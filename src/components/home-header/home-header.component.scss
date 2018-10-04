@@ -1,0 +1,115 @@
+.header-style {
+    height: 130px;
+    padding: 5px 50px;
+
+    -webkit-box-shadow: 0px 6px 24px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 6px 24px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 6px 24px 0px rgba(0,0,0,0.75);
+}
+
+.img-headedr-class {
+    width: 120px;
+    height: 120px;
+  }
+
+.img-tecnm {
+    height: 120px;
+}
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title-style {
+    text-align: center;
+    margin-right: 60px;
+}
+
+.title-line {
+    font-size: 1.4rem;
+    font-family: 'PT Sans';
+    font-weight: bold;
+    color: #707070;
+}
+
+.subtitle-line {
+    font-size: 1rem;
+    font-family: 'PT Sans';
+    color: #707070;
+}
+
+p {
+    margin: 0;
+}
+
+// Extra small devices (portrait phones, less than 576px)
+// No media query for `xs` since this is the default in Bootstrap
+
+// Small devices (landscape phones, 576px and up)
+@media (max-width: 576px) { 
+    .header-style {
+        height: auto;
+    }
+
+    .title-style {
+        text-align: center;
+        margin-right: 0;
+    }
+
+    .img-headedr-class {
+        display: none;
+      }
+
+      .img-tecnm {
+        display: none;
+    }
+
+      .header-container {
+        justify-content: center;
+    }
+
+    .title-line {
+        font-size: 1.2rem;
+    }
+
+    .subtitle-line {
+        font-size: 0.8rem;
+    }
+ }
+
+// Medium devices (tablets, 768px and up)
+@media (max-width: 768px) { 
+    .img-headedr-class {
+        width: 70px;
+        height: 70px;
+      }
+
+      .title-style {
+        text-align: center;
+        margin-right: 0;
+    }
+
+      .img-tecnm {
+        height: 70Px;
+    }
+
+      .header-style {
+        height: auto;
+    }
+ }
+
+// Large devices (desktops, 992px and up)
+@media (max-width: 992px) { 
+    .img-headedr-class {
+        width: 90px;
+        height: 90px;
+      }
+
+      .header-style {
+        height: auto;
+    }
+ }
+
+// Extra large devices (large desktops, 1200px and up)
+@media (max-width: 1200px) {  }

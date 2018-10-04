@@ -1,0 +1,55 @@
+<div class="content">
+  <div class="container-login-form">
+    <div class="container-title">
+      <p class="tittle-p">Inicio de sesión</p>
+    </div>
+    <div class="container-form">
+      <div class="form-input">
+        <form [formGroup]="formLogin">
+          <div class="form-group">
+            <label style="color: #707070;" for="loginInputUser">
+              <img style="height: 18px; width: 18px;" src="assets/imgs/profile.svg" alt=""> Usuario *
+            </label>
+            <input (input)="errorUsernameInput = false" formControlName="usernameInput" [ngClass]="{'is-invalid': (formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorUsernameInput }"
+              type="text" class="form-control" id="loginInputUser" aria-describedby="emailHelp" placeholder="Ingrese usuario">
+            <div *ngIf="(formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorForm">
+              <div class="invalid-feedback" *ngIf="formLogin.get('usernameInput').hasError('required') || errorUsernameInput">
+                Campo obligatorio
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="color: #707070;" for="loginInputPassword">
+              <img style="height: 18px; width: 18px;" src="assets/imgs/lock.svg" alt=""> Contraseña *
+            </label>
+            <input (input)="errorPasswordInput = false" formControlName="passwordInput" [ngClass]="{'is-invalid': (formLogin.get('passwordInput').errors && formLogin.get('passwordInput').dirty) || errorPasswordInput }"
+              type="password" class="form-control" id="loginInputPassword" aria-describedby="emailHelp" placeholder="Ingrese usuario">
+            <div *ngIf="(formLogin.get('passwordInput').errors && formLogin.get('passwordInput').dirty) || errorForm">
+              <div class="invalid-feedback" *ngIf="formLogin.get('passwordInput').hasError('required') || errorPasswordInput">
+                Campo obligatorio
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-6 col-12">
+              <a (click)="openModal(content)" style="color: #707070;" class="href-style">¿Se te olvido la contraseña?</a>
+            </div>
+          </div>
+
+
+          <div *ngIf="showAlertDiv" style="margin-top: 8px;" class="alert alert-danger" role="alert">
+            Usuario y/o contraseña incorrecto
+          </div>
+
+          <div class="footer-form">
+
+
+            <button (click)="login()" type="button" class="btn btn-login">Ingresar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
