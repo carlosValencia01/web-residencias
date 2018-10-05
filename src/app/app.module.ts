@@ -5,7 +5,8 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpModule } from '@angular/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CustomFormsModule } from 'ng2-validation'
+import { CustomFormsModule } from 'ng2-validation';
+import { Routes, RouterModule } from '@angular/router';
 
 import { CookieService } from 'ngx-cookie-service';
 import { SimpleNotificationsModule } from 'angular2-notifications';
@@ -13,6 +14,7 @@ import { SimpleNotificationsModule } from 'angular2-notifications';
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { HomePageComponent } from '../pages/home-page/home-page.component';
+import { StudentPageComponent } from '../pages/student-page/student-page.component';
 
 
 // Components
@@ -29,12 +31,18 @@ import { NotificationsServices } from '../services/notifications.service';
 import { Api } from '../providers/api.prov';
 import { UserProvider } from '../providers/user.prov';
 
+const appRouters: Routes = [
+  { path: '', component: HomePageComponent, pathMatch: 'full' },
+  { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
+];
+
 @NgModule({
   declarations: [
     AppComponent,
     LoginPageComponent,
     LoginHeaderComponent,
     HomePageComponent,
+    StudentPageComponent,
     HomeHeaderComponent
   ],
   imports: [
@@ -44,6 +52,7 @@ import { UserProvider } from '../providers/user.prov';
     FormsModule,
     ReactiveFormsModule,
     CustomFormsModule,
+    RouterModule.forRoot(appRouters),
     SimpleNotificationsModule.forRoot()
   ],
   providers: [
