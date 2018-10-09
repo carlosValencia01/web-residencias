@@ -1,3 +1,53 @@
-<p>
-  student-page works!
-</p>
+<div class="content-general">
+
+  <div class="card card-shadow">
+    <div class="card-body">
+      <div class="search-div">
+        <div class="form-group item1" style="margin-bottom: 10px;">
+          <input type="text" class="form-control" aria-describedby="searchHelp" placeholder="Buscar alumno por Nombre o Numero de Control" 
+            [(ngModel)]="search" [ngModelOptions]="{standalone: true}">
+        </div>
+        <div class="item2">
+          <button type="button" style="width: 100%" class="btn btn-success show-button-1" (click)="searchStudent()">Buscar Alumno
+          </button>
+
+          <button type="button" style="width: 100%" class="btn btn-success show-button-2">
+            <i style="font-size:18px" class="fa fa-plus-square">+</i>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="showTable" class="table-responsive div-size">
+        <table class="table table-bordered table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">Numero de Control</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Carrera</th>
+              <th scope="col">NSS</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of data">
+              <th scope="row">{{ student.controlNumber }}</th>
+              <td>{{ student.fullName }}</td>
+              <td>{{ student.career }}</td>
+              <td>{{ student.nss }}</td>
+              <td>
+
+                <div style="display: flex;">
+
+                  <button type="button" style="margin-right: 5px;" class="btn btn-primary btn-sm">Agregar Fotografia</button>
+                  <button type="button" class="btn btn-secondary btn-sm">Generar credencial</button>
+      
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

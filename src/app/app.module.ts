@@ -30,6 +30,7 @@ import { NotificationsServices } from '../services/notifications.service';
 // Providers
 import { Api } from '../providers/api.prov';
 import { UserProvider } from '../providers/user.prov';
+import { StudentProvider } from '../providers/student.prov';
 
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
@@ -47,7 +48,7 @@ const appRouters: Routes = [
   ],
   imports: [
     BrowserModule,
-    NgbModule,
+    NgbModule.forRoot(),
     HttpModule,
     FormsModule,
     ReactiveFormsModule,
@@ -64,6 +65,7 @@ const appRouters: Routes = [
 
     Api,
     UserProvider,
+    StudentProvider
   ],
   bootstrap: [AppComponent]
 })

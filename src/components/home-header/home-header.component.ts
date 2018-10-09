@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CookiesService } from '../../services/cookie.service';
 
 @Component({
   selector: 'app-home-header',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeHeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private cookiesServ: CookiesService,
+  ) { }
 
   ngOnInit() {
+  }
+
+  logOut() {
+    this.cookiesServ.deleteCookie();
+    window.location.replace('/');
   }
 
 }
