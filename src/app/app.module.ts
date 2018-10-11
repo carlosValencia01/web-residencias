@@ -10,11 +10,13 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { CookieService } from 'ngx-cookie-service';
 import { SimpleNotificationsModule } from 'angular2-notifications';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { HomePageComponent } from '../pages/home-page/home-page.component';
 import { StudentPageComponent } from '../pages/student-page/student-page.component';
+import { PhotoPageComponent } from '../pages/photo-page/photo-page.component';
 
 
 // Components
@@ -36,6 +38,7 @@ import { StudentProvider } from '../providers/student.prov';
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
+  { path: 'photo', component: PhotoPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -45,7 +48,8 @@ const appRouters: Routes = [
     LoginHeaderComponent,
     HomePageComponent,
     StudentPageComponent,
-    HomeHeaderComponent
+    HomeHeaderComponent,
+    PhotoPageComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +59,8 @@ const appRouters: Routes = [
     ReactiveFormsModule,
     CustomFormsModule,
     RouterModule.forRoot(appRouters),
-    SimpleNotificationsModule.forRoot()
+    SimpleNotificationsModule.forRoot(),
+    ImageCropperModule
   ],
   providers: [
     CookieService,
