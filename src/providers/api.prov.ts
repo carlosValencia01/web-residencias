@@ -19,6 +19,10 @@ export class Api {
         // this.headers.append('Authorization', `Bearer ${this.cookiesServ.getData().token}`);
     }
 
+    getURL() {
+        return this.url;
+    }
+
     setToken(token) {
         this.headers.delete('Authorization');
         this.headers.append('Authorization', `Bearer ${token}`);
@@ -42,6 +46,27 @@ export class Api {
         }
 
         return this.http.get(this.url + '/' + endpoint, options);
+        // .do(res => console.log(res));
+    }
+
+    get2(endpoint: string, params?: any) {
+        const options = new RequestOptions({ headers: this.headers });
+
+        // Support easy query params for GET requests
+        if (params) {
+            const p = new URLSearchParams();
+
+            // tslint:disable-next-line:forin
+            for (const k in params) {
+                p.set(k, params[k]);
+            }
+
+            // Set the search field if we have params and don't already have
+            // a search field set in options.
+            options.search = !options.search && p || options.search;
+        }
+
+        return this.http.get('https://api.cideti.com.mx/inifap/v1' + '/' + endpoint, options);
         // .do(res => console.log(res));
     }
 

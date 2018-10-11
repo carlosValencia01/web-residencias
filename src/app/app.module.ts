@@ -26,6 +26,7 @@ import { HomeHeaderComponent } from '../components/home-header/home-header.compo
 import { CookiesService } from '../services/cookie.service';
 import { FormErrorsService } from '../services/forms.errors.service';
 import { NotificationsServices } from '../services/notifications.service';
+import { ImageToBase64Service } from '../services/img.to.base63.service';
 
 // Providers
 import { Api } from '../providers/api.prov';
@@ -62,6 +63,7 @@ const appRouters: Routes = [
     CookiesService,
     FormErrorsService,
     NotificationsServices,
+    ImageToBase64Service,
 
     Api,
     UserProvider,
