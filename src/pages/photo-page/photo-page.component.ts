@@ -15,6 +15,8 @@ export class PhotoPageComponent implements OnInit {
   croppedImage: any = '';
   closeResult: string;
 
+
+
   constructor(
     private modalService: NgbModal
   ) { }

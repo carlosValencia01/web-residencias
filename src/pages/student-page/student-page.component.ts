@@ -81,28 +81,34 @@ export class StudentPageComponent implements OnInit {
     });
   }
 
-  generatePDF() {
+  generatePDF() { // 'p', 'mm', [68,20]
     const doc = new jsPDF({
       unit: 'mm',
-      format: 'letter',
+      format: [88.6, 56],
+      orientation: 'landscape'
     });
     // cara frontal de la credencial
-    doc.addImage(this.frontBase64, 'PNG', 10, 10, 88.6, 56);
+    doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
+    doc.addImage(this.imageProfileTest, 'JPEG', 3.4, 6.8, 28.1, 31);
 
-    // cara trasera de la credencial
-    doc.addImage(this.backBase64, 'PNG', 100, 10, 88.6, 56);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(8);
+    doc.text(49, 30.75, doc.splitTextToSize('VICTOR MANUEL CEBALLOS CRUZ', 35));
+    doc.text(49, 38.4, doc.splitTextToSize('ING. EN SIST. COMPUTACIONALES', 35));
+    doc.text(49, 46, doc.splitTextToSize('123456789', 35));
 
-    // foto del estudiante
-    doc.addImage(this.imageProfileTest, 'JPEG', 13.4, 16.8, 28.1, 31);
+    doc.addPage();
 
-    // Numero de control con codigo de barra
-    doc.addImage(this.textToBase64Barcode('12400253'), 'PNG', 146, 53, 33, 11);
 
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(8);
-      doc.text(59, 40.75, doc.splitTextToSize('VICTOR MANUEL CEBALLOS CRUZ', 35));
-      doc.text(59, 48.4, doc.splitTextToSize('ING. EN SIST. COMPUTACIONALES', 35) );
-      doc.text(59, 56, doc.splitTextToSize('123456789', 35) );
+    // // cara trasera de la credencial
+    doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
+
+    // // foto del estudiante
+
+    // // Numero de control con codigo de barra
+    doc.addImage(this.textToBase64Barcode('12400253'), 'PNG', 46, 43, 33, 11);
+
+
 
     doc.save('test.pdf');
   }

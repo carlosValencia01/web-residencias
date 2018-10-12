@@ -5,7 +5,7 @@
       <div class="search-div">
         <div class="form-group item1" style="margin-bottom: 10px;">
           <input type="text" class="form-control" aria-describedby="searchHelp" placeholder="Buscar alumno por Nombre o Numero de Control" 
-            [(ngModel)]="search" [ngModelOptions]="{standalone: true}">
+            [(ngModel)]="search" (keyup.enter)="searchStudent()" [ngModelOptions]="{standalone: true}">
         </div>
         <div class="item2">
           <button type="button" style="width: 100%" class="btn btn-success show-button-1" (click)="searchStudent()">Buscar Alumno
