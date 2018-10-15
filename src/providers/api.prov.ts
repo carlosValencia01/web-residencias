@@ -7,8 +7,8 @@ import { CookiesService } from '../services/cookie.service';
 
 @Injectable()
 export class Api {
-    // url = 'http://localhost:3005/escolares/credenciales';
-    url = 'https://api.cideti.com.mx/escolares/credenciales';
+    url = 'http://localhost:3003/escolares/credenciales';
+    // url = 'https://api.cideti.com.mx/escolares/credenciales';
     headers: Headers = new Headers();
 
     constructor(

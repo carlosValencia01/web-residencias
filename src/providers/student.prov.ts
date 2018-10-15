@@ -20,14 +20,24 @@ export class StudentProvider {
 
     getAllStudents() {
         return this.api.get('student')
-            .pipe(map(atudents => atudents.json()));
+            .pipe(map(students => students.json()));
     }
 
-    getProfileImage() {
-        return this.api.get2('post/5b9961abd7d3df267ff75282', { responseType: ResponseContentType.Blob })
-            .pipe(map( response => {
-                return new Blob([response.blob()], {type: 'application/jpeg'});
-              } ));
+    getProfileImage(id) {
+        return this.api.get(`student/image/${id}`, { responseType: ResponseContentType.Blob })
+            .pipe(map(response => {
+                return new Blob([response.blob()], { type: 'application/jpeg' });
+            }));
+    }
+
+    updateStudent(id, data) {
+        return this.api.put(`student/${id}`, data)
+            .pipe(map(student => student.json()));
+    }
+
+    updatePhoto(id, data) {
+        return this.api.put(`student/image/${id}`, data)
+            .pipe(map(student => student.json()));
     }
 
     searchStudents(text: string, start?: number, limit?: number) {

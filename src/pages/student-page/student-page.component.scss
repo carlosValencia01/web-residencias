@@ -6,6 +6,43 @@
     color: #DC3849;
 }
 
+.profile-icon {
+    height: 200px;
+    width: 200px;
+    
+}
+
+.container-img {
+    height: 200px;
+    width: 200px;
+    position:relative;
+ }
+ .tag {
+    float: left;
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    background-color: rgba(0, 0, 0, 0.514);;
+    color: white;
+
+    text-align: center;
+    padding-top: 10px;
+
+    width: 200px;
+    height: 50px;
+
+    -moz-user-select: none; 
+    -webkit-user-select: none; 
+    -ms-user-select:none;
+     user-select:none;
+    -o-user-select:none;
+ }
+
+ .tag:hover {
+    cursor: pointer;
+ }
+ 
+
 .btn-login {
     background-color: #4D66A2;
     color: white;

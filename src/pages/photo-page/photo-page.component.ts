@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 
-import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -24,7 +24,7 @@ export class PhotoPageComponent implements OnInit {
   ngOnInit() {
   }
 
-  fileChangeEvent(event: any, content): void {
+  fileChangeEvent(event: any, content) {
     this.imageChangedEvent = event;
 
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
@@ -34,7 +34,7 @@ export class PhotoPageComponent implements OnInit {
     });
   }
   imageCropped(event: ImageCroppedEvent) {
-    this.croppedImage = event.file;
+    this.croppedImage = event.base64;
     console.log(this.croppedImage);
   }
   imageLoaded() {

@@ -4,6 +4,10 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpModule } from '@angular/http';
+
+import { HttpClientModule } from '@angular/common/http';
+
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomFormsModule } from 'ng2-validation';
 import { Routes, RouterModule } from '@angular/router';
@@ -55,6 +59,9 @@ const appRouters: Routes = [
     BrowserModule,
     NgbModule.forRoot(),
     HttpModule,
+
+    HttpClientModule,
+
     FormsModule,
     ReactiveFormsModule,
     CustomFormsModule,
@@ -72,7 +79,7 @@ const appRouters: Routes = [
 
     Api,
     UserProvider,
-    StudentProvider
+    StudentProvider,
   ],
   bootstrap: [AppComponent]
 })
