@@ -8,7 +8,7 @@
     <div class="modal-body">
   
       <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="4 / 4"
-        [resizeToWidth]="128" format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
+        format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
         (loadImageFailed)="loadImageFailed()"></image-cropper>
   
     </div>
@@ -159,7 +159,7 @@
 
                   <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">Actualizar
                     información</button>
-                  <button type="button" (click)="generatePDF()" class="btn btn-secondary btn-sm">Generar credencial</button>
+                  <button type="button" (click)="generatePDF(student)" class="btn btn-secondary btn-sm">Generar credencial</button>
 
                 </div>
               </td>

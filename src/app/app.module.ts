@@ -6,6 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpModule } from '@angular/http';
 
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -67,7 +68,8 @@ const appRouters: Routes = [
     CustomFormsModule,
     RouterModule.forRoot(appRouters),
     SimpleNotificationsModule.forRoot(),
-    ImageCropperModule
+    ImageCropperModule,
+    BrowserAnimationsModule
   ],
   providers: [
     CookieService,

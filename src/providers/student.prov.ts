@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
-// import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
 
 
 import { Api } from './api.prov';
 import { ResponseContentType } from '@angular/http';
+import { Observable } from 'rxjs';
+
+import { HttpClient } from '@angular/common/http';
+
 
 @Injectable()
 export class StudentProvider {
     constructor(
         public api: Api,
+        private http: HttpClient,
+
     ) {
 
     }
@@ -25,9 +30,7 @@ export class StudentProvider {
 
     getProfileImage(id) {
         return this.api.get(`student/image/${id}`, { responseType: ResponseContentType.Blob })
-            .pipe(map(response => {
-                return new Blob([response.blob()], { type: 'application/jpeg' });
-            }));
+            .pipe(map((res: Response) => res.blob()));
     }
 
     updateStudent(id, data) {
@@ -35,10 +38,10 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-    updatePhoto(id, data) {
-        return this.api.put(`student/image/${id}`, data)
-            .pipe(map(student => student.json()));
-    }
+    // updatePhoto(id, data) {
+    //     return this.api.put(`student/image/${id}`, data)
+    //         .pipe(map(student => student.json()));
+    // }
 
     searchStudents(text: string, start?: number, limit?: number) {
         const trueStart = start || 0;
@@ -48,6 +51,16 @@ export class StudentProvider {
             start: trueStart,
             limit: trueLimit
         }).pipe(map(res => res.json()));
+    }
+
+
+    getImageTest(id: string): Observable<Blob> {
+        return this.http.get(`${this.api.getURL()}/student/image/${id}`, { responseType: 'blob' });
+    }
+
+    updatePhoto(id, fd) {
+        return this.http.put(`${this.api.getURL()}/student/image/${id}`, fd);
+
     }
 
 
