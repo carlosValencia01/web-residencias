@@ -47,7 +47,7 @@
 
             <div class="form-group">
               <label for="studentInputFullName">Nombre Completo *</label>
-              <input (input)="errorInputsTag.errorStudentFullName = false" type="text" class="form-control" id="studentInputFullName"
+              <input (input)="errorInputsTag.errorStudentFullName = false" #input (input)="input.value=$event.target.value.toUpperCase()" type="text" class="form-control" id="studentInputFullName"
                 formControlName="fullNameInput" aria-describedby="emailHelp" placeholder="Ingrese nombre completo"
                 [ngClass]="{'is-invalid': (formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorInputsTag.errorStudentFullName }">
               <div *ngIf="(formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorForm">
@@ -59,8 +59,8 @@
 
             <div class="form-group">
               <label for="exampleFormControlSelect1">Tipo*</label>
-              <select (input)="errorInputsTag.errorUserRole = false" class="form-control" id="exampleFormControlSelect1"
-                [ngClass]="{ 'is-invalid' : errorInputsTag.errorUserRole }" [(ngModel)]="currentStudent.career"
+              <select (input)="errorInputsTag.errorStudentCareer = false" class="form-control" id="exampleFormControlSelect1"
+                [ngClass]="{ 'is-invalid' : errorInputsTag.errorStudentCareer }" [(ngModel)]="currentStudent.career"
                 [ngModelOptions]="{standalone: true}">
                 <option value="default" selected>Seleccione la Carrera</option>
                 <option value="ARQUITECTURA">ARQUITECTURA</option>

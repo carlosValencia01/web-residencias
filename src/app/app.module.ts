@@ -21,7 +21,6 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { HomePageComponent } from '../pages/home-page/home-page.component';
 import { StudentPageComponent } from '../pages/student-page/student-page.component';
-import { PhotoPageComponent } from '../pages/photo-page/photo-page.component';
 
 
 // Components
@@ -43,7 +42,6 @@ import { StudentProvider } from '../providers/student.prov';
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
-  { path: 'photo', component: PhotoPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -53,8 +51,7 @@ const appRouters: Routes = [
     LoginHeaderComponent,
     HomePageComponent,
     StudentPageComponent,
-    HomeHeaderComponent,
-    PhotoPageComponent
+    HomeHeaderComponent
   ],
   imports: [
     BrowserModule,

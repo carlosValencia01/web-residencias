@@ -96,7 +96,9 @@ export class StudentPageComponent implements OnInit {
   }
 
   showFormValues(student) {
-    this.currentStudent = student;
+    // this.dataPresentation = JSON.parse(JSON.stringify(this.navParams.data));
+
+    this.currentStudent = JSON.parse(JSON.stringify(student));
 
     this.imgForSend = false;
 
@@ -194,9 +196,22 @@ export class StudentPageComponent implements OnInit {
             // // Numero de control con codigo de barra
             doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46, 43, 33, 11);
 
-            doc.save(`${student._id}.pdf`);
+            // doc.save(`${student._id}.pdf`);
 
-        this.notificationServ.showNotification(1, 'Credencial creada correctamente', '');
+            // doc.output('dataurlnewwindow');
+
+            // const stringPDF = doc.output('datauristring');
+
+            // console.log(encodeURI(stringPDF));
+
+            // window.open('data:application/pdf;base64, ' + stringPDF);
+
+            // this.notificationServ.showNotification(1, 'Credencial creada correctamente', '');
+
+            // const blob = doc.output('blob');
+            // window.open(URL.createObjectURL(blob));
+
+            window.open(doc.output('bloburl'), '_blank');
 
 
           });
@@ -241,31 +256,76 @@ export class StudentPageComponent implements OnInit {
 
   // Actualizacion de información basica (sin imagen) ************************************************************//#endregion
 
+  formValidation(): boolean {
+    let invalid = false;
+
+    console.log('Se esta ejecutando formValidation');
+
+
+    if (this.formStudent.invalid) {
+      // console.log('formStuden es invalido');
+      this.errorForm = true;
+      this.formErrosrServ.getErros(this.formStudent).forEach(key => {
+        // console.log(key);
+
+        switch (key.keyControl) {
+          case 'fullNameInput':
+            this.errorInputsTag.errorStudentFullName = true;
+            break;
+
+          case 'numberControlInput':
+            this.errorInputsTag.errorStudentNumberControl = true;
+            break;
+
+          default:
+            this.errorInputsTag.errorStudentNSS = true;
+            break;
+        }
+      });
+      invalid = true;
+    }
+    if (this.currentStudent.career === 'default') {
+      console.log('entro a la carrera', this.currentStudent.career);
+
+      this.errorInputsTag.errorStudentCareer = true;
+      invalid = true;
+    }
+
+    return invalid;
+  }
+
   updateStudentData() {
-    const data = {
-      controlNumber: this.formStudent.get('numberControlInput').value,
-      fullName: this.formStudent.get('fullNameInput').value,
-      career: this.currentStudent.career,
-      nss: this.formStudent.get('nssInput').value
-    };
+    console.log('Estoy ejecutando la funcion');
+    if (!this.formValidation()) {
+      console.log('Entro al IF');
+      const data = {
+        controlNumber: this.formStudent.get('numberControlInput').value,
+        fullName: this.formStudent.get('fullNameInput').value,
+        career: this.currentStudent.career,
+        nss: this.formStudent.get('nssInput').value
+      };
 
-    this.studentProv.updateStudent(this.currentStudent._id, data).subscribe(res => {
-      console.log(res);
+      this.studentProv.updateStudent(this.currentStudent._id, data).subscribe(res => {
+        console.log(res);
 
-      if (this.imgForSend) {
-        console.log('Hay una foto que enviar');
-        this.uploadFile(this.currentStudent._id);
-      } else {
-        console.log('No hay foto que enviar');
-        this.showForm = false;
-        this.searchStudent();
-        this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
-      }
+        if (this.imgForSend) {
+          console.log('Hay una foto que enviar');
+          this.uploadFile(this.currentStudent._id);
+        } else {
+          console.log('No hay foto que enviar');
+          this.showForm = false;
+          this.searchStudent();
+          this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
+        }
 
 
-    }, error => {
-      console.log(error);
-    });
+      }, error => {
+        console.log(error);
+      });
+
+    }
+
+
   }
 
   // Croper Image ***************************************************************************************************//#endregion
