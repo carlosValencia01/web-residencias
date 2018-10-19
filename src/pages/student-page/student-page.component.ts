@@ -28,6 +28,8 @@ export class StudentPageComponent implements OnInit {
   showNotFound = false;
   showForm = false;
 
+  showImg = false;
+
   frontBase64: any;
   backBase64: any;
 
@@ -97,6 +99,8 @@ export class StudentPageComponent implements OnInit {
 
   showFormValues(student) {
     // this.dataPresentation = JSON.parse(JSON.stringify(this.navParams.data));
+
+    this.showImg = false;
 
     this.currentStudent = JSON.parse(JSON.stringify(student));
 
@@ -328,7 +332,7 @@ export class StudentPageComponent implements OnInit {
 
   }
 
-  // Croper Image ***************************************************************************************************//#endregion
+  // Cropper Image ***************************************************************************************************//#endregion
 
   showSelectFileDialog() {
     console.log('Click detectado');
@@ -464,6 +468,7 @@ export class StudentPageComponent implements OnInit {
     reader.addEventListener('load', () => {
       this.imageToShow = reader.result;
       this.photoStudent = this.imageToShow;
+      this.showImg = true;
 
     }, false);
 
@@ -475,11 +480,13 @@ export class StudentPageComponent implements OnInit {
   getImageFromService(id) {
     this.studentProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
+
     }, error => {
       console.log(error);
       if (error.status === 404) {
         console.log('No tiene imagen');
         this.photoStudent = 'assets/imgs/imgNotFound.png';
+        this.showImg = true;
       }
     });
   }

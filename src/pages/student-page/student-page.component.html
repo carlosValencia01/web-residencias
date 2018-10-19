@@ -1,22 +1,21 @@
 <ng-template #content let-c="close('Save click')" let-d="dismiss('Cross click')" let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Seleccione el area de la foto</h4>
-      <button type="button" class="close" aria-label="Close" (click)="d">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-  
-      <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="4 / 4"
-        format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
-        (loadImageFailed)="loadImageFailed()"></image-cropper>
-  
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="c">Guardar</button>
-      <button type="button" class="btn btn-outline-dark" (click)="d">Cancelar</button>
-    </div>
-  </ng-template>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Seleccione el area de la foto</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="4 / 4" format="png"
+      (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (loadImageFailed)="loadImageFailed()"></image-cropper>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="c">Guardar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="d">Cancelar</button>
+  </div>
+</ng-template>
 
 
 <div class="content-general">
@@ -32,11 +31,23 @@
           <div class="col-12 col-md-6">
 
             <div style="display: flex; justify-content: center; height: 100%;">
-                <div class="container-img">
-                    <input type="file" (change)="fileChangeEvent($event, content)"  id="fileButton" accept="image/x-png,image/jpeg" style="display: none;">
-                    <div (click)="showSelectFileDialog()" class="tag">Actualizar foto</div>
-                    <img class="profile-icon" [src]="photoStudent">
+              <div class="container-img">
+                <div *ngIf="showImg">
+                  <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg"
+                    style="display: none;">
+                  <div (click)="showSelectFileDialog()" class="tag">Actualizar foto</div>
+                  <img class="profile-icon" [src]="photoStudent">
+                </div>
+                <div *ngIf="! showImg">
+                  <div class="cssload-thecube">
+                    <div class="cssload-cube cssload-c1"></div>
+                    <div class="cssload-cube cssload-c2"></div>
+                    <div class="cssload-cube cssload-c4"></div>
+                    <div class="cssload-cube cssload-c3"></div>
                   </div>
+                </div>
+
+              </div>
             </div>
 
 
@@ -47,9 +58,9 @@
 
             <div class="form-group">
               <label for="studentInputFullName">Nombre Completo *</label>
-              <input (input)="errorInputsTag.errorStudentFullName = false" #input (input)="input.value=$event.target.value.toUpperCase()" type="text" class="form-control" id="studentInputFullName"
-                formControlName="fullNameInput" aria-describedby="emailHelp" placeholder="Ingrese nombre completo"
-                [ngClass]="{'is-invalid': (formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorInputsTag.errorStudentFullName }">
+              <input (input)="errorInputsTag.errorStudentFullName = false" #input (input)="input.value=$event.target.value.toUpperCase()"
+                type="text" class="form-control" id="studentInputFullName" formControlName="fullNameInput"
+                aria-describedby="emailHelp" placeholder="Ingrese nombre completo" [ngClass]="{'is-invalid': (formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorInputsTag.errorStudentFullName }">
               <div *ngIf="(formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorForm">
                 <div class="invalid-feedback" *ngIf="formStudent.get('fullNameInput').hasError('required') || errorInputsTag.errorStudentFullName">
                   Campo obligatorio
@@ -58,7 +69,7 @@
             </div>
 
             <div class="form-group">
-              <label for="exampleFormControlSelect1">Tipo*</label>
+              <label for="exampleFormControlSelect1">Carrera *</label>
               <select (input)="errorInputsTag.errorStudentCareer = false" class="form-control" id="exampleFormControlSelect1"
                 [ngClass]="{ 'is-invalid' : errorInputsTag.errorStudentCareer }" [(ngModel)]="currentStudent.career"
                 [ngModelOptions]="{standalone: true}">
@@ -159,7 +170,8 @@
 
                   <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">Actualizar
                     información</button>
-                  <button type="button" (click)="generatePDF(student)" class="btn btn-secondary btn-sm">Generar credencial</button>
+                  <button type="button" (click)="generatePDF(student)" class="btn btn-secondary btn-sm">Generar
+                    credencial</button>
 
                 </div>
               </td>
