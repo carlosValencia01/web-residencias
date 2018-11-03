@@ -7,7 +7,7 @@
   </div>
   <div class="modal-body">
 
-    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="4 / 4" format="png"
+    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="2.5 / 3" format="png"
       (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (loadImageFailed)="loadImageFailed()"></image-cropper>
 
   </div>
@@ -94,7 +94,7 @@
             </div>
 
             <div class="form-group">
-              <label for="studentInputControlNumber">Numero de Control *</label>
+              <label for="studentInputControlNumber">Número de Control *</label>
               <input (input)="errorInputsTag.errorStudentNumberControl = false" type="text" class="form-control" id="studentInputFullName"
                 formControlName="numberControlInput" aria-describedby="emailHelp" placeholder="Ingrese numero de control"
                 [ngClass]="{'is-invalid': (formStudent.get('numberControlInput').errors && formStudent.get('numberControlInput').dirty) || errorInputsTag.errorStudentNumberControl }">
@@ -120,10 +120,10 @@
           </div>
         </div>
       </form>
-
-      <button type="button" (click)="updateStudentData();" class="btn btn-login" style="margin-right: 10px;">Editar</button>
-      <button type="button" (click)="hiddenFormDiv()" class="btn btn-light">Cancelar</button>
-
+      <div class="row">
+        <button type="button" (click)="updateStudentData();" class="btn btn-login col" style="margin-right: 10px;">Guardar</button>
+        <button type="button" (click)="hiddenFormDiv()" class="btn btn-light col">Cancelar</button>
+      </div>
     </div>
 
   </div>

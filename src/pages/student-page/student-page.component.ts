@@ -121,11 +121,11 @@ export class StudentPageComponent implements OnInit {
   getBase64ForStaticImages() {
     console.log(this.studentProv.getApiURL());
 
-    this.imageToBase64Serv.getBase64('assets/imgs/front.png').then(res1 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/front.jpg').then(res1 => {
       this.frontBase64 = res1;
     });
 
-    this.imageToBase64Serv.getBase64('assets/imgs/back.png').then(res2 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/back.jpg').then(res2 => {
       this.backBase64 = res2;
     });
 
@@ -137,7 +137,7 @@ export class StudentPageComponent implements OnInit {
 
   textToBase64Barcode(text) {
     const canvas = document.createElement('canvas');
-    JsBarcode(canvas, text, { format: 'CODE39' });
+    JsBarcode(canvas, text, { format: 'CODE128', displayValue: false });
     return canvas.toDataURL('image/png');
   }
 
@@ -183,13 +183,15 @@ export class StudentPageComponent implements OnInit {
             });
             // cara frontal de la credencial
             doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-            doc.addImage(this.imageProfileTest, 'JPEG', 3.4, 6.8, 28.1, 31);
+            doc.addImage(this.imageProfileTest, 'JPEG', 3.6, 7.1, 25.8, 31);
 
             doc.setTextColor(255, 255, 255);
-            doc.setFontSize(8);
+            doc.setFontSize(7);
+            doc.setFont('helvetica');
+            doc.setFontType('bold');
             doc.text(49, 30.75, doc.splitTextToSize(student.fullName, 35));
-            doc.text(49, 38.4, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
-            doc.text(49, 46, doc.splitTextToSize(student.nss, 35));
+            doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
+            doc.text(49, 46.5, doc.splitTextToSize(student.nss, 35));
 
             doc.addPage();
             // // cara trasera de la credencial
@@ -198,8 +200,10 @@ export class StudentPageComponent implements OnInit {
             // // foto del estudiante
 
             // // Numero de control con codigo de barra
-            doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46, 43, 33, 11);
-
+            doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46.8, 39.2, 33, 12);
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(8);
+            doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
             // doc.save(`${student._id}.pdf`);
 
             // doc.output('dataurlnewwindow');

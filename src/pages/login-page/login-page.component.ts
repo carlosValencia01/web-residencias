@@ -67,6 +67,7 @@ export class LoginPageComponent implements OnInit {
           this.loginSuccessful.emit();
         }, error => {
           // console.log(error);
+          //if(this.formLogin.get(userna))
           this.showAlertDiv = true;
         });
 
