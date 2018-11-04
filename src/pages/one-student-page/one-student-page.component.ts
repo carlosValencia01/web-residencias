@@ -252,8 +252,9 @@ export class OneStudentPageComponent implements OnInit {
     fd.append('image', this.croppedImage);
 
     this.loading=true;
-    this.studentProv.updatePhoto(id, fd).subscribe(res => {
-      this.currentStudent = res.student;
+    this.studentProv.updatePhoto(id, fd).subscribe((res) => {
+      const data:any = res;
+      this.currentStudent = data.student;
       this.imgForSend = false;
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
 
