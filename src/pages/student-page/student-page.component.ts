@@ -150,11 +150,11 @@ export class StudentPageComponent implements OnInit {
       case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
         return 'DOC. EN CIENCIAS DE ALIMENTOS';
 
-      case 'INGENIERIA EN GESTION EMPRESARIAL':
+      case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
         return 'ING. EN GESTION EMPRESARIAL';
 
 
-      case 'INGENIERIA EN SISTEMAS COMPUTACIONALES':
+      case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
         return 'ING. EN SISTEMAS COMPUTACIONALES';
 
       default:
