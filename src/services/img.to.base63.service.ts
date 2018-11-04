@@ -22,8 +22,6 @@ export class ImageToBase64Service {
                 const reader = new FileReader();
                 reader.readAsDataURL(xhr.response);
                 reader.addEventListener('loadend', function () {
-                    console.log('se ejectuo la funcion');
-                    // console.log(reader.result);
                     resolve(reader.result);
                 });
             });
@@ -31,7 +29,6 @@ export class ImageToBase64Service {
 
         const result = await promise; // wait till the promise resolves (*)
 
-        // console.log(result); // "done!"
         return result;
     }
 

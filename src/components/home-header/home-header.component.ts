@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class HomeHeaderComponent implements OnInit {
 
+  student = false;
   constructor(
     private cookiesServ: CookiesService,
     private router: Router
@@ -16,6 +17,7 @@ export class HomeHeaderComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.router.url); //  /routename
+    this.student = this.cookiesServ.getData().user.role===2;
   }
 
   logOut() {

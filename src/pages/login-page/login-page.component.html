@@ -8,10 +8,10 @@
         <form [formGroup]="formLogin">
           <div class="form-group">
             <label style="color: #707070;" for="loginInputUser">
-              <img style="height: 18px; width: 18px;" src="assets/imgs/profile.svg" alt=""> Usuario *
+              <img style="height: 18px; width: 18px;" src="assets/imgs/profile.svg" alt=""> Usuario o Número de Control *
             </label>
             <input (input)="errorUsernameInput = false" (keyup.enter)="login()" formControlName="usernameInput" [ngClass]="{'is-invalid': (formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorUsernameInput }"
-              type="text" class="form-control" id="loginInputUser" aria-describedby="emailHelp" placeholder="Ingrese usuario">
+              type="text" class="form-control" id="loginInputUser" aria-describedby="emailHelp" placeholder="Ingrese usuario o número de control">
             <div *ngIf="(formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorForm">
               <div class="invalid-feedback" *ngIf="formLogin.get('usernameInput').hasError('required') || errorUsernameInput">
                 Campo obligatorio
@@ -21,10 +21,10 @@
 
           <div class="form-group">
             <label style="color: #707070;" for="loginInputPassword">
-              <img style="height: 18px; width: 18px;" src="assets/imgs/lock.svg" alt=""> Contraseña *
+              <img style="height: 18px; width: 18px;" src="assets/imgs/lock.svg" alt=""> Contraseña o NIP *
             </label>
             <input (input)="errorPasswordInput = false" (keyup.enter)="login()" formControlName="passwordInput" [ngClass]="{'is-invalid': (formLogin.get('passwordInput').errors && formLogin.get('passwordInput').dirty) || errorPasswordInput }"
-              type="password" class="form-control" id="loginInputPassword" aria-describedby="emailHelp" placeholder="Ingrese usuario">
+              type="password" class="form-control" id="loginInputPassword" aria-describedby="emailHelp" placeholder="Ingrese password o NIP">
             <div *ngIf="(formLogin.get('passwordInput').errors && formLogin.get('passwordInput').dirty) || errorForm">
               <div class="invalid-feedback" *ngIf="formLogin.get('passwordInput').hasError('required') || errorPasswordInput">
                 Campo obligatorio

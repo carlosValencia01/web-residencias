@@ -28,6 +28,17 @@ export class StudentProvider {
             .pipe(map(students => students.json()));
     }
 
+    getStudentById(_id){
+        return this.api.get(`student/${_id}`)
+            .pipe(map(student => student.json()));
+    }
+
+    getStudentByControlNumber(controlnumber) {
+        console.log(controlnumber);
+        return this.api.post(`student/login`,controlnumber)
+            .pipe(map(student => student.json()));
+    }
+
     getProfileImage(id) {
         return this.api.get(`student/image/${id}`, { responseType: ResponseContentType.Blob })
             .pipe(map((res: Response) => res.blob()));

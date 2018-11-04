@@ -3,9 +3,9 @@
   <div class="header-container">
     <img class="img-tecnm" src="assets/imgs/tecnm.png" alt="">
     <div class="title-style">
-      <p class="title-line" >Servicios Escolares</p>
-      <p class="subtitle-line" >Tecnológico Nacional de México</p>
-      <p class="title-line" >Instituto Tecnológico de Tepic</p>
+      <p class="title-line">Servicios Escolares</p>
+      <p class="subtitle-line">Tecnológico Nacional de México</p>
+      <p class="title-line">Instituto Tecnológico de Tepic</p>
     </div>
     <img class="img-headedr-class" src="assets/imgs/ittepic-sm.png" alt="">
   </div>
@@ -15,7 +15,8 @@
 </div>
 
 <ul>
-    <li><a routerLink="">Inicio</a></li>
-    <li><a routerLink="student">Alumnos</a></li>
-    <li style="float:right" (click)="logOut()"><a >Cerrar sesión</a></li>
-  </ul>
+  <li><a routerLink="">Inicio</a></li>
+  <li><a *ngIf="!student" routerLink="student">Alumnos</a></li>
+  <li><a *ngIf="student" routerLink="oneStudentPage">Credenciales</a></li>
+  <li style="float:right" (click)="logOut()"><a>Cerrar sesión</a></li>
+</ul>

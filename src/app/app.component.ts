@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { CookiesService } from '../services/cookie.service';
 import { UserProvider } from '../providers/user.prov';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

@@ -1,0 +1,100 @@
+<ng-template #content let-c="close('Save click')" let-d="dismiss('Cross click')" let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Seleccione el area de la foto</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="2.5 / 3" format="png"
+      (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (loadImageFailed)="loadImageFailed()"></image-cropper>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="c">Actualizar</button>
+    <button type="button" class="btn btn-outline-dark" (click)="d">Cancelar</button>
+  </div>
+</ng-template>
+
+
+<div class="content-general">
+  <div class="row">
+    <div class="col-12 col-lg-8">
+      <div class="card card-shadow" style="margin-bottom: 15px;">
+        <div class="card-header">
+          <strong>Actualización de fotografía para impresión de credencial</strong>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 col-lg-4">
+              <div style="display: flex; justify-content: center; height: 100%;">
+                <div class="container-img">
+                  <div *ngIf="showImg">
+                    <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg"
+                      style="display: none;">
+                    <div (click)="showSelectFileDialog()" class="tag">Actualizar foto</div>
+                    <img class="profile-icon" [src]="photoStudent">
+                  </div>
+                  <div *ngIf="! showImg">
+                    <div class="cssload-thecube">
+                      <div class="cssload-cube cssload-c1"></div>
+                      <div class="cssload-cube cssload-c2"></div>
+                      <div class="cssload-cube cssload-c4"></div>
+                      <div class="cssload-cube cssload-c3"></div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-8" *ngIf="currentStudent">
+              
+              <div class="form-group" >
+                <label for="studentInputControlNumber">Número de Control: <strong>{{currentStudent.controlNumber}}</strong></label>
+
+              </div>
+
+              <div class="form-group">
+                <label for="studentInputFullName">Nombre: <strong>{{currentStudent.fullName}}</strong></label>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">Carrera:<strong>{{currentStudent.career}}</strong></label>
+              </div>
+
+              <div class="form-group">
+                <label for="studentInputNSS">NSS: <strong>{{currentStudent.nss}}</strong></label>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="alert alert-warning">
+            <h4 class="alert-heading">A tomar en cuenta!!!</h4>
+            <hr>
+            <p>La fotografía debe ser:</p>
+            <ol type=i>
+              <li>Fondo Blanco</li>
+              <li>De frente</li>
+            </ol>
+            <hr>
+            <p><strong>NOTA: Se revisará la fotografía antes de la impresión</strong> </p>
+          </div>
+        </div>
+        <div class="col-12">
+          <button type="button" (click)="generatePDF();" class="btn btn-success col" style="margin-right: 10px;">Previsualizar</button>
+        </div>
+      </div>
+      <div class="row">
+
+      </div>
+    </div>
+  </div>
+</div>

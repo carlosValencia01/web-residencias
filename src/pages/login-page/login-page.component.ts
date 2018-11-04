@@ -5,6 +5,7 @@ import { CustomValidators } from 'ng2-validation';
 import { NotificationsServices } from '../../services/notifications.service';
 
 import { UserProvider } from '../../providers/user.prov';
+import { StudentProvider } from '../../providers/student.prov';
 import { CookiesService } from '../../services/cookie.service';
 
 @Component({
@@ -25,6 +26,7 @@ export class LoginPageComponent implements OnInit {
   constructor(
     public formBuilder: FormBuilder,
     private userProv: UserProvider,
+    private studentProv: StudentProvider,
     private cookiesServ: CookiesService,
     private notificationsServ: NotificationsServices,
   ) { }
@@ -67,7 +69,25 @@ export class LoginPageComponent implements OnInit {
           this.loginSuccessful.emit();
         }, error => {
           // console.log(error);
-          //if(this.formLogin.get(userna))
+          if ((this.formLogin.get('usernameInput').value.length >= 8
+            && this.formLogin.get('usernameInput').value.length <= 10)
+            && (this.formLogin.get('passwordInput').value.length === 4)) {
+            
+            //Si es correcta
+            this.studentProv.getStudentByControlNumber({ controlNumber: this.formLogin.get('usernameInput').value })
+              .subscribe(res => {
+
+                console.log(res);
+                this.userProv.sendTokenFromAPI(res.token);
+                this.cookiesServ.saveData(res);
+                this.showAlertDiv = false;
+                this.loginSuccessful.emit();
+
+              }, error => {
+                console.log(error);
+              });
+
+          }
           this.showAlertDiv = true;
         });
 

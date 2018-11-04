@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CookiesService } from '../../services/cookie.service';
 
 @Component({
   selector: 'app-home-page',
@@ -6,10 +7,15 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements OnInit {
+  student = false;
 
-  constructor() { }
+  constructor(
+    private cookiesServ: CookiesService,
+  ) { }
 
   ngOnInit() {
+    console.log(this.cookiesServ.getData().user.role);
+    this.student = this.cookiesServ.getData().user.role===2;
   }
 
 }
