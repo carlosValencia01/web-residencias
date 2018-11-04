@@ -1,6 +1,6 @@
 <ng-template #content let-c="close('Save click')" let-d="dismiss('Cross click')" let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Seleccione el area de la foto</h4>
+    <h4 class="modal-title" id="modal-basic-title">Seleccione el área de la foto</h4>
     <button type="button" class="close" aria-label="Close" (click)="d">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -12,24 +12,24 @@
 
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="c">Guardar</button>
-    <button type="button" class="btn btn-outline-dark" (click)="d">Cancelar</button>
+    <button type="button" class="btn btn-login" (click)="c">Actualizar</button>
+    <button type="button" class="btn btn-link" (click)="d">Cancelar</button>
   </div>
 </ng-template>
 
 
 <div class="content-general">
-
   <div *ngIf="showForm" class="card card-shadow" style="margin-bottom: 15px;">
-
+    <div class="card-header">
+      <h5 class="card-title">Actualizar Datos del Alumno</h5>
+    </div>
     <div class="card-body">
-      <h5 class="card-title">Alumno: {{ currentStudent.fullName }}</h5>
-      <h6 class="card-subtitle mb-2 text-muted">Actualizar Alumno</h6>
+      <!-- <h5 class="card-title">Actualizar Datos del Alumno</h5> -->
+      <!-- <h6 class="card-subtitle mb-2 text-muted">Actualizar Alumno</h6> -->
 
       <form [formGroup]="formStudent">
         <div class="row">
-          <div class="col-12 col-md-6">
-
+          <div class="col-12 col-lg-4">
             <div style="display: flex; justify-content: center; height: 100%;">
               <div class="container-img">
                 <div *ngIf="showImg">
@@ -38,7 +38,7 @@
                   <div (click)="showSelectFileDialog()" class="tag">Actualizar foto</div>
                   <img class="profile-icon" [src]="photoStudent">
                 </div>
-                <div *ngIf="! showImg">
+                <div *ngIf="!showImg">
                   <div class="cssload-thecube">
                     <div class="cssload-cube cssload-c1"></div>
                     <div class="cssload-cube cssload-c2"></div>
@@ -46,16 +46,10 @@
                     <div class="cssload-cube cssload-c3"></div>
                   </div>
                 </div>
-
               </div>
             </div>
-
-
-
-
           </div>
-          <div class="col-12 col-md-6">
-
+          <div class="col-12 col-lg-8">
             <div class="form-group">
               <label for="studentInputFullName">Nombre Completo *</label>
               <input (input)="errorInputsTag.errorStudentFullName = false" #input (input)="input.value=$event.target.value.toUpperCase()"
@@ -83,7 +77,8 @@
                 <option value="INGENIERÍA MECATRÓNICA">INGENIERÍA MECATRÓNICA</option>
                 <option value="INGENIERÍA QUÍMICA">INGENIERÍA QUÍMICA</option>
                 <option value="INGENIERÍA EN SISTEMAS COMPUTACIONALES">INGENIERÍA EN SISTEMAS COMPUTACIONALES</option>
-                <option value="INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES">INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES</option>
+                <option value="INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES">INGENIERÍA EN TECNOLOGÍAS
+                  DE LA INFORMACIÓN Y COMUNICACIONES</option>
                 <option value="LICENCIATURA EN ADMINISTRACIÓN">LICENCIATURA EN ADMINISTRACIÓN</option>
                 <option value="MAESTRIA EN CIENCIAS DE ALIMENTOS">MAESTRIA EN CIENCIAS DE ALIMENTOS</option>
                 <option value="DOCTORADO EN CIENCIAS DE ALIMENTOS">DOCTORADO EN CIENCIAS DE ALIMENTOS</option>
@@ -117,27 +112,26 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-lg float-right">Cerrar</button>
+              <button type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
+            </div>
           </div>
         </div>
       </form>
-      <div class="row">
-        <button type="button" (click)="updateStudentData();" class="btn btn-login col" style="margin-right: 10px;">Guardar</button>
-        <button type="button" (click)="hiddenFormDiv()" class="btn btn-light col">Cancelar</button>
-      </div>
     </div>
-
   </div>
 
   <div class="card card-shadow">
     <div class="card-body">
       <div class="search-div">
         <div class="form-group item1" style="margin-bottom: 10px;">
-          <input type="text" class="form-control" aria-describedby="searchHelp" placeholder="Buscar alumno por Nombre o Numero de Control"
+          <input type="text" class="form-control" aria-describedby="searchHelp" placeholder="Buscar alumno por Nombre o Número de Control"
             [(ngModel)]="search" (keyup.enter)="searchStudent()" [ngModelOptions]="{standalone: true}">
         </div>
         <div class="item2">
-          <button type="button" style="width: 100%" class="btn btn-success show-button-1" (click)="searchStudent()">Buscar
-            Alumno
+          <button type="button" style="width: 100%" class="btn btn-success show-button-1" (click)="searchStudent()">
+            Buscar
           </button>
 
           <button type="button" style="width: 100%" class="btn btn-success show-button-2">
@@ -150,7 +144,7 @@
         <table class="table table-bordered table-hover">
           <thead class="thead-light">
             <tr>
-              <th scope="col">Numero de Control</th>
+              <th scope="col">Número de Control</th>
               <th scope="col">Nombre</th>
               <th scope="col">Carrera</th>
               <th scope="col">NSS</th>
@@ -181,7 +175,7 @@
       <div *ngIf="showNotFound">
         <div class="card text-center">
           <div class="card-body">
-            <h3 class="card-title">No se han encontrado resultados con esta busqueda, intente de nuevo.</h3>
+            <h3 class="card-title">No se han encontrado resultados con esta búsqueda, intente de nuevo.</h3>
           </div>
         </div>
       </div>

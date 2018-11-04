@@ -12,11 +12,10 @@
 
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="c">Actualizar</button>
-    <button type="button" class="btn btn-outline-dark" (click)="d">Cancelar</button>
+    <button type="button" class="btn btn-login" (click)="c">Actualizar</button>
+    <button type="button" class="btn btn-link" (click)="d">Cancelar</button>
   </div>
 </ng-template>
-
 
 <div class="content-general">
   <div class="row">
@@ -60,7 +59,7 @@
               </div>
 
               <div class="form-group">
-                <label for="exampleFormControlSelect1">Carrera:<strong>{{currentStudent.career}}</strong></label>
+                <label for="exampleFormControlSelect1">Carrera: <strong>{{currentStudent.career}}</strong></label>
               </div>
 
               <div class="form-group">
@@ -89,7 +88,7 @@
           </div>
         </div>
         <div class="col-12">
-          <button type="button" (click)="generatePDF();" class="btn btn-success col" style="margin-right: 10px;">Previsualizar</button>
+          <button type="button" (click)="generatePDF();" class="btn btn-login btn-lg col" style="margin-right: 10px;">Previsualizar</button>
         </div>
       </div>
       <div class="row">

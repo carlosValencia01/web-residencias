@@ -103,11 +103,10 @@ export class OneStudentPageComponent implements OnInit {
       case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
         return 'DOC. EN CIENCIAS DE ALIMENTOS';
 
-      case 'INGENIERIA EN GESTION EMPRESARIAL':
+      case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
         return 'ING. EN GESTION EMPRESARIAL';
 
-
-      case 'INGENIERIA EN SISTEMAS COMPUTACIONALES':
+      case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
         return 'ING. EN SISTEMAS COMPUTACIONALES';
 
       default:
@@ -178,18 +177,8 @@ export class OneStudentPageComponent implements OnInit {
         console.log(error);
       });
     } else {
-      this.notificationServ.showNotification(2, 'No cuenta con fotografia', '');
+      this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
 
-    }
-
-
-  }
-
-  updateStudentData() {
-    if (this.imgForSend) {
-      this.uploadFile();
-    } else {
-      this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
     }
   }
 
@@ -224,7 +213,7 @@ export class OneStudentPageComponent implements OnInit {
         this.photoStudent = this.croppedImageBase64;
         this.imgForSend = true;
 
-        this.updateStudentData();
+        this.uploadFile();
         event.target.value = '';
       }, (reason) => {
         event.target.value = '';
@@ -232,8 +221,6 @@ export class OneStudentPageComponent implements OnInit {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
       });
     }
-
-
   }
 
   private getDismissReason(reason: any): string {
@@ -256,19 +243,13 @@ export class OneStudentPageComponent implements OnInit {
     });
   }
 
-
-
   uploadFile() {
-    // const blob = new Blob([this.photoStudent], { type: 'image/jpg' });
-    // const file = new File([blob], 'test.jpg');
-
-    // const file = new File([this.croppedImage], 'test.jpg');
-
     const id = this.currentStudent._id;
     const fd = new FormData();
     fd.append('image', this.croppedImage);
 
     this.studentProv.updatePhoto(id, fd).subscribe(res => {
+      this.currentStudent = res.student;
       this.imgForSend = false;
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
 
@@ -276,11 +257,6 @@ export class OneStudentPageComponent implements OnInit {
       console.log(error);
     });
   }
-
-
-
-
-
 
   // Zona de test :D *********************************************************************************************//#region
 

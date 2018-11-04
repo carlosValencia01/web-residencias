@@ -204,41 +204,18 @@ export class StudentPageComponent implements OnInit {
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(8);
             doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
-            // doc.save(`${student._id}.pdf`);
-
-            // doc.output('dataurlnewwindow');
-
-            // const stringPDF = doc.output('datauristring');
-
-            // console.log(encodeURI(stringPDF));
-
-            // window.open('data:application/pdf;base64, ' + stringPDF);
-
-            // this.notificationServ.showNotification(1, 'Credencial creada correctamente', '');
-
-            // const blob = doc.output('blob');
-            // window.open(URL.createObjectURL(blob));
-
             window.open(doc.output('bloburl'), '_blank');
-
-
           });
         }, false);
-
         if (data) {
           reader.readAsDataURL(data);
         }
-
-
       }, error => {
         console.log(error);
       });
     } else {
-      console.log('tal parece que no tiene foto este registro');
       this.notificationServ.showNotification(2, 'No cuenta con fotografia', '');
-
     }
-
 
   }
 
@@ -267,15 +244,9 @@ export class StudentPageComponent implements OnInit {
   formValidation(): boolean {
     let invalid = false;
 
-    console.log('Se esta ejecutando formValidation');
-
-
     if (this.formStudent.invalid) {
-      // console.log('formStuden es invalido');
       this.errorForm = true;
       this.formErrosrServ.getErros(this.formStudent).forEach(key => {
-        // console.log(key);
-
         switch (key.keyControl) {
           case 'fullNameInput':
             this.errorInputsTag.errorStudentFullName = true;
@@ -303,9 +274,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   updateStudentData() {
-    console.log('Estoy ejecutando la funcion');
     if (!this.formValidation()) {
-      console.log('Entro al IF');
       const data = {
         controlNumber: this.formStudent.get('numberControlInput').value,
         fullName: this.formStudent.get('fullNameInput').value,
@@ -314,26 +283,20 @@ export class StudentPageComponent implements OnInit {
       };
 
       this.studentProv.updateStudent(this.currentStudent._id, data).subscribe(res => {
-        console.log(res);
-
         if (this.imgForSend) {
           console.log('Hay una foto que enviar');
-          this.uploadFile(this.currentStudent._id);
+          this.uploadFile(this.currentStudent._id,false);
         } else {
           console.log('No hay foto que enviar');
           this.showForm = false;
           this.searchStudent();
           this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
         }
-
-
       }, error => {
         console.log(error);
       });
 
     }
-
-
   }
 
   // Cropper Image ***************************************************************************************************//#endregion
@@ -358,36 +321,7 @@ export class StudentPageComponent implements OnInit {
   }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   fileChangeEvent(event: any, content) {
-    console.log(event);
-
     if (event) {
       this.selectedFile = <File>event.target.files[0];
 
@@ -398,7 +332,7 @@ export class StudentPageComponent implements OnInit {
 
         this.photoStudent = this.croppedImageBase64;
         this.imgForSend = true;
-
+        this.uploadFile(this.currentStudent._id, true);
         event.target.value = '';
       }, (reason) => {
         event.target.value = '';
@@ -406,8 +340,6 @@ export class StudentPageComponent implements OnInit {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
       });
     }
-
-
   }
 
   private getDismissReason(reason: any): string {
@@ -419,11 +351,6 @@ export class StudentPageComponent implements OnInit {
       return `with: ${reason}`;
     }
   }
-
-
-
-
-
 
   getImage() {
     this.studentProv.getProfileImage(this.currentStudent._id).subscribe(res => {
@@ -437,33 +364,21 @@ export class StudentPageComponent implements OnInit {
     });
   }
 
-
-
-  uploadFile(id) {
-    // const blob = new Blob([this.photoStudent], { type: 'image/jpg' });
-    // const file = new File([blob], 'test.jpg');
-
-    // const file = new File([this.croppedImage], 'test.jpg');
-
+  uploadFile(id, showForm) {
     const fd = new FormData();
     fd.append('image', this.croppedImage);
 
     this.studentProv.updatePhoto(id, fd).subscribe(res => {
-      console.log(res);
+      // console.log(res);
       this.imgForSend = false;
-      this.showForm = false;
+      this.showForm = showForm;
       this.searchStudent();
-      this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
+      this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
 
     }, error => {
       console.log(error);
     });
   }
-
-
-
-
-
 
   // Zona de test :D *********************************************************************************************//#region
 
@@ -494,7 +409,4 @@ export class StudentPageComponent implements OnInit {
       }
     });
   }
-
-
-
 }

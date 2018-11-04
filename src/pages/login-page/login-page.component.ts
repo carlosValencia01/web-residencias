@@ -77,18 +77,18 @@ export class LoginPageComponent implements OnInit {
             this.studentProv.getStudentByControlNumber({ controlNumber: this.formLogin.get('usernameInput').value })
               .subscribe(res => {
 
-                console.log(res);
+                // console.log(res);
                 this.userProv.sendTokenFromAPI(res.token);
                 this.cookiesServ.saveData(res);
                 this.showAlertDiv = false;
                 this.loginSuccessful.emit();
 
               }, error => {
-                console.log(error);
+                // console.log(error);
+                this.showAlertDiv = true;
               });
 
           }
-          this.showAlertDiv = true;
         });
 
     }

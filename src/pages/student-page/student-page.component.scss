@@ -7,16 +7,17 @@
 }
 
 .profile-icon {
-    height: 200px;
-    width: 200px;
+    height: 330px;
+    width: 275px;
     
 }
 
 .container-img {
-    height: 200px;
-    width: 200px;
+    height: 330px;
+    width: 275px;
     position:relative;
  }
+
  .tag {
     float: left;
     position: absolute;
@@ -28,7 +29,7 @@
     text-align: center;
     padding-top: 10px;
 
-    width: 200px;
+    width: 275px;
     height: 50px;
 
     -moz-user-select: none; 
@@ -81,8 +82,6 @@
     grid-template-columns: none;
     width: 100%;
 }
-
-
 
 .cssload-thecube {
 	width: 75px;
