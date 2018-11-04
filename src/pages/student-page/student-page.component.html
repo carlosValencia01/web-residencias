@@ -48,6 +48,9 @@
                 </div>
               </div>
             </div>
+            <div class="form-group">
+
+            </div>
           </div>
           <div class="col-12 col-lg-8">
             <div class="form-group">
@@ -112,10 +115,16 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-lg float-right">Cerrar</button>
-              <button type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
-            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-lg-4 text-center">
+            <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-lg">Generar
+              credencial</button>
+          </div>
+          <div class="col-12 col-lg-8">
+            <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-lg float-right">Cerrar</button>
+            <button type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
           </div>
         </div>
       </form>
@@ -158,14 +167,11 @@
               <td>{{ student.career }}</td>
               <td>{{ student.nss }}</td>
               <td>
-
                 <div style="display: flex;">
-
                   <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">Actualizar
                     información</button>
-                  <button type="button" (click)="generatePDF(student)" class="btn btn-secondary btn-sm">Generar
+                  <button type="button" (click)="generatePDF(student)" class="btn btn-itt btn-sm">Generar
                     credencial</button>
-
                 </div>
               </td>
             </tr>
@@ -181,5 +187,8 @@
       </div>
     </div>
   </div>
+</div>
 
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
 </div>

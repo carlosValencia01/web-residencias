@@ -1,6 +1,6 @@
 <ng-template #content let-c="close('Save click')" let-d="dismiss('Cross click')" let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Seleccione el area de la foto</h4>
+    <h4 class="modal-title" id="modal-basic-title">Seleccione el área de la foto</h4>
     <button type="button" class="close" aria-label="Close" (click)="d">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -48,8 +48,8 @@
               </div>
             </div>
             <div class="col-12 col-lg-8" *ngIf="currentStudent">
-              
-              <div class="form-group" >
+
+              <div class="form-group">
                 <label for="studentInputControlNumber">Número de Control: <strong>{{currentStudent.controlNumber}}</strong></label>
 
               </div>
@@ -88,12 +88,13 @@
           </div>
         </div>
         <div class="col-12">
-          <button type="button" (click)="generatePDF();" class="btn btn-login btn-lg col" style="margin-right: 10px;">Previsualizar</button>
+          <button type="button" (click)="generatePDF();" class="btn btn-itt btn-lg col" style="margin-right: 10px;">Previsualizar</button>
         </div>
-      </div>
-      <div class="row">
-
       </div>
     </div>
   </div>
+</div>
+
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
 </div>

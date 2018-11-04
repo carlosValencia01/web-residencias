@@ -88,6 +88,8 @@ export class LoginPageComponent implements OnInit {
                 this.showAlertDiv = true;
               });
 
+          } else {
+            this.showAlertDiv = true;
           }
         });
 

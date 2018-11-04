@@ -19,6 +19,8 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 })
 export class OneStudentPageComponent implements OnInit {
 
+  loading: boolean = false;
+
   showNotFound = false;
 
   showImg = false;
@@ -63,6 +65,7 @@ export class OneStudentPageComponent implements OnInit {
 
   ngOnInit() {
     const _id = this.cookiesServ.getData().user._id;
+    this.loading=true;
     this.studentProv.getStudentById(_id)
       .subscribe(res => {
         this.showImg = false;
@@ -71,8 +74,7 @@ export class OneStudentPageComponent implements OnInit {
         this.getImageFromService(res.student[0]._id);
       }, error => {
         console.log(error);
-      });
-
+      }, ()=> this.loading=false);
   }
 
   // Generacion de PDF *************************************************************************************//#endregion
@@ -120,6 +122,7 @@ export class OneStudentPageComponent implements OnInit {
     const student = this.currentStudent;
 
     if (student.filename) {
+      this.loading=true;
       this.studentProv.getImageTest(student._id).subscribe(data => {
 
         const reader = new FileReader();
@@ -175,10 +178,9 @@ export class OneStudentPageComponent implements OnInit {
         }
       }, error => {
         console.log(error);
-      });
+      }, ()=>this.loading=false);
     } else {
       this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
-
     }
   }
 
@@ -234,13 +236,14 @@ export class OneStudentPageComponent implements OnInit {
   }
 
   getImage() {
+    this.loading = true;
     this.studentProv.getProfileImage(this.currentStudent._id).subscribe(res => {
     }, error => {
       console.log(error);
       if (error.status === 404) {
         this.photoStudent = 'assets/imgs/imgNotFound.png';
       }
-    });
+    }, ()=>this.loading=false);
   }
 
   uploadFile() {
@@ -248,6 +251,7 @@ export class OneStudentPageComponent implements OnInit {
     const fd = new FormData();
     fd.append('image', this.croppedImage);
 
+    this.loading=true;
     this.studentProv.updatePhoto(id, fd).subscribe(res => {
       this.currentStudent = res.student;
       this.imgForSend = false;
@@ -255,7 +259,7 @@ export class OneStudentPageComponent implements OnInit {
 
     }, error => {
       console.log(error);
-    });
+    }, () => this.loading=false);
   }
 
   // Zona de test :D *********************************************************************************************//#region
@@ -275,6 +279,7 @@ export class OneStudentPageComponent implements OnInit {
   }
 
   getImageFromService(id) {
+    this.loading=true;
     this.studentProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
 
@@ -284,7 +289,7 @@ export class OneStudentPageComponent implements OnInit {
         this.photoStudent = 'assets/imgs/imgNotFound.png';
         this.showImg = true;
       }
-    });
+    },()=>this.loading=false);
   }
 
 }

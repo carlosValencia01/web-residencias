@@ -22,6 +22,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 })
 export class StudentPageComponent implements OnInit {
 
+  loading:boolean = false;
   data: Array<any>;
   search: any;
   showTable = false;
@@ -166,6 +167,7 @@ export class StudentPageComponent implements OnInit {
   generatePDF(student) { // 'p', 'mm', [68,20]
 
     if (student.filename) {
+      this.loading=true;
       this.studentProv.getImageTest(student._id).subscribe(data => {
 
         const reader = new FileReader();
@@ -212,7 +214,7 @@ export class StudentPageComponent implements OnInit {
         }
       }, error => {
         console.log(error);
-      });
+      }, ()=>this.loading=false);
     } else {
       this.notificationServ.showNotification(2, 'No cuenta con fotografia', '');
     }
@@ -222,6 +224,7 @@ export class StudentPageComponent implements OnInit {
   // Busqueda de estudiantes *************************************************************************************//#endregion
 
   searchStudent() {
+    this.loading=true;
     this.studentProv.searchStudents(this.search).subscribe(res => {
       console.log('res', res);
       this.data = res.students;
@@ -236,7 +239,7 @@ export class StudentPageComponent implements OnInit {
 
     }, err => {
       console.log('err', err);
-    });
+    }, ()=>this.loading=false);
   }
 
   // Actualizacion de información basica (sin imagen) ************************************************************//#endregion
@@ -281,7 +284,7 @@ export class StudentPageComponent implements OnInit {
         career: this.currentStudent.career,
         nss: this.formStudent.get('nssInput').value
       };
-
+      this.loading=true;
       this.studentProv.updateStudent(this.currentStudent._id, data).subscribe(res => {
         if (this.imgForSend) {
           console.log('Hay una foto que enviar');
@@ -294,7 +297,7 @@ export class StudentPageComponent implements OnInit {
         }
       }, error => {
         console.log(error);
-      });
+      }, ()=> this.loading=false);
 
     }
   }
@@ -367,7 +370,7 @@ export class StudentPageComponent implements OnInit {
   uploadFile(id, showForm) {
     const fd = new FormData();
     fd.append('image', this.croppedImage);
-
+    this.loading = true;
     this.studentProv.updatePhoto(id, fd).subscribe(res => {
       // console.log(res);
       this.imgForSend = false;
@@ -377,7 +380,7 @@ export class StudentPageComponent implements OnInit {
 
     }, error => {
       console.log(error);
-    });
+    }, ()=> this.loading=false);
   }
 
   // Zona de test :D *********************************************************************************************//#region
@@ -397,6 +400,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   getImageFromService(id) {
+    this.loading=true;
     this.studentProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
 
@@ -407,6 +411,6 @@ export class StudentPageComponent implements OnInit {
         this.photoStudent = 'assets/imgs/imgNotFound.png';
         this.showImg = true;
       }
-    });
+    }, ()=>this.loading=false);
   }
 }
