@@ -212,14 +212,15 @@ export class StudentPageComponent implements OnInit {
         console.log(error);
       }, ()=>this.loading=false);
     } else {
-      this.notificationServ.showNotification(2, 'No cuenta con fotografia', '');
+      this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
     }
 
   }
 
   // Busqueda de estudiantes *************************************************************************************//#endregion
 
-  searchStudent() {
+  searchStudent(showForm) {
+    this.showForm=showForm;
     this.loading=true;
     this.studentProv.searchStudents(this.search).subscribe(res => {
       console.log('res', res);
@@ -287,8 +288,8 @@ export class StudentPageComponent implements OnInit {
           this.uploadFile(this.currentStudent._id,false);
         } else {
           console.log('No hay foto que enviar');
-          this.showForm = false;
-          this.searchStudent();
+          this.showForm = true;
+          this.searchStudent(true);
           this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
         }
       }, error => {
@@ -331,7 +332,7 @@ export class StudentPageComponent implements OnInit {
 
         this.photoStudent = this.croppedImageBase64;
         this.imgForSend = true;
-        this.uploadFile(this.currentStudent._id, true);
+        this.uploadFile(this.currentStudent._id, false);
         event.target.value = '';
       }, (reason) => {
         event.target.value = '';
@@ -368,10 +369,13 @@ export class StudentPageComponent implements OnInit {
     fd.append('image', this.croppedImage);
     this.loading = true;
     this.studentProv.updatePhoto(id, fd).subscribe(res => {
-      // console.log(res);
+      console.log(res);
+      const student: any = res;
+      this.currentStudent = student.student;
+
       this.imgForSend = false;
       this.showForm = showForm;
-      this.searchStudent();
+      this.searchStudent(true);
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
 
     }, error => {
