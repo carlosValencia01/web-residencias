@@ -11,10 +11,6 @@ import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 
-
-
-
-
 @Component({
   selector: 'app-student-page',
   templateUrl: './student-page.component.html',
@@ -410,7 +406,8 @@ export class StudentPageComponent implements OnInit {
         console.log('No tiene imagen');
         this.photoStudent = 'assets/imgs/imgNotFound.png';
         this.showImg = true;
+        this.loading = false;
       }
-    }, ()=>this.loading=false);
+    }, ()=> this.loading=false);
   }
 }
