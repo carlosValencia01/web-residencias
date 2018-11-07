@@ -24,6 +24,7 @@ export class StudentPageComponent implements OnInit {
   showTable = false;
   showNotFound = false;
   showForm = false;
+  isNewStudent = false;
 
   showImg = false;
 
@@ -32,7 +33,13 @@ export class StudentPageComponent implements OnInit {
 
   imageProfileTest: any;
 
-  currentStudent: any;
+  currentStudent={
+    nss:'',
+    fullName:'',
+    career:'',
+    _id:'',
+    controlNumber:''
+  };
 
   formStudent: FormGroup;
   errorForm = false;
@@ -66,7 +73,19 @@ export class StudentPageComponent implements OnInit {
     private notificationServ: NotificationsServices
   ) {
     this.getBase64ForStaticImages();
+    this.cleanCurrentStudent();
   }
+
+  cleanCurrentStudent() {
+    this.currentStudent={
+      nss:'',
+      fullName:'',
+      career:'default',
+      _id:'1',
+      controlNumber:''
+    };
+  }
+
 
   ngOnInit() {
     // this.getAllStundets();
@@ -94,7 +113,47 @@ export class StudentPageComponent implements OnInit {
     this.showForm = false;
   }
 
+  newStudent() {
+    console.log('Current Student'+this.currentStudent);
+    this.isNewStudent=true;
+    this.hiddenFormDiv();
+    this.cleanCurrentStudent();
+    this.getImage();
+    this.imgForSend = false;
+    this.showForm = true;
+  }
+
+  newStudentData() {
+    this.loading = true;
+
+    const data = {
+      controlNumber: this.formStudent.get('numberControlInput').value,
+        fullName: this.formStudent.get('fullNameInput').value,
+        career: this.currentStudent.career,
+        nss: this.formStudent.get('nssInput').value
+    };
+
+    this.studentProv.newStudent(data).subscribe(res => {
+      if (this.imgForSend) {
+        console.log('Hay una foto que enviar');
+        this.uploadFile(this.currentStudent._id,false);
+      } else {
+        console.log('No hay foto que enviar');
+        this.showForm = true;
+        // this.searchStudent(true);
+        this.notificationServ.showNotification(1, 'Alumno agregado correctamente', '');
+      }
+      const student:any = res;
+
+      this.currentStudent = student;
+    }, error => {
+      console.log(error);
+      this.loading=false;
+    }, ()=> this.loading=false);
+  }
+
   showFormValues(student) {
+    this.isNewStudent=false;
     // this.dataPresentation = JSON.parse(JSON.stringify(this.navParams.data));
 
     this.showImg = false;
@@ -274,6 +333,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   updateStudentData() {
+    this.isNewStudent=false;
     if (!this.formValidation()) {
       const data = {
         controlNumber: this.formStudent.get('numberControlInput').value,
@@ -289,13 +349,13 @@ export class StudentPageComponent implements OnInit {
         } else {
           console.log('No hay foto que enviar');
           this.showForm = true;
-          this.searchStudent(true);
+          if(this.search)
+            this.searchStudent(true);
           this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
         }
       }, error => {
         console.log(error);
       }, ()=> this.loading=false);
-
     }
   }
 
@@ -332,7 +392,10 @@ export class StudentPageComponent implements OnInit {
 
         this.photoStudent = this.croppedImageBase64;
         this.imgForSend = true;
-        this.uploadFile(this.currentStudent._id, false);
+
+        const showForm =   this.isNewStudent;
+
+        this.uploadFile(this.currentStudent._id, showForm);
         event.target.value = '';
       }, (reason) => {
         event.target.value = '';
@@ -360,6 +423,7 @@ export class StudentPageComponent implements OnInit {
       if (error.status === 404) {
         console.log('No tiene imagen');
         this.photoStudent = 'assets/imgs/imgNotFound.png';
+        this.showImg = true;
       }
     });
   }
@@ -375,7 +439,8 @@ export class StudentPageComponent implements OnInit {
 
       this.imgForSend = false;
       this.showForm = showForm;
-      this.searchStudent(true);
+      if(this.search)
+        this.searchStudent(true);
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
 
     }, error => {

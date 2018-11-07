@@ -64,6 +64,11 @@ export class StudentProvider {
         }).pipe(map(res => res.json()));
     }
 
+    newStudent(data) {
+        return this.api.post(`student/create`, data)
+            .pipe(map(student => student.json()));
+    }
+
 
     getImageTest(id: string): Observable<Blob> {
         return this.http.get(`${this.api.getURL()}/student/image/${id}`, { responseType: 'blob' });

@@ -122,16 +122,18 @@
           </div>
           <div class="col-8 d-none d-lg-block">
             <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-lg float-right">Cerrar</button>
-            <button type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
+            <button *ngIf="!isNewStudent" type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
+            <button *ngIf="isNewStudent" type="button" (click)="newStudentData();" class="btn btn-login btn-lg float-right">Guardar</button>
           </div>
           <div class="col-12 d-lg-none">
             <div class="row">
-                <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-sm">
-                    Generar credencial
-                  </button>
+              <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-sm">
+                Generar credencial
+              </button>
             </div>
             <div class="row">
-              <button type="button" (click)="updateStudentData();" class="btn btn-login btn-sm btn-block col-6">Actualizar</button>
+              <button *ngIf="!isNewStudent" type="button" (click)="updateStudentData();" class="btn btn-login btn-sm btn-block col-6">Actualizar</button>
+              <button *ngIf="isNewStudent" type="button" (click)="newStudentData();" class="btn btn-login btn-sm btn-block col-6">Guardar</button>
               <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-sm btn-block col-6">Cerrar</button>
             </div>
           </div>
@@ -148,11 +150,15 @@
             [(ngModel)]="search" (keyup.enter)="searchStudent(false)" [ngModelOptions]="{standalone: true}">
         </div>
         <div class="item2">
-          <button type="button" style="width: 100%" class="btn btn-success show-button-1" (click)="searchStudent()">
-            Buscar
-          </button>
-
-          <button type="button" style="width: 100%" class="btn btn-success show-button-2" (click)="searchStudent()">
+          <div class="col-12">
+            <button type="button" class="btn btn-success show-button-1 col-6" (click)="searchStudent(false)">
+              Buscar
+            </button>
+            <button type="button" class="btn btn-login show-button-1 col-6" (click)="newStudent()">
+              Nuevo
+            </button>
+          </div>
+          <button type="button" style="width: 100%" class="btn btn-success show-button-2" (click)="searchStudent(false)">
             <i style="font-size:18px" class="fa fa-plus-square">+</i>
           </button>
         </div>
