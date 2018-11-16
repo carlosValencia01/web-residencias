@@ -7,7 +7,7 @@
         <div class="card-body">
             <h5 class="card-title">Sistema de Gestión de Servicios Escolares del Instituto Tecnológico de Tepic</h5>
             <p class="card-text">Servicios Escolares</p>
-            <a *ngIf="!student" routerLink="student" class="btn btn-primary">Buscar Alumnos</a>
+            <a *ngIf="role==='secretary'" routerLink="student" class="btn btn-primary">Buscar Alumnos</a>
         </div>
         <div class="card-footer text-muted">
             Tecnológico Nacional de México campus Tepic

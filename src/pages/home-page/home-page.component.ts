@@ -7,7 +7,7 @@ import { CookiesService } from '../../services/cookie.service';
   styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements OnInit {
-  student = false;
+  public role: string;
 
   constructor(
     private cookiesServ: CookiesService,
@@ -15,7 +15,17 @@ export class HomePageComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.cookiesServ.getData().user.role);
-    this.student = this.cookiesServ.getData().user.role===2;
+    switch (this.cookiesServ.getData().user.role) {
+      case 1:
+        this.role = "secretary";
+        break;
+      case 2:
+        this.role = "student";
+        break;
+      case 3:
+        this.role = "secretary";
+        break;
+    }
   }
 
 }

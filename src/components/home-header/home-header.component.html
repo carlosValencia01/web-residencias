@@ -9,14 +9,14 @@
     </div>
     <img class="img-headedr-class" src="assets/imgs/ittepic-sm.png" alt="">
   </div>
-
-
-
 </div>
 
 <ul>
-  <li><a routerLink="">Inicio</a></li>
-  <li><a *ngIf="!student" routerLink="student">Alumnos</a></li>
-  <li><a *ngIf="student" routerLink="oneStudentPage">Credenciales</a></li>
+  <li><a routerLink="" class="nav-link">Inicio</a></li>
+  <li><a *ngIf="role==='student'" routerLink="oneStudentPage">Credenciales</a></li>
+  <li><a *ngIf="role==='secretary'" routerLink="student">Alumnos</a></li>
+  <li><a *ngIf="role==='secretary'" routerLink="employeeCard">Trabajadores</a></li>
+  
   <li style="float:right" (click)="logOut()"><a>Cerrar sesión</a></li>
 </ul>
+

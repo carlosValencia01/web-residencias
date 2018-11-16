@@ -22,7 +22,7 @@ import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { HomePageComponent } from '../pages/home-page/home-page.component';
 import { StudentPageComponent } from '../pages/student-page/student-page.component';
 import { OneStudentPageComponent } from '../pages/one-student-page/one-student-page.component';
-
+import { CardEmployeePageComponent } from '../pages/card-employee-page/card-employee-page.component';
 
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
@@ -41,9 +41,11 @@ import { UserProvider } from '../providers/user.prov';
 import { StudentProvider } from '../providers/student.prov';
 import { LoaderComponent } from '../components/shared/loader/loader.component';
 
+
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
+  { path: 'employeeCard', component: CardEmployeePageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
 ];
 
@@ -56,7 +58,8 @@ const appRouters: Routes = [
     StudentPageComponent,
     HomeHeaderComponent,
     OneStudentPageComponent,
-    LoaderComponent
+    LoaderComponent,
+    CardEmployeePageComponent
   ],
   imports: [
     BrowserModule,
