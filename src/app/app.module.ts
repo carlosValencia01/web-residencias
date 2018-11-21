@@ -39,6 +39,7 @@ import { ImageToBase64Service } from '../services/img.to.base63.service';
 import { Api } from '../providers/api.prov';
 import { UserProvider } from '../providers/user.prov';
 import { StudentProvider } from '../providers/student.prov';
+import { EmployeeProvider } from '../providers/employee.prov';
 import { LoaderComponent } from '../components/shared/loader/loader.component';
 
 
@@ -86,6 +87,7 @@ const appRouters: Routes = [
     Api,
     UserProvider,
     StudentProvider,
+    EmployeeProvider
   ],
   bootstrap: [AppComponent]
 })

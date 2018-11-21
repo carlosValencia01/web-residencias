@@ -20,22 +20,23 @@
 <div class="content-general">
   <div *ngIf="showForm" class="card card-shadow" style="margin-bottom: 15px;">
     <div class="card-header">
-      <h5 class="card-title">Actualizar Datos del Alumno</h5>
+      <h5 class="card-title">Actualizar Datos del Trabajador</h5>
     </div>
     <div class="card-body">
       <!-- <h5 class="card-title">Actualizar Datos del Alumno</h5> -->
       <!-- <h6 class="card-subtitle mb-2 text-muted">Actualizar Alumno</h6> -->
 
-      <form [formGroup]="formStudent">
+      <form [formGroup]="formEmployee">
         <div class="row">
           <div class="col-12 col-lg-4">
             <div class="row" style="justify-content: center">
               <div style="display: flex; height: 100%;">
                 <div class="container-img">
                   <div *ngIf="showImg">
-                    <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg" style="display: none;">
+                    <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg"
+                      style="display: none;">
                     <div (click)="showSelectFileDialog()" class="tag">Actualizar foto</div>
-                    <img class="profile-icon" [src]="photoStudent">
+                    <img class="profile-icon" [src]="photoEmployee">
                   </div>
                   <div *ngIf="!showImg">
                     <div class="cssload-thecube">
@@ -50,89 +51,103 @@
             </div>
           </div>
           <div class="col-12 col-lg-8">
-            <div class="form-group">
-              <label for="studentInputFullName">Nombre Completo *</label>
-              <input (input)="errorInputsTag.errorStudentFullName = false" #input (input)="input.value=$event.target.value.toUpperCase()"
-                type="text" class="form-control" id="studentInputFullName" formControlName="fullNameInput" aria-describedby="emailHelp"
-                placeholder="Ingrese nombre completo" [ngClass]="{'is-invalid': (formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorInputsTag.errorStudentFullName }">
-              <div *ngIf="(formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorForm">
-                <div class="invalid-feedback" *ngIf="formStudent.get('fullNameInput').hasError('required') || errorInputsTag.errorStudentFullName">
-                  Campo obligatorio
+            <div class="row">
+              <div class="col-12 col-lg-4">
+                <div class="form-group">
+                  <label for="employeeInputRFC">RFC *</label>
+                  <input (input)="errorInputsTag.errorEmployeeRFC = false" #input2 (input)="input2.value=$event.target.value.toUpperCase()"
+                    type="text" class="form-control" id="employeeInputRFC" formControlName="RFCInput" aria-describedby="emailHelp"
+                    placeholder="Ingrese RFC" [ngClass]="{'is-invalid': (formEmployee.get('RFCInput').errors && formEmployee.get('RFCInput').dirty) || errorInputsTag.errorEmployeeRFC }">
+                  <div *ngIf="(formEmployee.get('RFCInput').errors && formEmployee.get('RFCInput').dirty) || errorForm">
+                    <div class="invalid-feedback" *ngIf="formEmployee.get('RFCInput').hasError('required') || errorInputsTag.errorEmployeeRFC">
+                      Campo obligatorio
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-8">
+                <div class="form-group">
+                  <label for="employeeInputFirstName">Nombre(s) *</label>
+                  <input (input)="errorInputsTag.errorEmployeeFirstName = false" #input1 (input)="input1.value=$event.target.value.toUpperCase()"
+                    type="text" class="form-control" id="employeeInputFirstName" formControlName="firstNameInput"
+                    aria-describedby="emailHelp" placeholder="Ingrese Nombre(s)" [ngClass]="{'is-invalid': (formEmployee.get('firstNameInput').errors && formEmployee.get('firstNameInput').dirty) || errorInputsTag.errorEmployeeFirstName }">
+                  <div *ngIf="(formEmployee.get('firstNameInput').errors && formEmployee.get('firstNameInput').dirty) || errorForm">
+                    <div class="invalid-feedback" *ngIf="formEmployee.get('firstNameInput').hasError('required') || errorInputsTag.errorEmployeeFirstName">
+                      Campo obligatorio
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="exampleFormControlSelect1">Carrera *</label>
-              <select (input)="errorInputsTag.errorStudentCareer = false" class="form-control" id="exampleFormControlSelect1" [ngClass]="{ 'is-invalid' : errorInputsTag.errorStudentCareer }"
-                [(ngModel)]="currentStudent.career" [ngModelOptions]="{standalone: true}">
-                <option value="default" selected>Seleccione la Carrera</option>
-                <option value="ARQUITECTURA">ARQUITECTURA</option>
-                <option value="INGENIERÍA BIOQUÍMICA">INGENIERÍA BIOQUÍMICA</option>
-                <option value="INGENIERÍA CIVIL">INGENIERÍA CIVIL</option>
-                <option value="INGENIERÍA ELÉCTRICA">INGENIERÍA ELÉCTRICA</option>
-                <option value="INGENIERÍA EN GESTIÓN EMPRESARIAL">INGENIERÍA EN GESTIÓN EMPRESARIAL</option>
-                <option value="INGENIERÍA INDUSTRIAL">INGENIERÍA INDUSTRIAL</option>
-                <option value="INGENIERÍA MECATRÓNICA">INGENIERÍA MECATRÓNICA</option>
-                <option value="INGENIERÍA QUÍMICA">INGENIERÍA QUÍMICA</option>
-                <option value="INGENIERÍA EN SISTEMAS COMPUTACIONALES">INGENIERÍA EN SISTEMAS COMPUTACIONALES</option>
-                <option value="INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES">INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES</option>
-                <option value="LICENCIATURA EN ADMINISTRACIÓN">LICENCIATURA EN ADMINISTRACIÓN</option>
-                <option value="MAESTRIA EN CIENCIAS DE ALIMENTOS">MAESTRIA EN CIENCIAS DE ALIMENTOS</option>
-                <option value="DOCTORADO EN CIENCIAS DE ALIMENTOS">DOCTORADO EN CIENCIAS DE ALIMENTOS</option>
-              </select>
-              <div class="invalid-feedback" *ngIf="errorInputsTag.errorStudentCareer">
-                Campo obligatorio
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="studentInputControlNumber">Número de Control *</label>
-              <input (input)="errorInputsTag.errorStudentNumberControl = false" type="text" class="form-control" id="studentInputFullName"
-                formControlName="numberControlInput" aria-describedby="emailHelp" placeholder="Ingrese numero de control" [ngClass]="{'is-invalid': (formStudent.get('numberControlInput').errors && formStudent.get('numberControlInput').dirty) || errorInputsTag.errorStudentNumberControl }">
-              <div *ngIf="(formStudent.get('numberControlInput').errors && formStudent.get('numberControlInput').dirty) || errorForm">
-                <div class="invalid-feedback" *ngIf="formStudent.get('numberControlInput').hasError('required') || errorInputsTag.errorStudentNumberControl">
-                  Campo obligatorio
+            <div class="row">
+              <div class="col-12 col-lg-12">
+                <div class="form-group">
+                  <label for="employeeInputLastName">Apellidos *</label>
+                  <input (input)="errorInputsTag.errorEmployeeLastName = false" #input (input)="input.value=$event.target.value.toUpperCase()"
+                    type="text" class="form-control" id="employeeInputLastName" formControlName="lastNameInput"
+                    aria-describedby="emailHelp" placeholder="Ingrese Apellidos" [ngClass]="{'is-invalid': (formEmployee.get('lastNameInput').errors && formEmployee.get('lastNameInput').dirty) || errorInputsTag.errorEmployeeLastName }">
+                  <div *ngIf="(formEmployee.get('lastNameInput').errors && formEmployee.get('lastNameInput').dirty) || errorForm">
+                    <div class="invalid-feedback" *ngIf="formEmployee.get('lastNameInput').hasError('required') || errorInputsTag.errorEmployeeLastName">
+                      Campo obligatorio
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="studentInputNSS">NSS *</label>
-              <input (input)="errorInputsTag.errorStudentNSS = false" type="text" class="form-control" id="studentInputNSS" formControlName="nssInput"
-                aria-describedby="emailHelp" placeholder="Ingrese numero de seguro social" [ngClass]="{'is-invalid': (formStudent.get('nssInput').errors && formStudent.get('nssInput').dirty) || errorInputsTag.errorStudentNSS }">
-              <div *ngIf="(formStudent.get('nssInput').errors && formStudent.get('nssInput').dirty) || errorForm">
-                <div class="invalid-feedback" *ngIf="formStudent.get('nssInput').hasError('required') || errorInputsTag.errorStudentNSS">
-                  Campo obligatorio
+            <div class="row">
+              <div class="col-12 col-lg-12">
+                <div class="form-group">
+                  <label for="employeeInputPosition">Puesto *</label>
+                  <input (input)="errorInputsTag.errorEmployeePosition = false" #input4 (input)="input4.value=$event.target.value.toUpperCase()"
+                    type="text" class="form-control" id="employeeInputPosition" formControlName="positionInput"
+                    aria-describedby="emailHelp" placeholder="Ingrese el puesto" [ngClass]="{'is-invalid': (formEmployee.get('positionInput').errors && formEmployee.get('positionInput').dirty) || errorInputsTag.errorEmployeePosition }">
+                  <div *ngIf="(formEmployee.get('positionInput').errors && formEmployee.get('positionInput').dirty) || errorForm">
+                    <div class="invalid-feedback" *ngIf="formEmployee.get('positionInput').hasError('required') || errorInputsTag.errorEmployeePosition">
+                      Campo obligatorio
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-
+            <div class="row">
+              <div class="col-12 col-lg-12">
+                <div class="form-group">
+                  <label for="employeeInputArea">Área *</label>
+                  <input (input)="errorInputsTag.errorEmployeeArea = false" #input3 (input)="input3.value=$event.target.value.toUpperCase()"
+                    type="text" class="form-control" id="employeeInputArea" formControlName="areaInput"
+                    aria-describedby="emailHelp" placeholder="Ingrese el área de adscripción" [ngClass]="{'is-invalid': (formEmployee.get('areaInput').errors && formEmployee.get('areaInput').dirty) || errorInputsTag.errorEmployeeArea }">
+                  <div *ngIf="(formEmployee.get('areaInput').errors && formEmployee.get('areaInput').dirty) || errorForm">
+                    <div class="invalid-feedback" *ngIf="formEmployee.get('areaInput').hasError('required') || errorInputsTag.errorEmployeeArea">
+                      Campo obligatorio
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="row">
           <div class="col-12 col-lg-4 text-center d-none d-lg-block">
-            <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-lg">
+            <button type="button" (click)="generatePDF(currentEmployee)" class="btn btn-itt btn-block btn-lg">
               Generar credencial
             </button>
-            <!-- <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-sm d-lg-none">
-              Generar credencial
-            </button> -->
           </div>
           <div class="col-8 d-none d-lg-block">
             <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-lg float-right">Cerrar</button>
-            <button *ngIf="!isNewStudent" type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
-            <button *ngIf="isNewStudent" type="button" (click)="newStudentData();" class="btn btn-login btn-lg float-right">Guardar</button>
+            <button *ngIf="!isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
+            <button *ngIf="isNewEmployee"  [disabled]="this.formEmployee.invalid" type="button" (click)="newEmployeeData();" class="btn btn-login btn-lg float-right">Guardar</button>
           </div>
           <div class="col-12 d-lg-none">
             <div class="row">
-              <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-sm">
+              <button type="button" (click)="generatePDF(currentEmployee)" class="btn btn-itt btn-block btn-sm">
                 Generar credencial
               </button>
             </div>
             <div class="row">
-              <button *ngIf="!isNewStudent" type="button" (click)="updateStudentData();" class="btn btn-login btn-sm btn-block col-6">Actualizar</button>
-              <button *ngIf="isNewStudent" type="button" (click)="newStudentData();" class="btn btn-login btn-sm btn-block col-6">Guardar</button>
+              <button *ngIf="!isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="updateStudentData();" class="btn btn-login btn-sm btn-block col-6">Actualizar</button>
+              <button *ngIf="isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="newEmployeeData();" class="btn btn-login btn-sm btn-block col-6">Guardar</button>
               <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-sm btn-block col-6">Cerrar</button>
             </div>
           </div>
@@ -145,19 +160,19 @@
     <div class="card-body">
       <div class="search-div">
         <div class="form-group item1" style="margin-bottom: 10px;">
-          <input type="text" class="form-control" aria-describedby="searchHelp" placeholder="Buscar trabajador por Nombre o RFC"
-            [(ngModel)]="search" (keyup.enter)="searchStudent(false)" [ngModelOptions]="{standalone: true}">
+          <input type="text" class="form-control" aria-describedby="searchHelp" #input5 (input)="input5.value=$event.target.value.toUpperCase()" placeholder="Buscar trabajador por RFC"
+            [(ngModel)]="search" (keyup.enter)="searchEmployee(false)" [ngModelOptions]="{standalone: true}">
         </div>
         <div class="item2">
           <div class="col-12">
-            <button type="button" class="btn btn-success show-button-1 col-6" (click)="searchStudent(false)">
+            <button type="button" class="btn btn-success show-button-1 col-6" (click)="searchEmployee(false)">
               Buscar
             </button>
-            <button type="button" class="btn btn-login show-button-1 col-6" (click)="newStudent()">
+            <button type="button" class="btn btn-login show-button-1 col-6" (click)="newEmployee()">
               Nuevo
             </button>
           </div>
-          <button type="button" style="width: 100%" class="btn btn-success show-button-2" (click)="searchStudent(false)">
+          <button type="button" style="width: 100%" class="btn btn-success show-button-2" (click)="searchEmployee(false)">
             <i style="font-size:18px" class="fa fa-plus-square">+</i>
           </button>
         </div>
@@ -167,26 +182,24 @@
         <table class="table table-bordered table-hover">
           <thead class="thead-light">
             <tr>
-              <th scope="col">Número de Control</th>
+              <th scope="col">RFC</th>
               <th scope="col">Nombre</th>
-              <th scope="col">Carrera</th>
-              <th scope="col">NSS</th>
+              <th scope="col">Puesto</th>
               <th scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let student of data">
-              <th scope="row">{{ student.controlNumber }}</th>
-              <td>{{ student.fullName }}</td>
-              <td>{{ student.career }}</td>
-              <td>{{ student.nss }}</td>
+            <tr *ngFor="let employee of data">
+              <th scope="row">{{ employee.rfc }}</th>
+              <td>{{ employee.name.fullName }}</td>
+              <td>{{ employee.position }}</td>
               <td>
                 <div style="display: flex;">
-                  <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">
-                    Actualizar información
+                  <button type="button" (click)="showFormValues(employee)" style="margin-right: 5px;" class="btn btn-login btn-sm">
+                    Ver
                   </button>
-                  <button type="button" (click)="generatePDF(student)" class="btn btn-itt btn-sm">
-                    Generar credencial
+                  <button type="button" (click)="generatePDF(employee)" class="btn btn-itt btn-sm">
+                    Credencial
                   </button>
                 </div>
               </td>
