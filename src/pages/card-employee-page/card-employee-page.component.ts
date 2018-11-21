@@ -195,11 +195,11 @@ export class CardEmployeePageComponent implements OnInit {
   getBase64ForStaticImages() {
     console.log(this.employeeProv.getApiURL());
 
-    this.imageToBase64Serv.getBase64('assets/imgs/front.jpg').then(res1 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/employeeFront.jpg').then(res1 => {
       this.frontBase64 = res1;
     });
 
-    this.imageToBase64Serv.getBase64('assets/imgs/back.jpg').then(res2 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/employeeBack.jpg').then(res2 => {
       this.backBase64 = res2;
     });
 
@@ -271,10 +271,9 @@ export class CardEmployeePageComponent implements OnInit {
             // // foto del estudiante
 
             // // Numero de control con codigo de barra
-            doc.addImage(this.textToBase64Barcode(employee.rfc), 'PNG', 46.8, 39.2, 33, 12);
-            doc.setTextColor(0, 0, 0);
+            doc.setTextColor(255, 255, 255);
             doc.setFontSize(8);
-            doc.text(57, 53.5, doc.splitTextToSize(employee.rfc, 35));
+            doc.text(52, 45.5, doc.splitTextToSize("RFC: "+employee.rfc, 35));
             window.open(doc.output('bloburl'), '_blank');
           });
         }, false);
