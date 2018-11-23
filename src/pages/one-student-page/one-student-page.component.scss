@@ -1,6 +1,27 @@
 .item1 { grid-area: searchBar; }
 .item2 { grid-area: newUser; }
 
+.studentDataName {
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.studentData {
+	text-align: center;
+	font-size: 11px;
+}
+
+.warning-photo {
+	font-size: 12px;
+}
+
+.warning-header {
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+}
+
 .invalid-feedback {
     display: block;
     color: #DC3849;

@@ -1,6 +1,6 @@
 <div class="content-general">
 
-    <div class="card text-center">
+    <!-- <div class="card text-center">
         <div class="card-header">
             Bienvenidos
         </div>
@@ -12,6 +12,38 @@
         <div class="card-footer text-muted">
             Tecnológico Nacional de México campus Tepic
         </div>
-    </div>
+    </div> -->
 
+    <div class="row">
+        <div *ngIf="role==='secretary'" class="col-12 col-sm-3">
+            <a  routerLink="student">
+                <div class="card text-white bg-dark">
+                    <img class="card-img-top" src="../../assets/imgs/studentAvatar.png" alt="Card image" style="width: 100%">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Credenciales Estudiantes</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div *ngIf="role==='secretary'" class="col-12 col-sm-3">
+            <a routerLink="employeeCard">
+                <div class="card text-white bg-dark">
+                    <img class="card-img-top" src="../../assets/imgs/employeeAvatar.png" alt="Card image" style="width: 100%">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Credenciales Trabajadores</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div *ngIf="role==='student'" class="col-6 col-xs-3">
+            <a routerLink="oneStudentPage">
+                <div class="card text-white bg-success">
+                    <img class="card-img-top" src="../../assets/imgs/myCredentials.png" alt="Card image" style="width: 100%">
+                    <div class="card-body d-none d-sm-block">
+                        <h4 class="card-title text-center">Mi credencial</h4>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 </div>

@@ -21,7 +21,7 @@
   <div class="row">
     <div class="col-12 col-lg-8">
       <div class="card card-shadow" style="margin-bottom: 15px;">
-        <div class="card-header">
+        <div class="card-header d-none d-sm-block">
           <strong>Actualización de fotografía para impresión de credencial</strong>
         </div>
         <div class="card-body">
@@ -32,7 +32,8 @@
                   <div *ngIf="showImg">
                     <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg"
                       style="display: none;">
-                    <div (click)="showSelectFileDialog()" class="tag">Actualizar foto</div>
+                    <div (click)="showSelectFileDialog()" class="tag d-none d-sm-block">Actualizar foto</div>
+                    <div (click)="showSelectFileDialog()" class="tag d-block d-sm-none">Actualizar</div>
                     <img class="profile-icon" [src]="photoStudent">
                   </div>
                   <div *ngIf="! showImg">
@@ -47,33 +48,42 @@
                 </div>
               </div>
             </div>
-            <div class="col-12 col-lg-8" *ngIf="currentStudent">
-
+            <div class="col-12 col-lg-8 d-none d-sm-block" *ngIf="currentStudent">
               <div class="form-group">
                 <label for="studentInputControlNumber">Número de Control: <strong>{{currentStudent.controlNumber}}</strong></label>
-
               </div>
-
               <div class="form-group">
                 <label for="studentInputFullName">Nombre: <strong>{{currentStudent.fullName}}</strong></label>
               </div>
-
               <div class="form-group">
                 <label for="exampleFormControlSelect1">Carrera: <strong>{{currentStudent.career}}</strong></label>
               </div>
-
               <div class="form-group">
                 <label for="studentInputNSS">NSS: <strong>{{currentStudent.nss}}</strong></label>
               </div>
-
+            </div>
+            <div class="col-12 col-lg-8 d-block d-sm-none" *ngIf="currentStudent">
+              <hr>
+              <p class="studentDataName">
+                {{currentStudent.fullName}}
+              </p>
+              <p class="studentData">
+                {{currentStudent.career}}
+                <br>
+                {{currentStudent.controlNumber}}
+                <br>
+                NSS: {{currentStudent.nss}}
+              </p>
+              <div class="col-12">
+                <button type="button" (click)="generatePDF();" class="btn btn-itt btn-xs col" style="margin-right: 10px;">Previsualizar</button>
+              </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
     <div class="col-12 col-lg-4">
-      <div class="row">
+      <div class="row d-none d-sm-block">
         <div class="col-12">
           <div class="alert alert-warning">
             <h4 class="alert-heading">A tomar en cuenta!!!</h4>
@@ -85,7 +95,6 @@
               <li>Que se visualice claramente de los hombros hacia arriba</li>
               <li>Hombres sin aretes</li>
               <li>Evitar accesorios (Lentes oscuros, audífonos, gorros, sombreros, gorras,...)</li>
-
             </ol>
             <hr>
             <p><strong>NOTA: Se revisará la fotografía antes de la impresión</strong> </p>
@@ -94,6 +103,26 @@
         <div class="col-12">
           <button type="button" (click)="generatePDF();" class="btn btn-itt btn-lg col" style="margin-right: 10px;">Previsualizar</button>
         </div>
+      </div>
+      <div class="row d-block d-sm-none warning-photo">
+        <div class="col-12">
+          <div class="card text-white bg-warning mb-3">
+            <div class="card-header warning-header">A tomar en cuenta!!!</div>
+            <div class="card-body">
+              <p>La fotografía debe ser:</p>
+              <ol type=i>
+                <li>Fondo blanco</li>
+                <li>De frente</li>
+                <li>Que se visualice claramente de los hombros hacia arriba</li>
+                <li>Hombres sin aretes</li>
+                <li>Evitar accesorios (Lentes oscuros, audífonos, gorros, sombreros, gorras,...)</li>
+              </ol>
+              <hr>
+              <p><strong>NOTA: Se revisará la fotografía antes de la impresión</strong> </p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
