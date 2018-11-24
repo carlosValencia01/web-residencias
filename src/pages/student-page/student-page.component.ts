@@ -5,7 +5,6 @@ import { FormErrorsService } from '../../services/forms.errors.service';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsServices } from '../../services/notifications.service';
-import { AngularFontAwesomeComponent } from "angular-font-awesome";
 
 
 import * as jsPDF from 'jspdf';
@@ -66,7 +65,6 @@ export class StudentPageComponent implements OnInit {
   selectedFile: File = null;
 
   constructor(
-    private aw: AngularFontAwesomeComponent,
     private studentProv: StudentProvider,
     private imageToBase64Serv: ImageToBase64Service,
     public formBuilder: FormBuilder,

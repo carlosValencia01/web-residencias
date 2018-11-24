@@ -28,7 +28,6 @@ import { CardEmployeePageComponent } from '../pages/card-employee-page/card-empl
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
 import { HomeHeaderComponent } from '../components/home-header/home-header.component';
-import { AngularFontAwesomeComponent } from "angular-font-awesome";
 
 
 // Services
@@ -81,7 +80,6 @@ const appRouters: Routes = [
   ],
   providers: [
     CookieService,
-    AngularFontAwesomeComponent,
     CookiesService,
     FormErrorsService,
     NotificationsServices,
