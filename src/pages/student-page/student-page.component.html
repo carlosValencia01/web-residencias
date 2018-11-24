@@ -20,20 +20,23 @@
 <div class="content-general">
   <div *ngIf="showForm" class="card card-shadow" style="margin-bottom: 15px;">
     <div class="card-header">
+      <span aria-hidden="true" (click)="hiddenFormDiv()" class="close float-right">&times;</span>
+      <span  class="close float-right" (click)="generatePDF(currentStudent)">
+        <fa name="print"></fa>
+      </span>
       <h5 class="card-title">Actualizar Datos del Alumno</h5>
     </div>
     <div class="card-body">
-      <!-- <h5 class="card-title">Actualizar Datos del Alumno</h5> -->
-      <!-- <h6 class="card-subtitle mb-2 text-muted">Actualizar Alumno</h6> -->
-
       <form [formGroup]="formStudent">
         <div class="row">
           <div class="col-12 col-lg-4">
+
             <div class="row" style="justify-content: center">
               <div style="display: flex; height: 100%;">
                 <div class="container-img">
                   <div *ngIf="showImg">
-                    <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg" style="display: none;">
+                    <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg"
+                      style="display: none;">
                     <div (click)="showSelectFileDialog()" class="tag">Actualizar foto</div>
                     <img class="profile-icon" [src]="photoStudent">
                   </div>
@@ -53,8 +56,8 @@
             <div class="form-group">
               <label for="studentInputFullName">Nombre Completo *</label>
               <input (input)="errorInputsTag.errorStudentFullName = false" #input (input)="input.value=$event.target.value.toUpperCase()"
-                type="text" class="form-control" id="studentInputFullName" formControlName="fullNameInput" aria-describedby="emailHelp"
-                placeholder="Ingrese nombre completo" [ngClass]="{'is-invalid': (formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorInputsTag.errorStudentFullName }">
+                type="text" class="form-control" id="studentInputFullName" formControlName="fullNameInput"
+                aria-describedby="emailHelp" placeholder="Ingrese nombre completo" [ngClass]="{'is-invalid': (formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorInputsTag.errorStudentFullName }">
               <div *ngIf="(formStudent.get('fullNameInput').errors && formStudent.get('fullNameInput').dirty) || errorForm">
                 <div class="invalid-feedback" *ngIf="formStudent.get('fullNameInput').hasError('required') || errorInputsTag.errorStudentFullName">
                   Campo obligatorio
@@ -64,8 +67,9 @@
 
             <div class="form-group">
               <label for="exampleFormControlSelect1">Carrera *</label>
-              <select (input)="errorInputsTag.errorStudentCareer = false" class="form-control" id="exampleFormControlSelect1" [ngClass]="{ 'is-invalid' : errorInputsTag.errorStudentCareer }"
-                [(ngModel)]="currentStudent.career" [ngModelOptions]="{standalone: true}">
+              <select (input)="errorInputsTag.errorStudentCareer = false" class="form-control" id="exampleFormControlSelect1"
+                [ngClass]="{ 'is-invalid' : errorInputsTag.errorStudentCareer }" [(ngModel)]="currentStudent.career"
+                [ngModelOptions]="{standalone: true}">
                 <option value="default" selected>Seleccione la Carrera</option>
                 <option value="ARQUITECTURA">ARQUITECTURA</option>
                 <option value="INGENIERÍA BIOQUÍMICA">INGENIERÍA BIOQUÍMICA</option>
@@ -76,7 +80,8 @@
                 <option value="INGENIERÍA MECATRÓNICA">INGENIERÍA MECATRÓNICA</option>
                 <option value="INGENIERÍA QUÍMICA">INGENIERÍA QUÍMICA</option>
                 <option value="INGENIERÍA EN SISTEMAS COMPUTACIONALES">INGENIERÍA EN SISTEMAS COMPUTACIONALES</option>
-                <option value="INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES">INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES</option>
+                <option value="INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES">INGENIERÍA EN TECNOLOGÍAS
+                  DE LA INFORMACIÓN Y COMUNICACIONES</option>
                 <option value="LICENCIATURA EN ADMINISTRACIÓN">LICENCIATURA EN ADMINISTRACIÓN</option>
                 <option value="MAESTRIA EN CIENCIAS DE ALIMENTOS">MAESTRIA EN CIENCIAS DE ALIMENTOS</option>
                 <option value="DOCTORADO EN CIENCIAS DE ALIMENTOS">DOCTORADO EN CIENCIAS DE ALIMENTOS</option>
@@ -89,7 +94,8 @@
             <div class="form-group">
               <label for="studentInputControlNumber">Número de Control *</label>
               <input (input)="errorInputsTag.errorStudentNumberControl = false" type="text" class="form-control" id="studentInputFullName"
-                formControlName="numberControlInput" aria-describedby="emailHelp" placeholder="Ingrese numero de control" [ngClass]="{'is-invalid': (formStudent.get('numberControlInput').errors && formStudent.get('numberControlInput').dirty) || errorInputsTag.errorStudentNumberControl }">
+                formControlName="numberControlInput" aria-describedby="emailHelp" placeholder="Ingrese numero de control"
+                [ngClass]="{'is-invalid': (formStudent.get('numberControlInput').errors && formStudent.get('numberControlInput').dirty) || errorInputsTag.errorStudentNumberControl }">
               <div *ngIf="(formStudent.get('numberControlInput').errors && formStudent.get('numberControlInput').dirty) || errorForm">
                 <div class="invalid-feedback" *ngIf="formStudent.get('numberControlInput').hasError('required') || errorInputsTag.errorStudentNumberControl">
                   Campo obligatorio
@@ -99,8 +105,9 @@
 
             <div class="form-group">
               <label for="studentInputNSS">NSS *</label>
-              <input (input)="errorInputsTag.errorStudentNSS = false" type="text" class="form-control" id="studentInputNSS" formControlName="nssInput"
-                aria-describedby="emailHelp" placeholder="Ingrese numero de seguro social" [ngClass]="{'is-invalid': (formStudent.get('nssInput').errors && formStudent.get('nssInput').dirty) || errorInputsTag.errorStudentNSS }">
+              <input (input)="errorInputsTag.errorStudentNSS = false" type="text" class="form-control" id="studentInputNSS"
+                formControlName="nssInput" aria-describedby="emailHelp" placeholder="Ingrese numero de seguro social"
+                [ngClass]="{'is-invalid': (formStudent.get('nssInput').errors && formStudent.get('nssInput').dirty) || errorInputsTag.errorStudentNSS }">
               <div *ngIf="(formStudent.get('nssInput').errors && formStudent.get('nssInput').dirty) || errorForm">
                 <div class="invalid-feedback" *ngIf="formStudent.get('nssInput').hasError('required') || errorInputsTag.errorStudentNSS">
                   Campo obligatorio
@@ -113,27 +120,26 @@
         <div class="row">
           <div class="col-12 col-lg-4 text-center d-none d-lg-block">
             <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-lg">
-              Generar credencial
+              Imprimir
             </button>
             <!-- <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-sm d-lg-none">
               Generar credencial
             </button> -->
           </div>
           <div class="col-8 d-none d-lg-block">
-            <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-lg float-right">Cerrar</button>
+            <!-- <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-lg float-right">Cerrar</button> -->
             <button *ngIf="!isNewStudent" type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
             <button *ngIf="isNewStudent" type="button" (click)="newStudentData();" class="btn btn-login btn-lg float-right">Guardar</button>
           </div>
           <div class="col-12 d-lg-none">
             <div class="row">
-              <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-sm">
-                Generar credencial
-              </button>
-            </div>
-            <div class="row">
-              <button *ngIf="!isNewStudent" type="button" (click)="updateStudentData();" class="btn btn-login btn-sm btn-block col-6">Actualizar</button>
-              <button *ngIf="isNewStudent" type="button" (click)="newStudentData();" class="btn btn-login btn-sm btn-block col-6">Guardar</button>
-              <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-sm btn-block col-6">Cerrar</button>
+              <div class="col-12">
+                  <button type="button" (click)="generatePDF(currentStudent)" class="btn btn-itt btn-block btn-sm">
+                    Generar credencial
+                  </button>
+                  <button *ngIf="!isNewStudent" type="button" (click)="updateStudentData();" class="btn btn-login btn-sm btn-block">Actualizar</button>
+                  <button *ngIf="isNewStudent" type="button" (click)="newStudentData();" class="btn btn-login btn-sm btn-block">Guardar</button>
+              </div>
             </div>
           </div>
         </div>
@@ -142,32 +148,44 @@
   </div>
 
   <div class="card card-shadow">
+    <div class="card-header"><strong>Búsqueda de alumnos registrados</strong></div>
     <div class="card-body">
-      <div class="search-div">
+      <!-- <div class="search-div">
         <div class="form-group item1" style="margin-bottom: 10px;">
-          <input type="text" class="form-control" aria-describedby="searchHelp" placeholder="Buscar alumno por Nombre o Número de Control"
+          <input type="text" #searchinput class="form-control" aria-describedby="searchHelp" placeholder="Buscar alumno por Nombre o Número de Control"
             [(ngModel)]="search" (keyup.enter)="searchStudent(false)" [ngModelOptions]="{standalone: true}">
         </div>
         <div class="item2">
           <div class="col-12">
-            <button type="button" class="btn btn-success show-button-1 col-6" (click)="searchStudent(false)">
+            <button type="button" class="btn btn-success show-button-1" (click)="searchStudent(false)">
               Buscar
-            </button>
-            <button type="button" class="btn btn-login show-button-1 col-6" (click)="newStudent()">
-              Nuevo
             </button>
           </div>
           <button type="button" style="width: 100%" class="btn btn-success show-button-2" (click)="searchStudent(false)">
             <i style="font-size:18px" class="fa fa-plus-square">+</i>
           </button>
         </div>
+      </div> -->
+      <div class="row">
+        <div class="col-10">
+          <div class="form-group" style="margin-bottom: 10px;">
+            <input type="text" #searchinput class="form-control" aria-describedby="searchHelp" placeholder="Buscar alumno por Nombre o Número de Control"
+              [(ngModel)]="search" (keyup.enter)="searchStudent(false)" [ngModelOptions]="{standalone: true}">
+          </div>
+        </div>
+        <div class="col-2">
+          <button type="button" [disabled]="!searchinput.value" class="btn btn-success btn-block" (click)="searchStudent(false)">
+            Buscar
+          </button>
+        </div>
       </div>
 
-      <div *ngIf="showTable" class="table-responsive div-size">
-        <table class="table table-bordered table-hover">
-          <thead class="thead-light">
+
+      <div *ngIf="showTable" class="table-responsive d-none d-lg-block">
+        <table class="table table-bordered table-hover table-striped">
+          <thead class="table-primary table-header">
             <tr>
-              <th scope="col">Número de Control</th>
+              <th scope="col">NC</th>
               <th scope="col">Nombre</th>
               <th scope="col">Carrera</th>
               <th scope="col">NSS</th>
@@ -175,18 +193,18 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let student of data">
+            <tr *ngFor="let student of data" (click)="showFormValues(student)">
               <th scope="row">{{ student.controlNumber }}</th>
               <td>{{ student.fullName }}</td>
               <td>{{ student.career }}</td>
               <td>{{ student.nss }}</td>
               <td>
                 <div style="display: flex;">
-                  <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">
-                    Actualizar información
-                  </button>
+                  <!-- <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">
+                    Ver
+                  </button> -->
                   <button type="button" (click)="generatePDF(student)" class="btn btn-itt btn-sm">
-                    Generar credencial
+                    Imprimir
                   </button>
                 </div>
               </td>
@@ -194,6 +212,35 @@
           </tbody>
         </table>
       </div>
+
+      <div *ngIf="showTable" class="table-responsive d-block d-lg-none">
+        <table class="table table-bordered table-hover table-striped">
+          <thead class="table-primary table-header">
+            <tr>
+              <th scope="col">NC</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let student of data" (click)="showFormValues(student)">
+              <th scope="row">{{ student.controlNumber }}</th>
+              <td>{{ student.fullName }}</td>
+              <td>
+                <div style="display: flex;">
+                  <!-- <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">
+                      Ver
+                    </button> -->
+                  <button type="button" (click)="generatePDF(student)" class="btn btn-itt btn-sm">
+                    Imprimir
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <div *ngIf="showNotFound">
         <div class="card text-center">
           <div class="card-body">
@@ -201,6 +248,12 @@
           </div>
         </div>
       </div>
+      <div>
+        <button type="button" class="btn btn-login show-button-1 col-12" (click)="newStudent()">
+          Nuevo
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

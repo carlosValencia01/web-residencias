@@ -16,6 +16,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { AngularFontAwesomeModule } from "angular-font-awesome";
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -27,6 +28,7 @@ import { CardEmployeePageComponent } from '../pages/card-employee-page/card-empl
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
 import { HomeHeaderComponent } from '../components/home-header/home-header.component';
+import { AngularFontAwesomeComponent } from "angular-font-awesome";
 
 
 // Services
@@ -68,7 +70,7 @@ const appRouters: Routes = [
     HttpModule,
 
     HttpClientModule,
-
+    AngularFontAwesomeModule,
     FormsModule,
     ReactiveFormsModule,
     CustomFormsModule,
@@ -79,7 +81,7 @@ const appRouters: Routes = [
   ],
   providers: [
     CookieService,
-
+    AngularFontAwesomeComponent,
     CookiesService,
     FormErrorsService,
     NotificationsServices,

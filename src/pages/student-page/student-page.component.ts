@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { StudentProvider } from '../../providers/student.prov';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormErrorsService } from '../../services/forms.errors.service';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsServices } from '../../services/notifications.service';
+import { AngularFontAwesomeComponent } from "angular-font-awesome";
 
 
 import * as jsPDF from 'jspdf';
@@ -17,6 +18,8 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
   styleUrls: ['./student-page.component.scss']
 })
 export class StudentPageComponent implements OnInit {
+
+  @ViewChild("searchinput") searchInput: ElementRef;
 
   loading:boolean = false;
   data: Array<any>;
@@ -63,8 +66,7 @@ export class StudentPageComponent implements OnInit {
   selectedFile: File = null;
 
   constructor(
-
-
+    private aw: AngularFontAwesomeComponent,
     private studentProv: StudentProvider,
     private imageToBase64Serv: ImageToBase64Service,
     public formBuilder: FormBuilder,
@@ -100,6 +102,9 @@ export class StudentPageComponent implements OnInit {
       'numberControlInput': ['', [Validators.required]],
       'nssInput': ['', [Validators.required]]
     });
+
+    this.searchInput.nativeElement.focus();
+
   }
 
   hiddenFormDiv() {

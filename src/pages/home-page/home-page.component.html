@@ -15,7 +15,7 @@
     </div> -->
 
     <div class="row">
-        <div *ngIf="role==='secretary'" class="col-12 col-sm-3">
+        <div *ngIf="role==='secretary'" class="col-12 col-sm-4 col-md-4 col-lg-3">
             <a  routerLink="student">
                 <div class="card text-white bg-dark">
                     <img class="card-img-top" src="../../assets/imgs/studentAvatar.png" alt="Card image" style="width: 100%">
@@ -25,7 +25,8 @@
                 </div>
             </a>
         </div>
-        <div *ngIf="role==='secretary'" class="col-12 col-sm-3">
+
+        <div *ngIf="role==='secretary'" class="col-12 col-sm-4 col-md-4 col-lg-3">
             <a routerLink="employeeCard">
                 <div class="card text-white bg-dark">
                     <img class="card-img-top" src="../../assets/imgs/employeeAvatar.png" alt="Card image" style="width: 100%">
@@ -35,7 +36,8 @@
                 </div>
             </a>
         </div>
-        <div *ngIf="role==='student'" class="col-6 col-xs-3">
+        
+        <div *ngIf="role==='student'" class="col-6 col-xs-4">
             <a routerLink="oneStudentPage">
                 <div class="card text-white bg-success">
                     <img class="card-img-top" src="../../assets/imgs/myCredentials.png" alt="Card image" style="width: 100%">

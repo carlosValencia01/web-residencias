@@ -1,4 +1,4 @@
-.item1 { grid-area: searchBar; }
+// .item1 { grid-area: searchBar; }
 .item2 { grid-area: newUser; }
 
 .invalid-feedback {
@@ -79,14 +79,19 @@
     }
 }
 
-.search-div {
-    display: grid;
-    grid-template-areas:
-    'searchBar searchBar searchBar searchBar searchBar newUser';
-    grid-gap: 10px;
-    grid-template-columns: none;
-    width: 100%;
+.table-header {
+	background-color: #333;
+	color: #ffffff;
 }
+
+// .search-div {
+//     display: grid;
+//     grid-template-areas:
+//     'searchBar searchBar searchBar searchBar searchBar';
+//     grid-gap: 10px;
+//     grid-template-columns: none;
+//     width: 100%;
+// }
 
 .cssload-thecube {
 	width: 75px;
