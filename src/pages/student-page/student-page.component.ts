@@ -5,6 +5,7 @@ import { FormErrorsService } from '../../services/forms.errors.service';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsServices } from '../../services/notifications.service';
+import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 
 
 import * as jsPDF from 'jspdf';
@@ -20,7 +21,7 @@ export class StudentPageComponent implements OnInit {
 
   @ViewChild("searchinput") searchInput: ElementRef;
 
-  loading:boolean = false;
+  loading: boolean = false;
   data: Array<any>;
   search: any;
   showTable = false;
@@ -35,12 +36,12 @@ export class StudentPageComponent implements OnInit {
 
   imageProfileTest: any;
 
-  currentStudent={
-    nss:'',
-    fullName:'',
-    career:'',
-    _id:'',
-    controlNumber:''
+  currentStudent = {
+    nss: '',
+    fullName: '',
+    career: '',
+    _id: '',
+    controlNumber: ''
   };
 
   formStudent: FormGroup;
@@ -70,19 +71,29 @@ export class StudentPageComponent implements OnInit {
     public formBuilder: FormBuilder,
     private formErrosrServ: FormErrorsService,
     private modalService: NgbModal,
-    private notificationServ: NotificationsServices
+    private notificationServ: NotificationsServices,
+    private hotkeysService: HotkeysService
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
+
+    this.hotkeysService.add(new Hotkey('shift+n', (event: KeyboardEvent): boolean => {
+      this.newStudent();
+      return false; // Prevent bubbling
+    }));
+    this.hotkeysService.add(new Hotkey('shift+c', (event: KeyboardEvent): boolean => {
+      this.hiddenFormDiv();
+      return false; // Prevent bubbling
+    }));
   }
 
   cleanCurrentStudent() {
-    this.currentStudent={
-      nss:'',
-      fullName:'',
-      career:'default',
-      _id:'1',
-      controlNumber:''
+    this.currentStudent = {
+      nss: '',
+      fullName: '',
+      career: 'default',
+      _id: '1',
+      controlNumber: ''
     };
   }
 
@@ -117,11 +128,13 @@ export class StudentPageComponent implements OnInit {
   }
 
   newStudent() {
-    console.log('Current Student'+this.currentStudent);
-    this.isNewStudent=true;
+    console.log('Current Student' + this.currentStudent);
+    this.isNewStudent = true;
     this.hiddenFormDiv();
     this.cleanCurrentStudent();
-    this.getImage();
+    // this.getImage();
+    this.photoStudent = 'assets/imgs/studentAvatar.png';
+    this.showImg = true;
     this.imgForSend = false;
     this.showForm = true;
   }
@@ -131,32 +144,32 @@ export class StudentPageComponent implements OnInit {
 
     const data = {
       controlNumber: this.formStudent.get('numberControlInput').value,
-        fullName: this.formStudent.get('fullNameInput').value,
-        career: this.currentStudent.career,
-        nss: this.formStudent.get('nssInput').value
+      fullName: this.formStudent.get('fullNameInput').value,
+      career: this.currentStudent.career,
+      nss: this.formStudent.get('nssInput').value
     };
 
     this.studentProv.newStudent(data).subscribe(res => {
       if (this.imgForSend) {
         console.log('Hay una foto que enviar');
-        this.uploadFile(this.currentStudent._id,false);
+        this.uploadFile(this.currentStudent._id, false);
       } else {
         console.log('No hay foto que enviar');
         this.showForm = true;
         // this.searchStudent(true);
         this.notificationServ.showNotification(1, 'Alumno agregado correctamente', '');
       }
-      const student:any = res;
+      const student: any = res;
 
       this.currentStudent = student;
     }, error => {
       console.log(error);
-      this.loading=false;
-    }, ()=> this.loading=false);
+      this.loading = false;
+    }, () => this.loading = false);
   }
 
   showFormValues(student) {
-    this.isNewStudent=false;
+    this.isNewStudent = false;
     // this.dataPresentation = JSON.parse(JSON.stringify(this.navParams.data));
 
     this.showImg = false;
@@ -225,7 +238,7 @@ export class StudentPageComponent implements OnInit {
   generatePDF(student) { // 'p', 'mm', [68,20]
 
     if (student.filename) {
-      this.loading=true;
+      this.loading = true;
       this.studentProv.getImageTest(student._id).subscribe(data => {
 
         const reader = new FileReader();
@@ -272,7 +285,7 @@ export class StudentPageComponent implements OnInit {
         }
       }, error => {
         console.log(error);
-      }, ()=>this.loading=false);
+      }, () => this.loading = false);
     } else {
       this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
     }
@@ -282,8 +295,8 @@ export class StudentPageComponent implements OnInit {
   // Busqueda de estudiantes *************************************************************************************//#endregion
 
   searchStudent(showForm) {
-    this.showForm=showForm;
-    this.loading=true;
+    this.showForm = showForm;
+    this.loading = true;
     this.studentProv.searchStudents(this.search).subscribe(res => {
       console.log('res', res);
       this.data = res.students;
@@ -298,7 +311,7 @@ export class StudentPageComponent implements OnInit {
 
     }, err => {
       console.log('err', err);
-    }, ()=>this.loading=false);
+    }, () => this.loading = false);
   }
 
   // Actualizacion de información basica (sin imagen) ************************************************************//#endregion
@@ -336,7 +349,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   updateStudentData() {
-    this.isNewStudent=false;
+    this.isNewStudent = false;
     if (!this.formValidation()) {
       const data = {
         controlNumber: this.formStudent.get('numberControlInput').value,
@@ -344,21 +357,21 @@ export class StudentPageComponent implements OnInit {
         career: this.currentStudent.career,
         nss: this.formStudent.get('nssInput').value
       };
-      this.loading=true;
+      this.loading = true;
       this.studentProv.updateStudent(this.currentStudent._id, data).subscribe(res => {
         if (this.imgForSend) {
           console.log('Hay una foto que enviar');
-          this.uploadFile(this.currentStudent._id,false);
+          this.uploadFile(this.currentStudent._id, false);
         } else {
           console.log('No hay foto que enviar');
           this.showForm = true;
-          if(this.search)
+          if (this.search)
             this.searchStudent(true);
           this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
         }
       }, error => {
         console.log(error);
-      }, ()=> this.loading=false);
+      }, () => this.loading = false);
     }
   }
 
@@ -396,7 +409,7 @@ export class StudentPageComponent implements OnInit {
         this.photoStudent = this.croppedImageBase64;
         this.imgForSend = true;
 
-        const showForm =   this.isNewStudent;
+        const showForm = this.isNewStudent;
 
         this.uploadFile(this.currentStudent._id, showForm);
         event.target.value = '';
@@ -425,7 +438,7 @@ export class StudentPageComponent implements OnInit {
       console.log(error);
       if (error.status === 404) {
         console.log('No tiene imagen');
-        this.photoStudent = 'assets/imgs/imgNotFound.png';
+        this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
       }
     });
@@ -442,13 +455,13 @@ export class StudentPageComponent implements OnInit {
 
       this.imgForSend = false;
       this.showForm = showForm;
-      if(this.search)
+      if (this.search)
         this.searchStudent(true);
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
 
     }, error => {
       console.log(error);
-    }, ()=> this.loading=false);
+    }, () => this.loading = false);
   }
 
   // Zona de test :D *********************************************************************************************//#region
@@ -468,7 +481,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   getImageFromService(id) {
-    this.loading=true;
+    this.loading = true;
     this.studentProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
 
@@ -476,10 +489,10 @@ export class StudentPageComponent implements OnInit {
       console.log(error);
       if (error.status === 404) {
         console.log('No tiene imagen');
-        this.photoStudent = 'assets/imgs/imgNotFound.png';
+        this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
         this.loading = false;
       }
-    }, ()=> this.loading=false);
+    }, () => this.loading = false);
   }
 }

@@ -26,7 +26,6 @@
     bottom: 0px;
     background-color: rgba(0, 0, 0, 0.514);;
     color: white;
-
     text-align: center;
     padding-top: 10px;
 
@@ -44,6 +43,10 @@
     cursor: pointer;
  }
  
+ .card-itt {
+	background-color: #193a68;
+    color: white;
+ }
 
 .btn-login {
     background-color: #4D66A2;
@@ -81,18 +84,24 @@
 }
 
 .table-header {
-	background-color: #333;
+	background-color: #193a68;
 	color: #ffffff;
 }
 
-// .search-div {
-//     display: grid;
-//     grid-template-areas:
-//     'searchBar searchBar searchBar searchBar searchBar';
-//     grid-gap: 10px;
-//     grid-template-columns: none;
-//     width: 100%;
-// }
+.table-header:hover {
+	background-color: #193a68;
+	color: #ffffff;
+}
+
+.table-striped tbody tr:nth-of-type(odd):hover {
+	background-color:#5580bd;
+	cursor:pointer;
+}
+
+.table-striped tbody tr:nth-of-type(even):hover {
+	background-color:#5580bd;
+	cursor:pointer;
+}
 
 .cssload-thecube {
 	width: 75px;

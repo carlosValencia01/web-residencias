@@ -17,6 +17,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { AngularFontAwesomeModule } from "angular-font-awesome";
+import {HotkeyModule} from 'angular2-hotkeys';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -67,7 +68,7 @@ const appRouters: Routes = [
     BrowserModule,
     NgbModule.forRoot(),
     HttpModule,
-
+    HotkeyModule.forRoot(),
     HttpClientModule,
     AngularFontAwesomeModule,
     FormsModule,
