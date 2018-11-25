@@ -7,7 +7,6 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsServices } from '../../services/notifications.service';
 import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 
-
 import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
@@ -20,6 +19,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 export class StudentPageComponent implements OnInit {
 
   @ViewChild("searchinput") searchInput: ElementRef;
+  @ViewChild("studentInputFullName") nameInput: ElementRef;
 
   loading: boolean = false;
   data: Array<any>;
@@ -28,6 +28,7 @@ export class StudentPageComponent implements OnInit {
   showNotFound = false;
   showForm = false;
   isNewStudent = false;
+  haveImage = false;
 
   showImg = false;
 
@@ -77,11 +78,11 @@ export class StudentPageComponent implements OnInit {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
 
-    this.hotkeysService.add(new Hotkey('shift+n', (event: KeyboardEvent): boolean => {
+    this.hotkeysService.add(new Hotkey('f1', (event: KeyboardEvent): boolean => {
       this.newStudent();
       return false; // Prevent bubbling
     }));
-    this.hotkeysService.add(new Hotkey('shift+c', (event: KeyboardEvent): boolean => {
+    this.hotkeysService.add(new Hotkey('f2', (event: KeyboardEvent): boolean => {
       this.hiddenFormDiv();
       return false; // Prevent bubbling
     }));
@@ -113,7 +114,6 @@ export class StudentPageComponent implements OnInit {
     });
 
     this.searchInput.nativeElement.focus();
-
   }
 
   hiddenFormDiv() {
@@ -137,6 +137,8 @@ export class StudentPageComponent implements OnInit {
     this.showImg = true;
     this.imgForSend = false;
     this.showForm = true;
+    this.haveImage = false;
+    // this.nameInput.nativeElement.focus();
   }
 
   newStudentData() {
@@ -144,7 +146,7 @@ export class StudentPageComponent implements OnInit {
 
     const data = {
       controlNumber: this.formStudent.get('numberControlInput').value,
-      fullName: this.formStudent.get('fullNameInput').value,
+      fullName: this.formStudent.get('fullNameInput').value.toUpperCase(),
       career: this.currentStudent.career,
       nss: this.formStudent.get('nssInput').value
     };
@@ -236,6 +238,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   generatePDF(student) { // 'p', 'mm', [68,20]
+    console.log(student);
 
     if (student.filename) {
       this.loading = true;
@@ -351,14 +354,13 @@ export class StudentPageComponent implements OnInit {
   updateStudentData() {
     this.isNewStudent = false;
     if (!this.formValidation()) {
-      const data = {
-        controlNumber: this.formStudent.get('numberControlInput').value,
-        fullName: this.formStudent.get('fullNameInput').value,
-        career: this.currentStudent.career,
-        nss: this.formStudent.get('nssInput').value
-      };
+      this.currentStudent.fullName = this.formStudent.get('fullNameInput').value.toUpperCase();
+      this.currentStudent.controlNumber = this.formStudent.get('numberControlInput').value;
+      this.currentStudent.career = this.currentStudent.career;
+      this.currentStudent.nss = this.formStudent.get('nssInput').value;
+
       this.loading = true;
-      this.studentProv.updateStudent(this.currentStudent._id, data).subscribe(res => {
+      this.studentProv.updateStudent(this.currentStudent._id, this.currentStudent).subscribe(res => {
         if (this.imgForSend) {
           console.log('Hay una foto que enviar');
           this.uploadFile(this.currentStudent._id, false);
@@ -378,7 +380,6 @@ export class StudentPageComponent implements OnInit {
   // Cropper Image ***************************************************************************************************//#endregion
 
   showSelectFileDialog() {
-    console.log('Click detectado');
     const input = document.getElementById('fileButton');
     input.click();
   }
@@ -434,10 +435,12 @@ export class StudentPageComponent implements OnInit {
   getImage() {
     this.studentProv.getProfileImage(this.currentStudent._id).subscribe(res => {
       console.log(res);
+      this.haveImage = true;
     }, error => {
       console.log(error);
       if (error.status === 404) {
         console.log('No tiene imagen');
+        this.haveImage = false;
         this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
       }
@@ -458,7 +461,7 @@ export class StudentPageComponent implements OnInit {
       if (this.search)
         this.searchStudent(true);
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
-
+      this.haveImage = true;
     }, error => {
       console.log(error);
     }, () => this.loading = false);
@@ -484,11 +487,12 @@ export class StudentPageComponent implements OnInit {
     this.loading = true;
     this.studentProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
-
+      this.haveImage = true;
     }, error => {
       console.log(error);
       if (error.status === 404) {
         console.log('No tiene imagen');
+        this.haveImage = false;
         this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
         this.loading = false;

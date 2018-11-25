@@ -6,8 +6,9 @@
     </button>
   </div>
   <div class="modal-body">
-    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="2.5 / 3" format="png"
-      (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (loadImageFailed)="loadImageFailed()"></image-cropper>
+    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="5 / 6" format="png"
+      (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (loadImageFailed)="loadImageFailed()"
+      [imageQuality]=90></image-cropper>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-login" (click)="c">Actualizar</button>
@@ -24,18 +25,19 @@
       <span class="float-right close">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </span>
-      <span *ngIf="!this.formStudent.invalid" class="float-right close" placement="top" ngbTooltip="Imprimir">
-        <fa name="print" (click)="generatePDF(currentStudent)" style="color:white"></fa>
-      </span>
-      <span class="float-right close">
-        &nbsp;&nbsp;
-      </span>
       <span *ngIf="!this.formStudent.invalid&&!isNewStudent" class="float-right close" placement="top" ngbTooltip="Guardar">
         <fa name="save" (click)="updateStudentData();" style="color:white"></fa>
       </span>
       <span *ngIf="!this.formStudent.invalid&&isNewStudent" class="float-right close" placement="top" ngbTooltip="Guardar">
         <fa name="save" (click)="newStudentData();" style="color:white"></fa>
       </span>
+      <span class="float-right close">
+        &nbsp;&nbsp;
+      </span>
+      <span *ngIf="haveImage" class="float-right close" placement="top" ngbTooltip="Imprimir">
+        <fa name="print" (click)="generatePDF(currentStudent)" style="color:white"></fa>
+      </span>
+
       <!-- <button *ngIf="!isNewStudent" type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button> -->
       <strong>Datos del Alumno</strong>
     </div>
@@ -49,7 +51,7 @@
                   <div *ngIf="showImg">
                     <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg"
                       style="display: none;">
-                    <div (click)="showSelectFileDialog()" class="tag" *ngIf="!this.formStudent.invalid&&isNewStudent">Actualizar</div>
+                    <div (click)="showSelectFileDialog()" class="tag" *ngIf="!this.formStudent.invalid&&this.currentStudent.fullName">Cambiar</div>
                     <img class="profile-icon" [src]="photoStudent">
                   </div>
                   <div *ngIf="!showImg">
@@ -233,11 +235,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let student of data" (click)="showFormValues(student)">
-              <th scope="row">{{ student.controlNumber }}</th>
-              <td>{{ student.fullName }}</td>
-              <td>{{ student.career }}</td>
-              <td>{{ student.nss }}</td>
+            <tr *ngFor="let student of data" >
+              <th (click)="showFormValues(student)" scope="row">{{ student.controlNumber }}</th>
+              <td (click)="showFormValues(student)">{{ student.fullName }}</td>
+              <td (click)="showFormValues(student)">{{ student.career }}</td>
+              <td (click)="showFormValues(student)">{{ student.nss }}</td>
               <td style="text-align: center">
                 <!-- <div style="display: flex;"> -->
                 <!-- <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">
@@ -247,7 +249,9 @@
                     Imprimir
                   </button> -->
                 <span ngbTooltip="Imprimir">
-                  <fa name="print" class="fa-lg" (click)="generatePDF(student)" style="color:#ED773C"></fa>
+                  <fa name="print" class="fa-lg" 
+                  (click)="generatePDF(student)" 
+                  style="color:#ED773C"></fa>
                 </span>
                 <!-- </div> -->
               </td>
@@ -266,9 +270,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let student of data" (click)="showFormValues(student)">
-              <th scope="row">{{ student.controlNumber }}</th>
-              <td>{{ student.fullName }}</td>
+            <tr *ngFor="let student of data" >
+              <th scope="row" (click)="showFormValues(student)">{{ student.controlNumber }}</th>
+              <td (click)="showFormValues(student)">{{ student.fullName }}</td>
               <td style="text-align: center">
                 <!-- <div style="display: flex;"> -->
                 <!-- <button type="button" (click)="showFormValues(student)" style="margin-right: 5px;" class="btn btn-login btn-sm">
@@ -278,7 +282,9 @@
                       Imprimir
                     </button> -->
                 <span ngbTooltip="Imprimir">
-                  <fa name="print" class="fa-lg" (click)="generatePDF(student)" style="color:#ED773C"></fa>
+                  <fa name="print" class="fa-lg" 
+                  (click)="generatePDF(student)" 
+                  style="color:#ED773C"></fa>
                 </span>
                 <!-- </div> -->
               </td>
