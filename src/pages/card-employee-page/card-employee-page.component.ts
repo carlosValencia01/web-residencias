@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { EmployeeProvider } from '../../providers/employee.prov';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormErrorsService } from '../../services/forms.errors.service';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsServices } from '../../services/notifications.service';
-
+import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 
 import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
@@ -18,6 +18,8 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 })
 export class CardEmployeePageComponent implements OnInit {
 
+  @ViewChild("searchinput") searchInput: ElementRef;
+
   loading: boolean = false;
   data: Array<any>;
   search: any;
@@ -25,6 +27,7 @@ export class CardEmployeePageComponent implements OnInit {
   showNotFound = false;
   showForm = false;
   isNewEmployee = false;
+  haveImage = false;
 
   showImg = false;
 
@@ -47,7 +50,6 @@ export class CardEmployeePageComponent implements OnInit {
 
   formEmployee: FormGroup;
   errorForm = false;
-
   photoEmployee = '';
 
   imageToShow: any;
@@ -75,10 +77,20 @@ export class CardEmployeePageComponent implements OnInit {
     public formBuilder: FormBuilder,
     private formErrosrServ: FormErrorsService,
     private modalService: NgbModal,
-    private notificationServ: NotificationsServices
+    private notificationServ: NotificationsServices,
+    private hotkeysService: HotkeysService
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentEmployee();
+
+    this.hotkeysService.add(new Hotkey('f1', (event: KeyboardEvent): boolean => {
+      this.newEmployee();
+      return false; // Prevent bubbling
+    }));
+    this.hotkeysService.add(new Hotkey('f2', (event: KeyboardEvent): boolean => {
+      this.hiddenFormDiv();
+      return false; // Prevent bubbling
+    }));
   }
 
   cleanCurrentEmployee() {
@@ -88,7 +100,7 @@ export class CardEmployeePageComponent implements OnInit {
         firstName: '',
         fullName: ''
       },
-      area: 'default',
+      area: '',
       _id: '1',
       rfc: '',
       position: ''
@@ -96,12 +108,10 @@ export class CardEmployeePageComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.getAllStundets();
     this.initializeForm();
   }
 
   // Formulario *************************************************************************************//#endregion
-
   initializeForm() {
     this.formEmployee = this.formBuilder.group({
       'firstNameInput': ['', [Validators.required]],
@@ -110,6 +120,7 @@ export class CardEmployeePageComponent implements OnInit {
       'areaInput': ['', [Validators.required]],
       'positionInput': ['', [Validators.required]]
     });
+    this.searchInput.nativeElement.focus();
   }
 
   hiddenFormDiv() {
@@ -125,18 +136,20 @@ export class CardEmployeePageComponent implements OnInit {
   }
 
   newEmployee() {
-    console.log('Current Employee' + this.currentEmployee);
+    // console.log('Current Employee' + this.currentEmployee);
     this.isNewEmployee = true;
     this.hiddenFormDiv();
     this.cleanCurrentEmployee();
-    this.getImage();
+    this.photoEmployee= 'assets/imgs/employeeAvatar.png';
+    this.showImg = true;
     this.imgForSend = false;
     this.showForm = true;
+    this.haveImage = false;
   }
 
   newEmployeeData() {
-    if (!this.formValidation()) {
-      this.loading = true;
+    this.loading = true;
+    // if (!this.formValidation()) {
       const data = {
         rfc: this.formEmployee.get('RFCInput').value.toUpperCase(),
         name: {
@@ -150,10 +163,10 @@ export class CardEmployeePageComponent implements OnInit {
 
       this.employeeProv.newEmployee(data).subscribe(res => {
         if (this.imgForSend) {
-          console.log('Hay una foto que enviar');
+          // console.log('Hay una foto que enviar');
           this.uploadFile(this.currentEmployee._id, false);
         } else {
-          console.log('No hay foto que enviar');
+          // console.log('No hay foto que enviar');
           this.showForm = true;
           // this.searchEmployee(true);
           this.notificationServ.showNotification(1, 'Trabajador agregado correctamente', '');
@@ -167,16 +180,13 @@ export class CardEmployeePageComponent implements OnInit {
         this.loading = false;
         this.notificationServ.showNotification(2, "Ocurrió un error al guardar, intente nuevamente", '');
       }, () => this.loading = false);
-    }
+    // }
   }
 
   showFormValues(employee) {
     this.isNewEmployee = false;
-
     this.showImg = false;
-
     this.currentEmployee = JSON.parse(JSON.stringify(employee));
-
     this.imgForSend = false;
 
     this.getImageFromService(employee._id);
@@ -193,7 +203,7 @@ export class CardEmployeePageComponent implements OnInit {
   // Generacion de PDF *************************************************************************************//#endregion
 
   getBase64ForStaticImages() {
-    console.log(this.employeeProv.getApiURL());
+    // console.log(this.employeeProv.getApiURL());
 
     this.imageToBase64Serv.getBase64('assets/imgs/employeeFront.jpg').then(res1 => {
       this.frontBase64 = res1;
@@ -297,7 +307,7 @@ export class CardEmployeePageComponent implements OnInit {
     if (this.search)
       this.search = this.search.toUpperCase();
     this.employeeProv.searchEmployeeRFC(this.search).subscribe(res => {
-      console.log('res', res);
+      // console.log('res', res);
       this.data = res.employees;
 
       if (this.data.length > 0) {
@@ -310,7 +320,6 @@ export class CardEmployeePageComponent implements OnInit {
 
     }, err => {
       console.log('err', err);
-      
     }, () => this.loading = false);
   }
 
@@ -342,17 +351,11 @@ export class CardEmployeePageComponent implements OnInit {
       });
       invalid = true;
     }
-    /*if (this.currentEmployee.career === 'default') {
-      console.log('entro a la carrera', this.currentEmployee.career);
-
-      this.errorInputsTag.errorEmployeeCareer = true;
-      invalid = true;
-    }*/
 
     return invalid;
   }
 
-  updateStudentData() {
+  updateEmployeeData() {
     this.isNewEmployee = false;
     if (!this.formValidation()) {
       this.currentEmployee.rfc = this.formEmployee.get('RFCInput').value.toUpperCase();
@@ -365,17 +368,17 @@ export class CardEmployeePageComponent implements OnInit {
       this.loading = true;
       this.employeeProv.updateEmployee(this.currentEmployee._id, this.currentEmployee).subscribe(res => {
         if (this.imgForSend) {
-          console.log('Hay una foto que enviar');
+          // console.log('Hay una foto que enviar');
           this.uploadFile(this.currentEmployee._id, false);
         } else {
-          console.log('No hay foto que enviar');
+          // console.log('No hay foto que enviar');
           this.showForm = true;
           if (this.search)
             this.searchEmployee(true);
           this.notificationServ.showNotification(1, 'Trabajador actualizado correctamente', '');
         }
       }, error => {
-        console.log(error);
+        // console.log(error);
         this.notificationServ.showNotification(2, 'Ocurrió un error, inténtalo nuevamente', '');
       }, () => this.loading = false);
     }
@@ -384,7 +387,7 @@ export class CardEmployeePageComponent implements OnInit {
   // Cropper Image ***************************************************************************************************//#endregion
 
   showSelectFileDialog() {
-    console.log('Click detectado');
+    // console.log('Click detectado');
     const input = document.getElementById('fileButton');
     input.click();
   }
@@ -439,12 +442,15 @@ export class CardEmployeePageComponent implements OnInit {
 
   getImage() {
     this.employeeProv.getProfileImage(this.currentEmployee._id).subscribe(res => {
-      console.log(res);
+      // console.log(res);
+      this.haveImage = true;
+
     }, error => {
-      console.log(error);
+      // console.log(error);
       if (error.status === 404) {
-        console.log('No tiene imagen');
-        this.photoEmployee = 'assets/imgs/imgNotFound.png';
+        // console.log('No tiene imagen');
+        this.haveImage = false;
+        this.photoEmployee = 'assets/imgs/employeeAvatar.png';
         this.showImg = true;
       }
     });
@@ -455,7 +461,7 @@ export class CardEmployeePageComponent implements OnInit {
     fd.append('image', this.croppedImage);
     this.loading = true;
     this.employeeProv.updatePhoto(id, fd).subscribe(res => {
-      console.log(res);
+      // console.log(res);
       const employee: any = res;
       this.currentEmployee = employee.employee;
 
@@ -464,9 +470,10 @@ export class CardEmployeePageComponent implements OnInit {
       if (this.search)
         this.searchEmployee(true);
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
-
+      this.haveImage = true;
     }, error => {
-      console.log(error);
+      // console.log(error);
+      this.notificationServ.showNotification(2, 'Ocurrió un error, inténtalo nuevamente', '');
     }, () => this.loading = false);
   }
 
@@ -490,12 +497,13 @@ export class CardEmployeePageComponent implements OnInit {
     this.loading = true;
     this.employeeProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
-
+      this.haveImage = true;
     }, error => {
       console.log(error);
       if (error.status === 404) {
-        console.log('No tiene imagen');
-        this.photoEmployee = 'assets/imgs/imgNotFound.png';
+        // console.log('No tiene imagen');
+        this.haveImage = false;
+        this.photoEmployee = 'assets/imgs/employeeAvatar.png';
         this.showImg = true;
         this.loading = false;
       }

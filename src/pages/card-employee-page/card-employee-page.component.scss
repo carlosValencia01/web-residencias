@@ -79,6 +79,32 @@
     }
 }
 
+.table-header {
+	background-color: #193a68;
+	color: #ffffff;
+}
+
+.card-itt {
+	// background-color: #193a68;
+	background-color: #9c9c9c;
+    color: white;
+ }
+
+.table-header:hover {
+	background-color: #193a68;
+	color: #ffffff;
+}
+
+.table-striped tbody tr:nth-of-type(odd):hover {
+	background-color:#5580bd;
+	cursor:pointer;
+}
+
+.table-striped tbody tr:nth-of-type(even):hover {
+	background-color:#5580bd;
+	cursor:pointer;
+}
+
 .search-div {
     display: grid;
     grid-template-areas:

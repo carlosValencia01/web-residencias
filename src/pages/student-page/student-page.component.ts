@@ -19,7 +19,6 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 export class StudentPageComponent implements OnInit {
 
   @ViewChild("searchinput") searchInput: ElementRef;
-  @ViewChild("studentInputFullName") nameInput: ElementRef;
 
   loading: boolean = false;
   data: Array<any>;
@@ -98,21 +97,17 @@ export class StudentPageComponent implements OnInit {
     };
   }
 
-
   ngOnInit() {
-    // this.getAllStundets();
     this.initializeForm();
   }
 
   // Formulario *************************************************************************************//#endregion
-
   initializeForm() {
     this.formStudent = this.formBuilder.group({
       'fullNameInput': ['', [Validators.required]],
       'numberControlInput': ['', [Validators.required]],
       'nssInput': ['', [Validators.required]]
     });
-
     this.searchInput.nativeElement.focus();
   }
 
@@ -124,22 +119,18 @@ export class StudentPageComponent implements OnInit {
     this.errorInputsTag.errorStudentNSS = false;
     this.errorInputsTag.errorStudentCareer = false;
     this.showForm = false;
-
-    // this.nameInput.nativeElement.focus();
   }
 
   newStudent() {
-    console.log('Current Student' + this.currentStudent);
+    // console.log('Current Student' + this.currentStudent);
     this.isNewStudent = true;
     this.hiddenFormDiv();
     this.cleanCurrentStudent();
-    // this.getImage();
     this.photoStudent = 'assets/imgs/studentAvatar.png';
     this.showImg = true;
     this.imgForSend = false;
     this.showForm = true;
     this.haveImage = false;
-    // this.nameInput.nativeElement.focus();
   }
 
   newStudentData() {
@@ -154,12 +145,9 @@ export class StudentPageComponent implements OnInit {
 
     this.studentProv.newStudent(data).subscribe(res => {
       if (this.imgForSend) {
-        console.log('Hay una foto que enviar');
         this.uploadFile(this.currentStudent._id, false);
       } else {
-        console.log('No hay foto que enviar');
         this.showForm = true;
-        // this.searchStudent(true);
         this.notificationServ.showNotification(1, 'Alumno agregado correctamente', '');
       }
       const student: any = res;
@@ -168,20 +156,16 @@ export class StudentPageComponent implements OnInit {
     }, error => {
       console.log(error);
       this.loading = false;
+      this.notificationServ.showNotification(2, "Ocurrió un error al guardar, intente nuevamente", '');
     }, () => this.loading = false);
   }
 
   showFormValues(student) {
     this.isNewStudent = false;
-    // this.dataPresentation = JSON.parse(JSON.stringify(this.navParams.data));
-
     this.showImg = false;
-
     this.currentStudent = JSON.parse(JSON.stringify(student));
-
     this.imgForSend = false;
 
-    // this.getImage();
     this.getImageFromService(student._id);
 
     this.formStudent.get('fullNameInput').setValue(student.fullName);
@@ -194,7 +178,7 @@ export class StudentPageComponent implements OnInit {
   // Generacion de PDF *************************************************************************************//#endregion
 
   getBase64ForStaticImages() {
-    console.log(this.studentProv.getApiURL());
+    // console.log(this.studentProv.getApiURL());
 
     this.imageToBase64Serv.getBase64('assets/imgs/front.jpg').then(res1 => {
       this.frontBase64 = res1;
@@ -203,11 +187,6 @@ export class StudentPageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/back.jpg').then(res2 => {
       this.backBase64 = res2;
     });
-
-    // tslint:disable-next-line:max-line-length
-    // this.imageToBase64Serv.getBase64('https://scontent.fmex5-1.fna.fbcdn.net/v/t1.0-9/1422436_10208416015382578_1208990774892394279_n.jpg?_nc_cat=103&oh=4dcba2f2a85aebc412aa74819eb1b8f0&oe=5C5A26F9').then(res3 => {
-    //   this.imageProfileTest = res3;
-    // });
   }
 
   textToBase64Barcode(text) {
@@ -239,8 +218,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   generatePDF(student) { // 'p', 'mm', [68,20]
-    console.log(student);
-
+    // console.log(student);
     if (student.filename) {
       this.loading = true;
       this.studentProv.getImageTest(student._id).subscribe(data => {
@@ -302,7 +280,7 @@ export class StudentPageComponent implements OnInit {
     this.showForm = showForm;
     this.loading = true;
     this.studentProv.searchStudents(this.search).subscribe(res => {
-      console.log('res', res);
+      // console.log('res', res);
       this.data = res.students;
 
       if (this.data.length > 0) {
@@ -343,8 +321,6 @@ export class StudentPageComponent implements OnInit {
       invalid = true;
     }
     if (this.currentStudent.career === 'default') {
-      console.log('entro a la carrera', this.currentStudent.career);
-
       this.errorInputsTag.errorStudentCareer = true;
       invalid = true;
     }
@@ -363,17 +339,18 @@ export class StudentPageComponent implements OnInit {
       this.loading = true;
       this.studentProv.updateStudent(this.currentStudent._id, this.currentStudent).subscribe(res => {
         if (this.imgForSend) {
-          console.log('Hay una foto que enviar');
+          // console.log('Hay una foto que enviar');
           this.uploadFile(this.currentStudent._id, false);
         } else {
-          console.log('No hay foto que enviar');
+          // console.log('No hay foto que enviar');
           this.showForm = true;
           if (this.search)
             this.searchStudent(true);
           this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
         }
       }, error => {
-        console.log(error);
+        // console.log(error);
+        this.notificationServ.showNotification(2, 'Ocurrió un error, inténtalo nuevamente', '');
       }, () => this.loading = false);
     }
   }
@@ -398,7 +375,7 @@ export class StudentPageComponent implements OnInit {
     // show message
   }
 
-
+    /*Se lanza cuando se cambia la foto*/
   fileChangeEvent(event: any, content) {
     if (event) {
       this.selectedFile = <File>event.target.files[0];
@@ -435,12 +412,12 @@ export class StudentPageComponent implements OnInit {
 
   getImage() {
     this.studentProv.getProfileImage(this.currentStudent._id).subscribe(res => {
-      console.log(res);
+      // console.log(res);
       this.haveImage = true;
     }, error => {
-      console.log(error);
+      // console.log(error);
       if (error.status === 404) {
-        console.log('No tiene imagen');
+        // console.log('No tiene imagen');
         this.haveImage = false;
         this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
@@ -453,7 +430,7 @@ export class StudentPageComponent implements OnInit {
     fd.append('image', this.croppedImage);
     this.loading = true;
     this.studentProv.updatePhoto(id, fd).subscribe(res => {
-      console.log(res);
+      // console.log(res);
       const student: any = res;
       this.currentStudent = student.student;
 
@@ -464,7 +441,8 @@ export class StudentPageComponent implements OnInit {
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
       this.haveImage = true;
     }, error => {
-      console.log(error);
+      // console.log(error);
+      this.notificationServ.showNotification(2, 'Ocurrió un error, inténtalo nuevamente', '');
     }, () => this.loading = false);
   }
 
@@ -492,7 +470,7 @@ export class StudentPageComponent implements OnInit {
     }, error => {
       console.log(error);
       if (error.status === 404) {
-        console.log('No tiene imagen');
+        // console.log('No tiene imagen');
         this.haveImage = false;
         this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;

@@ -18,14 +18,29 @@
 </ng-template>
 
 <div class="content-general">
-  <div *ngIf="showForm" class="card card-shadow" style="margin-bottom: 15px;">
+  <div *ngIf="showForm" class="card card-shadow text-white card-itt" style="margin-bottom: 15px;">
     <div class="card-header">
-      <h5 class="card-title">Actualizar Datos del Trabajador</h5>
+      <span class="float-right close" placement="top" ngbTooltip="Cerrar">
+        <fa name="times-circle" (click)="hiddenFormDiv()" style="color:white"></fa>
+      </span>
+      <span class="float-right close">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      <span *ngIf="!this.formEmployee.invalid&&!isNewEmployee" class="float-right close" placement="top" ngbTooltip="Guardar">
+        <fa name="save" (click)="updateEmployeeData();" style="color:white"></fa>
+      </span>
+      <span *ngIf="!this.formEmployee.invalid&&isNewEmployee" class="float-right close" placement="top" ngbTooltip="Guardar">
+        <fa name="save" (click)="newEmployeeData();" style="color:white"></fa>
+      </span>
+      <span class="float-right close">
+        &nbsp;&nbsp;
+      </span>
+      <span *ngIf="haveImage" class="float-right close" placement="top" ngbTooltip="Imprimir">
+        <fa name="print" (click)="generatePDF(currentEmployee)" style="color:white"></fa>
+      </span>
+      <strong>Datos del Trabajador</strong>
     </div>
     <div class="card-body">
-      <!-- <h5 class="card-title">Actualizar Datos del Alumno</h5> -->
-      <!-- <h6 class="card-subtitle mb-2 text-muted">Actualizar Alumno</h6> -->
-
       <form [formGroup]="formEmployee">
         <div class="row">
           <div class="col-12 col-lg-4">
@@ -35,7 +50,7 @@
                   <div *ngIf="showImg">
                     <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg"
                       style="display: none;">
-                    <div (click)="showSelectFileDialog()" class="tag">Actualizar foto</div>
+                    <div (click)="showSelectFileDialog()" class="tag" *ngIf="!this.formEmployee.invalid&&this.currentEmployee.rfc">Cambiar</div>
                     <img class="profile-icon" [src]="photoEmployee">
                   </div>
                   <div *ngIf="!showImg">
@@ -55,8 +70,8 @@
               <div class="col-12 col-lg-4">
                 <div class="form-group">
                   <label for="employeeInputRFC">RFC *</label>
-                  <input (input)="errorInputsTag.errorEmployeeRFC = false" #input2 (input)="input2.value=$event.target.value.toUpperCase()"
-                    type="text" class="form-control" id="employeeInputRFC" formControlName="RFCInput" aria-describedby="emailHelp"
+                  <input (input)="errorInputsTag.errorEmployeeRFC = false" #employeeInputRFC (input)="employeeInputRFC.value=$event.target.value.toUpperCase()"
+                    type="text" class="form-control" formControlName="RFCInput" aria-describedby="emailHelp"
                     placeholder="Ingrese RFC" [ngClass]="{'is-invalid': (formEmployee.get('RFCInput').errors && formEmployee.get('RFCInput').dirty) || errorInputsTag.errorEmployeeRFC }">
                   <div *ngIf="(formEmployee.get('RFCInput').errors && formEmployee.get('RFCInput').dirty) || errorForm">
                     <div class="invalid-feedback" *ngIf="formEmployee.get('RFCInput').hasError('required') || errorInputsTag.errorEmployeeRFC">
@@ -128,7 +143,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-12 col-lg-4 text-center d-none d-lg-block">
             <button type="button" (click)="generatePDF(currentEmployee)" class="btn btn-itt btn-block btn-lg">
               Generar credencial
@@ -136,8 +151,10 @@
           </div>
           <div class="col-8 d-none d-lg-block">
             <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-lg float-right">Cerrar</button>
-            <button *ngIf="!isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="updateStudentData();" class="btn btn-login btn-lg float-right">Actualizar</button>
-            <button *ngIf="isNewEmployee"  [disabled]="this.formEmployee.invalid" type="button" (click)="newEmployeeData();" class="btn btn-login btn-lg float-right">Guardar</button>
+            <button *ngIf="!isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="updateStudentData();"
+              class="btn btn-login btn-lg float-right">Actualizar</button>
+            <button *ngIf="isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="newEmployeeData();"
+              class="btn btn-login btn-lg float-right">Guardar</button>
           </div>
           <div class="col-12 d-lg-none">
             <div class="row">
@@ -146,41 +163,63 @@
               </button>
             </div>
             <div class="row">
-              <button *ngIf="!isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="updateStudentData();" class="btn btn-login btn-sm btn-block col-6">Actualizar</button>
-              <button *ngIf="isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="newEmployeeData();" class="btn btn-login btn-sm btn-block col-6">Guardar</button>
+              <button *ngIf="!isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="updateStudentData();"
+                class="btn btn-login btn-sm btn-block col-6">Actualizar</button>
+              <button *ngIf="isNewEmployee" [disabled]="this.formEmployee.invalid" type="button" (click)="newEmployeeData();"
+                class="btn btn-login btn-sm btn-block col-6">Guardar</button>
               <button type="button" (click)="hiddenFormDiv()" class="btn btn-link btn-sm btn-block col-6">Cerrar</button>
             </div>
           </div>
-        </div>
+        </div> -->
       </form>
+    </div>
+    <div class="card-footer">
+      <span class="float-right close" placement="top" ngbTooltip="Cerrar">
+        <fa name="times-circle" (click)="hiddenFormDiv()" style="color:white"></fa>
+      </span>
+      <span class="float-right close">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>
+      <span *ngIf="!this.formEmployee.invalid&&!isNewEmployee" class="float-right close" placement="top" ngbTooltip="Guardar">
+        <fa name="save" (click)="updateEmployeeData();" style="color:white"></fa>
+      </span>
+      <span *ngIf="!this.formEmployee.invalid&&isNewEmployee" class="float-right close" placement="top" ngbTooltip="Guardar">
+        <fa name="save" (click)="newEmployeeData();" style="color:white"></fa>
+      </span>
+      <span class="float-right close">
+        &nbsp;&nbsp;
+      </span>
+      <span *ngIf="haveImage" class="float-right close" placement="top" ngbTooltip="Imprimir">
+        <fa name="print" (click)="generatePDF(currentEmployee)" style="color:white"></fa>
+      </span>
     </div>
   </div>
 
   <div class="card card-shadow">
+    <div class="card-header text-white bg-secondary">
+      <span class="close float-right" placement="top" ngbTooltip="Nuevo">
+        <fa name="plus-circle" (click)="newEmployee()" style="color:white"></fa>
+      </span>
+      <strong>Búsqueda de trabajadores</strong>
+    </div>
     <div class="card-body">
-      <div class="search-div">
-        <div class="form-group item1" style="margin-bottom: 10px;">
-          <input type="text" class="form-control" aria-describedby="searchHelp" #input5 (input)="input5.value=$event.target.value.toUpperCase()" placeholder="Buscar trabajador por RFC"
-            [(ngModel)]="search" (keyup.enter)="searchEmployee(false)" [ngModelOptions]="{standalone: true}">
-        </div>
-        <div class="item2">
-          <div class="col-12">
-            <button type="button" class="btn btn-success show-button-1 col-6" (click)="searchEmployee(false)">
-              Buscar
-            </button>
-            <button type="button" class="btn btn-login show-button-1 col-6" (click)="newEmployee()">
-              Nuevo
-            </button>
+      <div class="row">
+        <div class="col-10">
+          <div class="form-group" style="margin-bottom: 10px;">
+            <input type="text" #searchinput class="form-control" aria-describedby="searchHelp" placeholder="RFC"
+              [(ngModel)]="search" (keyup.enter)="searchEmployee(false)" [ngModelOptions]="{standalone: true}">
           </div>
-          <button type="button" style="width: 100%" class="btn btn-success show-button-2" (click)="searchEmployee(false)">
-            <i style="font-size:18px" class="fa fa-plus-square">+</i>
-          </button>
+        </div>
+        <div class="col-2" *ngIf="searchinput.value">
+          <span ngbTooltip="Buscar" class="close">
+            <fa name="search" class="fa-lg" (click)="searchEmployee(false)" style="color:forestgreen"></fa>
+          </span>
         </div>
       </div>
 
-      <div *ngIf="showTable" class="table-responsive div-size">
-        <table class="table table-bordered table-hover">
-          <thead class="thead-light">
+      <div *ngIf="showTable" class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+          <thead class="table-primary table-header">
             <tr>
               <th scope="col">RFC</th>
               <th scope="col">Nombre</th>
@@ -190,18 +229,13 @@
           </thead>
           <tbody>
             <tr *ngFor="let employee of data">
-              <th scope="row">{{ employee.rfc }}</th>
-              <td>{{ employee.name.fullName }}</td>
-              <td>{{ employee.position }}</td>
-              <td>
-                <div style="display: flex;">
-                  <button type="button" (click)="showFormValues(employee)" style="margin-right: 5px;" class="btn btn-login btn-sm">
-                    Ver
-                  </button>
-                  <button type="button" (click)="generatePDF(employee)" class="btn btn-itt btn-sm">
-                    Credencial
-                  </button>
-                </div>
+              <th (click)="showFormValues(employee)" scope="row">{{ employee.rfc }}</th>
+              <td (click)="showFormValues(employee)">{{ employee.name.fullName }}</td>
+              <td (click)="showFormValues(employee)">{{ employee.position }}</td>
+              <td style="text-align: center">
+                <span ngbTooltip="Imprimir">
+                  <fa name="print" class="fa-lg" (click)="generatePDF(employee)" style="color:#ED773C"></fa>
+                </span>
               </td>
             </tr>
           </tbody>
@@ -210,7 +244,7 @@
       <div *ngIf="showNotFound">
         <div class="card text-center">
           <div class="card-body">
-            <h3 class="card-title">No se han encontrado resultados con esta búsqueda, intente de nuevo.</h3>
+            <h3 class="card-title">No hay resultados!!!</h3>
           </div>
         </div>
       </div>
