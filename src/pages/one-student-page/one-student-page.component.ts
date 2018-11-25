@@ -10,6 +10,7 @@ import { CookiesService } from '../../services/cookie.service';
 import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -57,9 +58,13 @@ export class OneStudentPageComponent implements OnInit {
     private studentProv: StudentProvider,
     private imageToBase64Serv: ImageToBase64Service,
     private modalService: NgbModal,
-    private cookiesServ: CookiesService,
-    private notificationServ: NotificationsServices
+    private notificationServ: NotificationsServices,
+    private router: Router,
+    private cookiesServ:CookiesService
   ) {
+
+    if(this.cookiesServ.getData().user.role!==2)
+      this.router.navigate(['/']);
     this.getBase64ForStaticImages();
   }
 

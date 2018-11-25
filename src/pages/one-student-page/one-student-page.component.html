@@ -20,11 +20,19 @@
 <div class="content-general">
   <div class="row">
     <div class="col-12 col-lg-8">
-      <div class="card card-shadow" style="margin-bottom: 15px;">
+      <div class="card card-shadow card-itt" style="margin-bottom: 15px;">
         <div class="card-header d-none d-sm-block">
+          <span class="float-right close" placement="top" ngbTooltip="Imprimir">
+            <fa name="print" (click)="generatePDF()" style="color:white"></fa>
+          </span>
           <strong>Actualización de fotografía para impresión de credencial</strong>
         </div>
-        <div class="card-body">
+        <div class="card-header d-block d-sm-none">
+          <span class="float-right close" placement="top" ngbTooltip="Imprimir">
+            <fa name="print" (click)="generatePDF()" style="color:white"></fa>
+          </span>
+        </div>
+        <div class="card-body" ngbTooltip="Mi credencial" tooltipClass="my-custom-class">
           <div class="row">
             <div class="col-12 col-lg-4">
               <div style="display: flex; justify-content: center; height: 100%;">
@@ -32,8 +40,8 @@
                   <div *ngIf="showImg">
                     <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg"
                       style="display: none;">
-                    <div (click)="showSelectFileDialog()" class="tag d-none d-sm-block">Actualizar foto</div>
-                    <div (click)="showSelectFileDialog()" class="tag d-block d-sm-none">Actualizar</div>
+                    <div (click)="showSelectFileDialog()" class="tag d-none d-sm-block">Cambiar</div>
+                    <div (click)="showSelectFileDialog()" class="tag d-block d-sm-none">Cambiar</div>
                     <img class="profile-icon" [src]="photoStudent">
                   </div>
                   <div *ngIf="! showImg">
@@ -74,9 +82,6 @@
                 <br>
                 NSS: {{currentStudent.nss}}
               </p>
-              <div class="col-12">
-                <button type="button" (click)="generatePDF();" class="btn btn-itt btn-xs col" style="margin-right: 10px;">Previsualizar</button>
-              </div>
             </div>
           </div>
         </div>
@@ -99,9 +104,6 @@
             <hr>
             <p><strong>NOTA: Se revisará la fotografía antes de la impresión</strong> </p>
           </div>
-        </div>
-        <div class="col-12">
-          <button type="button" (click)="generatePDF();" class="btn btn-itt btn-lg col" style="margin-right: 10px;">Previsualizar</button>
         </div>
       </div>
       <div class="row d-block d-sm-none warning-photo">

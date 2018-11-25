@@ -14,7 +14,7 @@ export class HomePageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.cookiesServ.getData().user.role);
+    // console.log(this.cookiesServ.getData().user.role);
     switch (this.cookiesServ.getData().user.role) {
       case 1:
         this.role = "secretary";

@@ -58,6 +58,11 @@
     -o-user-select:none;
  }
 
+ .card-itt {
+	background-color: #193a68;
+    color: white;
+ }
+
  .tag:hover {
     cursor: pointer;
  }
@@ -106,8 +111,6 @@
     grid-template-columns: none;
     width: 100%;
 }
-
-
 
 .cssload-thecube {
 	width: 75px;

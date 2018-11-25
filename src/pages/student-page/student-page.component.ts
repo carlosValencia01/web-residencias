@@ -6,10 +6,12 @@ import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsServices } from '../../services/notifications.service';
 import { HotkeysService, Hotkey } from 'angular2-hotkeys';
+import { Router } from '@angular/router';
 
 import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
+import { CookiesService } from 'src/services/cookie.service';
 
 @Component({
   selector: 'app-student-page',
@@ -72,10 +74,15 @@ export class StudentPageComponent implements OnInit {
     private formErrosrServ: FormErrorsService,
     private modalService: NgbModal,
     private notificationServ: NotificationsServices,
-    private hotkeysService: HotkeysService
+    private hotkeysService: HotkeysService,
+    private cookiesServ: CookiesService,
+    private router: Router
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
+
+    if(this.cookiesServ.getData().user.role!==1)
+      this.router.navigate(['/']);
 
     this.hotkeysService.add(new Hotkey('f1', (event: KeyboardEvent): boolean => {
       this.newStudent();

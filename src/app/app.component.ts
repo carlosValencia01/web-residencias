@@ -33,11 +33,11 @@ export class AppComponent {
   checkLogin() {
     if (this.cookiesServ.checkCookie('session')) {
       this.activeSession = true;
-      console.log('Aqui mandare el token');
+      // console.log('Aqui mandare el token');
       this.userProv.sendTokenFromAPI(this.cookiesServ.getData().token);
     } else {
       this.activeSession = false;
-      console.log('No hay sesión iniciada');
+      // console.log('No hay sesión iniciada');
     }
   }
 
