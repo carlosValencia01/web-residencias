@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
@@ -13,6 +13,7 @@ import { CookiesService } from '../../services/cookie.service';
   styleUrls: ['./login-page.component.scss']
 })
 export class LoginPageComponent implements OnInit {
+  @ViewChild("loginInputUser") loginInputUser: ElementRef;
 
   @Output() loginSuccessful = new EventEmitter();
 
@@ -42,6 +43,7 @@ export class LoginPageComponent implements OnInit {
 
     this.formLogin.get('usernameInput').setValue('');
     this.formLogin.get('passwordInput').setValue('');
+    this.loginInputUser.nativeElement.focus();
   }
 
   login() {

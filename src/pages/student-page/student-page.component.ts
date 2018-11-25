@@ -123,8 +123,9 @@ export class StudentPageComponent implements OnInit {
     this.errorInputsTag.errorStudentNumberControl = false;
     this.errorInputsTag.errorStudentNSS = false;
     this.errorInputsTag.errorStudentCareer = false;
-
     this.showForm = false;
+
+    // this.nameInput.nativeElement.focus();
   }
 
   newStudent() {
