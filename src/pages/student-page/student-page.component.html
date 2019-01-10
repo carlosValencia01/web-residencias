@@ -95,7 +95,7 @@
                 <option value="INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES">INGENIERÍA EN TECNOLOGÍAS
                   DE LA INFORMACIÓN Y COMUNICACIONES</option>
                 <option value="LICENCIATURA EN ADMINISTRACIÓN">LICENCIATURA EN ADMINISTRACIÓN</option>
-                <option value="MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN">MAESTRIA EN  TECNOLOGÍAS DE LA INFORMACIÓN</option>
+                <option value="MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN">MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN</option>
                 <option value="MAESTRIA EN CIENCIAS DE ALIMENTOS">MAESTRIA EN CIENCIAS DE ALIMENTOS</option>
                 <option value="DOCTORADO EN CIENCIAS DE ALIMENTOS">DOCTORADO EN CIENCIAS DE ALIMENTOS</option>
               </select>
@@ -197,7 +197,8 @@
         </div>
         <div class="col-2" *ngIf="searchinput.value">
           <span ngbTooltip="Buscar" class="close">
-            <fa name="search" class="fa-lg" (click)="searchStudent(false)" style="color:forestgreen"></fa>
+            <!-- <fa name="search" class="fa-lg" (click)="searchStudent(false)" style="color:forestgreen"></fa> -->
+            <fa name="search" class="fa-lg" (click)="generateGift()" style="color:forestgreen"></fa>
           </span>
         </div>
       </div>
