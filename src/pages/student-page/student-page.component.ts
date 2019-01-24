@@ -20,9 +20,9 @@ import { CookiesService } from 'src/services/cookie.service';
 })
 export class StudentPageComponent implements OnInit {
 
-  @ViewChild("searchinput") searchInput: ElementRef;
+  @ViewChild('searchinput') searchInput: ElementRef;
 
-  loading: boolean = false;
+  loading = false;
   data: Array<any>;
   search: any;
   showTable = false;
@@ -81,8 +81,9 @@ export class StudentPageComponent implements OnInit {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
 
-    if(this.cookiesServ.getData().user.role!==1)
+    if (this.cookiesServ.getData().user.role !== 1) {
       this.router.navigate(['/']);
+    }
 
     this.hotkeysService.add(new Hotkey('f1', (event: KeyboardEvent): boolean => {
       this.newStudent();
@@ -163,7 +164,7 @@ export class StudentPageComponent implements OnInit {
     }, error => {
       console.log(error);
       this.loading = false;
-      this.notificationServ.showNotification(2, "Ocurrió un error al guardar, intente nuevamente", '');
+      this.notificationServ.showNotification(2, 'Ocurrió un error al guardar, intente nuevamente', '');
     }, () => this.loading = false);
   }
 
@@ -354,8 +355,9 @@ export class StudentPageComponent implements OnInit {
         } else {
           // console.log('No hay foto que enviar');
           this.showForm = true;
-          if (this.search)
+          if (this.search) {
             this.searchStudent(true);
+          }
           this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
         }
       }, error => {
@@ -446,8 +448,9 @@ export class StudentPageComponent implements OnInit {
 
       this.imgForSend = false;
       this.showForm = showForm;
-      if (this.search)
+      if (this.search) {
         this.searchStudent(true);
+      }
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
       this.haveImage = true;
     }, error => {
@@ -456,7 +459,7 @@ export class StudentPageComponent implements OnInit {
     }, () => this.loading = false);
   }
 
-  // Zona de test :D *********************************************************************************************//#region
+  // Zona de test *********************************************************************************************//#region
 
   createImageFromBlob(image: Blob) {
     const reader = new FileReader();
