@@ -32,15 +32,18 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
 
   csvContent: string;
   arrayCsvContent: Array<any>;
+  copyArrayCsvContent: Array<any>;
   changeString = false;
   showControls = false;
   showInfo = false;
   fileName = '';
   testVAriable: any;
+  typeOfFile: number;
 
   radioButtonResponse = 1;
 
   dataStundets = [];
+  dataEmployees = [];
 
   constructor() { }
 
@@ -59,7 +62,7 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
 
 
 
-  onFileSelect(input: HTMLInputElement) {
+  onFileSelect(input: HTMLInputElement, type: number) {
 
 
     const files = input.files;
@@ -79,6 +82,7 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
 
       const fileReader = new FileReader();
       fileReader.onload = () => {
+        this.typeOfFile = type;
         this.convertFileToObject(fileReader.result);
       };
 
@@ -96,25 +100,69 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
 
     if (this.arrayCsvContent[this.arrayCsvContent.length - 1].length === 0) {
       this.arrayCsvContent.pop();
+      this.copyArrayCsvContent = this.arrayCsvContent.slice(0);
     }
 
   }
 
   analyzeArray() {
+    const localArrayCsvContent = this.arrayCsvContent.slice(0);
+
+    console.log(localArrayCsvContent);
+
+
     if (this.radioButtonResponse === 1) {
-      this.arrayCsvContent.shift();
+      localArrayCsvContent.shift();
     }
-    console.log(this.arrayCsvContent);
 
+    if (this.typeOfFile === 1) {
+      this.dataStundets = [];
 
+      localArrayCsvContent.forEach(element => {
+        const oneRow = element.split(',');
+        this.dataStundets.push(
+          {
+            controlNumber: oneRow[0].toUpperCase(), fullName: oneRow[1].toUpperCase(),
+            career: oneRow[2].toUpperCase(), nss: oneRow[3].toUpperCase()
+          }
+        );
+      });
+    } else {
+      this.dataEmployees = [];
 
-    this.arrayCsvContent.forEach(element => {
-      const oneRow = element.split(',');
-      this.dataStundets.push({ controlNumber: oneRow[0], fullName: oneRow[1], career: oneRow[2], nss: oneRow[3] });
-    });
+      localArrayCsvContent.forEach(element => {
+        const oneRow = element.split(',');
+        this.dataEmployees.push(
+          {
+            rfc: oneRow[0].toUpperCase(),
+            name: {
+              firstName: oneRow[1].toUpperCase(),
+              lastName: oneRow[2].toUpperCase(),
+              fullName: oneRow[1].toUpperCase() + ' ' + oneRow[2].toUpperCase()
+            },
+            area: oneRow[3].toUpperCase(),
+            position: oneRow[4].toUpperCase()
+          }
+        );
+      });
+
+    }
+
     this.showInfo = true;
 
-    console.log(this.dataStundets.length);
+  }
+
+  sendData(type: number) {
+    if (type === 1) {
+      
+    }
+  }
+
+  beforeChange(event) {
+    console.log(event);
+    this.showControls = false;
+    this.showInfo = false;
+    this.fileName = 'Seleccione un archivo';
   }
 
 
