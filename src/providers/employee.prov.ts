@@ -28,14 +28,14 @@ export class EmployeeProvider {
             .pipe(map(students => students.json()));
     }
 
-    getStudentById(_id){
+    getStudentById(_id) {
         return this.api.get(`employee/${_id}`)
             .pipe(map(student => student.json()));
     }
 
     getStudentByControlNumber(controlnumber) {
         console.log(controlnumber);
-        return this.api.post(`student/login`,controlnumber)
+        return this.api.post(`student/login`, controlnumber)
             .pipe(map(student => student.json()));
     }
 
