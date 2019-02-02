@@ -81,7 +81,7 @@ export class StudentPageComponent implements OnInit {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
 
-    if (this.cookiesServ.getData().user.role !== 1) {
+    if (this.cookiesServ.getData().user.role !== 1 && this.cookiesServ.getData().user.role !== 0) {
       this.router.navigate(['/']);
     }
 

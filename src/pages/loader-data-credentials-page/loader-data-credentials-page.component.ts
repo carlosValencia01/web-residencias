@@ -4,6 +4,8 @@ import { NotificationsServices } from '../../services/notifications.service';
 
 import { StudentProvider } from '../../providers/student.prov';
 import { EmployeeProvider } from '../../providers/employee.prov';
+import { CookiesService } from 'src/services/cookie.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-loader-data-credentials-page',
@@ -52,8 +54,15 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
   constructor(
     private studenProv: StudentProvider,
     private employeerProv: EmployeeProvider,
-    private notificationServ: NotificationsServices
-  ) { }
+    private notificationServ: NotificationsServices,
+    private router: Router,
+    private cookiesServ: CookiesService
+  ) {
+    if (
+      this.cookiesServ.getData().user.role !== 0 ) {
+      this.router.navigate(['/']);
+    }
+   }
 
   ngOnInit() {
   }
@@ -116,7 +125,7 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
   analyzeArray() {
     const localArrayCsvContent = this.arrayCsvContent.slice(0);
 
-    console.log(localArrayCsvContent);
+    // console.log(localArrayCsvContent);
 
 
     if (this.radioButtonResponse === 1) {
@@ -185,7 +194,7 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
   }
 
   beforeChange(event) {
-    console.log(event);
+    // console.log(event);
     this.showControls = false;
     this.showInfo = false;
     this.fileName = 'Seleccione un archivo';

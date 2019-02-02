@@ -86,7 +86,8 @@ export class CardEmployeePageComponent implements OnInit {
     private cookiesServ: CookiesService
   ) {
 
-    if (this.cookiesServ.getData().user.role !== 1 && this.cookiesServ.getData().user.role !== 4) {
+    if (this.cookiesServ.getData().user.role !== 1 &&
+      this.cookiesServ.getData().user.role !== 0 && this.cookiesServ.getData().user.role !== 4) {
       this.router.navigate(['/']);
     }
 
