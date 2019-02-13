@@ -220,6 +220,9 @@ export class StudentPageComponent implements OnInit {
 
       case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
         return 'MAESTRÍA EN TEC. DE LA INFORMACIÓN';
+      
+      case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+        return 'MAEST. EN CIENCIAS DE ALIMENTOS';
 
       default:
         return 'ING. EN TEC. DE LA INF. Y COM.';
