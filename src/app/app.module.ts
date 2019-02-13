@@ -16,8 +16,8 @@ import { Routes, RouterModule } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { ImageCropperModule } from 'ngx-image-cropper';
-import { AngularFontAwesomeModule } from "angular-font-awesome";
-import {HotkeyModule} from 'angular2-hotkeys';
+import { AngularFontAwesomeModule } from 'angular-font-awesome';
+import { HotkeyModule } from 'angular2-hotkeys';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -25,6 +25,8 @@ import { HomePageComponent } from '../pages/home-page/home-page.component';
 import { StudentPageComponent } from '../pages/student-page/student-page.component';
 import { OneStudentPageComponent } from '../pages/one-student-page/one-student-page.component';
 import { CardEmployeePageComponent } from '../pages/card-employee-page/card-employee-page.component';
+import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credentials-page/loader-data-credentials-page.component';
+
 
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
@@ -49,6 +51,7 @@ const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
   { path: 'employeeCard', component: CardEmployeePageComponent, pathMatch: 'full' },
+  { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
 ];
 
@@ -62,7 +65,8 @@ const appRouters: Routes = [
     HomeHeaderComponent,
     OneStudentPageComponent,
     LoaderComponent,
-    CardEmployeePageComponent
+    CardEmployeePageComponent,
+    LoaderDataCredentialsPageComponent
   ],
   imports: [
     BrowserModule,

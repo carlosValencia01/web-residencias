@@ -21,9 +21,9 @@ import { Router } from '@angular/router';
 })
 export class CardEmployeePageComponent implements OnInit {
 
-  @ViewChild("searchinput") searchInput: ElementRef;
+  @ViewChild('searchinput') searchInput: ElementRef;
 
-  loading: boolean = false;
+  loading = false;
   data: Array<any>;
   search: any;
   showTable = false;
@@ -83,11 +83,13 @@ export class CardEmployeePageComponent implements OnInit {
     private notificationServ: NotificationsServices,
     private hotkeysService: HotkeysService,
     private router: Router,
-    private cookiesServ:CookiesService
+    private cookiesServ: CookiesService
   ) {
 
-    if(this.cookiesServ.getData().user.role!==1&&this.cookiesServ.getData().user.role!==4)
+    if (this.cookiesServ.getData().user.role !== 1 &&
+      this.cookiesServ.getData().user.role !== 0 && this.cookiesServ.getData().user.role !== 4) {
       this.router.navigate(['/']);
+    }
 
     this.getBase64ForStaticImages();
     this.cleanCurrentEmployee();
@@ -149,7 +151,7 @@ export class CardEmployeePageComponent implements OnInit {
     this.isNewEmployee = true;
     this.hiddenFormDiv();
     this.cleanCurrentEmployee();
-    this.photoEmployee= 'assets/imgs/employeeAvatar.png';
+    this.photoEmployee = 'assets/imgs/employeeAvatar.png';
     this.showImg = true;
     this.imgForSend = false;
     this.showForm = true;
@@ -159,36 +161,36 @@ export class CardEmployeePageComponent implements OnInit {
   newEmployeeData() {
     this.loading = true;
     // if (!this.formValidation()) {
-      const data = {
-        rfc: this.formEmployee.get('RFCInput').value.toUpperCase(),
-        name: {
-          firstName: this.formEmployee.get('firstNameInput').value.toUpperCase(),
-          lastName: this.formEmployee.get('lastNameInput').value.toUpperCase(),
-          fullName: (this.formEmployee.get('firstNameInput').value + " " + this.formEmployee.get('lastNameInput').value).toUpperCase()
-        },
-        position: this.formEmployee.get('positionInput').value.toUpperCase(),
-        area: this.formEmployee.get('areaInput').value.toUpperCase()
-      };
+    const data = {
+      rfc: this.formEmployee.get('RFCInput').value.toUpperCase(),
+      name: {
+        firstName: this.formEmployee.get('firstNameInput').value.toUpperCase(),
+        lastName: this.formEmployee.get('lastNameInput').value.toUpperCase(),
+        fullName: (this.formEmployee.get('firstNameInput').value + ' ' + this.formEmployee.get('lastNameInput').value).toUpperCase()
+      },
+      position: this.formEmployee.get('positionInput').value.toUpperCase(),
+      area: this.formEmployee.get('areaInput').value.toUpperCase()
+    };
 
-      this.employeeProv.newEmployee(data).subscribe(res => {
-        if (this.imgForSend) {
-          // console.log('Hay una foto que enviar');
-          this.uploadFile(this.currentEmployee._id, false);
-        } else {
-          // console.log('No hay foto que enviar');
-          this.showForm = true;
-          // this.searchEmployee(true);
-          this.notificationServ.showNotification(1, 'Trabajador agregado correctamente', '');
-        }
-        const employee: any = res;
+    this.employeeProv.newEmployee(data).subscribe(res => {
+      if (this.imgForSend) {
+        // console.log('Hay una foto que enviar');
+        this.uploadFile(this.currentEmployee._id, false);
+      } else {
+        // console.log('No hay foto que enviar');
+        this.showForm = true;
+        // this.searchEmployee(true);
+        this.notificationServ.showNotification(1, 'Trabajador agregado correctamente', '');
+      }
+      const employee: any = res;
 
-        this.currentEmployee = employee;
-      }, error => {
-        // console.log("ERROR");
-        // console.log(error._body);
-        this.loading = false;
-        this.notificationServ.showNotification(2, "Ocurrió un error al guardar, intente nuevamente", '');
-      }, () => this.loading = false);
+      this.currentEmployee = employee;
+    }, error => {
+      // console.log("ERROR");
+      // console.log(error._body);
+      this.loading = false;
+      this.notificationServ.showNotification(2, 'Ocurrió un error al guardar, intente nuevamente', '');
+    }, () => this.loading = false);
     // }
   }
 
@@ -292,7 +294,7 @@ export class CardEmployeePageComponent implements OnInit {
             // // Numero de control con codigo de barra
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(8);
-            doc.text(52, 45.5, doc.splitTextToSize("RFC: "+employee.rfc, 35));
+            doc.text(52, 45.5, doc.splitTextToSize('RFC: ' + employee.rfc, 35));
             window.open(doc.output('bloburl'), '_blank');
           });
         }, false);
@@ -313,8 +315,9 @@ export class CardEmployeePageComponent implements OnInit {
   searchEmployee(showForm) {
     this.showForm = showForm;
     this.loading = true;
-    if (this.search)
+    if (this.search) {
       this.search = this.search.toUpperCase();
+    }
     this.employeeProv.searchEmployeeRFC(this.search).subscribe(res => {
       // console.log('res', res);
       this.data = res.employees;
@@ -368,10 +371,11 @@ export class CardEmployeePageComponent implements OnInit {
     this.isNewEmployee = false;
     if (!this.formValidation()) {
       this.currentEmployee.rfc = this.formEmployee.get('RFCInput').value.toUpperCase();
-      this.currentEmployee.name.firstName = this.formEmployee.get('firstNameInput').value.toUpperCase();;
-      this.currentEmployee.name.lastName = this.formEmployee.get('lastNameInput').value.toUpperCase();;
-      this.currentEmployee.name.fullName = (this.formEmployee.get('firstNameInput').value + " " + this.formEmployee.get('lastNameInput').value).toUpperCase();;
-      this.currentEmployee.position = this.formEmployee.get('positionInput').value.toUpperCase();;
+      this.currentEmployee.name.firstName = this.formEmployee.get('firstNameInput').value.toUpperCase();
+      this.currentEmployee.name.lastName = this.formEmployee.get('lastNameInput').value.toUpperCase();
+      // tslint:disable-next-line:max-line-length
+      this.currentEmployee.name.fullName = (this.formEmployee.get('firstNameInput').value + ' ' + this.formEmployee.get('lastNameInput').value).toUpperCase();
+      this.currentEmployee.position = this.formEmployee.get('positionInput').value.toUpperCase();
       this.currentEmployee.area = this.formEmployee.get('areaInput').value.toUpperCase();
 
       this.loading = true;
@@ -382,8 +386,9 @@ export class CardEmployeePageComponent implements OnInit {
         } else {
           // console.log('No hay foto que enviar');
           this.showForm = true;
-          if (this.search)
+          if (this.search) {
             this.searchEmployee(true);
+          }
           this.notificationServ.showNotification(1, 'Trabajador actualizado correctamente', '');
         }
       }, error => {
@@ -476,8 +481,9 @@ export class CardEmployeePageComponent implements OnInit {
 
       this.imgForSend = false;
       this.showForm = showForm;
-      if (this.search)
+      if (this.search) {
         this.searchEmployee(true);
+      }
       this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
       this.haveImage = true;
     }, error => {

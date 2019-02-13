@@ -28,6 +28,7 @@
     "angular2-datatable": "^0.6.0",
     "angular2-hotkeys": "^2.1.4",
     "angular2-notifications": "^1.0.4",
+    "angular5-csv": "^0.2.11",
     "bootstrap": "^4.0.0",
     "core-js": "^2.5.4",
     "font-awesome": "^4.7.0",

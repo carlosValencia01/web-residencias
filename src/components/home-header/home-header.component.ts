@@ -19,18 +19,23 @@ export class HomeHeaderComponent implements OnInit {
   ngOnInit() {
     console.log(this.router.url); //  /routename
 
+    console.log(this.cookiesServ.getData().user.role);
+
     switch (this.cookiesServ.getData().user.role) {
+      case 0:
+        this.role = 'administration';
+        break;
       case 1:
-        this.role = "secretary";
+        this.role = 'secretary';
         break;
       case 2:
-        this.role = "student";
+        this.role = 'student';
         break;
       case 3:
-        this.role = "employee";
+        this.role = 'employee';
         break;
       case 4:
-      this.role = "rechumanos"
+      this.role = 'rechumanos';
       break;
     }
   }
