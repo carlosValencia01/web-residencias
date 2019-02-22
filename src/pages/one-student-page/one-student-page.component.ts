@@ -122,7 +122,7 @@ export class OneStudentPageComponent implements OnInit {
 
   }
 
-  generatePDF() { // 'p', 'mm', [68,20]
+  /*generatePDF() { // 'p', 'mm', [68,20]
 
     const student = this.currentStudent;
 
@@ -187,7 +187,7 @@ export class OneStudentPageComponent implements OnInit {
     } else {
       this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
     }
-  }
+  }*/
 
   // Cropper Image ***************************************************************************************************//#endregion
 
