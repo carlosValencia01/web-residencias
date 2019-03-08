@@ -34,7 +34,7 @@
       <span class="float-right close">
         &nbsp;&nbsp;
       </span>
-      <span *ngIf="haveImage" class="float-right close" placement="top" ngbTooltip="Imprimir">
+      <span *ngIf="haveImage && currentStudent.nss" class="float-right close" placement="top" ngbTooltip="Imprimir">
         <fa name="print" (click)="generatePDF(currentStudent)" style="color:white"></fa>
       </span>
       <strong>Datos del Alumno</strong>
@@ -174,7 +174,7 @@
         <span class="float-right close">
           &nbsp;&nbsp;
         </span>
-        <span *ngIf="haveImage" class="float-right close" placement="top" ngbTooltip="Imprimir">
+        <span *ngIf="haveImage && currentStudent.nss" class="float-right close" placement="top" ngbTooltip="Imprimir">
           <fa name="print" (click)="generatePDF(currentStudent)" style="color:white"></fa>
         </span>
       </div>

@@ -64,6 +64,7 @@ export class StudentPageComponent implements OnInit {
   croppedImageBase64: any = '';
   imgForSend: boolean;
   closeResult: string;
+  haveSubjects: boolean;
 
   selectedFile: File = null;
 
@@ -162,25 +163,45 @@ export class StudentPageComponent implements OnInit {
 
       this.currentStudent = student;
     }, error => {
-      console.log(error);
+      // console.log(error);
       this.loading = false;
       this.notificationServ.showNotification(2, 'Ocurrió un error al guardar, intente nuevamente', '');
     }, () => this.loading = false);
   }
 
   showFormValues(student) {
-    this.isNewStudent = false;
-    this.showImg = false;
-    this.currentStudent = JSON.parse(JSON.stringify(student));
-    this.imgForSend = false;
 
-    this.getImageFromService(student._id);
+    this.studentProv.verifyStatus(student.controlNumber)
+      .subscribe(res => {
+        // console.log(res);
+        this.haveSubjects = res.status === 1 ? true : false;
+        if (this.haveSubjects) {
+          this.isNewStudent = false;
+          this.showImg = false;
+          this.currentStudent = JSON.parse(JSON.stringify(student));
+          this.imgForSend = false;
 
-    this.formStudent.get('fullNameInput').setValue(student.fullName);
-    this.formStudent.get('numberControlInput').setValue(student.controlNumber);
-    this.formStudent.get('nssInput').setValue(student.nss);
+          this.getImageFromService(student._id);
 
-    this.showForm = true;
+          this.formStudent.get('fullNameInput').setValue(student.fullName);
+          this.formStudent.get('numberControlInput').setValue(student.controlNumber);
+          this.formStudent.get('nssInput').setValue(student.nss);
+
+          this.showForm = true;
+        } else {
+          this.notificationServ.showNotification(2, 'No tiene materias cargadas', '');
+        }
+      }, error => {
+        // console.log(error.status);
+        if (error.status === 401) {
+          this.notificationServ.showNotification(2, 'No tiene materias cargadas', '');
+        } else {
+          this.notificationServ.showNotification(2, 'Ocurrió un error, intente nuevamente', '');
+        }
+        this.loading = false
+      }, () => this.loading = false);
+
+
   }
 
   // Generacion de PDF *************************************************************************************//#endregion
@@ -221,7 +242,7 @@ export class StudentPageComponent implements OnInit {
 
       case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
         return 'MAESTRÍA EN TEC. DE LA INFORMACIÓN';
-      
+
       case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
         return 'MAEST. EN CIENCIAS DE ALIMENTOS';
 
@@ -232,59 +253,88 @@ export class StudentPageComponent implements OnInit {
   }
 
   generatePDF(student) { // 'p', 'mm', [68,20]
-    // console.log(student);
-    if (student.filename) {
+
+    if (student.nss) {
       this.loading = true;
-      this.studentProv.getImageTest(student._id).subscribe(data => {
 
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          // this.imageToShow = reader.result;
+      // console.log(student);
+      this.studentProv.verifyStatus(student.controlNumber)
+        .subscribe(res => {
+          // console.log(res);
+          this.haveSubjects = res.status === 1 ? true : false;
+          if (this.haveSubjects) {
+            if (student.filename) {
+              this.loading = true;
+              this.studentProv.getImageTest(student._id).subscribe(data => {
 
-          this.imageToBase64Serv.getBase64(reader.result).then(res3 => {
-            this.imageProfileTest = res3;
-            // console.log(this.imageProfileTest);
+                const reader = new FileReader();
+                reader.addEventListener('load', () => {
+                  // this.imageToShow = reader.result;
 
-            const doc = new jsPDF({
-              unit: 'mm',
-              format: [88.6, 56],
-              orientation: 'landscape'
-            });
-            // cara frontal de la credencial
-            doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-            doc.addImage(this.imageProfileTest, 'JPEG', 3.6, 7.1, 25.8, 31);
+                  this.imageToBase64Serv.getBase64(reader.result).then(res3 => {
+                    this.imageProfileTest = res3;
+                    // console.log(this.imageProfileTest);
 
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(7);
-            doc.setFont('helvetica');
-            doc.setFontType('bold');
-            doc.text(49, 30.75, doc.splitTextToSize(student.fullName, 35));
-            doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
-            doc.text(49, 46.5, doc.splitTextToSize(student.nss, 35));
+                    const doc = new jsPDF({
+                      unit: 'mm',
+                      format: [88.6, 56],
+                      orientation: 'landscape'
+                    });
+                    // cara frontal de la credencial
+                    doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
+                    doc.addImage(this.imageProfileTest, 'JPEG', 3.6, 7.1, 25.8, 31);
 
-            doc.addPage();
-            // // cara trasera de la credencial
-            doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(7);
+                    doc.setFont('helvetica');
+                    doc.setFontType('bold');
+                    doc.text(49, 30.75, doc.splitTextToSize(student.fullName, 35));
+                    doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
+                    doc.text(49, 46.5, doc.splitTextToSize(student.nss, 35));
 
-            // // foto del estudiante
+                    doc.addPage();
+                    // // cara trasera de la credencial
+                    doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
 
-            // // Numero de control con codigo de barra
-            doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46.8, 39.2, 33, 12);
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(8);
-            doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
-            window.open(doc.output('bloburl'), '_blank');
-          });
-        }, false);
-        if (data) {
-          reader.readAsDataURL(data);
-        }
-      }, error => {
-        console.log(error);
-      }, () => this.loading = false);
+                    // // foto del estudiante
+
+                    // // Numero de control con codigo de barra
+                    doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46.8, 39.2, 33, 12);
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(8);
+                    doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
+                    window.open(doc.output('bloburl'), '_blank');
+                  });
+                }, false);
+                if (data) {
+                  reader.readAsDataURL(data);
+                }
+              }, error => {
+                // console.log(error);
+              }, () => this.loading = false);
+            } else {
+              this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
+            }
+          } else {
+            this.notificationServ.showNotification(2, 'No tiene materias cargadas', '');
+          }
+        }, error => {
+          // console.log(error.status);
+          if (error.status === 401) {
+            this.notificationServ.showNotification(2, 'No tiene materias cargadas', '');
+          } else {
+            this.notificationServ.showNotification(2, 'Ocurrió un error, intente nuevamente', '');
+          }
+          this.loading = false
+        }, () => this.loading = false);
+
+      // console.log(student);
     } else {
-      this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
+      this.notificationServ.showNotification(2, 'No tiene NSS asignado', '');
     }
+
+
+
 
   }
 
@@ -306,7 +356,7 @@ export class StudentPageComponent implements OnInit {
       }
 
     }, err => {
-      console.log('err', err);
+      // console.log('err', err);
     }, () => this.loading = false);
   }
 
@@ -390,7 +440,7 @@ export class StudentPageComponent implements OnInit {
     // show message
   }
 
-    /*Se lanza cuando se cambia la foto*/
+  /*Se lanza cuando se cambia la foto*/
   fileChangeEvent(event: any, content) {
     if (event) {
       this.selectedFile = <File>event.target.files[0];
@@ -484,7 +534,7 @@ export class StudentPageComponent implements OnInit {
       this.createImageFromBlob(data);
       this.haveImage = true;
     }, error => {
-      console.log(error);
+      // console.log(error);
       if (error.status === 404) {
         // console.log('No tiene imagen');
         this.haveImage = false;

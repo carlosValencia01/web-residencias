@@ -50,6 +50,7 @@ export class OneStudentPageComponent implements OnInit {
   croppedImageBase64: any = '';
   imgForSend: boolean;
   closeResult: string;
+  haveSubjects: boolean;
 
   selectedFile: File = null;
 
@@ -70,6 +71,8 @@ export class OneStudentPageComponent implements OnInit {
 
   ngOnInit() {
     const _id = this.cookiesServ.getData().user._id;
+    // const nc = this.cookiesServ.getData().user.email;
+    // console.log(nc);
     this.loading=true;
     this.studentProv.getStudentById(_id)
       .subscribe(res => {

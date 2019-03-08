@@ -76,7 +76,11 @@ export class StudentProvider {
 
     updatePhoto(id, fd) {
         return this.http.put(`${this.api.getURL()}/student/image/${id}`, fd);
+    }
 
+    verifyStatus(nc) {
+        return this.api.get(`student/verifystatus/${nc}`)
+            .pipe(map(student => student.json()));
     }
 
 
