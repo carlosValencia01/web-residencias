@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CookiesService } from '../services/cookie.service';
 import { UserProvider } from '../providers/user.prov';
 
@@ -12,6 +12,12 @@ export class AppComponent {
 
 
   activeSession: boolean;
+
+  opened = true;
+  mode = 'push';
+  smallScreen: boolean;
+  sizeBoolean: boolean;
+  closeOnClickOutside: boolean;
 
   optionsNotifications = {
     position: ['top', 'right'],
@@ -28,6 +34,43 @@ export class AppComponent {
     private cookieServ: CookiesService,
   ) {
     this.checkLogin();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.configureSideNav();
+  }
+
+  // tslint:disable-next-line:use-life-cycle-interface
+  ngOnInit() {
+    this.configureSideNav();
+  }
+
+  configureSideNav() {
+    this.smallScreen = window.innerWidth < 1300 ? true : false;
+    this.closeOnClickOutside = this.smallScreen ? true : false;
+    this.opened = this.smallScreen ? false : true;
+    this.sizeBoolean = this.smallScreen ? true : false;
+    this.mode = this.smallScreen ? 'over' : 'push';
+  }
+
+  onMenu() {
+    if (this.opened) {
+      this.opened = false;
+      this.sizeBoolean = true;
+    } else {
+      this.opened = true;
+      if (!this.smallScreen) {
+        this.sizeBoolean = false;
+      }
+    }
+  }
+
+  closeMenu() {
+    // console.log('Cerrare el menu si esta en small');
+    if (this.smallScreen) {
+      this.opened = false;
+    }
   }
 
   checkLogin() {

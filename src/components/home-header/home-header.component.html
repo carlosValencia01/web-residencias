@@ -12,17 +12,13 @@
 </div>
 
 <ul class="top">
-  <li><a routerLink="" class="nav-link">Inicio</a></li>
 
-
-  
-  <li><a *ngIf="role==='student'" routerLink="oneStudentPage">Mi Credencial</a></li>
-  <li><a *ngIf="role==='secretary' || role==='administration'" routerLink="student">Alumnos</a></li>
-  <li><a *ngIf="role==='secretary'|| role==='rechumanos' || role==='administration'" routerLink="employeeCard">Trabajadores</a></li>
-
-
-  <li><a *ngIf="role==='administration'" routerLink="loaderDataCredentials">Importar datos</a></li>
-
+  <li>
+    <a class="navbar-brand" (click)="onMenu()">
+      <img src="assets/icons/menu.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+      Menu
+    </a>
+  </li>
 
   <li style="float:right" (click)="logOut()"><a>Cerrar sesión</a></li>
-</ul> 
+</ul>

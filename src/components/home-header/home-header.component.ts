@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CookiesService } from '../../services/cookie.service';
 import { Router } from '@angular/router';
 
@@ -10,6 +10,10 @@ import { Router } from '@angular/router';
 export class HomeHeaderComponent implements OnInit {
 
   public role: string;
+  // tslint:disable-next-line:no-output-rename
+  @Output('onMenu') menuClicked = new EventEmitter();
+  // tslint:disable-next-line:no-input-rename
+  @Input('size') size;
 
   constructor(
     private cookiesServ: CookiesService,
@@ -43,6 +47,10 @@ export class HomeHeaderComponent implements OnInit {
   logOut() {
     this.cookiesServ.deleteCookie();
     window.location.replace('/');
+  }
+
+  onMenu() {
+    this.menuClicked.emit();
   }
 
 }

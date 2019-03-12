@@ -18,6 +18,7 @@ import { SimpleNotificationsModule } from 'angular2-notifications';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { HotkeyModule } from 'angular2-hotkeys';
+import { SidebarModule } from 'ng-sidebar';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -31,6 +32,8 @@ import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credent
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
 import { HomeHeaderComponent } from '../components/home-header/home-header.component';
+import { SidebarContentComponent } from '../components/sidebar-content/sidebar-content.component';
+
 
 
 // Services
@@ -66,7 +69,8 @@ const appRouters: Routes = [
     OneStudentPageComponent,
     LoaderComponent,
     CardEmployeePageComponent,
-    LoaderDataCredentialsPageComponent
+    LoaderDataCredentialsPageComponent,
+    SidebarContentComponent
   ],
   imports: [
     BrowserModule,
@@ -81,7 +85,8 @@ const appRouters: Routes = [
     RouterModule.forRoot(appRouters),
     SimpleNotificationsModule.forRoot(),
     ImageCropperModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    SidebarModule.forRoot()
   ],
   providers: [
     CookieService,
