@@ -57,6 +57,7 @@ export class SidebarContentComponent implements OnInit {
 
       default:
         this.menuClicked.emit();
+        this.showCredentialsItems = false;
         break;
     }
 
