@@ -213,7 +213,7 @@ export class StudentPageComponent implements OnInit {
       this.frontBase64 = res1;
     });
 
-    this.imageToBase64Serv.getBase64('assets/imgs/back.jpg').then(res2 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/back2.jpg').then(res2 => {
       this.backBase64 = res2;
     });
   }
