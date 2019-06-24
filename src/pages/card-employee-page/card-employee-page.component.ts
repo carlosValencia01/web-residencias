@@ -216,11 +216,11 @@ export class CardEmployeePageComponent implements OnInit {
   getBase64ForStaticImages() {
     // console.log(this.employeeProv.getApiURL());
 
-    this.imageToBase64Serv.getBase64('assets/imgs/employeeFront.jpg').then(res1 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/employeeFront1.jpg').then(res1 => {
       this.frontBase64 = res1;
     });
 
-    this.imageToBase64Serv.getBase64('assets/imgs/employeeBack.jpg').then(res2 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/employeeBack2.jpg').then(res2 => {
       this.backBase64 = res2;
     });
 
@@ -230,28 +230,6 @@ export class CardEmployeePageComponent implements OnInit {
     const canvas = document.createElement('canvas');
     JsBarcode(canvas, text, { format: 'CODE128', displayValue: false });
     return canvas.toDataURL('image/png');
-  }
-
-  reduceCareerString(career: string): string {
-    if (career.length < 33) {
-      return career;
-    }
-
-    switch (career) {
-      case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
-        return 'DOC. EN CIENCIAS DE ALIMENTOS';
-
-      case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
-        return 'ING. EN GESTION EMPRESARIAL';
-
-
-      case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
-        return 'ING. EN SISTEMAS COMPUTACIONALES';
-
-      default:
-        return 'ING. EN TEC. DE LA INF. Y COM.';
-    }
-
   }
 
   generatePDF(employee) { // 'p', 'mm', [68,20]
@@ -277,13 +255,13 @@ export class CardEmployeePageComponent implements OnInit {
             doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
             doc.addImage(this.imageProfileTest, 'JPEG', 3.6, 7.1, 25.8, 31);
 
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(7);
+            doc.setTextColor(27, 57, 106);
+            doc.setFontSize(8);
             doc.setFont('helvetica');
             doc.setFontType('bold');
-            doc.text(49, 30.75, doc.splitTextToSize(employee.name.fullName, 35));
-            doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(employee.area), 35));
-            doc.text(49, 46.5, doc.splitTextToSize(employee.position, 35));
+            doc.text(49, 23.9, doc.splitTextToSize(employee.name.fullName, 35));
+            doc.text(49, 32.1, doc.splitTextToSize(employee.area, 50));
+            doc.text(49, 40.6, doc.splitTextToSize(employee.position, 35));
 
             doc.addPage();
             // // cara trasera de la credencial
@@ -292,9 +270,9 @@ export class CardEmployeePageComponent implements OnInit {
             // // foto del estudiante
 
             // // Numero de control con codigo de barra
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(8);
-            doc.text(52, 45.5, doc.splitTextToSize('RFC: ' + employee.rfc, 35));
+            // doc.setTextColor(255, 255, 255);
+            // doc.setFontSize(8);
+            // doc.text(52, 45.5, doc.splitTextToSize('RFC: ' + employee.rfc, 35));
             window.open(doc.output('bloburl'), '_blank');
           });
         }, false);
