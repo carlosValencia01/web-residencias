@@ -260,7 +260,7 @@ export class CardEmployeePageComponent implements OnInit {
             doc.setFont('helvetica');
             doc.setFontType('bold');
             doc.text(49, 23.9, doc.splitTextToSize(employee.name.fullName, 35));
-            doc.text(49, 32.1, doc.splitTextToSize(employee.area, 50));
+            doc.text(49, 32.1, doc.splitTextToSize(employee.area, 35));
             doc.text(49, 40.6, doc.splitTextToSize(employee.position, 35));
 
             doc.addPage();
