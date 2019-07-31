@@ -42,6 +42,12 @@
         </div>
 
       </li>
+      <li>
+        <button (click)="closeMenu()" *ngIf="role==='secretary' || role==='administration'" type="button" class="menu-item" routerLink="inscriptions">
+          <img class="menu-item-img" src="assets/icons/student.svg" alt="">
+          <p class="menu-item-title">Inscripciones</p>
+        </button>
+      </li>
     </ul>
   </div>
 </div>
