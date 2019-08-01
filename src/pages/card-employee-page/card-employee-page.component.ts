@@ -259,9 +259,9 @@ export class CardEmployeePageComponent implements OnInit {
             doc.setFontSize(8);
             doc.setFont('helvetica');
             doc.setFontType('bold');
-            doc.text(49, 23.9, doc.splitTextToSize(employee.name.fullName, 35));
-            doc.text(49, 32.1, doc.splitTextToSize(employee.area, 35));
-            doc.text(49, 40.6, doc.splitTextToSize(employee.position, 35));
+            doc.text(49, 23.9, doc.splitTextToSize(employee.name.fullName, 38));
+            doc.text(49, 32.1, doc.splitTextToSize(employee.area, 38));
+            doc.text(49, 40.6, doc.splitTextToSize(employee.position, 38));
 
             doc.addPage();
             // // cara trasera de la credencial
