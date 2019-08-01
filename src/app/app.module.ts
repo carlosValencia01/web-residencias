@@ -27,6 +27,7 @@ import { StudentPageComponent } from '../pages/student-page/student-page.compone
 import { OneStudentPageComponent } from '../pages/one-student-page/one-student-page.component';
 import { CardEmployeePageComponent } from '../pages/card-employee-page/card-employee-page.component';
 import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credentials-page/loader-data-credentials-page.component';
+import { InscriptionsPageComponent } from '../pages/inscriptions-page/inscriptions-page.component';
 
 
 // Components
@@ -47,6 +48,7 @@ import { Api } from '../providers/api.prov';
 import { UserProvider } from '../providers/user.prov';
 import { StudentProvider } from '../providers/student.prov';
 import { EmployeeProvider } from '../providers/employee.prov';
+import { InscriptionsProvider } from '../providers/inscriptions.prov';
 import { LoaderComponent } from '../components/shared/loader/loader.component';
 
 
@@ -56,6 +58,7 @@ const appRouters: Routes = [
   { path: 'employeeCard', component: CardEmployeePageComponent, pathMatch: 'full' },
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
+  { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -70,7 +73,8 @@ const appRouters: Routes = [
     LoaderComponent,
     CardEmployeePageComponent,
     LoaderDataCredentialsPageComponent,
-    SidebarContentComponent
+    SidebarContentComponent,
+    InscriptionsPageComponent
   ],
   imports: [
     BrowserModule,
@@ -97,7 +101,8 @@ const appRouters: Routes = [
     Api,
     UserProvider,
     StudentProvider,
-    EmployeeProvider
+    EmployeeProvider,
+    InscriptionsProvider
   ],
   bootstrap: [AppComponent]
 })

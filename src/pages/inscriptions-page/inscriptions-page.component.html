@@ -1,0 +1,33 @@
+<ng-template #content>
+
+</ng-template>
+
+<div class="content-general">
+  <div class="card card-shadow">
+    <div class="card-header text-white bg-secondary">
+      <strong>Enviar infografía</strong>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="formEmail" (ngSubmit)="sendInfography()">
+          <div class="row">
+            <div class="col-10">
+              <div class="form-group">
+                <input #emailinput formControlName="emailInput" type="email" class="form-control" placeholder="Correo institucional"
+                [ngClass]="{'is-invalid': (formEmail.get('emailInput').errors && formEmail.get('emailInput').dirty) || errorEmail}">
+                <div *ngIf="(formEmail.get('emailInput').errors && formEmail.get('emailInput').dirty) || errorForm">
+                  <div class="invalid-feedback" *ngIf="formEmail.get('emailInput').hasError('required') || errorEmail">
+                    Campo obligatorio
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-2">
+              <div class="form-group">
+                <button type="submit" class="form-control">Enviar</button>
+              </div>
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
