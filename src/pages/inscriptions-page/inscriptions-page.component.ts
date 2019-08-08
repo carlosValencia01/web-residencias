@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
+
 import { InscriptionsProvider } from '../../providers/inscriptions.prov';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NotificationsServices } from '../../services/notifications.service';
 
 @Component({
   selector: 'app-inscriptions-page',
@@ -14,50 +16,54 @@ export class InscriptionsPageComponent implements OnInit {
   emails: Array<string>;
   subject: string;
   formEmail: FormGroup;
-  errorEmail: boolean = false;
-  errorForm: boolean = false;
+  errorEmail = false;
+  errorForm = false;
 
   constructor(
     private inscriptionsProv: InscriptionsProvider,
-    private formBuilder: FormBuilder,
+    private notificationsServices: NotificationsServices,
   ) { }
 
   ngOnInit() {
     this.emails = [];
-    this.subject = "Proceso de inscripción";
+    this.subject = 'Proceso de inscripción';
     this.initializeForm();
   }
 
   initializeForm() {
-    this.formEmail = this.formBuilder.group({
-      'emailInput': ['', [Validators.required, Validators.email]]
+    this.formEmail = new FormGroup({
+      'emailInput': new FormControl({ value: null, disabled: false }, [Validators.required, Validators.email])
     });
     this.emailInput.nativeElement.focus();
   }
 
   formValidation(): boolean {
-    let invalid = false;
+    let valid = true;
     this.errorForm = false;
     this.errorEmail = false;
     if (this.formEmail.invalid) {
       this.errorForm = true;
       this.errorEmail = true;
-      invalid = true;
+      valid = false;
     }
-    return invalid;
+    return valid;
   }
 
   sendInfography() {
-    if (!this.formValidation()) {
-      let email = this.formEmail.get('emailInput').value;
+    if (this.formValidation() && this.emailInput.nativeElement.value) {
+      const email = this.formEmail.get('emailInput').value;
       this.inscriptionsProv.sendInfography(email.trim(), this.subject)
       .subscribe((res) => {
         console.log(res);
         if (res.code === 200) {
-          this.formEmail.setValue({'emailInput': ""});
+          this.notificationsServices.showNotification(1, 'Envío de correo', 'El correo ha sido enviado con éxito.');
+          // this.formEmail.setValue({'emailInput': ''});
           this.emailInput.nativeElement.focus();
+          this.emailInput.nativeElement.value = '';
+          this.errorForm = false;
+          this.errorEmail = false;
         } else {
-          alert("Ha ocurrido un error al envíar el correo, inténtalo de nuevo");
+          this.notificationsServices.showNotification(2, 'Envío de correo', 'Ha ocurrido un error al envíar el correo, inténtalo de nuevo');
           this.emailInput.nativeElement.focus();
         }
       });
