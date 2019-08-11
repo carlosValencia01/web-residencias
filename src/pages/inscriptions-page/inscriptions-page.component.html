@@ -5,25 +5,39 @@
 <div class="content-general">
   <div class="card card-shadow">
     <div class="card-header text-white bg-secondary">
-      <strong>Proceso de inscripción</strong>
+      <strong>Envío de correos</strong>
     </div>
     <div class="card-body">
-      <form [formGroup]="formEmail" (ngSubmit)="sendInfography()">
+      <form [formGroup]="formEmail" (ngSubmit)="sendEmail()">
           <div class="row">
-            <div class="col-10">
+            <div class="col-sm-7 col-md-7">
               <div class="form-group">
-                <input #emailinput formControlName="emailInput" type="email" class="form-control" placeholder="Correo institucional"
-                [ngClass]="{'is-invalid': (formEmail.get('emailInput').errors && formEmail.get('emailInput').dirty) || errorEmail}">
-                <div *ngIf="(formEmail.get('emailInput').errors && formEmail.get('emailInput').dirty) || errorForm">
-                  <div class="invalid-feedback" *ngIf="formEmail.get('emailInput').hasError('required') || errorEmail">
-                    Campo obligatorio
+                <input #emailinput formControlName="emailInput" type="email" class="form-control" placeholder="Ingresar correo"
+                [ngClass]="{'is-invalid': (formEmail.get('emailInput').errors && formEmail.get('emailInput').dirty)}">
+                <div *ngIf="(formEmail.get('emailInput').errors && formEmail.get('emailInput').dirty)">
+                  <div class="invalid-feedback" *ngIf="formEmail.get('emailInput').hasError('required')">
+                    Correo obligatorio
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-2">
+            <div class="col-sm-5 col-md-3">
+              <select #template formControlName="template" class="form-control" 
+                [ngClass]="{'is-invalid': (formEmail.get('template').errors && formEmail.get('template').dirty)}">
+                <option *ngFor="let template of optionsTemplate; let i = index" [value]="i">{{ template }}</option>
+              </select>
+              <div *ngIf="(formEmail.get('template').errors || formEmail.get('template').dirty)">
+                <div class="invalid-feedback" *ngIf="formEmail.get('template').hasError('required')">
+                  Plantilla obligatoria
+                </div>
+                <div class="invalid-feedback" *ngIf="formEmail.get('template').hasError('pattern')">
+                    Plantilla invalida
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-3 col-md-2">
               <div class="form-group">
-                <button type="submit" class="form-control">Enviar</button>
+                <button type="submit" class="form-control btn btn-sm btn-success" [disabled]="formEmail.invalid">Enviar</button>
               </div>
             </div>
           </div>
