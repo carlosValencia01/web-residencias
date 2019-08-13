@@ -19,6 +19,13 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFireModule } from 'angularfire2';
+
+import { environment } from '../environments/environment';
+
+//FilterPipe
+import { FilterPipe} from '../pages/list-graduates-page/filter.pipe';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -28,6 +35,7 @@ import { OneStudentPageComponent } from '../pages/one-student-page/one-student-p
 import { CardEmployeePageComponent } from '../pages/card-employee-page/card-employee-page.component';
 import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credentials-page/loader-data-credentials-page.component';
 import { InscriptionsPageComponent } from '../pages/inscriptions-page/inscriptions-page.component';
+import { RegisterEmailgraduationPageComponent } from '../pages/register-emailgraduation-page/register-emailgraduation-page.component';
 
 
 // Components
@@ -42,6 +50,7 @@ import { CookiesService } from '../services/cookie.service';
 import { FormErrorsService } from '../services/forms.errors.service';
 import { NotificationsServices } from '../services/notifications.service';
 import { ImageToBase64Service } from '../services/img.to.base63.service';
+import { FirebaseService } from '../services/firebase.service';
 
 // Providers
 import { Api } from '../providers/api.prov';
@@ -50,6 +59,7 @@ import { StudentProvider } from '../providers/student.prov';
 import { EmployeeProvider } from '../providers/employee.prov';
 import { InscriptionsProvider } from '../providers/inscriptions.prov';
 import { LoaderComponent } from '../components/shared/loader/loader.component';
+import { ListGraduatesPageComponent } from '../pages/list-graduates-page/list-graduates-page.component';
 
 
 const appRouters: Routes = [
@@ -59,6 +69,9 @@ const appRouters: Routes = [
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
+  { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full'},
+  { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full'},
+
 ];
 
 @NgModule({
@@ -74,10 +87,14 @@ const appRouters: Routes = [
     CardEmployeePageComponent,
     LoaderDataCredentialsPageComponent,
     SidebarContentComponent,
-    InscriptionsPageComponent
+    InscriptionsPageComponent,
+    RegisterEmailgraduationPageComponent,
+    ListGraduatesPageComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
     NgbModule.forRoot(),
     HttpModule,
     HotkeyModule.forRoot(),
@@ -90,7 +107,9 @@ const appRouters: Routes = [
     SimpleNotificationsModule.forRoot(),
     ImageCropperModule,
     BrowserAnimationsModule,
-    SidebarModule.forRoot()
+    SidebarModule.forRoot(),
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     CookieService,
@@ -98,11 +117,13 @@ const appRouters: Routes = [
     FormErrorsService,
     NotificationsServices,
     ImageToBase64Service,
+    FirebaseService,
     Api,
     UserProvider,
     StudentProvider,
     EmployeeProvider,
-    InscriptionsProvider
+    InscriptionsProvider,
+    AngularFirestore
   ],
   bootstrap: [AppComponent]
 })

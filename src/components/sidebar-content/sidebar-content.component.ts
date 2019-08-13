@@ -11,6 +11,7 @@ export class SidebarContentComponent implements OnInit {
   data: any;
   title = '';
   showCredentialsItems = false;
+  showGraduationItems = false;
   public role: string;
   DEFAULT_PROFILE_IMG = 'assets/icons/man.svg';
 
@@ -54,7 +55,9 @@ export class SidebarContentComponent implements OnInit {
       case 'Credenciales':
         this.showCredentialsItems = !this.showCredentialsItems;
         break;
-
+      case 'Graduacion':
+        this.showGraduationItems = !this.showGraduationItems;
+        break;
       default:
         this.menuClicked.emit();
         this.showCredentialsItems = false;

@@ -1,0 +1,52 @@
+<div class="content-general">
+   <div class="card card-shadow">
+      <div class="card-header text-white bg-secondary">
+         <strong>Listado de Alumnos</strong>
+      </div>
+      <div class="card-body">
+         <div class="row">
+            <div class="col-10">
+               <div class="form-group">
+                  <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno...">
+               </div>
+            </div>
+            <div class="col-2">
+               <div class="form-group">
+                  <select [(ngModel)]="searchCarreer" class="form-control">
+                     <option value=''>Todas las carreras</option>
+                     <option value='ISC'>ISC</option>
+                     <option value='IBQ'>IBQ</option>
+                  </select>
+               </div>
+            </div>
+         </div>
+         <table class="table table-striped table-bordered table-hover">
+               <thead>
+                  <tr>
+                     <th>Número de Control</th>
+                     <th>Nombre del Alumno</th>
+                     <th>Carrera</th>
+                     <th>Email</th>
+                     <th>Estatus</th>
+                     <th>Acciones</th>
+                  </tr>          
+               </thead>
+               <tbody>
+                  <tr *ngFor="let item of alumnos |filter:{carreer:searchCarreer} |filter: {nc:searchText,name:searchText,carreer:searchText,email:searchText,status:searchText}; let i=index;">
+                     <td>{{item.nc}}</td>
+                     <td>{{item.name}}</td>
+                     <td>{{item.carreer}}</td>
+                     <td>{{item.email}}</td>
+                     <td>{{item.status}}</td>
+                     <td>
+                        <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class">
+                           <img src="../../assets/icons/sendEmail.svg" class="sendEmail" (click)="enviarInvitacion(item)">
+                        </div>
+                     </td>
+                  </tr>
+               </tbody>
+            </table> 
+      </div>
+   </div>
+   
+</div>
