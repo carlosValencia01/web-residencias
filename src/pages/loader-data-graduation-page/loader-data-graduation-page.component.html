@@ -23,18 +23,22 @@
                       <th scope="col">NC</th>
                       <th scope="col">Nombre</th>
                       <th scope="col">Carrera</th>
-                      <th scope="col">Plan de estudios</th>
+                      <th scope="col">Especialidad</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let student of csvObjects">                    
+                    <tr *ngFor="let student of csvObjects | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">                    
                       <td>{{ student.nc }}</td>
                       <td>{{ student.nombre }}</td>
                       <td>{{ student.carrera }}</td>
-                      <td>{{ student.planEstudios }}</td>
+                      <td>{{ student.especialidad }}</td>
                     </tr>                    
                   </tbody>
                 </table>
+                <ngb-pagination
+                  [(page)]="page"
+                  [pageSize]="pageSize"
+                  [collectionSize]="csvObjects.length" [boundaryLinks]="true"></ngb-pagination>
               </div>
               <div >
                 <div class="row justify-content-center">                  

@@ -13,7 +13,8 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   csvContent: string;
   arrayCsvContent: Array<any>;
   csvObjects = [];
-
+  page = 1;
+  pageSize = 10;
   constructor(
     private firebaseService : FirebaseService,
     private notificationsServices : NotificationsServices
@@ -54,8 +55,8 @@ export class LoaderDataGraduationPageComponent implements OnInit {
       this.csvObjects.push({
         nc:tmpStudent[1],
         nombre:tmpStudent[2],
-        planEstudios:tmpStudent[5],
-        carrera:this.fileName.split('-')[1].substr(1,3)
+        carrera:tmpStudent[4],
+        especialidad:tmpStudent[5]
       })
     });
   }

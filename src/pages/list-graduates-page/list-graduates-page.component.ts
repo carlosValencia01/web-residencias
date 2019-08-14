@@ -12,7 +12,9 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchText : string;
   public searchCarreer : string = '';
   public alumnos = [];
-
+  page = 1;
+  pageSize = 10;
+  
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,

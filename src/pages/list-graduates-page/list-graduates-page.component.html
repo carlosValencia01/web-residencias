@@ -32,7 +32,7 @@
                   </tr>          
                </thead>
                <tbody>
-                  <tr *ngFor="let item of alumnos |filter:{carreer:searchCarreer} |filter: {nc:searchText,name:searchText,carreer:searchText,email:searchText,status:searchText}; let i=index;">
+                  <tr *ngFor="let item of alumnos |filter:{carreer:searchCarreer} |filter: {nc:searchText,name:searchText,carreer:searchText,email:searchText,status:searchText} | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i=index;">
                      <td>{{item.nc}}</td>
                      <td>{{item.name}}</td>
                      <td>{{item.carreer}}</td>
@@ -46,6 +46,10 @@
                   </tr>
                </tbody>
             </table> 
+            <ngb-pagination
+                  [(page)]="page"
+                  [pageSize]="pageSize"
+                  [collectionSize]="alumnos.length" [boundaryLinks]="true"></ngb-pagination>
             <div class="row justify-content-center">
                <button type="button" class="btn btn-primary" (click)="sendMailAll()" >Enviar a todos</button>
             </div>
