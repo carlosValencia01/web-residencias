@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/services/firebase.service';
 import { NotificationsServices } from '../../services/notifications.service';
-
+import { GraduationProvider } from '../../providers/graduation.prov';
 
 @Component({
   selector: 'app-list-graduates-page',
@@ -15,7 +15,8 @@ export class ListGraduatesPageComponent implements OnInit {
 
   constructor(
     private firestoreService: FirebaseService,
-    private notificationsServices: NotificationsServices
+    private notificationsServices: NotificationsServices,
+    private graduationProv : GraduationProvider
     ) { }
 
   ngOnInit() {
@@ -38,9 +39,23 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
   
+  //envio del codigo qr por correo
   enviarInvitacion(item) {
-    console.log(this.alumnos);
-    this.notificationsServices.showNotification(1, 'Invitación enviada a:',item.nc+'\n'+item.name+'\n'+item.carreer+'\n'+item.email);
+    
+    this.graduationProv.sendQR(item.email,item.id).subscribe(
+      res=>{
+        this.notificationsServices.showNotification(1, 'Invitación enviada a:',item.nc+'\n'+item.name+'\n'+item.carreer+'\n'+item.email);
+      },
+      err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc+'\n'+item.name+'\n'+item.carreer+'\n'+item.email);
+      }
+    );
   }
 
+  sendMailAll(){
+    this.alumnos.forEach(async student =>{
+      if(student.email){
+        await this.enviarInvitacion(student);
+      }
+    });
+  }
 }

@@ -39,13 +39,16 @@
                      <td>{{item.email}}</td>
                      <td>{{item.status}}</td>
                      <td>
-                        <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class">
+                        <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" *ngIf="item.email">
                            <img src="../../assets/icons/sendEmail.svg" class="sendEmail" (click)="enviarInvitacion(item)">
                         </div>
                      </td>
                   </tr>
                </tbody>
             </table> 
+            <div class="row justify-content-center">
+               <button type="button" class="btn btn-primary" (click)="sendMailAll()" >Enviar a todos</button>
+            </div>
       </div>
    </div>
    

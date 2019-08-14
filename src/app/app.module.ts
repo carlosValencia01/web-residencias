@@ -58,6 +58,9 @@ import { UserProvider } from '../providers/user.prov';
 import { StudentProvider } from '../providers/student.prov';
 import { EmployeeProvider } from '../providers/employee.prov';
 import { InscriptionsProvider } from '../providers/inscriptions.prov';
+import { GraduationProvider } from '../providers/graduation.prov';
+
+
 import { LoaderComponent } from '../components/shared/loader/loader.component';
 import { ListGraduatesPageComponent } from '../pages/list-graduates-page/list-graduates-page.component';
 
@@ -125,6 +128,7 @@ const appRouters: Routes = [
     StudentProvider,
     EmployeeProvider,
     InscriptionsProvider,
+    GraduationProvider,
     AngularFirestore
   ],
   bootstrap: [AppComponent]
