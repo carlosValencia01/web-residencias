@@ -66,6 +66,12 @@
                   <p class="menu-item-title">Consultar</p>
                 </button>
             </li>
+            <li>
+              <div (click)="closeMenu()" *ngIf="role==='secretary' ||  role==='administration'" routerLink="loaderDataGraduation" class="menu-item menu-subitem">
+                <img class="menu-item-img" src="assets/icons/import.svg" alt="">
+                <span class="menu-item-title">Importar Datos</span>
+              </div>
+            </li>
         </div>
       </li>
     </ul>

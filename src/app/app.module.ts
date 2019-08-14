@@ -36,7 +36,7 @@ import { CardEmployeePageComponent } from '../pages/card-employee-page/card-empl
 import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credentials-page/loader-data-credentials-page.component';
 import { InscriptionsPageComponent } from '../pages/inscriptions-page/inscriptions-page.component';
 import { RegisterEmailgraduationPageComponent } from '../pages/register-emailgraduation-page/register-emailgraduation-page.component';
-
+import { LoaderDataGraduationPageComponent } from '../pages/loader-data-graduation-page/loader-data-graduation-page.component';
 
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
@@ -71,6 +71,7 @@ const appRouters: Routes = [
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
   { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full'},
   { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full'},
+  { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full'},
 
 ];
 
@@ -90,6 +91,7 @@ const appRouters: Routes = [
     InscriptionsPageComponent,
     RegisterEmailgraduationPageComponent,
     ListGraduatesPageComponent,
+    LoaderDataGraduationPageComponent,
     FilterPipe
   ],
   imports: [

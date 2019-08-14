@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreDocument, CollectionReference } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument, CollectionReference, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirebaseService {
-  private register: any;
+  private register: AngularFirestoreCollection;
 
   constructor(
     private firestore : AngularFirestore
@@ -32,5 +32,11 @@ export class FirebaseService {
   //Actualiza un alumno
   public updateGraduate(documentId: string, data: any) {
     return this.register.doc(documentId).set(data);
+  }
+
+  //carga csv
+
+  public loadCSV(data){
+    return this.register.add(data);
   }
 }
