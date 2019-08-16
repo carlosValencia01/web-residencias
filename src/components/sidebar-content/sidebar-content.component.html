@@ -48,12 +48,12 @@
           <p class="menu-item-title">Inscripciones</p>
         </button>
       </li>
-      <li>
+      <li *ngIf="showGraduationItems">
         <button (click)="closeMenu('Graduacion')" type="button" class="menu-item">
           <img class="menu-item-img" src="assets/icons/chevron-arrow-down.svg" alt="">
           <p class="menu-item-title">Graduación</p>
         </button>
-        <div *ngIf="showGraduationItems">
+        <div>
             <li>
                 <button (click)="closeMenu()" *ngIf="role==='secretary' || role==='administration'" type="button" class="menu-item menu-subitem" routerLink="registerGraduate">
                   <img class="menu-item-img" src="assets/icons/graduate.svg" alt="">

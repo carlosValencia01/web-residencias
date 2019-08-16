@@ -14,6 +14,11 @@
     height: 25px;
 }
 
+.paid{
+    width: 25px; 
+    height: 25px;
+}
+
 .div-img{
     display: flex;
     justify-content: center;
@@ -30,5 +35,20 @@ th {
 }
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-    background: rgb(69,108,177)
+    background: rgb(69,108,177);
+    color:white;
   }
+
+.div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.div-actions{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

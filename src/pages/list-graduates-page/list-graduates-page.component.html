@@ -5,17 +5,27 @@
       </div>
       <div class="card-body">
          <div class="row">
-            <div class="col-10">
+            <div class="col-9">
                <div class="form-group">
                   <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno...">
                </div>
             </div>
-            <div class="col-2">
+            <div class="col-3">
                <div class="form-group">
                   <select [(ngModel)]="searchCarreer" class="form-control">
                      <option value=''>Todas las carreras</option>
-                     <option value='ISC'>ISC</option>
-                     <option value='IBQ'>IBQ</option>
+                     <option value='IBQ'>Ingeniería Bioquímica</option>
+                     <option value='IGE'>Ingeniería en Gestión Empresarial</option>
+                     <option value='IC'>Ingeniería Civil</option>
+                     <option value='ARQ'>Arquitectura</option>
+                     <option value='IQ'>Ingeniería Química</option>
+                     <option value='IM'>Ingeniería Mecatrónica</option>
+                     <option value='IE'>Ingeniería Eléctrica</option>
+                     <option value='LA'>Licenciatura en Administración</option>Ç
+                     <option value='ITIC'>Ingeniería en Tecnologías de la Información y Comunicación</option>
+                     <option value='ISC'>Ingeniaría en Sistemas Computacionales</option>
+                     <option value='II'>Ingeniaría Industrial</option>
+                     <option value='MCA'>Maestría en Ciencias en Alimentos</option>
                   </select>
                </div>
             </div>
@@ -32,27 +42,43 @@
                   </tr>          
                </thead>
                <tbody>
-                  <tr *ngFor="let item of alumnos |filter:{carreer:searchCarreer} |filter: {nc:searchText,name:searchText,carreer:searchText,email:searchText,status:searchText} | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i=index;">
+                  <tr *ngFor="let item of alumnos |filter:{carreer:searchCarreer} |filter: {nc:searchText,name:searchText,email:searchText,status:searchText} | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i=index;">
                      <td>{{item.nc}}</td>
                      <td>{{item.name}}</td>
                      <td>{{item.carreer}}</td>
                      <td>{{item.email}}</td>
                      <td>{{item.status}}</td>
                      <td>
-                        <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" *ngIf="item.email">
-                           <img src="../../assets/icons/sendEmail.svg" class="sendEmail" (click)="enviarInvitacion(item)">
+                        <div class="div-actions">
+                           <tr *ngIf="item.email">
+                              <td *ngIf="item.status != 'Pagado'">
+                                 <div class="div-img" ngbTooltip="Confirmar Pago" tooltipClass="my-custom-class" *ngIf="item.email">
+                                       <img src="../../assets/icons/paid.svg" class="paid" (click)="confirmPaidEvent(item)">
+                                 </div>
+                              </td>
+                              <td>
+                                 <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" *ngIf="item.email">
+                                       <img src="../../assets/icons/sendEmail.svg" class="sendEmail" (click)="sendOneMail(item)">
+                                 </div>
+                              </td>
+                           </tr>
                         </div>
                      </td>
                   </tr>
                </tbody>
+               <tfoot align="right">
+                  <td colspan="6">
+                        <button type="button" class="btn btn-primary" (click)="sendMailAll()" >Enviar a todos</button>
+                  </td>
+               </tfoot>
             </table> 
-            <ngb-pagination
-                  [(page)]="page"
-                  [pageSize]="pageSize"
-                  [collectionSize]="alumnos.length" [boundaryLinks]="true"></ngb-pagination>
-            <div class="row justify-content-center">
-               <button type="button" class="btn btn-primary" (click)="sendMailAll()" >Enviar a todos</button>
-            </div>
+            <div class='div-pagination'>
+               <ngb-pagination
+                     [(page)]="page"
+                     [pageSize]="pageSize"
+                     [collectionSize]="alumnos.length" [boundaryLinks]="true">
+               </ngb-pagination>
+            </div>   
       </div>
    </div>
    

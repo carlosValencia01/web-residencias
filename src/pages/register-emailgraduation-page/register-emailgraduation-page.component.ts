@@ -3,6 +3,8 @@ import { FirebaseService } from 'src/services/firebase.service';
 import { FormGroup,FormBuilder, Validators, FormControl } from '@angular/forms';
 import { NotificationsServices } from '../../services/notifications.service';
 import { resolve } from 'url';
+import { CookiesService } from 'src/services/cookie.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-emailgraduation-page',
@@ -17,18 +19,26 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
   formEmailGraduate: FormGroup;
   errorEmail: boolean = false;
   errorForm: boolean = false;
-  correoElectronico:string='';
+  correo:string='';
   
   //Buscar alumno
   public ncInput = '';
   public dataUpdate;
   public docId;
+  public hidden;
 
   constructor(
     private firestoreService: FirebaseService,
     private formBuilder: FormBuilder,
-    private notificationsServices: NotificationsServices
-    ) { }
+    private notificationsServices: NotificationsServices,
+    private cookiesService: CookiesService,
+    private router: Router,
+    ) {
+      if (this.cookiesService.getData().user.role !== 0 &&
+        this.cookiesService.getData().user.role !== 1) {
+          this.router.navigate(['/']);
+        }
+    }
 
   ngOnInit() {
     this.initializeForm();
@@ -41,6 +51,7 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
     this.ncInput = '';
     this.dataUpdate = null;
     this.docId = null;
+    this.hidden = false;
   }
 
   formValidation(): boolean {
@@ -64,13 +75,14 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
               nc : alumnosData.payload.doc.data().nc,
               nombre : alumnosData.payload.doc.data().nombre,
               carrera : alumnosData.payload.doc.data().carrera,
+              estatus: ''
             }
             this.dataUpdate = data;
             data = null;
-            //this.notificationsServices.showNotification(1,'Registro encontrado','Alumno: '+this.dataUpdate.nombre);
+            this.hidden = true;
           }
         })
-        console.log (this.dataUpdate)
+        //console.log (this.dataUpdate)
         if(this.dataUpdate == null){
           this.notificationsServices.showNotification(2, 'Error','No se encontró alumno con nc: '+this.ncInput);
         }
@@ -80,9 +92,7 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
   updateEmail() {
     if (!this.formValidation()) {
       let newEmail = this.formEmailGraduate.get('emailGraduateInput').value;
-      this.dataUpdate.correoElectronico=newEmail;
-      //console.log(this.dataUpdate);
-
+      this.dataUpdate.correo=newEmail;
       //Actualizar registro
       if(this.dataUpdate != null){
         this.firestoreService.updateGraduate(this.docId,this.dataUpdate).then(() => {
