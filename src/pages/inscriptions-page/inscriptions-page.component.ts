@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { InscriptionsProvider } from '../../providers/inscriptions.prov';
 import { NotificationsServices } from '../../services/notifications.service';
+import { CookiesService } from 'src/services/cookie.service';
 
 @Component({
   selector: 'app-inscriptions-page',
@@ -18,7 +20,13 @@ export class InscriptionsPageComponent implements OnInit {
   constructor(
     private inscriptionsProv: InscriptionsProvider,
     private notificationsServices: NotificationsServices,
+    private cookiesServ: CookiesService,
+    private router: Router,
   ) {
+    if (this.cookiesServ.getData().user.role !== 0 &&
+      this.cookiesServ.getData().user.role !== 1 ) {
+      this.router.navigate(['/']);
+    }
     this.optionsTemplate = ['Seleccionar plantilla', 'Proceso de inscripción', 'Cursos de inglés'];
   }
 
@@ -38,7 +46,7 @@ export class InscriptionsPageComponent implements OnInit {
     if (this.emailInput.nativeElement.value) {
       const email = this.formEmail.get('emailInput').value;
       const template = this.formEmail.get('template').value;
-      this.inscriptionsProv.sendEmail({ 'to_email': email.trim(), 'template': template, 'subject': this.optionsTemplate[template] })
+      this.inscriptionsProv.sendEmail({ 'to_email': [email.trim()], 'index': template, 'many': false })
       .subscribe((res) => {
         console.log(res);
         if (res.code === 200) {
