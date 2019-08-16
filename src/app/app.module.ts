@@ -8,7 +8,6 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomFormsModule } from 'ng2-validation';
 import { Routes, RouterModule } from '@angular/router';
@@ -20,6 +19,11 @@ import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
 
+// Material
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { HomePageComponent } from '../pages/home-page/home-page.component';
@@ -28,14 +32,13 @@ import { OneStudentPageComponent } from '../pages/one-student-page/one-student-p
 import { CardEmployeePageComponent } from '../pages/card-employee-page/card-employee-page.component';
 import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credentials-page/loader-data-credentials-page.component';
 import { InscriptionsPageComponent } from '../pages/inscriptions-page/inscriptions-page.component';
-
+import { AcademicDegreeApplicationPageComponent } from '../pages/academic-degree-application-page/academic-degree-application-page.component';
 
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
 import { HomeHeaderComponent } from '../components/home-header/home-header.component';
 import { SidebarContentComponent } from '../components/sidebar-content/sidebar-content.component';
-
-
+import { AcademicDegreeApplicationFormComponent } from '../components/academic-degree-application-form/academic-degree-application-form.component';
 
 // Services
 import { CookiesService } from '../services/cookie.service';
@@ -49,8 +52,8 @@ import { UserProvider } from '../providers/user.prov';
 import { StudentProvider } from '../providers/student.prov';
 import { EmployeeProvider } from '../providers/employee.prov';
 import { InscriptionsProvider } from '../providers/inscriptions.prov';
+import { AcademicDegreeApplicationProvider } from '../providers/academic-degree-application.prov';
 import { LoaderComponent } from '../components/shared/loader/loader.component';
-
 
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
@@ -59,6 +62,7 @@ const appRouters: Routes = [
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
+  { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -74,7 +78,9 @@ const appRouters: Routes = [
     CardEmployeePageComponent,
     LoaderDataCredentialsPageComponent,
     SidebarContentComponent,
-    InscriptionsPageComponent
+    InscriptionsPageComponent,
+    AcademicDegreeApplicationPageComponent,
+    AcademicDegreeApplicationFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -90,7 +96,10 @@ const appRouters: Routes = [
     SimpleNotificationsModule.forRoot(),
     ImageCropperModule,
     BrowserAnimationsModule,
-    SidebarModule.forRoot()
+    SidebarModule.forRoot(),
+    MatStepperModule,
+    MatDatepickerModule,
+    MatButtonToggleModule,
   ],
   providers: [
     CookieService,
@@ -102,7 +111,8 @@ const appRouters: Routes = [
     UserProvider,
     StudentProvider,
     EmployeeProvider,
-    InscriptionsProvider
+    InscriptionsProvider,
+    AcademicDegreeApplicationProvider,
   ],
   bootstrap: [AppComponent]
 })
