@@ -18,6 +18,13 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFireModule } from 'angularfire2';
+
+import { environment } from '../environments/environment';
+
+// FilterPipe
+import { FilterPipe} from '../pages/list-graduates-page/filter.pipe';
 
 // Material
 import { MatStepperModule } from '@angular/material/stepper';
@@ -33,6 +40,8 @@ import { CardEmployeePageComponent } from '../pages/card-employee-page/card-empl
 import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credentials-page/loader-data-credentials-page.component';
 import { InscriptionsPageComponent } from '../pages/inscriptions-page/inscriptions-page.component';
 import { AcademicDegreeApplicationPageComponent } from '../pages/academic-degree-application-page/academic-degree-application-page.component';
+import { RegisterEmailgraduationPageComponent } from '../pages/register-emailgraduation-page/register-emailgraduation-page.component';
+import { LoaderDataGraduationPageComponent } from '../pages/loader-data-graduation-page/loader-data-graduation-page.component';
 
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
@@ -45,6 +54,7 @@ import { CookiesService } from '../services/cookie.service';
 import { FormErrorsService } from '../services/forms.errors.service';
 import { NotificationsServices } from '../services/notifications.service';
 import { ImageToBase64Service } from '../services/img.to.base63.service';
+import { FirebaseService } from '../services/firebase.service';
 
 // Providers
 import { Api } from '../providers/api.prov';
@@ -53,7 +63,11 @@ import { StudentProvider } from '../providers/student.prov';
 import { EmployeeProvider } from '../providers/employee.prov';
 import { InscriptionsProvider } from '../providers/inscriptions.prov';
 import { AcademicDegreeApplicationProvider } from '../providers/academic-degree-application.prov';
+import { GraduationProvider } from '../providers/graduation.prov';
+
+
 import { LoaderComponent } from '../components/shared/loader/loader.component';
+import { ListGraduatesPageComponent } from '../pages/list-graduates-page/list-graduates-page.component';
 
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
@@ -63,6 +77,10 @@ const appRouters: Routes = [
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
   { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
+  { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full'},
+  { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full'},
+  { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full'},
+
 ];
 
 @NgModule({
@@ -81,9 +99,14 @@ const appRouters: Routes = [
     InscriptionsPageComponent,
     AcademicDegreeApplicationPageComponent,
     AcademicDegreeApplicationFormComponent,
+    RegisterEmailgraduationPageComponent,
+    ListGraduatesPageComponent,
+    LoaderDataGraduationPageComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
     NgbModule.forRoot(),
     HttpModule,
     HotkeyModule.forRoot(),
@@ -100,6 +123,8 @@ const appRouters: Routes = [
     MatStepperModule,
     MatDatepickerModule,
     MatButtonToggleModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     CookieService,
@@ -107,12 +132,15 @@ const appRouters: Routes = [
     FormErrorsService,
     NotificationsServices,
     ImageToBase64Service,
+    FirebaseService,
     Api,
     UserProvider,
     StudentProvider,
     EmployeeProvider,
     InscriptionsProvider,
     AcademicDegreeApplicationProvider,
+    GraduationProvider,
+    AngularFirestore
   ],
   bootstrap: [AppComponent]
 })
