@@ -21,6 +21,7 @@ import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireModule } from 'angularfire2';
+import { DataTablesModule } from 'angular-datatables';
 
 import { environment } from '../environments/environment';
 
@@ -114,7 +115,8 @@ const appRouters: Routes = [
     BrowserAnimationsModule,
     SidebarModule.forRoot(),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DataTablesModule
   ],
   providers: [
     CookieService,

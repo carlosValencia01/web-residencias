@@ -12,15 +12,50 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   changeString = false;
   csvContent: string;
   arrayCsvContent: Array<any>;
-  csvObjects = [];
-  page = 1;
+  csvObjects = [];  
+
+  dtOptions: DataTables.Settings = {};
   pageSize = 10;
+  // We use this trigger because fetching the list of persons can be quite long,
+  // thus we ensure the data is fetched before rendering  
+
+
   constructor(
     private firebaseService : FirebaseService,
     private notificationsServices : NotificationsServices
     ) { }
 
   ngOnInit() {
+    this.dtOptions = {
+      pagingType: 'full_numbers',
+      pageLength: this.pageSize,      
+      responsive: true,      
+      
+      /* below is the relevant part, e.g. translated to spanish */ 
+      language: {
+        processing: "Procesando...",
+        search: "Buscar: ",
+        searchPlaceholder:"Nombre, NC, carrera, estatus, email",        
+        lengthMenu: "",
+        info: "",
+        infoEmpty: "",
+        infoFiltered: "",
+        infoPostFix: "",
+        loadingRecords: "Cargando registros...",
+        zeroRecords: "No se encontraron registros",
+        emptyTable: "No hay datos disponibles",
+        paginate: {
+          first: "Primero",
+          previous: "Anterior",
+          next: "Siguiente",
+          last: "Último"
+        },
+        aria: {
+          sortAscending: ": Activar para ordenar la tabla en orden ascendente",
+          sortDescending: ": Activar para ordenar la tabla en orden descendente"
+        }
+      }      
+    };
   }
 
   //para leer el archivo csv por carrera

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument, CollectionReference, AngularFirestoreCollection } from 'angularfire2/firestore';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +10,7 @@ export class FirebaseService {
   constructor(
     private firestore : AngularFirestore
   ) { 
-    this.register = firestore.collection('registrograduacion')
+    this.register = firestore.collection('registrograduacion', ref=> ref.orderBy('nc'))
   }
   
   //Registrar un correo
