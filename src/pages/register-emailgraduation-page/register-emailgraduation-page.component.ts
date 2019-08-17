@@ -82,7 +82,6 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
             this.hidden = true;
           }
         })
-        //console.log (this.dataUpdate)
         if(this.dataUpdate == null){
           this.notificationsServices.showNotification(2, 'Error','No se encontró alumno con nc: '+this.ncInput);
         }

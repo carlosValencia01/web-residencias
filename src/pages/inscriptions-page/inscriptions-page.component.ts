@@ -46,7 +46,7 @@ export class InscriptionsPageComponent implements OnInit {
     if (this.emailInput.nativeElement.value) {
       const email = this.formEmail.get('emailInput').value;
       const template = this.formEmail.get('template').value;
-      this.inscriptionsProv.sendEmail({ 'to_email': [email.trim()], 'index': template, 'many': false })
+      this.inscriptionsProv.sendEmail({ 'to_email': [email.toLowerCase().trim()], 'index': Number(template), 'many': false })
       .subscribe((res) => {
         console.log(res);
         if (res.code === 200) {

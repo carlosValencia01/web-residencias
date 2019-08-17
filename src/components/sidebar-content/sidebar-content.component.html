@@ -54,7 +54,7 @@
           <p class="menu-item-title">Acto recepcional</p>
         </button>
       </li>
-      <li>
+      <li *ngIf="role==='secretary' || role==='administration'">
         <button (click)="closeMenu('Graduacion')" type="button" class="menu-item">
           <img class="menu-item-img" src="assets/icons/chevron-arrow-down.svg" alt="">
           <p class="menu-item-title">Graduación</p>
