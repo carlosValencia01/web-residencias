@@ -31,14 +31,11 @@
               {
                 "input": "./node_modules/bootstrap/dist/css/bootstrap.css"
               },
-              "./node_modules/font-awesome/scss/font-awesome.scss",
-              "./node_modules/datatables.net-dt/css/jquery.dataTables.css"
+              "./node_modules/font-awesome/scss/font-awesome.scss"
             ],
             "scripts": [
               "./node_modules/jspdf/dist/jspdf.min.js",
-              "./node_modules/jsbarcode/dist/JsBarcode.all.min.js",
-              "./node_modules/jquery/dist/jquery.js",
-              "./node_modules/datatables.net/js/jquery.dataTables.js"
+              "./node_modules/jsbarcode/dist/JsBarcode.all.min.js"
             ]
           },
           "configurations": {

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/services/firebase.service';
 import { NotificationsServices } from '../../services/notifications.service';
 import { GraduationProvider } from '../../providers/graduation.prov';
-import { Subject } from 'rxjs';
 import { CookiesService } from 'src/services/cookie.service';
 import { Router } from '@angular/router';
 
@@ -15,10 +14,9 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchText : string;
   public searchCarreer : string = '';
   public alumnos = [];
+  page=1;
+  pageSize = 10;  
   
-  pageSize = 10;
-  dtOptions: DataTables.Settings = {};
-  dtTrigger: Subject<any> = new Subject();
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
@@ -33,36 +31,7 @@ export class ListGraduatesPageComponent implements OnInit {
     }
 
   ngOnInit() {
-    this.dtOptions = {
-      pagingType: 'full_numbers',
-      pageLength: this.pageSize,      
-      responsive: true,      
-      
-      /* below is the relevant part, e.g. translated to spanish */ 
-      language: {
-        processing: "Procesando...",
-        search: "Buscar: ",
-        searchPlaceholder:"Nombre, NC, carrera, estatus, email",        
-        lengthMenu: "",
-        info: "",
-        infoEmpty: "",
-        infoFiltered: "",
-        infoPostFix: "",
-        loadingRecords: "Cargando registros...",
-        zeroRecords: "No se encontraron registros",
-        emptyTable: "No hay datos disponibles",
-        paginate: {
-          first: "Primero",
-          previous: "Anterior",
-          next: "Siguiente",
-          last: "Último"
-        },
-        aria: {
-          sortAscending: ": Activar para ordenar la tabla en orden ascendente",
-          sortDescending: ": Activar para ordenar la tabla en orden descendente"
-        }
-      }      
-    };    
+    
     this.readEmail();
     
   }
@@ -78,7 +47,7 @@ export class ListGraduatesPageComponent implements OnInit {
           email: alumno.payload.doc.data().correoElectronico,
           status: alumno.payload.doc.data().status
         }});
-        this.dtTrigger.next();               
+               
     });
   }
   //3 estatus Pagado,Presente,Mencionado
@@ -128,5 +97,9 @@ export class ListGraduatesPageComponent implements OnInit {
         await this.sendOneMail(student);
       }
     });
+  }
+
+  pageChanged(ev){
+    this.page=ev;    
   }
 }

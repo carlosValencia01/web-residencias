@@ -21,7 +21,7 @@ import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AngularFireModule } from 'angularfire2';
-import { DataTablesModule } from 'angular-datatables';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 import { environment } from '../environments/environment';
 
@@ -116,7 +116,7 @@ const appRouters: Routes = [
     SidebarModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
-    DataTablesModule
+    NgxPaginationModule
   ],
   providers: [
     CookieService,
