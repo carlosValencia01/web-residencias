@@ -13,9 +13,10 @@ import { Router } from '@angular/router';
 export class ListGraduatesPageComponent implements OnInit {
   public searchText : string;
   public searchCarreer : string = '';
+  public searchStatus : string = '';
   public alumnos = [];
   page=1;
-  pageSize = 10;  
+  pageSize = 10;
   
   constructor(
     private firestoreService: FirebaseService,
@@ -44,24 +45,24 @@ export class ListGraduatesPageComponent implements OnInit {
           nc : alumno.payload.doc.data().nc,
           name : alumno.payload.doc.data().nombre,
           carreer : alumno.payload.doc.data().carrera,
-          email: alumno.payload.doc.data().correoElectronico,
-          status: alumno.payload.doc.data().status
+          email: alumno.payload.doc.data().correo,
+          status: alumno.payload.doc.data().estatus
         }});
                
     });
   }
-  //3 estatus Pagado,Presente,Mencionado
 
+  // 3 estatus Pagado,Presente,Mencionado
   paidEvent(item){
     console.log(item);  
-    let dataUpdate = {
+    let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
       carrera : item.carreer,
       correo : item.email,
       estatus: 'Pagado'
     }
-    this.firestoreService.updateGraduate(item.id,dataUpdate).then(() => {
+    this.firestoreService.updateGraduate(item.id,itemUpdate).then(() => {
       this.notificationsServices.showNotification(1, 'Pago confirmado para:',item.nc);
     }, (error) => {
       console.log(error);
@@ -90,7 +91,7 @@ export class ListGraduatesPageComponent implements OnInit {
     }
   }
 
-  //Enviar invitación a todos los alumnos (status = pagado)
+  // Enviar invitación a todos los alumnos (status = pagado)
   sendMailAll(){
     this.alumnos.forEach(async student =>{
       if(student.email){

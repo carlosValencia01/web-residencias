@@ -26,6 +26,7 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
   public dataUpdate;
   public docId;
   public hidden;
+  public foundNc;
 
   constructor(
     private firestoreService: FirebaseService,
@@ -52,6 +53,7 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
     this.dataUpdate = null;
     this.docId = null;
     this.hidden = false;
+    this.foundNc = true;
   }
 
   formValidation(): boolean {
@@ -67,25 +69,31 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
   }
 
   searchAlumno(){
-      this.firestoreService.getGraduates().subscribe((alumnosSnapshot) => {
-        alumnosSnapshot.forEach((alumnosData: any) => {
-          if(this.ncInput==alumnosData.payload.doc.data().nc){
-            this.docId = alumnosData.payload.doc.id;
-            let data = {
-              nc : alumnosData.payload.doc.data().nc,
-              nombre : alumnosData.payload.doc.data().nombre,
-              carrera : alumnosData.payload.doc.data().carrera,
-              estatus: ''
+      if (this.ncInput !== '') {
+        this.firestoreService.getGraduates().subscribe((alumnosSnapshot) => {
+          alumnosSnapshot.forEach((alumnosData: any) => {
+            if(this.ncInput === alumnosData.payload.doc.data().nc){
+              this.docId = alumnosData.payload.doc.id;
+              let data = {
+                nc : alumnosData.payload.doc.data().nc,
+                nombre : alumnosData.payload.doc.data().nombre,
+                carrera : alumnosData.payload.doc.data().carrera,
+                estatus: 'Registrado'
+              }
+              this.dataUpdate = data;
+              data = null;
+              this.hidden = true;
             }
-            this.dataUpdate = data;
-            data = null;
-            this.hidden = true;
+          })
+          if(this.dataUpdate === null){
+            //this.notificationsServices.showNotification(2, 'Error','No se encontró alumno con NC: '+this.ncInput);
+            this.foundNc = false;
           }
-        })
-        if(this.dataUpdate == null){
-          this.notificationsServices.showNotification(2, 'Error','No se encontró alumno con nc: '+this.ncInput);
-        }
-      });
+        });
+      } else {
+        this.notificationsServices.showNotification(3, 'Atención','No se ha ingresado ningún número de contról.');
+      }
+      
   }
 
   updateEmail() {
@@ -95,8 +103,8 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
       //Actualizar registro
       if(this.dataUpdate != null){
         this.firestoreService.updateGraduate(this.docId,this.dataUpdate).then(() => {
+          this.notificationsServices.showNotification(1,'Exito','Correo actualizado exitosamente para '+this.dataUpdate.nc);
           this.initializeForm();
-          this.notificationsServices.showNotification(1,'Exito','Correo actualizado exitosamente');
         }, (error) => {
           console.log(error);
         });       

@@ -70,8 +70,8 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         nc:tmpStudent[0],
         nombre:tmpStudent[1],
         carrera:tmpStudent[2],
-        correo:tmpStudent[3],
-        estatus:tmpStudent[4]
+        correo:'',
+        estatus:' '
       })
     });
     console.log(this.csvObjects);

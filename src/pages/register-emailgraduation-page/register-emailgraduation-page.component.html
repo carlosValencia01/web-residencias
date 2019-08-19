@@ -1,13 +1,16 @@
 <div class="content-general">
   <div class="card card-shadow">
     <div class="card-header text-white bg-secondary">
-      <strong>Registro Correo Graduado</strong>
+      <strong>Actualizar Correo Graduado</strong>
     </div>
     <div class="card-body">
         <div class="row" *ngIf="!hidden">
             <div class="col-3">
                <div class="form-group">
                   <input [(ngModel)]="ncInput" type="text" class="form-control" placeholder="Ingresar número de contról">
+                  <div class="invalid-feedback" *ngIf="!foundNc">
+                    No se encontró el número de contról
+                  </div>
                </div>
             </div>
             <div class="col-2">
@@ -19,6 +22,9 @@
             </div>
         </div>
       <form *ngIf="hidden" [formGroup]="formEmailGraduate" (ngSubmit)="updateEmail()">
+          <div class="div-dataEmailUpdate">
+              <h6>{{ncInput}} - {{dataUpdate.nombre}} - {{dataUpdate.carrera}}</h6>
+          </div>  
           <div class="row">
             <div class="col-10">
               <div class="form-group">
@@ -26,7 +32,7 @@
                 [ngClass]="{'is-invalid': (formEmailGraduate.get('emailGraduateInput').errors && formEmailGraduate.get('emailGraduateInput').dirty) || errorEmail}">
                 <div *ngIf="(formEmailGraduate.get('emailGraduateInput').errors && formEmailGraduate.get('emailGraduateInput').dirty) || errorForm">
                   <div class="invalid-feedback" *ngIf="formEmailGraduate.get('emailGraduateInput').hasError('required') || errorEmail">
-                    Campo obligatorio / Verificar correo
+                    Verificar correo ingresado
                   </div>
                 </div>
               </div>

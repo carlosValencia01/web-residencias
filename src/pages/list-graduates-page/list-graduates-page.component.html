@@ -6,9 +6,21 @@
       </div>
       <div class="card-body">
          <div class="row">
-            <div class="col-9">
+            <div class="col-7">
                <div class="form-group">
                   <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno...">
+               </div>
+            </div>
+            <div class="col-2">
+               <div class="form-group">
+                  <select [(ngModel)]="searchStatus" class="form-control">
+                     <option value=''>Todos los estatus</option>
+                     <option value=' '>No Registrado</option>
+                     <option value='Registrado'>Registrado</option>
+                     <option value='Pagado'>Pagado</option>
+                     <option value='Presente'>Presente</option>
+                     <option value='Mencionado'>Mencionado</option>
+                  </select>
                </div>
             </div>
             <div class="col-3">
@@ -43,7 +55,7 @@
                   </tr>          
                </thead>
                <tbody>
-                  <tr *ngFor="let item of alumnos |filter:{carreer:searchCarreer}|filter: {nc:searchText,name:searchText,email:searchText,status:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
+                  <tr *ngFor="let item of alumnos | filter:{carreer:searchCarreer} | filter:{status:searchStatus} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
                   currentPage: page }; ">                    
                      <td>{{item.nc}} </td>
                      <td>{{item.name}}</td>
