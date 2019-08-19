@@ -14,7 +14,7 @@ export class FirebaseService {
   }
   
   //Registrar un correo
-  public newEmail(data: {correoElectronico: string}) {
+  public newEmail(data: {correo: string}) {
     return this.register.add(data);
   }
 

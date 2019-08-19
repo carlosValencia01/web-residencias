@@ -24,8 +24,19 @@
                      <td>{{item.email}}</td>
                      <td>{{item.status}}</td>
                      <td>
-                        <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" *ngIf="item.email">
-                           <img src="../../assets/icons/sendEmail.svg" class="sendEmail" (click)="enviarInvitacion(item)">
+                        <div class="div-actions">
+                           <tr *ngIf="item.email">
+                              <td *ngIf="item.status != 'Pagado'">
+                                 <div class="div-img" ngbTooltip="Confirmar Pago" tooltipClass="my-custom-class" *ngIf="item.email">
+                                       <img src="../../assets/icons/paid.svg" class="paid" (click)="confirmPaidEvent(item)">
+                                 </div>
+                              </td>
+                              <td>
+                                 <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" *ngIf="item.email">
+                                       <img src="../../assets/icons/sendEmail.svg" class="sendEmail" (click)="sendOneMail(item)">
+                                 </div>
+                              </td>
+                           </tr>
                         </div>
                      </td>
                   </tr>

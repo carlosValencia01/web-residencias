@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from '../../services/firebase.service';
 import { NotificationsServices } from '../../services/notifications.service';
+import { CookiesService } from 'src/services/cookie.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-loader-data-graduation-page',
   templateUrl: './loader-data-graduation-page.component.html',
@@ -22,8 +24,15 @@ export class LoaderDataGraduationPageComponent implements OnInit {
 
   constructor(
     private firebaseService : FirebaseService,
-    private notificationsServices : NotificationsServices
-    ) { }
+    private notificationsServices : NotificationsServices,
+    private cookiesService: CookiesService,
+    private router: Router,
+    ) {
+      if (this.cookiesService.getData().user.role !== 0 &&
+        this.cookiesService.getData().user.role !== 1) {
+          this.router.navigate(['/']);
+        }
+    }
 
   ngOnInit() {
     this.dtOptions = {
@@ -88,10 +97,11 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     this.arrayCsvContent.forEach( student =>{
       let tmpStudent = student.split(',');
       this.csvObjects.push({
-        nc:tmpStudent[1],
-        nombre:tmpStudent[2],
-        carrera:tmpStudent[4],
-        especialidad:tmpStudent[5]
+        nc:tmpStudent[0],
+        nombre:tmpStudent[1],
+        carrera:tmpStudent[2],
+        correo:tmpStudent[3],
+        estatus:tmpStudent[4]
       })
     });
   }

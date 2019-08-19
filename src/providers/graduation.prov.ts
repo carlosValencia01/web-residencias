@@ -10,8 +10,8 @@ export class GraduationProvider {
         public api: Api,
     ){}
 
-    sendQR(email: string, id: string) {
-        return this.api.post('graduationmail', { to_email: email, id: id })
+    sendQR(email: string, id: string, nombre: string) {
+        return this.api.post('graduationmail', { to_email: [email], id: id, name: nombre })
         .pipe(map(data => data.json()));
     }
 }

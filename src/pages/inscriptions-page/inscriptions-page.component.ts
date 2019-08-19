@@ -1,6 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
+
 import { InscriptionsProvider } from '../../providers/inscriptions.prov';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { NotificationsServices } from '../../services/notifications.service';
+import { CookiesService } from 'src/services/cookie.service';
 
 @Component({
   selector: 'app-inscriptions-page',
@@ -10,57 +14,55 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 export class InscriptionsPageComponent implements OnInit {
 
   @ViewChild('emailinput') emailInput:  ElementRef;
-
-  emails: Array<string>;
-  subject: string;
   formEmail: FormGroup;
-  errorEmail: boolean = false;
-  errorForm: boolean = false;
+  optionsTemplate: Array<string>;
 
   constructor(
     private inscriptionsProv: InscriptionsProvider,
-    private formBuilder: FormBuilder,
-  ) { }
+    private notificationsServices: NotificationsServices,
+    private cookiesServ: CookiesService,
+    private router: Router,
+  ) {
+    if (this.cookiesServ.getData().user.role !== 0 &&
+      this.cookiesServ.getData().user.role !== 1 ) {
+      this.router.navigate(['/']);
+    }
+    this.optionsTemplate = ['Seleccionar plantilla', 'Proceso de inscripción', 'Cursos de inglés'];
+  }
 
   ngOnInit() {
-    this.emails = [];
-    this.subject = "Proceso de inscripción";
     this.initializeForm();
   }
 
   initializeForm() {
-    this.formEmail = this.formBuilder.group({
-      'emailInput': ['', [Validators.required, Validators.email]]
+    this.formEmail = new FormGroup({
+      'emailInput': new FormControl({ value: null, disabled: false }, [Validators.required, Validators.email]),
+      'template': new FormControl({ value: 1, disabled: false }, [Validators.required, Validators.pattern('^[1-9]')]),
     });
     this.emailInput.nativeElement.focus();
   }
 
-  formValidation(): boolean {
-    let invalid = false;
-    this.errorForm = false;
-    this.errorEmail = false;
-    if (this.formEmail.invalid) {
-      this.errorForm = true;
-      this.errorEmail = true;
-      invalid = true;
-    }
-    return invalid;
-  }
-
-  sendInfography() {
-    if (!this.formValidation()) {
-      let email = this.formEmail.get('emailInput').value;
-      this.inscriptionsProv.sendInfography(email.trim(), this.subject)
+  sendEmail() {
+    if (this.emailInput.nativeElement.value) {
+      const email = this.formEmail.get('emailInput').value;
+      const template = this.formEmail.get('template').value;
+      this.inscriptionsProv.sendEmail({ 'to_email': [email.toLowerCase().trim()], 'index': Number(template), 'many': false })
       .subscribe((res) => {
         console.log(res);
         if (res.code === 200) {
-          this.formEmail.setValue({'emailInput': ""});
+          this.notificationsServices.showNotification(1, 'Envío de correo', 'El correo ha sido enviado con éxito.');
           this.emailInput.nativeElement.focus();
+          this.emailInput.nativeElement.value = '';
         } else {
-          alert("Ha ocurrido un error al envíar el correo, inténtalo de nuevo");
+          this.notificationsServices.showNotification(2, 'Envío de correo', 'Ha ocurrido un error al envíar el correo, inténtalo de nuevo');
           this.emailInput.nativeElement.focus();
         }
       });
+    } else {
+      if (!this.emailInput.nativeElement.value) {
+        return this.notificationsServices.showNotification(3, 'Envío de correo', 'Es necesario ingresar un correo');
+      }
+      return this.notificationsServices.showNotification(3, 'Envío de correo', 'Es necesario seleccionar una plantilla');
     }
   }
 }
