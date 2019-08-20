@@ -28,7 +28,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let student of csvObjects | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">                    
+                    <tr *ngFor="let student of csvObjects | paginate: {id:pag2, itemsPerPage: pageSize,
+                      currentPage: page };">                    
                       <td>{{ student.nc }}</td>
                       <td>{{ student.nombre }}</td>
                       <td>{{ student.carrera }}</td>
@@ -37,10 +38,15 @@
                     </tr>                    
                   </tbody>
                 </table>                
-                <ngb-pagination
-                  [(page)]="page"
-                  [pageSize]="pageSize"
-                  [collectionSize]="csvObjects.length" [boundaryLinks]="true"></ngb-pagination>
+                <div class='div-pagination'>
+                  <pagination-controls [id]="pag"
+                     directionLinks="true"
+                     (pageChange)="pageChanged($event)"
+                      responsive="true"
+                      previousLabel="Anterior"
+                      nextLabel="Siguiente"
+                   ></pagination-controls>
+            </div>
               </div>
               <div >
                 <div class="row justify-content-center mt-3">                  

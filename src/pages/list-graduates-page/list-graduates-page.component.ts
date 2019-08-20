@@ -103,4 +103,5 @@ export class ListGraduatesPageComponent implements OnInit {
   pageChanged(ev){
     this.page=ev;    
   }
+
 }

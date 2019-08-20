@@ -18,8 +18,20 @@ export class LoaderDataGraduationPageComponent implements OnInit {
 
   page=1;
   pageSize = 10;
-  // We use this trigger because fetching the list of persons can be quite long,
-  // thus we ensure the data is fetched before rendering  
+  careers = {
+    "INGENIERÍA BIOQUÍMICA":"IBQ",
+    "INGENIERÍA EN GESTIÓN EMPRESARIAL":"IGE",
+    "INGENIERÍA CIVIL":"IC",
+    "ARQUITECTURA":"ARQ",
+    "INGENIERÍA QUÍMICA":"IQ",
+    "INGENIERÍA MECATRÓNICA":"IM",
+    "INGENIERÍA ELÉCTRICA":"IE",
+    "LICENCIATURA EN ADMINISTRACIÓN":"LA",
+    "INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES":"ITIC",
+    "INGENIERÍA EN SISTEMAS COMPUTACIONALES":"ISC",
+    "INGENIERÍA INDUSTRIAL":"II",
+    "MAESTRÍA EN CIENCIAS EN ALIMENTOS":"MCA"
+  };
 
 
   constructor(
@@ -67,9 +79,9 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     this.arrayCsvContent.forEach( student =>{
       let tmpStudent = student.split(',');
       this.csvObjects.push({
-        nc:tmpStudent[0],
-        nombre:tmpStudent[1],
-        carrera:tmpStudent[2],
+        nc:tmpStudent[1],
+        nombre:tmpStudent[2],
+        carrera:this.careers[tmpStudent[4].trim()],
         correo:'',
         estatus:' '
       })
@@ -88,4 +100,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     this.fileName = 'Seleccione un archivo';
     this.csvObjects = [];
   }
+  pageChanged(ev){
+    this.page=ev;    
+  } 
 }

@@ -7,3 +7,9 @@ th {
     background: rgb(55, 89, 149);
     color: white;
   }
+  .div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
