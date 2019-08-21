@@ -30,14 +30,18 @@ th {
     background: rgb(21,43,84);
     color: white;
 }
+td {
+    vertical-align: middle;
+}
 .table-hover tbody tr{
     transition: all 300ms ease-out;
 }
 .table-hover tbody tr:hover {
     background: rgb(55, 89, 149);
     color: white;
-  }
-  .div-pagination{
+}
+
+.div-pagination{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,4 +53,46 @@ th {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    width: 100%; 
+    height: 25px;
+}
+
+.Registrado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgb(218, 12, 12);
+    color: white;
+    border-radius: 15px;
+}
+
+.Pagado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgb(255, 174, 1);
+    color: white;
+    border-radius: 15px;
+}
+
+.Asistió{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: green;
+    color: white;
+    border-radius: 15px;
+}
+
+.Mencionado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgb(7, 7, 133);
+    color: white;
+    border-radius: 15px;
 }

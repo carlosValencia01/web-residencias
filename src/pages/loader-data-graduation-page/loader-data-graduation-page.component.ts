@@ -21,7 +21,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   careers = {
     "INGENIERÍA BIOQUÍMICA":"IBQ",
     "INGENIERÍA EN GESTIÓN EMPRESARIAL":"IGE",
-    "INGENIERÍA CIVIL":"IC",
+    "INGENIERÍA CIVIL":"IC ",
     "ARQUITECTURA":"ARQ",
     "INGENIERÍA QUÍMICA":"IQ",
     "INGENIERÍA MECATRÓNICA":"IM",
@@ -74,7 +74,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     this.csvContent = content;
     this.csvContent = this.csvContent.replace(/"/g, '');
     this.arrayCsvContent = this.csvContent.split('\n');
-    
+    console.log(this.arrayCsvContent);
     this.arrayCsvContent.shift();
     this.arrayCsvContent.forEach( student =>{
       let tmpStudent = student.split(',');
@@ -83,7 +83,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         nombre:tmpStudent[2],
         carrera:this.careers[tmpStudent[4].trim()],
         correo:'',
-        estatus:' '
+        estatus:'Registrado'
       })
     });
     console.log(this.csvObjects);
