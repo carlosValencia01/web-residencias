@@ -21,7 +21,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   careers = {
     "INGENIERÍA BIOQUÍMICA":"IBQ",
     "INGENIERÍA EN GESTIÓN EMPRESARIAL":"IGE",
-    "INGENIERÍA CIVIL":"IC",
+    "INGENIERÍA CIVIL":"IC ",
     "ARQUITECTURA":"ARQ",
     "INGENIERÍA QUÍMICA":"IQ",
     "INGENIERÍA MECATRÓNICA":"IM",

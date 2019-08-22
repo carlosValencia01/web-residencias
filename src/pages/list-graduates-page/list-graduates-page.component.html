@@ -28,7 +28,7 @@
                      <option value=''>Todas las carreras</option>
                      <option value='IBQ'>Ingeniería Bioquímica</option>
                      <option value='IGE'>Ingeniería en Gestión Empresarial</option>
-                     <option value='IC'>Ingeniería Civil</option>
+                     <option value='IC '>Ingeniería Civil</option>
                      <option value='ARQ'>Arquitectura</option>
                      <option value='IQ'>Ingeniería Química</option>
                      <option value='IM'>Ingeniería Mecatrónica</option>
@@ -60,7 +60,7 @@
                      <td>{{item.name}}</td>
                      <td>{{item.carreer}}</td>
                      <td>{{item.email}}</td>
-                     <td>{{item.status}}</td>
+                     <td class="{{item.status}}">{{item.status}}</td>
                      <td>
                         <div class="div-actions">
                            <tr *ngIf="item.email && status===1">
