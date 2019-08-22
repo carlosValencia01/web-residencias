@@ -55,12 +55,12 @@
         </button>
         <div *ngIf="showGraduationItems">
             <li>
-                <button (click)="closeMenu()" *ngIf="role==='secretary' || role==='administration'" type="button" class="menu-item menu-subitem" routerLink="registerGraduate">
-                  <img class="menu-item-img" src="assets/icons/graduate.svg" alt="">
-                  <p class="menu-item-title">Actualizar Correo</p>
+                <button (click)="closeMenu()" *ngIf="role==='secretary' || role==='administration'" type="button" class="menu-item menu-subitem" routerLink="graduationEvents">
+                  <img class="menu-item-img" src="assets/icons/listgraduation.svg" alt="">
+                  <p class="menu-item-title">Gestión de eventos</p>
                 </button>
             </li>
-            <li>
+            <!-- <li>
                 <button (click)="closeMenu()" *ngIf="role==='secretary' || role==='administration'" type="button" class="menu-item menu-subitem" routerLink="listGraduates">
                   <img class="menu-item-img" src="assets/icons/graduation.svg" alt="">
                   <p class="menu-item-title">Consultar</p>
@@ -71,7 +71,7 @@
                 <img class="menu-item-img" src="assets/icons/import.svg" alt="">
                 <span class="menu-item-title">Importar Datos</span>
               </div>
-            </li>
+            </li> -->
         </div>
       </li>
     </ul>

@@ -38,6 +38,7 @@ import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credent
 import { InscriptionsPageComponent } from '../pages/inscriptions-page/inscriptions-page.component';
 import { RegisterEmailgraduationPageComponent } from '../pages/register-emailgraduation-page/register-emailgraduation-page.component';
 import { LoaderDataGraduationPageComponent } from '../pages/loader-data-graduation-page/loader-data-graduation-page.component';
+import { GraduationEventsPageComponent } from '../pages/graduation-events-page/graduation-events-page.component'
 
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
@@ -73,9 +74,10 @@ const appRouters: Routes = [
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
-  { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full'},
-  { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full'},
-  { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full'},
+  { path: 'registerGraduate/:eventId/:status', component: RegisterEmailgraduationPageComponent, pathMatch: 'full'},
+  { path: 'listGraduates/:eventId/:status', component: ListGraduatesPageComponent, pathMatch: 'full'},
+  { path: 'loaderDataGraduation/:eventId/:status', component: LoaderDataGraduationPageComponent, pathMatch: 'full'},
+  { path: 'graduationEvents', component: GraduationEventsPageComponent, pathMatch: 'full'},
 
 ];
 
@@ -96,6 +98,7 @@ const appRouters: Routes = [
     RegisterEmailgraduationPageComponent,
     ListGraduatesPageComponent,
     LoaderDataGraduationPageComponent,
+    GraduationEventsPageComponent,
     FilterPipe
   ],
   imports: [

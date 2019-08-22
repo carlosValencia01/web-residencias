@@ -17,7 +17,8 @@ export class ListGraduatesPageComponent implements OnInit {
   public alumnos = [];
   page=1;
   pageSize = 10;
-  
+  collection = null;
+  status = 0;
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
@@ -29,6 +30,8 @@ export class ListGraduatesPageComponent implements OnInit {
       this.cookiesService.getData().user.role !== 1) {
         this.router.navigate(['/']);
       }
+      this.collection=this.router.url.split('/')[2];
+      this.status=parseInt(this.router.url.split('/')[3]);
     }
 
   ngOnInit() {
@@ -38,16 +41,17 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   readEmail(){
-    this.firestoreService.getGraduates().subscribe(async (alumnosSnapshot) => {      
+    this.firestoreService.getGraduates(this.collection).subscribe(async (alumnosSnapshot) => {      
       this.alumnos = alumnosSnapshot.map( (alumno) =>{
         return {
           id:alumno.payload.doc.id,
-          nc : alumno.payload.doc.data().nc,
-          name : alumno.payload.doc.data().nombre,
-          carreer : alumno.payload.doc.data().carrera,
-          email: alumno.payload.doc.data().correo,
-          status: alumno.payload.doc.data().estatus
+          nc : alumno.payload.doc.get("nc"),
+          name : alumno.payload.doc.get("nombre"),
+          carreer : alumno.payload.doc.get("carrera"),
+          email: alumno.payload.doc.get("correo"),
+          status: alumno.payload.doc.get("estatus")
         }});
+        console.log(this.alumnos);
                
     });
   }
@@ -62,7 +66,7 @@ export class ListGraduatesPageComponent implements OnInit {
       correo : item.email,
       estatus: 'Pagado'
     }
-    this.firestoreService.updateGraduate(item.id,itemUpdate).then(() => {
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
       this.notificationsServices.showNotification(1, 'Pago confirmado para:',item.nc);
     }, (error) => {
       console.log(error);

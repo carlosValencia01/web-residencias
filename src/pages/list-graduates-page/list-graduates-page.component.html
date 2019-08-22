@@ -1,8 +1,7 @@
 <div class="content-general">
    <div class="card card-shadow">
       <div class="card-header text-white bg-secondary">
-         <strong>Listado de Alumnos</strong>
-         {{len}}
+         <strong>Listado de Alumnos</strong>  
       </div>
       <div class="card-body">
          <div class="row">
@@ -64,7 +63,7 @@
                      <td>{{item.status}}</td>
                      <td>
                         <div class="div-actions">
-                           <tr *ngIf="item.email">
+                           <tr *ngIf="item.email && status===1">
                               <td *ngIf="item.status == 'Registrado'">
                                  <div class="div-img" ngbTooltip="Confirmar Pago" tooltipClass="my-custom-class" *ngIf="item.email">
                                        <img src="../../assets/icons/paid.svg" class="paid" (click)="confirmPaidEvent(item)">

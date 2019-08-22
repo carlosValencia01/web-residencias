@@ -1,0 +1,89 @@
+<div class="content-general">
+  <div class="card card-shadow">
+     <div class="card-header text-white bg-secondary">
+        <strong>Listado de eventos</strong>        
+     </div>
+     <div class="card-body">
+        <div class="row align-items-center  mb-4">
+           <div class="col-4 text-center">
+             <button type="button" class="btn btn-primary" (click)="createEvent()">CREAR EVENTO {{periodo}}</button>
+           </div>
+           <div id="evento" class="col-8 inactivo text-center">
+              <div class="row">
+                 <div class="col-12">
+                     <div class="form-group">
+                           <label for="period">Periodo</label>
+                           <select [(ngModel)]="periodo" name="periodo" id="periodo" class="form-control">
+                              <option value="">Seleccione un periodo</option>
+                              <option value="enejun{{year}}">Enero-Junio {{year}}</option>
+                              <option value="agodic{{year}}">Agosto-Diciembre {{year}}</option>
+                           </select>
+                        </div>
+                 </div>
+                 
+              </div>
+              <div class="row">
+                 <div class="col-12">
+                    <button type="button" class="btn btn-outline-primary" (click)="saveEvent()">Guardar</button>
+                 </div>
+              </div>
+               
+           </div>
+        </div>
+        <table *ngIf="events.length>0; else empty" class="table table-striped table-bordered table-hover text-center">
+              <thead>
+                 <tr>
+                    <th>Periodo del evento</th>
+                    <th>Acciones</th>                    
+                 </tr>          
+              </thead>
+              <tbody>
+                <tr *ngFor="let event of events">
+                  <td >{{event.id | uppercase}}</td>
+                  <td>
+                    <tr>
+                        <td>
+                            <div class="div-img" ngbTooltip="Consultar" tooltipClass="my-custom-class" >
+                              
+                                <img src="../../assets/icons/graduation.svg" class="action-icon" (click)="checkEvent(event)">
+                                 
+                            </div>
+                         </td>
+                        <td *ngIf="event.status == 1">
+                            <div class="div-img" ngbTooltip="Actualizar correo" tooltipClass="my-custom-class" >
+                                  <img src="../../assets/icons/graduate.svg" class="action-icon">
+                            </div>
+                         </td>
+                        <td *ngIf="event.status == 1">
+                            <div class="div-img" ngbTooltip="Importar datos" tooltipClass="my-custom-class" >
+                              <a [routerLink]="[ '/loaderDataGraduation', event.id,event.status ]">
+                              
+                                <img src="../../assets/icons/import.svg" class="action-icon" >
+                              </a>
+                            </div>
+                         </td>                         
+                    </tr>
+                  </td>
+                  
+                </tr>                 
+              </tbody>              
+           </table> 
+           <!-- <div class='div-pagination'>
+                 <pagination-controls [id]="pag"
+                    directionLinks="true"
+                    (pageChange)="pageChanged($event)"
+                     responsive="true"
+                     previousLabel="Anterior"
+                     nextLabel="Siguiente"
+                  ></pagination-controls>
+           </div>    -->
+           <ng-template #empty>
+              <div class="alert alert-info text-center">
+                 <h2>No se encontraron eventos.</h2>
+              </div>
+           </ng-template>
+           
+     </div>
+  </div>
+  
+</div>

@@ -70,7 +70,7 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
 
   searchAlumno(){
       if (this.ncInput !== '') {
-        this.firestoreService.getGraduates().subscribe((alumnosSnapshot) => {
+        this.firestoreService.getGraduates(this.router.url.split('/')[2]).subscribe((alumnosSnapshot) => {
           alumnosSnapshot.forEach((alumnosData: any) => {
             if(this.ncInput === alumnosData.payload.doc.data().nc){
               this.docId = alumnosData.payload.doc.id;
@@ -102,7 +102,7 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
       this.dataUpdate.correo=newEmail;
       //Actualizar registro
       if(this.dataUpdate != null){
-        this.firestoreService.updateGraduate(this.docId,this.dataUpdate).then(() => {
+        this.firestoreService.updateGraduate(this.docId,this.dataUpdate,this.router.url.split('/')[2]).then(() => {
           this.notificationsServices.showNotification(1,'Exito','Correo actualizado exitosamente para '+this.dataUpdate.nc);
           this.initializeForm();
         }, (error) => {

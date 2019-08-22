@@ -15,7 +15,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   csvContent: string;
   arrayCsvContent: Array<any>;
   csvObjects = [];  
-
+  collection="";
   page=1;
   pageSize = 10;
   careers = {
@@ -44,6 +44,9 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         this.cookiesService.getData().user.role !== 1) {
           this.router.navigate(['/']);
         }
+        // console.log(this.router.url.split("/"));
+        
+        this.collection=this.router.url.split('/')[2];
     }
 
   ngOnInit() {    
@@ -71,27 +74,31 @@ export class LoaderDataGraduationPageComponent implements OnInit {
 
   //genera un arreglo de estudiantes por carrera
   convertFileToObject(content) {
+    this.cancel();
     this.csvContent = content;
     this.csvContent = this.csvContent.replace(/"/g, '');
     this.arrayCsvContent = this.csvContent.split('\n');
     
+    console.log(this.arrayCsvContent[0]);
     this.arrayCsvContent.shift();
     this.arrayCsvContent.forEach( student =>{
       let tmpStudent = student.split(',');
       this.csvObjects.push({
-        nc:tmpStudent[1],
-        nombre:tmpStudent[2],
-        carrera:this.careers[tmpStudent[4].trim()],
-        correo:'',
+        nc:tmpStudent[0],
+        nombre:tmpStudent[1],
+        carrera:this.careers[tmpStudent[3].trim()],
+        correo:tmpStudent[2],
         estatus:' '
       })
     });
-    console.log(this.csvObjects);
     
   }
   sendData(){
+
+    // console.log(this.collection, this.csvObjects);
+    
     this.csvObjects.forEach(async (student) =>{
-      await this.firebaseService.loadCSV(student).then(resp =>{}).catch(err=>{});
+      await this.firebaseService.loadCSV(student,this.collection).then(resp =>{}).catch(err=>{});
     });
     this.notificationsServices.showNotification(1,'Exito','Alumnos registrados correctamente');
     this.cancel();

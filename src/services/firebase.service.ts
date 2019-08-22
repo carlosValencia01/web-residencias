@@ -5,37 +5,57 @@ import { AngularFirestore, AngularFirestoreDocument, CollectionReference, Angula
   providedIn: 'root'
 })
 export class FirebaseService {
-  private register: AngularFirestoreCollection;
+  
 
   constructor(
     private firestore : AngularFirestore
-  ) { 
-    this.register = firestore.collection('registrograduacion', ref=> ref.orderBy('nc'))
+  ) {       
   }
   
   //Registrar un correo
-  public newEmail(data: {correo: string}) {
-    return this.register.add(data);
+  public newEmail(data: {correo: string} , collection : string) {
+    return this.firestore.collection(collection).add(data);
   }
 
   //Obtener un alumno
-  public getGraduate(documentId: string) {
-    return this.register.doc(documentId).snapshotChanges();
+  public getGraduate(documentId: string , collection : string) {
+    return this.firestore.collection(collection).doc(documentId).snapshotChanges();
   }
 
   //Obtiene todos los alumnos
-  public getGraduates() {
-    return this.register.snapshotChanges();
+  public getGraduates(collection : string) {
+    return this.firestore.collection(collection).snapshotChanges();
   }
 
   //Actualiza un alumno
-  public updateGraduate(documentId: string, data: any) {
-    return this.register.doc(documentId).set(data);
+  public updateGraduate(documentId: string, data: any , collection : string) {
+    return this.firestore.collection(collection).doc(documentId).set(data);
   }
 
   //carga csv
 
-  public loadCSV(data){
-    return this.register.add(data);
+  public loadCSV(data , collection : string){    
+    return this.firestore.collection(collection).add(data);
+  }
+
+  //crear evento
+  public createEvent(name : string, status : number){
+    return this.firestore.collection("eventosG").doc(name).set({estatus:status});
+  }
+
+  //obtiene evento activo === estatus = 1
+  //inactivo === estatus = 0
+  public getActivedEvent(){
+    return this.firestore.collection("eventosG", ref=>ref.where("estatus","==",1)).snapshotChanges();
+  }
+
+  //obtiene todos los eventos
+  public getAllEvents(){
+    return this.firestore.collection("eventosG", ref=>ref.orderBy("estatus","desc")).snapshotChanges();
+  }
+
+  //cambiar estatus de evento
+  public setStatusEvent(status : number, idEvent){
+    return this.firestore.collection("eventosG").doc(idEvent).update({estatus:status});
   }
 }
