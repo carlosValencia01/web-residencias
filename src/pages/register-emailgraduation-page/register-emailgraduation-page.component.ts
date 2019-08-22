@@ -80,6 +80,8 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
                 carrera : alumnosData.payload.doc.data().carrera,
                 estatus: 'Registrado'
               }
+              console.log(this.docId);
+              
               this.dataUpdate = data;
               data = null;
               this.hidden = true;
@@ -97,12 +99,15 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
   }
 
   updateEmail() {
+    let collection=this.router.url.split('/')[2];
+    console.log(collection,this.docId,this.dataUpdate);
+    
     if (!this.formValidation()) {
       let newEmail = this.formEmailGraduate.get('emailGraduateInput').value;
       this.dataUpdate.correo=newEmail;
       //Actualizar registro
       if(this.dataUpdate != null){
-        this.firestoreService.updateGraduate(this.docId,this.dataUpdate,this.router.url.split('/')[2]).then(() => {
+        this.firestoreService.updateGraduate(this.docId,this.dataUpdate,collection).then(() => {
           this.notificationsServices.showNotification(1,'Exito','Correo actualizado exitosamente para '+this.dataUpdate.nc);
           this.initializeForm();
         }, (error) => {

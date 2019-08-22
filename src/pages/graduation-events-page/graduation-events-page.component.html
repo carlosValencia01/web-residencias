@@ -1,7 +1,7 @@
 <div class="content-general">
   <div class="card card-shadow">
      <div class="card-header text-white bg-secondary">
-        <strong>Listado de eventos</strong>        
+        <strong>Listado de eventos</strong>             
      </div>
      <div class="card-body">
         <div class="row align-items-center  mb-4">
@@ -51,7 +51,10 @@
                          </td>
                         <td *ngIf="event.status == 1">
                             <div class="div-img" ngbTooltip="Actualizar correo" tooltipClass="my-custom-class" >
-                                  <img src="../../assets/icons/graduate.svg" class="action-icon">
+                              <a [routerLink]="[ '/registerGraduate', event.id,event.status ]">
+                              
+                                 <img src="../../assets/icons/graduate.svg" class="action-icon">
+                              </a>
                             </div>
                          </td>
                         <td *ngIf="event.status == 1">

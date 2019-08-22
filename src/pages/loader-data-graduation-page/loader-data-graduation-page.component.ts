@@ -88,7 +88,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         nombre:tmpStudent[1],
         carrera:this.careers[tmpStudent[3].trim()],
         correo:tmpStudent[2],
-        estatus:' '
+        estatus:'Registrado'?tmpStudent[2]!== "  ":' '
       })
     });
     

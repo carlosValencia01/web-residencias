@@ -58,4 +58,5 @@ export class FirebaseService {
   public setStatusEvent(status : number, idEvent){
     return this.firestore.collection("eventosG").doc(idEvent).update({estatus:status});
   }
+
 }

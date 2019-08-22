@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FirebaseService } from 'src/services/firebase.service';
+import { FirebaseService } from '../../services/firebase.service';
 import { Router } from '@angular/router';
 import { NotificationsServices } from '../../services/notifications.service';
 @Component({
@@ -45,7 +45,8 @@ export class GraduationEventsPageComponent implements OnInit {
      var oldEvent="";
      let i=0;
      let sub = this.firestoreService.getActivedEvent().subscribe(
-        res=> {
+       res=> {
+        sub.unsubscribe();
           i++;   //por el subscribe y lo asincrono solo dejamos que se ejecute una vez cada que se llama la funcion             
           if(res.length>0 && i===1){
             oldEvent = res[0].payload.doc.id; //evento activo actual
@@ -62,7 +63,6 @@ export class GraduationEventsPageComponent implements OnInit {
                 //cambiamos de evento activo
                 this.firestoreService.setStatusEvent(0,oldEvent).then(
                   updated=>{
-                    sub.unsubscribe();
                     this.insertEvent("a");
                   }
                 );
@@ -73,8 +73,6 @@ export class GraduationEventsPageComponent implements OnInit {
           }else{
             console.log("aja");
             if(i===1){
-
-              sub.unsubscribe();
               this.insertEvent("i");
             }
           }
@@ -98,16 +96,19 @@ export class GraduationEventsPageComponent implements OnInit {
   }
 
   checkEvent(event){
-    this.firestoreService.getGraduates(event.id).subscribe(
+   let sub= this.firestoreService.getGraduates(event.id).subscribe(
       res =>{
+        sub.unsubscribe();
         if(res.length === 0){
           this.notificationsServices.showNotification(2, 'No se encontraron alumnos, por favor primero importe los datos','');
-      
-        }else{
+          console.log(sub.closed);
+        }else{          
           this.router.navigate(['/listGraduates', event.id,event.status]);  
         }
       }
     );
+    console.log(sub.closed);
+    
   }
 
 }
