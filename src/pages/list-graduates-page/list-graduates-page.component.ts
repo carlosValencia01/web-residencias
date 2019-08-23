@@ -15,6 +15,7 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchCarreer : string = '';
   public searchStatus : string = '';
   public alumnos = [];
+  public role: string;
   page=1;
   pageSize = 10;
   collection = null;
@@ -27,7 +28,8 @@ export class ListGraduatesPageComponent implements OnInit {
     private router: Router
     ) {
       if (this.cookiesService.getData().user.role !== 0 && 
-      this.cookiesService.getData().user.role !== 1) {
+      this.cookiesService.getData().user.role !== 1 &&
+      this.cookiesService.getData().user.role !== 5) {
         this.router.navigate(['/']);
       }
       this.collection=this.router.url.split('/')[2];
@@ -37,7 +39,26 @@ export class ListGraduatesPageComponent implements OnInit {
     }
 
   ngOnInit() {
-    
+    switch (this.cookiesService.getData().user.role) {
+      case 0:
+        this.role = 'administration';
+        break;
+      case 1:
+        this.role = 'secretary';
+        break;
+      case 2:
+        this.role = 'student';
+        break;
+      case 3:
+        this.role = 'employee';
+        break;
+      case 4:
+        this.role = 'rechumanos';
+        break;
+      case 5:
+        this.role = 'comunication';
+        break;
+    }
     this.readEmail();
     
   }

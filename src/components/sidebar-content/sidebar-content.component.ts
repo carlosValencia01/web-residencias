@@ -47,6 +47,10 @@ export class SidebarContentComponent implements OnInit {
         this.role = 'rechumanos';
         this.title = 'Recursos Humanos';
         break;
+      case 5:
+        this.role = 'comunication';
+        this.title = 'Comunicación y Difusión';
+        break;
     }
   }
 
