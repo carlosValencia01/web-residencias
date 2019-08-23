@@ -48,6 +48,9 @@ export class FirebaseService {
   public getActivedEvent(){
     return this.firestore.collection("eventosG", ref=>ref.where("estatus","==",1)).snapshotChanges();
   }
+  public getEvent(event : string){
+    return this.firestore.collection("eventosG").doc(event).snapshotChanges();
+  }
 
   //obtiene todos los eventos
   public getAllEvents(){

@@ -51,7 +51,7 @@
                          </td>
                         <td *ngIf="event.status == 1">
                             <div class="div-img" ngbTooltip="Actualizar correo" tooltipClass="my-custom-class" >
-                              <a [routerLink]="[ '/registerGraduate', event.id,event.status ]">
+                              <a [routerLink]="[ '/registerGraduate', event.id ]">
                               
                                  <img src="../../assets/icons/graduate.svg" class="action-icon">
                               </a>
@@ -59,7 +59,7 @@
                          </td>
                         <td *ngIf="event.status == 1">
                             <div class="div-img" ngbTooltip="Importar datos" tooltipClass="my-custom-class" >
-                              <a [routerLink]="[ '/loaderDataGraduation', event.id,event.status ]">
+                              <a [routerLink]="[ '/loaderDataGraduation', event.id ]">
                               
                                 <img src="../../assets/icons/import.svg" class="action-icon" >
                               </a>

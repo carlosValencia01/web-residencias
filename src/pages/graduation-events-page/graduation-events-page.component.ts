@@ -101,13 +101,13 @@ export class GraduationEventsPageComponent implements OnInit {
         sub.unsubscribe();
         if(res.length === 0){
           this.notificationsServices.showNotification(2, 'No se encontraron alumnos, por favor primero importe los datos','');
-          console.log(sub.closed);
+          
         }else{          
-          this.router.navigate(['/listGraduates', event.id,event.status]);  
+          this.router.navigate(['/listGraduates', event.id]);  
         }
       }
     );
-    console.log(sub.closed);
+    
     
   }
 

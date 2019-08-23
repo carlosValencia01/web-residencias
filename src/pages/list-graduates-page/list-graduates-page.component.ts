@@ -31,7 +31,9 @@ export class ListGraduatesPageComponent implements OnInit {
         this.router.navigate(['/']);
       }
       this.collection=this.router.url.split('/')[2];
-      this.status=parseInt(this.router.url.split('/')[3]);
+      let sub = this.firestoreService.getEvent(this.collection).subscribe(
+        ev =>{ sub.unsubscribe(); this.status=ev.payload.get("estatus");}
+      );      
     }
 
   ngOnInit() {
