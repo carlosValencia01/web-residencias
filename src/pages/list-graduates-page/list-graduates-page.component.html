@@ -5,21 +5,9 @@
       </div>
       <div class="card-body">
          <div class="row">
-            <div class="col-7">
+            <div class="col-6">
                <div class="form-group">
                   <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno...">
-               </div>
-            </div>
-            <div class="col-2">
-               <div class="form-group">
-                  <select [(ngModel)]="searchStatus" class="form-control">
-                     <option value=''>Todos los estatus</option>
-                     <option value=' '>No Registrado</option>
-                     <option value='Registrado'>Registrado</option>
-                     <option value='Pagado'>Pagado</option>
-                     <option value='Asistió'>Asistió</option>
-                     <option value='Mencionado'>Mencionado</option>
-                  </select>
                </div>
             </div>
             <div class="col-3">
@@ -40,6 +28,53 @@
                      <option value='MCA'>Maestría en Ciencias en Alimentos</option>
                   </select>
                </div>
+            </div>
+            <div class="col-2">
+               <table class="table table-bordered">
+                  <tr>
+                     <td id="checkAll">
+                        <div class="form-check" ngbTooltip="Todos" tooltipClass="my-custom-class">
+                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusAll" value="">
+                           <label class="form-check-label" for="estatusAll">
+                              T
+                           </label>
+                        </div>
+                     </td>
+                     <td id="checkRegistrado">
+                        <div class="form-check" ngbTooltip="Registrado" tooltipClass="my-custom-class">
+                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusRegistrado" value="Registrado">
+                           <label class="form-check-label" for="estatusRegistrado">
+                              R
+                           </label>
+                        </div>
+                     </td>
+                     <td id="checkPagado">
+                        <div class="form-check" ngbTooltip="Pagado" tooltipClass="my-custom-class">
+                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusPagado" value="Pagado">
+                           <label class="form-check-label" for="estatusPagado">
+                              P
+                           </label>
+                        </div>
+                     </td>
+                     <td id="checkAsistio">
+                        <div class="form-check" ngbTooltip="Asistió" tooltipClass="my-custom-class">
+                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusAsistio" value="Asistió">
+                           <label class="form-check-label" for="estatusAsistio">
+                              A
+                           </label>
+                        </div>
+                     </td>
+                     <td id="checkMencionado">
+                        <div class="form-check" ngbTooltip="Mencionado" tooltipClass="my-custom-class">
+                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusMencionado" value="Mencionado">
+                           <label class="form-check-label" for="estatusMencionado">
+                              M
+                           </label>
+                        </div>
+                     </td>
+                  </tr>
+      
+               </table>
             </div>
          </div>
          <table class="table table-striped table-bordered table-hover">
@@ -64,7 +99,7 @@
                      <td>
                         <div class="div-actions">
                            <tr *ngIf="item.email && status===1">
-                              <td *ngIf="item.status == 'Registrado'">
+                              <td *ngIf="item.status == 'Registrado' && role === 'comunication'">
                                  <div class="div-img" ngbTooltip="Confirmar Pago" tooltipClass="my-custom-class" *ngIf="item.email">
                                        <img src="../../assets/icons/paid.svg" class="paid" (click)="confirmPaidEvent(item)">
                                  </div>
