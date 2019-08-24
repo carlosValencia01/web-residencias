@@ -8,10 +8,10 @@ import { Api } from './api.prov';
 export class InscriptionsProvider {
     constructor(
         public api: Api,
-    ) {}
+    ) { }
 
     sendEmail(data: object) {
-        return this.api.post('sendmail', data)
-        .pipe(map(res => res.json()));
+        return this.api.post('inscription/sendmail', data)
+            .pipe(map(res => res.json()));
     }
 }

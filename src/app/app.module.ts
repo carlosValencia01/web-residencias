@@ -24,12 +24,14 @@ import { AngularFireModule } from 'angularfire2';
 import { environment } from '../environments/environment';
 
 // FilterPipe
-import { FilterPipe} from '../pages/list-graduates-page/filter.pipe';
+import { FilterPipe } from '../pages/list-graduates-page/filter.pipe';
 
 // Material
-import { MatStepperModule } from '@angular/material/stepper';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatStepperModule } from '@angular/material/stepper';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -77,9 +79,9 @@ const appRouters: Routes = [
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
   { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
-  { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full'},
-  { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full'},
-  { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full'},
+  { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
+  { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full' },
+  { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
 
 ];
 
@@ -121,8 +123,10 @@ const appRouters: Routes = [
     BrowserAnimationsModule,
     SidebarModule.forRoot(),
     MatStepperModule,
-    MatDatepickerModule,
     MatButtonToggleModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
     FormsModule,
     ReactiveFormsModule
   ],
