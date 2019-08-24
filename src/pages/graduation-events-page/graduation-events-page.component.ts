@@ -3,6 +3,7 @@ import { FirebaseService } from '../../services/firebase.service';
 import { Router } from '@angular/router';
 import { NotificationsServices } from '../../services/notifications.service';
 import { CookiesService } from 'src/services/cookie.service';
+import * as years from 'ye-ars';
 
 @Component({
   selector: 'app-graduation-events-page',
@@ -18,6 +19,12 @@ export class GraduationEventsPageComponent implements OnInit {
   periodo="";
   public role: string;
 
+  model;
+  yearsOptions = {
+    count: 50
+  };
+  newYears=[];
+  eventYear="";
   constructor(
     private firestoreService: FirebaseService, 
     private router : Router,
@@ -34,7 +41,8 @@ export class GraduationEventsPageComponent implements OnInit {
             this.events = ev.map( data=> { return {id:data.payload.doc.id, status:data.payload.doc.get("estatus")}} );
             this.year=this.today.getFullYear()+"";                  
           }
-        )
+        );
+        this.newYears = years(this.yearsOptions);      
       }
 
   ngOnInit() {
@@ -66,61 +74,20 @@ export class GraduationEventsPageComponent implements OnInit {
   createEvent(){
     console.log("create");
     this.periodo="";
+    this.eventYear="";
     let evento = document.getElementById("evento").classList.toggle("inactivo");
   }
 
   async saveEvent(){
-    if(this.periodo!== ""){
-     var oldEvent="";
-     let i=0;
-     let sub = this.firestoreService.getActivedEvent().subscribe(
-       res=> {
-        sub.unsubscribe();
-          i++;   //por el subscribe y lo asincrono solo dejamos que se ejecute una vez cada que se llama la funcion             
-          if(res.length>0 && i===1){
-            oldEvent = res[0].payload.doc.id; //evento activo actual
-  
-            if(oldEvent === this.periodo){
-              this.notificationsServices.showNotification(2, 'YA EXISTE UN EVENTO ACTIVO EN ESE PERIODO:',this.periodo);
-            }else{
-
-              //preguntar si se desea tener un nuevo evento activo
-              let opcion = confirm(`¿DESEA CREAR EL EVENTO CON PERIODO ${this.periodo}?\n ESTO DESHABILITARA EL EVENTO DEL PERIODO ${oldEvent.toUpperCase()}`);
-              console.log(opcion);
-              
-              if (opcion===true) {
-                //cambiamos de evento activo
-                this.firestoreService.setStatusEvent(0,oldEvent).then(
-                  updated=>{
-                    this.insertEvent("a");
-                  }
-                );
-              }          
-            }
-            console.log("eje");
-            
-          }else{
-            console.log("aja");
-            if(i===1){
-              this.insertEvent("i");
-            }
-          }
-        }
-      );
+    if(this.periodo!== "" && this.eventYear!==""){
+     this.periodo = this.periodo+this.eventYear;
+     this.firestoreService.createEvent(this.periodo,0).then(
+      async created=>{
+        await this.notificationsServices.showNotification(1, 'EVENTO CREADO CON PERIODO:',this.periodo); 
+        this.createEvent();
+       }
+     );
      
-    }
-  }
-
-   insertEvent(msg){
-
-    if(this.periodo!==""){
-      
-     this.firestoreService.createEvent(this.periodo,1).then(
-       async created=>{
-         await this.notificationsServices.showNotification(1, 'EVENTO CREADO CON PERIODO:',this.periodo); 
-         this.createEvent();
-        }
-      );
     }
   }
 
@@ -135,8 +102,49 @@ export class GraduationEventsPageComponent implements OnInit {
           this.router.navigate(['/listGraduates', event.id]);  
         }
       }
-    );
+    );        
+  }
+
+  changeEventStatus(ev){
+    console.log(ev);
     
+    let i=0, oldEvent="";
+    if(ev.status ===0){
+
+      let sub = this.firestoreService.getActivedEvent().subscribe(
+        res=> {
+         sub.unsubscribe();
+           i++;   //por el subscribe y lo asincrono solo dejamos que se ejecute una vez cada que se llama la funcion             
+           if(res.length>0 && i===1){
+             oldEvent = res[0].payload.doc.id; //evento activo actual
+               
+               //preguntar si se desea tener un nuevo evento activo
+               let opcion = confirm(`¿DESEA ACTIVAR EL EVENTO CON PERIODO ${ev.id.toUpperCase()}?\n ESTO DESHABILITARA EL EVENTO DEL PERIODO ${oldEvent.toUpperCase()}`);              
+               
+               if (opcion===true) {
+                 //cambiamos de evento activo
+                 this.firestoreService.setStatusEvent(0,oldEvent).then(
+                   updated=>{
+                     this.firestoreService.setStatusEvent(1,ev.id).then(
+                       up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
+                     );
+                   }
+                 );
+               }                                    
+           }else{             
+             if(i===1){
+              this.firestoreService.setStatusEvent(1,ev.id).then(
+                up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
+              );
+             }
+           }
+         }
+       );
+    }else{
+      this.firestoreService.setStatusEvent(0,ev.id).then(
+        up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
+      );
+    }
     
   }
 

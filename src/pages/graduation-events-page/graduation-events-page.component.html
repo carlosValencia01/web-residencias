@@ -6,19 +6,29 @@
      <div class="card-body">
         <div class="row align-items-center  mb-4">
            <div class="col-4 text-center">
-             <button type="button" class="btn btn-primary" (click)="createEvent()">CREAR EVENTO {{periodo}}</button>
+             <button type="button" class="btn btn-primary" (click)="createEvent()">CREAR EVENTO</button>
            </div>
            <div id="evento" class="col-8 inactivo text-center">
               <div class="row">
-                 <div class="col-12">
+                 <div class="col-6">
                      <div class="form-group">
-                           <label for="period">Periodo</label>
+                           <label for="periodo">Periodo</label>
                            <select [(ngModel)]="periodo" name="periodo" id="periodo" class="form-control">
                               <option value="">Seleccione un periodo</option>
-                              <option value="enejun{{year}}">Enero-Junio {{year}}</option>
-                              <option value="agodic{{year}}">Agosto-Diciembre {{year}}</option>
+                              <option value="enejun">Enero-Junio</option>
+                              <option value="agodic">Agosto-Diciembre</option>
                            </select>
                         </div>
+                 </div>
+                 <div class="col-6">
+                    <div class="form-group">
+                     <label for="eventYear">Año</label>
+                     <select [(ngModel)]="eventYear" name="eventYear" id="eventYear" class="form-control">
+                        <option value="">Seleccione un año</option>
+                        <option *ngFor="let y of newYears"
+                         [value]="y">{{y}}</option>                        
+                     </select>
+                    </div>
                  </div>
                  
               </div>
@@ -45,8 +55,7 @@
                         <td>
                             <div class="div-img" ngbTooltip="Consultar" tooltipClass="my-custom-class" >
                               
-                                <img src="../../assets/icons/graduation.svg" class="action-icon" (click)="checkEvent(event)">
-                                 
+                                <img src="../../assets/icons/graduation.svg" class="action-icon" (click)="checkEvent(event)">                                 
                             </div>
                          </td>
                         <td *ngIf="event.status == 1 && role === 'administration'">
@@ -64,7 +73,13 @@
                                 <img src="../../assets/icons/import.svg" class="action-icon" >
                               </a>
                             </div>
-                         </td>                         
+                         </td>    
+                         <td>
+                           <div class="div-img" ngbTooltip="Cambiar estatus" tooltipClass="my-custom-class" >
+                             
+                               <img src="../../assets/icons/refresh.svg" class="action-icon" (click)="changeEventStatus(event)">                                 
+                           </div>
+                        </td>                     
                     </tr>
                   </td>
                   
