@@ -74,7 +74,7 @@
                               </a>
                             </div>
                          </td>    
-                         <td>
+                         <td *ngIf="role === 'administration'">
                            <div class="div-img" ngbTooltip="Cambiar estatus" tooltipClass="my-custom-class" >
                              
                                <img src="../../assets/icons/refresh.svg" class="action-icon" (click)="changeEventStatus(event)">                                 
