@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from '../../services/firebase.service';
 import { Router } from '@angular/router';
 import { NotificationsServices } from '../../services/notifications.service';
+import { CookiesService } from 'src/services/cookie.service';
+
 @Component({
   selector: 'app-graduation-events-page',
   templateUrl: './graduation-events-page.component.html',
@@ -14,24 +16,51 @@ export class GraduationEventsPageComponent implements OnInit {
   year="";
   closeResult="";
   periodo="";
+  public role: string;
 
   constructor(
     private firestoreService: FirebaseService, 
     private router : Router,
-    private notificationsServices: NotificationsServices 
+    private notificationsServices: NotificationsServices,
+    private cookiesService: CookiesService
     ) {
+        if (this.cookiesService.getData().user.role !== 0 && 
+        this.cookiesService.getData().user.role !== 5) {
+          this.router.navigate(['/']);
+        }
 
-    this.firestoreService.getAllEvents().subscribe(
-      ev =>{
-        this.events = ev.map( data=> { return {id:data.payload.doc.id, status:data.payload.doc.get("estatus")}} );    
-        
-        this.year=this.today.getFullYear()+"";
-                    
+        this.firestoreService.getAllEvents().subscribe(
+          ev =>{
+            this.events = ev.map( data=> { return {id:data.payload.doc.id, status:data.payload.doc.get("estatus")}} );
+            this.year=this.today.getFullYear()+"";                  
+          }
+        )
       }
-    )
-  }
 
   ngOnInit() {
+    switch (this.cookiesService.getData().user.role) {
+      case 0:
+        this.role = 'administration';
+        break;
+      case 1:
+        this.role = 'secretary';
+        break;
+      case 2:
+        this.role = 'student';
+        break;
+      case 3:
+        this.role = 'employee';
+        break;
+      case 4:
+        this.role = 'rechumanos';
+        break;
+      case 5:
+        this.role = 'comunication';
+        break;
+      case 6:
+        this.role = 'coordinator';
+        break;
+    }
   }
 
   createEvent(){

@@ -28,7 +28,6 @@ export class ListGraduatesPageComponent implements OnInit {
     private router: Router
     ) {
       if (this.cookiesService.getData().user.role !== 0 && 
-      this.cookiesService.getData().user.role !== 1 &&
       this.cookiesService.getData().user.role !== 5) {
         this.router.navigate(['/']);
       }
@@ -58,6 +57,9 @@ export class ListGraduatesPageComponent implements OnInit {
       case 5:
         this.role = 'comunication';
         break;
+      case 6:
+        this.role = 'coordinator';
+        break;
     }
     this.readEmail();
     
@@ -79,7 +81,7 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
-  // 3 estatus Pagado,Presente,Mencionado
+  // Cambias estatus a Pagado
   paidEvent(item){
     console.log(item);  
     let itemUpdate = {
@@ -95,14 +97,74 @@ export class ListGraduatesPageComponent implements OnInit {
       console.log(error);
     });  
   }
+
+  // Cambias estatus a Registrado
+  removePaidEvent(item){
+    console.log(item);  
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      carrera : item.carreer,
+      correo : item.email,
+      estatus: 'Registrado'
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.notificationsServices.showNotification(1, 'Pago removido para:',item.nc);
+    }, (error) => {
+      console.log(error);
+    });  
+  }
+
+  // Cambias estatus a Asistió
+  asistenceEvent(item){
+    console.log(item);  
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      carrera : item.carreer,
+      correo : item.email,
+      estatus: 'Asistió'
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.notificationsServices.showNotification(1, 'Pago removido para:',item.nc);
+    }, (error) => {
+      console.log(error);
+    });  
+  }
   
+  // Confirmar pago
   confirmPaidEvent(item){
     var opcion = confirm("CONFIRMAR PAGO PARA:"+"\n"+'NC: '+item.nc+"\n"+'Nombre: '+item.name);
     if (opcion == true) {
       this.paidEvent(item);
     }
   }
-  //Enviar invitación al alumno seleccionado (status == Pagado)
+
+  // Confirmar remover pago
+  confirmRemovePaidEvent(item){
+    var opcion = confirm("REMOVER PAGO PARA:"+"\n"+'NC: '+item.nc+"\n"+'Nombre: '+item.name);
+    if (opcion == true) {
+      this.removePaidEvent(item);
+    }
+  }
+
+  // Confirmar asistencia
+  confirmPresenceEvent(item){
+    var opcion = confirm("CONFIRMAR ASISTENCIA PARA:"+"\n"+'NC: '+item.nc+"\n"+'Nombre: '+item.name);
+    if (opcion == true) {
+      this.asistenceEvent(item);
+    }
+  }
+
+  // Confirmar envio de invitación
+  confirmSendEmail(item){
+    var opcion = confirm("ENVIAR INVITACIÓN A:"+"\n"+'NC: '+item.nc+"\n"+'Nombre: '+item.name);
+    if (opcion == true) {
+      this.sendOneMail(item);
+    }
+  }
+
+  // Enviar invitación al alumno seleccionado (status == Pagado)
   sendOneMail(item) {
     if(item.status == 'Pagado'){
       this.graduationProv.sendQR(item.email,item.id,item.name).subscribe(
@@ -118,7 +180,7 @@ export class ListGraduatesPageComponent implements OnInit {
     }
   }
 
-  // Enviar invitación a todos los alumnos (status = pagado)
+  // Enviar invitación a todos los alumnos
   sendMailAll(){
     this.alumnos.forEach(async student =>{
       if(student.email){

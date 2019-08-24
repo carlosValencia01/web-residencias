@@ -51,6 +51,10 @@ export class SidebarContentComponent implements OnInit {
         this.role = 'comunication';
         this.title = 'Comunicación y Difusión';
         break;
+      case 6:
+          this.role = 'coordinator';
+          this.title = 'Coordinador';
+          break;
     }
   }
 

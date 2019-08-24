@@ -34,6 +34,9 @@ export class HomePageComponent implements OnInit {
       case 5:
         this.role = 'comunication';
         break;
+      case 6:
+        this.role = 'coordinator';
+        break;
     }
   }
 

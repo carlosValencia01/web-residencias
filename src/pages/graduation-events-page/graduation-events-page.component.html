@@ -49,7 +49,7 @@
                                  
                             </div>
                          </td>
-                        <td *ngIf="event.status == 1">
+                        <td *ngIf="event.status == 1 && role === 'administration'">
                             <div class="div-img" ngbTooltip="Actualizar correo" tooltipClass="my-custom-class" >
                               <a [routerLink]="[ '/registerGraduate', event.id ]">
                               
@@ -57,7 +57,7 @@
                               </a>
                             </div>
                          </td>
-                        <td *ngIf="event.status == 1">
+                        <td *ngIf="event.status == 1 && role === 'administration'">
                             <div class="div-img" ngbTooltip="Importar datos" tooltipClass="my-custom-class" >
                               <a [routerLink]="[ '/loaderDataGraduation', event.id ]">
                               

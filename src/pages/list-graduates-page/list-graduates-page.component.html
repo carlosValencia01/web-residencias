@@ -101,12 +101,22 @@
                            <tr *ngIf="item.email && status===1">
                               <td *ngIf="item.status == 'Registrado' && role === 'comunication'">
                                  <div class="div-img" ngbTooltip="Confirmar Pago" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/paid.svg" class="paid" (click)="confirmPaidEvent(item)">
+                                       <img src="../../assets/icons/paid.svg" class="action" (click)="confirmPaidEvent(item)">
                                  </div>
                               </td>
                               <td *ngIf="item.status == 'Pagado'">
                                  <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" >
-                                       <img src="../../assets/icons/sendEmail.svg" class="sendEmail" (click)="sendOneMail(item)">
+                                       <img src="../../assets/icons/sendEmail.svg" class="action" (click)="confirmSendEmail(item)">
+                                 </div>
+                              </td>
+                              <td *ngIf="item.status == 'Pagado' && role === 'administration'">
+                                 <div class="div-img" ngbTooltip="Registrar Asistencia" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/presence.svg" class="action" (click)="confirmPresenceEvent(item)">
+                                 </div>
+                              </td>  
+                              <td *ngIf="item.status == 'Pagado' && role === 'comunication'">
+                                 <div class="div-img" ngbTooltip="Remover Pago" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/remove-paid.svg" class="action" (click)="confirmRemovePaidEvent(item)">
                                  </div>
                               </td>                              
                            </tr>
