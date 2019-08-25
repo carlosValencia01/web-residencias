@@ -1,6 +1,11 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 
+import * as jsPDF from 'jspdf';
+
+import { OperationMode } from '../../enumerators/operation-mode.enum';
+import { RequestStatus } from '../../enumerators/request-status.enum';
 import { AcademicDegreeApplicationProvider } from '../../providers/academic-degree-application.prov';
 import { CookiesService } from '../../services/cookie.service';
 import { NotificationsServices } from '../../services/notifications.service';
@@ -15,46 +20,114 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   @ViewChild('projectFile') projectFileElement: ElementRef;
   public formRequest: FormGroup;
   private user: any;
-  private formData: FormData;
-  private operationMode: Number = 0;
-  private msnObservations: string[] = [
-    'Observación 1',
-    'Observación 2',
-    'Observación 3',
-  ];
-  private isLoadImage: boolean;
-  private resource: string;
+  private formData: any;
+  private operationMode: Number;
+  private showObservations: boolean;
   private isUploadedFile: boolean;
   private projectFileName: string;
   private projectFile: any;
+  private requestData: any;
 
   constructor(
     private academicDegreeProv: AcademicDegreeApplicationProvider,
     private cookiesService: CookiesService,
     private notificationsServices: NotificationsServices,
+    private dateFormat: DatePipe
   ) {
     this.user = this.cookiesService.getData().user;
     this.isUploadedFile = false;
     this.resource = '';
+    this.operationMode = -1;
+    this.showObservations = false;
   }
 
   ngOnInit() {
+    this.academicDegreeProv.getRequestByControlNumber(this.user.email)
+      .subscribe(request => {
+        if (request.error) {
+          this.operationMode = OperationMode.NEW;
+          return;
+        }
+        if (request.status === RequestStatus.CAPTURED) {
+          this.operationMode = OperationMode.CREATED;
+          this.loadRequestData(request);
+          if (request.observations) {
+            this.showObservations = true;
+          }
+        } else if (request.status === RequestStatus.SENT) {
+          this.operationMode = OperationMode.SENT;
+        }
+      });
     this.initializeForm();
   }
 
   initializeForm() {
     this.formRequest = new FormGroup({
-      'name': new FormControl({ value: this.user.name.firstName, disabled: false }, [Validators.required]),
-      'lastname': new FormControl({ value: this.user.name.lastName, disabled: false }, [Validators.required]),
-      'telephone': new FormControl({ value: null, disabled: false  },
-        [Validators.required, Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
-      'email': new FormControl({ value: null, disabled: false }, [Validators.required, Validators.email]),
-      'projectName': new FormControl({ value: null, disabled: false }, [Validators.required]),
-      'proposedDate': new FormControl({ value: null, disabled: false }, [Validators.required]),
-      'honorificMention': new FormControl({ value: 'false', disabled: false }, [Validators.required]),
-      'numberParticipants': new FormControl({ value: null, disabled: false }, [Validators.required, Validators.min(1)]),
-      'projectFile': new FormControl(null),
-      'observations': new FormControl(null),
+      'name': new FormControl({
+        value: this.user.name.firstName,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required]),
+      'lastname': new FormControl({
+        value: this.user.name.lastName,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required]),
+      'telephone': new FormControl({
+        value: null,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required,
+      Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
+      'email': new FormControl({
+        value: null,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required, Validators.email]),
+      'projectName': new FormControl({
+        value: null,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required]),
+      'proposedDate': new FormControl({
+        value: null,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required]),
+      'honorificMention': new FormControl({
+        value: 'false',
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required]),
+      'numberParticipants': new FormControl({
+        value: null,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required, Validators.min(1)]),
+      'projectFile': new FormControl({
+        value: null,
+        disabled: this.operationMode === OperationMode.CREATED
+      }),
+      'product': new FormControl({
+        value: null,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required]),
+      'address': new FormControl({
+        value: null,
+        disabled: this.operationMode === OperationMode.CREATED
+      }, [Validators.required]),
+      'observations': new FormControl({ value: null }),
+    });
+  }
+
+  loadRequestData(data: any) {
+    this.requestData = data;
+    this.formRequest.disable();
+    this.formRequest.setValue({
+      'name': data.graduate.name.firstName,
+      'lastname': data.graduate.name.lastName,
+      'telephone': data.telephoneContact,
+      'email': data.graduate.email.toUpperCase(),
+      'projectName': data.request.projectName,
+      'proposedDate': this.dateFormat.transform(data.request.proposedDate, 'yyyy-MM-dd'),
+      'honorificMention': `${data.request.honorificMention}`,
+      'numberParticipants': data.request.numberParticipants,
+      'projectFile': '',
+      'product': data.request.product,
+      'address': data.graduate.address,
+      'observations': data.observations ? data.observations : '',
     });
   }
 
@@ -63,27 +136,87 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
       this.notificationsServices.showNotification(3, 'Acto recepcional', 'Es obligatorio subir la carátula del proyecto');
       return;
     }
-    this.formData = this.loadData();
-    if (this.formData) {
+    this.formData = this.loadFormData();
+    if (this.formData && this.operationMode === OperationMode.NEW && this.formRequest.valid) {
       this.academicDegreeProv.saveRequest(this.formData)
-        .subscribe(res => {
-          console.log(res);
+        .subscribe(request => {
+          if (request.error) {
+            return this.notificationsServices.showNotification(2, 'Acto recepcional', 'Ha ocurrido un error al crear la solicitud');
+          }
+          this.notificationsServices.showNotification(1, 'Acto recepcional', 'La solicitud se ha creado con éxito');
+          this.operationMode = OperationMode.CREATED;
+          this.requestData = request;
+          this.formRequest.disable();
+          this.formRequest.markAsUntouched();
         });
     }
   }
 
-  loadData() {
-    const formData = new FormData();
-    formData.append('name', this.formRequest.get('name').value);
-    formData.append('lastname', this.formRequest.get('lastname').value);
-    formData.append('telephone', this.formRequest.get('telephone').value);
-    formData.append('email', this.formRequest.get('email').value);
-    formData.append('projectName', this.formRequest.get('projectName').value);
-    formData.append('proposedDate', this.formRequest.get('proposedDate').value);
-    formData.append('honorificMention', this.formRequest.get('honorificMention').value);
-    formData.append('numberParticipants', this.formRequest.get('numberParticipants').value);
-    formData.append('projectFile', this.projectFile);
-    return formData;
+  onSaveEdited() {
+    if (!this.projectFile) {
+      this.notificationsServices.showNotification(3, 'Acto recepcional', 'Es obligatorio subir la carátula del proyecto');
+      return;
+    }
+    this.formData = this.loadFormData();
+    if (this.formData && this.operationMode === OperationMode.EDIT && this.formRequest.valid) {
+      this.academicDegreeProv.editRequest(this.formData, this.requestData._id)
+        .subscribe(request => {
+          if (request.error) {
+            return this.notificationsServices.showNotification(2, 'Acto recepcional', 'Ha ocurrido un error al editar la solicitud');
+          }
+          this.notificationsServices.showNotification(1, 'Acto recepcional', 'La solicitud se ha actualizado con éxito');
+          this.operationMode = OperationMode.CREATED;
+          this.requestData = request;
+          this.formRequest.disable();
+          this.formRequest.markAsUntouched();
+        });
+    }
+  }
+
+  sendRequest() {
+    const send = confirm('¿Todos los campos están correctos?, después de enviar la solicitud no podrá hacer cambios.');
+    if (this.operationMode === OperationMode.CREATED && send) {
+      this.academicDegreeProv.updateRequestStatus({ newStatus: RequestStatus.SENT }, this.requestData._id)
+        .subscribe(request => {
+          if (request.error) {
+            return this.notificationsServices.showNotification(2, 'Envío solicitud', 'Ha ocurrido un error al envíar la solicitud');
+          }
+          this.notificationsServices.showNotification(1, 'Solicitud', 'Su solicitud se ha enviado con éxito');
+          this.operationMode = OperationMode.SENT;
+          this.requestData.status = RequestStatus.SENT;
+        });
+    }
+  }
+
+  loadFormData() {
+    const data = {
+      graduate: {
+        name: {
+          firstName: this.formRequest.get('name').value,
+          lastName: this.formRequest.get('lastname').value,
+          fullName: this.formRequest.get('name').value + ' ' + this.formRequest.get('lastname').value,
+        },
+        career: this.requestData ? this.requestData.graduate.career : '',
+        controlNumber: this.user.email,
+        address: this.formRequest.get('address').value,
+        email: this.formRequest.get('email').value,
+      },
+      request: {
+        projectName: this.formRequest.get('projectName').value,
+        product: this.formRequest.get('product').value,
+        numberParticipants: this.formRequest.get('numberParticipants').value,
+        honorificMention: this.formRequest.get('honorificMention').value === 'true' ? true : false,
+        proposedDate: this.formRequest.get('proposedDate').value,
+        projectFile: this.projectFileName,
+      },
+      telephoneContact: this.formRequest.get('telephone').value,
+      creationDate: this.requestData ? this.requestData.creationDate : new Date(),
+      editionDate: new Date(),
+      headProfessionalStudiesDivision: this.requestData ? this.requestData.headProfessionalStudiesDivision : '',
+      degreeCoordinator: this.requestData ? this.requestData.degreeCoordinator : '',
+      status: RequestStatus.CAPTURED,
+    };
+    return data;
   }
 
   onUploadFile(inputFile: HTMLInputElement) {
@@ -94,6 +227,38 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
       this.notificationsServices.showNotification(1, 'Acto recepcional',
         'El archivo ' + this.projectFileName + ' se ha cargado correctamente');
       this.isUploadedFile = true;
+    }
+  }
+
+  editionMode() {
+    this.operationMode = OperationMode.EDIT;
+    this.formRequest.enable();
+  }
+
+  cancelEdition() {
+    this.operationMode = OperationMode.CREATED;
+    this.formRequest.disable();
+    this.formRequest.markAsUntouched();
+    this.loadRequestData(this.requestData);
+  }
+
+  generateRequestPDF() {
+    if (this.operationMode === OperationMode.CREATED || this.operationMode === OperationMode.SENT) {
+      const reader = new FileReader();
+      const doc = new jsPDF({
+        unit: 'mm',
+        format: [216, 279],
+        orientation: 'portrait'
+      });
+
+      // Page headers
+
+      // Page body
+
+      // Footer
+
+      doc.text('Hola mundo', 50, 100);
+      window.open(doc.output('bloburl'), '_blank');
     }
   }
 }
