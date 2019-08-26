@@ -1,0 +1,15 @@
+<mat-vertical-stepper #stepper linear>
+  <mat-step>
+    <ng-template matStepLabel>Solicitud de acto protocolario</ng-template>
+    <app-academic-degree-application-form></app-academic-degree-application-form>
+  </mat-step>
+  <mat-step>
+    <form>
+      <ng-template matStepLabel>Titulación</ng-template>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    You are now done.
+  </mat-step>
+</mat-vertical-stepper>

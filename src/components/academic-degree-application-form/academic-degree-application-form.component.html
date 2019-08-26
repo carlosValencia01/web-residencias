@@ -1,0 +1,264 @@
+<div class="card" [ngSwitch]="operationMode">
+  <!-- Error al consultar solicitud -->
+  <div class="card-body" *ngSwitchCase="-1">
+    <span class="red-font-18">Solicitud de acto protocolario por el momento no disponible, intente de nuevo en un
+      momento</span>
+  </div>
+  <!-- Solicitud enviada -->
+  <div class="card-body" *ngSwitchCase="3">
+    <label>Su solicitud ha sido enviada para revisión</label><br>
+    <button type="button" class="btn btn-sm btn-info" style="margin-right: 0.3em" (click)="generateRequestPDF()"><i
+        class="fa fa-download"></i> Descargar solicitud </button>
+  </div>
+  <!-- Solicitud creada o en edición -->
+  <form [formGroup]="formRequest" (ngSubmit)="onSave()" enctype="multipart/form-data" *ngSwitchDefault>
+    <div class="card-body">
+      <div class="row">
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="name">Nombre</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-user"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!formRequest.get('name').valid && formRequest.get('name').touched)?'form-control is-invalid':'form-control'"
+              id="name" formControlName="name" placeholder="Nombre" oninput="this.value = this.value.toUpperCase()">
+            <div class="invalid-feedback" *ngIf="!formRequest.get('name').valid && formRequest.get('name').touched">
+              <span *ngIf="formRequest.get('name').errors['required']">
+                ¡Por favor ingrese un nombre!
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="lastname">Apellidos</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-user"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!formRequest.get('lastname').valid && formRequest.get('lastname').touched)?'form-control is-invalid':'form-control'"
+              id="lastname" formControlName="lastname" placeholder="Apellidos"
+              oninput="this.value = this.value.toUpperCase()">
+            <div class="invalid-feedback"
+              *ngIf="!formRequest.get('lastname').valid && formRequest.get('lastname').touched">
+              <span *ngIf="formRequest.get('lastname').errors['required']">
+                ¡Por favor ingrese sus apellidos!
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="telephone">Número Telefónico</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-phone"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!formRequest.get('telephone').valid && formRequest.get('telephone').touched)?'form-control is-invalid':'form-control'"
+              id="telephone" formControlName="telephone" placeholder="(311)-102-3456">
+            <div class="invalid-feedback"
+              *ngIf="!formRequest.get('telephone').valid && formRequest.get('telephone').touched">
+              <span *ngIf="formRequest.get('telephone').errors['required']">
+                Número telefónico obligatorio
+              </span>
+              <span *ngIf="formRequest.get('telephone').errors['pattern']">
+                Número telefónico incorrecto
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="email">Correo electrónico</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!formRequest.get('email').valid && formRequest.get('email').touched)?'form-control is-invalid':'form-control'"
+              id="email" formControlName="email" placeholder="Correo electrónico"
+              oninput="this.value = this.value.toUpperCase()">
+            <div class="invalid-feedback" *ngIf="!formRequest.get('email').valid && formRequest.get('email').touched">
+              <span *ngIf="formRequest.get('email').errors['required']">
+                Correo electrónico obligatorio
+              </span>
+              <span *ngIf="formRequest.get('email').errors['email']">
+                Ingrese un correo válido
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-12 col-md-12">
+          <label class="form-col-form-label" for="projectName">Proyecto</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-folder"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!formRequest.get('projectName').valid && formRequest.get('projectName').touched)?'form-control is-invalid':'form-control'"
+              id="projectName" formControlName="projectName" placeholder="Nombre del proyecto"
+              oninput="this.value = this.value.toUpperCase()">
+            <div class="invalid-feedback"
+              *ngIf="!formRequest.get('projectName').valid && formRequest.get('projectName').touched">
+              <span *ngIf="formRequest.get('projectName').errors['required']">
+                Nombre del proyecto obligatorio
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 col-md-6" [ngSwitch]="operationMode">
+          <div class="form-group" *ngSwitchCase="1">
+            <label class="form-col-form-label" for="projectFile">Portada del Proyecto</label>
+            <div class="input-group custom-file">
+              <input #projectFile class="custom-file-input" type="file" accept=".pdf" formControlName="projectFile"
+                id="projectFile" (change)="onUploadFile($event.target)" disabled>
+              <label class="custom-file-label" for="projectFile">
+                {{ isUploadedFile ? projectFileName : 'Seleccione un archivo' }}
+              </label>
+            </div>
+          </div>
+          <div class="form-group" *ngSwitchDefault>
+            <label class="form-col-form-label" for="projectFile">Portada del Proyecto</label>
+            <div class="input-group custom-file">
+              <input #projectFile class="form-control custom-file-input" type="file" accept=".pdf"
+                formControlName="projectFile" id="projectFile" (change)="onUploadFile($event.target)">
+              <label class="custom-file-label" for="projectFile">
+                {{ isUploadedFile ? projectFileName : 'Seleccione un archivo' }}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-sm-6 col-md-6" stlye="padding: 0.375rem 0.75rem">
+          <label class="form-col-form-label" for="honorificMention">Mención honorífica</label>
+          <div class="input-group">
+            <mat-button-toggle-group id="honorificMention" formControlName="honorificMention"
+              [value]="formRequest.get('honorificMention').value">
+              <mat-button-toggle value="true">Con mención honorífica</mat-button-toggle>
+              <mat-button-toggle value="false">Sin mención honorífica</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="numberParticipants">Número de integrantes</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-group"></i></span>
+            </div>
+            <input type="number" pKeyFilter="pnum" min="1" formControlName="numberParticipants"
+              [ngClass]="(!formRequest.get('numberParticipants').valid && formRequest.get('numberParticipants').touched)?'form-control is-invalid':'form-control'"
+              id="numberParticipants" placeholder="Número de integrantes">
+            <div class="invalid-feedback"
+              *ngIf="!formRequest.get('numberParticipants').valid && formRequest.get('numberParticipants').touched">
+              <span *ngIf="formRequest.get('numberParticipants').errors['required']">
+                Número de integrantes obligatorio
+              </span>
+              <span *ngIf="formRequest.get('numberParticipants').errors['min']">
+                Número de integrantes incorrecto
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="proposedDate">Día propuesto para titulación</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+            </div>
+            <input type="date" id="proposedDate" formControlName="proposedDate"
+              [ngClass]="(!formRequest.get('proposedDate').valid && formRequest.get('proposedDate').touched)?'form-control is-invalid':'form-control'">
+            <div class="invalid-feedback"
+              *ngIf="!formRequest.get('proposedDate').valid && formRequest.get('proposedDate').touched">
+              <span *ngIf="formRequest.get('proposedDate').errors['required']">
+                Día propuesto obligatorio
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="product">Producto</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-archive"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!formRequest.get('product').valid && formRequest.get('product').touched)?'form-control is-invalid':'form-control'"
+              id="product" formControlName="product" placeholder="Producto"
+              oninput="this.value = this.value.toUpperCase()">
+            <div class="invalid-feedback"
+              *ngIf="!formRequest.get('product').valid && formRequest.get('product').touched">
+              <span *ngIf="formRequest.get('product').errors['required']">
+                Producto obligatorio
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="address">Dirección</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-address-card-o"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!formRequest.get('address').valid && formRequest.get('address').touched)?'form-control is-invalid':'form-control'"
+              id="address" formControlName="address" placeholder="Dirección"
+              oninput="this.value = this.value.toUpperCase()">
+            <div class="invalid-feedback"
+              *ngIf="!formRequest.get('address').valid && formRequest.get('address').touched">
+              <span *ngIf="formRequest.get('address').errors['required']">
+                Dirección obligatoria
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="showObservations" class="form-group col-sm-14 col-md-14">
+        <label class="form-col-form-label" for="observations">Observaciones</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-pencil"></i></span>
+          </div>
+          <textarea class="form-control red-font-18" id="observations" formControlName="observations"
+            placeholder="Observaciones" oninput="this.value = this.value.toUpperCase()" readonly></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer text-right" [ngSwitch]="operationMode">
+      <!-- Solicitud creada -->
+      <div *ngSwitchCase="1">
+        <button type="button" class="btn btn-sm btn-success" style="margin-right: 0.3em"
+          [disabled]="formRequest.invalid" (click)="sendRequest()"><i class="fa fa-paper-plane-o"></i> Enviar
+          solicitud </button>
+        <button type="button" class="btn btn-sm btn-info" style="margin-right: 0.3em" [disabled]="formRequest.invalid"
+          (click)="generateRequestPDF()"><i class="fa fa-file-pdf-o"></i> Ver solicitud </button>
+        <button type="button" class="btn btn-sm btn-warning" (click)="editionMode()"><i
+            class="fa fa-pencil-square-o"></i> Editar
+        </button>
+      </div>
+      <!-- Solicitud en edición -->
+      <div *ngSwitchCase="2">
+        <button type="button" class="btn btn-sm btn-success" [disabled]="formRequest.invalid"
+          style="margin-right: 0.3em" (click)="onSaveEdited()"><i class="fa fa-dot-circle-o"></i> Aceptar </button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="cancelEdition()"><i class="fa fa-ban"></i> Cancelar
+        </button>
+      </div>
+      <!-- Solicitud nueva -->
+      <div *ngSwitchDefault>
+        <button type="submit" class="btn btn-sm btn-success" [disabled]="formRequest.invalid"
+          style="margin-right: 0.3em"><i class="fa fa-dot-circle-o"></i> Aceptar </button>
+        <button type="reset" class="btn btn-sm btn-danger"><i class="fa fa-ban"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

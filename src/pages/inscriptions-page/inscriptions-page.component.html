@@ -9,38 +9,43 @@
     </div>
     <div class="card-body">
       <form [formGroup]="formEmail" (ngSubmit)="sendEmail()">
-          <div class="row">
-            <div class="col-sm-7 col-md-7">
-              <div class="form-group">
-                <input #emailinput formControlName="emailInput" type="email" class="form-control" placeholder="Ingresar correo"
-                [ngClass]="{'is-invalid': (formEmail.get('emailInput').errors && formEmail.get('emailInput').dirty)}">
-                <div *ngIf="(formEmail.get('emailInput').errors && formEmail.get('emailInput').dirty)">
-                  <div class="invalid-feedback" *ngIf="formEmail.get('emailInput').hasError('required')">
-                    Correo obligatorio
-                  </div>
-                </div>
-              </div>
+        <div class="row">
+          <div class="col-sm-7 col-md-7">
+            <div class="form-group">
+              <mat-form-field class="chip-list-control">
+                <mat-chip-list #emailsList>
+                  <mat-chip *ngFor="let email of emails" (removed)="removeEmail(email)" color="primary" removable>
+                    {{email}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                  </mat-chip>
+                  <input #emailinput formControlName="emailInput" placeholder="Ingresar correo"
+                    [matChipInputFor]="emailsList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="addEmail($event)">
+                </mat-chip-list>
+              </mat-form-field>
             </div>
-            <div class="col-sm-5 col-md-3">
-              <select #template formControlName="template" class="form-control" 
-                [ngClass]="{'is-invalid': (formEmail.get('template').errors && formEmail.get('template').dirty)}">
-                <option *ngFor="let template of optionsTemplate; let i = index" [value]="i">{{ template }}</option>
-              </select>
-              <div *ngIf="(formEmail.get('template').errors || formEmail.get('template').dirty)">
-                <div class="invalid-feedback" *ngIf="formEmail.get('template').hasError('required')">
-                  Plantilla obligatoria
-                </div>
-                <div class="invalid-feedback" *ngIf="formEmail.get('template').hasError('pattern')">
-                    Plantilla invalida
-                </div>
+          </div>
+          <div class="col-sm-5 col-md-3">
+            <select #template formControlName="template" class="form-control"
+              [ngClass]="{'is-invalid': (formEmail.get('template').errors && formEmail.get('template').dirty)}">
+              <option *ngFor="let template of optionsTemplate; let i = index" [value]="i">{{ template }}</option>
+            </select>
+            <div *ngIf="(formEmail.get('template').errors || formEmail.get('template').dirty)">
+              <div class="invalid-feedback" *ngIf="formEmail.get('template').hasError('required')">
+                Plantilla obligatoria
               </div>
-            </div>
-            <div class="col-sm-3 col-md-2">
-              <div class="form-group">
-                <button type="submit" class="form-control btn btn-sm btn-success" [disabled]="formEmail.invalid">Enviar</button>
+              <div class="invalid-feedback" *ngIf="formEmail.get('template').hasError('pattern')">
+                Plantilla invalida
               </div>
             </div>
           </div>
+          <div class="col-sm-3 col-md-2">
+            <div class="form-group">
+              <button type="submit" class="form-control btn btn-sm btn-success"
+                [disabled]="emails.length===0">Enviar</button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>
