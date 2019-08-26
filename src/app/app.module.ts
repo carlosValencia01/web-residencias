@@ -19,8 +19,12 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { AngularFireModule } from 'angularfire2';
+
+//Firestore
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
+
 import {NgxPaginationModule} from 'ngx-pagination';
 
 import { environment } from '../environments/environment';
@@ -134,6 +138,7 @@ const appRouters: Routes = [
     EmployeeProvider,
     InscriptionsProvider,
     GraduationProvider,
+    AngularFirestoreModule,
     AngularFirestore
   ],
   bootstrap: [AppComponent]
