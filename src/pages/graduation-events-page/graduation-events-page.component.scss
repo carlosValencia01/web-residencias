@@ -6,3 +6,15 @@
 .inactivo{
     display: none;
 }
+
+.statusActivo{
+    color: white;
+    background: rgb(0, 187, 45);
+    font-weight: bold;
+    size: 20px;
+}
+
+.statusInactivo{
+    font-weight: bold;
+    size: 20px;
+}

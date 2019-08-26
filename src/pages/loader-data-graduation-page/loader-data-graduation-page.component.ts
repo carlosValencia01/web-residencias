@@ -84,11 +84,13 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     this.arrayCsvContent.forEach( student =>{
       let tmpStudent = student.split(',');
       this.csvObjects.push({
-        nc:tmpStudent[0],
-        nombre:tmpStudent[1],
-        carrera:this.careers[tmpStudent[3].trim()],
-        correo:tmpStudent[2],
-        estatus:'Registrado'?tmpStudent[2]!== "  ":' '
+        nc:tmpStudent[1],
+        nombreApellidos:tmpStudent[2],
+        nombre:tmpStudent[3],
+        carreraCompleta:tmpStudent[4],
+        carrera:this.careers[tmpStudent[4].trim()],
+        correo:tmpStudent[7],
+        estatus:'Registrado'
       })
     });
     

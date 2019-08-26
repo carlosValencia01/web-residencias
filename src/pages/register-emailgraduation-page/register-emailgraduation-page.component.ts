@@ -77,8 +77,10 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
               let data = {
                 nc : alumnosData.payload.doc.data().nc,
                 nombre : alumnosData.payload.doc.data().nombre,
+                nombreApellidos : alumnosData.payload.doc.data().nombreApellidos,
                 carrera : alumnosData.payload.doc.data().carrera,
-                estatus: 'Registrado'
+                carreraCompleta : alumnosData.payload.doc.data().carreraCompleta,
+                estatus: alumnosData.payload.doc.data().estatus
               }
               console.log(this.docId);
               

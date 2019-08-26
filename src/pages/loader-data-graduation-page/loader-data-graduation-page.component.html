@@ -21,7 +21,9 @@
                   <thead class="table-primary table-header">
                     <tr>                
                       <th scope="col">NC</th>
+                      <th scope="col">NombreApellidos</th>
                       <th scope="col">Nombre</th>
+                      <th scope="col">CarreraCompleta</th>
                       <th scope="col">Carrera</th>
                       <th scope="col">Email</th>
                       <th scope="col">Estatus</th>
@@ -31,7 +33,9 @@
                     <tr *ngFor="let student of csvObjects | paginate: {id:pag2, itemsPerPage: pageSize,
                       currentPage: page };">                    
                       <td>{{ student.nc }}</td>
+                      <td>{{ student.nombreApellidos }}</td>
                       <td>{{ student.nombre }}</td>
+                      <td>{{ student.carreraCompleta }}</td>
                       <td>{{ student.carrera }}</td>
                       <td>{{ student.correo }}</td>
                       <td>{{ student.estatus }}</td>

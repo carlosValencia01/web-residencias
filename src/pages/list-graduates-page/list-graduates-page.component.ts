@@ -72,7 +72,9 @@ export class ListGraduatesPageComponent implements OnInit {
           id:alumno.payload.doc.id,
           nc : alumno.payload.doc.get("nc"),
           name : alumno.payload.doc.get("nombre"),
+          nameLastName : alumno.payload.doc.get("nombreApellidos"),
           carreer : alumno.payload.doc.get("carrera"),
+          carreerComplete : alumno.payload.doc.get("carreraCompleta"),
           email: alumno.payload.doc.get("correo"),
           status: alumno.payload.doc.get("estatus")
         }});
@@ -87,7 +89,9 @@ export class ListGraduatesPageComponent implements OnInit {
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
+      nombreApellidos : item.nameLastName,
       carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
       correo : item.email,
       estatus: 'Pagado'
     }
@@ -104,7 +108,9 @@ export class ListGraduatesPageComponent implements OnInit {
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
+      nombreApellidos : item.nameLastName,
       carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
       correo : item.email,
       estatus: 'Registrado'
     }
@@ -121,7 +127,9 @@ export class ListGraduatesPageComponent implements OnInit {
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
+      nombreApellidos : item.nameLastName,
       carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
       correo : item.email,
       estatus: 'Asistió'
     }

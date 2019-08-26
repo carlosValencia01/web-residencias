@@ -44,7 +44,8 @@
               <thead>
                  <tr>
                     <th>Periodo del evento</th>
-                    <th>Acciones</th>                    
+                    <th>Acciones</th>    
+                    <th>Estatus</th>                                    
                  </tr>          
               </thead>
               <tbody>
@@ -82,7 +83,8 @@
                         </td>                     
                     </tr>
                   </td>
-                  
+                  <td *ngIf="event.status" class="statusActivo">Activo</td>
+                  <td *ngIf="!event.status" class="statusInactivo">Inactivo</td>
                 </tr>                 
               </tbody>              
            </table> 
