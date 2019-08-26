@@ -243,21 +243,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
 
   generateRequestPDF() {
     if (this.operationMode === OperationMode.CREATED || this.operationMode === OperationMode.SENT) {
-      const reader = new FileReader();
-      const doc = new jsPDF({
-        unit: 'mm',
-        format: [216, 279],
-        orientation: 'portrait'
-      });
-
-      // Page headers
-
-      // Page body
-
-      // Footer
-
-      doc.text('Hola mundo', 50, 100);
-      window.open(doc.output('bloburl'), '_blank');
+      window.open(`http://localhost:3003/escolares/credenciales/graduate/request/generate/${this.requestData._id}`);
     }
   }
 }
