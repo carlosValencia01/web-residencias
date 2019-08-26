@@ -36,7 +36,6 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   ) {
     this.user = this.cookiesService.getData().user;
     this.isUploadedFile = false;
-    this.resource = '';
     this.operationMode = -1;
     this.showObservations = false;
   }
