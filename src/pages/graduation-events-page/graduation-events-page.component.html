@@ -68,13 +68,21 @@
                             </div>
                          </td>
                         <td *ngIf="event.status == 1 && role === 'administration'">
-                            <div class="div-img" ngbTooltip="Importar datos" tooltipClass="my-custom-class" >
-                              <a [routerLink]="[ '/loaderDataGraduation', event.id ]">
+                            <div class="div-img" ngbTooltip="Importar datos de alumnos" tooltipClass="my-custom-class" >
+                              <a [routerLink]="[ '/loaderDataGraduation', event.id,0 ]">
                               
                                 <img src="../../assets/icons/import.svg" class="action-icon" >
                               </a>
                             </div>
-                         </td>    
+                         </td>
+                         <td *ngIf="event.status == 1 && role === 'administration'">
+                           <div class="div-img" ngbTooltip="Importar lista financieros" tooltipClass="my-custom-class" >
+                             <a [routerLink]="[ '/loaderDataGraduation', event.id,1 ]">
+                             
+                               <img src="../../assets/icons/completed-task.svg" class="action-icon" >
+                             </a>
+                           </div>
+                        </td>    
                          <td *ngIf="role === 'administration' && event.status!==3">
                            <div class="div-img" ngbTooltip="Cambiar estatus" tooltipClass="my-custom-class" >
                              

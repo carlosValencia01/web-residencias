@@ -30,6 +30,10 @@ export class FirebaseService {
     return this.db.collection(collection).doc(documentId).set(data);
   }
 
+  updateFieldGraduate(documentId: string, data: any , collection : string){
+    return this.db.collection(collection).doc(documentId).update(data);
+  }
+
   //carga csv
 
   public loadCSV(data , collection : string){    

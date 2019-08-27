@@ -86,7 +86,7 @@ const appRouters: Routes = [
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
   { path: 'registerGraduate/:eventId', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
   { path: 'listGraduates/:eventId', component: ListGraduatesPageComponent, pathMatch: 'full' },
-  { path: 'loaderDataGraduation/:eventId', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
+  { path: 'loaderDataGraduation/:eventId/:type', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
   { path: 'graduationEvents', component: GraduationEventsPageComponent, pathMatch: 'full' },
   { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
 ];

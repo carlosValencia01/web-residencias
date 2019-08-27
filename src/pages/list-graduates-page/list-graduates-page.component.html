@@ -104,12 +104,12 @@
                                        <img src="../../assets/icons/paid.svg" class="action" (click)="confirmPaidEvent(item)">
                                  </div>
                               </td>
-                              <td *ngIf="item.status == 'Pagado'">
+                              <td *ngIf="item.status == 'Verificado'">
                                  <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/sendEmail.svg" class="action" (click)="confirmSendEmail(item)">
                                  </div>
                               </td>
-                              <td *ngIf="item.status == 'Pagado' && role === 'administration'">
+                              <td *ngIf="item.status == 'Verificado' && role === 'administration'">
                                  <div class="div-img" ngbTooltip="Registrar Asistencia" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/presence.svg" class="action" (click)="confirmPresenceEvent(item)">
                                  </div>
