@@ -75,7 +75,7 @@
                               </a>
                             </div>
                          </td>    
-                         <td *ngIf="role === 'administration'">
+                         <td *ngIf="role === 'administration' && event.status!==3">
                            <div class="div-img" ngbTooltip="Cambiar estatus" tooltipClass="my-custom-class" >
                              
                                <img src="../../assets/icons/refresh.svg" class="action-icon" (click)="changeEventStatus(event)">                                 
@@ -83,8 +83,9 @@
                         </td>                     
                     </tr>
                   </td>
-                  <td *ngIf="event.status" class="statusActivo">Activo</td>
-                  <td *ngIf="!event.status" class="statusInactivo">Inactivo</td>
+                  <td *ngIf="event.status === 1" class="statusActivo">Activo</td>
+                  <td *ngIf="event.status === 2" class="statusEspera">Espera</td>
+                  <td *ngIf="event.status === 3" class="statusInactivo">Inactivo</td>
                 </tr>                 
               </tbody>              
            </table> 
