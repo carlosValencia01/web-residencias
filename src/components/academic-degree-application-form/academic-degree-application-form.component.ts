@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 
-import * as jsPDF from 'jspdf';
+import Swal from 'sweetalert2';
 
 import { OperationMode } from '../../enumerators/operation-mode.enum';
 import { RequestStatus } from '../../enumerators/request-status.enum';
@@ -174,18 +174,30 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   }
 
   sendRequest() {
-    const send = confirm('¿Todos los campos están correctos?, después de enviar la solicitud no podrá hacer cambios.');
-    if (this.operationMode === OperationMode.CREATED && send) {
-      this.academicDegreeProv.updateRequestStatus({ newStatus: RequestStatus.SENT }, this.requestData._id)
-        .subscribe(request => {
-          if (request.error) {
-            return this.notificationsServices.showNotification(2, 'Envío solicitud', 'Ha ocurrido un error al envíar la solicitud');
-          }
-          this.notificationsServices.showNotification(1, 'Solicitud', 'Su solicitud se ha enviado con éxito');
-          this.operationMode = OperationMode.SENT;
-          this.requestData.status = RequestStatus.SENT;
-        });
-    }
+    Swal.fire({
+      title: '¿Todos los campos están correctos?',
+      text: 'Después de enviar la solicitud no podrá hacer cambios.',
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      allowEnterKey: true;
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Enviar'
+    }).then((result) => {
+      if (result.value && this.operationMode === OperationMode.CREATED) {
+        this.academicDegreeProv.updateRequestStatus({ newStatus: RequestStatus.SENT }, this.requestData._id)
+          .subscribe(request => {
+            if (request.error) {
+              return this.notificationsServices.showNotification(2, 'Envío solicitud', 'Ha ocurrido un error al envíar la solicitud');
+            }
+            this.notificationsServices.showNotification(1, 'Solicitud', 'Su solicitud se ha enviado con éxito');
+            this.operationMode = OperationMode.SENT;
+            this.requestData.status = RequestStatus.SENT;
+          });
+      }
+    });
   }
 
   loadFormData() {

@@ -79,7 +79,7 @@
             <input type="text"
               [ngClass]="(!formRequest.get('email').valid && formRequest.get('email').touched)?'form-control is-invalid':'form-control'"
               id="email" formControlName="email" placeholder="Correo electrónico"
-              oninput="this.value = this.value.toUpperCase()">
+              oninput="this.value = this.value.toLowerCase()">
             <div class="invalid-feedback" *ngIf="!formRequest.get('email').valid && formRequest.get('email').touched">
               <span *ngIf="formRequest.get('email').errors['required']">
                 Correo electrónico obligatorio
