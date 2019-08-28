@@ -180,7 +180,6 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
       type: 'question',
       showCancelButton: true,
       allowOutsideClick: false,
-      allowEnterKey: true;
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       cancelButtonText: 'Cancelar',
