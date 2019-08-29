@@ -281,7 +281,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   // Generar reporte de alumnos Verificados
-  generateReportVerificate(){
+  generateReportVerified(){
     var doc = new jsPDF('p', 'pt');
     
     // Header
@@ -331,7 +331,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
     // Exportar alumnos Verificados a excel
-  excelExportVerificate(): void{
+  excelExportVerified(): void{
     console.log('Exportando datos...');
     console.log(this.alumnosReportV);
     this.excelService.exportAsExcelFile(this.alumnosReportV,'Graduacion Verificados '+this.searchCarreer);

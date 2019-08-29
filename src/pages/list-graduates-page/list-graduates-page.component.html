@@ -135,8 +135,8 @@
                </tbody>
                <tfoot align="right">
                   <td colspan="6">
-                        <button type="button" class="btn btn-primary" (click)="excelExportVerificate()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'">Exportar Verificados a Excel</button>
-                        <button type="button" class="btn btn-primary" (click)="generateReportVerificate()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Generar PDF de Verificados</button>
+                        <button type="button" class="btn btn-primary" (click)="excelExportVerified()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'">Exportar Verificados a Excel</button>
+                        <button type="button" class="btn btn-primary" (click)="generateReportVerified()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Generar PDF de Verificados</button>
                         <button type="button" class="btn btn-primary" (click)="excelExport()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Exportar a Excel</button>
                         <button type="button" class="btn btn-primary" (click)="generateReport()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Generar PDF</button>
                         <button type="button" class="btn btn-primary" (click)="confirmSendEmailAll()" style="margin-left: 10px" *ngIf="role === 'comunication' || role === 'administration'">Enviar a todos</button>
