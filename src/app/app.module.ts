@@ -53,6 +53,7 @@ import { AcademicDegreeApplicationFormComponent } from '../components/academic-d
 
 // Services
 import { CookiesService } from '../services/cookie.service';
+import { SidebarService } from '../services/sidebar.service';
 import { FormErrorsService } from '../services/forms.errors.service';
 import { NotificationsServices } from '../services/notifications.service';
 import { ImageToBase64Service } from '../services/img.to.base63.service';
@@ -82,7 +83,6 @@ const appRouters: Routes = [
   { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
   { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full' },
   { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
-
 ];
 
 @NgModule({
@@ -133,6 +133,7 @@ const appRouters: Routes = [
   providers: [
     CookieService,
     CookiesService,
+    SidebarService,
     FormErrorsService,
     NotificationsServices,
     ImageToBase64Service,
