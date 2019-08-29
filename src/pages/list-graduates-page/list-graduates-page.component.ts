@@ -5,6 +5,10 @@ import { GraduationProvider } from '../../providers/graduation.prov';
 import { CookiesService } from 'src/services/cookie.service';
 import { Router } from '@angular/router';
 
+declare const require: any;
+const jsPDF = require('jspdf');
+require('jspdf-autotable');
+
 @Component({
   selector: 'app-list-graduates-page',
   templateUrl: './list-graduates-page.component.html',
@@ -15,7 +19,9 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchCarreer : string = '';
   public searchStatus : string = '';
   public alumnos = [];
+  public alumnosReport;
   public role: string;
+  public no = 0;
   page=1;
   pageSize = 10;
   collection = null;
@@ -62,7 +68,6 @@ export class ListGraduatesPageComponent implements OnInit {
         break;
     }
     this.readEmail();
-    
   }
 
   readEmail(){
@@ -78,8 +83,7 @@ export class ListGraduatesPageComponent implements OnInit {
           email: alumno.payload.doc.get("correo"),
           status: alumno.payload.doc.get("estatus")
         }});
-        console.log(this.alumnos);
-               
+        this.alumnosReport =  this.filterItems(this.searchCarreer);
     });
   }
 
@@ -188,6 +192,14 @@ export class ListGraduatesPageComponent implements OnInit {
     }
   }
 
+  // Confirmar envio de invitación
+  confirmSendEmailAll(){
+      var opcion = confirm("ENVIAR INVITACIÓN A TODOS LOS ALUMNOS:");
+      if (opcion == true) {
+        this.sendMailAll();
+      }
+    }
+
   // Enviar invitación a todos los alumnos
   sendMailAll(){
     this.alumnos.forEach(async student =>{
@@ -197,8 +209,69 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
+  // Cambiar valor del alumnosReport dependiendo del filtro de carrera
+  loadInfoReport(){
+    this.alumnosReport =  this.filterItems(this.searchCarreer);
+  }
+
+  // Filtrar elementos para generar reporte
+  filterItems(query) {
+    return this.alumnos.filter(function(elemento) {
+      return elemento.carreer.toLowerCase().indexOf(query.toLowerCase()) > -1;
+    })
+  }
+
+ // Generar reporte
+  generateReport(){
+    // Generando PDF
+    var doc = new jsPDF('p', 'pt');
+
+    // Header
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    let header = "Reporte Alumnos Graduados "+this.searchCarreer;
+    doc.setTextColor(0,0,0);
+    doc.setFontSize(20);
+    doc.setFontStyle('bold');
+    doc.text(header, pageWidth / 2, 30 , 'center');
+    
+    doc.autoTable({
+      html: '#tableReport',
+      didParseCell: function (data) {
+          if(data.row.cells[4].text[0] === 'Asistió'){
+            data.cell.styles.fillColor = [26, 111, 0];
+            data.cell.styles.textColor = [255,255,255];
+          }      
+          if(data.row.cells[4].text[0] === 'Registrado' || data.row.cells[3].text[0] === 'Pagado' || data.row.cells[3].text[0] === 'Mencionado' || data.row.cells[3].text[0] === 'Verificado'){
+            data.cell.styles.fillColor = [202, 0, 10];
+            data.cell.styles.textColor = [255,255,255];
+          }
+          if(data.row.cells[4].text[0] === 'Estatus'){
+            data.cell.styles.fillColor = [21, 43, 84];
+            data.cell.styles.textColor = [255,255,255];
+            data.cell.styles.fontSize =  10;
+          }         
+      }
+    });
+
+    // FOOTER
+    var  today = new Date();
+    var m = today.getMonth() + 1;
+    var mes = (m < 10) ? '0' + m : m;
+
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    let footer = "© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n"+today.getDate()+'/' +mes+'/'+today.getFullYear()+' - '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
+    doc.setTextColor(0,0,0);
+    doc.setFontStyle('bold');
+    doc.setFontSize(10);
+    doc.text(footer, pageWidth / 2, pageHeight  - 30, 'center');
+
+
+    doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
+    }
   pageChanged(ev){
-    this.page=ev;    
+    this.page=ev;  
   }
 
 }
