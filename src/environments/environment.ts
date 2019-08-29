@@ -9,7 +9,7 @@ export const environment = {
     authDomain: "graduacion-db.firebaseapp.com",
     databaseURL: "https://graduacion-db.firebaseio.com",
     projectId: "graduacion-db",
-    storageBucket: "",
+    storageBucket: "graduacion-db.appspot.com",
     messagingSenderId: "178833379222",
     appId: "1:178833379222:web:c6b59ef3d0579784"
   }

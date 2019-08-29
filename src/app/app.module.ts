@@ -23,6 +23,7 @@ import { SidebarModule } from 'ng-sidebar';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 
 import { NgxPaginationModule } from 'ngx-pagination';
 
@@ -90,6 +91,9 @@ const appRouters: Routes = [
   { path: 'loaderDataGraduation/:eventId/:type', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
   { path: 'graduationEvents', component: GraduationEventsPageComponent, pathMatch: 'full' },
   { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
+  { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
+  { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full' },
+  { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -137,7 +141,8 @@ const appRouters: Routes = [
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    AngularFireStorageModule
   ],
   providers: [
     CookieService,
