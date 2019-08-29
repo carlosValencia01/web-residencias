@@ -72,6 +72,16 @@ td {
     border-radius: 15px;
 }
 
+.Verificado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgb(77, 190, 224);
+    color: white;
+    border-radius: 15px;
+}
+
 .Asistió{
     display: flex;
     justify-content: center;
@@ -110,6 +120,12 @@ td {
     color: white;
 }
 
+#checkVerificado{
+    background: rgb(77, 190, 224);
+    border-radius: 15px;
+    color: white;
+}
+
 #checkAsistio{
     background: green;
     border-radius: 15px;
@@ -126,4 +142,31 @@ td {
     display: none;
 }
 
+#tableReportVerificate{
+    display: none;
+}
 
+.rowRegistrado{
+    background: rgb(218, 12, 12);
+    color: white;
+}
+
+.rowPagado{
+    background: rgb(255, 174, 1);
+    color: white;
+}
+
+.rowVerificado{
+    background: rgb(77, 190, 224);
+    color: white;
+}
+
+.rowAsistió{
+    background: green;
+    color: white;
+}
+
+.rowMencionado{
+    background: rgb(7, 7, 133);
+    color: white;
+}

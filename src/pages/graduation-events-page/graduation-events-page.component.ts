@@ -32,7 +32,8 @@ export class GraduationEventsPageComponent implements OnInit {
     private cookiesService: CookiesService
     ) {
         if (this.cookiesService.getData().user.role !== 0 && 
-        this.cookiesService.getData().user.role !== 5) {
+        this.cookiesService.getData().user.role !== 5 && 
+        this.cookiesService.getData().user.role !== 6) {
           this.router.navigate(['/']);
         }
 

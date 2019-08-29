@@ -34,6 +34,7 @@
     "angularfire2": "^5.2.1",
     "bootstrap": "^4.0.0",
     "core-js": "^2.5.4",
+    "file-saver": "^2.0.2",
     "firebase": "^6.3.4",
     "font-awesome": "^4.7.0",
     "image-data-uri": "^2.0.0",
@@ -46,6 +47,7 @@
     "ngx-image-cropper": "^1.2.2",
     "ngx-pagination": "^4.1.0",
     "node-sass": "^4.12.0",
+    "xlsx": "^0.15.1",
     "ye-ars": "^1.0.1",
     "zone.js": "~0.8.26"
   },

@@ -4,6 +4,7 @@ import { NotificationsServices } from '../../services/notifications.service';
 import { GraduationProvider } from '../../providers/graduation.prov';
 import { CookiesService } from 'src/services/cookie.service';
 import { Router } from '@angular/router';
+import { ExporterService } from 'src/services/exporter.service'
 
 declare const require: any;
 const jsPDF = require('jspdf');
@@ -20,27 +21,31 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchStatus : string = '';
   public alumnos = [];
   public alumnosReport;
+  public alumnosReportV;
   public role: string;
   public no = 0;
   page=1;
   pageSize = 10;
   collection = null;
-  status = 0;
+  public status = 0;
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
     private graduationProv : GraduationProvider,
     private cookiesService: CookiesService,
-    private router: Router
+    private router: Router,
+    private excelService: ExporterService
     ) {
       if (this.cookiesService.getData().user.role !== 0 && 
-      this.cookiesService.getData().user.role !== 5) {
+      this.cookiesService.getData().user.role !== 5 &&
+      this.cookiesService.getData().user.role !== 6)
+       {
         this.router.navigate(['/']);
       }
       this.collection=this.router.url.split('/')[2];
       let sub = this.firestoreService.getEvent(this.collection).subscribe(
         ev =>{ sub.unsubscribe(); this.status=ev.payload.get("estatus");}
-      );      
+      ); 
     }
 
   ngOnInit() {
@@ -84,6 +89,7 @@ export class ListGraduatesPageComponent implements OnInit {
           status: alumno.payload.doc.get("estatus")
         }});
         this.alumnosReport =  this.filterItems(this.searchCarreer);
+        this.alumnosReportV = this.filterItemsStatus('Verificado')
     });
   }
 
@@ -221,11 +227,16 @@ export class ListGraduatesPageComponent implements OnInit {
     })
   }
 
- // Generar reporte
-  generateReport(){
-    // Generando PDF
-    var doc = new jsPDF('p', 'pt');
+  filterItemsStatus(query) {
+    return this.alumnos.filter(function(elemento) {
+      return elemento.status.toLowerCase().indexOf(query.toLowerCase()) > -1;
+    })
+  }
 
+ // Generar reporte de alumnos
+  generateReport(){
+    var doc = new jsPDF('p', 'pt');
+    
     // Header
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
@@ -242,7 +253,7 @@ export class ListGraduatesPageComponent implements OnInit {
             data.cell.styles.fillColor = [26, 111, 0];
             data.cell.styles.textColor = [255,255,255];
           }      
-          if(data.row.cells[4].text[0] === 'Registrado' || data.row.cells[3].text[0] === 'Pagado' || data.row.cells[3].text[0] === 'Mencionado' || data.row.cells[3].text[0] === 'Verificado'){
+          if(data.row.cells[4].text[0] === 'Registrado' || data.row.cells[4].text[0] === 'Pagado' || data.row.cells[4].text[0] === 'Mencionado' || data.row.cells[4].text[0] === 'Verificado'){
             data.cell.styles.fillColor = [202, 0, 10];
             data.cell.styles.textColor = [255,255,255];
           }
@@ -258,18 +269,74 @@ export class ListGraduatesPageComponent implements OnInit {
     var  today = new Date();
     var m = today.getMonth() + 1;
     var mes = (m < 10) ? '0' + m : m;
-
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
     let footer = "© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n"+today.getDate()+'/' +mes+'/'+today.getFullYear()+' - '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
-    doc.setTextColor(0,0,0);
+    doc.setTextColor(100);
     doc.setFontStyle('bold');
     doc.setFontSize(10);
     doc.text(footer, pageWidth / 2, pageHeight  - 30, 'center');
 
-
     doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
-    }
+  }
+
+  // Generar reporte de alumnos Verificados
+  generateReportVerificate(){
+    var doc = new jsPDF('p', 'pt');
+    
+    // Header
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    let header = "Reporte Alumnos Verificados "+this.searchCarreer;
+    doc.setTextColor(0,0,0);
+    doc.setFontSize(20);
+    doc.setFontStyle('bold');
+    doc.text(header, pageWidth / 2, 30 , 'center');
+    
+    doc.autoTable({
+      html: '#tableReportVerificate',
+      didParseCell: function (data) {   
+          if(data.row.cells[4].text[0] === 'Estatus'){
+            data.cell.styles.fillColor = [21, 43, 84];
+            data.cell.styles.textColor = [255,255,255];
+            data.cell.styles.fontSize =  10;
+          }
+          else{
+            data.cell.styles.fillColor = [77, 190, 224];
+            data.cell.styles.textColor = [255,255,255];
+          }         
+      }
+    });
+
+    // FOOTER
+    var  today = new Date();
+    var m = today.getMonth() + 1;
+    var mes = (m < 10) ? '0' + m : m;
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    let footer = "© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n"+today.getDate()+'/' +mes+'/'+today.getFullYear()+' - '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
+    doc.setTextColor(100);
+    doc.setFontStyle('bold');
+    doc.setFontSize(10);
+    doc.text(footer, pageWidth / 2, pageHeight  - 30, 'center');
+    
+    doc.save("Reporte Graduacion Verificados "+this.searchCarreer+".pdf");
+  }
+
+  // Exportar alumnos a excel
+  excelExport(): void{
+    console.log('Exportando datos...');
+    console.log(this.alumnosReport);
+    this.excelService.exportAsExcelFile(this.alumnosReport,'Graduacion '+this.searchCarreer);
+  }
+
+    // Exportar alumnos Verificados a excel
+  excelExportVerificate(): void{
+    console.log('Exportando datos...');
+    console.log(this.alumnosReportV);
+    this.excelService.exportAsExcelFile(this.alumnosReportV,'Graduacion Verificados '+this.searchCarreer);
+  }
+  
   pageChanged(ev){
     this.page=ev;  
   }
