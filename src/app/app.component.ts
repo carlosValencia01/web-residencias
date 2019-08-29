@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { CookiesService } from '../services/cookie.service';
 import { UserProvider } from '../providers/user.prov';
+import { SidebarService } from '../services/sidebar.service';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class AppComponent {
     private cookiesServ: CookiesService,
     private userProv: UserProvider,
     private cookieServ: CookiesService,
+    private sidebarService: SidebarService,
   ) {
     this.checkLogin();
   }
@@ -43,6 +45,9 @@ export class AppComponent {
 
   // tslint:disable-next-line:use-life-cycle-interface
   ngOnInit() {
+    this.sidebarService.changeStatus.subscribe(status => {
+      this.opened = status;
+    });
     this.configureSideNav();
   }
 
@@ -89,4 +94,11 @@ export class AppComponent {
     this.activeSession = !this.activeSession;
   }
 
+  onOpened() {
+    this.sidebarService.opened();
+  }
+
+  onClosed() {
+    this.sidebarService.closed();
+  }
 }

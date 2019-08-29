@@ -13,7 +13,8 @@
     <ng-sidebar-container class="content" style="background-color: #E9EBEE;">
 
         <!-- A sidebar -->
-        <ng-sidebar [(opened)]="opened" [(mode)]="mode" [(closeOnClickOutside)]="closeOnClickOutside">
+        <ng-sidebar [(opened)]="opened" [(mode)]="mode" [(closeOnClickOutside)]="closeOnClickOutside"
+          (onOpened)="onOpened()" (onClosed)="onClosed()">
             <app-sidebar-content (closeMenu)="closeMenu()"></app-sidebar-content>
         </ng-sidebar>
 
