@@ -81,7 +81,7 @@ export class GraduationEventsPageComponent implements OnInit {
   async saveEvent(){
     if(this.periodo!== "" && this.eventYear!==""){
      this.periodo = this.periodo+this.eventYear;
-     this.firestoreService.createEvent(this.periodo,0).then(
+     this.firestoreService.createEvent(this.periodo,2).then(
       async created=>{
         await this.notificationsServices.showNotification(1, 'EVENTO CREADO CON PERIODO:',this.periodo); 
         this.createEvent();
@@ -109,7 +109,7 @@ export class GraduationEventsPageComponent implements OnInit {
     console.log(ev);
     
     let i=0, oldEvent="";
-    if(ev.status ===0){
+    if(ev.status === 2){
 
       let sub = this.firestoreService.getActivedEvent().subscribe(
         res=> {
@@ -123,7 +123,7 @@ export class GraduationEventsPageComponent implements OnInit {
                
                if (opcion===true) {
                  //cambiamos de evento activo
-                 this.firestoreService.setStatusEvent(0,oldEvent).then(
+                 this.firestoreService.setStatusEvent(3,oldEvent).then(
                    updated=>{
                      this.firestoreService.setStatusEvent(1,ev.id).then(
                        up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
@@ -141,7 +141,7 @@ export class GraduationEventsPageComponent implements OnInit {
          }
        );
     }else{
-      this.firestoreService.setStatusEvent(0,ev.id).then(
+      this.firestoreService.setStatusEvent(3,ev.id).then(
         up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
       );
     }

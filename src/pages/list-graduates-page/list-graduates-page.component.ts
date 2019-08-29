@@ -176,9 +176,9 @@ export class ListGraduatesPageComponent implements OnInit {
     }
   }
 
-  // Enviar invitación al alumno seleccionado (status == Pagado)
+  // Enviar invitación al alumno seleccionado (status == Verificado)
   sendOneMail(item) {
-    if(item.status == 'Pagado'){
+    if(item.status == 'Verificado'){
       this.graduationProv.sendQR(item.email,item.id,item.name).subscribe(
         res=>{
           this.notificationsServices.showNotification(1, 'Invitación enviada a:',item.nc);

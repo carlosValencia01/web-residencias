@@ -30,6 +30,10 @@ export class FirebaseService {
     return this.db.collection(collection).doc(documentId).set(data);
   }
 
+  updateFieldGraduate(documentId: string, data: any , collection : string){
+    return this.db.collection(collection).doc(documentId).update(data);
+  }
+
   //carga csv
 
   public loadCSV(data , collection : string){    
@@ -42,7 +46,8 @@ export class FirebaseService {
   }
 
   //obtiene evento activo === estatus = 1
-  //inactivo === estatus = 0
+  //espera === estatus = 2
+  //inactivo === estatus = 3
   public getActivedEvent(){
     return this.db.collection("eventosG", ref=>ref.where("estatus","==",1)).snapshotChanges();
   }
@@ -52,7 +57,7 @@ export class FirebaseService {
 
   //obtiene todos los eventos
   public getAllEvents(){
-    return this.db.collection("eventosG", ref=>ref.orderBy("estatus","desc")).snapshotChanges();
+    return this.db.collection("eventosG", ref=>ref.orderBy("estatus","asc")).snapshotChanges();
   }
 
   //cambiar estatus de evento

@@ -8,7 +8,6 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomFormsModule } from 'ng2-validation';
 import { Routes, RouterModule } from '@angular/router';
@@ -25,12 +24,19 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
 
-import {NgxPaginationModule} from 'ngx-pagination';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 import { environment } from '../environments/environment';
 
-//FilterPipe
-import { FilterPipe} from '../pages/list-graduates-page/filter.pipe';
+// FilterPipe
+import { FilterPipe } from '../pages/list-graduates-page/filter.pipe';
+
+// Material
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatStepperModule } from '@angular/material/stepper';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -40,6 +46,7 @@ import { OneStudentPageComponent } from '../pages/one-student-page/one-student-p
 import { CardEmployeePageComponent } from '../pages/card-employee-page/card-employee-page.component';
 import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credentials-page/loader-data-credentials-page.component';
 import { InscriptionsPageComponent } from '../pages/inscriptions-page/inscriptions-page.component';
+import { AcademicDegreeApplicationPageComponent } from '../pages/academic-degree-application-page/academic-degree-application-page.component';
 import { RegisterEmailgraduationPageComponent } from '../pages/register-emailgraduation-page/register-emailgraduation-page.component';
 import { LoaderDataGraduationPageComponent } from '../pages/loader-data-graduation-page/loader-data-graduation-page.component';
 import { GraduationEventsPageComponent } from '../pages/graduation-events-page/graduation-events-page.component'
@@ -48,8 +55,7 @@ import { GraduationEventsPageComponent } from '../pages/graduation-events-page/g
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
 import { HomeHeaderComponent } from '../components/home-header/home-header.component';
 import { SidebarContentComponent } from '../components/sidebar-content/sidebar-content.component';
-
-
+import { AcademicDegreeApplicationFormComponent } from '../components/academic-degree-application-form/academic-degree-application-form.component';
 
 // Services
 import { CookiesService } from '../services/cookie.service';
@@ -64,12 +70,12 @@ import { UserProvider } from '../providers/user.prov';
 import { StudentProvider } from '../providers/student.prov';
 import { EmployeeProvider } from '../providers/employee.prov';
 import { InscriptionsProvider } from '../providers/inscriptions.prov';
+import { AcademicDegreeApplicationProvider } from '../providers/academic-degree-application.prov';
 import { GraduationProvider } from '../providers/graduation.prov';
 
 
 import { LoaderComponent } from '../components/shared/loader/loader.component';
 import { ListGraduatesPageComponent } from '../pages/list-graduates-page/list-graduates-page.component';
-
 
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
@@ -78,11 +84,11 @@ const appRouters: Routes = [
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
-  { path: 'registerGraduate/:eventId', component: RegisterEmailgraduationPageComponent, pathMatch: 'full'},
-  { path: 'listGraduates/:eventId', component: ListGraduatesPageComponent, pathMatch: 'full'},
-  { path: 'loaderDataGraduation/:eventId', component: LoaderDataGraduationPageComponent, pathMatch: 'full'},
-  { path: 'graduationEvents', component: GraduationEventsPageComponent, pathMatch: 'full'},
-
+  { path: 'registerGraduate/:eventId', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
+  { path: 'listGraduates/:eventId', component: ListGraduatesPageComponent, pathMatch: 'full' },
+  { path: 'loaderDataGraduation/:eventId/:type', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
+  { path: 'graduationEvents', component: GraduationEventsPageComponent, pathMatch: 'full' },
+  { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -99,6 +105,8 @@ const appRouters: Routes = [
     LoaderDataCredentialsPageComponent,
     SidebarContentComponent,
     InscriptionsPageComponent,
+    AcademicDegreeApplicationPageComponent,
+    AcademicDegreeApplicationFormComponent,
     RegisterEmailgraduationPageComponent,
     ListGraduatesPageComponent,
     LoaderDataGraduationPageComponent,
@@ -121,6 +129,11 @@ const appRouters: Routes = [
     ImageCropperModule,
     BrowserAnimationsModule,
     SidebarModule.forRoot(),
+    MatStepperModule,
+    MatButtonToggleModule,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
     FormsModule,
     ReactiveFormsModule,
     NgxPaginationModule
@@ -137,6 +150,7 @@ const appRouters: Routes = [
     StudentProvider,
     EmployeeProvider,
     InscriptionsProvider,
+    AcademicDegreeApplicationProvider,
     GraduationProvider,
     AngularFirestoreModule,
     AngularFirestore

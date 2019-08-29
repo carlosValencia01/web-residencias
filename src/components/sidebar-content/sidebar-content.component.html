@@ -48,6 +48,12 @@
           <p class="menu-item-title">Inscripciones</p>
         </button>
       </li>
+      <li>
+        <button (click)="closeMenu()" *ngIf="role==='student'" type="button" class="menu-item" routerLink="academicDegreeApplication">
+          <img class="menu-item-img" src="assets/icons/student.svg" alt="">
+          <p class="menu-item-title">Acto recepcional</p>
+        </button>
+      </li>
       <li *ngIf="role==='administration' || role==='comunication'">
         <button (click)="closeMenu('Graduacion')" type="button" class="menu-item">
           <img class="menu-item-img" src="assets/icons/chevron-arrow-down.svg" alt="">

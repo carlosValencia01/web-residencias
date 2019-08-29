@@ -1,7 +1,11 @@
 <div class="content-general">
   <div class="card card-shadow">
-    
-    <div class="card-body">
+    <div class="card-header">
+      <h2 *ngIf="type === '0'">Importar datos de alumnos</h2>
+      <h2 *ngIf="type === '1'">Importar lista de financieros</h2>
+      <h2 *ngIf="type !== '1' && type !== '0'">Invalido</h2>
+    </div>
+    <div class="card-body" *ngIf="type === '1' || type === '0'">
 
             <div style="margin: 20px 0px;">
               <div class="input-group">
