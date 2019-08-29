@@ -19,7 +19,8 @@ import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { AngularFireModule } from 'angularfire2';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 
 import { environment } from '../environments/environment';
 
@@ -82,7 +83,6 @@ const appRouters: Routes = [
   { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
   { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full' },
   { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
-
 ];
 
 @NgModule({
@@ -128,7 +128,8 @@ const appRouters: Routes = [
     MatFormFieldModule,
     MatIconModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AngularFireStorageModule,
   ],
   providers: [
     CookieService,

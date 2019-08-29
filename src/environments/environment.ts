@@ -5,13 +5,13 @@
 export const environment = {
   production: false,
   firebaseConfig : {
-    apiKey: "AIzaSyDBJQc2NAZuPUahVGZdwfxm8BvOtaYj_gI",
-    authDomain: "ceremonia-graduacion.firebaseapp.com",
-    databaseURL: "https://ceremonia-graduacion.firebaseio.com",
-    projectId: "ceremonia-graduacion",
-    storageBucket: "ceremonia-graduacion.appspot.com",
-    messagingSenderId: "452486540507",
-    appId: "1:452486540507:web:43e9972ade946c9d"
+    apiKey: "AIzaSyDxiyf4Ztm1gymxL7O6A99s_UuPjnWK4qE",
+    authDomain: "graduacion-db.firebaseapp.com",
+    databaseURL: "https://graduacion-db.firebaseio.com",
+    projectId: "graduacion-db",
+    storageBucket: "graduacion-db.appspot.com",
+    messagingSenderId: "178833379222",
+    appId: "1:178833379222:web:c6b59ef3d0579784"
   }
 };
 

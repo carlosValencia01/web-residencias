@@ -10,6 +10,11 @@ import { AcademicDegreeApplicationProvider } from '../../providers/academic-degr
 import { CookiesService } from '../../services/cookie.service';
 import { NotificationsServices } from '../../services/notifications.service';
 
+import { AngularFireStorage } from '@angular/fire/storage';
+import {Observable} from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import {st} from '@angular/core/src/render3';
+
 @Component({
   selector: 'app-academic-degree-application-form',
   templateUrl: './academic-degree-application-form.component.html',
@@ -28,11 +33,16 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   private projectFile: any;
   private requestData: any;
 
+  downloadURL: Observable<string>;
+  meta: Observable<any>;
+  private uri: any;
+
   constructor(
     private academicDegreeProv: AcademicDegreeApplicationProvider,
     private cookiesService: CookiesService,
     private notificationsServices: NotificationsServices,
-    private dateFormat: DatePipe
+    private dateFormat: DatePipe,
+    private storage: AngularFireStorage
   ) {
     this.user = this.cookiesService.getData().user;
     this.isUploadedFile = false;
@@ -124,7 +134,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
       'proposedDate': this.dateFormat.transform(data.request.proposedDate, 'yyyy-MM-dd'),
       'honorificMention': `${data.request.honorificMention}`,
       'numberParticipants': data.request.numberParticipants,
-      'projectFile': '',
+      'projectFile': data.request.projectFile,
       'product': data.request.product,
       'address': data.graduate.address,
       'observations': data.observations ? data.observations : '',
@@ -231,13 +241,41 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   }
 
   onUploadFile(inputFile: HTMLInputElement) {
+    let path;
+    /*if (this.uri) {
+      this.storage.storage.refFromURL('gs://' + this.uri.bucket + '/' + this.uri.fullPath).delete().then().catch(err => {
+        console.log(err);
+      });
+    }*/
     const files = inputFile.files;
     if (files && files.length) {
-      this.projectFileName = files[0].name;
       this.projectFile = files[0];
-      this.notificationsServices.showNotification(1, 'Acto recepcional',
-        'El archivo ' + this.projectFileName + ' se ha cargado correctamente');
+      if ((this.projectFile.size) > (1 * 1024 * 1024)) {
+        this.notificationsServices.showNotification(2, 'Acto recepcional', 'El archivo no debe ser mayor a 1MB');
+        this.projectFile = null;
+        return;
+      }
+      this.projectFileName = files[0].name;
       this.isUploadedFile = true;
+      if (this.uri) {
+        path = this.uri;
+      } else {
+        path = 'requestFiles/' + this.user.email;
+      }
+      const task = this.storage.upload(path, this.projectFile).then(_ => {
+        this.uri = path;
+        this.notificationsServices.showNotification(1, 'Acto recepcional',
+          'El archivo ' + this.projectFileName + ' se ha guardado correctamente');
+      }).catch(err => {
+        this.notificationsServices.showNotification(2, 'Acto recepcional', 'Hubo un error al subir el archivo');
+      });
+      /*const storageRef = this.storage.ref(path);
+      const task = storageRef.put(this.projectFile).then( _ => {
+        this.meta = storageRef.getMetadata();
+        this.meta.subscribe(value => this.uri = value);
+      }).catch(err => {
+        console.log(err);
+      });*/
     }
   }
 
