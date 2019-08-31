@@ -6,7 +6,7 @@ import { CookiesService } from 'src/services/cookie.service';
 import { Router } from '@angular/router';
 import { ExporterService } from 'src/services/exporter.service'
 import Swal from 'sweetalert2';
-import { filter } from 'rxjs/operators';
+import { ImageToBase64Service } from '../../services/img.to.base63.service';
 
 
 declare const require: any;
@@ -36,6 +36,11 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchSA : string = '';
   public searchSM : string = '';
 
+  //Imagenes para Reportes
+  public logoTecNM: any;
+  public logoSep: any;
+  public logoTecTepic: any;
+
   //Variable donde se almacenan todos los alumnos
   public alumnos = [];
 
@@ -55,7 +60,8 @@ export class ListGraduatesPageComponent implements OnInit {
     private graduationProv : GraduationProvider,
     private cookiesService: CookiesService,
     private router: Router,
-    private excelService: ExporterService
+    private excelService: ExporterService,
+    private imageToBase64Serv: ImageToBase64Service
     ) {
       if (this.cookiesService.getData().user.role !== 0 && 
       this.cookiesService.getData().user.role !== 5 &&
@@ -94,6 +100,17 @@ export class ListGraduatesPageComponent implements OnInit {
         break;
     }
     this.readEmail();
+
+    //Convertir imágenes a base 64 para los reportes
+    this.imageToBase64Serv.getBase64('assets/imgs/logoTecNM.png').then(res1 => {
+        this.logoTecNM = res1;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
+        this.logoSep = res2;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
+        this.logoTecTepic = res3;
+    });
   }
 
   readEmail(){
@@ -241,7 +258,7 @@ export class ListGraduatesPageComponent implements OnInit {
       confirmButtonText: 'Enviar'
     }).then((result) => {
       if (result.value) {
-        //this.sendOneMail(item);
+        this.sendOneMail(item);
       }
     })
   }
@@ -276,7 +293,7 @@ export class ListGraduatesPageComponent implements OnInit {
         confirmButtonText: 'Enviar'
       }).then((result) => {
         if (result.value) {
-          //this.sendMailAll();
+          this.sendMailAll();
         }
       })
   }
@@ -330,13 +347,20 @@ export class ListGraduatesPageComponent implements OnInit {
                       this.searchSA,
                       this.searchSM
                     );
-      
+
       if(Object.keys(this.alumnosReport).length === 0){
         if(!this.searchSRC && !this.searchSPC && !this.searchSVC && !this.searchSAC && !this.searchSMC){
           this.alumnosReport =  this.alumnos;
         }
-      }
 
+        if(this.searchCarreer == '' && this.searchSR == '~' && this.searchSP == '~' && this.searchSV == '~' && this.searchSA == '~' && this.searchSM == '~'){
+          this.alumnosReport =  this.alumnos;
+        }
+
+        if(this.searchCarreer != ''){
+          this.alumnosReport = this.filterItemsCarreer(this.searchCarreer);
+        }
+      }
   }
   ////////////////////FILTRADO POR CARRERA O ESTATUS/////////////////////////
   filterItems(carreer,sR,sP,sV,sA,sM) {
@@ -349,18 +373,28 @@ export class ListGraduatesPageComponent implements OnInit {
              alumno.status.toLowerCase().indexOf(sM.toLowerCase()) > -1;
     })
   }
+
+  filterItemsCarreer(carreer) {
+    return this.alumnos.filter(function(alumno) {
+      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1;
+    })
+  }
   ///////////////////////////////////////////////////////////////////////////
 
  // Generar reporte de alumnos
-  generateReport(){
+  generateReport(){    
     var doc = new jsPDF('p', 'pt');
-  
+
     // Header
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+    doc.addImage(this.logoTecNM, 'PNG', 5, 0, 80, 35); // Logo TecNM
+    doc.addImage(this.logoSep, 'PNG', pageWidth-85, 0, 80, 35); // Logo SEP
+
     let header = "Reporte Alumnos Graduados "+this.searchCarreer;
     doc.setTextColor(0,0,0);
-    doc.setFontSize(20);
+    doc.setFontSize(15);
     doc.setFontStyle('bold');
     doc.text(header, pageWidth / 2, 30 , 'center');
 
@@ -405,20 +439,26 @@ export class ListGraduatesPageComponent implements OnInit {
     var mes = (m < 10) ? '0' + m : m;
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    let footer = "© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n"+today.getDate()+'/' +mes+'/'+today.getFullYear()+' - '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
+    doc.addImage(this.logoTecTepic, 'PNG',282.64, pageHeight  - 47, 30,30); // Logo SEP
+    let footer = "© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n";
+    doc.setTextColor(0,0,0);
+    doc.setFontStyle('bold');
+    doc.setFontSize(7);
+    doc.text(footer, pageWidth / 2, pageHeight -12, 'center');
+
+    //Hour PDF
+    let hour = today.getDate()+'/' +mes+'/'+today.getFullYear()+' - '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
     doc.setTextColor(100);
     doc.setFontStyle('bold');
-    doc.setFontSize(10);
-    doc.text(footer, pageWidth / 2, pageHeight  - 30, 'center');
+    doc.setFontSize(7);
+    doc.text(hour, pageWidth-45, pageHeight -5, 'center');
 
-    doc.output('dataurlnewwindow');    
-    doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");    
+    window.open(doc.output('bloburl'), '_blank');
+    //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");    
   }
 
   // Exportar alumnos a excel
-  excelExport(): void{
-    console.log('Exportando datos...');
-    console.log(this.alumnosReport);
+  excelExport(){
     this.excelService.exportAsExcelFile(this.alumnosReport,'Graduacion '+this.searchCarreer);
   }
   
