@@ -5,14 +5,14 @@
       </div>
       <div class="card-body">
          <div class="row">
-            <div class="col-5">
+            <div class="col-4">
                <div class="form-group">
                   <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno...">
                </div>
             </div>
             <div class="col-3">
                <div class="form-group">
-                  <select [(ngModel)]="searchCarreer" class="form-control" (change)="loadInfoReport()">
+                  <select [(ngModel)]="searchCarreer" class="form-control" (change)="eventFilterReport()">
                      <option value=''>Todas las carreras</option>
                      <option value='IBQ'>Ingeniería Bioquímica</option>
                      <option value='IGE'>Ingeniería en Gestión Empresarial</option>
@@ -32,52 +32,34 @@
             <div class="col-2">
                <table class="table table-bordered">
                   <tr>
-                     <td id="checkAll">
-                        <div class="form-check" ngbTooltip="Todos" tooltipClass="my-custom-class">
-                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusAll" value="">
-                           <label class="form-check-label" for="estatusAll">
-                              T
-                           </label>
-                        </div>
-                     </td>
                      <td id="checkRegistrado">
-                        <div class="form-check" ngbTooltip="Registrado" tooltipClass="my-custom-class">
-                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusRegistrado" value="Registrado">
-                           <label class="form-check-label" for="estatusRegistrado">
-                              R
-                           </label>
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Registrado" tooltipClass="my-custom-class">
+                              <input [(ngModel)]="searchSRC" type="checkbox" class="custom-control-input" id="defaultInline2" value="Registrado" (click)="eventFilterReport()">
+                              <label class="custom-control-label" for="defaultInline2">R</label>
                         </div>
                      </td>
                      <td id="checkPagado">
-                        <div class="form-check" ngbTooltip="Pagado" tooltipClass="my-custom-class">
-                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusPagado" value="Pagado">
-                           <label class="form-check-label" for="estatusPagado">
-                              P
-                           </label>
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Pagado" tooltipClass="my-custom-class">
+                              <input [(ngModel)]="searchSPC" type="checkbox" class="custom-control-input" id="defaultInline3" value="Pagado" (click)="eventFilterReport()">
+                              <label class="custom-control-label" for="defaultInline3">P</label>
                         </div>
                      </td>
                      <td id="checkVerificado">
-                        <div class="form-check" ngbTooltip="Verificado" tooltipClass="my-custom-class">
-                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusVerificado" value="Verificado">
-                           <label class="form-check-label" for="estatusVerificado">
-                              V
-                           </label>
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Verificado" tooltipClass="my-custom-class">
+                              <input [(ngModel)]="searchSVC" type="checkbox" class="custom-control-input" id="defaultInline4" value="Verificado" (click)="eventFilterReport()">
+                              <label class="custom-control-label" for="defaultInline4">V</label>
                         </div>
                      </td>
                      <td id="checkAsistio">
-                        <div class="form-check" ngbTooltip="Asistió" tooltipClass="my-custom-class">
-                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusAsistio" value="Asistió">
-                           <label class="form-check-label" for="estatusAsistio">
-                              A
-                           </label>
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Asistió" tooltipClass="my-custom-class">
+                              <input [(ngModel)]="searchSAC" type="checkbox" class="custom-control-input" id="defaultInline5" value="Asistió" (click)="eventFilterReport()">
+                              <label class="custom-control-label" for="defaultInline5">A</label>
                         </div>
                      </td>
                      <td id="checkMencionado">
-                        <div class="form-check" ngbTooltip="Mencionado" tooltipClass="my-custom-class">
-                           <input [(ngModel)]="searchStatus" class="form-check-input" type="radio" name="findStatus" id="estatusMencionado" value="Mencionado">
-                           <label class="form-check-label" for="estatusMencionado">
-                              M
-                           </label>
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Mencionado" tooltipClass="my-custom-class">
+                              <input [(ngModel)]="searchSMC" type="checkbox" class="custom-control-input" id="defaultInline6" value="Mencionado" (click)="eventFilterReport()">
+                              <label class="custom-control-label" for="defaultInline6">M</label>
                         </div>
                      </td>
                   </tr>
@@ -85,8 +67,8 @@
                </table>
             </div>
          </div>
-         <!--Tabla Escolares y Comunicación-->
-         <table class="table table-striped table-bordered table-hover" id="my-table" *ngIf="role === 'administration' || role === 'comunication'">
+
+         <table class="table table-striped table-bordered table-hover" id="my-table">
                <thead>
                   <tr>
                      <th>Número de Control</th>
@@ -98,7 +80,7 @@
                   </tr>          
                </thead>
                <tbody>
-                  <tr *ngFor="let item of alumnos | filter:{carreer:searchCarreer} | filter:{status:searchStatus} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
+                  <tr *ngFor="let item of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
                   currentPage: page };">      
                      <td>{{item.nc}} </td>
                      <td>{{item.name}}</td>
@@ -134,72 +116,27 @@
                   </tr>
                </tbody>
                <tfoot align="right">
-                  <td colspan="6">
-                        <button type="button" class="btn btn-primary" (click)="excelExportVerified()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'">Exportar Verificados a Excel</button>
-                        <button type="button" class="btn btn-primary" (click)="generateReportVerified()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Generar PDF de Verificados</button>
-                        <button type="button" class="btn btn-primary" (click)="excelExport()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Exportar a Excel</button>
-                        <button type="button" class="btn btn-primary" (click)="generateReport()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Generar PDF</button>
-                        <button type="button" class="btn btn-primary" (click)="confirmSendEmailAll()" style="margin-left: 10px" *ngIf="role === 'comunication' || role === 'administration'">Enviar a todos</button>
-                  </td>
-               </tfoot>
-            </table> 
-         
-         <!--Tabla Coordinador-->
-         <table class="table table-striped table-bordered" id="my-table" *ngIf="role === 'coordinator'">
-               <thead>
-                  <tr>
-                     <th>Número de Control</th>
-                     <th>Nombre del Alumno</th>
-                     <th>Carrera</th>
-                     <th>Email</th>
-                     <th>Estatus</th>
-                     <th>Acciones</th>
-                  </tr>          
-               </thead>
-               <tbody>
-                  <tr *ngFor="let item of alumnos | filter:{carreer:searchCarreer} | filter:{status:searchStatus} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
-                  currentPage: page };">      
-                     <td class="row{{item.status}}">{{item.nc}} </td>
-                     <td class="row{{item.status}}">{{item.name}}</td>
-                     <td class="row{{item.status}}">{{item.carreer}}</td>
-                     <td class="row{{item.status}}">{{item.email}}</td>
-                     <td class="row{{item.status}}">{{item.status}}</td>
-                     <td>
-                        <div class="div-actions" id="{{item.status}}" >
-                           <tr *ngIf="item.email && status == '1'">
-                              <td *ngIf="item.status == 'Registrado' && role === 'comunication'">
-                                 <div class="div-img" ngbTooltip="Confirmar Pago" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/paid.svg" class="action" (click)="confirmPaidEvent(item)">
+                     <td colspan="6">
+                        <div class="div-actionsFoot">
+                           <tr>
+                              <td>
+                                 <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
+                                    <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
                                  </div>
                               </td>
-                              <td *ngIf="item.status === 'Verificado' && role === 'comunication' || item.status === 'Verificado' && role === 'administration'">
-                                 <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" >
-                                       <img src="../../assets/icons/sendEmail.svg" class="action" (click)="confirmSendEmail(item)">
+                              <td>
+                                 <div class="div-img" ngbTooltip="Generar Reporte" tooltipClass="my-custom-class">
+                                    <img src="../../assets/icons/pdfReport.svg" class="action" (click)="generateReport()">
                                  </div>
-                              </td>
-                              <td *ngIf="item.status === 'Verificado' && role === 'administration' || item.status === 'Verificado' && role === 'coordinator'">
-                                 <div class="div-img" ngbTooltip="Registrar Asistencia" tooltipClass="my-custom-class" >
-                                       <img src="../../assets/icons/presence.svg" class="action" (click)="confirmPresenceEvent(item)">
+                              </td>    
+                              <td *ngIf="role === 'comunication' || role === 'administration'">
+                                 <div class="div-img" ngbTooltip="Enviar a todos" tooltipClass="my-custom-class">
+                                    <img src="../../assets/icons/sendAllEmail.svg" class="action" (click)="confirmSendEmailAll()">
                                  </div>
-                              </td>  
-                              <td *ngIf="item.status == 'Pagado' && role === 'comunication'">
-                                 <div class="div-img" ngbTooltip="Remover Pago" tooltipClass="my-custom-class" >
-                                       <img src="../../assets/icons/remove-paid.svg" class="action" (click)="confirmRemovePaidEvent(item)">
-                                 </div>
-                              </td>                              
+                              </td>                             
                            </tr>
                         </div>
                      </td>
-                  </tr>
-               </tbody>
-               <tfoot align="right">
-                  <td colspan="6">
-                        <button type="button" class="btn btn-primary" (click)="excelExportVerificate()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'">Exportar Verificados a Excel</button>
-                        <button type="button" class="btn btn-primary" (click)="generateReportVerificate()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Generar PDF de Verificados</button>
-                        <button type="button" class="btn btn-primary" (click)="excelExport()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Exportar a Excel</button>
-                        <button type="button" class="btn btn-primary" (click)="generateReport()" *ngIf="role === 'comunication' || role === 'administration' || role === 'coordinator'" style="margin-left: 10px">Generar PDF</button>
-                        <button type="button" class="btn btn-primary" (click)="confirmSendEmailAll()" style="margin-left: 10px" *ngIf="role === 'comunication' || role === 'administration'">Enviar a todos</button>
-                  </td>
                </tfoot>
             </table> 
             <div class='div-pagination'>
@@ -208,10 +145,10 @@
                      (pageChange)="pageChanged($event)"
                       responsive="true"
                       previousLabel="Anterior"
-                      nextLabel="Siguiente"
-                   ></pagination-controls>
-            </div>  
-            
+                      nextLabel="Siguiente">
+                  </pagination-controls>
+            </div>
+         
             <!-- Tabla reporte alumnos-->
              <table class="table table-striped table-bordered table-hover" id="tableReport">
                <thead>
@@ -224,7 +161,7 @@
                   </tr>          
                </thead>
                <tbody>
-                  <tr *ngFor="let alumno of alumnosReport; let indice=index">  
+                  <tr *ngFor="let alumno of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText}; let indice=index">  
                      <td>{{indice+1}}</td>                  
                      <td>{{alumno.nc}} </td>
                      <td>{{alumno.name}}</td>
@@ -233,29 +170,7 @@
                   </tr>
                </tbody>
             </table> 
-
-            <!-- Tabla reporte alumnos Verificados-->
-            <table class="table table-striped table-bordered table-hover" id="tableReportVerificate">
-               <thead>
-                  <tr>
-                     <th>No</th>
-                     <th>Número de Control</th>
-                     <th>Nombre del Alumno</th>
-                     <th>Carrera</th>
-                     <th>Estatus</th>
-                  </tr>          
-               </thead>
-               <tbody>
-                  <tr *ngFor="let alumno of alumnosReportV; let indice=index">  
-                     <td>{{indice+1}}</td>                  
-                     <td>{{alumno.nc}} </td>
-                     <td>{{alumno.name}}</td>
-                     <td>{{alumno.carreer}}</td>
-                     <td class="{{alumno.status}}">{{alumno.status}}</td>
-                  </tr>
-               </tbody>
-            </table>
-            
+ 
       </div>
    </div>
    

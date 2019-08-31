@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NotificationsServices } from '../../services/notifications.service';
 import { CookiesService } from 'src/services/cookie.service';
 import * as years from 'ye-ars';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-graduation-events-page',
@@ -115,23 +116,32 @@ export class GraduationEventsPageComponent implements OnInit {
       let sub = this.firestoreService.getActivedEvent().subscribe(
         res=> {
          sub.unsubscribe();
-           i++;   //por el subscribe y lo asincrono solo dejamos que se ejecute una vez cada que se llama la funcion             
+           i++;   // Por el subscribe y lo asincrono solo dejamos que se ejecute una vez cada que se llama la funcion             
            if(res.length>0 && i===1){
-             oldEvent = res[0].payload.doc.id; //evento activo actual
-               
-               //preguntar si se desea tener un nuevo evento activo
-               let opcion = confirm(`¿DESEA ACTIVAR EL EVENTO CON PERIODO ${ev.id.toUpperCase()}?\n ESTO DESHABILITARA EL EVENTO DEL PERIODO ${oldEvent.toUpperCase()}`);              
-               
-               if (opcion===true) {
-                 //cambiamos de evento activo
-                 this.firestoreService.setStatusEvent(3,oldEvent).then(
-                   updated=>{
-                     this.firestoreService.setStatusEvent(1,ev.id).then(
-                       up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
-                     );
-                   }
-                 );
-               }                                    
+             oldEvent = res[0].payload.doc.id; // Evento activo actual
+               // Preguntar si se desea tener un nuevo evento activo      
+              Swal.fire({
+              title: `¿DESEA ACTIVAR EL EVENTO CON PERIODO ${ev.id.toUpperCase()}?`,
+              text: `ESTO DESHABILITARA EL EVENTO DEL PERIODO ${oldEvent.toUpperCase()}`,
+              type: 'question',
+              showCancelButton: true,
+              allowOutsideClick: false,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              cancelButtonText: 'Cancelar',
+              confirmButtonText: 'Activar'
+            }).then((result) => {
+              if (result.value) {
+                // Cambiamos de evento activo
+                this.firestoreService.setStatusEvent(3,oldEvent).then(
+                  updated=>{
+                    this.firestoreService.setStatusEvent(1,ev.id).then(
+                      up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
+                    );
+                  }
+                );
+              }
+            })
            }else{             
              if(i===1){
               this.firestoreService.setStatusEvent(1,ev.id).then(
@@ -142,9 +152,24 @@ export class GraduationEventsPageComponent implements OnInit {
          }
        );
     }else{
-      this.firestoreService.setStatusEvent(3,ev.id).then(
-        up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
-      );
+      Swal.fire({
+        title: `¿DESEA FINALIZAR EL EVENTO CON PERIODO ${ev.id.toUpperCase()}?`,
+        text: `ESTO DESHABILITARA EL EVENTO DE FORMA PERMANENTE`,
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Finalizar'
+      }).then((result) => {
+        if (result.value) {
+          // Finalizar de evento activo
+          this.firestoreService.setStatusEvent(3,ev.id).then(
+            up=> this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`,'')
+          );
+        }
+      })
     }
     
   }

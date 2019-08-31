@@ -5,6 +5,9 @@ import { GraduationProvider } from '../../providers/graduation.prov';
 import { CookiesService } from 'src/services/cookie.service';
 import { Router } from '@angular/router';
 import { ExporterService } from 'src/services/exporter.service'
+import Swal from 'sweetalert2';
+import { filter } from 'rxjs/operators';
+
 
 declare const require: any;
 const jsPDF = require('jspdf');
@@ -17,11 +20,29 @@ require('jspdf-autotable');
 })
 export class ListGraduatesPageComponent implements OnInit {
   public searchText : string;
+
+  //Variables para filtrar alumnos y generar reporte
   public searchCarreer : string = '';
-  public searchStatus : string = '';
+
+  public searchSRC = false;
+  public searchSPC = false;
+  public searchSVC = false;
+  public searchSAC = false;
+  public searchSMC = false;
+
+  public searchSR : string = '';
+  public searchSP : string = '';
+  public searchSV : string = '';
+  public searchSA : string = '';
+  public searchSM : string = '';
+
+  //Variable donde se almacenan todos los alumnos
   public alumnos = [];
-  public alumnosReport;
-  public alumnosReportV;
+
+  //Variable donde se almacenan los alumnos filtrados
+  public alumnosReport = [];
+
+
   public role: string;
   public no = 0;
   page=1;
@@ -88,9 +109,8 @@ export class ListGraduatesPageComponent implements OnInit {
           email: alumno.payload.doc.get("correo"),
           status: alumno.payload.doc.get("estatus")
         }});
-        this.alumnosReport =  this.filterItems(this.searchCarreer);
-        this.alumnosReportV = this.filterItemsStatus('Verificado')
-    });
+        this.alumnosReport =  this.alumnos;
+      });
   }
 
   // Cambias estatus a Pagado
@@ -152,34 +172,78 @@ export class ListGraduatesPageComponent implements OnInit {
   
   // Confirmar pago
   confirmPaidEvent(item){
-    var opcion = confirm("CONFIRMAR PAGO PARA:"+"\n"+'NC: '+item.nc+"\n"+'Nombre: '+item.name);
-    if (opcion == true) {
-      this.paidEvent(item);
-    }
+    Swal.fire({
+      title: 'Confirmar Pago',
+      text: "Para "+item.name,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        //this.paidEvent(item);
+      }
+    })
   }
 
   // Confirmar remover pago
   confirmRemovePaidEvent(item){
-    var opcion = confirm("REMOVER PAGO PARA:"+"\n"+'NC: '+item.nc+"\n"+'Nombre: '+item.name);
-    if (opcion == true) {
-      this.removePaidEvent(item);
-    }
+    Swal.fire({
+      title: 'Remover Pago',
+      text: "Para "+item.name,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        //this.removePaidEvent(item);
+      }
+    })
   }
 
   // Confirmar asistencia
   confirmPresenceEvent(item){
-    var opcion = confirm("CONFIRMAR ASISTENCIA PARA:"+"\n"+'NC: '+item.nc+"\n"+'Nombre: '+item.name);
-    if (opcion == true) {
-      this.asistenceEvent(item);
-    }
+    Swal.fire({
+      title: 'Confirmar Asistencia',
+      text: "Para "+item.name,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        //this.asistenceEvent(item);
+      }
+    })
   }
 
   // Confirmar envio de invitación
   confirmSendEmail(item){
-    var opcion = confirm("ENVIAR INVITACIÓN A:"+"\n"+'NC: '+item.nc+"\n"+'Nombre: '+item.name);
-    if (opcion == true) {
-      this.sendOneMail(item);
-    }
+    Swal.fire({
+      title: 'Enviar Invitación',
+      text: "Para: "+item.name,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Enviar'
+    }).then((result) => {
+      if (result.value) {
+        //this.sendOneMail(item);
+      }
+    })
   }
 
   // Enviar invitación al alumno seleccionado (status == Verificado)
@@ -200,11 +264,22 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Confirmar envio de invitación
   confirmSendEmailAll(){
-      var opcion = confirm("ENVIAR INVITACIÓN A TODOS LOS ALUMNOS:");
-      if (opcion == true) {
-        this.sendMailAll();
-      }
-    }
+      Swal.fire({
+        title: 'Enviar Invitación',
+        text: "Para todos los alumnos",
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Enviar'
+      }).then((result) => {
+        if (result.value) {
+          //this.sendMailAll();
+        }
+      })
+  }
 
   // Enviar invitación a todos los alumnos
   sendMailAll(){
@@ -215,28 +290,71 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
-  // Cambiar valor del alumnosReport dependiendo del filtro de carrera
-  loadInfoReport(){
-    this.alumnosReport =  this.filterItems(this.searchCarreer);
-  }
+  ////////////////////Obetener Valor del checkbox de Estatus/////////////////////////
+  eventFilterReport(){
+    if(this.searchSRC){
+      this.searchSR = 'Registrado';
+    }
+    else{
+      this.searchSR = '~';
+    }
+    if(this.searchSPC){
+      this.searchSP = 'Pagado';
+    }
+    else{
+      this.searchSP = '~';
+    }
+    if(this.searchSVC){
+      this.searchSV = 'Verificado';
+    }
+    else{
+      this.searchSV = '~';
+    }
+    if(this.searchSAC){
+      this.searchSA = 'Asistió';
+    }
+    else{
+      this.searchSA = '~';
+    }
+    if(this.searchSMC){
+      this.searchSM = 'Mencionado';
+    }
+    else{
+      this.searchSM = '~';
+    }
+    this.alumnosReport = this.filterItems(
+                      this.searchCarreer,
+                      this.searchSR,
+                      this.searchSP,
+                      this.searchSV,
+                      this.searchSA,
+                      this.searchSM
+                    );
+      
+      if(Object.keys(this.alumnosReport).length === 0){
+        if(!this.searchSRC && !this.searchSPC && !this.searchSVC && !this.searchSAC && !this.searchSMC){
+          this.alumnosReport =  this.alumnos;
+        }
+      }
 
-  // Filtrar elementos para generar reporte
-  filterItems(query) {
-    return this.alumnos.filter(function(elemento) {
-      return elemento.carreer.toLowerCase().indexOf(query.toLowerCase()) > -1;
+  }
+  ////////////////////FILTRADO POR CARRERA O ESTATUS/////////////////////////
+  filterItems(carreer,sR,sP,sV,sA,sM) {
+    return this.alumnos.filter(function(alumno) {
+      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && 
+             alumno.status.toLowerCase().indexOf(sR.toLowerCase()) > -1 || 
+             alumno.status.toLowerCase().indexOf(sP.toLowerCase()) > -1 || 
+             alumno.status.toLowerCase().indexOf(sV.toLowerCase()) > -1 || 
+             alumno.status.toLowerCase().indexOf(sA.toLowerCase()) > -1 || 
+             alumno.status.toLowerCase().indexOf(sM.toLowerCase()) > -1;
     })
   }
-
-  filterItemsStatus(query) {
-    return this.alumnos.filter(function(elemento) {
-      return elemento.status.toLowerCase().indexOf(query.toLowerCase()) > -1;
-    })
-  }
+  ///////////////////////////////////////////////////////////////////////////
 
  // Generar reporte de alumnos
   generateReport(){
     var doc = new jsPDF('p', 'pt');
-    
+  
     // Header
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
@@ -245,20 +363,36 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(20);
     doc.setFontStyle('bold');
     doc.text(header, pageWidth / 2, 30 , 'center');
-    
+
     doc.autoTable({
       html: '#tableReport',
       didParseCell: function (data) {
+          if(data.row.cells[4].text[0] === 'Registrado'){
+            data.cell.styles.fillColor = [71, 178, 218];
+            data.cell.styles.textColor = [255,255,255];
+          }      
+          if(data.row.cells[4].text[0] === 'Pagado'){
+            data.cell.styles.fillColor = [250, 157, 0];
+            data.cell.styles.textColor = [255,255,255];
+            data.cell.styles.fontSize =  10;
+          }
+          if(data.row.cells[4].text[0] === 'Verificado'){
+            data.cell.styles.fillColor = [202, 0, 10];
+            data.cell.styles.textColor = [255,255,255];
+            data.cell.styles.fontSize =  10;
+          }
           if(data.row.cells[4].text[0] === 'Asistió'){
             data.cell.styles.fillColor = [26, 111, 0];
             data.cell.styles.textColor = [255,255,255];
-          }      
-          if(data.row.cells[4].text[0] === 'Registrado' || data.row.cells[4].text[0] === 'Pagado' || data.row.cells[4].text[0] === 'Mencionado' || data.row.cells[4].text[0] === 'Verificado'){
-            data.cell.styles.fillColor = [202, 0, 10];
+            data.cell.styles.fontSize =  10;
+          }
+          if(data.row.cells[4].text[0] === 'Mencionado'){
+            data.cell.styles.fillColor = [0, 0, 116];
             data.cell.styles.textColor = [255,255,255];
+            data.cell.styles.fontSize =  10;
           }
           if(data.row.cells[4].text[0] === 'Estatus'){
-            data.cell.styles.fillColor = [21, 43, 84];
+            data.cell.styles.fillColor = [17, 32, 67];
             data.cell.styles.textColor = [255,255,255];
             data.cell.styles.fontSize =  10;
           }         
@@ -277,50 +411,8 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(10);
     doc.text(footer, pageWidth / 2, pageHeight  - 30, 'center');
 
-    doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
-  }
-
-  // Generar reporte de alumnos Verificados
-  generateReportVerified(){
-    var doc = new jsPDF('p', 'pt');
-    
-    // Header
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    let header = "Reporte Alumnos Verificados "+this.searchCarreer;
-    doc.setTextColor(0,0,0);
-    doc.setFontSize(20);
-    doc.setFontStyle('bold');
-    doc.text(header, pageWidth / 2, 30 , 'center');
-    
-    doc.autoTable({
-      html: '#tableReportVerificate',
-      didParseCell: function (data) {   
-          if(data.row.cells[4].text[0] === 'Estatus'){
-            data.cell.styles.fillColor = [21, 43, 84];
-            data.cell.styles.textColor = [255,255,255];
-            data.cell.styles.fontSize =  10;
-          }
-          else{
-            data.cell.styles.fillColor = [77, 190, 224];
-            data.cell.styles.textColor = [255,255,255];
-          }         
-      }
-    });
-
-    // FOOTER
-    var  today = new Date();
-    var m = today.getMonth() + 1;
-    var mes = (m < 10) ? '0' + m : m;
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    let footer = "© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n"+today.getDate()+'/' +mes+'/'+today.getFullYear()+' - '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
-    doc.setTextColor(100);
-    doc.setFontStyle('bold');
-    doc.setFontSize(10);
-    doc.text(footer, pageWidth / 2, pageHeight  - 30, 'center');
-    
-    doc.save("Reporte Graduacion Verificados "+this.searchCarreer+".pdf");
+    doc.output('dataurlnewwindow');    
+    doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");    
   }
 
   // Exportar alumnos a excel
@@ -328,13 +420,6 @@ export class ListGraduatesPageComponent implements OnInit {
     console.log('Exportando datos...');
     console.log(this.alumnosReport);
     this.excelService.exportAsExcelFile(this.alumnosReport,'Graduacion '+this.searchCarreer);
-  }
-
-    // Exportar alumnos Verificados a excel
-  excelExportVerified(): void{
-    console.log('Exportando datos...');
-    console.log(this.alumnosReportV);
-    this.excelService.exportAsExcelFile(this.alumnosReportV,'Graduacion Verificados '+this.searchCarreer);
   }
   
   pageChanged(ev){
