@@ -453,6 +453,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(7);
     doc.text(hour, pageWidth-45, pageHeight -5, 'center');
 
+    this.notificationsServices.showNotification(1, 'Reporte Generado','Se generó reporte con filtros actuales.');
     window.open(doc.output('bloburl'), '_blank');
     //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");    
   }
@@ -460,6 +461,7 @@ export class ListGraduatesPageComponent implements OnInit {
   // Exportar alumnos a excel
   excelExport(){
     this.excelService.exportAsExcelFile(this.alumnosReport,'Graduacion '+this.searchCarreer);
+    this.notificationsServices.showNotification(1, 'Datos Exportados','Se exportaron datos con filtros actuales.');
   }
   
   pageChanged(ev){
