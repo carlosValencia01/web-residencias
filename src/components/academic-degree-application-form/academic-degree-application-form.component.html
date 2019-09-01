@@ -193,7 +193,7 @@
             <input type="text"
               [ngClass]="(!formRequest.get('product').valid && formRequest.get('product').touched)?'form-control is-invalid':'form-control'"
               id="product" formControlName="product" placeholder="Producto"
-              oninput="this.value = this.value.toUpperCase()">
+              oninput="this.value = this.value.toUpperCase()" readonly>
             <div class="invalid-feedback"
               *ngIf="!formRequest.get('product').valid && formRequest.get('product').touched">
               <span *ngIf="formRequest.get('product').errors['required']">

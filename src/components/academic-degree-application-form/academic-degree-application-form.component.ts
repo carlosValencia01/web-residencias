@@ -64,11 +64,11 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   initializeForm() {
     this.formRequest = new FormGroup({
       'name': new FormControl({
-        value: this.user.name.firstName,
+        value: this.user.name.firstName.toUpperCase(),
         disabled: this.operationMode === OperationMode.CREATED
       }, [Validators.required]),
       'lastname': new FormControl({
-        value: this.user.name.lastName,
+        value: this.user.name.lastName.toUpperCase(),
         disabled: this.operationMode === OperationMode.CREATED
       }, [Validators.required]),
       'telephone': new FormControl({
@@ -101,7 +101,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
         disabled: this.operationMode === OperationMode.CREATED
       }),
       'product': new FormControl({
-        value: null,
+        value: 'Memoria de residencia profesional'.toUpperCase(),
         disabled: this.operationMode === OperationMode.CREATED
       }, [Validators.required]),
       'address': new FormControl({
@@ -119,7 +119,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
       'name': data.graduate.name.firstName,
       'lastname': data.graduate.name.lastName,
       'telephone': data.telephoneContact,
-      'email': data.graduate.email.toUpperCase(),
+      'email': data.graduate.email.toLowerCase(),
       'projectName': data.request.projectName,
       'proposedDate': this.dateFormat.transform(data.request.proposedDate, 'yyyy-MM-dd'),
       'honorificMention': `${data.request.honorificMention}`,
@@ -200,7 +200,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   }
 
   loadFormData() {
-    const data = {
+    return {
       graduate: {
         name: {
           firstName: this.formRequest.get('name').value,
@@ -216,7 +216,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
         projectName: this.formRequest.get('projectName').value,
         product: this.formRequest.get('product').value,
         numberParticipants: this.formRequest.get('numberParticipants').value,
-        honorificMention: this.formRequest.get('honorificMention').value === 'true' ? true : false,
+        honorificMention: this.formRequest.get('honorificMention').value === 'true',
         proposedDate: this.formRequest.get('proposedDate').value,
         projectFile: this.projectFileName,
       },
@@ -227,7 +227,6 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
       degreeCoordinator: this.requestData ? this.requestData.degreeCoordinator : '',
       status: RequestStatus.CAPTURED,
     };
-    return data;
   }
 
   onUploadFile(inputFile: HTMLInputElement) {
