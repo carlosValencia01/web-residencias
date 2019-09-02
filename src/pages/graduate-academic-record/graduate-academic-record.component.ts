@@ -3,7 +3,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import Swal from 'sweetalert2';
 
 import {RequestStatus} from 'src/enumerators/request-status.enum';
-import {AcademicDegreeApplicationProvider} from 'src/providers/academic-degree-application.prov';
+import {RequestProvider} from 'src/providers/request.prov';
 
 @Component({
   selector: 'app-graduate-academic-record',
@@ -13,7 +13,7 @@ import {AcademicDegreeApplicationProvider} from 'src/providers/academic-degree-a
 export class GraduateAcademicRecordComponent implements OnInit {
   @Input() request;
   constructor(
-    private academicDegreeApplicationProvider: AcademicDegreeApplicationProvider,
+    private requestProvider: RequestProvider,
   ) { }
 
   ngOnInit() {
@@ -41,7 +41,7 @@ export class GraduateAcademicRecordComponent implements OnInit {
       confirmButtonText: 'Aprobar'
     }).then((result) => {
       if (result.value) {
-        this.academicDegreeApplicationProvider.updateRequestStatus({newStatus: RequestStatus.VERIFIED}, this.request._id)
+        this.requestProvider.updateRequestStatus({newStatus: RequestStatus.VERIFIED}, this.request._id)
           .subscribe(res => {
             Swal.fire(
               'Acto recepcional',
@@ -86,7 +86,7 @@ export class GraduateAcademicRecordComponent implements OnInit {
       confirmButtonText: 'Rechazar'
     }).then((result) => {
       if (result.value) {
-        this.academicDegreeApplicationProvider.updateRequestStatus(
+        this.requestProvider.updateRequestStatus(
           {newStatus: RequestStatus.CAPTURED, observation: result.value}, this.request._id)
           .subscribe(res => {
             Swal.fire(

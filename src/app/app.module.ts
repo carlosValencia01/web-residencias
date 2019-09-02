@@ -18,8 +18,10 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
-import { AngularFirestore } from 'angularfire2/firestore';
-import { AngularFireModule } from 'angularfire2';
+
+// Firestore
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireStorageModule } from '@angular/fire/storage';
 
 import { environment } from '../environments/environment';
 
@@ -33,6 +35,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 
 // Pages
@@ -46,6 +54,7 @@ import { InscriptionsPageComponent } from '../pages/inscriptions-page/inscriptio
 import { AcademicDegreeApplicationPageComponent } from '../pages/academic-degree-application-page/academic-degree-application-page.component';
 import { RegisterEmailgraduationPageComponent } from '../pages/register-emailgraduation-page/register-emailgraduation-page.component';
 import { LoaderDataGraduationPageComponent } from '../pages/loader-data-graduation-page/loader-data-graduation-page.component';
+import { CoordinationRequestsTablePageComponent } from '../pages/coordination-requests-table-page/coordination-requests-table-page.component';
 
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
@@ -69,7 +78,7 @@ import { UserProvider } from '../providers/user.prov';
 import { StudentProvider } from '../providers/student.prov';
 import { EmployeeProvider } from '../providers/employee.prov';
 import { InscriptionsProvider } from '../providers/inscriptions.prov';
-import { AcademicDegreeApplicationProvider } from '../providers/academic-degree-application.prov';
+import { RequestProvider } from '../providers/request.prov';
 import { GraduationProvider } from '../providers/graduation.prov';
 
 
@@ -83,10 +92,11 @@ const appRouters: Routes = [
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
+  { path: 'registerGraduate/:eventId', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
+  { path: 'listGraduates/:eventId', component: ListGraduatesPageComponent, pathMatch: 'full' },
+  { path: 'loaderDataGraduation/:eventId/:type', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
   { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
-  { path: 'registerGraduate', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
-  { path: 'listGraduates', component: ListGraduatesPageComponent, pathMatch: 'full' },
-  { path: 'loaderDataGraduation', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
+  { path: 'coordinationRequestsTable', component: CoordinationRequestsTablePageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -108,6 +118,7 @@ const appRouters: Routes = [
     RegisterEmailgraduationPageComponent,
     ListGraduatesPageComponent,
     LoaderDataGraduationPageComponent,
+    CoordinationRequestsTablePageComponent,
     FilterPipe,
     GraduateAcademicRecordComponent,
     RequestModalContentComponent,
@@ -136,7 +147,14 @@ const appRouters: Routes = [
     MatDialogModule,
     MatTabsModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AngularFireStorageModule,
+    MatInputModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MatCheckboxModule,
+    MatCardModule
   ],
   providers: [
     CookieService,
@@ -151,9 +169,8 @@ const appRouters: Routes = [
     StudentProvider,
     EmployeeProvider,
     InscriptionsProvider,
-    AcademicDegreeApplicationProvider,
+    RequestProvider,
     GraduationProvider,
-    AngularFirestore
   ],
   entryComponents: [GraduateAcademicRecordComponent],
   bootstrap: [AppComponent]
