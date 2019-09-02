@@ -7,6 +7,10 @@ export class SidebarService {
 
   @Output() changeStatus: EventEmitter<boolean> = new EventEmitter();
 
+  getIsOpen() {
+    return this.isOpen;
+  }
+
   opened() {
     this.isOpen = true;
     this.changeStatus.emit(this.isOpen);
