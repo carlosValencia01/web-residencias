@@ -45,10 +45,13 @@ export class HomeHeaderComponent implements OnInit {
         this.role = 'comunication';
         break;
       case 6:
-          this.role = 'coordinator';
-          break;
+        this.role = 'coordinator';
+        break;
       case 7:
         this.role = 'degreeCoordinator';
+        break;
+      case 8:
+        this.role = 'chiefAcademic';
         break;
     }
   }

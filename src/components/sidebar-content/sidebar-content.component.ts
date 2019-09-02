@@ -57,6 +57,11 @@ export class SidebarContentComponent implements OnInit {
           break;
       case 7:
         this.role = 'degreeCoordinator';
+        this.title = 'Coordinador(a) de titulación';
+        break;
+      case 8:
+        this.role = 'chiefAcademic';
+        this.title = 'Jefe(a) de departamento';
         break;
     }
   }
