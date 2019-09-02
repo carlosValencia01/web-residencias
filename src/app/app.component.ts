@@ -54,7 +54,7 @@ export class AppComponent {
   configureSideNav() {
     this.smallScreen = window.innerWidth < 1300;
     this.closeOnClickOutside = this.smallScreen;
-    this.opened = !this.smallScreen && this.sidebarService.getIsOpen();
+    this.opened = !this.smallScreen && !this.sidebarService.getIsOpenAnyModal();
     this.sizeBoolean = this.smallScreen;
     this.mode = this.smallScreen ? 'over' : 'push';
   }
