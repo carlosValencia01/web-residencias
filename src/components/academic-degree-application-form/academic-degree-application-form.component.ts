@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 
 import { OperationMode } from '../../enumerators/operation-mode.enum';
 import { RequestStatus } from '../../enumerators/request-status.enum';
-import { AcademicDegreeApplicationProvider } from '../../providers/academic-degree-application.prov';
+import { RequestProvider } from '../../providers/request';
 import { CookiesService } from '../../services/cookie.service';
 import { NotificationsServices } from '../../services/notifications.service';
 
@@ -38,7 +38,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   private uri: any;
 
   constructor(
-    private academicDegreeProv: AcademicDegreeApplicationProvider,
+    private academicDegreeProv: RequestProvider,
     private cookiesService: CookiesService,
     private notificationsServices: NotificationsServices,
     private dateFormat: DatePipe,

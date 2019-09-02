@@ -80,6 +80,12 @@
             </li>
         </div>
       </li>
+      <li>
+        <button (click)="closeMenu()" *ngIf="role==='degreeCoordinator' || 'student'" type="button" class="menu-item" routerLink="coordinationRequestsTable">
+          <img class="menu-item-img" src="assets/icons/student.svg" alt="">
+          <p class="menu-item-title">Solicitudes</p>
+        </button>
+      </li>
     </ul>
   </div>
 </div>

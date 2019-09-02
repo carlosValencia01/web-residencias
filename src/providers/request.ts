@@ -5,13 +5,18 @@ import { map } from 'rxjs/operators';
 import { Api } from './api.prov';
 
 @Injectable()
-export class AcademicDegreeApplicationProvider {
+export class RequestProvider {
   constructor(
     private api: Api
   ) { }
 
   getRequestByControlNumber(controlNumber: any) {
     return this.api.get(`graduate/request/${controlNumber}`)
+      .pipe(map(request => request.json()));
+  }
+
+  getAllRequests() {
+    return this.api.get(`graduate/request/all`)
       .pipe(map(request => request.json()));
   }
 
