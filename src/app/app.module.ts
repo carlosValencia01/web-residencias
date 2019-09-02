@@ -29,9 +29,11 @@ import { FilterPipe } from '../pages/list-graduates-page/filter.pipe';
 // Material
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatTabsModule } from '@angular/material/tabs';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -50,6 +52,8 @@ import { LoginHeaderComponent } from '../components/login-header/login-header.co
 import { HomeHeaderComponent } from '../components/home-header/home-header.component';
 import { SidebarContentComponent } from '../components/sidebar-content/sidebar-content.component';
 import { AcademicDegreeApplicationFormComponent } from '../components/academic-degree-application-form/academic-degree-application-form.component';
+import { GraduateAcademicRecordComponent } from '../pages/graduate-academic-record/graduate-academic-record.component';
+import { RequestModalContentComponent } from '../components/request-modal-content/request-modal-content.component';
 
 // Services
 import { CookiesService } from '../services/cookie.service';
@@ -104,7 +108,9 @@ const appRouters: Routes = [
     RegisterEmailgraduationPageComponent,
     ListGraduatesPageComponent,
     LoaderDataGraduationPageComponent,
-    FilterPipe
+    FilterPipe,
+    GraduateAcademicRecordComponent,
+    RequestModalContentComponent,
   ],
   imports: [
     BrowserModule,
@@ -127,6 +133,8 @@ const appRouters: Routes = [
     MatChipsModule,
     MatFormFieldModule,
     MatIconModule,
+    MatDialogModule,
+    MatTabsModule,
     FormsModule,
     ReactiveFormsModule
   ],
@@ -147,6 +155,7 @@ const appRouters: Routes = [
     GraduationProvider,
     AngularFirestore
   ],
+  entryComponents: [GraduateAcademicRecordComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

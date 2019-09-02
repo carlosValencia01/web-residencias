@@ -1,0 +1,90 @@
+<div class="body">
+  <form [formGroup]="formRequestData">
+    <div class="form-body">
+      <div class="row">
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="telephone">Número Telefónico</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-phone"></i></span>
+            </div>
+            <input type="text" class="form-control" id="telephone" formControlName="telephone"
+              placeholder="(311)-102-3456">
+          </div>
+        </div>
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="email">Correo electrónico</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+            </div>
+            <input type="text" class="form-control" id="email" formControlName="email"
+              placeholder="Correo electrónico">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-12 col-md-12">
+          <label class="form-col-form-label" for="projectName">Proyecto</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-folder"></i></span>
+            </div>
+            <input type="text" class="form-control" id="projectName" formControlName="projectName"
+              placeholder="Nombre del proyecto">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-6 col-md-6" stlye="padding: 0.375rem 0.75rem">
+          <label class="form-col-form-label" for="honorificMention">Mención honorífica</label>
+          <div class="input-group">
+            <input id="honorificMention" formControlName="honorificMention" class="form-control"
+              [value]="formRequestData.get('honorificMention').value === 'true' ? 'Con mención honorífica' : 'Sin mención honorífica'">
+          </div>
+        </div>
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="numberParticipants">Número de integrantes</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-group"></i></span>
+            </div>
+            <input type="number" pKeyFilter="pnum" min="1" formControlName="numberParticipants" class="form-control"
+              id="numberParticipants" placeholder="Número de integrantes">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="proposedDate">Día propuesto para titulación</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+            </div>
+            <input type="text" id="proposedDate" formControlName="proposedDate" class="form-control">
+          </div>
+        </div>
+        <div class="form-group col-sm-6 col-md-6">
+          <label class="form-col-form-label" for="product">Producto</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-archive"></i></span>
+            </div>
+            <input type="text" class="form-control" id="product" formControlName="product" placeholder="Producto">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-12 col-md-12">
+          <label class="form-col-form-label" for="address">Dirección</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-address-card-o"></i></span>
+            </div>
+            <input type="text" class="form-control" id="address" formControlName="address" placeholder="Dirección">
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
