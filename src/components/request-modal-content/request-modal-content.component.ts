@@ -26,6 +26,14 @@ export class RequestModalContentComponent implements OnInit {
         value: this.request.graduate.name.fullName,
         disabled: true
       }),
+      'controlNumber': new FormControl({
+        value: this.request.graduate.controlNumber,
+        disabled: true
+      }),
+      'career': new FormControl({
+        value: this.request.graduate.career,
+        disabled: true
+      }),
       'telephone': new FormControl({
         value: this.request.telephoneContact,
         disabled: true

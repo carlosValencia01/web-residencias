@@ -1,11 +1,20 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {RequestProvider} from '../../providers/request.prov';
+import {Router} from '@angular/router';
+
+import * as moment from 'moment';
+
+import {GraduateAcademicRecordComponent} from 'src/pages/graduate-academic-record/graduate-academic-record.component';
+import {RequestProvider} from 'src/providers/request.prov';
+import {CookiesService} from 'src/services/cookie.service';
+import {SidebarService} from 'src/services/sidebar.service';
 
 export interface UserData {
   name: string;
+  controlNumber: string;
   career: string;
   date: string;
   status: string;
@@ -25,7 +34,17 @@ export class CoordinationRequestsTablePageComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  constructor(private requestProvider: RequestProvider) {
+  constructor(
+    private cookiesService: CookiesService,
+    private dialog: MatDialog,
+    private requestProvider: RequestProvider,
+    private router: Router,
+    private sidebarService: SidebarService,
+  ) {
+    if (this.cookiesService.getData().user.role !== 7) {
+      this.router.navigate(['/']);
+    }
+    moment.locale('es');
   }
 
   ngOnInit() {
@@ -48,6 +67,22 @@ export class CoordinationRequestsTablePageComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
+
+  openDialog(row: any) {
+    this.requestProvider.getRequestByControlNumber(row.controlNumber)
+      .subscribe(request => {
+        const dialogRef = this.dialog.open(GraduateAcademicRecordComponent, {
+          width: '90%',
+          disableClose: true
+        });
+        dialogRef.componentInstance.request = request;
+        this.sidebarService.openedModal();
+
+        dialogRef.afterClosed().subscribe(result => {
+          this.sidebarService.closedModal();
+        });
+      });
+  }
 }
 
 function createNewUser(data): UserData {
@@ -55,8 +90,9 @@ function createNewUser(data): UserData {
 
   return {
     name: name,
+    controlNumber: data.graduate.controlNumber,
     career: data.graduate.career,
-    date: data.editionDate.slice(0, 10),
+    date: moment(data.editionDate.slice(0, 10)).format('LL'),
     status: data.status
   };
 }

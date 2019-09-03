@@ -1,7 +1,7 @@
 <div mat-dialog-title>
   <div>
     <h4>{{request.graduate.name.fullName}}</h4>
-    <button type="button" class="close" aria-label="Close" mat-dialog-close>
+    <button type="button" class="close" aria-label="Close" mat-dialog-close id="close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -24,22 +24,6 @@
 <mat-dialog-actions align="end">
   <div>
     <div [ngSwitch]="request.status">
-      <div *ngSwitchCase="ENVIADO">
-        <button type="button" class="btn btn-success action-button" (click)="approveRequest()">
-          <i class="fa fa-check"></i> Aprobar
-        </button>
-        <button type="button" class="btn btn-danger action-button" (click)="rejectRequest()">
-          <i class="fa fa-ban"></i> Rechazar
-        </button>
-      </div>
-      <div *ngSwitchCase="VERIFICADO"></div>
-      <div *ngSwitchCase="REGISTRADO"></div>
-      <div *ngSwitchCase="LIBERADO"></div>
-      <div *ngSwitchCase="ENTREGADO"></div>
-      <div *ngSwitchCase="VALIDADO"></div>
-      <div *ngSwitchCase="ASIGNADO"></div>
-      <div *ngSwitchCase="REALIZADO"></div>
-      <div *ngSwitchCase="GENERADO"></div>
       <div *ngSwitchDefault>
         <button type="button" class="btn btn-success action-button" (click)="approveRequest()">
           <i class="fa fa-check"></i> Aprobar
@@ -51,57 +35,3 @@
     </div>
   </div>
 </mat-dialog-actions>
-
-
-<!--<mat-tab-group>-->
-<!--  <mat-tab label="request">-->
-<!--    <div mat-dialog-title>-->
-<!--      <div>-->
-<!--        <h4>{{request.graduate.name.fullName}}</h4>-->
-<!--        <button type="button" class="close" aria-label="Close" mat-dialog-close>-->
-<!--          <span aria-hidden="true">&times;</span>-->
-<!--        </button>-->
-<!--      </div>-->
-<!--      <div>-->
-<!--        <button type="button" class="btn btn-warning action-button" (click)="openProjectFile()"><i class="fa fa-file-pdf-o"></i> Ver-->
-<!--          caratula</button>-->
-<!--        <button type="button" class="btn btn-info action-button" (click)="openRequestPDF()"><i class="fa fa-file-pdf-o"></i> Imprimir-->
-<!--          solicitud</button>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <mat-dialog-content>-->
-<!--      <app-request-modal-content [request]="request"></app-request-modal-content>-->
-<!--    </mat-dialog-content>-->
-<!--    <mat-dialog-actions align="end">-->
-<!--      <div>-->
-<!--        <div [ngSwitch]="request.status">-->
-<!--          <div *ngSwitchCase="ENVIADO">-->
-<!--            <button type="button" class="btn btn-warning" (click)="approveRequest()"><i class="fa fa-file-pdf-o"></i>-->
-<!--              Aprobar</button>-->
-<!--            <button type="button" class="btn btn-error" (click)="rejectRequest()"><i class="fa fa-file-pdf-o"></i>-->
-<!--              Rechazar</button>-->
-<!--          </div>-->
-<!--          <div *ngSwitchCase="VERIFICADO"></div>-->
-<!--          <div *ngSwitchCase="REGISTRADO"></div>-->
-<!--          <div *ngSwitchCase="LIBERADO"></div>-->
-<!--          <div *ngSwitchCase="ENTREGADO"></div>-->
-<!--          <div *ngSwitchCase="VALIDADO"></div>-->
-<!--          <div *ngSwitchCase="ASIGNADO"></div>-->
-<!--          <div *ngSwitchCase="REALIZADO"></div>-->
-<!--          <div *ngSwitchCase="GENERADO"></div>-->
-<!--          <div *ngSwitchDefault>-->
-<!--            <button type="button" class="btn btn-success action-button" (click)="approveRequest()"><i-->
-<!--              class="fa fa-check"></i>-->
-<!--              Aprobar</button>-->
-<!--            <button type="button" class="btn btn-danger action-button" (click)="rejectRequest()"><i-->
-<!--              class="fa fa-ban"></i>-->
-<!--              Rechazar</button>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </mat-dialog-actions>-->
-<!--  </mat-tab>-->
-<!--  <mat-tab label="otro tab">-->
-<!--    asdufapsoidu-->
-<!--  </mat-tab>-->
-<!--</mat-tab-group>-->
