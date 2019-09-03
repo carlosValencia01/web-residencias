@@ -34,31 +34,31 @@
                   <tr>
                      <td id="checkRegistrado">
                         <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Registrado" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSRC" type="checkbox" class="custom-control-input" id="defaultInline2" value="Registrado" (click)="eventFilterReport()">
+                              <input [(ngModel)]="searchSRC" type="checkbox" class="custom-control-input" id="defaultInline2" value="Registrado" (change)="eventFilterReport()">
                               <label class="custom-control-label" for="defaultInline2">R</label>
                         </div>
                      </td>
                      <td id="checkPagado">
                         <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Pagado" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSPC" type="checkbox" class="custom-control-input" id="defaultInline3" value="Pagado" (click)="eventFilterReport()">
+                              <input [(ngModel)]="searchSPC" type="checkbox" class="custom-control-input" id="defaultInline3" value="Pagado" (change)="eventFilterReport()">
                               <label class="custom-control-label" for="defaultInline3">P</label>
                         </div>
                      </td>
                      <td id="checkVerificado">
                         <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Verificado" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSVC" type="checkbox" class="custom-control-input" id="defaultInline4" value="Verificado" (click)="eventFilterReport()">
+                              <input [(ngModel)]="searchSVC" type="checkbox" class="custom-control-input" id="defaultInline4" value="Verificado" (change)="eventFilterReport()">
                               <label class="custom-control-label" for="defaultInline4">V</label>
                         </div>
                      </td>
                      <td id="checkAsistio">
                         <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Asistió" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSAC" type="checkbox" class="custom-control-input" id="defaultInline5" value="Asistió" (click)="eventFilterReport()">
+                              <input [(ngModel)]="searchSAC" type="checkbox" class="custom-control-input" id="defaultInline5" value="Asistió" (change)="eventFilterReport()">
                               <label class="custom-control-label" for="defaultInline5">A</label>
                         </div>
                      </td>
                      <td id="checkMencionado">
                         <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Mencionado" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSMC" type="checkbox" class="custom-control-input" id="defaultInline6" value="Mencionado" (click)="eventFilterReport()">
+                              <input [(ngModel)]="searchSMC" type="checkbox" class="custom-control-input" id="defaultInline6" value="Mencionado" (change)="eventFilterReport()">
                               <label class="custom-control-label" for="defaultInline6">M</label>
                         </div>
                      </td>
@@ -119,6 +119,11 @@
                      <td colspan="6">
                         <div class="div-actionsFoot">
                            <tr>
+                              <td>
+                                 <div class="div-img" ngbTooltip="Generar Papeletas" tooltipClass="my-custom-class">
+                                    <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
+                                 </div>
+                              </td>
                               <td>
                                  <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
                                     <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">

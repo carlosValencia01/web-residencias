@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ExporterService } from 'src/services/exporter.service'
 import Swal from 'sweetalert2';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
+import { CheckboxControlValueAccessor } from '@angular/forms';
 
 
 declare const require: any;
@@ -46,6 +47,9 @@ export class ListGraduatesPageComponent implements OnInit {
 
   //Variable donde se almacenan los alumnos filtrados
   public alumnosReport = [];
+
+  //Variable para almacenar los alumnos verificados e imprimir papeletas
+  public alumnosBallotPaper = [];
 
 
   public role: string;
@@ -127,6 +131,7 @@ export class ListGraduatesPageComponent implements OnInit {
           status: alumno.payload.doc.get("estatus")
         }});
         this.alumnosReport =  this.alumnos;
+        this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
       });
   }
 
@@ -201,7 +206,7 @@ export class ListGraduatesPageComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        //this.paidEvent(item);
+        this.paidEvent(item);
       }
     })
   }
@@ -220,7 +225,7 @@ export class ListGraduatesPageComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        //this.removePaidEvent(item);
+        this.removePaidEvent(item);
       }
     })
   }
@@ -239,7 +244,7 @@ export class ListGraduatesPageComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        //this.asistenceEvent(item);
+        this.asistenceEvent(item);
       }
     })
   }
@@ -307,7 +312,7 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
-  ////////////////////Obetener Valor del checkbox de Estatus/////////////////////////
+  // Obetener Valor del checkbox de Estatus
   eventFilterReport(){
     if(this.searchSRC){
       this.searchSR = 'Registrado';
@@ -362,15 +367,16 @@ export class ListGraduatesPageComponent implements OnInit {
         }
       }
   }
-  ////////////////////FILTRADO POR CARRERA O ESTATUS/////////////////////////
+
+  // FILTRADO POR CARRERA O ESTATUS
   filterItems(carreer,sR,sP,sV,sA,sM) {
     return this.alumnos.filter(function(alumno) {
-      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && 
+      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
              alumno.status.toLowerCase().indexOf(sR.toLowerCase()) > -1 || 
              alumno.status.toLowerCase().indexOf(sP.toLowerCase()) > -1 || 
              alumno.status.toLowerCase().indexOf(sV.toLowerCase()) > -1 || 
              alumno.status.toLowerCase().indexOf(sA.toLowerCase()) > -1 || 
-             alumno.status.toLowerCase().indexOf(sM.toLowerCase()) > -1;
+             alumno.status.toLowerCase().indexOf(sM.toLowerCase()) > -1);
     })
   }
 
@@ -379,7 +385,13 @@ export class ListGraduatesPageComponent implements OnInit {
       return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1;
     })
   }
-  ///////////////////////////////////////////////////////////////////////////
+
+  filterItemsVerified(carreer,status){
+    return this.alumnos.filter(function(alumno) {
+      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && 
+             alumno.status.toLowerCase().indexOf(status.toLowerCase()) > -1;
+    })
+  }
 
  // Generar reporte de alumnos
   generateReport(){    
@@ -462,6 +474,80 @@ export class ListGraduatesPageComponent implements OnInit {
   excelExport(){
     this.excelService.exportAsExcelFile(this.alumnosReport,'Graduacion '+this.searchCarreer);
     this.notificationsServices.showNotification(1, 'Datos Exportados','Se exportaron datos con filtros actuales.');
+  }
+
+  // Generar papeletas de alumnos verificados
+  generateBallotPaper(){
+    // Obtener alumnos cuyo estatus sea 'Verificado' && Carrera = al filtro seleccionado
+    this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
+
+    // Dividir total de alumnos verificados en segmentos de 4
+	  let divAlumnosBallotPaper = [];
+    
+    // 4 Alumnos por hoja
+    const LONGITUD_PEDAZOS = 4; 
+    for (let i = 0; i < this.alumnosBallotPaper.length; i += LONGITUD_PEDAZOS) {
+	    let pedazo = this.alumnosBallotPaper.slice(i, i + LONGITUD_PEDAZOS);
+	    divAlumnosBallotPaper.push(pedazo);
+    }
+
+    var doc = new jsPDF('p', 'mm');
+
+    // Obtener Ancho y Alto de la hoja
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    
+    // Dividir Alto de hoja entre 4 para dibujar recta divisora
+    var divLine = pageHeight/4;
+    
+    for(var i = 0; i < divAlumnosBallotPaper.length; i++){ // Recorrer cada segmento de alumnos
+      for(var j = 0; j < divAlumnosBallotPaper[i].length; j++){ // Recorrer los alumnos del segmento actual
+        if(j == 0){
+          doc.addImage(this.logoTecNM, 'PNG', 5, 2, 60, 18); // Logo TecNM
+          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 2, 60, 18); // Logo SEP
+          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,divLine-20, 15, 15); // Logo TecTepic
+          doc.setFontSize(22);
+          doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,30, 'center');
+          doc.setFontSize(13);
+          doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,45, 'center');
+          doc.line(0,divLine,pageWidth,divLine);
+        }
+        if(j == 1){
+          doc.addImage(this.logoTecNM, 'PNG', 5, 76.25, 60, 18); // Logo TecNM
+          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 76.25, 60, 18); // Logo SEP
+          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*2)-20, 15, 15); // Logo TecTepic
+          doc.setFontSize(22);
+          doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,104.25, 'center');
+          doc.setFontSize(13);
+          doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,119.25, 'center');
+          doc.line(0,divLine*2,pageWidth,divLine*2);
+        }
+        if(j == 2){
+          doc.addImage(this.logoTecNM, 'PNG', 5, 150.5, 60, 18); // Logo TecNM
+          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 150.5, 60, 18); // Logo SEP
+          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*3)-20, 15, 15); // Logo TecTepic
+          doc.setFontSize(22);
+          doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,178.5, 'center');
+          doc.setFontSize(13);
+          doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,193.5, 'center');
+          doc.line(0,divLine*3,pageWidth,divLine*3);
+        }
+        if(j == 3){
+          doc.addImage(this.logoTecNM, 'PNG', 5, 224.75, 60, 18); // Logo TecNM
+          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 224.75, 60, 18); // Logo SEP
+          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*4)-20, 15, 15); // Logo TecTepic
+          doc.setFontSize(22);
+          doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,252.75, 'center');
+          doc.setFontSize(13);
+          doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,267.75, 'center');        
+        }
+      }
+      if(i < divAlumnosBallotPaper.length-1){
+        doc.addPage(); // Agregar una nueva página al documento cuando cambie el segmento de alumnos
+      }
+    }
+    window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+    //doc.save("Papeletas Graduación "+this.searchCarreer+".pdf");    
   }
   
   pageChanged(ev){
