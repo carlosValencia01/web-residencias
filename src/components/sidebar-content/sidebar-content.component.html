@@ -15,7 +15,7 @@
           <p class="menu-item-title">Inicio</p>
         </button>
       </li>
-      <li *ngIf="role !== 'comunication' && role !== 'coordinator'">
+      <li *ngIf="role==='secretary' || role==='administration' || role==='student' || role==='rechumanos'">
         <button (click)="closeMenu('Credenciales')" type="button" class="menu-item">
           <img class="menu-item-img" src="assets/icons/chevron-arrow-down.svg" alt="">
           <p class="menu-item-title">Credenciales</p>
@@ -50,7 +50,7 @@
       </li>
       <li>
         <button (click)="closeMenu()" *ngIf="role==='student'" type="button" class="menu-item" routerLink="academicDegreeApplication">
-          <img class="menu-item-img" src="assets/icons/student.svg" alt="">
+          <img class="menu-item-img" src="assets/icons/graduate.svg" alt="">
           <p class="menu-item-title">Acto recepcional</p>
         </button>
       </li>
@@ -79,6 +79,18 @@
               </div>
             </li> -->
         </div>
+      </li>
+      <li>
+        <button (click)="closeMenu()" *ngIf="role==='degreeCoordinator'" type="button" class="menu-item" routerLink="coordinationRequestsTable">
+          <img class="menu-item-img" src="assets/icons/graduate.svg" alt="">
+          <p class="menu-item-title">Acto recepcional</p>
+        </button>
+      </li>
+      <li>
+        <button (click)="closeMenu()" *ngIf="role==='chiefAcademic'" type="button" class="menu-item" routerLink="chiefAcademicRequestsTable">
+          <img class="menu-item-img" src="assets/icons/graduate.svg" alt="">
+          <p class="menu-item-title">Acto recepcional</p>
+        </button>
       </li>
     </ul>
   </div>
