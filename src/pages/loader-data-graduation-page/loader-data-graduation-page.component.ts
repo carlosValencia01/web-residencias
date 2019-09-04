@@ -109,7 +109,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
           nombre:tmpStudent[3],
           carreraCompleta:tmpStudent[4],
           carrera:this.careers[tmpStudent[4].trim()],
-          correo:tmpStudent[7],
+          correo:tmpStudent[5],
           estatus:'Registrado'
         });
       }

@@ -119,7 +119,7 @@
                      <td colspan="6">
                         <div class="div-actionsFoot">
                            <tr>
-                              <td>
+                              <td *ngIf="searchCarreer !== '' ">
                                  <div class="div-img" ngbTooltip="Generar Papeletas" tooltipClass="my-custom-class">
                                     <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
                                  </div>

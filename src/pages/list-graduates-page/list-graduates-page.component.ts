@@ -401,8 +401,8 @@ export class ListGraduatesPageComponent implements OnInit {
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    doc.addImage(this.logoTecNM, 'PNG', 5, 0, 80, 35); // Logo TecNM
-    doc.addImage(this.logoSep, 'PNG', pageWidth-85, 0, 80, 35); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', 36, 2, 82, 35); // Logo TecNM
+    doc.addImage(this.logoSep, 'PNG', pageWidth-147, 5, 110, 27); // Logo SEP
 
     let header = "Reporte Alumnos Graduados "+this.searchCarreer;
     doc.setTextColor(0,0,0);
@@ -499,13 +499,26 @@ export class ListGraduatesPageComponent implements OnInit {
     
     // Dividir Alto de hoja entre 4 para dibujar recta divisora
     var divLine = pageHeight/4;
-    
+    var cont = 1;
     for(var i = 0; i < divAlumnosBallotPaper.length; i++){ // Recorrer cada segmento de alumnos
       for(var j = 0; j < divAlumnosBallotPaper[i].length; j++){ // Recorrer los alumnos del segmento actual
         if(j == 0){
-          doc.addImage(this.logoTecNM, 'PNG', 5, 2, 60, 18); // Logo TecNM
-          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 2, 60, 18); // Logo SEP
+          doc.addImage(this.logoSep, 'PNG', 5, 2, 60, 14); // Logo Sep
+          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58, 2, 53, 14); // Logo TecNM
           doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,divLine-20, 15, 15); // Logo TecTepic
+          
+          // Numero de alumno
+          doc.setLineWidth(.3)
+          doc.setDrawColor(0)
+          doc.setFillColor(20, 43, 88)
+          doc.circle(pageWidth-25,divLine-20,10, 'FD')
+          doc.setTextColor(255,255,255);
+          doc.setFontSize(30);
+          doc.text(cont.toString(), pageWidth-25,divLine-16, 'center');
+          cont++;
+
+          // Nombre y Carrera
+          doc.setTextColor(0);
           doc.setFontSize(22);
           doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,30, 'center');
           doc.setFontSize(13);
@@ -513,9 +526,22 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.line(0,divLine,pageWidth,divLine);
         }
         if(j == 1){
-          doc.addImage(this.logoTecNM, 'PNG', 5, 76.25, 60, 18); // Logo TecNM
-          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 76.25, 60, 18); // Logo SEP
-          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*2)-20, 15, 15); // Logo TecTepic
+          doc.addImage(this.logoSep, 'PNG', 5,(divLine)+2, 60, 14); // Logo Sep
+          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine)+2, 53, 14); // Logo TecNM
+          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine)-20, 15, 15); // Logo TecTepic
+          
+          //Numero de alumno
+          doc.setLineWidth(.3)
+          doc.setDrawColor(0)
+          doc.setFillColor(20, 43, 88)
+          doc.circle(pageWidth-25,(divLine*2)-20,10, 'FD')
+          doc.setTextColor(255,255,255);
+          doc.setFontSize(30);
+          doc.text((cont).toString(), pageWidth-25,(divLine*2)-16, 'center');
+          cont++;
+
+          // Nombre y Carrera
+          doc.setTextColor(0);
           doc.setFontSize(22);
           doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,104.25, 'center');
           doc.setFontSize(13);
@@ -523,9 +549,22 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.line(0,divLine*2,pageWidth,divLine*2);
         }
         if(j == 2){
-          doc.addImage(this.logoTecNM, 'PNG', 5, 150.5, 60, 18); // Logo TecNM
-          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 150.5, 60, 18); // Logo SEP
+          doc.addImage(this.logoSep, 'PNG', 5,(divLine*2)+2, 60, 14); // Logo Sep
+          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*2)+2, 53, 14); // Logo TecNM
           doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*3)-20, 15, 15); // Logo TecTepic
+          
+          //Numero de alumno
+          doc.setLineWidth(.3)
+          doc.setDrawColor(0)
+          doc.setFillColor(20, 43, 88)
+          doc.circle(pageWidth-25,(divLine*3)-20,10, 'FD')
+          doc.setTextColor(255,255,255);
+          doc.setFontSize(30);
+          doc.text((cont).toString(), pageWidth-25,(divLine*3)-16, 'center');
+          cont++;
+          
+          // Nombre y Carrera
+          doc.setTextColor(0);
           doc.setFontSize(22);
           doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,178.5, 'center');
           doc.setFontSize(13);
@@ -533,9 +572,22 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.line(0,divLine*3,pageWidth,divLine*3);
         }
         if(j == 3){
-          doc.addImage(this.logoTecNM, 'PNG', 5, 224.75, 60, 18); // Logo TecNM
-          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 224.75, 60, 18); // Logo SEP
+          doc.addImage(this.logoSep, 'PNG', 5,(divLine*3)+2, 60, 14); // Logo Sep
+          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*3)+2, 53, 14); // Logo TecNM
           doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*4)-20, 15, 15); // Logo TecTepic
+          
+          //Numero de alumno
+          doc.setLineWidth(.3)
+          doc.setDrawColor(0)
+          doc.setFillColor(20, 43, 88)
+          doc.circle(pageWidth-25,(divLine*4)-20,10, 'FD')
+          doc.setTextColor(255,255,255);
+          doc.setFontSize(30);
+          doc.text((cont).toString(), pageWidth-25,(divLine*4)-16, 'center');
+          cont++;
+          
+          // Nombre y Carrera
+          doc.setTextColor(0);
           doc.setFontSize(22);
           doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,252.75, 'center');
           doc.setFontSize(13);
