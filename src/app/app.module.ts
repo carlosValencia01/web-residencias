@@ -71,6 +71,7 @@ import { FormErrorsService } from '../services/forms.errors.service';
 import { NotificationsServices } from '../services/notifications.service';
 import { ImageToBase64Service } from '../services/img.to.base63.service';
 import { FirebaseService } from '../services/firebase.service';
+import { FirebaseStorageService } from '../services/firebase-storage.service';
 
 // Providers
 import { Api } from '../providers/api.prov';
@@ -165,6 +166,7 @@ const appRouters: Routes = [
     NotificationsServices,
     ImageToBase64Service,
     FirebaseService,
+    FirebaseStorageService,
     Api,
     UserProvider,
     StudentProvider,
