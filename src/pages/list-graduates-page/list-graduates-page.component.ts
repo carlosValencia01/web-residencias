@@ -129,7 +129,8 @@ export class ListGraduatesPageComponent implements OnInit {
           carreerComplete : alumno.payload.doc.get("carreraCompleta"),
           email: alumno.payload.doc.get("correo"),
           status: alumno.payload.doc.get("estatus"),
-          degree: alumno.payload.doc.get("degree")
+          degree: alumno.payload.doc.get("degree"),
+          observations: alumno.payload.doc.get("observations")
         }});
         this.alumnosReport =  this.alumnos;
         this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
@@ -146,6 +147,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carreraCompleta : item.carreerComplete,
       correo : item.email,
       degree: item.degree,
+      observations: item.observations,
       estatus: 'Pagado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -165,6 +167,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carreraCompleta : item.carreerComplete,
       correo : item.email,
       degree: item.degree,
+      observations: item.observations,
       estatus: 'Registrado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -184,6 +187,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carreraCompleta : item.carreerComplete,
       correo : item.email,
       degree: item.degree,
+      observations: item.observations,
       estatus: 'Asistió'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -672,6 +676,76 @@ export class ListGraduatesPageComponent implements OnInit {
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
       this.notificationsServices.showNotification(1, 'Título removido para:',item.nc);
+    }, (error) => {
+      console.log(error);
+    });  
+  }
+
+  // Mostar modal para agregar y visualizar observaciones
+  observationsModal(item){
+    if(this.role === 'administration'){
+      var id = 'observaciones';
+      if(item.observations){
+        Swal.fire({
+          title: 'Observaciones',
+          imageUrl: '../../assets/icons/observations.svg',
+          imageWidth: 100,
+          imageHeight: 100,
+          imageAlt: 'Custom image',
+          html:
+            '<textarea rows="4" cols="30" id="observaciones">'+item.observations+'</textarea>  ',
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Guardar'
+        }).then((result) => {
+          if (result.value) {
+            var observations = (<HTMLInputElement>document.getElementById(id)).value;
+            this.saveObservations(item,observations);
+          }
+        })
+      }else{
+        Swal.fire({
+          title: 'Observaciones',
+          imageUrl: '../../assets/icons/observations.svg',
+          imageWidth: 100,
+          imageHeight: 100,
+          imageAlt: 'Custom image',
+          html:
+            '<textarea rows="4" cols="30" id="observaciones"></textarea>  ',
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Guardar'
+        }).then((result) => {
+          if (result.value) {
+            var observations = (<HTMLInputElement>document.getElementById(id)).value;
+            this.saveObservations(item,observations);
+          }
+        })
+      }
+    }
+  }
+
+  // Guardar observaciones
+  saveObservations(item,newObservations){
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      nombreApellidos : item.nameLastName,
+      carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
+      correo : item.email,
+      degree: item.degree,
+      observations: newObservations,
+      estatus: item.status
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      Swal.fire("Observaciones Guardadas", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
     });  

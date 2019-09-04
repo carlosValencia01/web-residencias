@@ -81,7 +81,7 @@
                </thead>
                <tbody>
                   <tr *ngFor="let item of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
-                  currentPage: page };">      
+                  currentPage: page };" (click)="observationsModal(item)">      
                      <td>{{item.nc}} </td>
                      <td>{{item.name}}</td>
                      <td>{{item.carreer}}</td>
@@ -119,7 +119,12 @@
                                  <div class="div-img" ngbTooltip="Titulado" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/degreeYes.svg" class="action" (click)="confirmRemoveDegree(item)">
                                  </div>
-                              </td>                         
+                              </td>       
+                              <td *ngIf="role === 'administration' && item.observations !== undefined">
+                                 <div class="div-img" ngbTooltip="Observaciones" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/observations.svg" class="action" (click)="observationsModal(item)">
+                                 </div>
+                              </td>                     
                            </tr>
                         </div>
                      </td>
