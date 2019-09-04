@@ -128,7 +128,8 @@ export class ListGraduatesPageComponent implements OnInit {
           carreer : alumno.payload.doc.get("carrera"),
           carreerComplete : alumno.payload.doc.get("carreraCompleta"),
           email: alumno.payload.doc.get("correo"),
-          status: alumno.payload.doc.get("estatus")
+          status: alumno.payload.doc.get("estatus"),
+          degree: alumno.payload.doc.get("degree")
         }});
         this.alumnosReport =  this.alumnos;
         this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
@@ -137,7 +138,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Pagado
   paidEvent(item){
-    console.log(item);  
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
@@ -145,6 +145,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
+      degree: item.degree,
       estatus: 'Pagado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -156,7 +157,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Registrado
   removePaidEvent(item){
-    console.log(item);  
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
@@ -164,6 +164,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
+      degree: item.degree,
       estatus: 'Registrado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -175,7 +176,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Asistió
   asistenceEvent(item){
-    console.log(item);  
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
@@ -183,6 +183,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
+      degree: item.degree,
       estatus: 'Asistió'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -600,6 +601,80 @@ export class ListGraduatesPageComponent implements OnInit {
     }
     window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     //doc.save("Papeletas Graduación "+this.searchCarreer+".pdf");    
+  }
+
+  confirmDegree(item){
+    Swal.fire({
+      title: 'Asignar Título',
+      text: "Para "+item.nameLastName,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Asignar'
+    }).then((result) => {
+      if (result.value) {
+        this.degreeEvent(item);
+      }
+    })
+  }
+
+  confirmRemoveDegree(item){
+    Swal.fire({
+      title: 'Remover Título',
+      text: "Para "+item.nameLastName,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Remover'
+    }).then((result) => {
+      if (result.value) {
+        this.degreeRemoveEvent(item);
+      }
+    })
+  }
+
+  // Asignar titulo
+  degreeEvent(item){
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      nombreApellidos : item.nameLastName,
+      carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
+      correo : item.email,
+      estatus : item.status,
+      degree : true
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.notificationsServices.showNotification(1, 'Título asignado para:',item.nc);
+    }, (error) => {
+      console.log(error);
+    });  
+  }
+
+  // Remover titulo
+  degreeRemoveEvent(item){
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      nombreApellidos : item.nameLastName,
+      carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
+      correo : item.email,
+      estatus : item.status,
+      degree : false
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.notificationsServices.showNotification(1, 'Título removido para:',item.nc);
+    }, (error) => {
+      console.log(error);
+    });  
   }
   
   pageChanged(ev){

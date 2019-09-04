@@ -109,7 +109,17 @@
                                  <div class="div-img" ngbTooltip="Remover Pago" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/remove-paid.svg" class="action" (click)="confirmRemovePaidEvent(item)">
                                  </div>
-                              </td>                              
+                              </td>    
+                              <td *ngIf="role === 'administration' && item.degree !== true">
+                                 <div class="div-img" ngbTooltip="No Titulado" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/degreeNo.svg" class="action" (click)="confirmDegree(item)">
+                                 </div>
+                              </td>    
+                              <td *ngIf="role === 'administration' && item.degree === true">
+                                 <div class="div-img" ngbTooltip="Titulado" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/degreeYes.svg" class="action" (click)="confirmRemoveDegree(item)">
+                                 </div>
+                              </td>                         
                            </tr>
                         </div>
                      </td>
