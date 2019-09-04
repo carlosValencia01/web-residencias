@@ -61,11 +61,12 @@ export class OneStudentPageComponent implements OnInit {
     private modalService: NgbModal,
     private notificationServ: NotificationsServices,
     private router: Router,
-    private cookiesServ:CookiesService
+    private cookiesServ: CookiesService,
   ) {
-
-    if(this.cookiesServ.getData().user.role!==2)
+    if (this.cookiesServ.getData().user.role !== 2
+      || this.cookiesServ.getData().user.status === 'egresado') {
       this.router.navigate(['/']);
+    }
     this.getBase64ForStaticImages();
   }
 
@@ -172,7 +173,7 @@ export class OneStudentPageComponent implements OnInit {
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(8);
             doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
-            
+
             doc.setFontSize(20);
             doc.setTextColor(255,255,255);
             doc.text(5,30, 'Muestra No Imprimible');

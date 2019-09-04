@@ -8,10 +8,13 @@ import { CookiesService } from '../../services/cookie.service';
 })
 export class HomePageComponent implements OnInit {
   public role: string;
+  private status: string;
 
   constructor(
     private cookiesServ: CookiesService,
-  ) { }
+  ) {
+    this.status = this.cookiesServ.getData().user.status;
+  }
 
   ngOnInit() {
     // console.log(this.cookiesServ.getData().user.role);
@@ -23,7 +26,7 @@ export class HomePageComponent implements OnInit {
         this.role = 'secretary';
         break;
       case 2:
-        this.role = 'student';
+        this.role = this.status === 'egresado' ? 'graduate' : 'student';
         break;
       case 3:
         this.role = 'employee';
@@ -39,6 +42,9 @@ export class HomePageComponent implements OnInit {
         break;
       case 7:
         this.role = 'degreeCoordinator';
+        break;
+      case 8:
+        this.role = 'chiefAcademic';
         break;
     }
   }

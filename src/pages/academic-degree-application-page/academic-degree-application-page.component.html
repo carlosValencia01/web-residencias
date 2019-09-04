@@ -1,15 +1,32 @@
-<mat-vertical-stepper #stepper linear>
-  <mat-step>
-    <ng-template matStepLabel>Solicitud de acto protocolario</ng-template>
-    <app-academic-degree-application-form></app-academic-degree-application-form>
-  </mat-step>
-  <mat-step>
-    <form>
-      <ng-template matStepLabel>Titulación</ng-template>
-    </form>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Done</ng-template>
-    You are now done.
-  </mat-step>
-</mat-vertical-stepper>
+<section *ngIf="allowSection;then request else message"></section>
+<ng-template #request>
+  <mat-vertical-stepper #stepper linear>
+    <mat-step>
+      <ng-template matStepLabel>Solicitud de acto protocolario</ng-template>
+      <app-academic-degree-application-form></app-academic-degree-application-form>
+    </mat-step>
+    <mat-step>
+      <form>
+        <ng-template matStepLabel>Titulación</ng-template>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      You are now done.
+    </mat-step>
+  </mat-vertical-stepper>
+</ng-template>
+<ng-template #message>
+  <div class="title">
+    <h2>¡Aviso, acto recepcional!</h2>
+  </div>
+  <div class="message">
+    <span>Aún no cumple con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
+    <span>Los requisitos son:</span>
+    <ul>
+      <li>Ser egresado</li>
+      <li>Contar con el inglés liberado</li>
+    </ul><br>
+    <span>Si ya cuenta con los requisitos anteriores, es necesario esperar a que sea liberado en el sistema.</span>
+  </div>
+</ng-template>
