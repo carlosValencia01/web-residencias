@@ -46,7 +46,8 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     private graduationProv : GraduationProvider
     ) {
       if (this.cookiesService.getData().user.role !== 0 &&
-        this.cookiesService.getData().user.role !== 1) {
+        this.cookiesService.getData().user.role !== 1 &&
+        this.cookiesService.getData().user.role !== 9) {
           this.router.navigate(['/']);
         }
         let url = this.router.url.split('/'); 

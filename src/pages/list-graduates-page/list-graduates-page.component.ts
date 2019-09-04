@@ -69,7 +69,8 @@ export class ListGraduatesPageComponent implements OnInit {
     ) {
       if (this.cookiesService.getData().user.role !== 0 && 
       this.cookiesService.getData().user.role !== 5 &&
-      this.cookiesService.getData().user.role !== 6)
+      this.cookiesService.getData().user.role !== 6 &&
+      this.cookiesService.getData().user.role !== 9)
        {
         this.router.navigate(['/']);
       }
@@ -101,6 +102,9 @@ export class ListGraduatesPageComponent implements OnInit {
         break;
       case 6:
         this.role = 'coordinator';
+        break;
+      case 9:
+        this.role = 'recfinancieros';
         break;
     }
     this.readEmail();

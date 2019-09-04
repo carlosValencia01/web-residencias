@@ -40,6 +40,9 @@ export class HomePageComponent implements OnInit {
       case 7:
         this.role = 'degreeCoordinator';
         break;
+      case 7:
+        this.role = 'recfinancieros';
+        break;
     }
   }
 

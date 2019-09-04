@@ -76,7 +76,7 @@
                      <th>Carrera</th>
                      <th>Email</th>
                      <th>Estatus</th>
-                     <th>Acciones</th>
+                     <th *ngIf="role !== 'recfinancieros'">Acciones</th>
                   </tr>          
                </thead>
                <tbody>
@@ -87,7 +87,7 @@
                      <td>{{item.carreer}}</td>
                      <td>{{item.email}}</td>
                      <td class="{{item.status}}">{{item.status}}</td>
-                     <td>
+                     <td *ngIf="role !== 'recfinancieros'">
                         <div class="div-actions" id="{{item.status}}" >
                            <tr *ngIf="item.email && status == '1'">
                               <td *ngIf="item.status == 'Registrado' && role === 'comunication'">
@@ -134,7 +134,7 @@
                      <td colspan="6">
                         <div class="div-actionsFoot">
                            <tr>
-                              <td *ngIf="searchCarreer !== '' ">
+                              <td *ngIf="role === 'administration' && searchCarreer !== '' || role === 'coordinator' && searchCarreer !== '' ">
                                  <div class="div-img" ngbTooltip="Generar Papeletas" tooltipClass="my-custom-class">
                                     <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
                                  </div>
