@@ -58,6 +58,9 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
         } else if (request.status === RequestStatus.SENT) {
           this.operationMode = OperationMode.SENT;
           this.requestData = request;
+        } else {
+          this.operationMode = OperationMode.VERIFIED;
+          this.requestData = request;
         }
       });
     this.initializeForm();
