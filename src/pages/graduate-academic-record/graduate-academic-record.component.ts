@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 
 import {RequestStatus} from 'src/enumerators/request-status.enum';
 import {RequestProvider} from 'src/providers/request.prov';
+import {FirebaseStorageService} from 'src/services/firebase-storage.service';
 
 @Component({
   selector: 'app-graduate-academic-record',
@@ -12,8 +13,10 @@ import {RequestProvider} from 'src/providers/request.prov';
 })
 export class GraduateAcademicRecordComponent implements OnInit {
   @Input() request;
+
   constructor(
     private requestProvider: RequestProvider,
+    private firebaseStorageService: FirebaseStorageService,
   ) { }
 
   ngOnInit() {
@@ -24,8 +27,16 @@ export class GraduateAcademicRecordComponent implements OnInit {
   }
 
   openProjectFile() {
-    // Obtener archivo de firebase
-    console.log('Ver proyecto');
+    this.firebaseStorageService.getFileURL(this.request.graduate.controlNumber)
+      .subscribe(url => {
+        window.open(url);
+      }, err => {
+        Swal.fire(
+          'Acto recepcional',
+          'Ha ocurrido un error al descargar la carátula del proyecto',
+          'error'
+        );
+      });
   }
 
   approveRequest() {

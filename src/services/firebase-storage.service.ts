@@ -13,4 +13,10 @@ export class FirebaseStorageService {
     const path = this.basePath + fileName;
     return this.storage.upload(path, projectFile);
   }
+
+  getFileURL(fileName: string) {
+    const path = this.basePath + fileName;
+    const ref = this.storage.ref(path);
+    return ref.getDownloadURL();
+  }
 }
