@@ -2,5 +2,6 @@ export enum OperationMode {
     NEW,
     CREATED,
     EDIT,
-    SENT
+    SENT,
+    VERIFIED,
 }

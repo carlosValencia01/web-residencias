@@ -48,6 +48,10 @@ export class CoordinationRequestsTablePageComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadDataTable();
+  }
+
+  loadDataTable() {
     this.requestProvider.getAllRequests().subscribe(data => {
       for (let i = 0; i < data.length; i++) {
         this.arr.push(createNewUser(data[i]));
@@ -79,6 +83,8 @@ export class CoordinationRequestsTablePageComponent implements OnInit {
         this.sidebarService.openedModal();
 
         dialogRef.afterClosed().subscribe(result => {
+          this.arr = [];
+          this.loadDataTable();
           this.sidebarService.closedModal();
         });
       });

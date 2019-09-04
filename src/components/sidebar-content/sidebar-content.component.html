@@ -49,7 +49,7 @@
         </button>
       </li>
       <li>
-        <button (click)="closeMenu()" *ngIf="role==='student'" type="button" class="menu-item" routerLink="academicDegreeApplication">
+        <button (click)="closeMenu()" *ngIf="role==='student' || role==='graduate'" type="button" class="menu-item" routerLink="academicDegreeApplication">
           <img class="menu-item-img" src="assets/icons/graduate.svg" alt="">
           <p class="menu-item-title">Acto recepcional</p>
         </button>

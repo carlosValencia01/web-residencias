@@ -1,0 +1,22 @@
+.title {
+  justify-content: center;
+  text-align: center;
+  font-size: 18px;
+  padding: 30px;
+  font-weight: bold;
+  color: red;
+  background-color: white!important;
+  margin: 50px 50px 10px 50px;
+}
+.title > h2 {
+  margin: 0px;
+}
+.message {
+  justify-content: center;
+  font-size: 18px;
+  padding: 30px;
+  font-weight: bold;
+  color: red;
+  background-color: white!important;
+  margin: 10px 50px 50px 50px;
+}
