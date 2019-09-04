@@ -81,11 +81,11 @@
                </thead>
                <tbody>
                   <tr *ngFor="let item of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
-                  currentPage: page };" (click)="observationsModal(item)">      
-                     <td>{{item.nc}} </td>
-                     <td>{{item.name}}</td>
-                     <td>{{item.carreer}}</td>
-                     <td>{{item.email}}</td>
+                  currentPage: page };">      
+                     <td (click)="observationsModal(item)">{{item.nc}} </td>
+                     <td (click)="observationsModal(item)">{{item.name}}</td>
+                     <td (click)="observationsModal(item)">{{item.carreer}}</td>
+                     <td (click)="observationsModal(item)">{{item.email}}</td>
                      <td class="{{item.status}}">{{item.status}}</td>
                      <td *ngIf="role !== 'recfinancieros'">
                         <div class="div-actions" id="{{item.status}}" >

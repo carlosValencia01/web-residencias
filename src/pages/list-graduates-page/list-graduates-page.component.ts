@@ -657,6 +657,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carreraCompleta : item.carreerComplete,
       correo : item.email,
       estatus : item.status,
+      observations: item.observations,
       degree : true
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -676,6 +677,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carreraCompleta : item.carreerComplete,
       correo : item.email,
       estatus : item.status,
+      observations: item.observations,
       degree : false
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
