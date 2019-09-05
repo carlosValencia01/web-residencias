@@ -657,9 +657,11 @@ export class ListGraduatesPageComponent implements OnInit {
       carreraCompleta : item.carreerComplete,
       correo : item.email,
       estatus : item.status,
-      observations: item.observations,
+      observations: item.observations ? item.observations:'',
       degree : true
-    }
+    };
+    // console.log(itemUpdate);
+    
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
       this.notificationsServices.showNotification(1, 'Título asignado para:',item.nc);
     }, (error) => {
@@ -677,7 +679,7 @@ export class ListGraduatesPageComponent implements OnInit {
       carreraCompleta : item.carreerComplete,
       correo : item.email,
       estatus : item.status,
-      observations: item.observations,
+      observations:  item.observations ? item.observations:'',
       degree : false
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
