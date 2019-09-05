@@ -111,6 +111,8 @@ export class LoaderDataGraduationPageComponent implements OnInit {
           carreraCompleta:tmpStudent[4],
           carrera:this.careers[tmpStudent[4].trim()],
           correo:tmpStudent[5],
+          observations:'',
+          degree:'',
           estatus:'Registrado'
         });
       }

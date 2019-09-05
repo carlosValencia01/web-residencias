@@ -120,7 +120,7 @@
                                        <img src="../../assets/icons/degreeYes.svg" class="action" (click)="confirmRemoveDegree(item)">
                                  </div>
                               </td>       
-                              <td *ngIf="role === 'administration' && item.observations !== undefined">
+                              <td *ngIf=" role === 'administration' && item.observations !== '' ">
                                  <div class="div-img" ngbTooltip="Observaciones" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/observations.svg" class="action" (click)="observationsModal(item)">
                                  </div>

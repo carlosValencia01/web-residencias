@@ -80,10 +80,10 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
                 nombreApellidos : alumnosData.payload.doc.data().nombreApellidos,
                 carrera : alumnosData.payload.doc.data().carrera,
                 carreraCompleta : alumnosData.payload.doc.data().carreraCompleta,
-                estatus: alumnosData.payload.doc.data().estatus
-              }
-              console.log(this.docId);
-              
+                estatus: alumnosData.payload.doc.data().estatus,
+                degree: alumnosData.payload.doc.data().degree,
+                observations: alumnosData.payload.doc.data().observations
+              }              
               this.dataUpdate = data;
               data = null;
               this.hidden = true;
@@ -102,7 +102,6 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
 
   updateEmail() {
     let collection=this.router.url.split('/')[2];
-    console.log(collection,this.docId,this.dataUpdate);
     
     if (!this.formValidation()) {
       let newEmail = this.formEmailGraduate.get('emailGraduateInput').value;
