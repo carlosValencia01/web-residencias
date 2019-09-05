@@ -9,17 +9,18 @@ import { CookiesService } from 'src/services/cookie.service';
   styleUrls: ['./academic-degree-application-page.component.scss']
 })
 export class AcademicDegreeApplicationPageComponent implements OnInit {
-
-  SteepOneCompleted: boolean = true;
-  isLinear: boolean = true;
+  private user: any;
+  private allowSection: boolean;
 
   constructor(
     private cookiesService: CookiesService,
     private router: Router,
   ) {
-    if (this.cookiesService.getData().user.role !== 2) {
+    this.user = this.cookiesService.getData().user;
+    if (this.user.role !== 2) {
       this.router.navigate(['/']);
     }
+    this.allowSection = this.user.status === 'egresado' && this.user.english;
   }
 
   ngOnInit() {

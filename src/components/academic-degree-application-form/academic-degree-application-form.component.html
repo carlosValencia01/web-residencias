@@ -10,6 +10,12 @@
     <button type="button" class="btn btn-sm btn-info" style="margin-right: 0.3em" (click)="generateRequestPDF()"><i
         class="fa fa-download"></i> Descargar solicitud </button>
   </div>
+  <!-- Solicitud verificada -->
+  <div class="card-body" *ngSwitchCase="4">
+    <label>Su solicitud ha sido verficada por coordinación de titulación</label><br>
+    <button type="button" class="btn btn-sm btn-info" style="margin-right: 0.3em" (click)="generateRequestPDF()"><i
+      class="fa fa-download"></i> Descargar solicitud </button>
+  </div>
   <!-- Solicitud creada o en edición -->
   <form [formGroup]="formRequest" (ngSubmit)="onSave()" enctype="multipart/form-data" *ngSwitchDefault>
     <div class="card-body">

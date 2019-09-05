@@ -659,7 +659,9 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus : item.status,
       observations: item.observations ? item.observations:'',
       degree : true
-    }
+    };
+    // console.log(itemUpdate);
+    
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
       this.notificationsServices.showNotification(1, 'Título asignado para:',item.nc);
     }, (error) => {

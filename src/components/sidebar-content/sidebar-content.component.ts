@@ -14,6 +14,7 @@ export class SidebarContentComponent implements OnInit {
   showGraduationItems = false;
   public role: string;
   DEFAULT_PROFILE_IMG = 'assets/icons/man.svg';
+  private status: string;
 
   // tslint:disable-next-line:no-output-rename
   @Output('closeMenu') menuClicked = new EventEmitter();
@@ -23,6 +24,7 @@ export class SidebarContentComponent implements OnInit {
   ) {
     this.data = this.cookiesServ.getData().user;
     console.log(this.data);
+    this.status = this.data.status;
   }
 
   ngOnInit() {
@@ -36,8 +38,8 @@ export class SidebarContentComponent implements OnInit {
         this.title = 'Secretario(a)';
         break;
       case 2:
-        this.role = 'student';
-        this.title = 'Estudiante';
+        this.role = this.status === 'egresado' ? 'graduate' : 'student';
+        this.title = this.status === 'egresado' ? 'Egresado' : 'Estudiante';
         break;
       case 3:
         this.role = 'employee';
