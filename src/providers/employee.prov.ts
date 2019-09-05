@@ -23,7 +23,7 @@ export class EmployeeProvider {
         return this.api.getURL();
     }
 
-    getAllStudents() {
+    getAllEmployee() {
         return this.api.get('employee')
             .pipe(map(students => students.json()));
     }
@@ -44,6 +44,10 @@ export class EmployeeProvider {
             .pipe(map((res: Response) => res.blob()));
     }
 
+    getEmployeesByDepto() {
+        return this.api.get(`department/employees`).pipe(map(department=>department.json()));
+    }
+    
     updateEmployee(id, data) {
         return this.api.put(`employee/${id}`, data)
             .pipe(map(student => student.json()));
@@ -88,5 +92,16 @@ export class EmployeeProvider {
 
     }
 
+    searchEmployeeGrade(search: string) {
+        return this.api.get(`employee/grade/search/${search}`).pipe(map(res => res.json()));
+    }
+
+    csvEmployeGrade(data: any) {
+        return this.api.post(`employee/csv`, data).pipe(map(res => res.json()));
+    }
+
+    searchEmployeeByArea() {
+        return this.api.get(`employee/area`).pipe(map(res => res.json()));
+    }
 
 }

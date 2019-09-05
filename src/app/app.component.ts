@@ -1,6 +1,7 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CookiesService } from '../services/cookie.service';
 import { UserProvider } from '../providers/user.prov';
+import { MatSidenav } from '@angular/material';
 
 
 @Component({
@@ -9,7 +10,7 @@ import { UserProvider } from '../providers/user.prov';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-
+  @ViewChild('sidenav') sideNav: MatSidenav;
 
   activeSession: boolean;
 
@@ -55,15 +56,16 @@ export class AppComponent {
   }
 
   onMenu() {
-    if (this.opened) {
-      this.opened = false;
-      this.sizeBoolean = true;
-    } else {
-      this.opened = true;
-      if (!this.smallScreen) {
-        this.sizeBoolean = false;
-      }
-    }
+    this.sideNav.toggle();
+    // if (this.opened) {
+    //   this.opened = false;
+    //   this.sizeBoolean = true;
+    // } else {
+    //   this.opened = true;
+    //   if (!this.smallScreen) {
+    //     this.sizeBoolean = false;
+    //   }
+    // }
   }
 
   closeMenu() {

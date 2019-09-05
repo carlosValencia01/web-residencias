@@ -9,16 +9,26 @@
 </div>
 
 <div *ngIf="activeSession">
+    <mat-sidenav-container fullscreen>
+        <mat-sidenav mode="side" #sidenav opened position="start">
+            <app-sidebar-content></app-sidebar-content>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <app-home-header (onMenu)="onMenu()" [size]="sizeBoolean"></app-home-header>
+            <div class="main-content" [ngStyle]="{'padding':'15px'}">
+                <router-outlet></router-outlet>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+    <!-- <ng-sidebar-container class="content" style="background-color: #E9EBEE;"> -->
 
-    <ng-sidebar-container class="content" style="background-color: #E9EBEE;">
-
-        <!-- A sidebar -->
-        <ng-sidebar [(opened)]="opened" [(mode)]="mode" [(closeOnClickOutside)]="closeOnClickOutside">
+    <!-- A sidebar -->
+    <!-- <ng-sidebar [(opened)]="opened" [(mode)]="mode" [(closeOnClickOutside)]="closeOnClickOutside">
             <app-sidebar-content (closeMenu)="closeMenu()"></app-sidebar-content>
-        </ng-sidebar>
+        </ng-sidebar> -->
 
-        <!-- Page content -->
-        <div ng-sidebar-content>
+    <!-- Page content -->
+    <!-- <div ng-sidebar-content>
             <app-home-header (onMenu)="onMenu()" [size]="sizeBoolean"></app-home-header>
             <div >
                 <div >
@@ -29,5 +39,5 @@
 
     </ng-sidebar-container>
 
-
+ -->
 </div>

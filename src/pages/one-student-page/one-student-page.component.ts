@@ -11,6 +11,7 @@ import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { Router } from '@angular/router';
+import { eNotificationType } from 'src/enumerators/notificationType.enum';
 
 
 @Component({
@@ -264,7 +265,7 @@ export class OneStudentPageComponent implements OnInit {
       const data:any = res;
       this.currentStudent = data.student;
       this.imgForSend = false;
-      this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
+      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Fotografía actualizada correctamente', '');
 
     }, error => {
       console.log(error);

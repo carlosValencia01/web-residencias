@@ -1,0 +1,137 @@
+<h1 mat-dialog-title>Nuevo Estudiante</h1>
+<form [formGroup]="frmNewStudent" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label class="form-col-form-label" for="controlNumber">Número de control</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-user"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!frmNewStudent.get('controlNumber').valid && frmNewStudent.get('controlNumber').touched)?'form-control is-invalid':'form-control'"
+              id="controlNumber" formControlName="controlNumber" placeholder="Número Control"
+              oninput="this.value = this.value.toUpperCase()">
+            <div class="invalid-feedback"
+              *ngIf="!frmNewStudent.get('controlNumber').valid && frmNewStudent.get('controlNumber').touched">
+              <span *ngIf="frmNewStudent.get('controlNumber').errors['required']">
+                ¡Número de control obligatorio!
+              </span>
+              <span *ngIf="frmNewStudent.get('controlNumber').errors['pattern']">
+                Digite sólo números
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label class="form-col-form-label" for="fullname">Nombre</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-user"></i></span>
+            </div>
+            <input type="text"
+              [ngClass]="(!frmNewStudent.get('fullname').valid && frmNewStudent.get('fullname').touched)?'form-control is-invalid':'form-control'"
+              id="fullname" formControlName="fullname" placeholder="Nombre"
+              oninput="this.value = this.value.toUpperCase()">
+            <div class="invalid-feedback"
+              *ngIf="!frmNewStudent.get('fullname').valid && frmNewStudent.get('fullname').touched">
+              <span *ngIf="frmNewStudent.get('fullname').errors['required']">
+                ¡Nombre obligatorio!
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label class="form-col-form-label" for="career">Carrera</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fa fa-user"></i></span>
+            </div>
+            <select id="career" class="form-control" formControlName="career">
+              <option *ngFor="let career of sourceData.getCareers()" [value]="career">{{career}}</option>
+            </select>           
+            <div class="invalid-feedback"
+              *ngIf="!frmNewStudent.get('career').valid && frmNewStudent.get('career').touched">
+              <span *ngIf="frmNewStudent.get('career').errors['invalidOption']">
+                ¡Seleccione una carrera
+              </span>
+            </div>           
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button color="primary" type="submit" [disabled]="!frmNewStudent.valid">Guardar</button>
+    <button mat-stroked-button color="warn" type="button" (click)="onClose()" mat-dialog-close>Cancelar</button>
+  </mat-dialog-actions>
+</form>
+
+
+<!-- <div class="ui-g ui-fluid">
+  <form [formGroup]="frmNewStudent" (ngSubmit)="onSubmit()">
+    <div class="ui-g-12">
+      <div class="ui-inputgroup">
+        <span class="ui-inputgroup-addon">
+          <i class="fa fa-credit-card"></i>
+        </span>
+        <input type="text" pInputText placeholder="Número Control"
+         formControlName="controlNumber">
+      </div>
+      <span class="help-block"
+        *ngIf="!frmNewStudent.get('controlNumber').valid && frmNewStudent.get('controlNumber').touched">
+        <span *ngIf="frmNewStudent.get('controlNumber').errors['required']">
+          Número de control obligatorio
+        </span>
+        <span *ngIf="frmNewStudent.get('controlNumber').errors['pattern']">
+          Digite sólo números
+        </span>
+      </span>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-inputgroup">
+        <span class="ui-inputgroup-addon">
+          <i class="fa fa-user"></i>
+        </span>
+        <input type="text" pInputText placeholder="Nombre" formControlName="fullname" (input)="frmNewStudent.get('fullname').setValue($event.target.value.toUpperCase())">        
+      </div>
+      <span class="help-block" *ngIf="!frmNewStudent.get('fullname').valid && frmNewStudent.get('fullname').touched">
+        <span *ngIf="frmNewStudent.get('fullname').errors['required']">
+          Nombre del alumno obligatorio
+        </span>
+      </span>
+    </div>
+
+    <div class="ui-g-12">
+      <div class="ui-inputgroup">
+        <span class="ui-inputgroup-addon">
+          <i class="fa fa-pencil"></i>
+        </span>
+        <select id="secret" class="form-control" formControlName="career">
+          <option *ngFor="let career of sourceData.getCareers()" [value]="career">{{career}}</option>
+        </select>
+      </div>
+      <span class="help-block" *ngIf="!frmNewStudent.get('career').valid && frmNewStudent.get('career').touched">
+          <span *ngIf="frmNewStudent.get('career').errors['invalidOption']">
+            Seleccione una carrera
+          </span>          
+        </span>
+    </div>
+    <div class="ui-g-12">
+      <p-button style="float: right" label="Guardar" type="submit"
+      [disabled]="!frmNewStudent.valid"></p-button>
+    </div>
+
+  </form>
+</div> -->

@@ -1,0 +1,162 @@
+<!-- <ngx-smart-modal #NewGradeModal [identifier]="NewGradeModal"> -->
+  <h1 mat-dialog-title>{{title}}</h1>
+  <form [formGroup]="frmNewGrade" (ngSubmit)="onSubmit()">
+    <mat-dialog-content>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-col-form-label" for="title">Título</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+              </div>
+              <input type="text"
+                [ngClass]="(!frmNewGrade.get('title').valid && frmNewGrade.get('title').touched)?'form-control is-invalid':'form-control'"
+                id="title" formControlName="title" placeholder="Título" oninput="this.value = this.value.toUpperCase()">
+              <div class="invalid-feedback" *ngIf="!frmNewGrade.get('title').valid && frmNewGrade.get('title').touched">
+                <span *ngIf="frmNewGrade.get('title').errors['required']">
+                  ¡Título obligatorio!
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-col-form-label" for="cedula">Cédula Profesional</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+              </div>
+              <input type="text"
+                [ngClass]="(!frmNewGrade.get('cedula').valid && frmNewGrade.get('cedula').touched)?'form-control is-invalid':'form-control'"
+                id="cedula" formControlName="cedula" placeholder="Cédula Profesional"
+                oninput="this.value = this.value.toUpperCase()">
+              <div class="invalid-feedback"
+                *ngIf="!frmNewGrade.get('title').valid && frmNewGrade.get('cedula').touched">
+                <span *ngIf="frmNewGrade.get('cedula').errors['required']">
+                  ¡Cédula Profesional obligatoria!
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-col-form-label" for="abbreviation">Abreviatura</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+              </div>
+              <input type="text"
+                [ngClass]="(!frmNewGrade.get('cedula').valid && frmNewGrade.get('cedula').touched)?'form-control is-invalid':'form-control'"
+                id="abbreviation" formControlName="abbreviation" placeholder="Abreviatura"
+                oninput="this.value = this.value.toUpperCase()">
+              <div class="invalid-feedback"
+                *ngIf="!frmNewGrade.get('abbreviation').valid && frmNewGrade.get('abbreviation').touched">
+                <span *ngIf="frmNewGrade.get('abbreviation').errors['required']">
+                  ¡Abreviatura obligatoria!
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-col-form-label" for="grade">Grado</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+              </div>
+              <select id="grade" class="form-control" formControlName="grade">
+                <option *ngFor="let grade of sourceData.getGrades()" [value]="grade">{{grade}}</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="!frmNewGrade.get('grade').valid && frmNewGrade.get('grade').touched">
+                <span *ngIf="frmNewGrade.get('grade').errors['required']">
+                  ¡Cédula Profesional obligatoria!
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <!-- <button mat-button mat-dialog-close  mat-stroked-button >Cancel</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial  mat-stroked-button color="primary">Install</button> -->
+      <button mat-stroked-button color="primary" type="submit" [disabled]="!frmNewGrade.valid">Guardar</button>
+      <button mat-stroked-button color="warn" type="button" (click)="onClose()" mat-dialog-close>Cancelar</button>
+    </mat-dialog-actions>
+  </form>
+<!-- </ngx-smart-modal> -->
+<!-- <div class="ui-g ui-fluid">
+  <form [formGroup]="frmNewGrade" (ngSubmit)="onSubmit()">
+    <div class="ui-g-12">
+      <div class="ui-g-12">
+        <span class="ui-float-label">
+          <input id="float-input" type="text" size="30" formControlName="title" pInputText  oninput="this.value = this.value.toUpperCase()">
+          <label for="float-input">Título</label>
+        </span>
+
+        <span class="help-block" *ngIf="!frmNewGrade.get('title').valid && frmNewGrade.get('title').touched">
+          <span *ngIf="frmNewGrade.get('title').errors['required']">
+            Título obligatorio
+          </span>
+        </span>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-12">
+        <span class="ui-float-label">
+          <input id="float-input" type="text" size="30" formControlName="cedula" pInputText  oninput="this.value = this.value.toUpperCase()">
+          <label for="float-input">Cédula Profesional</label>
+        </span>
+        <span class="help-block" *ngIf="!frmNewGrade.get('cedula').valid && frmNewGrade.get('cedula').touched">
+          <span *ngIf="frmNewGrade.get('cedula').errors['required']">
+            Cédula Profesional obligatorio
+          </span>
+        </span>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-12">
+        <span class="ui-float-label">
+          <input id="float-input" type="text" size="30" formControlName="abbreviation" pInputText oninput="this.value = this.value.toUpperCase()">
+          <label for="float-input">Abreviatura</label>
+        </span>
+
+        <span class="help-block" *ngIf="!frmNewGrade.get('abbreviation').valid && frmNewGrade.get('abbreviation').touched">
+          <span *ngIf="frmNewGrade.get('abbreviation').errors['required']">
+            Abreviatura obligatorio
+          </span>
+        </span>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-12">
+        <select id="secret" class="form-control" formControlName="grade">
+          <option *ngFor="let grade of sourceData.getGrades()" [value]="grade">{{grade}}</option>
+        </select>
+
+        <span class="help-block" *ngIf="!frmNewGrade.get('grade').valid && frmNewGrade.get('grade').touched">
+          <span *ngIf="frmNewGrade.get('grade').errors['required']">
+            Grado obligatorio
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div class="ui-g-12 text-right">
+      <p-button label="Guardar" style="margin-right: 1em" type="submit" [disabled]="!frmNewGrade.valid"></p-button>
+      <p-button styleClass="ui-button-danger" label="Cancelar" type="button" (click)="onClose()"></p-button>
+    </div>
+  </form>
+</div> -->

@@ -1,14 +1,14 @@
 <div class="sidebar-style">
   <div class="profile-card">
-      <img class="profile-icon" [src]="data?.photo || DEFAULT_PROFILE_IMG" alt="">
-      <div>
-        <p class="profile-text">{{ data.name.fullName }}</p>
-        <p class="profile-text">{{ title }}</p>
-      </div>
+    <img class="profile-icon" [src]="data?.photo || DEFAULT_PROFILE_IMG" alt="">
+    <div>
+      <p class="profile-text">{{ data.name.fullName }}</p>
+      <p class="profile-text">{{ title }}</p>
     </div>
+  </div>
   <hr>
   <div>
-    <ul class="menu-style">
+    <!-- <ul class="menu-style">
       <li>
         <button (click)="closeMenu()" type="button" class="menu-item" routerLink="">
           <img class="menu-item-img" src="assets/icons/house.svg" alt="">
@@ -42,6 +42,31 @@
         </div>
 
       </li>
-    </ul>
+    </ul> -->
+
+    <div *ngFor="let item of menu">
+      <div *ngIf="!isUndefined(item.items) else noSubmenu">
+        <button mat-menu-item [matMenuTriggerFor]="sub_menu">
+          <mat-icon>{{item.icon}}</mat-icon>
+          <span>{{item.label}}</span>
+        </button>
+        <mat-menu #sub_menu>
+          <button *ngFor="let submenu of item.items" mat-menu-item routerLink="{{submenu.routerLink}}">
+            <mat-icon>{{submenu.icon}}</mat-icon>
+            <span>{{submenu.label}}</span>
+          </button>
+        </mat-menu>
+      </div>
+      <ng-template #noSubmenu>
+        <button mat-menu-item routerLink="{{item.routerLink}}">
+          <mat-icon>{{item.icon}}</mat-icon>
+          <span>{{item.label}}</span>
+        </button>
+      </ng-template>
+    </div>
+    <!-- <button mat-menu-item routerLink="{{item.routerLink}}">
+        <i class="material-icons">{{item.icon}}</i>&nbsp;&nbsp;&nbsp;{{item.label}}
+      </button>-->
+
   </div>
 </div>
