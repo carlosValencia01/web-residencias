@@ -69,7 +69,8 @@ export class ListGraduatesPageComponent implements OnInit {
     ) {
       if (this.cookiesService.getData().user.role !== 0 && 
       this.cookiesService.getData().user.role !== 5 &&
-      this.cookiesService.getData().user.role !== 6)
+      this.cookiesService.getData().user.role !== 6 &&
+      this.cookiesService.getData().user.role !== 9)
        {
         this.router.navigate(['/']);
       }
@@ -102,6 +103,9 @@ export class ListGraduatesPageComponent implements OnInit {
       case 6:
         this.role = 'coordinator';
         break;
+      case 9:
+        this.role = 'recfinancieros';
+        break;
     }
     this.readEmail();
 
@@ -128,7 +132,9 @@ export class ListGraduatesPageComponent implements OnInit {
           carreer : alumno.payload.doc.get("carrera"),
           carreerComplete : alumno.payload.doc.get("carreraCompleta"),
           email: alumno.payload.doc.get("correo"),
-          status: alumno.payload.doc.get("estatus")
+          status: alumno.payload.doc.get("estatus"),
+          degree: alumno.payload.doc.get("degree"),
+          observations: alumno.payload.doc.get("observations")
         }});
         this.alumnosReport =  this.alumnos;
         this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
@@ -137,7 +143,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Pagado
   paidEvent(item){
-    console.log(item);  
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
@@ -145,6 +150,8 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
+      degree: item.degree,
+      observations: item.observations,
       estatus: 'Pagado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -156,7 +163,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Registrado
   removePaidEvent(item){
-    console.log(item);  
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
@@ -164,6 +170,8 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
+      degree: item.degree,
+      observations: item.observations,
       estatus: 'Registrado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -175,7 +183,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Asistió
   asistenceEvent(item){
-    console.log(item);  
     let itemUpdate = {
       nc : item.nc,
       nombre : item.name,
@@ -183,6 +190,8 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
+      degree: item.degree,
+      observations: item.observations,
       estatus: 'Asistió'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -401,8 +410,8 @@ export class ListGraduatesPageComponent implements OnInit {
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    doc.addImage(this.logoTecNM, 'PNG', 5, 0, 80, 35); // Logo TecNM
-    doc.addImage(this.logoSep, 'PNG', pageWidth-85, 0, 80, 35); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', 36, 2, 82, 35); // Logo TecNM
+    doc.addImage(this.logoSep, 'PNG', pageWidth-147, 5, 110, 27); // Logo SEP
 
     let header = "Reporte Alumnos Graduados "+this.searchCarreer;
     doc.setTextColor(0,0,0);
@@ -499,13 +508,26 @@ export class ListGraduatesPageComponent implements OnInit {
     
     // Dividir Alto de hoja entre 4 para dibujar recta divisora
     var divLine = pageHeight/4;
-    
+    var cont = 1;
     for(var i = 0; i < divAlumnosBallotPaper.length; i++){ // Recorrer cada segmento de alumnos
       for(var j = 0; j < divAlumnosBallotPaper[i].length; j++){ // Recorrer los alumnos del segmento actual
         if(j == 0){
-          doc.addImage(this.logoTecNM, 'PNG', 5, 2, 60, 18); // Logo TecNM
-          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 2, 60, 18); // Logo SEP
+          doc.addImage(this.logoSep, 'PNG', 5, 2, 60, 14); // Logo Sep
+          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58, 2, 53, 14); // Logo TecNM
           doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,divLine-20, 15, 15); // Logo TecTepic
+          
+          // Numero de alumno
+          doc.setLineWidth(.3)
+          doc.setDrawColor(0)
+          doc.setFillColor(20, 43, 88)
+          doc.circle(pageWidth-25,divLine-20,10, 'FD')
+          doc.setTextColor(255,255,255);
+          doc.setFontSize(30);
+          doc.text(cont.toString(), pageWidth-25,divLine-16, 'center');
+          cont++;
+
+          // Nombre y Carrera
+          doc.setTextColor(0);
           doc.setFontSize(22);
           doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,30, 'center');
           doc.setFontSize(13);
@@ -513,9 +535,22 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.line(0,divLine,pageWidth,divLine);
         }
         if(j == 1){
-          doc.addImage(this.logoTecNM, 'PNG', 5, 76.25, 60, 18); // Logo TecNM
-          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 76.25, 60, 18); // Logo SEP
-          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*2)-20, 15, 15); // Logo TecTepic
+          doc.addImage(this.logoSep, 'PNG', 5,(divLine)+2, 60, 14); // Logo Sep
+          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine)+2, 53, 14); // Logo TecNM
+          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine)-20, 15, 15); // Logo TecTepic
+          
+          //Numero de alumno
+          doc.setLineWidth(.3)
+          doc.setDrawColor(0)
+          doc.setFillColor(20, 43, 88)
+          doc.circle(pageWidth-25,(divLine*2)-20,10, 'FD')
+          doc.setTextColor(255,255,255);
+          doc.setFontSize(30);
+          doc.text((cont).toString(), pageWidth-25,(divLine*2)-16, 'center');
+          cont++;
+
+          // Nombre y Carrera
+          doc.setTextColor(0);
           doc.setFontSize(22);
           doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,104.25, 'center');
           doc.setFontSize(13);
@@ -523,9 +558,22 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.line(0,divLine*2,pageWidth,divLine*2);
         }
         if(j == 2){
-          doc.addImage(this.logoTecNM, 'PNG', 5, 150.5, 60, 18); // Logo TecNM
-          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 150.5, 60, 18); // Logo SEP
+          doc.addImage(this.logoSep, 'PNG', 5,(divLine*2)+2, 60, 14); // Logo Sep
+          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*2)+2, 53, 14); // Logo TecNM
           doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*3)-20, 15, 15); // Logo TecTepic
+          
+          //Numero de alumno
+          doc.setLineWidth(.3)
+          doc.setDrawColor(0)
+          doc.setFillColor(20, 43, 88)
+          doc.circle(pageWidth-25,(divLine*3)-20,10, 'FD')
+          doc.setTextColor(255,255,255);
+          doc.setFontSize(30);
+          doc.text((cont).toString(), pageWidth-25,(divLine*3)-16, 'center');
+          cont++;
+          
+          // Nombre y Carrera
+          doc.setTextColor(0);
           doc.setFontSize(22);
           doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,178.5, 'center');
           doc.setFontSize(13);
@@ -533,9 +581,22 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.line(0,divLine*3,pageWidth,divLine*3);
         }
         if(j == 3){
-          doc.addImage(this.logoTecNM, 'PNG', 5, 224.75, 60, 18); // Logo TecNM
-          doc.addImage(this.logoSep, 'PNG', pageWidth-65, 224.75, 60, 18); // Logo SEP
+          doc.addImage(this.logoSep, 'PNG', 5,(divLine*3)+2, 60, 14); // Logo Sep
+          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*3)+2, 53, 14); // Logo TecNM
           doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*4)-20, 15, 15); // Logo TecTepic
+          
+          //Numero de alumno
+          doc.setLineWidth(.3)
+          doc.setDrawColor(0)
+          doc.setFillColor(20, 43, 88)
+          doc.circle(pageWidth-25,(divLine*4)-20,10, 'FD')
+          doc.setTextColor(255,255,255);
+          doc.setFontSize(30);
+          doc.text((cont).toString(), pageWidth-25,(divLine*4)-16, 'center');
+          cont++;
+          
+          // Nombre y Carrera
+          doc.setTextColor(0);
           doc.setFontSize(22);
           doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,252.75, 'center');
           doc.setFontSize(13);
@@ -548,6 +609,154 @@ export class ListGraduatesPageComponent implements OnInit {
     }
     window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     //doc.save("Papeletas Graduación "+this.searchCarreer+".pdf");    
+  }
+
+  confirmDegree(item){
+    Swal.fire({
+      title: 'Asignar Título',
+      text: "Para "+item.nameLastName,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Asignar'
+    }).then((result) => {
+      if (result.value) {
+        this.degreeEvent(item);
+      }
+    })
+  }
+
+  confirmRemoveDegree(item){
+    Swal.fire({
+      title: 'Remover Título',
+      text: "Para "+item.nameLastName,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Remover'
+    }).then((result) => {
+      if (result.value) {
+        this.degreeRemoveEvent(item);
+      }
+    })
+  }
+
+  // Asignar titulo
+  degreeEvent(item){
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      nombreApellidos : item.nameLastName,
+      carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
+      correo : item.email,
+      estatus : item.status,
+      observations: item.observations ? item.observations:'',
+      degree : true
+    };
+    // console.log(itemUpdate);
+    
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.notificationsServices.showNotification(1, 'Título asignado para:',item.nc);
+    }, (error) => {
+      console.log(error);
+    });  
+  }
+
+  // Remover titulo
+  degreeRemoveEvent(item){
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      nombreApellidos : item.nameLastName,
+      carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
+      correo : item.email,
+      estatus : item.status,
+      observations:  item.observations ? item.observations:'',
+      degree : false
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.notificationsServices.showNotification(1, 'Título removido para:',item.nc);
+    }, (error) => {
+      console.log(error);
+    });  
+  }
+
+  // Mostar modal para agregar y visualizar observaciones
+  observationsModal(item){
+    if(this.role === 'administration'){
+      var id = 'observaciones';
+      if(item.observations){
+        Swal.fire({
+          title: 'Observaciones',
+          imageUrl: '../../assets/icons/observations.svg',
+          imageWidth: 100,
+          imageHeight: 100,
+          imageAlt: 'Custom image',
+          html:
+            '<textarea rows="4" cols="30" id="observaciones">'+item.observations+'</textarea>  ',
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Guardar'
+        }).then((result) => {
+          if (result.value) {
+            var observations = (<HTMLInputElement>document.getElementById(id)).value;
+            this.saveObservations(item,observations);
+          }
+        })
+      }else{
+        Swal.fire({
+          title: 'Observaciones',
+          imageUrl: '../../assets/icons/observations.svg',
+          imageWidth: 100,
+          imageHeight: 100,
+          imageAlt: 'Custom image',
+          html:
+            '<textarea rows="4" cols="30" id="observaciones"></textarea>  ',
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Guardar'
+        }).then((result) => {
+          if (result.value) {
+            var observations = (<HTMLInputElement>document.getElementById(id)).value;
+            this.saveObservations(item,observations);
+          }
+        })
+      }
+    }
+  }
+
+  // Guardar observaciones
+  saveObservations(item,newObservations){
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      nombreApellidos : item.nameLastName,
+      carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
+      correo : item.email,
+      degree: item.degree,
+      observations: newObservations,
+      estatus: item.status
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      Swal.fire("Observaciones Guardadas", "Para: "+item.nameLastName, "success");
+    }, (error) => {
+      console.log(error);
+    });  
   }
   
   pageChanged(ev){

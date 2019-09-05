@@ -53,6 +53,9 @@ export class HomeHeaderComponent implements OnInit {
       case 8:
         this.role = 'chiefAcademic';
         break;
+      case 9:
+        this.role = 'recfinancieros';
+        break;
     }
   }
 

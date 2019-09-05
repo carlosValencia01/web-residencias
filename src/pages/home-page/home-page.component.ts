@@ -45,6 +45,8 @@ export class HomePageComponent implements OnInit {
         break;
       case 8:
         this.role = 'chiefAcademic';
+      case 9:
+        this.role = 'recfinancieros';
         break;
     }
   }

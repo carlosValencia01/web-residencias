@@ -54,14 +54,14 @@
           <p class="menu-item-title">Acto recepcional</p>
         </button>
       </li>
-      <li *ngIf="role==='administration' || role==='comunication' || role === 'coordinator'">
+      <li *ngIf="role==='administration' || role==='comunication' || role === 'coordinator' || role === 'recfinancieros'">
         <button (click)="closeMenu('Graduacion')" type="button" class="menu-item">
           <img class="menu-item-img" src="assets/icons/chevron-arrow-down.svg" alt="">
           <p class="menu-item-title">Graduación</p>
         </button>
         <div *ngIf="showGraduationItems">
             <li>
-                <button (click)="closeMenu()" *ngIf="role==='coordinator' || role==='administration' || role==='comunication'" type="button" class="menu-item menu-subitem" routerLink="graduationEvents">
+                <button (click)="closeMenu()" *ngIf="role==='coordinator' || role==='administration' || role==='comunication' || role === 'recfinancieros'" type="button" class="menu-item menu-subitem" routerLink="graduationEvents">
                   <img class="menu-item-img" src="assets/icons/listgraduation.svg" alt="">
                   <p class="menu-item-title">Gestión de eventos</p>
                 </button>

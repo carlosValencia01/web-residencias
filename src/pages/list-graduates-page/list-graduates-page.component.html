@@ -76,18 +76,18 @@
                      <th>Carrera</th>
                      <th>Email</th>
                      <th>Estatus</th>
-                     <th>Acciones</th>
+                     <th *ngIf="role !== 'recfinancieros'">Acciones</th>
                   </tr>          
                </thead>
                <tbody>
                   <tr *ngFor="let item of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
                   currentPage: page };">      
-                     <td>{{item.nc}} </td>
-                     <td>{{item.name}}</td>
-                     <td>{{item.carreer}}</td>
-                     <td>{{item.email}}</td>
+                     <td (click)="observationsModal(item)">{{item.nc}} </td>
+                     <td (click)="observationsModal(item)">{{item.name}}</td>
+                     <td (click)="observationsModal(item)">{{item.carreer}}</td>
+                     <td (click)="observationsModal(item)">{{item.email}}</td>
                      <td class="{{item.status}}">{{item.status}}</td>
-                     <td>
+                     <td *ngIf="role !== 'recfinancieros'">
                         <div class="div-actions" id="{{item.status}}" >
                            <tr *ngIf="item.email && status == '1'">
                               <td *ngIf="item.status == 'Registrado' && role === 'comunication'">
@@ -109,7 +109,22 @@
                                  <div class="div-img" ngbTooltip="Remover Pago" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/remove-paid.svg" class="action" (click)="confirmRemovePaidEvent(item)">
                                  </div>
-                              </td>                              
+                              </td>    
+                              <td *ngIf="role === 'administration' && item.degree !== true">
+                                 <div class="div-img" ngbTooltip="No Titulado" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/degreeNo.svg" class="action" (click)="confirmDegree(item)">
+                                 </div>
+                              </td>    
+                              <td *ngIf="role === 'administration' && item.degree === true">
+                                 <div class="div-img" ngbTooltip="Titulado" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/degreeYes.svg" class="action" (click)="confirmRemoveDegree(item)">
+                                 </div>
+                              </td>       
+                              <td *ngIf="role === 'administration' && item.observations !== undefined">
+                                 <div class="div-img" ngbTooltip="Observaciones" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/observations.svg" class="action" (click)="observationsModal(item)">
+                                 </div>
+                              </td>                     
                            </tr>
                         </div>
                      </td>
@@ -119,7 +134,7 @@
                      <td colspan="6">
                         <div class="div-actionsFoot">
                            <tr>
-                              <td>
+                              <td *ngIf="role === 'administration' && searchCarreer !== '' || role === 'coordinator' && searchCarreer !== '' ">
                                  <div class="div-img" ngbTooltip="Generar Papeletas" tooltipClass="my-custom-class">
                                     <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
                                  </div>

@@ -46,7 +46,8 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     private graduationProv : GraduationProvider
     ) {
       if (this.cookiesService.getData().user.role !== 0 &&
-        this.cookiesService.getData().user.role !== 1) {
+        this.cookiesService.getData().user.role !== 1 &&
+        this.cookiesService.getData().user.role !== 9) {
           this.router.navigate(['/']);
         }
         let url = this.router.url.split('/'); 
@@ -109,7 +110,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
           nombre:tmpStudent[3],
           carreraCompleta:tmpStudent[4],
           carrera:this.careers[tmpStudent[4].trim()],
-          correo:tmpStudent[7],
+          correo:tmpStudent[5],
           estatus:'Registrado'
         });
       }
