@@ -136,8 +136,15 @@ export class ListGraduatesPageComponent implements OnInit {
           degree: alumno.payload.doc.get("degree"),
           observations: alumno.payload.doc.get("observations")
         }});
+        
+        //Ordenar Alumnos por Apellidos
+        this.alumnos.sort(function (a, b) {
+          return a.nameLastName.localeCompare(b.nameLastName);
+        });
+        
         this.alumnosReport =  this.alumnos;
         this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
+
       });
   }
 
@@ -375,6 +382,7 @@ export class ListGraduatesPageComponent implements OnInit {
           this.alumnosReport = this.filterItemsCarreer(this.searchCarreer);
         }
       }
+      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
   }
 
   // FILTRADO POR CARRERA O ESTATUS
@@ -487,128 +495,131 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Generar papeletas de alumnos verificados
   generateBallotPaper(){
-    // Obtener alumnos cuyo estatus sea 'Verificado' && Carrera = al filtro seleccionado
-    this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
+    if(this.alumnosBallotPaper.length !== 0){
+      // Obtener alumnos cuyo estatus sea 'Verificado' && Carrera = al filtro seleccionado
+      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
 
-    // Dividir total de alumnos verificados en segmentos de 4
-	  let divAlumnosBallotPaper = [];
-    
-    // 4 Alumnos por hoja
-    const LONGITUD_PEDAZOS = 4; 
-    for (let i = 0; i < this.alumnosBallotPaper.length; i += LONGITUD_PEDAZOS) {
-	    let pedazo = this.alumnosBallotPaper.slice(i, i + LONGITUD_PEDAZOS);
-	    divAlumnosBallotPaper.push(pedazo);
-    }
+      // Dividir total de alumnos verificados en segmentos de 4
+      let divAlumnosBallotPaper = [];
+      
+      // 4 Alumnos por hoja
+      const LONGITUD_PEDAZOS = 4; 
+      for (let i = 0; i < this.alumnosBallotPaper.length; i += LONGITUD_PEDAZOS) {
+        let pedazo = this.alumnosBallotPaper.slice(i, i + LONGITUD_PEDAZOS);
+        divAlumnosBallotPaper.push(pedazo);
+      }
 
-    var doc = new jsPDF('p', 'mm');
+      var doc = new jsPDF('p', 'mm');
 
-    // Obtener Ancho y Alto de la hoja
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    
-    // Dividir Alto de hoja entre 4 para dibujar recta divisora
-    var divLine = pageHeight/4;
-    var cont = 1;
-    for(var i = 0; i < divAlumnosBallotPaper.length; i++){ // Recorrer cada segmento de alumnos
-      for(var j = 0; j < divAlumnosBallotPaper[i].length; j++){ // Recorrer los alumnos del segmento actual
-        if(j == 0){
-          doc.addImage(this.logoSep, 'PNG', 5, 2, 60, 14); // Logo Sep
-          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58, 2, 53, 14); // Logo TecNM
-          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,divLine-20, 15, 15); // Logo TecTepic
-          
-          // Numero de alumno
-          doc.setLineWidth(.3)
-          doc.setDrawColor(0)
-          doc.setFillColor(20, 43, 88)
-          doc.circle(pageWidth-25,divLine-20,10, 'FD')
-          doc.setTextColor(255,255,255);
-          doc.setFontSize(30);
-          doc.text(cont.toString(), pageWidth-25,divLine-16, 'center');
-          cont++;
+      // Obtener Ancho y Alto de la hoja
+      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+      
+      // Dividir Alto de hoja entre 4 para dibujar recta divisora
+      var divLine = pageHeight/4;
+      var cont = 1;
+      for(var i = 0; i < divAlumnosBallotPaper.length; i++){ // Recorrer cada segmento de alumnos
+        for(var j = 0; j < divAlumnosBallotPaper[i].length; j++){ // Recorrer los alumnos del segmento actual
+          if(j == 0){
+            doc.addImage(this.logoSep, 'PNG', 5, 2, 60, 14); // Logo Sep
+            doc.addImage(this.logoTecNM, 'PNG', pageWidth-58, 2, 53, 14); // Logo TecNM
+            doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,divLine-20, 15, 15); // Logo TecTepic
+            
+            // Numero de alumno
+            doc.setLineWidth(.3)
+            doc.setDrawColor(0)
+            doc.setFillColor(20, 43, 88)
+            doc.circle(pageWidth-25,divLine-20,10, 'FD')
+            doc.setTextColor(255,255,255);
+            doc.setFontSize(30);
+            doc.text(cont.toString(), pageWidth-25,divLine-16, 'center');
+            cont++;
 
-          // Nombre y Carrera
-          doc.setTextColor(0);
-          doc.setFontSize(22);
-          doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,30, 'center');
-          doc.setFontSize(13);
-          doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,45, 'center');
-          doc.line(0,divLine,pageWidth,divLine);
+            // Nombre y Carrera
+            doc.setTextColor(0);
+            doc.setFontSize(22);
+            doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,30, 'center');
+            doc.setFontSize(13);
+            doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,45, 'center');
+            doc.line(0,divLine,pageWidth,divLine);
+          }
+          if(j == 1){
+            doc.addImage(this.logoSep, 'PNG', 5,(divLine)+2, 60, 14); // Logo Sep
+            doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine)+2, 53, 14); // Logo TecNM
+            doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine)-20, 15, 15); // Logo TecTepic
+            
+            //Numero de alumno
+            doc.setLineWidth(.3)
+            doc.setDrawColor(0)
+            doc.setFillColor(20, 43, 88)
+            doc.circle(pageWidth-25,(divLine*2)-20,10, 'FD')
+            doc.setTextColor(255,255,255);
+            doc.setFontSize(30);
+            doc.text((cont).toString(), pageWidth-25,(divLine*2)-16, 'center');
+            cont++;
+
+            // Nombre y Carrera
+            doc.setTextColor(0);
+            doc.setFontSize(22);
+            doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,104.25, 'center');
+            doc.setFontSize(13);
+            doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,119.25, 'center');
+            doc.line(0,divLine*2,pageWidth,divLine*2);
+          }
+          if(j == 2){
+            doc.addImage(this.logoSep, 'PNG', 5,(divLine*2)+2, 60, 14); // Logo Sep
+            doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*2)+2, 53, 14); // Logo TecNM
+            doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*3)-20, 15, 15); // Logo TecTepic
+            
+            //Numero de alumno
+            doc.setLineWidth(.3)
+            doc.setDrawColor(0)
+            doc.setFillColor(20, 43, 88)
+            doc.circle(pageWidth-25,(divLine*3)-20,10, 'FD')
+            doc.setTextColor(255,255,255);
+            doc.setFontSize(30);
+            doc.text((cont).toString(), pageWidth-25,(divLine*3)-16, 'center');
+            cont++;
+            
+            // Nombre y Carrera
+            doc.setTextColor(0);
+            doc.setFontSize(22);
+            doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,178.5, 'center');
+            doc.setFontSize(13);
+            doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,193.5, 'center');
+            doc.line(0,divLine*3,pageWidth,divLine*3);
+          }
+          if(j == 3){
+            doc.addImage(this.logoSep, 'PNG', 5,(divLine*3)+2, 60, 14); // Logo Sep
+            doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*3)+2, 53, 14); // Logo TecNM
+            doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*4)-20, 15, 15); // Logo TecTepic
+            
+            //Numero de alumno
+            doc.setLineWidth(.3)
+            doc.setDrawColor(0)
+            doc.setFillColor(20, 43, 88)
+            doc.circle(pageWidth-25,(divLine*4)-20,10, 'FD')
+            doc.setTextColor(255,255,255);
+            doc.setFontSize(30);
+            doc.text((cont).toString(), pageWidth-25,(divLine*4)-16, 'center');
+            cont++;
+            
+            // Nombre y Carrera
+            doc.setTextColor(0);
+            doc.setFontSize(22);
+            doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,252.75, 'center');
+            doc.setFontSize(13);
+            doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,267.75, 'center');        
+          }
         }
-        if(j == 1){
-          doc.addImage(this.logoSep, 'PNG', 5,(divLine)+2, 60, 14); // Logo Sep
-          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine)+2, 53, 14); // Logo TecNM
-          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine)-20, 15, 15); // Logo TecTepic
-          
-          //Numero de alumno
-          doc.setLineWidth(.3)
-          doc.setDrawColor(0)
-          doc.setFillColor(20, 43, 88)
-          doc.circle(pageWidth-25,(divLine*2)-20,10, 'FD')
-          doc.setTextColor(255,255,255);
-          doc.setFontSize(30);
-          doc.text((cont).toString(), pageWidth-25,(divLine*2)-16, 'center');
-          cont++;
-
-          // Nombre y Carrera
-          doc.setTextColor(0);
-          doc.setFontSize(22);
-          doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,104.25, 'center');
-          doc.setFontSize(13);
-          doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,119.25, 'center');
-          doc.line(0,divLine*2,pageWidth,divLine*2);
-        }
-        if(j == 2){
-          doc.addImage(this.logoSep, 'PNG', 5,(divLine*2)+2, 60, 14); // Logo Sep
-          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*2)+2, 53, 14); // Logo TecNM
-          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*3)-20, 15, 15); // Logo TecTepic
-          
-          //Numero de alumno
-          doc.setLineWidth(.3)
-          doc.setDrawColor(0)
-          doc.setFillColor(20, 43, 88)
-          doc.circle(pageWidth-25,(divLine*3)-20,10, 'FD')
-          doc.setTextColor(255,255,255);
-          doc.setFontSize(30);
-          doc.text((cont).toString(), pageWidth-25,(divLine*3)-16, 'center');
-          cont++;
-          
-          // Nombre y Carrera
-          doc.setTextColor(0);
-          doc.setFontSize(22);
-          doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,178.5, 'center');
-          doc.setFontSize(13);
-          doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,193.5, 'center');
-          doc.line(0,divLine*3,pageWidth,divLine*3);
-        }
-        if(j == 3){
-          doc.addImage(this.logoSep, 'PNG', 5,(divLine*3)+2, 60, 14); // Logo Sep
-          doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*3)+2, 53, 14); // Logo TecNM
-          doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*4)-20, 15, 15); // Logo TecTepic
-          
-          //Numero de alumno
-          doc.setLineWidth(.3)
-          doc.setDrawColor(0)
-          doc.setFillColor(20, 43, 88)
-          doc.circle(pageWidth-25,(divLine*4)-20,10, 'FD')
-          doc.setTextColor(255,255,255);
-          doc.setFontSize(30);
-          doc.text((cont).toString(), pageWidth-25,(divLine*4)-16, 'center');
-          cont++;
-          
-          // Nombre y Carrera
-          doc.setTextColor(0);
-          doc.setFontSize(22);
-          doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,252.75, 'center');
-          doc.setFontSize(13);
-          doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,267.75, 'center');        
+        if(i < divAlumnosBallotPaper.length-1){
+          doc.addPage(); // Agregar una nueva página al documento cuando cambie el segmento de alumnos
         }
       }
-      if(i < divAlumnosBallotPaper.length-1){
-        doc.addPage(); // Agregar una nueva página al documento cuando cambie el segmento de alumnos
-      }
+      window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+    }else{
+      this.notificationsServices.showNotification(2, 'Error','No hay alumnos  en estatus Verificado');  
     }
-    window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
-    //doc.save("Papeletas Graduación "+this.searchCarreer+".pdf");    
   }
 
   confirmDegree(item){
