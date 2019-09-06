@@ -100,7 +100,7 @@
                                        <img src="../../assets/icons/sendEmail.svg" class="action" (click)="confirmSendEmail(item)">
                                  </div>
                               </td>
-                              <td *ngIf="item.status === 'Verificado' && role === 'administration' || item.status === 'Verificado' && role === 'coordinator'">
+                              <td *ngIf="item.status === 'Verificado' && role === 'administration'">
                                  <div class="div-img" ngbTooltip="Registrar Asistencia" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/presence.svg" class="action" (click)="confirmPresenceEvent(item)">
                                  </div>
