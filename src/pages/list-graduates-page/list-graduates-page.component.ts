@@ -418,8 +418,8 @@ export class ListGraduatesPageComponent implements OnInit {
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    doc.addImage(this.logoTecNM, 'PNG', 36, 2, 82, 35); // Logo TecNM
-    doc.addImage(this.logoSep, 'PNG', pageWidth-147, 5, 110, 27); // Logo SEP
+    doc.addImage(this.logoSep, 'PNG', 36, 5, 110, 27); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth-120, 2, 82, 35); // Logo TecNM
 
     let header = "Reporte Alumnos Graduados "+this.searchCarreer;
     doc.setTextColor(0,0,0);
