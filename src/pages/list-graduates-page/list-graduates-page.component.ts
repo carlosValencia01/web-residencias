@@ -546,7 +546,7 @@ export class ListGraduatesPageComponent implements OnInit {
           if(j == 1){
             doc.addImage(this.logoSep, 'PNG', 5,(divLine)+2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine)+2, 53, 14); // Logo TecNM
-            doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine)-20, 15, 15); // Logo TecTepic
+            doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*2)-20, 15, 15); // Logo TecTepic
             
             //Numero de alumno
             doc.setLineWidth(.3)
@@ -625,8 +625,11 @@ export class ListGraduatesPageComponent implements OnInit {
   confirmDegree(item){
     Swal.fire({
       title: 'Asignar Título',
-      text: "Para "+item.nameLastName,
-      type: 'question',
+      imageUrl: '../../assets/imgs/asignarTitulo.png',
+      imageWidth: 100,
+      imageHeight: 100,
+      imageAlt: 'Custom image',
+      text: item.nameLastName,
       showCancelButton: true,
       allowOutsideClick: false,
       confirmButtonColor: '#3085d6',
@@ -643,8 +646,11 @@ export class ListGraduatesPageComponent implements OnInit {
   confirmRemoveDegree(item){
     Swal.fire({
       title: 'Remover Título',
-      text: "Para "+item.nameLastName,
-      type: 'question',
+      imageUrl: '../../assets/imgs/removerTitulo.png',
+      imageWidth: 100,
+      imageHeight: 100,
+      imageAlt: 'Custom image',
+      text: item.nameLastName,
       showCancelButton: true,
       allowOutsideClick: false,
       confirmButtonColor: '#3085d6',
@@ -670,11 +676,9 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus : item.status,
       observations: item.observations ? item.observations:'',
       degree : true
-    };
-    // console.log(itemUpdate);
-    
+    };    
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
-      this.notificationsServices.showNotification(1, 'Título asignado para:',item.nc);
+      Swal.fire("Título Asignado", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
     });  
@@ -694,7 +698,7 @@ export class ListGraduatesPageComponent implements OnInit {
       degree : false
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
-      this.notificationsServices.showNotification(1, 'Título removido para:',item.nc);
+      Swal.fire("Título Removido", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
     });  
@@ -707,7 +711,7 @@ export class ListGraduatesPageComponent implements OnInit {
       if(item.observations){
         Swal.fire({
           title: 'Observaciones',
-          imageUrl: '../../assets/icons/observations.svg',
+          imageUrl: '../../assets/imgs/logros.png',
           imageWidth: 100,
           imageHeight: 100,
           imageAlt: 'Custom image',
@@ -728,7 +732,7 @@ export class ListGraduatesPageComponent implements OnInit {
       }else{
         Swal.fire({
           title: 'Observaciones',
-          imageUrl: '../../assets/icons/observations.svg',
+          imageUrl: '../../assets/imgs/logros.png',
           imageWidth: 100,
           imageHeight: 100,
           imageAlt: 'Custom image',

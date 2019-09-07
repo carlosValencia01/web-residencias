@@ -1,7 +1,7 @@
 <div class="content-general">
    <div class="card card-shadow">
       <div class="card-header text-white bg-secondary">
-         <strong>Listado de Alumnos</strong>  
+         <strong>Listado de Alumnos {{collection.toUpperCase()}}</strong>  
       </div>
       <div class="card-body">
          <div class="row">
@@ -122,7 +122,7 @@
                               </td>       
                               <td *ngIf=" role === 'administration' && item.observations !== '' ">
                                  <div class="div-img" ngbTooltip="Observaciones" tooltipClass="my-custom-class" >
-                                       <img src="../../assets/icons/observations.svg" class="action" (click)="observationsModal(item)">
+                                       <img src="../../assets/imgs/logros.png" class="action" (click)="observationsModal(item)">
                                  </div>
                               </td>                     
                            </tr>
