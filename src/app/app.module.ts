@@ -90,6 +90,7 @@ import { GraduationProvider } from '../providers/graduation.prov';
 
 import { LoaderComponent } from '../components/shared/loader/loader.component';
 import { ListGraduatesPageComponent } from '../pages/list-graduates-page/list-graduates-page.component';
+import { SurveyGraduatesPageComponent } from '../pages/survey-graduates-page/survey-graduates-page.component';
 
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
@@ -105,6 +106,7 @@ const appRouters: Routes = [
   { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
   { path: 'coordinationRequestsTable', component: CoordinationRequestsTablePageComponent, pathMatch: 'full' },
   { path: 'chiefAcademicRequestsTable', component: CoordinationRequestsTablePageComponent, pathMatch: 'full' },
+  { path: 'surveyGraduates/:nc/:id', component: SurveyGraduatesPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -131,6 +133,7 @@ const appRouters: Routes = [
     FilterPipe,
     GraduateAcademicRecordComponent,
     RequestModalContentComponent,
+    SurveyGraduatesPageComponent,
   ],
   imports: [
     BrowserModule,

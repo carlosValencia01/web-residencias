@@ -269,8 +269,11 @@ export class ListGraduatesPageComponent implements OnInit {
   confirmSendEmail(item){
     Swal.fire({
       title: 'Enviar Invitación',
-      text: "Para: "+item.name,
-      type: 'question',
+      imageUrl: '../../assets/icons/sendEmail.svg',
+      imageWidth: 100,
+      imageHeight: 100,
+      imageAlt: 'Custom image',
+      text: item.nameLastName,
       showCancelButton: true,
       allowOutsideClick: false,
       confirmButtonColor: '#3085d6',
@@ -299,6 +302,44 @@ export class ListGraduatesPageComponent implements OnInit {
       this.notificationsServices.showNotification(3,item.nc,'Aun no se realiza el pago correspondiente');
     }
   }
+
+    // Confirmar envio de encuesta de egresados
+    confirmSendEmailSurvey(item){
+      Swal.fire({
+        title: 'Enviar Encuesta',        
+        imageUrl: '../../assets/icons/survey.svg',
+        imageWidth: 100,
+        imageHeight: 100,
+        imageAlt: 'Custom image',
+        text: item.nameLastName,
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Enviar'
+      }).then((result) => {
+        if (result.value) {
+          this.sendOneMailSurvey(item);
+        }
+      })
+    }
+  
+    // Enviar encuesta al alumno seleccionado (status == Verificado)
+    sendOneMailSurvey(item) {
+      if(item.status == 'Verificado'){
+        this.graduationProv.sendSurvey(item.email,item.id,item.name, item.nc).subscribe(
+          res=>{
+            this.notificationsServices.showNotification(1, 'Encuesta enviada a:',item.nc);
+          },
+          err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc);
+          }
+        );
+      }
+      else{
+        this.notificationsServices.showNotification(3,item.nc,'Aun no se realiza el pago correspondiente');
+      }    
+    }
 
   // Confirmar envio de invitación
   confirmSendEmailAll(){
