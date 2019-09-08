@@ -76,7 +76,7 @@
                      <th>Carrera</th>
                      <th>Email</th>
                      <th>Estatus</th>
-                     <th *ngIf="role !== 'recfinancieros'">Acciones</th>
+                     <th *ngIf="role === 'administration' || role === 'comunication'">Acciones</th>
                   </tr>          
                </thead>
                <tbody>
@@ -87,7 +87,7 @@
                      <td (click)="observationsModal(item)">{{item.carreer}}</td>
                      <td (click)="observationsModal(item)">{{item.email}}</td>
                      <td class="{{item.status}}">{{item.status}}</td>
-                     <td *ngIf="role !== 'recfinancieros'">
+                     <td *ngIf="role === 'administration' || role === 'comunication'">
                         <div class="div-actions" id="{{item.status}}" >
                            <tr *ngIf="item.email && status == '1'">
                               <td *ngIf="item.status == 'Registrado' && role === 'comunication'">
