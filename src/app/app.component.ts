@@ -2,7 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { CookiesService } from '../services/cookie.service';
 import { UserProvider } from '../providers/user.prov';
 import { SidebarService } from '../services/sidebar.service';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +34,9 @@ export class AppComponent {
     private userProv: UserProvider,
     private cookieServ: CookiesService,
     private sidebarService: SidebarService,
-  ) {
+    private router : Router,
+  
+  ) {        
     this.checkLogin();
   }
 
@@ -45,7 +47,9 @@ export class AppComponent {
 
   // tslint:disable-next-line:use-life-cycle-interface
   ngOnInit() {
+
     this.sidebarService.changeStatus.subscribe(status => {
+      
       this.opened = status;
     });
     this.configureSideNav();
@@ -79,13 +83,17 @@ export class AppComponent {
   }
 
   checkLogin() {
+    let fullurl =window.location.href;
+    
     if (this.cookiesServ.checkCookie('session')) {
       this.activeSession = true;
       // console.log('Aqui mandare el token');
       this.userProv.sendTokenFromAPI(this.cookiesServ.getData().token);
+    } else if(fullurl.indexOf('survey')!==-1){ //para saber si se esta ingresando por la encuesta
+      this.activeSession = true;
     } else {
       this.activeSession = false;
-      // console.log('No hay sesión iniciada');
+      // console.log('No hay sesión iniciada',this.router.url);
     }
   }
 

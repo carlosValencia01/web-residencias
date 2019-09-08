@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,OnDestroy } from '@angular/core';
 import { FirebaseService } from '../../services/firebase.service';
 import { Router } from '@angular/router';
 import { NotificationsServices } from '../../services/notifications.service';
@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
   templateUrl: './graduation-events-page.component.html',
   styleUrls: ['./graduation-events-page.component.scss']
 })
-export class GraduationEventsPageComponent implements OnInit {
+export class GraduationEventsPageComponent implements OnInit,OnDestroy {
 
   events = [];
   today = new Date();
@@ -32,11 +32,13 @@ export class GraduationEventsPageComponent implements OnInit {
     private notificationsServices: NotificationsServices,
     private cookiesService: CookiesService
     ) {
-        if (this.cookiesService.getData().user.role !== 0 && 
-        this.cookiesService.getData().user.role !== 5 && 
-        this.cookiesService.getData().user.role !== 6 &&
-        this.cookiesService.getData().user.role !== 9) {
-          this.router.navigate(['/']);
+
+      if (this.cookiesService.getData().user.role !== 0 && 
+      this.cookiesService.getData().user.role !== 5 && 
+      this.cookiesService.getData().user.role !== 6 &&
+      this.cookiesService.getData().user.role !== 9) {
+        console.log('events');
+        this.router.navigate(['/']);
         }
 
         this.firestoreService.getAllEvents().subscribe(
@@ -48,6 +50,12 @@ export class GraduationEventsPageComponent implements OnInit {
         this.newYears = years(this.yearsOptions);      
       }
 
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    console.log('events');
+    
+  }
   ngOnInit() {
     switch (this.cookiesService.getData().user.role) {
       case 0:

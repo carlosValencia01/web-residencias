@@ -60,6 +60,8 @@ import { RegisterEmailgraduationPageComponent } from '../pages/register-emailgra
 import { LoaderDataGraduationPageComponent } from '../pages/loader-data-graduation-page/loader-data-graduation-page.component';
 import { GraduationEventsPageComponent } from '../pages/graduation-events-page/graduation-events-page.component';
 import { CoordinationRequestsTablePageComponent } from '../pages/coordination-requests-table-page/coordination-requests-table-page.component';
+import { SurveyPageComponent } from '../pages/survey-page/survey-page.component';
+
 
 // Components
 import { LoginHeaderComponent } from '../components/login-header/login-header.component';
@@ -105,6 +107,7 @@ const appRouters: Routes = [
   { path: 'academicDegreeApplication', component: AcademicDegreeApplicationPageComponent, pathMatch: 'full' },
   { path: 'coordinationRequestsTable', component: CoordinationRequestsTablePageComponent, pathMatch: 'full' },
   { path: 'chiefAcademicRequestsTable', component: CoordinationRequestsTablePageComponent, pathMatch: 'full' },
+  { path: 'survey', component: SurveyPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -131,6 +134,7 @@ const appRouters: Routes = [
     FilterPipe,
     GraduateAcademicRecordComponent,
     RequestModalContentComponent,
+    SurveyPageComponent
   ],
   imports: [
     BrowserModule,
