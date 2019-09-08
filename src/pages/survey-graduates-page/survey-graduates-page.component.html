@@ -1,10 +1,29 @@
-<p>
-  ID: {{id}}<br>
-  NC: {{nc}}<br>
-  Evento Activo: {{eventActived}}<br>
-  Datos del Alumno<br>
-  Nombre: {{nombreAlumno}}<br>
-  No. de contról: {{ncAlumno}}<br>
-  Correo: {{correoAlumno}}<br>
-  Carrera: {{carreraAlumno}}<br>
-</p>
+<div class="container">
+  <div class="row align-items-center justify-content-center">
+    <div class="col-12">
+      <p>
+          ID: {{id}}<br>
+          NC: {{nc}}<br>
+          Evento Activo: {{eventActived}}<br>
+      </p>          
+      <p><strong>Datos del Alumno</strong></p>
+      <p><strong>Nombre: {{nombreAlumno}}</strong></p>
+      <p><strong>No. de contról: {{ncAlumno}}</strong></p>
+      <p><strong>Correro: {{correoAlumno}}</strong></p>
+      <p><strong>Teléfono: </strong></p>
+      <p><strong>Carrera: {{carreraAlumno}}</strong></p>
+      <p><strong>Especialidad: </strong></p>
+      <p><strong>Mes y Año de egreso: </strong></p>
+      <p><strong>Titulado: </strong></p>
+
+      <div class="row justify-content-center mt-3">                  
+          <div >
+            <button type="button" (click)="goSurvey()" class="btn btn-success">Enviar y Continuar</button>
+          </div>                            
+        </div>
+    </div>
+    </div>
+</div>
+  
+
+

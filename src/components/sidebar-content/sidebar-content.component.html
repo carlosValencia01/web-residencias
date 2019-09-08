@@ -1,4 +1,4 @@
-<div class="sidebar-style">
+<div class="sidebar-style" *ngIf="survey == false">
   <div class="profile-card">
       <img class="profile-icon" [src]="data?.photo || DEFAULT_PROFILE_IMG" alt="">
       <div>

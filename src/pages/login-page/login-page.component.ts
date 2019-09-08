@@ -6,7 +6,7 @@ import { NotificationsServices } from '../../services/notifications.service';
 
 import { UserProvider } from '../../providers/user.prov';
 import { CookiesService } from '../../services/cookie.service';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
@@ -29,7 +29,11 @@ export class LoginPageComponent implements OnInit {
     private userProv: UserProvider,
     private cookiesServ: CookiesService,
     private notificationsServ: NotificationsServices,
-  ) { }
+    private router : Router
+  ) {
+    console.log('login');
+    
+   }
 
   ngOnInit() {
     this.initializeForm();

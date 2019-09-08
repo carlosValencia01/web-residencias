@@ -28,8 +28,8 @@ export class SurveyGraduatesPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     ) {
-      this.nc=this.router.url.split('/')[2];
-      this.id=this.router.url.split('/')[3];
+      this.id=this.router.url.split('/')[2];
+      this.nc=this.router.url.split('/')[3];
 
       this.firestoreService.getActivedEvent().subscribe(
         res => {
@@ -57,4 +57,7 @@ export class SurveyGraduatesPageComponent implements OnInit {
   ngOnInit() {
   }
 
+  goSurvey(event){ 
+    this.router.navigate(['/survey',this.id,this.nc]);  
+  }
 }

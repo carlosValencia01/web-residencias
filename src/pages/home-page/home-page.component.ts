@@ -13,6 +13,7 @@ export class HomePageComponent implements OnInit {
   constructor(
     private cookiesServ: CookiesService,
   ) {
+   
     this.status = this.cookiesServ.getData().user.status;
   }
 
