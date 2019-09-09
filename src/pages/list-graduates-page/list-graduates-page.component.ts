@@ -134,7 +134,8 @@ export class ListGraduatesPageComponent implements OnInit {
           email: alumno.payload.doc.get("correo"),
           status: alumno.payload.doc.get("estatus"),
           degree: alumno.payload.doc.get("degree"),
-          observations: alumno.payload.doc.get("observations")
+          observations: alumno.payload.doc.get("observations"),
+          survey: alumno.payload.doc.get("survey")
         }});
         
         //Ordenar Alumnos por Apellidos
@@ -157,8 +158,9 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
-      degree: item.degree ? item.degree:'',
+      degree: item.degree ? item.degree:false,
       observations: item.observations ? item.observations:'',
+      survey: item.survey ? item.survey:false,
       estatus: 'Pagado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -177,8 +179,9 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
-      degree: item.degree ? item.degree:'',
+      degree: item.degree ? item.degree:false,
       observations: item.observations ? item.observations:'',
+      survey: item.survey ? item.survey:false,
       estatus: 'Registrado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -197,8 +200,9 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
-      degree: item.degree ? item.degree:'',
+      degree: item.degree ? item.degree:false,
       observations: item.observations ? item.observations:'',
+      survey: item.survey ? item.survey:false,
       estatus: 'Asistió'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -716,6 +720,7 @@ export class ListGraduatesPageComponent implements OnInit {
       correo : item.email,
       estatus : item.status,
       observations: item.observations ? item.observations:'',
+      survey: item.survey ? item.survey:false,
       degree : true
     };    
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -736,6 +741,7 @@ export class ListGraduatesPageComponent implements OnInit {
       correo : item.email,
       estatus : item.status,
       observations: item.observations ? item.observations:'',
+      survey: item.survey ? item.survey:false,
       degree : false
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -804,8 +810,9 @@ export class ListGraduatesPageComponent implements OnInit {
       carrera : item.carreer,
       carreraCompleta : item.carreerComplete,
       correo : item.email,
-      degree: item.degree ? item.degree:'',
+      degree: item.degree ? item.degree:false,
       observations: newObservations,
+      survey: item.survey ? item.survey:false,
       estatus: item.status
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {

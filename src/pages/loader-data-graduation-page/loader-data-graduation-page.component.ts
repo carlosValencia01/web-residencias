@@ -113,7 +113,8 @@ export class LoaderDataGraduationPageComponent implements OnInit {
           correo:tmpStudent[5],
           observations:'',
           degree:'',
-          estatus:'Registrado'
+          estatus:'Registrado',
+          survey:false
         });
       }
       if(this.type === "1"){

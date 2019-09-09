@@ -4,6 +4,9 @@ import { NotificationsServices } from '../../services/notifications.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { CookiesService } from 'src/services/cookie.service';
+import { FormControl, FormGroupDirective, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { getLocaleDateFormat } from '@angular/common';
+
 
 @Component({
   templateUrl: './survey-graduates-page.component.html',
@@ -16,10 +19,15 @@ export class SurveyGraduatesPageComponent implements OnInit {
   public data = null;
 
   //Datos del alumno
-  public nombreAlumno = null;
-  public ncAlumno = null;
-  public correoAlumno = null;
-  public carreraAlumno = null;
+  graduateForm: FormGroup;
+  public nombreAlumno:string = null;
+  public ncAlumno:string = null;
+  public correoAlumno:string = null;
+  public telefonoAlumno:string = null;
+  public carreraAlumno:string = null;
+  public especialidadAlumno:string = null;
+  public egresoAlumno: Date = null;
+  public tituloAlumno:string = null;
 
 
   constructor(
@@ -27,37 +35,71 @@ export class SurveyGraduatesPageComponent implements OnInit {
     private notificationsServices: NotificationsServices,
     private cookiesService: CookiesService,
     private router: Router,
+    private formBuilder: FormBuilder,
     ) {
-      this.id=this.router.url.split('/')[2];
-      this.nc=this.router.url.split('/')[3];
-
-      this.firestoreService.getActivedEvent().subscribe(
-        res => {
-          this.eventActived = res[0].payload.doc.id;
-          console.log(this.eventActived);
-
-          this.firestoreService.getGraduate(this.id,this.eventActived).subscribe(
-            res => {
-              this.data = res.payload.data();
-              if(this.data !== undefined){
-                console.log("Alumno encontrado")
-                this.nombreAlumno = this.data.nombreApellidos;
-                this.ncAlumno = this.data.nc;
-                this.correoAlumno = this.data.correo;
-                this.carreraAlumno = this.data.carreraCompleta;
-              }else{
-                console.log("Alumno no encontrado/registrado")
-              }
-            }
-          );
-        }
-      );
-    }
+        this.getAlumnData();
+      }
 
   ngOnInit() {
   }
 
-  goSurvey(event){ 
-    this.router.navigate(['/survey',this.id,this.nc]);  
+  validateForm(){
+    this.graduateForm = this.formBuilder.group({
+      'nombreAlumno' : [this.nombreAlumno, [Validators.required]],
+      'ncAlumno' : [this.ncAlumno, Validators.required],
+      'correoAlumno' : [this.correoAlumno, Validators.required],
+      'telefonoAlumno' : [this.telefonoAlumno, Validators.required],
+      'carreraAlumno' : [this.carreraAlumno, Validators.required],
+      'especialidadAlumno' : [this.especialidadAlumno, Validators.required],
+      'egresoAlumno' : [new Date(this.egresoAlumno), Validators.required],
+      'tituloAlumno' : [this.tituloAlumno,[]],
+    });
+  }
+
+  getAlumnData(){
+    this.id=this.router.url.split('/')[2];
+    this.nc=this.router.url.split('/')[3];
+
+    this.firestoreService.getActivedEvent().subscribe(
+      res => {
+        this.eventActived = res[0].payload.doc.id;
+        this.firestoreService.getGraduate(this.id,this.eventActived).subscribe(
+          res => {
+            this.data = res.payload.data();
+            if(this.data !== undefined){ // Verificar que existan datos de alumno
+              if(!this.data.survey){ // Verificar que la encuesta aun no sea contestada
+                this.nombreAlumno = this.data.nombreApellidos;
+                this.ncAlumno = this.data.nc;
+                this.correoAlumno = this.data.correo;
+                this.telefonoAlumno = this.data.telefono ? this.data.telefono:'Sin número';
+                this.carreraAlumno = this.data.carreraCompleta;
+                this.especialidadAlumno = this.data.especialidad ? this.data.especialidad:'Sin especialidad';
+                this.egresoAlumno = this.data.fechaEgreso ? this.data.fechaEgreso: new Date();
+                this.tituloAlumno = (this.data.degree) ? 'Si':'No';
+                this.validateForm();
+              }else{
+                this.notificationsServices.showNotification(3, 'Encuesta ya fue contestada','');
+              }
+            }
+          }
+        );
+      }
+    );
+  }
+
+  async onFormSubmit(form:NgForm) {
+    await this.saveProfile(this.id,form);
+  }
+
+  async saveProfile(idDoc,data){
+    this.firestoreService.getProfile(idDoc).subscribe(
+      res => {
+          this.firestoreService.createProfile(idDoc,data).then(
+            created=>{
+              this.router.navigate(['/survey',this.id,this.nc]);  
+            }
+          );    
+      }
+    ); 
   }
 }

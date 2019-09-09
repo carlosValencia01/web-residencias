@@ -65,4 +65,13 @@ export class FirebaseService {
     return this.db.collection("eventosG").doc(idEvent).update({estatus:status});
   }
 
+  //crear perfil Alumno
+  public createProfile(idProfile: string, data: any){
+    return this.db.collection("perfilAlumno").doc(idProfile).set(data);
+  }
+
+  //obtener perfil Alumno
+  public getProfile(idProfile: string){
+    return this.db.collection("perfilAlumno").doc(idProfile).snapshotChanges();
+  }
 }

@@ -46,6 +46,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDatepickerModule, MatNativeDateModule, MatRadioModule} from '@angular/material';
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -93,6 +94,7 @@ import { GraduationProvider } from '../providers/graduation.prov';
 import { LoaderComponent } from '../components/shared/loader/loader.component';
 import { ListGraduatesPageComponent } from '../pages/list-graduates-page/list-graduates-page.component';
 import { SurveyGraduatesPageComponent } from '../pages/survey-graduates-page/survey-graduates-page.component';
+import { from } from 'rxjs';
 
 const appRouters: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
@@ -171,7 +173,10 @@ const appRouters: Routes = [
     MatTableModule,
     MatSortModule,
     MatCheckboxModule,
-    MatCardModule
+    MatCardModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRadioModule
   ],
   providers: [
     CookieService,
