@@ -1,7 +1,8 @@
 <div class="content-general" *ngIf="questions.length !== 0">
     <div class="card card-shadow">
        <div class="card-header text-white bg-secondary">
-          <strong>II. PERTINENCIA Y DISPONIBILIDAD DE MEDIOS Y RECURSOS PARA EL APRENDIZAJE</strong>             
+          <p><strong>PERTINENCIA Y DISPONIBILIDAD DE MEDIOS Y RECURSOS PARA EL APRENDIZAJE</strong></p>
+          <p>Califique la calidad de la educación profesional proporcionada por el personal docente, así como el Plan de Estudios de la carrera</p>
        </div>
         <div class="example-container mat-elevation-z8">
             <mat-card class="header-card">
@@ -48,4 +49,31 @@
             </mat-card>           
         </div>
     </div>
-  </div>
+    <div class="container-fluid" *ngIf="questions.length>0; else empty">
+       <div class="container mt-3 p-2" *ngFor="let question of questions | slice:0:1">
+          <div class="row">
+             <div class="col-12 p-3 text-center">
+                {{question.descripcion}}
+             </div>
+          </div>
+          <div class="row justify-content-center">
+             <button class="btn btn-success" (click)="saveAnswer(question.id,'MB')">Muy Buena</button>
+             <button class="btn btn-success ml-1" (click)="saveAnswer(question.id,'B')">Buena</button>
+             <button class="btn btn-success ml-1" (click)="saveAnswer(question.id,'R')">Regular</button>
+             <button class="btn btn-success ml-1" (click)="saveAnswer(question.id,'M')">Mala</button>
+          </div>
+       </div>
+     </div>
+     <ng-template #empty>
+        <div class="container mt-3 p-2 text-center" *ngIf="contesto==true">
+           <div class="form-group">
+              <label for="opinion">Opinión o recomendación para mejorar la formación profesional de un egresado de su carrera</label>
+              <textarea type="textarea" class="form-control" id="opinion"  rows="5" cols="35"></textarea>
+           </div>
+           <div class="row justify-content-center">
+              <button class="btn btn-primary">Guardar encuesta</button>
+           </div>
+        </div>
+     </ng-template>
+     
+</div>
