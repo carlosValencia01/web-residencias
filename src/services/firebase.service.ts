@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -73,5 +74,17 @@ export class FirebaseService {
   //obtener perfil Alumno
   public getProfile(idProfile: string){
     return this.db.collection("perfilAlumno").doc(idProfile).snapshotChanges();
+  }
+
+  //obtener todas las preguntas
+  public getQuestions(){
+    return this.db.collection('preguntasEncuesta').snapshotChanges().pipe(
+      map( data=> data.map( col=> {return {id:col.payload.doc.id, descripcion:col.payload.doc.get('descripcion')}}))
+    );
+  }
+
+  //crear pregunta
+  public setQuestion(question: string, questionNumber : string){
+    return this.db.collection('preguntrasEntuesta').doc(questionNumber).set({descripcion:question});
   }
 }
