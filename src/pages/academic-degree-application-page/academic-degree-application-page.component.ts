@@ -10,7 +10,7 @@ import { CookiesService } from 'src/services/cookie.service';
 })
 export class AcademicDegreeApplicationPageComponent implements OnInit {
   private user: any;
-  private allowSection: boolean;
+  public allowSection: boolean;
 
   constructor(
     private cookiesService: CookiesService,

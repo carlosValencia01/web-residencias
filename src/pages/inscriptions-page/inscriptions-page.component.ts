@@ -17,9 +17,9 @@ import { CookiesService } from 'src/services/cookie.service';
 export class InscriptionsPageComponent implements OnInit {
 
   @ViewChild('emailinput') emailInput: ElementRef;
-  private formEmail: FormGroup;
-  private optionsTemplate: Array<string>;
-  private emails: Array<string>;
+  public formEmail: FormGroup;
+  public optionsTemplate: Array<string>;
+  public emails: Array<string>;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
