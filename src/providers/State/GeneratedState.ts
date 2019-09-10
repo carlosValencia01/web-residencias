@@ -3,10 +3,10 @@ import { RealizedState } from "./RealizedState";
 import { iState } from "./iState";
 import { eRequest } from "src/enumerators/request.enum";
 
-export class ApprovedState extends iState{
+export class GeneratedState extends iState{
     router:string="employeeCard";
     index:number=7;
-    phase: eRequest=  eRequest.APPROVED;
+    phase: eRequest=  eRequest.GENERATED;
     public next(context: ContextState): void {
         ;
     } public back(context: ContextState): void {

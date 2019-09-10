@@ -11,6 +11,10 @@ export class RequestProvider {
             .pipe(map(requests => requests.json()));
     }
 
+    getAllRequestByStatus(role){
+        return this.api.get(`request/phase/${role}`)
+        .pipe(map(requests => requests.json()));
+    }
     getRequestById(_id) {
         return this.api.get(`request/${_id}`)
             .pipe(map(request => request.json()));

@@ -1,9 +1,10 @@
 import { eRequest } from "src/enumerators/request.enum";
-import { RequestState } from "./RequestState";
+import { CapturedState } from "./CapturedState";
 import { VerifiedState } from "./VerifiedState";
 import { iState } from "./iState";
 import { eStatusRequest } from "src/enumerators/statusRequest.enum";
 import { RegisteredState } from "./RegisteredState";
+import { SentState } from "./SentState";
 
 export class ContextState {
     public state: iState;
@@ -12,12 +13,17 @@ export class ContextState {
         console.log("c status",status);
         switch (phase) {
             case eRequest.NONE:{                                
-                this.state = new RequestState();
+                this.state = new CapturedState();
                 this.state.status=status;
                 break;
             }
-            case eRequest.REQUEST: {
-                this.state = new RequestState();
+            case eRequest.CAPTURED: {
+                this.state = new CapturedState();
+                this.state.status=status;
+                break;
+            }
+            case eRequest.SENT: {
+                this.state = new SentState();
                 this.state.status=status;
                 break;
             }

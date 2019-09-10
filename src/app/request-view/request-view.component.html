@@ -193,32 +193,10 @@
         <span *ngIf="isToggle">Con Mención Honorífica</span>
         <span *ngIf="!isToggle">Sin Mención Honorífica</span>
       </button>
-    </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="observations">Observaciones</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-pencil"></i></span>
-        </div>
-        <textarea #observations
-          [ngClass]="(!frmRequest.get('observations').valid && frmRequest.get('observations').touched)?'form-control is-invalid':'form-control'"
-          id="observations" formControlName="observations" placeholder="Observaciones"
-          oninput="this.value = this.value.toUpperCase()"></textarea>
-        <div class="input-group-append" (click)="watchObservations()">
-          <span class="input-group-text">...</span>
-        </div>
-        <div class="invalid-feedback"
-          *ngIf="!frmRequest.get('observations').valid && frmRequest.get('observations').touched">
-          <span *ngIf="frmRequest.get('observations').errors['required']">
-            Observaciones del proyecto obligatorio
-          </span>
-        </div>
-      </div>
+    </div> 
+    <div class="form-group" stlye="padding: 0.375rem 0.75rem">
+      <button type="button" class="btn btn-outline-primary btn-block" (click)="watchObservations()">
+        Observaciones</button>
     </div>
   </form>
 </mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button type="button" class="btn btn-sm btn-success" style="margin-right: 0.3em" (click)="accept()"><i
-      class="fa fa-check-circle-o"></i>Aceptar</button>
-  <button type="button" class="btn btn-sm btn-danger" (click)="reject()"><i class="fa fa-ban"></i>Rechazar</button>
-</mat-dialog-actions>

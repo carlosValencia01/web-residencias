@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-process-component',
@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./process-component.component.scss']
 })
 export class ProcessComponentComponent implements OnInit {
-
+  @Input('Message') Message: String;
   constructor() { }
 
   ngOnInit() {

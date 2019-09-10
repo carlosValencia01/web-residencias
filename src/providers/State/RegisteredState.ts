@@ -6,7 +6,7 @@ import { eRequest } from "src/enumerators/request.enum";
 
 export class RegisteredState extends iState {
     router:string="oneStudentPage";
-    index:number=2;
+    index:number=3;
     phase: eRequest=  eRequest.REGISTERED;
     public next(context: ContextState): void {
         context.state = new ReleasedState();        

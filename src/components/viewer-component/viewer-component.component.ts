@@ -24,7 +24,7 @@ export class ViewerComponentComponent implements OnInit {
     this.oRequest = new uRequest(this._Request, this.imgService);    
     this.PHASE = <eRequest>this._Phase;
     switch (this.PHASE) {
-      case eRequest.APPROVED: {
+      case eRequest.GENERATED: {
         this.message = "Visualizar Petición";
         break;
       }
@@ -32,7 +32,7 @@ export class ViewerComponentComponent implements OnInit {
         this.message = "Visualizar Petición";
         break;
       }
-      case eRequest.SCHEDULED: {
+      case eRequest.ASSIGNED: {
         this.message = "Visualizar Petición";
         break;
       }
@@ -50,10 +50,10 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.VERIFIED: {
-        this.message = "Hoja de Requisitos";
+        this.message = "Registro de Proyecto";
         break;
       }
-      case eRequest.REQUEST: {
+      case eRequest.CAPTURED: {
         this.message = "Visualizar Petición";
         break;
       }
@@ -65,13 +65,13 @@ export class ViewerComponentComponent implements OnInit {
 
   view(): void {    
     switch (this.PHASE) {
-      case eRequest.APPROVED: {
+      case eRequest.GENERATED: {
         break;
       }
       case eRequest.REALIZED: {
         break;
       }
-      case eRequest.SCHEDULED: {
+      case eRequest.ASSIGNED: {
         break;
       }
       case eRequest.VALIDATED: {
@@ -83,14 +83,16 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.REGISTERED: {
+        console.log("registered",this.oRequest);
         window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
         break;
       }
       case eRequest.VERIFIED: {
-        window.open('..\\..\\assets\\imgs\\requirementsSheet.pdf', '_blank');
+        // window.open('..\\..\\assets\\imgs\\requirementsSheet.pdf', '_blank');
+        window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
         break;
       }
-      case eRequest.REQUEST: {
+      case eRequest.CAPTURED: {
         window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
         break;
       }

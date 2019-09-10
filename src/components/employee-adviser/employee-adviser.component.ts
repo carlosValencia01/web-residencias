@@ -125,9 +125,9 @@ export class EmployeeAdviserComponent implements OnInit {
     this.dialogRef.close({ Employee: item.name, Depto: this.departmentInfo });
   }
 
-  onClose(): void {
-    this.dialogRef.close();
-  }
+  // onClose(): void {
+  //   this.dialogRef.close();
+  // }
 }
 interface IAdviserTable {
   name?: string, position?: string, action?: string

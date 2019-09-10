@@ -1,15 +1,16 @@
 import { ContextState } from "./ContextState";
-import { VerifiedState } from "./VerifiedState";
 import { iState } from "./iState";
 import { eRequest } from "src/enumerators/request.enum";
+import { ValidatedState } from "./ValidatedState";
+import { ReleasedState } from "./ReleasedState";
 
-export class RequestState extends iState {  
+export class DeliveredState extends iState {  
     router:string="student";       
     index:number=0;   
-    phase: eRequest=  eRequest.REQUEST;
+    phase: eRequest=  eRequest.CAPTURED;
     public next(context: ContextState): void {        
-        context.state = new VerifiedState();
+        context.state = new ValidatedState();
     } public back(context: ContextState): void {
-
+        context.state = new ReleasedState();
     }
 }

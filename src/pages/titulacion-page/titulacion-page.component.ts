@@ -42,31 +42,49 @@ export class TitulacionPageComponent implements OnInit {
   StatusComponent: eStatusRequest; //Status del proceso actual
   oRequest: uRequest;
 
+  //Mensajes
+  ProcessSentMessage: String = 'En espera de que tú solicitud sea aceptada';
+  CompletedSentMessage: String = 'Tú solicitud ha sido aceptada';
+  ProcessVerifiedMessage: String = 'En espera del registro de tu proyecto';
+  CompletedVerifiedMessage: String = 'Tú proyecto ha sido registrado';
+  ProcessReleasedMessage: String = 'En espera de la liberación del proyecto';
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
 
   constructor(private studentProv: StudentProvider,
-    private _formBuilder: FormBuilder, 
-    private cookiesService: CookiesService, 
-    private imgService: ImageToBase64Service, 
-    private router: Router, 
+    private _formBuilder: FormBuilder,
+    private cookiesService: CookiesService,
+    private imgService: ImageToBase64Service,
+    private router: Router,
     private routeActive: ActivatedRoute,
     private srvNotifications: NotificationsServices) {
 
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
-    }    
+    }
+  }
+
+  ngOnInit() {
     //Obtengo la información de la solicitud del estudiante
     //Si tiene información realizo un casteo de la información a un IRequest
     //Caso contrario genero una peticion de inicio (con solo phase y status)
+    //this.loadRequest();
+  }
+  ngAfterContentInit() {
+    //Obtengo el indice de mi estado y le indico que me posicione en ese Step
+    this.loadRequest();
+
+  }
+
+  loadRequest() {
     this.studentProv.getRequest(this.cookiesService.getData().user._id)
       .subscribe(res => {
         if (res.request.length > 0) {
           this.Request = <iRequest>res.request[0];
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
-          this.oRequest = new uRequest(this.Request, imgService);
+          this.oRequest = new uRequest(this.Request, this.imgService);          
         } else {
           this.Request = {
             phase: eRequest.NONE,
@@ -76,86 +94,88 @@ export class TitulacionPageComponent implements OnInit {
         this.SelectItem();
       }, error => {
         this.srvNotifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-      })
-  }
-
-  ngOnInit() {
-    
+      });
   }
 
   RequestEvent($event) {
-    //Si la petición fue exitosa cambio el estatus de mi fase a "EN PROCESO"
-    if ($event) {     
-      this.Steeps.next();
-      this.Steeps.state.status = eStatusRequest.PROCESS;
-      this.onReload();
-    }    
+    if ($event) {
+      this.loadRequest();
+    }
   }
 
   SelectItem(): void {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
     this.Steeps = new ContextState(phase, status);
-    if (<String>eStatusRequest.ACCEPT === status) {
-      this.Steeps.next();
-    }    
-    this.stepperComponent.selectedIndex = this.Steeps.getIndex();
-    this.StatusComponent = this.Steeps.state.status;    
+    //this.stepperComponent.selectedIndex = this.Steeps.getIndex();
+    this.StatusComponent = this.Steeps.state.status;
     this.enableSteps(phase);
   }
 
 
   //Visualiza el componente donde colocarse
   onReload(): void {
-    //Obtengo el indice de mi estado y le indico que me posicione en ese Step
-    this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     //Obtengo el estatus de ese componente
     this.StatusComponent = this.Steeps.state.status;
     this.enableSteps(this.Steeps.getPhase());
   }
 
   enableSteps(phase: eRequest): void {
-    this.resetSteep();    
+    this.resetSteep();
     switch (phase) {
-      case eRequest.APPROVED: {
+      case eRequest.GENERATED: {
 
       }
       case eRequest.REALIZED: {
 
       }
-      case eRequest.SCHEDULED: {
+      case eRequest.ASSIGNED: {
 
       }
       case eRequest.VALIDATED: {
 
       }
+      case eRequest.DELIVERED: {
+
+      }
       case eRequest.RELEASED: {
-        this.SteepFourCompleted = (phase === eRequest.VALIDATED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        this.SteepFourCompleted = (phase === eRequest.RELEASED ? this.Steeps.state.status === eStatusRequest.NONE : true);
       }
-      case eRequest.REGISTERED: {        
-        this.SteepThreeCompleted = (phase === eRequest.REGISTERED ? this.Steeps.state.status === eStatusRequest.NONE : true);        
+      case eRequest.REGISTERED: {
+        this.SteepFourCompleted = (phase === eRequest.REGISTERED ? this.Steeps.state.status === eStatusRequest.NONE : true);
       }
-      case eRequest.VERIFIED: {        
-        this.SteepTwoCompleted = (phase === eRequest.VERIFIED ? this.Steeps.state.status === eStatusRequest.NONE : true);        
+      case eRequest.VERIFIED: {
+        this.SteepThreeCompleted = (phase === eRequest.VERIFIED ? this.Steeps.state.status === eStatusRequest.NONE : true);
       }
-      case eRequest.REQUEST: {                
-        this.SteepOneCompleted = (phase === eRequest.REQUEST ? this.Steeps.state.status === eStatusRequest.NONE : true);        
+      case eRequest.SENT: {
+        this.SteepTwoCompleted = (phase === eRequest.SENT ? this.Steeps.state.status === eStatusRequest.NONE : true);
+      }
+      case eRequest.CAPTURED: {
+        this.SteepOneCompleted = (phase === eRequest.CAPTURED ? this.Steeps.state.status === eStatusRequest.NONE : true);
       }
       case eRequest.NONE: {
 
       }
     }
-    this.stepperComponent.selectedIndex = this.Steeps.getIndex();
+    (async () => {
+      await this.delay(100);
+      this.stepperComponent.selectedIndex = this.Steeps.getIndex();
+    })();
   }
 
-  resetSteep() {
-    this.SteepOneCompleted = this.SteepTwoCompleted = this.SteepThreeCompleted = false;
+
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
-  valores() {  
+  resetSteep(): void {
+    this.SteepOneCompleted = this.SteepTwoCompleted = this.SteepThreeCompleted = this.SteepFourCompleted = false;
+  }
+  valores() {
     console.log(this.stepperComponent);
-    console.log("STEP INDEX",   this.stepperComponent.selectedIndex);
-    this.stepperComponent.next();
-    console.log("STEP INDEX",   this.stepperComponent.selectedIndex=2);
+    console.log("STEP INDEX", this.stepperComponent.selectedIndex);
+    //this.stepperComponent.next();
+    console.log("STEP INDEX", this.stepperComponent.selectedIndex = 2);
     console.log("values", this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted)
   }
 

@@ -4,10 +4,10 @@ import { RealizedState } from "./RealizedState";
 import { ValidatedState } from "./ValidatedState";
 import { eRequest } from "src/enumerators/request.enum";
 
-export class ScheduledState extends iState {
+export class AssignedState extends iState {
     router: string = "oneStudentPage";
     index: number = 5;
-    phase: eRequest=  eRequest.SCHEDULED;
+    phase: eRequest=  eRequest.ASSIGNED;
     public next(context: ContextState): void {
         context.state = new RealizedState();
     } public back(context: ContextState): void {

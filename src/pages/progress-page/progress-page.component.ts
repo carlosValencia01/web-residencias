@@ -1,4 +1,4 @@
-import { Component, OnInit,  ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { IStudent } from 'src/entities/student.model';
 import { RequestProvider } from 'src/providers/request.prov';
 import { iRequest } from 'src/entities/request.model';
@@ -10,8 +10,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CookiesService } from 'src/services/cookie.service';
 import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { RequestModalComponent } from 'src/modals/request-modal/request-modal.component';
+import { ConfirmDialogComponent } from 'src/components/confirm-dialog/confirm-dialog.component';
+import { eRole } from 'src/enumerators/role.enum';
+import { SteepComponentComponent } from 'src/app/steep-component/steep-component.component';
 @Component({
   selector: 'app-progress-page',
   templateUrl: './progress-page.component.html',
@@ -22,15 +25,16 @@ export class ProgressPageComponent implements OnInit {
   students: IStudent[];
   request: iRequest[];
   displayedColumns: string[];
-  statusOptions: {icon: string,option:string}[];
+  statusOptions: { icon: string, option: string }[];
   dataSource: MatTableDataSource<iRequestSource>;
   search: string;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  constructor(private requestProvider: RequestProvider,   
-    public dialog: MatDialog, 
+  constructor(private requestProvider: RequestProvider,
+    public dialog: MatDialog,
     private notifications: NotificationsServices, private cookiesService: CookiesService,
     private router: Router, private routeActive: ActivatedRoute) {
+      console.log("cookie", this.cookiesService.getData());
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -38,27 +42,47 @@ export class ProgressPageComponent implements OnInit {
 
   ngOnInit() {
     this.loadRequest();
-    this.displayedColumns=["controlNumber","fullName","career","phase","status","applicationDateLocal","action"]  ;
-    this.statusOptions=[
-      {icon:"accessibility_new", option:"Todos"},
-      {icon:"mail", option:"Solicitado"},
-      {icon:"verified_user", option:"Verificado"},
-      {icon:"how_to_vote", option:"Registrado"},
-      {icon:"lock_open", option:"Liberado"},
-      {icon:"thumb_up", option:"Validado"},
-      {icon:"today", option:"Agendado"},
-      {icon:"gavel", option:"Realizado"},
-      {icon:"school", option:"Aprobado"}
+    this.displayedColumns = ["controlNumber", "fullName", "career", "phase", "status", "applicationDateLocal", "action"];
+    this.statusOptions = [
+      { icon: "accessibility_new", option: "Todos" },
+      { icon: "mail", option: "Solicitado" },
+      { icon: "verified_user", option: "Verificado" },
+      { icon: "how_to_vote", option: "Registrado" },
+      { icon: "lock_open", option: "Liberado" },
+      { icon: "thumb_up", option: "Validado" },
+      { icon: "today", option: "Agendado" },
+      { icon: "gavel", option: "Realizado" },
+      { icon: "school", option: "Aprobado" }
     ]
   }
 
   loadRequest(): void {
-    this.requestProvider.getAllRequest().subscribe(
+    let filter="";    
+    switch(this.cookiesService.getData().user.rol.name){     
+      case eRole.CHIEFACADEMIC:{
+        filter='jefe';
+        break;    
+      }
+      case eRole.COORDINATION:{
+        filter='coordinacion';
+        break;    
+      }
+      case eRole.SECRETARY:{
+        filter='secretaria';
+        break;    
+      }
+      default:{
+        filter='administration';
+        break;    
+      }
+    }
+
+    this.requestProvider.getAllRequestByStatus(filter).subscribe(
       res => {
         this.request = [];
         res.request.forEach(element => {
           let tmp: iRequest = <iRequest>element;
-          tmp._id=element._id;
+          tmp._id = element._id;
           tmp.status = this.convertStatus(tmp.status);
           tmp.controlNumber = element.studentId.controlNumber;
           tmp.career = element.studentId.career;
@@ -67,18 +91,18 @@ export class ProgressPageComponent implements OnInit {
           tmp.studentId = element.studentId._id;
           tmp.applicationDateLocal = new Date(tmp.applicationDate).toLocaleDateString();
           this.request.push(tmp);
-        });        
+        });
         this.refresh();
       },
       error => {
         this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error)
       });
   }
- 
-  refresh():void{
+
+  refresh(): void {
     this.dataSource = new MatTableDataSource(this.request);
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;  
+    this.dataSource.sort = this.sort;
   }
 
   convertStatus(status: string): string {
@@ -111,12 +135,29 @@ export class ProgressPageComponent implements OnInit {
   }
 
   //Abre el formulario de Solicitud
-  openRequestForm(Identificador): void {    
+  checkRequest(Identificador): void {
     const ref = this.dialog.open(RequestModalComponent, {
       data: {
         Id: Identificador
-      },  
-      width: '45em'      
+      },
+      width: '45em'
+    });
+
+    ref.afterClosed().subscribe((valor: any) => {
+      if (valor) {
+        this.loadRequest();
+      }
+    }, error => {
+      this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+    });
+  }
+
+  Verified(Identificador):void{
+    const ref = this.dialog.open(SteepComponentComponent, {
+      data: {
+        Request: Identificador
+      },
+      width: '60em'
     });
 
     ref.afterClosed().subscribe((valor: any) => {
@@ -127,9 +168,37 @@ export class ProgressPageComponent implements OnInit {
       this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
     })
   }
+  
 
   acceptRequest(Identificador): void {
-    // console.log("IDENTIFICADOR", Identificador);
+    let data = {
+      doer: this.cookiesService.getData().user.name.fullName,
+      observation: 'No es viable',
+      operation: eStatusRequest.ACCEPT
+    };
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '350px',
+      data: "¿Está seguro de confirma esta solicitud?'"
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.requestProvider.updateRequest(Identificador, data).subscribe(data => {
+          this.notifications.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Actualizada");
+          this.loadRequest();
+        }, error => {
+          this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", error);
+        });
+      } else {
+        data.operation = eStatusRequest.REJECT;
+        this.requestProvider.updateRequest(Identificador, data).subscribe(data => {
+          this.notifications.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Actualizada");
+          this.loadRequest();
+        }, error => {
+          this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", error);
+        });
+      }
+    });
+    
     // let data = {
     //   doer: this.cookiesService.getData().user.name.fullName,
     //   observation: 'No es viable',

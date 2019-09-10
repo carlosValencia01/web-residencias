@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { StudentProvider } from 'src/providers/student.prov';
 import { CookiesService } from 'src/services/cookie.service';
@@ -16,6 +16,7 @@ import { EmployeeAdviserComponent } from 'src/components/employee-adviser/employ
 import { IntegrantsComponentComponent } from 'src/components/integrants-component/integrants-component.component';
 import { iIntegrant } from 'src/entities/integrant.model';
 import { MatDialog } from '@angular/material';
+import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
 
 @Component({
   selector: 'app-request-component',
@@ -37,10 +38,11 @@ export class RequestComponentComponent implements OnInit {
   private resource: string;
   private employees: IEmployee[];
   private isToggle: boolean = false;
-  public observations:string;
+  public observations: string;
   private viewObservation: boolean = false;
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
+  public isEdit: boolean = false;
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -67,20 +69,24 @@ export class RequestComponentComponent implements OnInit {
         Validators.pattern("^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$")]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
         "project": new FormControl(null, Validators.required),
-        "product": new FormControl(null, Validators.required),
+        "product": new FormControl({ value: 'MEMORIA DE RESIDENCIA PROFESIONAL', disabled: true }, Validators.required),
         "observations": new FormControl(null),
         "adviser": new FormControl({ value: '', disabled: true }, Validators.required),
         "noIntegrants": new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
         "dateProposed": new FormControl(null, Validators.required),
         "honorific": new FormControl(false, Validators.required)
       });
+      this.getRequest();
+  }
 
-    this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {
+  getRequest() {
+    this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {      
       if (typeof (res) !== 'undefined' && res.request.length > 0) {
         this.loadRequest(res);
         this.operationMode = eOperation.EDIT;
-        this.observations=this.request.observation;
-        this.viewObservation=true;            
+        this.observations = this.request.observation;
+        if (this.request.status === eStatusRequest.REJECT)
+          this.viewObservation = true;
       } else {
         this.operationMode = eOperation.NEW;
       }
@@ -88,10 +94,11 @@ export class RequestComponentComponent implements OnInit {
       this.operationMode = eOperation.NEW;
     });
   }
-
-  revisedView():void{
-    this.viewObservation=false;
+  
+  revisedView(): void {
+    this.viewObservation = false;
   }
+
   assignName(): void {
     let nameArray = this.request.student.fullName.split(/\s*\s\s*/);
     let name = "";
@@ -108,7 +115,9 @@ export class RequestComponentComponent implements OnInit {
     this.request.student = request.request[0].studentId;
     this.request.studentId = this.request.student._id;
     this.integrants = this.request.integrants;
+    this.request.status
     this.assignName();
+    
     this.frmRequest.setValue({
       'name': this.request.student.name,
       'lastname': this.request.student.lastName,
@@ -122,6 +131,7 @@ export class RequestComponentComponent implements OnInit {
       'dateProposed': this.dateFormat.transform(this.request.proposedDate, 'yyyy-MM-dd'),
       'honorific': this.request.honorificMention,
     });
+    this.disabledControl();
     this.isToggle = this.request.honorificMention
     this.studentProvider.getResource(this.request.studentId, eFILES.PROYECTO).subscribe(
       data => {
@@ -130,6 +140,45 @@ export class RequestComponentComponent implements OnInit {
     );
   }
 
+  Edit(): void {
+    this.isEdit = !this.isEdit;
+    this.disabledControl();
+  }
+  disabledControl(): void {
+    this.frmRequest.get('name').markAsUntouched();
+    this.frmRequest.get('lastname').markAsUntouched();
+    this.frmRequest.get('telephone').markAsUntouched();
+    this.frmRequest.get('email').markAsUntouched();
+    this.frmRequest.get('project').markAsUntouched();
+    this.frmRequest.get('observations').markAsUntouched();    
+    this.frmRequest.get('noIntegrants').markAsUntouched();
+    this.frmRequest.get('dateProposed').markAsUntouched();
+    this.frmRequest.get('honorific').markAsUntouched();
+
+    if (this.isEdit) {
+      this.frmRequest.get('name').enable();
+      this.frmRequest.get('lastname').enable();
+      this.frmRequest.get('telephone').enable();
+      this.frmRequest.get('email').enable();
+      this.frmRequest.get('project').enable();
+      this.frmRequest.get('observations').enable();
+      this.frmRequest.get('adviser').disable();
+      this.frmRequest.get('noIntegrants').enable();
+      this.frmRequest.get('dateProposed').enable();
+      this.frmRequest.get('honorific').enable();
+    } else {
+      this.frmRequest.get('name').disable();
+      this.frmRequest.get('lastname').disable();
+      this.frmRequest.get('telephone').disable();
+      this.frmRequest.get('email').disable();
+      this.frmRequest.get('project').disable();
+      this.frmRequest.get('observations').disable();
+      this.frmRequest.get('adviser').disable();
+      this.frmRequest.get('noIntegrants').disable();
+      this.frmRequest.get('dateProposed').disable();
+      this.frmRequest.get('honorific').disable();
+    }
+  }
   onUpload(event): void {
     if (event.target.files && event.target.files[0]) {
       this.fileData = event.target.files[0];
@@ -158,7 +207,7 @@ export class RequestComponentComponent implements OnInit {
     );
   }
 
-  onSave(event): void {
+  onSave(): void {
     let errorExists = false;
     if (!this.isLoadFile && this.operationMode === eOperation.NEW) {
       this.notificationsServ.showNotification(eNotificationType.ERROR, '', 'No se ha cargado archivo de portada');
@@ -167,7 +216,7 @@ export class RequestComponentComponent implements OnInit {
 
     if (this.frmRequest.get('noIntegrants').value > 1 && (typeof (this.integrants) === 'undefined' || this.integrants.length == 0)) {
       this.frmRequest.get('noIntegrants').setErrors({ 'notEntered': true })
-      this.frmRequest.get("noIntegrants").markAsTouched();      
+      this.frmRequest.get("noIntegrants").markAsTouched();
       errorExists = true;
     }
 
@@ -204,7 +253,7 @@ export class RequestComponentComponent implements OnInit {
         this.frmData.append('boss', this.deptoInfo.boss);
         this.studentProvider.request(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(data => {
-            this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Enviada Correctamente");
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Guardada Correctamente");
             this.btnSubmitRequest.emit(true);
           }, error => {
             this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
@@ -220,7 +269,9 @@ export class RequestComponentComponent implements OnInit {
       case eOperation.EDIT: {
         this.studentProvider.updateRequest(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(data => {
-            this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Enviada Correctamente");
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Editada Correctamente");            
+            this.isEdit = false;
+            this.getRequest();            
             this.btnSubmitRequest.emit(true);
           }, error => {
             this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
@@ -235,6 +286,20 @@ export class RequestComponentComponent implements OnInit {
     }
   }
 
+  Send(): void {
+    let data = {
+      operation: eStatusRequest.ACCEPT,
+      doer: this.cookiesService.getData().user.name.fullName
+    };
+    this.requestProvider.updateRequest(this.request._id, data).subscribe(data => {
+      this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Enviada");
+      this.btnSubmitRequest.emit(true);
+    }, error => {
+      this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
+      this.btnSubmitRequest.emit(false);
+    });
+  }
+
   valor(): void {
     console.log(typeof (this.frmRequest.get('adviser').value) === 'undefined')
     console.log(!(this.frmRequest.get('adviser').value))
@@ -247,12 +312,13 @@ export class RequestComponentComponent implements OnInit {
       data: {
         carrer: this.userInformation.career
       },
+      disableClose: true,
+      hasBackdrop: true,
       width: '45em'
     });
 
     ref.afterClosed().subscribe((result) => {
       if (result) {
-        console.log("result", result.Employee.name);
         this.frmRequest.patchValue({ 'adviser': result.Employee });
         //if(this.operationMode===eOperation.NEW)
         this.deptoInfo = result.Depto;
@@ -264,7 +330,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmRequest.get('noIntegrants').setErrors(null);
     const ref = this.dialog.open(IntegrantsComponentComponent, {
       data: {
-        integrants: this.operationMode === eOperation.NEW ? [] : this.request.integrants
+        integrants: this.operationMode === eOperation.NEW ? (typeof (this.integrants) !== 'undefined' ? this.integrants : []) : this.request.integrants
       },
       width: '45em'
     });

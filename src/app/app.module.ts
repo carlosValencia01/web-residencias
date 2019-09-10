@@ -74,6 +74,9 @@ import { ObservationsComponentComponent } from 'src/components/observations-comp
 import { IntegrantsComponentComponent } from 'src/components/integrants-component/integrants-component.component';
 import { RequestProvider } from 'src/providers/request.prov';
 import { ProgressPageComponent } from 'src/pages/progress-page/progress-page.component';
+import { ConfirmDialogComponent } from 'src/components/confirm-dialog/confirm-dialog.component';
+import { SteepComponentComponent } from './steep-component/steep-component.component';
+import { RequestViewComponent } from './request-view/request-view.component';
 
 
 @NgModule({
@@ -102,7 +105,10 @@ import { ProgressPageComponent } from 'src/pages/progress-page/progress-page.com
     ObservationsComponentComponent,
     IntegrantsComponentComponent,
     ProgressPageComponent,
-    RequestModalComponent
+    RequestModalComponent,
+    ConfirmDialogComponent,
+    SteepComponentComponent,
+    RequestViewComponent
   ],
   imports: [
     BrowserModule,
@@ -165,7 +171,9 @@ import { ProgressPageComponent } from 'src/pages/progress-page/progress-page.com
     EmployeeAdviserComponent,
     ObservationsComponentComponent,
     IntegrantsComponentComponent,
-    RequestModalComponent
+    RequestModalComponent,
+    ConfirmDialogComponent,
+    SteepComponentComponent
   ],
   bootstrap: [AppComponent]
 })

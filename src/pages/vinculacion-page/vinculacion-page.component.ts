@@ -143,33 +143,33 @@ export class VinculacionPageComponent implements OnInit {
   }
 
   addNewStudent() {
-    // const ref = this.dialog.open(EnglishComponent, {      
-    //   width: '45em',      
-    // });
+    const ref = this.dialog.open(EnglishComponent, {      
+      width: '45em',      
+    });
 
-    // ref.afterClosed().subscribe((student: IStudent) => {
-    //   if (student) {
-    //     student.document = { type: "Ingles", "status": "Activo" };
-    //     this.studentProvider.csvAddStudentEnglish(student).subscribe(data => {          
-    //       let student: IStudent = {
-    //         _id: data.student._id,
-    //         controlNumber: data.student.controlNumber,
-    //         fullName: data.student.fullName,
-    //         career: data.student.career,
-    //         english: new Date(data.student.documents[0].releaseDate).toLocaleDateString()
-    //       };
-    //       let i=this.students.findIndex(x=>x._id=student._id);
-    //       if(i!==-1)
-    //         this.students[i]=student
-    //       else
-    //         this.students.push(student);
-    //       this.refresh();
-    //       this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante agregado exitosamente', '');
-    //     }, error => {
-    //       this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
-    //     });
-    //   }
-    // });
+    ref.afterClosed().subscribe((student: IStudent) => {
+      if (student) {
+        student.document = { type: "Ingles", "status": "Activo" };
+        this.studentProvider.csvAddStudentEnglish(student).subscribe(data => {          
+          let student: IStudent = {
+            _id: data.student._id,
+            controlNumber: data.student.controlNumber,
+            fullName: data.student.fullName,
+            career: data.student.career,
+            english: new Date(data.student.documents[0].releaseDate).toLocaleDateString()
+          };
+          let i=this.students.findIndex(x=>x._id=student._id);
+          if(i!==-1)
+            this.students[i]=student
+          else
+            this.students.push(student);
+          this.refresh();
+          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante agregado exitosamente', '');
+        }, error => {
+          this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
+        });
+      }
+    });
   }
 
   onRowRemove(row: IStudent) {

@@ -1,26 +1,24 @@
-import { Component, OnInit, Output, EventEmitter, Inject, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, OnInit, Output, ViewChild, EventEmitter, ElementRef, Input } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { iRequest } from 'src/entities/request.model';
+import { iIntegrant } from 'src/entities/integrant.model';
 import { StudentProvider } from 'src/providers/student.prov';
 import { CookiesService } from 'src/services/cookie.service';
-import { eFILES } from 'src/enumerators/document.enum';
-import { NotificationsServices } from 'src/services/notifications.service';
-import { eNotificationType } from 'src/enumerators/notificationType.enum';
 import { RequestProvider } from 'src/providers/request.prov';
 import { DatePipe } from '@angular/common';
-import { iRequest } from 'src/entities/request.model';
-import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
-import { Router, ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { NotificationsServices } from 'src/services/notifications.service';
+import { eNotificationType } from 'src/enumerators/notificationType.enum';
+import { eFILES } from 'src/enumerators/document.enum';
 import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
-import { iIntegrant } from 'src/entities/integrant.model';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  selector: 'app-request-modal',
-  templateUrl: './request-modal.component.html',
-  styleUrls: ['./request-modal.component.scss']
+  selector: 'app-request-view',
+  templateUrl: './request-view.component.html',
+  styleUrls: ['./request-view.component.scss']
 })
-export class RequestModalComponent implements OnInit {
-  @Output('onSubmit') btnSubmitRequest = new EventEmitter<boolean>();
+export class RequestViewComponent implements OnInit {
+  @Input('Request') RequestId: String;
   @ViewChild('observations') txtObservation: ElementRef;
   public frmRequest: FormGroup;
   private fileData: any;
@@ -31,19 +29,15 @@ export class RequestModalComponent implements OnInit {
   private isLoadImage: boolean;
   private resource: string;
   private integrants: Array<iIntegrant> = [];
-
-  // private msnObservations: Message[] = [];    
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
     private notificationsServ: NotificationsServices,
     private requestProvider: RequestProvider,
     private dateFormat: DatePipe,
-    private router: Router,
-    private routeActive: ActivatedRoute, public dialog: MatDialog, public dialogRef: MatDialogRef<RequestModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialog: MatDialog
   ) {
-    this.userInformation = this.cookiesService.getData().user;
+    console.log("VIEW RES", this.RequestId);
   }
 
   ngOnInit() {
@@ -62,13 +56,14 @@ export class RequestModalComponent implements OnInit {
         "dateProposed": new FormControl({ value: null, disabled: true }, Validators.required),
         "honorific": new FormControl({ value: false, disabled: true }, Validators.required)
       });
+  }
 
-    this.requestProvider.getRequestById(this.data.Id).subscribe(res => {
+  ngAfterContentInit() {
+    this.requestProvider.getRequestById(this.RequestId).subscribe(res => {
       this.loadRequest(res);
     }, error => {
       this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
     });
-
   }
   assignName(): void {
     let nameArray = this.request.student.fullName.split(/\s*\s\s*/);
@@ -123,40 +118,6 @@ export class RequestModalComponent implements OnInit {
     }
   }
 
-  accept(): void {
-    let data = {
-      doer: this.cookiesService.getData().user.name.fullName,
-      operation: eStatusRequest.ACCEPT,
-      observation: this.frmRequest.get('observations').value
-    };
-    this.updateRequest(data);
-  }
-
-  reject(): void {
-    let observation = String(this.frmRequest.get('observations').value).trim();
-    if (typeof (observation) === 'undefined' || observation === '') {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', 'Es necesario agregar una observación');
-      this.txtObservation.nativeElement.focus();
-      return;
-    }
-    let data = {
-      doer: this.cookiesService.getData().user.name.fullName,
-      observation: observation,
-      operation: eStatusRequest.REJECT,
-      phase: this.request.phase
-    };
-    this.updateRequest(data);
-  }
-
-  updateRequest(data: any) {
-    this.requestProvider.updateRequest(this.request._id, data).subscribe(data => {
-      this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Actualizada");
-      this.dialogRef.close(true);
-    }, error => {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
-      this.dialogRef.close(false);
-    });
-  }
 
   watchObservations(): void {
     const ref = this.dialog.open(ObservationsComponentComponent, {
@@ -167,4 +128,5 @@ export class RequestModalComponent implements OnInit {
       width: '45em',
     });
   }
+
 }

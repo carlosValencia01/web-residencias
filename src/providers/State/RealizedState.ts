@@ -1,7 +1,7 @@
 import { ContextState } from "./ContextState";
 import { iState } from "./iState";
-import { ApprovedState } from "./ApprovedState";
-import { ScheduledState } from "./ScheduledState";
+import { GeneratedState } from "./GeneratedState";
+import {  AssignedState } from "./AssignedState";
 import { eRequest } from "src/enumerators/request.enum";
 
 export class RealizedState extends iState {
@@ -9,8 +9,8 @@ export class RealizedState extends iState {
     index:number=6;
     phase: eRequest=  eRequest.REALIZED;
     public next(context: ContextState): void {
-        context.state = new ApprovedState();        
+        context.state = new GeneratedState();        
     } public back(context: ContextState): void {
-        context.state = new ScheduledState();
+        context.state = new AssignedState();
     }
 }
