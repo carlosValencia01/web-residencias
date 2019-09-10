@@ -95,12 +95,12 @@
                                        <img src="../../assets/icons/paid.svg" class="action" (click)="confirmPaidEvent(item)">
                                  </div>
                               </td>
-                              <td *ngIf="item.status === 'Verificado' && role === 'comunication' || item.status === 'Verificado' && role === 'administration'">
+                              <td *ngIf="item.status === 'Verificado' && role === 'administration'">
                                  <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/sendEmail.svg" class="action" (click)="confirmSendEmail(item)">
                                  </div>
                               </td>
-                              <td *ngIf="item.status === 'Verificado' && role === 'comunication' || item.status === 'Verificado' && role === 'administration'">
+                              <td *ngIf="item.status === 'Verificado' && role === 'administration'">
                                  <div class="div-img" ngbTooltip="Enviar Encuesta" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/survey.svg" class="action" (click)="confirmSendEmailSurvey(item)">
                                  </div>
@@ -154,7 +154,7 @@
                                     <img src="../../assets/icons/pdfReport.svg" class="action" (click)="generateReport()">
                                  </div>
                               </td>    
-                              <td *ngIf="role === 'comunication' || role === 'administration'">
+                              <td *ngIf="role === 'administration'">
                                  <div class="div-img" ngbTooltip="Enviar a todos" tooltipClass="my-custom-class">
                                     <img src="../../assets/icons/sendAllEmail.svg" class="action" (click)="confirmSendEmailAll()">
                                  </div>
