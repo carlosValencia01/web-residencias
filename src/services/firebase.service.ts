@@ -74,4 +74,14 @@ export class FirebaseService {
   public getProfile(idProfile: string){
     return this.db.collection("perfilAlumno").doc(idProfile).snapshotChanges();
   }
+
+  //obtener preguntas Encuestra
+  public getQuestionsSurvey(){
+    return this.db.collection("preguntasEncuesta").snapshotChanges();
+  }
+
+  //guardar respuestas Encuesta
+  public saveAnswersQuestions(idAnswer: string, data: any){
+    return this.db.collection("respuestasEncuesta").doc(idAnswer).set({respuestas:data});
+  }
 }

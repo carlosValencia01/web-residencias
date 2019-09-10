@@ -256,7 +256,7 @@ export class CardEmployeePageComponent implements OnInit {
             doc.addImage(this.imageProfileTest, 'JPEG', 3.6, 7.1, 25.8, 31);
 
             doc.setTextColor(27, 57, 106);
-            doc.setFontSize(8);
+            doc.setFontSize(7);
             doc.setFont('helvetica');
             doc.setFontType('bold');
             doc.text(49, 23.9, doc.splitTextToSize(employee.name.fullName, 38));

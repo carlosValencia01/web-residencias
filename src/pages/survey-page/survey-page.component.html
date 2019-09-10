@@ -1,9 +1,51 @@
-<div class="content-general">
+<div class="content-general" *ngIf="questions.length !== 0">
     <div class="card card-shadow">
        <div class="card-header text-white bg-secondary">
           <strong>II. PERTINENCIA Y DISPONIBILIDAD DE MEDIOS Y RECURSOS PARA EL APRENDIZAJE</strong>             
        </div>
         <div class="example-container mat-elevation-z8">
+            <mat-card class="header-card">
+               <div class="header">
+                  <mat-card-header>
+                     <mat-card-title>            
+                        <h6>Califique la calidad de la educación profesional proporcionada por el personal docente, así como el Plan de Estudios de la carrera que cursó y las condiciones del plantel en cuanto a la infraestructura</h6>  
+                     </mat-card-title>
+                  </mat-card-header>
+               </div>
+            </mat-card>  
+            <mat-card class="body-card">
+               <div class="header">
+                  <mat-card-header>
+                     <mat-card-title><h3>{{contQuestion+1}}.- {{questions[contQuestion].descripcion}}:</h3></mat-card-title>
+                  </mat-card-header>
+               </div>
+               <mat-card-content>
+                  <table class="table table-striped">
+                     <tr>
+                        <td>
+                           <div class="div-img" ngbTooltip="Muy Buena" tooltipClass="my-custom-class" (click)="nextQuestion('Muy Buena')">
+                              <img src="../../assets/survey/encuestaMB.png" class="action">
+                           </div>
+                        </td>
+                        <td>
+                           <div class="div-img" ngbTooltip="Buena" tooltipClass="my-custom-class" (click)="nextQuestion('Buena')">
+                              <img src="../../assets/survey/encuestaB.png" class="action">
+                           </div>
+                        </td>
+                        <td>
+                           <div class="div-img" ngbTooltip="Regular" tooltipClass="my-custom-class" (click)="nextQuestion('Regular')">
+                              <img src="../../assets/survey/encuestaR.png" class="action">
+                           </div>
+                        </td>
+                        <td>
+                           <div class="div-img" ngbTooltip="Mala" tooltipClass="my-custom-class" (click)="nextQuestion('Mala')">
+                              <img src="../../assets/survey/encuestaMM.png" class="action">
+                           </div>
+                        </td>
+                     </tr>
+                  </table>
+               </mat-card-content>
+            </mat-card>           
         </div>
     </div>
   </div>
