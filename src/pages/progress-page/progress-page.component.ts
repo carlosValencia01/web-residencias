@@ -140,6 +140,8 @@ export class ProgressPageComponent implements OnInit {
       data: {
         Id: Identificador
       },
+      disableClose: true,
+      hasBackdrop: true,
       width: '45em'
     });
 
@@ -157,6 +159,8 @@ export class ProgressPageComponent implements OnInit {
       data: {
         Request: Identificador
       },
+      disableClose: true,
+      hasBackdrop: true,
       width: '60em'
     });
 
@@ -169,7 +173,6 @@ export class ProgressPageComponent implements OnInit {
     });
   }
 
-
   acceptRequest(Identificador): void {
     const data = {
       doer: this.cookiesService.getData().user.name.fullName,
@@ -178,11 +181,13 @@ export class ProgressPageComponent implements OnInit {
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
+      disableClose: true,
+      hasBackdrop: true,
       data: '¿Está seguro de confirma esta solicitud?\''
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.requestProvider.updateRequest(Identificador, data).subscribe(data => {
+        this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
           this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.loadRequest();
         }, error => {
@@ -190,7 +195,7 @@ export class ProgressPageComponent implements OnInit {
         });
       } else {
         data.operation = eStatusRequest.REJECT;
-        this.requestProvider.updateRequest(Identificador, data).subscribe(data => {
+        this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
           this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.loadRequest();
         }, error => {
@@ -228,6 +233,7 @@ export class ProgressPageComponent implements OnInit {
     // });
   }
 }
+
 interface iRequestSource {
   _id?: string;
   controlNumber?: string;

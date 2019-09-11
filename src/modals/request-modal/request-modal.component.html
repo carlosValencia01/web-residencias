@@ -1,4 +1,13 @@
-<h1 mat-dialog-title>Solicitud</h1>
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title>Solicitud</h1>
+  </div>
+  <div class="col-2">
+    <button mat-icon-button [mat-dialog-close] class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
 <mat-dialog-content>
   <form [formGroup]="frmRequest">
     <div class="form-group">

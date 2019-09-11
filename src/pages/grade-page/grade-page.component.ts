@@ -108,6 +108,8 @@ export class GradePageComponent implements OnInit {
           Employee: employee,
           Operation: eOperation.EDIT
         },
+        disableClose: true,
+        hasBackdrop: true,
         width: '45em'
       });
 
@@ -145,6 +147,8 @@ export class GradePageComponent implements OnInit {
       data: {
         Operation: eOperation.NEW
       },
+      disableClose: true,
+      hasBackdrop: true,
       width: '45em',
     });
 

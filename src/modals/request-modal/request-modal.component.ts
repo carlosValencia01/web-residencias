@@ -164,6 +164,8 @@ export class RequestModalComponent implements OnInit {
         phase: 'Solicitado',
         request: this.request
       },
+      disableClose: true,
+      hasBackdrop: true,
       width: '45em',
     });
   }

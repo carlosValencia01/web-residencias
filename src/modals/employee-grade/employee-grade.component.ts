@@ -43,7 +43,7 @@ export class EmployeeGradeComponent implements OnInit {
       grade: []
     };
 
-    if (this.Operation == eOperation.EDIT) {
+    if (this.Operation === eOperation.EDIT) {
       this.Employee = <IEmployee>data.Employee;
       this.title = 'Editar Empleado';
     }
@@ -53,10 +53,10 @@ export class EmployeeGradeComponent implements OnInit {
   ngOnInit() {
     this.frmNewEmployeGrade = new FormGroup({
       'name': new FormControl(
-        (this.Operation == eOperation.EDIT ? this.Employee.name.firstName : null), Validators.required),
-      'lastname': new FormControl((this.Operation == eOperation.EDIT ? this.Employee.name.lastName : null), Validators.required),
-      'area': new FormControl((this.Operation == eOperation.EDIT ? this.Employee.area : null), Validators.required),
-      'position': new FormControl((this.Operation == eOperation.EDIT ? this.Employee.position : null), Validators.required)
+        (this.Operation === eOperation.EDIT ? this.Employee.name.firstName : null), Validators.required),
+      'lastname': new FormControl((this.Operation === eOperation.EDIT ? this.Employee.name.lastName : null), Validators.required),
+      'area': new FormControl((this.Operation === eOperation.EDIT ? this.Employee.area : null), Validators.required),
+      'position': new FormControl((this.Operation === eOperation.EDIT ? this.Employee.position : null), Validators.required)
     });
 
     this.grades = this.Employee.grade;
@@ -75,6 +75,8 @@ export class EmployeeGradeComponent implements OnInit {
       data: {
         Operation: eOperation.NEW
       },
+      disableClose: true,
+      hasBackdrop: true,
       width: '40em'
     });
 
@@ -95,6 +97,7 @@ export class EmployeeGradeComponent implements OnInit {
     this.grades = this.grades.slice();
     this.refresh();
   }
+
   onSubmit() {
     this.Employee = {
       _id: this.Employee._id,
@@ -113,7 +116,6 @@ export class EmployeeGradeComponent implements OnInit {
     this.dialogRef.close();
   }
 }
-
 
 interface IGradeTable {
   title?: string; cedula?: string; level?: string; action?: string;

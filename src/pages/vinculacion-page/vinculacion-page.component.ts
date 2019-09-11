@@ -145,6 +145,8 @@ export class VinculacionPageComponent implements OnInit {
   addNewStudent() {
     const ref = this.dialog.open(EnglishComponent, {
       width: '45em',
+      disableClose: true,
+      hasBackdrop: true,
     });
 
     ref.afterClosed().subscribe((student: IStudent) => {
