@@ -8,7 +8,7 @@
     </div>
     <div *ngIf="!SteepOneCompleted">
       <div [ngSwitch]="StatusComponent">
-        <app-request-component *ngSwitchCase="'Process'" (onSubmit)=" RequestEvent($event)"></app-request-component>
+        <app-request-component *ngSwitchCase="'Process'" (onSubmit)=" RequestEvent($event)" [request]="Request"></app-request-component>
         <app-request-component *ngSwitchDefault (onSubmit)=" RequestEvent($event)"></app-request-component>
       </div>
     </div>

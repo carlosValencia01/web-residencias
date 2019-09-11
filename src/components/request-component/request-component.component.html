@@ -240,12 +240,14 @@
     <div class="card-footer text-right" [ngSwitch]="operationMode">
       <div *ngSwitchCase="0">
         <button type="submit" class="btn btn-outline-success" style="margin-right: 0.3em"
-                [disabled]="frmRequest.invalid">Guardar
+                [disabled]="frmRequest.invalid"> Guardar
         </button>
         <button type="reset" class="btn btn-outline-danger"> Reiniciar</button>
       </div>
       <div *ngSwitchDefault>
         <div *ngIf="!isEdit">
+          <button type="button" (click)="generateRequestPDF()" class="btn btn-outline-secondary"
+                  style="margin-right: 0.3em"> Generar</button>
           <button type="buton" class="btn btn-outline-success" style="margin-right: 0.3em" (click)="Edit()"> Editar
           </button>
           <button type="button" (click)="Send()" class="btn btn-outline-primary"> Enviar</button>

@@ -17,6 +17,8 @@ import { IntegrantsComponentComponent } from 'src/components/integrants-componen
 import { iIntegrant } from 'src/entities/integrant.model';
 import { MatDialog } from '@angular/material';
 import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
+import { uRequest } from 'src/entities/request';
+import { ImageToBase64Service } from 'src/services/img.to.base63.service';
 
 @Component({
   selector: 'app-request-component',
@@ -24,6 +26,7 @@ import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
   styleUrls: ['./request-component.component.scss']
 })
 export class RequestComponentComponent implements OnInit {
+  @Input('request') _request: iRequest;
   @Output('onSubmit') btnSubmitRequest = new EventEmitter<boolean>();
 
   public frmRequest: FormGroup;
@@ -43,6 +46,7 @@ export class RequestComponentComponent implements OnInit {
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
   public isEdit = false;
+  private oRequest: uRequest;
 
   constructor(
     public studentProvider: StudentProvider,
@@ -53,6 +57,7 @@ export class RequestComponentComponent implements OnInit {
     private router: Router,
     private routeActive: ActivatedRoute,
     public dialog: MatDialog,
+    private imgService: ImageToBase64Service,
   ) {
     this.userInformation = this.cookiesService.getData().user;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -62,6 +67,7 @@ export class RequestComponentComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.oRequest = new uRequest(this._request, this.imgService);
     this.frmRequest = new FormGroup(
       {
         'name': new FormControl(this.userInformation.name.firstName, Validators.required),
@@ -358,5 +364,9 @@ export class RequestComponentComponent implements OnInit {
         }
       }
     });
+  }
+
+  generateRequestPDF() {
+    window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
   }
 }
