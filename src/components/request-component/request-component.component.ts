@@ -30,19 +30,20 @@ export class RequestComponentComponent implements OnInit {
   private fileData: any;
   private frmData: any;
   private isLoadFile: boolean;
-  private isLoadImage: boolean;
+  public isLoadImage: boolean;
   private userInformation: any;
   private typeCareer: any;
-  private operationMode: eOperation;
+  public operationMode: eOperation;
   private request: iRequest;
-  private resource: string;
+  public resource: string;
   private employees: IEmployee[];
-  private isToggle = false;
+  public isToggle = false;
   public observations: string;
-  private viewObservation = false;
+  public viewObservation = false;
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
   public isEdit = false;
+
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -50,8 +51,8 @@ export class RequestComponentComponent implements OnInit {
     private requestProvider: RequestProvider,
     private dateFormat: DatePipe,
     private router: Router,
-    private routeActive: ActivatedRoute
-    , public dialog: MatDialog
+    private routeActive: ActivatedRoute,
+    public dialog: MatDialog,
   ) {
     this.userInformation = this.cookiesService.getData().user;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -123,7 +124,7 @@ export class RequestComponentComponent implements OnInit {
       'name': this.request.student.name,
       'lastname': this.request.student.lastName,
       'telephone': this.request.telephone,
-      'email': this.request.email,
+      'email': this.request.email.toLowerCase(),
       'adviser': this.request.adviser,
       'noIntegrants': this.request.noIntegrants,
       'observations': this.request.observation,
@@ -182,10 +183,15 @@ export class RequestComponentComponent implements OnInit {
   }
   onUpload(event): void {
     if (event.target.files && event.target.files[0]) {
-      this.fileData = event.target.files[0];
-      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App',
-        'Archivo ' + this.fileData.name + ' cargado correctamente');
-      this.isLoadFile = true;
+      if (event.target.files[0].type === 'application/pdf') {
+        this.fileData = event.target.files[0];
+        this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+          'Archivo ' + this.fileData.name + ' cargado correctamente');
+        this.isLoadFile = true;
+      } else {
+        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App',
+          'Error, su archivo debe ser de tipo PDF');
+      }
     }
   }
 
@@ -216,7 +222,7 @@ export class RequestComponentComponent implements OnInit {
       errorExists = true;
     }
 
-    if (this.frmRequest.get('noIntegrants').value > 1 && (typeof (this.integrants) === 'undefined' || this.integrants.length == 0)) {
+    if (this.frmRequest.get('noIntegrants').value > 1 && (typeof (this.integrants) === 'undefined' || this.integrants.length === 0)) {
       this.frmRequest.get('noIntegrants').setErrors({ 'notEntered': true });
       this.frmRequest.get('noIntegrants').markAsTouched();
       errorExists = true;
@@ -255,7 +261,7 @@ export class RequestComponentComponent implements OnInit {
         this.frmData.append('department', this.deptoInfo.name);
         this.frmData.append('boss', this.deptoInfo.boss);
         this.studentProvider.request(this.userInformation._id, this.frmData).subscribe(data => {
-          this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(data => {
+          this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Guardada Correctamente');
             this.btnSubmitRequest.emit(true);
           }, error => {
@@ -271,7 +277,7 @@ export class RequestComponentComponent implements OnInit {
 
       case eOperation.EDIT: {
         this.studentProvider.updateRequest(this.userInformation._id, this.frmData).subscribe(data => {
-          this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(data => {
+          this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Editada Correctamente');
             this.isEdit = false;
             this.getRequest();
@@ -294,7 +300,7 @@ export class RequestComponentComponent implements OnInit {
       operation: eStatusRequest.ACCEPT,
       doer: this.cookiesService.getData().user.name.fullName
     };
-    this.requestProvider.updateRequest(this.request._id, data).subscribe(data => {
+    this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
       this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Enviada');
       this.btnSubmitRequest.emit(true);
     }, error => {
@@ -337,6 +343,8 @@ export class RequestComponentComponent implements OnInit {
           ? (typeof (this.integrants) !== 'undefined' ? this.integrants : [])
           : this.request.integrants
       },
+      disableClose: true,
+      hasBackdrop: true,
       width: '45em'
     });
 

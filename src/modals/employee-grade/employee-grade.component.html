@@ -40,7 +40,7 @@
             </div>
             <input type="text"
               [ngClass]="(!frmNewEmployeGrade.get('lastname').valid && frmNewEmployeGrade.get('lastname').touched)?'form-control is-invalid':'form-control'"
-              id="name" formControlName="lastname" placeholder="Apellidos"
+              id="lastname" formControlName="lastname" placeholder="Apellidos"
               oninput="this.value = this.value.toUpperCase()">
             <div class="invalid-feedback"
               *ngIf="!frmNewEmployeGrade.get('lastname').valid && frmNewEmployeGrade.get('lastname').touched">
@@ -62,7 +62,7 @@
             </div>
             <input type="text"
               [ngClass]="(!frmNewEmployeGrade.get('area').valid && frmNewEmployeGrade.get('area').touched)?'form-control is-invalid':'form-control'"
-              id="name" formControlName="area" placeholder="Area" oninput="this.value = this.value.toUpperCase()">
+              id="area" formControlName="area" placeholder="Area" oninput="this.value = this.value.toUpperCase()">
             <div class="invalid-feedback"
               *ngIf="!frmNewEmployeGrade.get('area').valid && frmNewEmployeGrade.get('area').touched">
               <span *ngIf="frmNewEmployeGrade.get('area').errors['required']">
@@ -81,7 +81,7 @@
             </div>
             <input type="text"
               [ngClass]="(!frmNewEmployeGrade.get('position').valid && frmNewEmployeGrade.get('position').touched)?'form-control is-invalid':'form-control'"
-              id="name" formControlName="position" placeholder="Apellidos"
+              id="position" formControlName="position" placeholder="Apellidos"
               oninput="this.value = this.value.toUpperCase()">
             <div class="invalid-feedback"
               *ngIf="!frmNewEmployeGrade.get('position').valid && frmNewEmployeGrade.get('position').touched">
@@ -161,14 +161,14 @@
 
 
 
-<!-- 
+<!--
     <div class="ui-g-12">
-      <p-table #dt [columns]="columns" [value]="grades" [paginator]="true" [rows]="4" [resizableColumns]="true">        
+      <p-table #dt [columns]="columns" [value]="grades" [paginator]="true" [rows]="4" [resizableColumns]="true">
         <ng-template pTemplate="caption">
           <div class="text-right">
             <p-button type="button" label="Nuevo" icon="pi pi-plus"
             styleClass="ui-button-success" (click)="addNewGrade()"></p-button>
-          </div>         
+          </div>
         </ng-template>
         <ng-template pTemplate="header" let-columns>
           <tr>
@@ -179,7 +179,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
-          <tr>            
+          <tr>
             <td *ngFor="let col of columns" [ngStyle]="{'display': col.display}">
               {{rowData[col.field]}}
             </td>
@@ -191,7 +191,7 @@
         </ng-template>
       </p-table>
     </div>
-    <div class="ui-g-12 text-right">      
+    <div class="ui-g-12 text-right">
       <p-button label="Guardar" style="margin-right: 0.3em" type="submit" [disabled]="!frmNewEmployeGrade.valid"></p-button>
       <p-button styleClass="ui-button-danger" label="Cancelar" type="button" (click)="onClose()"></p-button>
     </div> -->
@@ -253,12 +253,12 @@
 
 
     <div class="ui-g-12">
-      <p-table #dt [columns]="columns" [value]="grades" [paginator]="true" [rows]="4" [resizableColumns]="true">        
+      <p-table #dt [columns]="columns" [value]="grades" [paginator]="true" [rows]="4" [resizableColumns]="true">
         <ng-template pTemplate="caption">
           <div class="text-right">
             <p-button type="button" label="Nuevo" icon="pi pi-plus"
             styleClass="ui-button-success" (click)="addNewGrade()"></p-button>
-          </div>         
+          </div>
         </ng-template>
         <ng-template pTemplate="header" let-columns>
           <tr>
@@ -269,7 +269,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
-          <tr>            
+          <tr>
             <td *ngFor="let col of columns" [ngStyle]="{'display': col.display}">
               {{rowData[col.field]}}
             </td>
@@ -281,7 +281,7 @@
         </ng-template>
       </p-table>
     </div>
-    <div class="ui-g-12 text-right">      
+    <div class="ui-g-12 text-right">
       <p-button label="Guardar" style="margin-right: 0.3em" type="submit" [disabled]="!frmNewEmployeGrade.valid"></p-button>
       <p-button styleClass="ui-button-danger" label="Cancelar" type="button" (click)="onClose()"></p-button>
     </div>

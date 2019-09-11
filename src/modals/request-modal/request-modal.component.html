@@ -205,7 +205,7 @@
           id="observations" formControlName="observations" placeholder="Observaciones"
           oninput="this.value = this.value.toUpperCase()"></textarea>
         <div class="input-group-append" (click)="watchObservations()">
-          <span class="input-group-text">...</span>
+          <span class="input-group-text btn">...</span>
         </div>
         <div class="invalid-feedback"
           *ngIf="!frmRequest.get('observations').valid && frmRequest.get('observations').touched">

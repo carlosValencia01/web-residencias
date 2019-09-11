@@ -1,9 +1,9 @@
 tr:nth-child(even) {
     background-color: #f2f2f2
   }
-  
+
 .breadcrumb li{
-  color:#000;  
+  color:#000;
   height: 20px;
 }
 
@@ -14,6 +14,10 @@ table {
 .mat-form-field {
   font-size: 14px;
   width: 100%;
+}
+
+td > mat-icon {
+  cursor: pointer;
 }
 
 // td, th {
