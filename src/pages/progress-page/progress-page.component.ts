@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IStudent } from 'src/entities/student.model';
 import { RequestProvider } from 'src/providers/request.prov';
 import { iRequest } from 'src/entities/request.model';
-//import { RequestComponentComponent } from '../request-component/request-component.component';
+// import { RequestComponentComponent } from '../request-component/request-component.component';
 import { NotificationsServices } from 'src/services/notifications.service';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
-//import { RequestModalComponent } from 'src/modals/request-modal/request-modal.component';
+// import { RequestModalComponent } from 'src/modals/request-modal/request-modal.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookiesService } from 'src/services/cookie.service';
 import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
@@ -28,13 +28,13 @@ export class ProgressPageComponent implements OnInit {
   statusOptions: { icon: string, option: string }[];
   dataSource: MatTableDataSource<iRequestSource>;
   search: string;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   constructor(private requestProvider: RequestProvider,
     public dialog: MatDialog,
     private notifications: NotificationsServices, private cookiesService: CookiesService,
     private router: Router, private routeActive: ActivatedRoute) {
-      console.log("cookie", this.cookiesService.getData());
+      console.log('cookie', this.cookiesService.getData());
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -42,38 +42,38 @@ export class ProgressPageComponent implements OnInit {
 
   ngOnInit() {
     this.loadRequest();
-    this.displayedColumns = ["controlNumber", "fullName", "career", "phase", "status", "applicationDateLocal", "action"];
+    this.displayedColumns = ['controlNumber', 'fullName', 'career', 'phase', 'status', 'applicationDateLocal', 'action'];
     this.statusOptions = [
-      { icon: "accessibility_new", option: "Todos" },
-      { icon: "mail", option: "Solicitado" },
-      { icon: "verified_user", option: "Verificado" },
-      { icon: "how_to_vote", option: "Registrado" },
-      { icon: "lock_open", option: "Liberado" },
-      { icon: "thumb_up", option: "Validado" },
-      { icon: "today", option: "Agendado" },
-      { icon: "gavel", option: "Realizado" },
-      { icon: "school", option: "Aprobado" }
-    ]
+      { icon: 'accessibility_new', option: 'Todos' },
+      { icon: 'mail', option: 'Solicitado' },
+      { icon: 'verified_user', option: 'Verificado' },
+      { icon: 'how_to_vote', option: 'Registrado' },
+      { icon: 'lock_open', option: 'Liberado' },
+      { icon: 'thumb_up', option: 'Validado' },
+      { icon: 'today', option: 'Agendado' },
+      { icon: 'gavel', option: 'Realizado' },
+      { icon: 'school', option: 'Aprobado' }
+    ];
   }
 
   loadRequest(): void {
-    let filter="";    
-    switch(this.cookiesService.getData().user.rol.name){     
-      case eRole.CHIEFACADEMIC:{
-        filter='jefe';
-        break;    
+    let filter = '';
+    switch (this.cookiesService.getData().user.rol.name) {
+      case eRole.CHIEFACADEMIC: {
+        filter = 'jefe';
+        break;
       }
-      case eRole.COORDINATION:{
-        filter='coordinacion';
-        break;    
+      case eRole.COORDINATION: {
+        filter = 'coordinacion';
+        break;
       }
-      case eRole.SECRETARY:{
-        filter='secretaria';
-        break;    
+      case eRole.SECRETARY: {
+        filter = 'secretaria';
+        break;
       }
-      default:{
-        filter='administration';
-        break;    
+      default: {
+        filter = 'administration';
+        break;
       }
     }
 
@@ -81,7 +81,7 @@ export class ProgressPageComponent implements OnInit {
       res => {
         this.request = [];
         res.request.forEach(element => {
-          let tmp: iRequest = <iRequest>element;
+          const tmp: iRequest = <iRequest>element;
           tmp._id = element._id;
           tmp.status = this.convertStatus(tmp.status);
           tmp.controlNumber = element.studentId.controlNumber;
@@ -95,7 +95,7 @@ export class ProgressPageComponent implements OnInit {
         this.refresh();
       },
       error => {
-        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error)
+        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
       });
   }
 
@@ -134,7 +134,7 @@ export class ProgressPageComponent implements OnInit {
     return value;
   }
 
-  //Abre el formulario de Solicitud
+  // Abre el formulario de Solicitud
   checkRequest(Identificador): void {
     const ref = this.dialog.open(RequestModalComponent, {
       data: {
@@ -152,7 +152,7 @@ export class ProgressPageComponent implements OnInit {
     });
   }
 
-  Verified(Identificador):void{
+  Verified(Identificador): void {
     const ref = this.dialog.open(SteepComponentComponent, {
       data: {
         Request: Identificador
@@ -166,39 +166,39 @@ export class ProgressPageComponent implements OnInit {
       }
     }, error => {
       this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-    })
+    });
   }
-  
+
 
   acceptRequest(Identificador): void {
-    let data = {
+    const data = {
       doer: this.cookiesService.getData().user.name.fullName,
       observation: 'No es viable',
       operation: eStatusRequest.ACCEPT
     };
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '350px',
-      data: "¿Está seguro de confirma esta solicitud?'"
+      data: '¿Está seguro de confirma esta solicitud?\''
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.requestProvider.updateRequest(Identificador, data).subscribe(data => {
-          this.notifications.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Actualizada");
+          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.loadRequest();
         }, error => {
-          this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", error);
+          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
         });
       } else {
         data.operation = eStatusRequest.REJECT;
         this.requestProvider.updateRequest(Identificador, data).subscribe(data => {
-          this.notifications.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Actualizada");
+          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.loadRequest();
         }, error => {
-          this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", error);
+          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
         });
       }
     });
-    
+
     // let data = {
     //   doer: this.cookiesService.getData().user.name.fullName,
     //   observation: 'No es viable',
@@ -229,12 +229,12 @@ export class ProgressPageComponent implements OnInit {
   }
 }
 interface iRequestSource {
-  _id?: string,
-  controlNumber?: string,
-  fullName?: string,
-  career?: string,
-  applicationDateLocal?: string,
-  phase?: string,
-  status?: string,
-  action?: string
+  _id?: string;
+  controlNumber?: string;
+  fullName?: string;
+  career?: string;
+  applicationDateLocal?: string;
+  phase?: string;
+  status?: string;
+  action?: string;
 }

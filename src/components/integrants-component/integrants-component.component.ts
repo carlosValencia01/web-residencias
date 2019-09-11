@@ -14,8 +14,8 @@ export class IntegrantsComponentComponent implements OnInit {
   public frmIntegrants: FormGroup;
   private integrants: [{ name: string, controlNumber: string, career: string }];
   public careers: string[];
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   constructor(
     public dialogRef: MatDialogRef<IntegrantsComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -23,7 +23,7 @@ export class IntegrantsComponentComponent implements OnInit {
     this.integrants = this.data.integrants;
     this.careers = [];
     this.careers = this.source.getCareers();
-    console.log("INTEGRANTES",this.integrants);
+    console.log('INTEGRANTES', this.integrants);
   }
 
   ngOnInit() {
@@ -32,7 +32,7 @@ export class IntegrantsComponentComponent implements OnInit {
       {
         'name': new FormControl(null, Validators.required),
         'controlNumber': new FormControl(null, [Validators.required,
-        Validators.pattern("^[0-9]*$"),
+        Validators.pattern('^[0-9]*$'),
         Validators.minLength(8),
         ]),
         'career': new FormControl('Seleccione la Carrera', Validators.required)
@@ -47,7 +47,7 @@ export class IntegrantsComponentComponent implements OnInit {
   }
 
   onRemove(data): void {
-    let indice = this.integrants.findIndex(x => x.controlNumber === data.controlNumber);
+    const indice = this.integrants.findIndex(x => x.controlNumber === data.controlNumber);
     if (indice !== -1) {
       this.integrants.splice(indice, 1);
       this.refresh();
@@ -55,39 +55,38 @@ export class IntegrantsComponentComponent implements OnInit {
   }
 
   onRowEditSave(data): void {
-    let indice = this.integrants.findIndex(x => x.controlNumber === data.controlNumber);
+    const indice = this.integrants.findIndex(x => x.controlNumber === data.controlNumber);
     this.frmIntegrants.setValue(
       {
         'name': this.integrants[indice].name,
         'controlNumber': this.integrants[indice].controlNumber,
         'career': this.integrants[indice].career,
-      })
+      });
   }
 
   onSave() {
-    let indice = this.integrants.findIndex(x => x.controlNumber === this.frmIntegrants.get('controlNumber').value);
-    console.log('indice', indice,'response',indice === -1);    
+    const indice = this.integrants.findIndex(x => x.controlNumber === this.frmIntegrants.get('controlNumber').value);
+    console.log('indice', indice, 'response', indice === -1);
     if (indice === -1) {
       this.integrants.push({
         name: this.frmIntegrants.get('name').value,
         controlNumber: this.frmIntegrants.get('controlNumber').value,
         career: this.frmIntegrants.get('career').value,
       });
-    }
-    else {
+    } else {
       this.integrants[indice] = {
         name: this.frmIntegrants.get('name').value,
         controlNumber: this.frmIntegrants.get('controlNumber').value,
         career: this.frmIntegrants.get('career').value,
-      }
+      };
     }
-    console.log("integrants",this.integrants);
+    console.log('integrants', this.integrants);
     this.frmIntegrants.reset();
     this.refresh();
   }
 
   onSaveAll() {
-    console.log("SAVE ALGOO", this.integrants);
+    console.log('SAVE ALGOO', this.integrants);
     this.dialogRef.close(this.integrants);
   }
   onClose() {
@@ -96,5 +95,5 @@ export class IntegrantsComponentComponent implements OnInit {
 
 }
 interface IIntegrantsTable {
-  name?: string, controlNumber?: string, career?: string, edit?: string, delete?: string
+  name?: string; controlNumber?: string; career?: string; edit?: string; delete?: string;
 }

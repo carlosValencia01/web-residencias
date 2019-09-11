@@ -45,9 +45,9 @@ export class EmployeeProvider {
     }
 
     getEmployeesByDepto() {
-        return this.api.get(`department/employees`).pipe(map(department=>department.json()));
+        return this.api.get(`department/employees`).pipe(map(department => department.json()));
     }
-    
+
     updateEmployee(id, data) {
         return this.api.put(`employee/${id}`, data)
             .pipe(map(student => student.json()));

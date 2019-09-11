@@ -37,12 +37,12 @@ export class RequestComponentComponent implements OnInit {
   private request: iRequest;
   private resource: string;
   private employees: IEmployee[];
-  private isToggle: boolean = false;
+  private isToggle = false;
   public observations: string;
-  private viewObservation: boolean = false;
+  private viewObservation = false;
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
-  public isEdit: boolean = false;
+  public isEdit = false;
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -66,27 +66,28 @@ export class RequestComponentComponent implements OnInit {
         'name': new FormControl(this.userInformation.name.firstName, Validators.required),
         'lastname': new FormControl(this.userInformation.name.lastName, Validators.required),
         'telephone': new FormControl(null, [Validators.required,
-        Validators.pattern("^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$")]),
+        Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
-        "project": new FormControl(null, Validators.required),
-        "product": new FormControl({ value: 'MEMORIA DE RESIDENCIA PROFESIONAL', disabled: true }, Validators.required),
-        "observations": new FormControl(null),
-        "adviser": new FormControl({ value: '', disabled: true }, Validators.required),
-        "noIntegrants": new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
-        "dateProposed": new FormControl(null, Validators.required),
-        "honorific": new FormControl(false, Validators.required)
+        'project': new FormControl(null, Validators.required),
+        'product': new FormControl({ value: 'MEMORIA DE RESIDENCIA PROFESIONAL', disabled: true }, Validators.required),
+        'observations': new FormControl(null),
+        'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
+        'noIntegrants': new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
+        'dateProposed': new FormControl(null, Validators.required),
+        'honorific': new FormControl(false, Validators.required)
       });
       this.getRequest();
   }
 
   getRequest() {
-    this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {      
+    this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {
       if (typeof (res) !== 'undefined' && res.request.length > 0) {
         this.loadRequest(res);
         this.operationMode = eOperation.EDIT;
         this.observations = this.request.observation;
-        if (this.request.status === eStatusRequest.REJECT)
+        if (this.request.status === eStatusRequest.REJECT) {
           this.viewObservation = true;
+        }
       } else {
         this.operationMode = eOperation.NEW;
       }
@@ -94,17 +95,17 @@ export class RequestComponentComponent implements OnInit {
       this.operationMode = eOperation.NEW;
     });
   }
-  
+
   revisedView(): void {
     this.viewObservation = false;
   }
 
   assignName(): void {
-    let nameArray = this.request.student.fullName.split(/\s*\s\s*/);
-    let name = "";
-    let maxIteration = nameArray.length - 2;
+    const nameArray = this.request.student.fullName.split(/\s*\s\s*/);
+    let name = '';
+    const maxIteration = nameArray.length - 2;
     for (let i = 0; i < maxIteration; i++) {
-      name += nameArray[i] + " ";
+      name += nameArray[i] + ' ';
     }
     this.request.student.name = name;
     this.request.student.lastName = nameArray[nameArray.length - 2] + ' ' + nameArray[nameArray.length - 1];
@@ -115,24 +116,24 @@ export class RequestComponentComponent implements OnInit {
     this.request.student = request.request[0].studentId;
     this.request.studentId = this.request.student._id;
     this.integrants = this.request.integrants;
-    this.request.status
+    this.request.status;
     this.assignName();
-    
+
     this.frmRequest.setValue({
       'name': this.request.student.name,
       'lastname': this.request.student.lastName,
       'telephone': this.request.telephone,
       'email': this.request.email,
-      "adviser": this.request.adviser,
-      "noIntegrants": this.request.noIntegrants,
-      "observations": this.request.observation,
+      'adviser': this.request.adviser,
+      'noIntegrants': this.request.noIntegrants,
+      'observations': this.request.observation,
       'project': this.request.projectName,
       'product': this.request.product,
       'dateProposed': this.dateFormat.transform(this.request.proposedDate, 'yyyy-MM-dd'),
       'honorific': this.request.honorificMention,
     });
     this.disabledControl();
-    this.isToggle = this.request.honorificMention
+    this.isToggle = this.request.honorificMention;
     this.studentProvider.getResource(this.request.studentId, eFILES.PROYECTO).subscribe(
       data => {
         this.generateImageFromBlob(data);
@@ -150,7 +151,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmRequest.get('telephone').markAsUntouched();
     this.frmRequest.get('email').markAsUntouched();
     this.frmRequest.get('project').markAsUntouched();
-    this.frmRequest.get('observations').markAsUntouched();    
+    this.frmRequest.get('observations').markAsUntouched();
     this.frmRequest.get('noIntegrants').markAsUntouched();
     this.frmRequest.get('dateProposed').markAsUntouched();
     this.frmRequest.get('honorific').markAsUntouched();
@@ -182,7 +183,8 @@ export class RequestComponentComponent implements OnInit {
   onUpload(event): void {
     if (event.target.files && event.target.files[0]) {
       this.fileData = event.target.files[0];
-      this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Archivo " + this.fileData.name + " cargado correctamente");
+      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+        'Archivo ' + this.fileData.name + ' cargado correctamente');
       this.isLoadFile = true;
     }
   }
@@ -191,7 +193,7 @@ export class RequestComponentComponent implements OnInit {
     const reader = new FileReader();
     this.isLoadImage = false;
     reader.addEventListener('load', () => {
-      let result: any = reader.result;
+      const result: any = reader.result;
       this.resource = result;
       this.isLoadImage = true;
     }, false);
@@ -215,33 +217,34 @@ export class RequestComponentComponent implements OnInit {
     }
 
     if (this.frmRequest.get('noIntegrants').value > 1 && (typeof (this.integrants) === 'undefined' || this.integrants.length == 0)) {
-      this.frmRequest.get('noIntegrants').setErrors({ 'notEntered': true })
-      this.frmRequest.get("noIntegrants").markAsTouched();
+      this.frmRequest.get('noIntegrants').setErrors({ 'notEntered': true });
+      this.frmRequest.get('noIntegrants').markAsTouched();
       errorExists = true;
     }
 
-    if (typeof (this.frmRequest.get("adviser").value) === 'undefined' || !this.frmRequest.get('adviser').value) {
-      this.frmRequest.get("adviser").setErrors({ required: true });
-      this.frmRequest.get("adviser").markAsTouched();
+    if (typeof (this.frmRequest.get('adviser').value) === 'undefined' || !this.frmRequest.get('adviser').value) {
+      this.frmRequest.get('adviser').setErrors({ required: true });
+      this.frmRequest.get('adviser').markAsTouched();
       errorExists = true;
     }
-    if (errorExists)
+    if (errorExists) {
       return;
-    //Data FormData
+    }
+    // Data FormData
     this.frmData = new FormData();
     this.frmData.append('file', this.fileData);
     this.frmData.append('ControlNumber', this.userInformation.email);
     this.frmData.append('FullName', this.userInformation.name.fullName);
     this.frmData.append('Career', this.typeCareer);
     this.frmData.append('Document', eFILES.PROYECTO);
-    //Data
+    // Data
     this.frmData.append('adviser', this.frmRequest.get('adviser').value);
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
     this.frmData.append('projectName', this.frmRequest.get('project').value);
     this.frmData.append('email', this.frmRequest.get('email').value);
     this.frmData.append('proposedDate', this.frmRequest.get('dateProposed').value);
-    this.frmData.append('status', "Process");
-    this.frmData.append('phase', "Solicitado");
+    this.frmData.append('status', 'Process');
+    this.frmData.append('phase', 'Solicitado');
     this.frmData.append('telephone', this.frmRequest.get('telephone').value);
     this.frmData.append('honorificMention', this.frmRequest.get('honorific').value);
     this.frmData.append('lastModified', this.frmRequest.get('project').value);
@@ -253,14 +256,14 @@ export class RequestComponentComponent implements OnInit {
         this.frmData.append('boss', this.deptoInfo.boss);
         this.studentProvider.request(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(data => {
-            this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Guardada Correctamente");
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Guardada Correctamente');
             this.btnSubmitRequest.emit(true);
           }, error => {
-            this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
+            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
             this.btnSubmitRequest.emit(false);
           });
         }, error => {
-          this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
           this.btnSubmitRequest.emit(false);
         });
         break;
@@ -269,16 +272,16 @@ export class RequestComponentComponent implements OnInit {
       case eOperation.EDIT: {
         this.studentProvider.updateRequest(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(data => {
-            this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Editada Correctamente");            
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Editada Correctamente');
             this.isEdit = false;
-            this.getRequest();            
+            this.getRequest();
             this.btnSubmitRequest.emit(true);
           }, error => {
-            this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
+            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
             this.btnSubmitRequest.emit(false);
           });
         }, error => {
-          this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
           this.btnSubmitRequest.emit(false);
         });
         break;
@@ -287,22 +290,22 @@ export class RequestComponentComponent implements OnInit {
   }
 
   Send(): void {
-    let data = {
+    const data = {
       operation: eStatusRequest.ACCEPT,
       doer: this.cookiesService.getData().user.name.fullName
     };
     this.requestProvider.updateRequest(this.request._id, data).subscribe(data => {
-      this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Enviada");
+      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Enviada');
       this.btnSubmitRequest.emit(true);
     }, error => {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
       this.btnSubmitRequest.emit(false);
     });
   }
 
   valor(): void {
-    console.log(typeof (this.frmRequest.get('adviser').value) === 'undefined')
-    console.log(!(this.frmRequest.get('adviser').value))
+    console.log(typeof (this.frmRequest.get('adviser').value) === 'undefined');
+    console.log(!(this.frmRequest.get('adviser').value));
   }
 
   selectAdviser(): void {
@@ -320,7 +323,7 @@ export class RequestComponentComponent implements OnInit {
     ref.afterClosed().subscribe((result) => {
       if (result) {
         this.frmRequest.patchValue({ 'adviser': result.Employee });
-        //if(this.operationMode===eOperation.NEW)
+        // if(this.operationMode===eOperation.NEW)
         this.deptoInfo = result.Depto;
       }
     });
@@ -330,7 +333,9 @@ export class RequestComponentComponent implements OnInit {
     this.frmRequest.get('noIntegrants').setErrors(null);
     const ref = this.dialog.open(IntegrantsComponentComponent, {
       data: {
-        integrants: this.operationMode === eOperation.NEW ? (typeof (this.integrants) !== 'undefined' ? this.integrants : []) : this.request.integrants
+        integrants: this.operationMode === eOperation.NEW
+          ? (typeof (this.integrants) !== 'undefined' ? this.integrants : [])
+          : this.request.integrants
       },
       width: '45em'
     });
@@ -340,8 +345,7 @@ export class RequestComponentComponent implements OnInit {
         if (this.operationMode === eOperation.EDIT) {
           this.request.integrants = integrants;
           this.integrants = integrants;
-        }
-        else {
+        } else {
           this.integrants = integrants;
         }
       }

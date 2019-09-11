@@ -1,1 +1,5 @@
-export interface iIntegrant { name: string, controlNumber: number, career: string }
+export interface iIntegrant {
+  name: string;
+  controlNumber: number;
+  career: string;
+}

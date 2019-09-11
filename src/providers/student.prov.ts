@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-
-
 import { Api } from './api.prov';
 import { ResponseContentType } from '@angular/http';
 import { Observable } from 'rxjs';
-
 import { HttpClient } from '@angular/common/http';
-
 
 @Injectable()
 export class StudentProvider {
@@ -69,7 +65,6 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-
     getImageTest(id: string): Observable<Blob> {
         return this.http.get(`${this.api.getURL()}/student/image/${id}`, { responseType: 'blob' });
     }
@@ -111,8 +106,8 @@ export class StudentProvider {
         return this.api.put(`request/${id}`, data, true).pipe(map(res => res.json()));
     }
 
-    addIntegrants(id, data){
-        return this.api.put(`request/${id}/integrants`, data, true).pipe(map(res => res.json()));        
+    addIntegrants(id, data) {
+        return this.api.put(`request/${id}/integrants`, data, true).pipe(map(res => res.json()));
     }
     getRequest(id) {
         return this.api.get(`student/request/${id}`).pipe(map(res => res.json()));

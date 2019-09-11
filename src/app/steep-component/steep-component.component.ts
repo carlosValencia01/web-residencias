@@ -14,7 +14,7 @@ import { eNotificationType } from 'src/enumerators/notificationType.enum';
 })
 export class SteepComponentComponent implements OnInit {
   @ViewChild('stepper') stepperComponent: MatStepper;
-  //@Input('Request') RequestId: String;    
+  // @Input('Request') RequestId: String;
   RequestId: String;
   Request: String;
   ObjectRequestTmp: iRequest;
@@ -35,18 +35,18 @@ export class SteepComponentComponent implements OnInit {
     this._RequestProvider.getRequestById(this.RequestId).subscribe(
       data => {
         // console.log("reques", this.data);
-        //this.ObjectRequestTmp = <iRequest>data.request[0];
+        // this.ObjectRequestTmp = <iRequest>data.request[0];
         this.ObjectRequestTmp = <iRequest>data.request[0];
         this.ObjectRequestTmp.student = data.request[0].studentId;
-        this.ObjectRequestTmp.studentId = this.ObjectRequestTmp.student._id;        
-        console.log("object tmp", this.ObjectRequestTmp);
+        this.ObjectRequestTmp.studentId = this.ObjectRequestTmp.student._id;
+        console.log('object tmp', this.ObjectRequestTmp);
         // this.ObjectRequestTmp.student = data.request[0].studentId;
         // this.ObjectRequestTmp.studentId = this.ObjectRequest.student._id;
       }
-    )
-    //this.ObjectRequest = this.ObjectRequestTmp;
-    console.log("RTEQUEST", this.RequestId);
-    
+    );
+    // this.ObjectRequest = this.ObjectRequestTmp;
+    console.log('RTEQUEST', this.RequestId);
+
   }
 
 
@@ -56,7 +56,7 @@ export class SteepComponentComponent implements OnInit {
     switch (index) {
       case 0:
         {
-          //this.stepperComponent.selectedIndex = 1;
+          // this.stepperComponent.selectedIndex = 1;
           this.SteepOneCompleted = true;
           this.updateSteeps(1);
           break;
@@ -67,7 +67,7 @@ export class SteepComponentComponent implements OnInit {
         break;
       }
       case 2: {
-        let data = {
+        const data = {
           doer: this.cookiesService.getData().user.name.fullName,
           observation: '',
           operation: eStatusRequest.ACCEPT,
@@ -75,10 +75,10 @@ export class SteepComponentComponent implements OnInit {
         };
 
         this._RequestProvider.updateRequest(this.RequestId, data).subscribe(data => {
-          this.notificationsServ.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Actualizada");
+          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.dialogRef.close(true);
         }, error => {
-          this.notificationsServ.showNotification(eNotificationType.ERROR, "Titulación App", error);
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
           this.dialogRef.close(false);
         });
         break;
@@ -96,7 +96,7 @@ export class SteepComponentComponent implements OnInit {
       case 2: {
         this.stepperComponent.selectedIndex = 1;
         this.SteepTwoCompleted = false;
-        // console.log("complete", this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted);        
+        // console.log("complete", this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted);
         break;
       }
     }

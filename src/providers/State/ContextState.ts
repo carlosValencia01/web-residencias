@@ -1,61 +1,61 @@
-import { eRequest } from "src/enumerators/request.enum";
-import { CapturedState } from "./CapturedState";
-import { VerifiedState } from "./VerifiedState";
-import { iState } from "./iState";
-import { eStatusRequest } from "src/enumerators/statusRequest.enum";
-import { RegisteredState } from "./RegisteredState";
-import { SentState } from "./SentState";
+import { eRequest } from 'src/enumerators/request.enum';
+import { CapturedState } from './CapturedState';
+import { VerifiedState } from './VerifiedState';
+import { iState } from './iState';
+import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
+import { RegisteredState } from './RegisteredState';
+import { SentState } from './SentState';
 
 export class ContextState {
     public state: iState;
-    constructor(phase: eRequest=eRequest.NONE, status: eStatusRequest=eStatusRequest.NONE) {
-        console.log("c pahe",phase);
-        console.log("c status",status);
+    constructor(phase: eRequest= eRequest.NONE, status: eStatusRequest= eStatusRequest.NONE) {
+        console.log('c pahe', phase);
+        console.log('c status', status);
         switch (phase) {
-            case eRequest.NONE:{                                
+            case eRequest.NONE: {
                 this.state = new CapturedState();
-                this.state.status=status;
+                this.state.status = status;
                 break;
             }
             case eRequest.CAPTURED: {
                 this.state = new CapturedState();
-                this.state.status=status;
+                this.state.status = status;
                 break;
             }
             case eRequest.SENT: {
                 this.state = new SentState();
-                this.state.status=status;
+                this.state.status = status;
                 break;
             }
             case eRequest.VERIFIED: {
                 this.state = new VerifiedState();
-                this.state.status=status;
+                this.state.status = status;
                 break;
-            }       
+            }
             case eRequest.REGISTERED: {
                 this.state = new RegisteredState();
-                this.state.status=status;
+                this.state.status = status;
                 break;
-            }       
+            }
         }
     }
 
-    public getRouter():string{
+    public getRouter(): string {
         return this.state.router;
     }
     public next(): void {
         this.state.next(this);
-        this.state.status=eStatusRequest.NONE;
+        this.state.status = eStatusRequest.NONE;
     }
-    public getIndex():number{
+    public getIndex(): number {
         return this.state.index;
     }
 
-    public getPhase():eRequest{
+    public getPhase(): eRequest {
         return this.state.phase;
     }
     public back(): void {
         this.state.back(this);
-        this.state.status=eStatusRequest.ACCEPT;
+        this.state.status = eStatusRequest.ACCEPT;
     }
 }

@@ -23,15 +23,15 @@ export class ObservationsComponentComponent implements OnInit {
     this.observations = <iObservation[]>this.request.history.slice();
     this.observations.forEach(e => {
       e.status = this.convertStatus(e.status);
-      let date = new Date(e.achievementDate);
+      const date = new Date(e.achievementDate);
       e.achievementDateString = date.toLocaleDateString();
     });
 
-    this.dataSource=new MatTableDataSource(this.observations)
+    this.dataSource = new MatTableDataSource(this.observations);
   }
 
   ngOnInit() {
-    this.displayedColumns=['phase','status','observation','achievementDateString','doer'];  
+    this.displayedColumns = ['phase', 'status', 'observation', 'achievementDateString', 'doer'];
   }
   convertStatus(status: string): string {
     let value = '';
@@ -64,5 +64,5 @@ export class ObservationsComponentComponent implements OnInit {
 }
 
 interface IObservationTable {
-  phase?: string, status?: string, observation?: string, achievementDateString?: string,doer?: string
+  phase?: string; status?: string; observation?: string; achievementDateString?: string; doer?: string;
 }

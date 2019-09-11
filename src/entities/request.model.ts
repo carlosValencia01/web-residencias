@@ -1,30 +1,30 @@
-import { IStudent } from "./student.model";
-import { iIntegrant } from "./integrant.model";
+import { IStudent } from './student.model';
+import { iIntegrant } from './integrant.model';
 
 export interface iRequest {
-    _id?: string,
-    studentId?: string,
-    student?: IStudent,
-    controlNumber?: string,
-    career?: string,
-    fullName?: string,
-    applicationDate?: Date,
-    applicationDateLocal?: string,
-    projectName?: string,
-    product?: string,
-    proposedDate?: Date,
-    email?: string,
-    actDate?: Date,
-    honorificMention?: boolean,
-    adviserId?: string,
-    adviser?: string,
-    noIntegrants?: number,
-    integrants?:Array<iIntegrant>,
-    department?: { name: string, boss: string },
-    phase?: string,
-    status?: string,
-    telephone?: string,
-    lastModified?: Date,
+    _id?: string;
+    studentId?: string;
+    student?: IStudent;
+    controlNumber?: string;
+    career?: string;
+    fullName?: string;
+    applicationDate?: Date;
+    applicationDateLocal?: string;
+    projectName?: string;
+    product?: string;
+    proposedDate?: Date;
+    email?: string;
+    actDate?: Date;
+    honorificMention?: boolean;
+    adviserId?: string;
+    adviser?: string;
+    noIntegrants?: number;
+    integrants?: Array<iIntegrant>;
+    department?: { name: string, boss: string };
+    phase?: string;
+    status?: string;
+    telephone?: string;
+    lastModified?: Date;
     doer?: string;
     observation?: string;
     history?: [
@@ -36,7 +36,7 @@ export interface iRequest {
             achievementDateString: string,
             user: string
         }
-    ],
+    ];
     documents?: [
         {
             type: string,
@@ -44,5 +44,5 @@ export interface iRequest {
             nameFile: string,
             status: string
         }
-    ]
+    ];
 }

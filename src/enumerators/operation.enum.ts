@@ -1,7 +1,7 @@
-export enum eOperation{
+export enum eOperation {
     NEW,
     EDIT,
     DELETE,
     MODAL,
-    DML    
+    DML
 }

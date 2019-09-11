@@ -8,7 +8,7 @@ import { CookiesService } from '../services/cookie.service';
 @Injectable()
 export class Api {
     url = 'http://localhost:3003/escolares/credenciales';
-    //url = 'https://api.cideti.com.mx/escolares/credenciales';
+    // url = 'https://api.cideti.com.mx/escolares/credenciales';
     headers: Headers = new Headers();
 
     constructor(
@@ -74,19 +74,21 @@ export class Api {
         // console.log('api:post');
         // console.log("vbody", body);
         const options = new RequestOptions({ headers: this.headers });
-        if (!isUpload)
+        if (!isUpload) {
             return this.http.post(this.url + '/' + endpoint, body, options);
-        else
+        } else {
             return this.http.post(this.url + '/' + endpoint, body);
+        }
         // .do(res => console.log(res));
     }
 
     put(endpoint: string, body: any, isUpload = false) {
         const options = new RequestOptions({ headers: this.headers });
-        if (!isUpload)            
+        if (!isUpload) {
             return this.http.put(this.url + '/' + endpoint, body, options);
-        else
-            return this.http.put(this.url + '/' + endpoint, body);        
+        } else {
+            return this.http.put(this.url + '/' + endpoint, body);
+        }
         // .do(res => console.log(res));
     }
 

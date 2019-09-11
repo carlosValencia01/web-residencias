@@ -1,15 +1,15 @@
-import { ContextState } from "./ContextState";
-import { iState } from "./iState";
-import { GeneratedState } from "./GeneratedState";
-import {  AssignedState } from "./AssignedState";
-import { eRequest } from "src/enumerators/request.enum";
+import { ContextState } from './ContextState';
+import { iState } from './iState';
+import { GeneratedState } from './GeneratedState';
+import {  AssignedState } from './AssignedState';
+import { eRequest } from 'src/enumerators/request.enum';
 
 export class RealizedState extends iState {
-    router:string="oneStudentPage";
-    index:number=6;
-    phase: eRequest=  eRequest.REALIZED;
+    router = 'oneStudentPage';
+    index = 6;
+    phase: eRequest =  eRequest.REALIZED;
     public next(context: ContextState): void {
-        context.state = new GeneratedState();        
+        context.state = new GeneratedState();
     } public back(context: ContextState): void {
         context.state = new AssignedState();
     }

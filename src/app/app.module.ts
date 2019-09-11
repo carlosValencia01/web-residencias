@@ -34,11 +34,12 @@ import { RequestComponentComponent } from 'src/components/request-component/requ
 import { ViewerComponentComponent } from 'src/components/viewer-component/viewer-component.component';
 import { ProcessComponentComponent } from 'src/components/process-component/process-component.component';
 
-//Modals
+// Modals
 import { NewGradeComponent } from 'src/modals/new-grade/new-grade.component';
 import { EmployeeGradeComponent } from 'src/modals/employee-grade/employee-grade.component';
 import { EnglishComponent } from 'src/modals/english/english.component';
 import { RequestModalComponent } from 'src/modals/request-modal/request-modal.component';
+
 // Services
 import { CookiesService } from '../services/cookie.service';
 import { FormErrorsService } from '../services/forms.errors.service';
@@ -52,22 +53,24 @@ import { StudentProvider } from '../providers/student.prov';
 import { EmployeeProvider } from '../providers/employee.prov';
 import { LoaderComponent } from '../components/shared/loader/loader.component';
 import { sourceDataProvider } from 'src/providers/sourceData.prov';
-//Angular Material
+
+// Angular Material
 import {
   MatListModule, MatButtonModule, MatMenuModule,
   MatFormFieldModule, MatStepperModule, MatInputModule,
   MatCardModule, MatIconModule, MAT_DIALOG_DEFAULT_OPTIONS,
   MatCheckboxModule, MatProgressBarModule, MatGridListModule,
   MatTableModule, MatPaginatorModule, MatDialogModule,
-  MatSidenavModule, MatToolbarModule,MatButtonToggleModule,MatSlideToggleModule,
+  MatSidenavModule, MatToolbarModule, MatButtonToggleModule, MatSlideToggleModule,
   MatSnackBarModule
-}from '@angular/material';  
+} from '@angular/material';
 
-import {MatFileUploadModule } from 'mat-file-upload'; 
+import {MatFileUploadModule } from 'mat-file-upload';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { NgxSmartModalModule, NgxSmartModalService } from 'ngx-smart-modal';
 // import { TreetableModule } from 'ng-material-treetable';
-//Routes
+
+// Routes
 import { AppRoutingModule } from 'src/app-routing.module';
 import { EmployeeAdviserComponent } from 'src/components/employee-adviser/employee-adviser.component';
 import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
@@ -77,7 +80,6 @@ import { ProgressPageComponent } from 'src/pages/progress-page/progress-page.com
 import { ConfirmDialogComponent } from 'src/components/confirm-dialog/confirm-dialog.component';
 import { SteepComponentComponent } from './steep-component/steep-component.component';
 import { RequestViewComponent } from './request-view/request-view.component';
-
 
 @NgModule({
   declarations: [
@@ -108,7 +110,7 @@ import { RequestViewComponent } from './request-view/request-view.component';
     RequestModalComponent,
     ConfirmDialogComponent,
     SteepComponentComponent,
-    RequestViewComponent
+    RequestViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -132,48 +134,48 @@ import { RequestViewComponent } from './request-view/request-view.component';
     MatIconModule,
     MatMenuModule,
     MatCardModule,
-    MatListModule,    
+    MatListModule,
     MatCheckboxModule,
-    MatProgressBarModule, 
+    MatProgressBarModule,
     MatGridListModule,
-    MatTableModule, 
-    MatPaginatorModule, 
+    MatTableModule,
+    MatPaginatorModule,
     MatDialogModule,
-    MatSidenavModule, 
+    MatSidenavModule,
     MatToolbarModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
-    AppRoutingModule,  
+    AppRoutingModule,
     NgxSmartModalModule.forRoot(),
     MatFileUploadModule ,
-    MatSnackBarModule    
-    // TreetableModule  
+    MatSnackBarModule,
+    // TreetableModule
   ],
   providers: [
     CookieService,
     CookiesService,
     FormErrorsService,
     NotificationsServices,
-    ImageToBase64Service,    
+    ImageToBase64Service,
     Api,
     UserProvider,
     StudentProvider,
     EmployeeProvider,
-    sourceDataProvider,            
+    sourceDataProvider,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
-    RequestProvider    
+    RequestProvider,
   ],
-  entryComponents:[
+  entryComponents: [
     EnglishComponent,
     NewGradeComponent,
-    EmployeeGradeComponent,    
+    EmployeeGradeComponent,
     RequestComponentComponent,
     EmployeeAdviserComponent,
     ObservationsComponentComponent,
     IntegrantsComponentComponent,
     RequestModalComponent,
     ConfirmDialogComponent,
-    SteepComponentComponent
+    SteepComponentComponent,
   ],
   bootstrap: [AppComponent]
 })

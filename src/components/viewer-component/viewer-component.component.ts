@@ -21,40 +21,40 @@ export class ViewerComponentComponent implements OnInit {
   constructor(private imgService: ImageToBase64Service) { }
 
   ngOnInit() {
-    this.oRequest = new uRequest(this._Request, this.imgService);    
+    this.oRequest = new uRequest(this._Request, this.imgService);
     this.PHASE = <eRequest>this._Phase;
     switch (this.PHASE) {
       case eRequest.GENERATED: {
-        this.message = "Visualizar Petición";
+        this.message = 'Visualizar Petición';
         break;
       }
       case eRequest.REALIZED: {
-        this.message = "Visualizar Petición";
+        this.message = 'Visualizar Petición';
         break;
       }
       case eRequest.ASSIGNED: {
-        this.message = "Visualizar Petición";
+        this.message = 'Visualizar Petición';
         break;
       }
       case eRequest.VALIDATED: {
-        this.message = "Visualizar Petición";
+        this.message = 'Visualizar Petición';
         break;
 
       }
       case eRequest.RELEASED: {
-        this.message = "Hoja de Liberación";
+        this.message = 'Hoja de Liberación';
         break;
       }
       case eRequest.REGISTERED: {
-        this.message = "Registro de Proyecto";
+        this.message = 'Registro de Proyecto';
         break;
       }
       case eRequest.VERIFIED: {
-        this.message = "Registro de Proyecto";
+        this.message = 'Registro de Proyecto';
         break;
       }
       case eRequest.CAPTURED: {
-        this.message = "Visualizar Petición";
+        this.message = 'Visualizar Petición';
         break;
       }
       default: {
@@ -63,7 +63,7 @@ export class ViewerComponentComponent implements OnInit {
     }
   }
 
-  view(): void {    
+  view(): void {
     switch (this.PHASE) {
       case eRequest.GENERATED: {
         break;
@@ -83,7 +83,7 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.REGISTERED: {
-        console.log("registered",this.oRequest);
+        console.log('registered', this.oRequest);
         window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
         break;
       }

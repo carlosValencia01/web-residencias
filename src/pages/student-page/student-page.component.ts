@@ -31,14 +31,10 @@ export class StudentPageComponent implements OnInit {
   showForm = false;
   isNewStudent = false;
   haveImage = false;
-
   showImg = false;
-
   frontBase64: any;
   backBase64: any;
-
   imageProfileTest: any;
-
   currentStudent = {
     nss: '',
     fullName: '',
@@ -46,27 +42,22 @@ export class StudentPageComponent implements OnInit {
     _id: '',
     controlNumber: ''
   };
-
   formStudent: FormGroup;
   errorForm = false;
   photoStudent = '';
-
   imageToShow: any;
-
   errorInputsTag = {
     errorStudentFullName: false,
     errorStudentNumberControl: false,
     errorStudentNSS: false,
     errorStudentCareer: false,
   };
-
   imageChangedEvent: any = '';
   croppedImage: any = '';
   croppedImageBase64: any = '';
   imgForSend: boolean;
   closeResult: string;
   haveSubjects: boolean;
-
   selectedFile: File = null;
 
   constructor(
@@ -199,7 +190,7 @@ export class StudentPageComponent implements OnInit {
         } else {
           this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
         }
-        this.loading = false
+        this.loading = false;
       }, () => this.loading = false);
 
 
@@ -326,7 +317,7 @@ export class StudentPageComponent implements OnInit {
           } else {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
           }
-          this.loading = false
+          this.loading = false;
         }, () => this.loading = false);
 
       // console.log(student);

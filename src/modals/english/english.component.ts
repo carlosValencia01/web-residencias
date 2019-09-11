@@ -1,10 +1,9 @@
 import { Component, OnInit, Inject } from '@angular/core';
-// import { DynamicDialogRef } from 'primeng/api';
-// import { DynamicDialogConfig } from 'primeng/api';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { sourceDataProvider } from 'src/providers/sourceData.prov';
 import { IStudent } from 'src/entities/student.model';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+
 @Component({
   selector: 'app-english',
   templateUrl: './english.component.html',
@@ -13,7 +12,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 export class EnglishComponent implements OnInit {
 
   constructor(
-    public dialogRef: MatDialogRef<EnglishComponent>,    
+    public dialogRef: MatDialogRef<EnglishComponent>,
     public sourceData: sourceDataProvider) { }
   frmNewStudent: FormGroup;
 
@@ -28,17 +27,16 @@ export class EnglishComponent implements OnInit {
   }
 
   onSubmit(): void {
-    let Student: IStudent =
-    {
+    const Student: IStudent = {
       controlNumber: this.frmNewStudent.value.controlNumber,
       fullName: this.frmNewStudent.value.fullname,
       career: this.frmNewStudent.value.career,
-    }
+    };
     this.frmNewStudent.reset({
       'controlNumber': '',
       'fullname': '',
       'career': 'Seleccione la Carrera'
-    })    
+    });
     this.dialogRef.close(Student);
   }
 
@@ -81,7 +79,7 @@ export class EnglishComponent implements OnInit {
 //     'controlNumber': '',
 //     'fullname': '',
 //     'career': 'Seleccione la Carrera'
-//   })    
+//   })
 //   this.ref.close(Student);
 // }
 

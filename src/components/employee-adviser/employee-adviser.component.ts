@@ -22,9 +22,9 @@ export class EmployeeAdviserComponent implements OnInit {
   private departmentInfo: { name: String, boss: String } = { name: '', boss: '' };
   public dataSource: MatTableDataSource<IAdviserTable>;
   public displayedColumns: string[];
-  public type:string;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  public type: string;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   constructor(private employeProvider: EmployeeProvider,
     private notifications: NotificationsServices,
     public dialogRef: MatDialogRef<EmployeeAdviserComponent>,
@@ -37,27 +37,28 @@ export class EmployeeAdviserComponent implements OnInit {
   ngOnInit() {
     this.employeProvider.getEmployeesByDepto().subscribe(
       data => {
-        
+
         this.departments = <IDepartment[]>data.departments;
-        let indice = this.departments.findIndex((e) => {
+        const indice = this.departments.findIndex((e) => {
           return e.careers.findIndex(s => s == this.career) !== -1;
         });
-        this.getAllEmployees(indice);        
+        this.getAllEmployees(indice);
 
 
-        this.onlyEmployees = indice === -1 ? this.allEmployees:this.onlyEmployees.slice(0) ;
+        this.onlyEmployees = indice === -1 ? this.allEmployees : this.onlyEmployees.slice(0) ;
         this.employees = <IAdviserTable[]>this.onlyEmployees.slice(0);
-        this.type="Empleado Carrera";
-        this.departmentInfo.name = (indice === -1 ? '' : this.departments[indice].name)
+        this.type = 'Empleado Carrera';
+        this.departmentInfo.name = (indice === -1 ? '' : this.departments[indice].name);
 
-        let boss = this.departments[indice].Employees.find(x => (x.position.includes('JEFE DE DEPARTAMENTO') || x.position.includes('JEFE DE DEPTO')));
+        const boss = this.departments[indice].Employees.find(x => (x.position.includes('JEFE DE DEPARTAMENTO')
+          || x.position.includes('JEFE DE DEPTO')));
         this.departmentInfo.boss = (indice === -1 ? '' : boss.name.fullName);
         this.refresh();
       },
       error => {
         this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
       }
-    )
+    );
   }
 
   refresh(): void {
@@ -66,9 +67,9 @@ export class EmployeeAdviserComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  areAll(areAll: boolean) {    
+  areAll(areAll: boolean) {
     this.employees = areAll ? this.allEmployees.slice(0) : this.onlyEmployees.slice(0);
-    this.type=areAll?"Todos los empleados":"Personal del Área";
+    this.type = areAll ? 'Todos los empleados' : 'Personal del Área';
     this.refresh();
   }
   applyFilter(filterValue: string) {
@@ -79,49 +80,53 @@ export class EmployeeAdviserComponent implements OnInit {
   }
   getAllEmployees(index: number): void {
     this.allEmployees = [];
-    this.onlyEmployees = [];    
-    if (index !== -1) {          
+    this.onlyEmployees = [];
+    if (index !== -1) {
       this.departments[index].Employees.forEach(e => {
-        let Adviser = {
+        const Adviser = {
           name: this.gradeMax(e) + ' ' + e.name.firstName + ' ' + e.name.lastName,
           position: e.area + ' ' + e.position,
           action: ''
-        }
+        };
         this.onlyEmployees.push(Adviser);
-      })
+      });
     }
     this.departments.forEach(e => {
       e.Employees.forEach(em => {
-        let Adviser = {
+        const Adviser = {
           name: this.gradeMax(em) + ' ' + em.name.firstName + ' ' + em.name.lastName,
           position: e.name + ' ' + em.position,
           action: ''
-        }        
+        };
         this.allEmployees.push(Adviser);
-      })
+      });
     });
   }
 
   gradeMax(employee: IEmployee): String {
-    if (typeof (employee.grade) === 'undefined' || employee.grade.length === 0)
-      return "";
+    if (typeof (employee.grade) === 'undefined' || employee.grade.length === 0) {
+      return '';
+    }
     let isGrade = employee.grade.find(x => x.level === 'DOCTORADO');
 
-    if (typeof (isGrade) !== 'undefined')
+    if (typeof (isGrade) !== 'undefined') {
       return isGrade.abbreviation;
+    }
 
     isGrade = employee.grade.find(x => x.level === 'MAESTRÍA');
-    if (typeof (isGrade) !== 'undefined')
+    if (typeof (isGrade) !== 'undefined') {
       return isGrade.abbreviation;
+    }
 
     isGrade = employee.grade.find(x => x.level === 'LICENCIATURA');
-    if (typeof (isGrade) !== 'undefined')
+    if (typeof (isGrade) !== 'undefined') {
       return isGrade.abbreviation;
-    return "";
-  };
+    }
+    return '';
+  }
 
-  selected(item): void {    
-    //let lEmployee: IEmployee = <IEmployee>item;
+  selected(item): void {
+    // let lEmployee: IEmployee = <IEmployee>item;
     this.dialogRef.close({ Employee: item.name, Depto: this.departmentInfo });
   }
 
@@ -130,5 +135,5 @@ export class EmployeeAdviserComponent implements OnInit {
   // }
 }
 interface IAdviserTable {
-  name?: string, position?: string, action?: string
+  name?: string; position?: string; action?: string;
 }

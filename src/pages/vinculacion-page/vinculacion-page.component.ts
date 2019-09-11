@@ -10,36 +10,34 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource, MatDialog, MatPaginator, MatSort } from '@angular/material';
 import { EnglishComponent } from 'src/modals/english/english.component';
 
-// import { MenuItem, DialogService } from 'primeng/api';
-// import { FileUpload } from 'primeng/fileupload';
 @Component({
   selector: 'app-vinculacion-page',
   templateUrl: './vinculacion-page.component.html',
   styleUrls: ['./vinculacion-page.component.css'],
-  //providers: [DialogService]
+  // providers: [DialogService]
 })
 
 export class VinculacionPageComponent implements OnInit {
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   students: IStudent[] = [];
   displayedColumns: string[];
   dataSource: MatTableDataSource<IEnglishTable>;
   search: string;
 
   constructor(
-    public studentProvider: StudentProvider, 
+    public studentProvider: StudentProvider,
     private notificationServ: NotificationsServices,
-    private cookiesService: CookiesService, 
+    private cookiesService: CookiesService,
     public dialog: MatDialog,
     private router: Router, private routeActive: ActivatedRoute) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
-    }    
+    }
   }
 
-  ngOnInit() {       
-    this.displayedColumns = ['numeroControl','nombre', 'carrera', 'liberacion', 'action'];
+  ngOnInit() {
+    this.displayedColumns = ['numeroControl', 'nombre', 'carrera', 'liberacion', 'action'];
     this.loadStudentsWithEnglish();
   }
 
@@ -53,7 +51,7 @@ export class VinculacionPageComponent implements OnInit {
     this.students = [];
     this.studentProvider.StudentWithEnglish().subscribe(data => {
       data.students.forEach(element => {
-        let student: IStudent = {
+        const student: IStudent = {
           _id: element._id,
           controlNumber: element.controlNumber,
           fullName: element.fullName,
@@ -67,63 +65,65 @@ export class VinculacionPageComponent implements OnInit {
       this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al recuperar los datos, intente nuevamente', '');
     });
   }
-  refresh():void{
+  refresh(): void {
     this.dataSource = new MatTableDataSource(<IEnglishTable[]>this.students.slice());
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;  
+    this.dataSource.sort = this.sort;
   }
   onUpload(event) {
-    //Se convierte el archivo csv a un arreglo de arrays    
-    let Students: IStudent[] = [];
-    let estudiantes = this.students;
-    let provider = this.studentProvider;
-    let notificacion = this.notificationServ;    
+    // Se convierte el archivo csv a un arreglo de arrays
+    const Students: IStudent[] = [];
+    const estudiantes = this.students;
+    const provider = this.studentProvider;
+    const notificacion = this.notificationServ;
     Papa.parse(event.files[0], {
       complete: function (results) {
         if (results.data.length > 0) {
           results.data.forEach((element, index) => {
             if (index > 0) {
-              let Student: IStudent = {
+              const Student: IStudent = {
                 controlNumber: element[0],
                 fullName: element[1],
                 career: element[2],
-                document: { type: "Ingles", "status": "Activo" }
+                document: { type: 'Ingles', 'status': 'Activo' }
               };
               Students.push(Student);
             }
           });
-          provider.csvEnglish(Students).subscribe(res => {            
-            res.Data.forEach(e => {              
-              let lStudent: IStudent = {
+          provider.csvEnglish(Students).subscribe(res => {
+            res.Data.forEach(e => {
+              const lStudent: IStudent = {
                 _id: e._id,
                 controlNumber: e.controlNumber,
                 fullName: e.fullName,
                 career: e.career,
                 english: new Date(e.document.releaseDate).toLocaleDateString()
-              }
-              let indice = estudiantes.findIndex(x => x._id === e._id);              
-              if (indice !== -1)
+              };
+              const indice = estudiantes.findIndex(x => x._id === e._id);
+              if (indice !== -1) {
                 estudiantes[indice] = lStudent;
-              else
+              } else {
                 estudiantes.push(lStudent);
-            });            
-            notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');            
+              }
+            });
+            notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');
           }, error => {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al recuperar los datos, intente nuevamente', '');
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al recuperar los datos, ' +
+              'intente nuevamente', '');
           });
         }
       }
     });
-    
+
   }
 
   getStudent() {
-    this.students = [];    
-    if(typeof(this.search)!=='undefined' && this.search!==''){
+    this.students = [];
+    if (typeof(this.search) !== 'undefined' && this.search !== '') {
       this.studentProvider.searchStudentWithEnglish(this.search)
       .subscribe(data => {
         data.students.forEach(element => {
-          let student: IStudent = {
+          const student: IStudent = {
             _id: element._id,
             controlNumber: element.controlNumber,
             fullName: element.fullName,
@@ -136,33 +136,35 @@ export class VinculacionPageComponent implements OnInit {
       }, error => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al recuperar los datos, intente nuevamente', '');
       });
-    }else{
+    } else {
       this.loadStudentsWithEnglish();
     }
 
   }
 
   addNewStudent() {
-    const ref = this.dialog.open(EnglishComponent, {      
-      width: '45em',      
+    const ref = this.dialog.open(EnglishComponent, {
+      width: '45em',
     });
 
     ref.afterClosed().subscribe((student: IStudent) => {
       if (student) {
-        student.document = { type: "Ingles", "status": "Activo" };
-        this.studentProvider.csvAddStudentEnglish(student).subscribe(data => {          
-          let student: IStudent = {
+        student.document = { type: 'Ingles', 'status': 'Activo' };
+        this.studentProvider.csvAddStudentEnglish(student).subscribe(data => {
+          // tslint:disable-next-line:no-shadowed-variable
+          const student: IStudent = {
             _id: data.student._id,
             controlNumber: data.student.controlNumber,
             fullName: data.student.fullName,
             career: data.student.career,
             english: new Date(data.student.documents[0].releaseDate).toLocaleDateString()
           };
-          let i=this.students.findIndex(x=>x._id=student._id);
-          if(i!==-1)
-            this.students[i]=student
-          else
+          const i = this.students.findIndex(x => x._id === student._id);
+          if (i !== -1) {
+            this.students[i] = student;
+          } else {
             this.students.push(student);
+          }
           this.refresh();
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante agregado exitosamente', '');
         }, error => {
@@ -186,7 +188,7 @@ export class VinculacionPageComponent implements OnInit {
 }
 
 interface IEnglishTable {
-  _id?: string, controlNumber?: string, fullName?: string, career?: string, action?: string       
+  _id?: string; controlNumber?: string; fullName?: string; career?: string; action?: string;
 }
 // @ViewChild('fileUpload') fileUpload: FileUpload;
 
@@ -197,14 +199,15 @@ interface IEnglishTable {
 // search: string;
 
 // constructor(public studentProvider: StudentProvider, private notificationServ: NotificationsServices,
-//   public dialogService: DialogService, private cookiesService: CookiesService, private router: Router, private routeActive: ActivatedRoute) {
+//   public dialogService: DialogService, private cookiesService: CookiesService, private router: Router,
+//   private routeActive: ActivatedRoute) {
 //   if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
 //     this.router.navigate(['/']);
 //   }
 //   this.home = { icon: 'pi pi-home' };
 // }
 
-// ngOnInit() {    
+// ngOnInit() {
 //   this.menuRoute = [
 //     { label: 'Vinculación' },
 //     { label: 'Ingles', icon: 'pi pi-external-link' }
@@ -239,11 +242,11 @@ interface IEnglishTable {
 // }
 
 // onUpload(event) {
-//   //Se convierte el archivo csv a un arreglo de arrays    
+//   //Se convierte el archivo csv a un arreglo de arrays
 //   let Students: IStudent[] = [];
 //   let estudiantes = this.students;
 //   let provider = this.studentProvider;
-//   let notificacion = this.notificationServ;    
+//   let notificacion = this.notificationServ;
 //   Papa.parse(event.files[0], {
 //     complete: function (results) {
 //       if (results.data.length > 0) {
@@ -258,8 +261,8 @@ interface IEnglishTable {
 //             Students.push(Student);
 //           }
 //         });
-//         provider.csvEnglish(Students).subscribe(res => {            
-//           res.Data.forEach(e => {              
+//         provider.csvEnglish(Students).subscribe(res => {
+//           res.Data.forEach(e => {
 //             let lStudent: IStudent = {
 //               _id: e._id,
 //               controlNumber: e.controlNumber,
@@ -267,15 +270,16 @@ interface IEnglishTable {
 //               career: e.career,
 //               english: new Date(e.document.releaseDate).toLocaleDateString()
 //             }
-//             let indice = estudiantes.findIndex(x => x._id === e._id);              
+//             let indice = estudiantes.findIndex(x => x._id === e._id);
 //             if (indice !== -1)
 //               estudiantes[indice] = lStudent;
 //             else
 //               estudiantes.push(lStudent);
-//           });            
-//           notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');            
+//           });
+//           notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');
 //         }, error => {
-//           this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al recuperar los datos, intente nuevamente', '');
+//           this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al recuperar los datos, ' +
+//              'intente nuevamente', '');
 //         });
 //       }
 //     }

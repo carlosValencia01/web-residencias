@@ -22,12 +22,12 @@ import { eNotificationType } from 'src/enumerators/notificationType.enum';
   styleUrls: ['./titulacion-page.component.scss']
 })
 export class TitulacionPageComponent implements OnInit {
-  //Componentes
+  // Componentes
   @ViewChild('Request') stepOneComponent: RequestComponentComponent;
   @ViewChild('Viewer') viewComponent: ViewerComponentComponent;
   @ViewChild('stepper') stepperComponent: MatStepper;
 
-  //Variables de visibilización de componentes
+  // Variables de visibilización de componentes
   SteepOneCompleted: boolean;
   SteepTwoCompleted: boolean;
   SteepThreeCompleted: boolean;
@@ -36,13 +36,13 @@ export class TitulacionPageComponent implements OnInit {
   SteepSixCompleted: boolean;
   SteepSevenCompleted: boolean;
 
-  //Variables globales
-  Steeps: ContextState; //Estado donde se encuentra la solicitud
-  Request: iRequest;  //Objeto Solicitud
-  StatusComponent: eStatusRequest; //Status del proceso actual
+  // Variables globales
+  Steeps: ContextState; // Estado donde se encuentra la solicitud
+  Request: iRequest;  // Objeto Solicitud
+  StatusComponent: eStatusRequest; // Status del proceso actual
   oRequest: uRequest;
 
-  //Mensajes
+  // Mensajes
   ProcessSentMessage: String = 'En espera de que tú solicitud sea aceptada';
   CompletedSentMessage: String = 'Tú solicitud ha sido aceptada';
   ProcessVerifiedMessage: String = 'En espera del registro de tu proyecto';
@@ -66,13 +66,14 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    //Obtengo la información de la solicitud del estudiante
-    //Si tiene información realizo un casteo de la información a un IRequest
-    //Caso contrario genero una peticion de inicio (con solo phase y status)
-    //this.loadRequest();
+    // Obtengo la información de la solicitud del estudiante
+    // Si tiene información realizo un casteo de la información a un IRequest
+    // Caso contrario genero una peticion de inicio (con solo phase y status)
+    // this.loadRequest();
   }
+
   ngAfterContentInit() {
-    //Obtengo el indice de mi estado y le indico que me posicione en ese Step
+    // Obtengo el indice de mi estado y le indico que me posicione en ese Step
     this.loadRequest();
 
   }
@@ -84,12 +85,12 @@ export class TitulacionPageComponent implements OnInit {
           this.Request = <iRequest>res.request[0];
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
-          this.oRequest = new uRequest(this.Request, this.imgService);          
+          this.oRequest = new uRequest(this.Request, this.imgService);
         } else {
           this.Request = {
             phase: eRequest.NONE,
             status: eStatusRequest.NONE
-          }
+          };
         }
         this.SelectItem();
       }, error => {
@@ -107,15 +108,15 @@ export class TitulacionPageComponent implements OnInit {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
     this.Steeps = new ContextState(phase, status);
-    //this.stepperComponent.selectedIndex = this.Steeps.getIndex();
+    // this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     this.StatusComponent = this.Steeps.state.status;
     this.enableSteps(phase);
   }
 
 
-  //Visualiza el componente donde colocarse
+  // Visualiza el componente donde colocarse
   onReload(): void {
-    //Obtengo el estatus de ese componente
+    // Obtengo el estatus de ese componente
     this.StatusComponent = this.Steeps.state.status;
     this.enableSteps(this.Steeps.getPhase());
   }
@@ -173,10 +174,10 @@ export class TitulacionPageComponent implements OnInit {
   }
   valores() {
     console.log(this.stepperComponent);
-    console.log("STEP INDEX", this.stepperComponent.selectedIndex);
-    //this.stepperComponent.next();
-    console.log("STEP INDEX", this.stepperComponent.selectedIndex = 2);
-    console.log("values", this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted)
+    console.log('STEP INDEX', this.stepperComponent.selectedIndex);
+    // this.stepperComponent.next();
+    console.log('STEP INDEX', this.stepperComponent.selectedIndex = 2);
+    console.log('values', this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted);
   }
 
 }

@@ -11,7 +11,7 @@ export class RequestProvider {
             .pipe(map(requests => requests.json()));
     }
 
-    getAllRequestByStatus(role){
+    getAllRequestByStatus(role) {
         return this.api.get(`request/phase/${role}`)
         .pipe(map(requests => requests.json()));
     }
@@ -19,8 +19,8 @@ export class RequestProvider {
         return this.api.get(`request/${_id}`)
             .pipe(map(request => request.json()));
     }
-    
-    updateRequest(_id, data){
-        return this.api.put(`request/${_id}/status`,data).pipe(map(request => request.json()));
+
+    updateRequest(_id, data) {
+        return this.api.put(`request/${_id}/status`, data).pipe(map(request => request.json()));
     }
 }

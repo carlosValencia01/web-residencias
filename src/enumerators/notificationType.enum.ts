@@ -1,5 +1,5 @@
-export enum eNotificationType{
-    SUCCESS,    
+export enum eNotificationType {
+    SUCCESS,
     ERROR,
     INFORMATION
 }

@@ -16,7 +16,7 @@ export class SidebarContentComponent implements OnInit {
   DEFAULT_PROFILE_IMG = 'assets/icons/man.svg';
   // tslint:disable-next-line:no-output-rename
   @Output('closeMenu') menuClicked = new EventEmitter();
-  menu:Array<iPermission>;
+  menu: Array<iPermission>;
   constructor(
     private cookiesServ: CookiesService,
   ) {
@@ -46,10 +46,10 @@ export class SidebarContentComponent implements OnInit {
     //     this.title = 'Recursos Humanos';
     //     break;
     // }
-    let rol: iRole = this.data.rol;
-    if (typeof (rol) !== 'undefined') {      
+    const rol: iRole = this.data.rol;
+    if (typeof (rol) !== 'undefined') {
       this.menu = rol.permissions;
-      console.log("Menu", this.menu);
+      console.log('Menu', this.menu);
     }
     this.title = rol.name;
   }
@@ -67,11 +67,11 @@ export class SidebarContentComponent implements OnInit {
     }
   }
 
-  isUndefined(valor) {    
-    return typeof (valor) === 'undefined' || valor.length===0;
+  isUndefined(valor) {
+    return typeof (valor) === 'undefined' || valor.length === 0;
   }
 
-  otro(){
-    console.log("dadwa");
+  otro() {
+    console.log('dadwa');
   }
 }

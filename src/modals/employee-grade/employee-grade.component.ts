@@ -11,7 +11,7 @@ import { NewGradeComponent } from '../new-grade/new-grade.component';
 @Component({
   selector: 'app-employee-grade',
   templateUrl: './employee-grade.component.html',
-  styleUrls: ['./employee-grade.component.scss']  
+  styleUrls: ['./employee-grade.component.scss']
 })
 export class EmployeeGradeComponent implements OnInit {
   public Employee: IEmployee;
@@ -19,33 +19,33 @@ export class EmployeeGradeComponent implements OnInit {
   public columns: any[];
   public grades: Array<IGrade>;
   public frmNewEmployeGrade: FormGroup;
-  public title: string="Nuevo Empleado";
+  public title = 'Nuevo Empleado';
   public dataSource: MatTableDataSource<IGradeTable>;
   public displayedColumns: string[];
 
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   constructor(
     public dialogRef: MatDialogRef<EmployeeGradeComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any, 
-     public dialogTwo: MatDialog, 
+    @Inject(MAT_DIALOG_DATA) public data: any,
+     public dialogTwo: MatDialog,
     public sourceData: sourceDataProvider) {
-    this.displayedColumns = ['abbreviation', 'title', 'cedula', 'level', 'action'];        
+    this.displayedColumns = ['abbreviation', 'title', 'cedula', 'level', 'action'];
     this.Operation = data.Operation;
     this.Employee = <IEmployee>{
       name: {
-        firstName: "",
-        lastName: "",
-        fullName: ""
+        firstName: '',
+        lastName: '',
+        fullName: ''
       },
-      area: "",
-      position: "",
+      area: '',
+      position: '',
       grade: []
     };
 
-    if (this.Operation == eOperation.EDIT) {  
+    if (this.Operation == eOperation.EDIT) {
       this.Employee = <IEmployee>data.Employee;
-      this.title = "Editar Empleado"
+      this.title = 'Editar Empleado';
     }
   }
 
@@ -60,7 +60,7 @@ export class EmployeeGradeComponent implements OnInit {
     });
 
     this.grades = this.Employee.grade;
-    this.refresh();    
+    this.refresh();
   }
 
   refresh(): void {
@@ -69,16 +69,16 @@ export class EmployeeGradeComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  addNewGrade() {    
+  addNewGrade() {
     const referencia = this.dialogTwo.open(NewGradeComponent, {
-      id:'NewGradeModal',
+      id: 'NewGradeModal',
       data: {
         Operation: eOperation.NEW
       },
-      width: '40em'      
+      width: '40em'
     });
 
-    referencia.afterClosed().subscribe((gradeResult: IGrade) => {      
+    referencia.afterClosed().subscribe((gradeResult: IGrade) => {
       if (gradeResult) {
         this.grades.push(gradeResult);
         this.refresh();
@@ -87,11 +87,11 @@ export class EmployeeGradeComponent implements OnInit {
 
   }
 
-  onRowRemove(row: any) {    
+  onRowRemove(row: any) {
     this.grades.splice(this.grades.indexOf(<IGrade>row), 1);
     this.grades.forEach(e => {
       delete e._id;
-    })
+    });
     this.grades = this.grades.slice();
     this.refresh();
   }
@@ -99,13 +99,13 @@ export class EmployeeGradeComponent implements OnInit {
     this.Employee = {
       _id: this.Employee._id,
       name: {
-        firstName: this.frmNewEmployeGrade.get("name").value,
-        lastName: this.frmNewEmployeGrade.get("lastname").value
+        firstName: this.frmNewEmployeGrade.get('name').value,
+        lastName: this.frmNewEmployeGrade.get('lastname').value
       },
-      area: this.frmNewEmployeGrade.get("area").value,
-      position: this.frmNewEmployeGrade.get("position").value,
+      area: this.frmNewEmployeGrade.get('area').value,
+      position: this.frmNewEmployeGrade.get('position').value,
       grade: this.grades
-    };   
+    };
     this.dialogRef.close(this.Employee);
   }
 
@@ -116,5 +116,5 @@ export class EmployeeGradeComponent implements OnInit {
 
 
 interface IGradeTable {
-  title?: string, cedula?: string, level?: string, action?: string
+  title?: string; cedula?: string; level?: string; action?: string;
 }

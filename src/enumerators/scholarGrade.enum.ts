@@ -1,4 +1,4 @@
-export enum eScholarGrade{
+export enum eScholarGrade {
     LICENCIATURA,
     MAESTRIA,
     DOCTORADO
