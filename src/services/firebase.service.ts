@@ -83,7 +83,7 @@ export class FirebaseService {
 
   //guardar respuestas Encuesta
   public saveAnswersQuestions(idStudent: string, data: any,event){
-    return this.db.collection(event).doc(idStudent).update({respuestas:data,encuesta:true});
+    return this.db.collection(event).doc(idStudent).update({respuestas:data,survey:true});
   }
 
   //crear pregunta 

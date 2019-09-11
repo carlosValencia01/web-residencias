@@ -3,7 +3,7 @@ import { FirebaseService } from 'src/services/firebase.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { isNullOrUndefined } from 'util';
-import { ok } from 'assert';
+
 
 
 
@@ -49,7 +49,7 @@ export class SurveyPageComponent implements OnInit {
               this.graduateItem = graduate.payload.data();    
               console.log(this.graduateItem);
                         
-              if(isNullOrUndefined(this.graduateItem.encuesta)){
+              if(!this.graduateItem.survey){
                 if(this.nc == graduate.payload.get('nc')){
                   this.itsOK=true;
                   this.getQuestionsSurvey(); //todo OK
