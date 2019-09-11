@@ -82,7 +82,12 @@ export class FirebaseService {
   }
 
   //guardar respuestas Encuesta
-  public saveAnswersQuestions(idAnswer: string, data: any){
-    return this.db.collection("respuestasEncuesta").doc(idAnswer).set({respuestas:data});
+  public saveAnswersQuestions(idStudent: string, data: any,event){
+    return this.db.collection(event).doc(idStudent).update({respuestas:data,encuesta:true});
+  }
+
+  //crear pregunta 
+  public setQuestion(idQuestion, description){
+    return this.db.collection('preguntasEncuesta').doc(idQuestion).set({descripcion:description});
   }
 }

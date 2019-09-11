@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FirebaseService } from 'src/services/firebase.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { isNullOrUndefined } from 'util';
+import { ok } from 'assert';
 
 
 
@@ -13,6 +15,8 @@ import Swal from 'sweetalert2';
 export class SurveyPageComponent implements OnInit {
   public nc = null;
   public idDocAlumn = null;
+  public activeEvent = null;
+  public graduateItem = null;
 
   //Variable donde se guardan las preguntas
   public questions = [];
@@ -23,16 +27,50 @@ export class SurveyPageComponent implements OnInit {
   //Variable para almacenar Respuestas
   public answersQuestions = [];
 
+    //variable para validar ID y NC
+  itsOK : boolean = false;
   constructor(    
     private firestoreService: FirebaseService,
     private router: Router,
     ) 
-  { }
-
-  ngOnInit() {
+  {
     this.idDocAlumn=this.router.url.split('/')[2];
     this.nc=this.router.url.split('/')[3];
-    this.getQuestionsSurvey();
+    let subs =  this.firestoreService.getActivedEvent().subscribe(
+      res => {
+        
+        
+        subs.unsubscribe();
+        this.activeEvent = res[0].payload.doc.id;
+        let sub = firestoreService.getGraduate(this.idDocAlumn,this.activeEvent).subscribe(
+          graduate=>{
+            sub.unsubscribe();
+            if(!isNullOrUndefined(graduate)){   
+              this.graduateItem = graduate.payload.data();    
+              console.log(this.graduateItem);
+                        
+              if(isNullOrUndefined(this.graduateItem.encuesta)){
+                if(this.nc == graduate.payload.get('nc')){
+                  this.itsOK=true;
+                  this.getQuestionsSurvey(); //todo OK
+                }else{
+                  this.itsOK=false; //no coincide el NC con el ID
+                }
+              }else{
+                this.itsOK = false; //ya respondio la encuesta
+              }                         
+            }else{
+              this.itsOK=false; //no existe el alumno
+            }
+          }
+        )
+      }
+    );
+
+   }
+
+  ngOnInit() {
+    
   }
   
   getQuestionsSurvey(){
@@ -47,8 +85,10 @@ export class SurveyPageComponent implements OnInit {
 
   nextQuestion(answer){
     //this.answersQuestions["idQuestion"]=this.contQuestion+1;
-    this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:answer})
+    let score = answer == 'Muy Buena' ? 3 : answer == 'Buena' ? 2 : answer == 'Regular' ? 1 : 0;
+    this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:answer,score:score})
     if(this.contQuestion < this.questions.length-1){
+      
       this.contQuestion++;
     }else{
       console.log(this.answersQuestions);
@@ -59,13 +99,11 @@ export class SurveyPageComponent implements OnInit {
         allowOutsideClick: false,
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'Aceptar'
-      }).then((result) => {
+      }).then((result) => {     
         if (result.value) {
-          this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions).then(
-            created=>{
-              this.router.navigate(['/student']);  
-            }
-          ); 
+          this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then(
+            updated=> window.location.assign("/") //salir de la encuesta
+          );
         }
       }) 
     }
