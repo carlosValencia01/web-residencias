@@ -15,6 +15,9 @@ import { RequestModalComponent } from 'src/modals/request-modal/request-modal.co
 import { ConfirmDialogComponent } from 'src/components/confirm-dialog/confirm-dialog.component';
 import { eRole } from 'src/enumerators/role.enum';
 import { SteepComponentComponent } from 'src/app/steep-component/steep-component.component';
+import { uRequest } from 'src/entities/request';
+import { ImageToBase64Service } from '../../services/img.to.base63.service';
+
 @Component({
   selector: 'app-progress-page',
   templateUrl: './progress-page.component.html',
@@ -30,11 +33,17 @@ export class ProgressPageComponent implements OnInit {
   search: string;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  constructor(private requestProvider: RequestProvider,
+
+  constructor(
+    private requestProvider: RequestProvider,
     public dialog: MatDialog,
-    private notifications: NotificationsServices, private cookiesService: CookiesService,
-    private router: Router, private routeActive: ActivatedRoute) {
-      console.log('cookie', this.cookiesService.getData());
+    private notifications: NotificationsServices,
+    private cookiesService: CookiesService,
+    private router: Router,
+    private routeActive: ActivatedRoute,
+    private imgService: ImageToBase64Service,
+  ) {
+    console.log('cookie', this.cookiesService.getData());
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -231,6 +240,15 @@ export class ProgressPageComponent implements OnInit {
     //     });
     //   }
     // });
+  }
+
+  seeRequestPDF(_id: string): void {
+    const indexRequest = this.request.findIndex(x => x._id === _id);
+    const _request: iRequest = this.request[indexRequest];
+    const oRequest: uRequest = new uRequest(_request, this.imgService);
+    setTimeout( () => {
+      window.open(oRequest.protocolActRequest().output('bloburl'), '_blank');
+    }, 500);
   }
 }
 
