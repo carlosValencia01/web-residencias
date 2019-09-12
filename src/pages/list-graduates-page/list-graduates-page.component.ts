@@ -294,7 +294,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Enviar invitación al alumno seleccionado (status == Verificado)
   sendOneMail(item) {
-    if(item.status == 'Verificado'){
+    if(item.survey){
       this.graduationProv.sendQR(item.email,item.id,item.name).subscribe(
         res=>{
           this.notificationsServices.showNotification(1, 'Invitación enviada a:',item.nc);
@@ -304,7 +304,7 @@ export class ListGraduatesPageComponent implements OnInit {
       );
     }
     else{
-      this.notificationsServices.showNotification(3,item.nc,'Aun no se realiza el pago correspondiente');
+      this.notificationsServices.showNotification(3,item.nc,'Encuesta de Egresados aun no ha sido respondida');
     }
   }
 

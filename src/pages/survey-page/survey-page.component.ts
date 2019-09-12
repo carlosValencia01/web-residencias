@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { isNullOrUndefined } from 'util';
 import { ok } from 'assert';
+import { GraduationProvider } from '../../providers/graduation.prov';
+import { NotificationsServices } from '../../services/notifications.service';
 
 
 
@@ -18,38 +20,36 @@ export class SurveyPageComponent implements OnInit {
   public activeEvent = null;
   public graduateItem = null;
 
-  //Variable donde se guardan las preguntas
+  // Variable donde se guardan las preguntas
   public questions = [];
 
-  //Contador de pregunta
+  // Contador de pregunta
   public contQuestion = 0;
 
-  //Variable para almacenar Respuestas
+  // Variable para almacenar Respuestas
   public answersQuestions = [];
 
-    //variable para validar ID y NC
+  // variable para validar ID y NC
   itsOK : boolean = false;
   constructor(    
     private firestoreService: FirebaseService,
     private router: Router,
+    private graduationProv : GraduationProvider,
+    private notificationsServices: NotificationsServices,
     ) 
   {
     this.idDocAlumn=this.router.url.split('/')[2];
     this.nc=this.router.url.split('/')[3];
     let subs =  this.firestoreService.getActivedEvent().subscribe(
       res => {
-        
-        
         subs.unsubscribe();
         this.activeEvent = res[0].payload.doc.id;
         let sub = firestoreService.getGraduate(this.idDocAlumn,this.activeEvent).subscribe(
           graduate=>{
             sub.unsubscribe();
             if(!isNullOrUndefined(graduate)){   
-              this.graduateItem = graduate.payload.data();    
-              console.log(this.graduateItem);
-                        
-              if(isNullOrUndefined(this.graduateItem.encuesta)){
+              this.graduateItem = graduate.payload.data();  
+              if(!this.graduateItem.survey){
                 if(this.nc == graduate.payload.get('nc')){
                   this.itsOK=true;
                   this.getQuestionsSurvey(); //todo OK
@@ -58,6 +58,18 @@ export class SurveyPageComponent implements OnInit {
                 }
               }else{
                 this.itsOK = false; //ya respondio la encuesta
+                Swal.fire({
+                  title: 'Encuesta Finalizada',
+                  text: "Click en aceptar para finalizar",
+                  type: 'info',
+                  allowOutsideClick: false,
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'Aceptar'
+                }).then((result) => {     
+                  if (result.value) {
+                    window.location.assign("/") //salir de la encuesta
+                  }
+                }) 
               }                         
             }else{
               this.itsOK=false; //no existe el alumno
@@ -88,24 +100,20 @@ export class SurveyPageComponent implements OnInit {
     let score = answer == 'Muy Buena' ? 3 : answer == 'Buena' ? 2 : answer == 'Regular' ? 1 : 0;
     this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:answer,score:score})
     if(this.contQuestion < this.questions.length-1){
-      
       this.contQuestion++;
     }else{
-      console.log(this.answersQuestions);
-      Swal.fire({
-        title: 'Encuesta Finalizada',
-        text: "Click en aceptar para finalizar",
-        type: 'success',
-        allowOutsideClick: false,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-      }).then((result) => {     
-        if (result.value) {
-          this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then(
-            updated=> window.location.assign("/") //salir de la encuesta
-          );
-        }
-      }) 
+      this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then();
+      this.sendQR(this.graduateItem);
     }
+  }
+
+  sendQR(item) {
+      this.graduationProv.sendQR(item.correo,this.idDocAlumn,item.nombre).subscribe(
+        res=>{
+          this.notificationsServices.showNotification(1, 'Tu Invitación Fué Enviada','');
+        },
+        err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar la invitación:','');
+        }
+      );
   }
 }

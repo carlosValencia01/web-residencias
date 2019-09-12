@@ -156,7 +156,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         
         this.firebaseService.updateFieldGraduate(student.id,{estatus:"Verificado"},this.collection).then(
           res=>{
-            this.sendOneMail(student);
+            this.sendOneMailSurvey(student);
           }
         );
       });
@@ -165,7 +165,6 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   }
 
   sendOneMail(item) {
-    
       this.graduationProv.sendQR(item.correo,item.id,item.nombre).subscribe(
         res=>{
           this.notificationsServices.showNotification(1, 'Invitación enviada a:',item.nc);
@@ -173,7 +172,16 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc);
         }
       );
-    
+  }
+
+  sendOneMailSurvey(item) {
+      this.graduationProv.sendSurvey(item.correo,item.id,item.nombre,item.nc).subscribe(
+        res=>{
+          this.notificationsServices.showNotification(1, 'Encuesta enviada a:',item.nc);
+        },
+        err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc);
+        }
+      );
   }
 
   //borrar los datos cuando se cancela
