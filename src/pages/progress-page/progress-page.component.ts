@@ -166,7 +166,7 @@ export class ProgressPageComponent implements OnInit {
   Verified(Identificador): void {
     const ref = this.dialog.open(SteepComponentComponent, {
       data: {
-        Request: Identificador
+        Request: this.getRequestById(Identificador)
       },
       disableClose: true,
       hasBackdrop: true,
@@ -243,12 +243,16 @@ export class ProgressPageComponent implements OnInit {
   }
 
   seeRequestPDF(_id: string): void {
-    const indexRequest = this.request.findIndex(x => x._id === _id);
-    const _request: iRequest = this.request[indexRequest];
+    const _request: iRequest = this.getRequestById(_id);
     const oRequest: uRequest = new uRequest(_request, this.imgService);
     setTimeout( () => {
       window.open(oRequest.protocolActRequest().output('bloburl'), '_blank');
     }, 500);
+  }
+
+  getRequestById(_id: string): iRequest {
+    const indexRequest = this.request.findIndex(x => x._id === _id);
+    return this.request[indexRequest];
   }
 }
 

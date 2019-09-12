@@ -30,12 +30,11 @@
     <!-- <form [formGroup]="thirdFormGroup"> -->
     <ng-template matStepLabel>REGISTRO DE PROYECTO</ng-template>
     <div *ngIf="SteepThreeCompleted">
-      <!-- <app-viewer-component [Request]="Request" [Phase]="'Registrado'"></app-viewer-component> -->
+      <app-viewer-component [Request]="Request" [Phase]="'Registrado'"></app-viewer-component>
       <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
     </div>
     <div *ngIf="!SteepThreeCompleted">
       <div [ngSwitch]="StatusComponent">
-        <!-- <app-steep-component [Request]="'5d7599ed45e02a331c0e4f6b'"></app-steep-component> -->
         <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessVerifiedMessage"></app-process-component>
       </div>
     </div>

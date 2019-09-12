@@ -16,22 +16,28 @@ export class SteepComponentComponent implements OnInit {
   @ViewChild('stepper') stepperComponent: MatStepper;
   // @Input('Request') RequestId: String;
   RequestId: String;
-  Request: String;
+  Request: iRequest;
   ObjectRequestTmp: iRequest;
   ObjectRequest: iRequest;
   SteepOneCompleted: boolean;
   SteepTwoCompleted: boolean;
   SteepThreeCompleted: boolean;
-  constructor(public dialogRef: MatDialogRef<SteepComponentComponent>,
-    @Inject(MAT_DIALOG_DATA) public data, public _RequestProvider: RequestProvider,
-    private cookiesService: CookiesService, private notificationsServ: NotificationsServices) {
-    this.RequestId = data.Request;
+
+  constructor(
+    public dialogRef: MatDialogRef<SteepComponentComponent>,
+    @Inject(MAT_DIALOG_DATA) public data,
+    public _RequestProvider: RequestProvider,
+    private cookiesService: CookiesService,
+    private notificationsServ: NotificationsServices,
+  ) {
+    this.Request = data.Request;
+    this.RequestId = data.Request._id;
   }
 
   ngOnInit() {
   }
+
   ngAfterContentInit() {
-    this.Request = this.RequestId;
     this._RequestProvider.getRequestById(this.RequestId).subscribe(
       data => {
         // console.log("reques", this.data);
@@ -48,9 +54,6 @@ export class SteepComponentComponent implements OnInit {
     console.log('RTEQUEST', this.RequestId);
 
   }
-
-
-
 
   Next(index: number): void {
     switch (index) {
