@@ -9,9 +9,9 @@
 </div>
 
 <div *ngIf="activeSession">
-    <mat-sidenav-container fullscreen>
-        <mat-sidenav mode="side" #sidenav opened position="start">
-            <app-sidebar-content></app-sidebar-content>
+    <mat-sidenav-container class="content" style="background-color: #E9EBEE;" hasBackdrop="false" fullscreen>
+        <mat-sidenav #sidenav [(opened)]="opened" [mode]="mode" position="start">
+            <app-sidebar-content (closeMenu)="closeMenu()"></app-sidebar-content>
         </mat-sidenav>
         <mat-sidenav-content>
             <app-home-header (onMenu)="onMenu()" [size]="sizeBoolean"></app-home-header>

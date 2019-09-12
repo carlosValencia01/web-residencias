@@ -15,7 +15,7 @@ export class AppComponent {
   activeSession: boolean;
 
   opened = true;
-  mode = 'push';
+  mode = 'side';
   smallScreen: boolean;
   sizeBoolean: boolean;
   closeOnClickOutside: boolean;
@@ -48,11 +48,11 @@ export class AppComponent {
   }
 
   configureSideNav() {
-    this.smallScreen = window.innerWidth < 1300 ? true : false;
-    this.closeOnClickOutside = this.smallScreen ? true : false;
-    this.opened = this.smallScreen ? false : true;
-    this.sizeBoolean = this.smallScreen ? true : false;
-    this.mode = this.smallScreen ? 'over' : 'push';
+    this.smallScreen = window.innerWidth < 1300;
+    this.closeOnClickOutside = this.smallScreen;
+    this.opened = !this.smallScreen;
+    this.sizeBoolean = this.smallScreen;
+    this.mode = this.smallScreen ? 'over' : 'side';
   }
 
   onMenu() {

@@ -51,14 +51,14 @@
           <span>{{item.label}}</span>
         </button>
         <mat-menu #sub_menu>
-          <button *ngFor="let submenu of item.items" mat-menu-item routerLink="{{submenu.routerLink}}">
+          <button *ngFor="let submenu of item.items" mat-menu-item routerLink="{{submenu.routerLink}}" (click)="closeMenu()">
             <mat-icon>{{submenu.icon}}</mat-icon>
             <span>{{submenu.label}}</span>
           </button>
         </mat-menu>
       </div>
       <ng-template #noSubmenu>
-        <button mat-menu-item routerLink="{{item.routerLink}}">
+        <button mat-menu-item routerLink="{{item.routerLink}}" (click)="closeMenu()">
           <mat-icon>{{item.icon}}</mat-icon>
           <span>{{item.label}}</span>
         </button>
