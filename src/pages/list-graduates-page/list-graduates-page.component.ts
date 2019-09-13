@@ -55,6 +55,7 @@ export class ListGraduatesPageComponent implements OnInit {
   public role: string;
   public no = 0;
   page=1;
+  pag;
   pageSize = 10;
   collection = null;
   public status = 0;
@@ -67,7 +68,7 @@ export class ListGraduatesPageComponent implements OnInit {
     private excelService: ExporterService,
     private imageToBase64Serv: ImageToBase64Service
     ) {
-      if (this.cookiesService.getData().user.role !== 0 && 
+      if (this.cookiesService.getData().user.role !== 0 &&
       this.cookiesService.getData().user.role !== 5 &&
       this.cookiesService.getData().user.role !== 6 &&
       this.cookiesService.getData().user.role !== 9)
@@ -77,7 +78,7 @@ export class ListGraduatesPageComponent implements OnInit {
       this.collection=this.router.url.split('/')[2];
       let sub = this.firestoreService.getEvent(this.collection).subscribe(
         ev =>{ sub.unsubscribe(); this.status=ev.payload.get("estatus");}
-      ); 
+      );
     }
 
   ngOnInit() {
@@ -122,7 +123,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   readEmail(){
-    this.firestoreService.getGraduates(this.collection).subscribe(async (alumnosSnapshot) => {      
+    this.firestoreService.getGraduates(this.collection).subscribe(async (alumnosSnapshot) => {
       this.alumnos = alumnosSnapshot.map( (alumno) =>{
         return {
           id:alumno.payload.doc.id,
@@ -137,12 +138,12 @@ export class ListGraduatesPageComponent implements OnInit {
           observations: alumno.payload.doc.get("observations"),
           survey: alumno.payload.doc.get("survey")
         }});
-        
+
         //Ordenar Alumnos por Apellidos
         this.alumnos.sort(function (a, b) {
           return a.nameLastName.localeCompare(b.nameLastName);
         });
-        
+
         this.alumnosReport =  this.alumnos;
         this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
 
@@ -167,7 +168,7 @@ export class ListGraduatesPageComponent implements OnInit {
       this.notificationsServices.showNotification(1, 'Pago confirmado para:',item.nc);
     }, (error) => {
       console.log(error);
-    });  
+    });
   }
 
   // Cambias estatus a Registrado
@@ -188,7 +189,7 @@ export class ListGraduatesPageComponent implements OnInit {
       this.notificationsServices.showNotification(1, 'Pago removido para:',item.nc);
     }, (error) => {
       console.log(error);
-    });  
+    });
   }
 
   // Cambias estatus a Asistió
@@ -209,9 +210,9 @@ export class ListGraduatesPageComponent implements OnInit {
       this.notificationsServices.showNotification(1, 'Pago removido para:',item.nc);
     }, (error) => {
       console.log(error);
-    });  
+    });
   }
-  
+
   // Confirmar pago
   confirmPaidEvent(item){
     Swal.fire({
@@ -310,7 +311,7 @@ export class ListGraduatesPageComponent implements OnInit {
     // Confirmar envio de encuesta de egresados
     confirmSendEmailSurvey(item){
       Swal.fire({
-        title: 'Enviar Encuesta',        
+        title: 'Enviar Encuesta',
         imageUrl: '../../assets/icons/survey.svg',
         imageWidth: 100,
         imageHeight: 100,
@@ -328,7 +329,7 @@ export class ListGraduatesPageComponent implements OnInit {
         }
       })
     }
-  
+
     // Enviar encuesta al alumno seleccionado (status == Verificado)
     sendOneMailSurvey(item) {
       if(item.status == 'Verificado'){
@@ -342,7 +343,7 @@ export class ListGraduatesPageComponent implements OnInit {
       }
       else{
         this.notificationsServices.showNotification(3,item.nc,'Aun no se realiza el pago correspondiente');
-      }    
+      }
     }
 
   // Confirmar envio de invitación
@@ -434,10 +435,10 @@ export class ListGraduatesPageComponent implements OnInit {
   filterItems(carreer,sR,sP,sV,sA,sM) {
     return this.alumnos.filter(function(alumno) {
       return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
-             alumno.status.toLowerCase().indexOf(sR.toLowerCase()) > -1 || 
-             alumno.status.toLowerCase().indexOf(sP.toLowerCase()) > -1 || 
-             alumno.status.toLowerCase().indexOf(sV.toLowerCase()) > -1 || 
-             alumno.status.toLowerCase().indexOf(sA.toLowerCase()) > -1 || 
+             alumno.status.toLowerCase().indexOf(sR.toLowerCase()) > -1 ||
+             alumno.status.toLowerCase().indexOf(sP.toLowerCase()) > -1 ||
+             alumno.status.toLowerCase().indexOf(sV.toLowerCase()) > -1 ||
+             alumno.status.toLowerCase().indexOf(sA.toLowerCase()) > -1 ||
              alumno.status.toLowerCase().indexOf(sM.toLowerCase()) > -1);
     })
   }
@@ -450,13 +451,13 @@ export class ListGraduatesPageComponent implements OnInit {
 
   filterItemsVerified(carreer,status){
     return this.alumnos.filter(function(alumno) {
-      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && 
+      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 &&
              alumno.status.toLowerCase().indexOf(status.toLowerCase()) > -1;
     })
   }
 
  // Generar reporte de alumnos
-  generateReport(){    
+  generateReport(){
     var doc = new jsPDF('p', 'pt');
 
     // Header
@@ -478,7 +479,7 @@ export class ListGraduatesPageComponent implements OnInit {
           if(data.row.cells[4].text[0] === 'Registrado'){
             data.cell.styles.fillColor = [71, 178, 218];
             data.cell.styles.textColor = [255,255,255];
-          }      
+          }
           if(data.row.cells[4].text[0] === 'Pagado'){
             data.cell.styles.fillColor = [250, 157, 0];
             data.cell.styles.textColor = [255,255,255];
@@ -503,7 +504,7 @@ export class ListGraduatesPageComponent implements OnInit {
             data.cell.styles.fillColor = [17, 32, 67];
             data.cell.styles.textColor = [255,255,255];
             data.cell.styles.fontSize =  10;
-          }         
+          }
       }
     });
 
@@ -529,7 +530,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
     this.notificationsServices.showNotification(1, 'Reporte Generado','Se generó reporte con filtros actuales.');
     window.open(doc.output('bloburl'), '_blank');
-    //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");    
+    //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
 
   // Exportar alumnos a excel
@@ -546,9 +547,9 @@ export class ListGraduatesPageComponent implements OnInit {
 
       // Dividir total de alumnos verificados en segmentos de 4
       let divAlumnosBallotPaper = [];
-      
+
       // 4 Alumnos por hoja
-      const LONGITUD_PEDAZOS = 4; 
+      const LONGITUD_PEDAZOS = 4;
       for (let i = 0; i < this.alumnosBallotPaper.length; i += LONGITUD_PEDAZOS) {
         let pedazo = this.alumnosBallotPaper.slice(i, i + LONGITUD_PEDAZOS);
         divAlumnosBallotPaper.push(pedazo);
@@ -559,7 +560,7 @@ export class ListGraduatesPageComponent implements OnInit {
       // Obtener Ancho y Alto de la hoja
       var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
       var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-      
+
       // Dividir Alto de hoja entre 4 para dibujar recta divisora
       var divLine = pageHeight/4;
       var cont = 1;
@@ -569,7 +570,7 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.addImage(this.logoSep, 'PNG', 5, 2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth-58, 2, 53, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,divLine-20, 15, 15); // Logo TecTepic
-            
+
             // Numero de alumno
             doc.setLineWidth(.3)
             doc.setDrawColor(0)
@@ -592,7 +593,7 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.addImage(this.logoSep, 'PNG', 5,(divLine)+2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine)+2, 53, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*2)-20, 15, 15); // Logo TecTepic
-            
+
             //Numero de alumno
             doc.setLineWidth(.3)
             doc.setDrawColor(0)
@@ -615,7 +616,7 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.addImage(this.logoSep, 'PNG', 5,(divLine*2)+2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*2)+2, 53, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*3)-20, 15, 15); // Logo TecTepic
-            
+
             //Numero de alumno
             doc.setLineWidth(.3)
             doc.setDrawColor(0)
@@ -625,7 +626,7 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.setFontSize(30);
             doc.text((cont).toString(), pageWidth-25,(divLine*3)-16, 'center');
             cont++;
-            
+
             // Nombre y Carrera
             doc.setTextColor(0);
             doc.setFontSize(22);
@@ -638,7 +639,7 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.addImage(this.logoSep, 'PNG', 5,(divLine*3)+2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth-58,(divLine*3)+2, 53, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG',(pageWidth/2)-7.5,(divLine*4)-20, 15, 15); // Logo TecTepic
-            
+
             //Numero de alumno
             doc.setLineWidth(.3)
             doc.setDrawColor(0)
@@ -648,13 +649,13 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.setFontSize(30);
             doc.text((cont).toString(), pageWidth-25,(divLine*4)-16, 'center');
             cont++;
-            
+
             // Nombre y Carrera
             doc.setTextColor(0);
             doc.setFontSize(22);
             doc.text(divAlumnosBallotPaper[i][j].nameLastName, pageWidth / 2,252.75, 'center');
             doc.setFontSize(13);
-            doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,267.75, 'center');        
+            doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2,267.75, 'center');
           }
         }
         if(i < divAlumnosBallotPaper.length-1){
@@ -663,7 +664,7 @@ export class ListGraduatesPageComponent implements OnInit {
       }
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     }else{
-      this.notificationsServices.showNotification(2, 'Error','No hay alumnos  en estatus Verificado');  
+      this.notificationsServices.showNotification(2, 'Error','No hay alumnos  en estatus Verificado');
     }
   }
 
@@ -722,12 +723,12 @@ export class ListGraduatesPageComponent implements OnInit {
       observations: item.observations ? item.observations:'',
       survey: item.survey ? item.survey:false,
       degree : true
-    };    
+    };
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
       Swal.fire("Título Asignado", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
-    });  
+    });
   }
 
   // Remover titulo
@@ -748,7 +749,7 @@ export class ListGraduatesPageComponent implements OnInit {
       Swal.fire("Título Removido", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
-    });  
+    });
   }
 
   // Mostar modal para agregar y visualizar observaciones
@@ -819,11 +820,11 @@ export class ListGraduatesPageComponent implements OnInit {
       Swal.fire("Observaciones Guardadas", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
-    });  
+    });
   }
-  
+
   pageChanged(ev){
-    this.page=ev;  
+    this.page=ev;
   }
 
 }

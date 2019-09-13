@@ -22,7 +22,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
   public formRequest: FormGroup;
   private user: any;
   private formData: any;
-  private operationMode: Number;
+  public operationMode: Number;
   private showObservations: boolean;
   private isUploadedFile: boolean;
   private projectFileName: string;
@@ -269,7 +269,7 @@ export class AcademicDegreeApplicationFormComponent implements OnInit {
 
   generateRequestPDF() {
     if (this.operationMode === OperationMode.CREATED || this.operationMode === OperationMode.SENT) {
-      window.open(`http://104.248.94.77/escolares/credenciales/graduate/request/generate/${this.requestData._id}`);
+      window.open(`http://api.cideti.com.mx/escolares/credenciales/graduate/request/generate/${this.requestData._id}`);
     }
   }
 }

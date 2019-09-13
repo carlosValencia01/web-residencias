@@ -11,7 +11,7 @@ moment.locale('es');
 })
 export class RequestModalContentComponent implements OnInit {
   @Input() request;
-  private formRequestData: FormGroup;
+  public formRequestData: FormGroup;
 
   constructor() {
   }

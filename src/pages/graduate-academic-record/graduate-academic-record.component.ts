@@ -23,7 +23,7 @@ export class GraduateAcademicRecordComponent implements OnInit {
   }
 
   openRequestPDF() {
-    window.open(`http://104.248.94.77/escolares/credenciales/graduate/request/generate/${this.request._id}`);
+    window.open(`http://api.cideti.com.mx/escolares/credenciales/graduate/request/generate/${this.request._id}`);
   }
 
   openProjectFile() {
