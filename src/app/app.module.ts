@@ -47,6 +47,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDatepickerModule, MatNativeDateModule, MatRadioModule} from '@angular/material';
+import { MatButtonModule } from "@angular/material";
 
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
@@ -176,7 +177,8 @@ const appRouters: Routes = [
     MatCardModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatRadioModule
+    MatRadioModule,
+    MatButtonModule
   ],
   providers: [
     CookieService,

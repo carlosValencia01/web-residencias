@@ -26,6 +26,12 @@ export class SurveyPageComponent implements OnInit {
   // Contador de pregunta
   public contQuestion = 0;
 
+  // Verificar si son preguntas con carita o radio/abiertas
+  public survey = true;
+  public radioPrimerEmpleo;
+  public empleoFamiliar;
+  public recomendations;
+
   // Variable para almacenar Respuestas
   public answersQuestions = [];
 
@@ -96,14 +102,44 @@ export class SurveyPageComponent implements OnInit {
   }
 
   nextQuestion(answer){
-    //this.answersQuestions["idQuestion"]=this.contQuestion+1;
-    let score = answer == 'Muy Buena' ? 3 : answer == 'Buena' ? 2 : answer == 'Regular' ? 1 : 0;
-    this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:answer,score:score})
+    if(this.contQuestion <= 5){
+      let score = answer == 'Muy Buena' ? 3 : answer == 'Buena' ? 2 : answer == 'Regular' ? 1 : 0;
+      this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:answer,score:score})
+    }
+    if(this.contQuestion < this.questions.length-1){
+      this.contQuestion++;
+      if(this.contQuestion > 5){
+        this.survey=false;
+      }
+    }
+  }
+
+  nextQuestionPE(){
+    this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:this.radioPrimerEmpleo,empleoFamiliar:this.empleoFamiliar});
+    if(this.contQuestion < this.questions.length-1){
+      this.contQuestion++;
+    }
+  }
+
+  nextQuestionRecomendations(){
+    this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:this.recomendations});
     if(this.contQuestion < this.questions.length-1){
       this.contQuestion++;
     }else{
       this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then();
       this.sendQR(this.graduateItem);
+      Swal.fire({
+        title: 'Encuesta Finalizada',
+        text: "Click en aceptar para finalizar",
+        type: 'info',
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+      }).then((result) => {     
+        if (result.value) {
+          window.location.assign("/") //salir de la encuesta
+        }
+      })
     }
   }
 
