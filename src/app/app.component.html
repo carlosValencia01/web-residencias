@@ -9,17 +9,26 @@
 </div>
 
 <div *ngIf="activeSession">
-
-    <ng-sidebar-container class="content" style="background-color: #E9EBEE;">
-
-        <!-- A sidebar -->
-        <ng-sidebar [(opened)]="opened" [(mode)]="mode" [(closeOnClickOutside)]="closeOnClickOutside"
-          (onOpened)="onOpened()" (onClosed)="onClosed()">
+    <mat-sidenav-container class="content" style="background-color: #E9EBEE;" hasBackdrop="false" fullscreen>
+        <mat-sidenav #sidenav [(opened)]="opened" [mode]="mode" position="start">
             <app-sidebar-content (closeMenu)="closeMenu()"></app-sidebar-content>
-        </ng-sidebar>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <app-home-header (onMenu)="onMenu()" [size]="sizeBoolean"></app-home-header>
+            <div class="main-content" [ngStyle]="{'padding':'15px'}">
+                <router-outlet></router-outlet>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+    <!-- <ng-sidebar-container class="content" style="background-color: #E9EBEE;"> -->
 
-        <!-- Page content -->
-        <div ng-sidebar-content>
+    <!-- A sidebar -->
+    <!-- <ng-sidebar [(opened)]="opened" [(mode)]="mode" [(closeOnClickOutside)]="closeOnClickOutside">
+            <app-sidebar-content (closeMenu)="closeMenu()"></app-sidebar-content>
+        </ng-sidebar> -->
+
+    <!-- Page content -->
+    <!-- <div ng-sidebar-content>
             <app-home-header (onMenu)="onMenu()" [size]="sizeBoolean"></app-home-header>
             <div >
                 <div >
@@ -30,5 +39,5 @@
 
     </ng-sidebar-container>
 
-
+ -->
 </div>

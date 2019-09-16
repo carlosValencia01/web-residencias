@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
-
-
 import { Api } from './api.prov';
 import { ResponseContentType } from '@angular/http';
 import { Observable } from 'rxjs';
-
 import { HttpClient } from '@angular/common/http';
-
 
 @Injectable()
 export class StudentProvider {
@@ -28,14 +24,14 @@ export class StudentProvider {
             .pipe(map(students => students.json()));
     }
 
-    getStudentById(_id){
+    getStudentById(_id) {
         return this.api.get(`student/${_id}`)
             .pipe(map(student => student.json()));
     }
 
     getStudentByControlNumber(controlnumber) {
         console.log(controlnumber);
-        return this.api.post(`student/login`,controlnumber)
+        return this.api.post(`student/login`, controlnumber)
             .pipe(map(student => student.json()));
     }
 
@@ -69,7 +65,6 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-
     getImageTest(id: string): Observable<Blob> {
         return this.http.get(`${this.api.getURL()}/student/image/${id}`, { responseType: 'blob' });
     }
@@ -83,5 +78,43 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
+    csvEnglish(data: any) {
+        return this.api.post(`student/csv`, data).pipe(map(res => res.json()));
+    }
 
+    searchStudentWithEnglish(search: string) {
+        return this.api.get(`english/search/${search}`).pipe(map(res => res.json()));
+    }
+
+    csvAddStudentEnglish(data: any) {
+        return this.api.post(`english/create`, data).pipe(map(res => res.json()));
+    }
+
+    csvRemoveStudentEnglish(id: string) {
+        return this.api.delete(`english/remove/${id}`).pipe(map(res => res.json()));
+    }
+
+    StudentWithEnglish() {
+        return this.api.get(`english/`).pipe(map(res => res.json()));
+    }
+
+    request(id, data) {
+        return this.api.post(`request/create/${id}`, data, true).pipe(map(res => res.json()));
+    }
+
+    updateRequest(id, data) {
+        return this.api.put(`request/${id}`, data, true).pipe(map(res => res.json()));
+    }
+
+    addIntegrants(id, data) {
+        return this.api.put(`request/${id}/integrants`, data, true).pipe(map(res => res.json()));
+    }
+    getRequest(id) {
+        return this.api.get(`student/request/${id}`).pipe(map(res => res.json()));
+    }
+
+    getResource(id: string, resource: string): Observable<Blob> {
+        return this.http.get(`${this.api.getURL()}/student/${resource.toLocaleLowerCase()}/${id}`, { responseType: 'blob' });
+
+    }
 }

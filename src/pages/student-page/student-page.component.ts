@@ -12,6 +12,7 @@ import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { CookiesService } from 'src/services/cookie.service';
+import { eNotificationType } from 'src/enumerators/notificationType.enum';
 
 @Component({
   selector: 'app-student-page',
@@ -30,14 +31,10 @@ export class StudentPageComponent implements OnInit {
   showForm = false;
   isNewStudent = false;
   haveImage = false;
-
   showImg = false;
-
   frontBase64: any;
   backBase64: any;
-
   imageProfileTest: any;
-
   currentStudent = {
     nss: '',
     fullName: '',
@@ -45,27 +42,22 @@ export class StudentPageComponent implements OnInit {
     _id: '',
     controlNumber: ''
   };
-
   formStudent: FormGroup;
   errorForm = false;
   photoStudent = '';
-
   imageToShow: any;
-
   errorInputsTag = {
     errorStudentFullName: false,
     errorStudentNumberControl: false,
     errorStudentNSS: false,
     errorStudentCareer: false,
   };
-
   imageChangedEvent: any = '';
   croppedImage: any = '';
   croppedImageBase64: any = '';
   imgForSend: boolean;
   closeResult: string;
   haveSubjects: boolean;
-
   selectedFile: File = null;
 
   constructor(
@@ -157,7 +149,7 @@ export class StudentPageComponent implements OnInit {
         this.uploadFile(this.currentStudent._id, false);
       } else {
         this.showForm = true;
-        this.notificationServ.showNotification(1, 'Alumno agregado correctamente', '');
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno agregado correctamente', '');
       }
       const student: any = res;
 
@@ -165,7 +157,7 @@ export class StudentPageComponent implements OnInit {
     }, error => {
       // console.log(error);
       this.loading = false;
-      this.notificationServ.showNotification(2, 'Ocurrió un error al guardar, intente nuevamente', '');
+      this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al guardar, intente nuevamente', '');
     }, () => this.loading = false);
   }
 
@@ -189,16 +181,16 @@ export class StudentPageComponent implements OnInit {
 
           this.showForm = true;
         } else {
-          this.notificationServ.showNotification(2, 'No tiene materias cargadas', '');
+          this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
         }
       }, error => {
         // console.log(error.status);
         if (error.status === 401) {
-          this.notificationServ.showNotification(2, 'No tiene materias cargadas', '');
+          this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
         } else {
-          this.notificationServ.showNotification(2, 'Ocurrió un error, intente nuevamente', '');
+          this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
         }
-        this.loading = false
+        this.loading = false;
       }, () => this.loading = false);
 
 
@@ -313,24 +305,24 @@ export class StudentPageComponent implements OnInit {
                 // console.log(error);
               }, () => this.loading = false);
             } else {
-              this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
+              this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
             }
           } else {
-            this.notificationServ.showNotification(2, 'No tiene materias cargadas', '');
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
           }
         }, error => {
           // console.log(error.status);
           if (error.status === 401) {
-            this.notificationServ.showNotification(2, 'No tiene materias cargadas', '');
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
           } else {
-            this.notificationServ.showNotification(2, 'Ocurrió un error, intente nuevamente', '');
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
           }
-          this.loading = false
+          this.loading = false;
         }, () => this.loading = false);
 
       // console.log(student);
     } else {
-      this.notificationServ.showNotification(2, 'No tiene NSS asignado', '');
+      this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
     }
 
 
@@ -411,11 +403,11 @@ export class StudentPageComponent implements OnInit {
           if (this.search) {
             this.searchStudent(true);
           }
-          this.notificationServ.showNotification(1, 'Alumno actualizado correctamente', '');
+          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno actualizado correctamente', '');
         }
       }, error => {
         // console.log(error);
-        this.notificationServ.showNotification(2, 'Ocurrió un error, inténtalo nuevamente', '');
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
       }, () => this.loading = false);
     }
   }
@@ -504,11 +496,11 @@ export class StudentPageComponent implements OnInit {
       if (this.search) {
         this.searchStudent(true);
       }
-      this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
+      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Fotografía actualizada correctamente', '');
       this.haveImage = true;
     }, error => {
       // console.log(error);
-      this.notificationServ.showNotification(2, 'Ocurrió un error, inténtalo nuevamente', '');
+      this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
     }, () => this.loading = false);
   }
 

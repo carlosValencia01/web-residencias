@@ -3,7 +3,7 @@ import { FirebaseService } from 'src/services/firebase.service';
 import { NotificationsServices } from '../../services/notifications.service';
 import { GraduationProvider } from '../../providers/graduation.prov';
 import { CookiesService } from 'src/services/cookie.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ExporterService } from 'src/services/exporter.service'
 import Swal from 'sweetalert2';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
@@ -66,12 +66,14 @@ export class ListGraduatesPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     private excelService: ExporterService,
-    private imageToBase64Serv: ImageToBase64Service
+    private imageToBase64Serv: ImageToBase64Service,
+    private routeActive: ActivatedRoute,
     ) {
-      if (this.cookiesService.getData().user.role !== 0 &&
-      this.cookiesService.getData().user.role !== 5 &&
-      this.cookiesService.getData().user.role !== 6 &&
-      this.cookiesService.getData().user.role !== 9)
+      let rol = this.cookiesService.getData().user.role;
+      console.log(rol,'soy rol');
+      
+      if (rol !== 0 && rol !== 5 && rol !== 6 &&
+      rol !== 9)
        {
         this.router.navigate(['/']);
       }

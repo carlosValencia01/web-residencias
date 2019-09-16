@@ -1,8 +1,8 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { CookiesService } from '../services/cookie.service';
 import { UserProvider } from '../providers/user.prov';
-import { SidebarService } from '../services/sidebar.service';
-import { Router } from '@angular/router';
+import { MatSidenav } from '@angular/material';
+
 
 @Component({
   selector: 'app-root',
@@ -10,12 +10,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-
+  @ViewChild('sidenav') sideNav: MatSidenav;
 
   activeSession: boolean;
 
   opened = true;
-  mode = 'push';
+  mode = 'side';
   smallScreen: boolean;
   sizeBoolean: boolean;
   closeOnClickOutside: boolean;
@@ -33,8 +33,6 @@ export class AppComponent {
     private cookiesServ: CookiesService,
     private userProv: UserProvider,
     private cookieServ: CookiesService,
-    private sidebarService: SidebarService,
-    private router : Router,
   
   ) {        
     this.checkLogin();
@@ -48,31 +46,28 @@ export class AppComponent {
   // tslint:disable-next-line:use-life-cycle-interface
   ngOnInit() {
 
-    this.sidebarService.changeStatus.subscribe(status => {
-      
-      this.opened = status;
-    });
-    this.configureSideNav();
+   
   }
 
   configureSideNav() {
     this.smallScreen = window.innerWidth < 1300;
     this.closeOnClickOutside = this.smallScreen;
-    this.opened = !this.smallScreen && !this.sidebarService.getIsOpenAnyModal();
+    this.opened = !this.smallScreen;
     this.sizeBoolean = this.smallScreen;
-    this.mode = this.smallScreen ? 'over' : 'push';
+    this.mode = this.smallScreen ? 'over' : 'side';
   }
 
   onMenu() {
-    if (this.opened) {
-      this.opened = false;
-      this.sizeBoolean = true;
-    } else {
-      this.opened = true;
-      if (!this.smallScreen) {
-        this.sizeBoolean = false;
-      }
-    }
+    this.sideNav.toggle();
+    // if (this.opened) {
+    //   this.opened = false;
+    //   this.sizeBoolean = true;
+    // } else {
+    //   this.opened = true;
+    //   if (!this.smallScreen) {
+    //     this.sizeBoolean = false;
+    //   }
+    // }
   }
 
   closeMenu() {
@@ -102,11 +97,5 @@ export class AppComponent {
     this.activeSession = !this.activeSession;
   }
 
-  onOpened() {
-    this.sidebarService.opened();
-  }
-
-  onClosed() {
-    this.sidebarService.closed();
-  }
+ 
 }
