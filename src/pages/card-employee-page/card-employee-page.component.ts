@@ -13,6 +13,7 @@ import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { Router } from '@angular/router';
+import { eNotificationType } from 'src/enumerators/notificationType.enum';
 
 @Component({
   selector: 'app-card-employee-page',
@@ -180,7 +181,7 @@ export class CardEmployeePageComponent implements OnInit {
         // console.log('No hay foto que enviar');
         this.showForm = true;
         // this.searchEmployee(true);
-        this.notificationServ.showNotification(1, 'Trabajador agregado correctamente', '');
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Trabajador agregado correctamente', '');
       }
       const employee: any = res;
 
@@ -189,7 +190,7 @@ export class CardEmployeePageComponent implements OnInit {
       // console.log("ERROR");
       // console.log(error._body);
       this.loading = false;
-      this.notificationServ.showNotification(2, 'Ocurrió un error al guardar, intente nuevamente', '');
+      this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al guardar, intente nuevamente', '');
     }, () => this.loading = false);
     // }
   }
@@ -283,7 +284,7 @@ export class CardEmployeePageComponent implements OnInit {
         console.log(error);
       }, () => this.loading = false);
     } else {
-      this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
+      this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
     }
 
   }
@@ -367,11 +368,11 @@ export class CardEmployeePageComponent implements OnInit {
           if (this.search) {
             this.searchEmployee(true);
           }
-          this.notificationServ.showNotification(1, 'Trabajador actualizado correctamente', '');
+          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Trabajador actualizado correctamente', '');
         }
       }, error => {
         // console.log(error);
-        this.notificationServ.showNotification(2, 'Ocurrió un error, inténtalo nuevamente', '');
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
       }, () => this.loading = false);
     }
   }
@@ -462,11 +463,11 @@ export class CardEmployeePageComponent implements OnInit {
       if (this.search) {
         this.searchEmployee(true);
       }
-      this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
+      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Fotografía actualizada correctamente', '');
       this.haveImage = true;
     }, error => {
       // console.log(error);
-      this.notificationServ.showNotification(2, 'Ocurrió un error, inténtalo nuevamente', '');
+      this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
     }, () => this.loading = false);
   }
 

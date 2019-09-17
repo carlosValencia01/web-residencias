@@ -79,6 +79,17 @@ hr{
     color: #707070;
 }
 
+button.mat-menu-item:hover {
+    background-color: #ff5050;
+    color: #fff;
+}
+button.mat-menu-item:hover mat-icon{
+    color:#fff;
+} 
+
+button.mat-menu-item mat-icon{
+    color:#000;
+} 
 // Extra small devices (portrait phones, less than 576px)
 // No media query for `xs` since this is the default in Bootstrap
 

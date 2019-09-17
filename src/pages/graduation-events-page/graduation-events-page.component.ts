@@ -1,6 +1,6 @@
 import { Component, OnInit,OnDestroy } from '@angular/core';
 import { FirebaseService } from '../../services/firebase.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationsServices } from '../../services/notifications.service';
 import { CookiesService } from 'src/services/cookie.service';
 import * as years from 'ye-ars';
@@ -30,16 +30,13 @@ export class GraduationEventsPageComponent implements OnInit,OnDestroy {
     private firestoreService: FirebaseService, 
     private router : Router,
     private notificationsServices: NotificationsServices,
-    private cookiesService: CookiesService
+    private cookiesService: CookiesService,
+    private routeActive: ActivatedRoute,
     ) {
 
-      if (this.cookiesService.getData().user.role !== 0 && 
-      this.cookiesService.getData().user.role !== 5 && 
-      this.cookiesService.getData().user.role !== 6 &&
-      this.cookiesService.getData().user.role !== 9) {
-        console.log('events');
+      if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
         this.router.navigate(['/']);
-        }
+      }
 
         this.firestoreService.getAllEvents().subscribe(
           ev =>{

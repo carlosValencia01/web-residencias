@@ -146,9 +146,9 @@ export class SurveyPageComponent implements OnInit {
   sendQR(item) {
       this.graduationProv.sendQR(item.correo,this.idDocAlumn,item.nombre).subscribe(
         res=>{
-          this.notificationsServices.showNotification(1, 'Tu Invitación Fué Enviada','');
+          this.notificationsServices.showNotification(0, 'Tu Invitación Fué Enviada','');
         },
-        err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar la invitación:','');
+        err =>{this.notificationsServices.showNotification(1, 'No se pudo enviar la invitación:','');
         }
       );
   }

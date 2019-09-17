@@ -71,16 +71,25 @@ export class Api {
         // .do(res => console.log(res));
     }
 
-    post(endpoint: string, body: any) {
+    post(endpoint: string, body: any, isUpload = false) {
         // console.log('api:post');
+        // console.log("vbody", body);
         const options = new RequestOptions({ headers: this.headers });
-        return this.http.post(this.url + '/' + endpoint, body, options);
+        if (!isUpload) {
+            return this.http.post(this.url + '/' + endpoint, body, options);
+        } else {
+            return this.http.post(this.url + '/' + endpoint, body);
+        }
         // .do(res => console.log(res));
     }
 
-    put(endpoint: string, body: any) {
+    put(endpoint: string, body: any, isUpload = false) {
         const options = new RequestOptions({ headers: this.headers });
-        return this.http.put(this.url + '/' + endpoint, body, options);
+        if (!isUpload) {
+            return this.http.put(this.url + '/' + endpoint, body, options);
+        } else {
+            return this.http.put(this.url + '/' + endpoint, body);
+        }
         // .do(res => console.log(res));
     }
 

@@ -6,6 +6,7 @@ import { StudentProvider } from '../../providers/student.prov';
 import { EmployeeProvider } from '../../providers/employee.prov';
 import { CookiesService } from 'src/services/cookie.service';
 import { Router } from '@angular/router';
+import { eNotificationType } from 'src/enumerators/notificationType.enum';
 
 @Component({
   selector: 'app-loader-data-credentials-page',
@@ -172,23 +173,23 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
   sendData(type: number) {
     if (type === 1) {
       this.studenProv.newStudent(this.dataStundets).subscribe(res => {
-        this.notificationServ.showNotification(1, 'Importación finalizada correctamente',
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Importación finalizada correctamente',
           `Importado ${this.dataStundets.length} de ${this.dataStundets.length}`);
         this.showControls = false;
         this.showInfo = false;
         this.fileName = 'Seleccione un archivo';
       }, error => {
-        this.notificationServ.showNotification(2, 'Hubo un error, intente de nuevo.', error);
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'Hubo un error, intente de nuevo.', error);
       });
     } else {
       this.employeerProv.newEmployee(this.dataEmployees).subscribe(res => {
-        this.notificationServ.showNotification(1, 'Importación finalizada correctamente',
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Importación finalizada correctamente',
           `Importado ${this.dataEmployees.length} de ${this.dataEmployees.length}`);
         this.showControls = false;
         this.showInfo = false;
         this.fileName = 'Seleccione un archivo';
       }, error => {
-        this.notificationServ.showNotification(2, 'Hubo un error, intente de nuevo.', error);
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'Hubo un error, intente de nuevo.', error);
       });
     }
   }
