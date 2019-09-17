@@ -4,6 +4,7 @@ import { eRequest } from 'src/enumerators/request.enum';
 import { uRequest } from 'src/entities/request';
 import { ImageToBase64Service } from 'src/services/img.to.base63.service';
 import * as jsPDF from 'jspdf';
+import { RequestService } from 'src/services/request.service';
 
 @Component({
   selector: 'app-viewer-component',
@@ -12,18 +13,39 @@ import * as jsPDF from 'jspdf';
 })
 export class ViewerComponentComponent implements OnInit {
 
-  @Input('Request') _Request: iRequest;
+  @Input('Request') _Request?: iRequest;
+  @Input('RequestId') RequestId?: String;
   @Input('Phase') _Phase: eRequest;
   private message: string;
   private oRequest: uRequest;
   private file: jsPDF;
   private PHASE: eRequest;
-  constructor(private imgService: ImageToBase64Service) { }
+  constructor(private imgService: ImageToBase64Service, private _RequestService: RequestService) { }
 
   ngOnInit() {
-    this.oRequest = new uRequest(this._Request, this.imgService);
-    this.PHASE = <eRequest>this._Phase;
-    switch (this.PHASE) {
+
+  }
+
+  ngAfterContentInit() {
+
+    this._RequestService.requestUpdate.subscribe(
+      (response: any) => {        
+        this.oRequest = new uRequest(response.Request, this.imgService);
+        this.PHASE=<eRequest>response.Phase;
+        this.loadMessage(response.Phase);
+      }
+    );
+
+    if (typeof (this._Request) !== 'undefined') {
+      this.oRequest = new uRequest(this._Request, this.imgService);      
+      this.PHASE=<eRequest>this._Phase;
+      this.loadMessage(<eRequest>this._Phase);
+    }
+
+  }
+
+  loadMessage(phase: eRequest): void {
+    switch (phase) {
       case eRequest.GENERATED: {
         this.message = 'Visualizar Petición';
         break;
@@ -64,6 +86,7 @@ export class ViewerComponentComponent implements OnInit {
   }
 
   view(): void {
+    console.log("registered", this.oRequest);
     switch (this.PHASE) {
       case eRequest.GENERATED: {
         break;
@@ -83,7 +106,6 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.REGISTERED: {
-        console.log('registered', this.oRequest);
         window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
         break;
       }

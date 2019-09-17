@@ -5,6 +5,8 @@ import { iState } from './iState';
 import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
 import { RegisteredState } from './RegisteredState';
 import { SentState } from './SentState';
+import { ReleasedState } from './ReleasedState';
+import { DeliveredState } from './DeliveredState';
 
 export class ContextState {
     public state: iState;
@@ -34,6 +36,15 @@ export class ContextState {
             }
             case eRequest.REGISTERED: {
                 this.state = new RegisteredState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.RELEASED:{
+                this.state = new ReleasedState();
+                this.state.status = status;
+                break;
+            }case eRequest.DELIVERED:{
+                this.state = new DeliveredState();
                 this.state.status = status;
                 break;
             }

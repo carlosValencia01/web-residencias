@@ -11,7 +11,7 @@
 <mat-horizontal-stepper #stepper [linear]="true">
   <mat-step [completed]="SteepOneCompleted">
     <ng-template matStepLabel>Solicitud</ng-template>
-    <app-request-view [Request]="RequestId"></app-request-view>
+    <app-request-view></app-request-view>
     <div class="text-right">
       <button mat-stroked-button color="primary" (click)="Next(0)">
         Siguiente<mat-icon>navigate_next</mat-icon>
@@ -20,7 +20,7 @@
   </mat-step>
   <mat-step [completed]="SteepTwoCompleted">
     <ng-template matStepLabel>Registro de Proyecto</ng-template>
-    <app-viewer-component [Request]="Request" [Phase]="'Verificado'"></app-viewer-component>
+    <app-viewer-component></app-viewer-component>
     <div class="row">
       <div class="col-6 text-left">
         <button mat-stroked-button color="primary" (click)="Back(1)">

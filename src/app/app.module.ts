@@ -80,6 +80,9 @@ import { ProgressPageComponent } from 'src/pages/progress-page/progress-page.com
 import { ConfirmDialogComponent } from 'src/components/confirm-dialog/confirm-dialog.component';
 import { SteepComponentComponent } from './steep-component/steep-component.component';
 import { RequestViewComponent } from './request-view/request-view.component';
+import { RequestService } from 'src/services/request.service';
+import { ReleaseComponentComponent } from './release-component/release-component.component';
+import { UploadFilesComponent } from './upload-files/upload-files.component';
 
 @NgModule({
   declarations: [
@@ -111,6 +114,8 @@ import { RequestViewComponent } from './request-view/request-view.component';
     ConfirmDialogComponent,
     SteepComponentComponent,
     RequestViewComponent,
+    ReleaseComponentComponent,
+    UploadFilesComponent,
   ],
   imports: [
     BrowserModule,
@@ -156,7 +161,8 @@ import { RequestViewComponent } from './request-view/request-view.component';
     CookiesService,
     FormErrorsService,
     NotificationsServices,
-    ImageToBase64Service,
+    ImageToBase64Service,    
+    RequestService,
     Api,
     UserProvider,
     StudentProvider,
@@ -176,6 +182,7 @@ import { RequestViewComponent } from './request-view/request-view.component';
     RequestModalComponent,
     ConfirmDialogComponent,
     SteepComponentComponent,
+    ReleaseComponentComponent
   ],
   bootstrap: [AppComponent]
 })

@@ -11,14 +11,14 @@ import { NotificationsServices } from 'src/services/notifications.service';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
 import { eFILES } from 'src/enumerators/document.enum';
 import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
+import { RequestService } from 'src/services/request.service';
 
 @Component({
   selector: 'app-request-view',
   templateUrl: './request-view.component.html',
   styleUrls: ['./request-view.component.scss']
 })
-export class RequestViewComponent implements OnInit {
-  @Input('Request') RequestId: String;
+export class RequestViewComponent implements OnInit {  
   @ViewChild('observations') txtObservation: ElementRef;
   public frmRequest: FormGroup;
   private fileData: any;
@@ -35,12 +35,19 @@ export class RequestViewComponent implements OnInit {
     private notificationsServ: NotificationsServices,
     private requestProvider: RequestProvider,
     private dateFormat: DatePipe,
-    public dialog: MatDialog
-  ) {
-    console.log('VIEW RES', this.RequestId);
+    public dialog: MatDialog,
+    public _RequestService: RequestService
+  ) {    
   }
 
   ngOnInit() {
+    
+    this._RequestService.requestUpdate.subscribe(
+      (response: any) => {        
+        this.loadRequest(response.Request);
+      }
+    );
+    
     this.frmRequest = new FormGroup(
       {
         'name': new FormControl({ value: null, disabled: true }, Validators.required),
@@ -56,15 +63,10 @@ export class RequestViewComponent implements OnInit {
         'dateProposed': new FormControl({ value: null, disabled: true }, Validators.required),
         'honorific': new FormControl({ value: false, disabled: true }, Validators.required)
       });
-  }
 
-  ngAfterContentInit() {
-    this.requestProvider.getRequestById(this.RequestId).subscribe(res => {
-      this.loadRequest(res);
-    }, error => {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-    });
+      
   }
+  
   assignName(): void {
     const nameArray = this.request.student.fullName.split(/\s*\s\s*/);
     let name = '';
@@ -76,10 +78,8 @@ export class RequestViewComponent implements OnInit {
     this.request.student.lastName = nameArray[nameArray.length - 2] + ' ' + nameArray[nameArray.length - 1];
   }
 
-  loadRequest(request: any): void {
-    this.request = <iRequest>request.request[0];
-    this.request.student = request.request[0].studentId;
-    this.request.studentId = this.request.student._id;
+  loadRequest(request: iRequest): void {
+    this.request = request;
     this.integrants = this.request.integrants;
     this.assignName();
     this.frmRequest.setValue({

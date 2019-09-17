@@ -1,0 +1,254 @@
+<div class="card">
+  <div class="card-header">
+    Archivos
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-4 ">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Acta de Nacimiento
+            <span *ngIf="UploadActa" (click)="onRemove('ACTA_NACIMIENTO')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadActa">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'ACTA_NACIMIENTO')"
+                style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadActa">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadActa.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Curp
+            <span *ngIf="UploadCurp" (click)="onRemove('CURP')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadCurp">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'CURP')"
+                style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadCurp">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadCurp.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Certificado Bachillerato
+            <span *ngIf="UploadCertificado" (click)="onRemove('CERTIFICADO_BACHILLERATO')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadCertificado">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf"
+                (change)="onUpload($event,'CERTIFICADO_BACHILLERATO')" style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadCertificado">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadCertificado.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-4">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Cédula Técnico
+            <span *ngIf="UploadCedula" (click)="onRemove('CEDULA_TECNICA')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadCedula">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'CEDULA_TECNICA')"
+                style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadCedula">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadCedula.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Certificado Licenciatura
+            <span *ngIf="UploadLicenciatura" (click)="onRemove('CERTIFICADO_LICENCIATURA')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadLicenciatura">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf"
+                (change)="onUpload($event,'CERTIFICADO_LICENCIATURA')" style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadLicenciatura">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadLicenciatura.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Servicio Social
+            <span *ngIf="UploadServicio" (click)="onRemove('SERVICIO_SOCIAL')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadServicio">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'SERVICIO_SOCIAL')"
+                style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadServicio">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadServicio.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-4">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Constancia de Ingles
+            <span *ngIf="UploadIngles" (click)="onRemove('LIBERACION_INGLES')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadIngles">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'LIBERACION_INGLES')"
+                style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadIngles">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadIngles.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Recibo de Pago
+            <span *ngIf="UploadPago" (click)="onRemove('RECIBO')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadPago">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'RECIBO')"
+                style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadPago">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadPago.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div class="card text-center" style="width: 18rem;">
+          <div class="card-header">
+            Certificado Revalidación
+            <span *ngIf="UploadRevalidacion" (click)="onRemove('REVALIDACION')">
+              <i style="float: right;" class="fa fa-recycle"></i>
+            </span>
+          </div>
+          <div class="card-body">
+            <div *ngIf="!UploadRevalidacion">
+              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+              <p class="card-text">Archivo no cargado</p>
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'REVALIDACION')"
+                style="display: none">
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Cargar</button>
+            </div>
+            <div *ngIf="UploadRevalidacion">
+              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+              <p class="card-text">{{UploadRevalidacion.name}}</p>
+              <button type="button" class="btn btn-primary btn-sm btn-block"
+                (click)="fileUpload.click()">Enviar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

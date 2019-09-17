@@ -4,7 +4,7 @@ import { Api } from './api.prov';
 
 @Injectable()
 export class RequestProvider {
-    constructor(public api: Api) {}
+    constructor(public api: Api) { }
 
     getAllRequest() {
         return this.api.get('request')
@@ -13,7 +13,7 @@ export class RequestProvider {
 
     getAllRequestByStatus(role) {
         return this.api.get(`request/phase/${role}`)
-        .pipe(map(requests => requests.json()));
+            .pipe(map(requests => requests.json()));
     }
     getRequestById(_id) {
         return this.api.get(`request/${_id}`)
@@ -22,5 +22,9 @@ export class RequestProvider {
 
     updateRequest(_id, data) {
         return this.api.put(`request/${_id}/status`, data).pipe(map(request => request.json()));
+    }
+
+    releasedRequest(_id, data) {
+        return this.api.put(`request/${_id}/released`, data, true).pipe(map(request => request.json()));
     }
 }

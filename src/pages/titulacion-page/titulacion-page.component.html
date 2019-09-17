@@ -8,7 +8,8 @@
     </div>
     <div *ngIf="!SteepOneCompleted">
       <div [ngSwitch]="StatusComponent">
-        <app-request-component *ngSwitchCase="'Process'" (onSubmit)=" RequestEvent($event)" [request]="Request"></app-request-component>
+        <app-request-component *ngSwitchCase="'Process'" (onSubmit)=" RequestEvent($event)" [request]="Request">
+        </app-request-component>
         <app-request-component *ngSwitchDefault (onSubmit)=" RequestEvent($event)"></app-request-component>
       </div>
     </div>
@@ -54,11 +55,15 @@
     </div>
   </mat-step>
   <mat-step [completed]="SteepFiveCompleted">
-    <ng-template matStepLabel>NO INCOVENIENCIA</ng-template>
-    You are now done.
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button (click)="stepper.reset()">Reset</button>
+    <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
+    <div *ngIf="SteepFiveCompleted">
+      <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
+    </div>
+    <div *ngIf="!SteepFiveCompleted">
+      <div [ngSwitch]="StatusComponent">
+        <app-upload-files *ngSwitchCase="'None'"></app-upload-files>
+        <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
+      </div>
     </div>
   </mat-step>
   <mat-step [completed]="SteepSixCompleted">

@@ -1,0 +1,30 @@
+<div class="row">
+    <div class="col-10">
+        <h1 mat-dialog-title>Liberación</h1>
+    </div>
+    <div class="col-2">
+        <button mat-icon-button [mat-dialog-close] class="float-right">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+</div>
+<div mat-dialog-content>
+    <div class="card text-center border-dark mb-3">
+        <!-- <div class="card-header">Header</div> -->
+        <div class="card-body text-dark">
+            <!-- <h5 class="card-title">Dark card title</h5> -->
+            <p class="card-text" *ngIf="!fileName">ARCHIVO NO SELECCIONADO</p>
+            <p class="card-text" *ngIf="fileName">{{fileName}}</p>
+        </div>
+        <div class="card-footer">
+            <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
+            <button type="button" class="btn btn-outline-primary btn-block" (click)="fileUpload.click()">Cargar
+                Portada
+            </button>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="Save()">Guardar</button>
+    <button mat-button [mat-dialog-close] cdkFocusInitial>Cancelar</button>
+</div>

@@ -6,17 +6,28 @@
 </nav>
 
 <div class="row">
-  <div class="col-11">
+  <div class="col-10">
     <mat-form-field>
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
     </mat-form-field>
   </div>
-  <div class="col-1">
-    <button mat-mini-fab color="primary" (click)="addNewGradeEmployee()"> <mat-icon>add</mat-icon></button>
+  <div class="col-2">
+    <div class="form-group">
+      <div class="text-center">
+        <input #fileUpload type="file" accept=".csv" (change)="onUpload($event)" style="display: none">
+        <button mat-mini-fab class="mr-1" color="primary" (click)="fileUpload.click()">
+          <mat-icon>archive</mat-icon>
+        </button>
+        <button mat-mini-fab color="primary" (click)="addNewGradeEmployee()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-mini-fab color="primary" (click)="refresh()">
+          <mat-icon>update</mat-icon>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
-
-
 <div class="mat-elevation-z8">
   <table mat-table [dataSource]="dataSource" matSort>
 

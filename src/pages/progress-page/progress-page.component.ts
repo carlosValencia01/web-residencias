@@ -17,6 +17,10 @@ import { eRole } from 'src/enumerators/role.enum';
 import { SteepComponentComponent } from 'src/app/steep-component/steep-component.component';
 import { uRequest } from 'src/entities/request';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
+import { ReleaseComponentComponent } from 'src/app/release-component/release-component.component';
+import { RequestService } from 'src/services/request.service';
+import { eRequest } from 'src/enumerators/request.enum';
+import { eFILES } from 'src/enumerators/document.enum';
 
 @Component({
   selector: 'app-progress-page',
@@ -42,6 +46,7 @@ export class ProgressPageComponent implements OnInit {
     private router: Router,
     private routeActive: ActivatedRoute,
     private imgService: ImageToBase64Service,
+    public _RequestService: RequestService
   ) {
     console.log('cookie', this.cookiesService.getData());
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -164,6 +169,8 @@ export class ProgressPageComponent implements OnInit {
   }
 
   Verified(Identificador): void {
+    // this._RequestService.AddRequest(this.getRequestById(Identificador), eRequest.VERIFIED);
+
     const ref = this.dialog.open(SteepComponentComponent, {
       data: {
         Request: this.getRequestById(Identificador)
@@ -182,6 +189,43 @@ export class ProgressPageComponent implements OnInit {
     });
   }
 
+  releasedRequest(Identificador): void {
+    const tmpRequest = this.getRequestById(Identificador);
+    const ref = this.dialog.open(ReleaseComponentComponent, {
+      disableClose: true,
+      hasBackdrop: true,
+      width: '35em'
+    });
+
+    ref.afterClosed().subscribe(result => {
+      console.log("rr", result);
+      if (typeof (result) !== 'undefined') {
+        console.log(" Request tmp", tmpRequest);
+        console.log(" Request tmp", result);
+
+        // const data = {
+        //   ControlNumber: tmpRequest.student.controlNumber,
+        //   FullName: tmpRequest.student.fullName,
+        //   Career: tmpRequest.student.career,
+        //   file: result,
+        //   Document: eFILES.RELEASED,
+        // }
+        let frmData = new FormData();
+        frmData.append('file', result);
+        frmData.append('ControlNumber', tmpRequest.student.controlNumber);
+        frmData.append('FullName', tmpRequest.student.fullName);
+        frmData.append('Career', tmpRequest.student.career);
+        frmData.append('Document', eFILES.RELEASED);
+        frmData.append("Doer",this.cookiesService.getData().user.name.fullName);
+        this.requestProvider.releasedRequest(Identificador, frmData).subscribe(data => {
+          console.log("consulta", data);
+        }, error => {
+          console.log("errr", error);
+        })
+      }
+    });
+
+  }
   acceptRequest(Identificador): void {
     const data = {
       doer: this.cookiesService.getData().user.name.fullName,
@@ -212,40 +256,12 @@ export class ProgressPageComponent implements OnInit {
         });
       }
     });
-
-    // let data = {
-    //   doer: this.cookiesService.getData().user.name.fullName,
-    //   observation: 'No es viable',
-    //   operation: eStatusRequest.ACCEPT
-    // };
-
-    // this.confirmationService.confirm({
-    //   message: '¿Está seguro de confirma esta solicitud?',
-    //   header: 'Confirmación de Solicitud',
-    //   acceptLabel: 'Aceptar',
-    //   rejectLabel: 'Rechazar',
-    //   accept: () => {
-    //     this.requestProvider.updateRequest(Identificador, data).subscribe(data => {
-    //       this.notifications.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Actualizada");
-    //     }, error => {
-    //       this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", error);
-    //     });
-    //   },
-    //   reject: () => {
-    //     data.operation = eStatusRequest.REJECT;
-    //     this.requestProvider.updateRequest(Identificador, data).subscribe(data => {
-    //       this.notifications.showNotification(eNotificationType.SUCCESS, "Titulación App", "Solicitud Actualizada");
-    //     }, error => {
-    //       this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", error);
-    //     });
-    //   }
-    // });
   }
 
   seeRequestPDF(_id: string): void {
     const _request: iRequest = this.getRequestById(_id);
     const oRequest: uRequest = new uRequest(_request, this.imgService);
-    setTimeout( () => {
+    setTimeout(() => {
       window.open(oRequest.protocolActRequest().output('bloburl'), '_blank');
     }, 500);
   }

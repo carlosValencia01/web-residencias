@@ -107,7 +107,11 @@ export class TitulacionPageComponent implements OnInit {
   SelectItem(): void {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
+    
     this.Steeps = new ContextState(phase, status);
+    console.log("estatus", this.Steeps.getIndex());
+    console.log("estatus", phase, status);
+    console.log("estatus", this.Request.phase, this.Request.status);
     // this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     this.StatusComponent = this.Steeps.state.status;
     this.enableSteps(phase);
@@ -123,6 +127,7 @@ export class TitulacionPageComponent implements OnInit {
 
   enableSteps(phase: eRequest): void {
     this.resetSteep();
+    console.log("fase", phase);
     switch (phase) {
       case eRequest.GENERATED: {
 
@@ -137,22 +142,27 @@ export class TitulacionPageComponent implements OnInit {
 
       }
       case eRequest.DELIVERED: {
-
+        this.SteepFiveCompleted = (phase === eRequest.DELIVERED ? false : true);
       }
       case eRequest.RELEASED: {
-        this.SteepFourCompleted = (phase === eRequest.RELEASED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        // this.SteepFourCompleted = (phase === eRequest.RELEASED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        this.SteepFourCompleted = (phase === eRequest.RELEASED ? false : true);
       }
       case eRequest.REGISTERED: {
-        this.SteepFourCompleted = (phase === eRequest.REGISTERED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        // this.SteepFourCompleted = (phase === eRequest.REGISTERED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        this.SteepFourCompleted = (phase === eRequest.REGISTERED ? false: true);
       }
       case eRequest.VERIFIED: {
-        this.SteepThreeCompleted = (phase === eRequest.VERIFIED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        // this.SteepThreeCompleted = (phase === eRequest.VERIFIED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        this.SteepThreeCompleted = (phase === eRequest.VERIFIED ? false: true);
       }
       case eRequest.SENT: {
-        this.SteepTwoCompleted = (phase === eRequest.SENT ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        // this.SteepTwoCompleted = (phase === eRequest.SENT ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        this.SteepTwoCompleted = (phase === eRequest.SENT ? false : true);
       }
       case eRequest.CAPTURED: {
-        this.SteepOneCompleted = (phase === eRequest.CAPTURED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        // this.SteepOneCompleted = (phase === eRequest.CAPTURED ? this.Steeps.state.status === eStatusRequest.NONE : true);
+        this.SteepOneCompleted = (phase === eRequest.CAPTURED ? false : true);
       }
       case eRequest.NONE: {
 
@@ -160,6 +170,7 @@ export class TitulacionPageComponent implements OnInit {
     }
     (async () => {
       await this.delay(100);
+      console.log("index",this.Steeps.getIndex());
       this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     })();
   }
@@ -170,7 +181,7 @@ export class TitulacionPageComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
   resetSteep(): void {
-    this.SteepOneCompleted = this.SteepTwoCompleted = this.SteepThreeCompleted = this.SteepFourCompleted = false;
+    this.SteepOneCompleted = this.SteepTwoCompleted = this.SteepThreeCompleted = this.SteepFourCompleted =this.SteepFiveCompleted= this.SteepSixCompleted=false;
   }
   valores() {
     console.log(this.stepperComponent);

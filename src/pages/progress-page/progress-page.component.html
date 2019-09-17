@@ -130,12 +130,12 @@
                                             Verificar
                                         </button>
                                         <button *ngSwitchCase="'Registrado'" mat-menu-item
-                                            (click)="acceptRequest(row._id)">
+                                            (click)="releasedRequest(row._id)">
                                             <mat-icon>lock_open</mat-icon>
                                             Liberacion
                                         </button>
                                         <button *ngSwitchCase="'Liberado'" mat-menu-item
-                                            (click)="openRequestForm(row._id)">
+                                            (click)="releasedRequest(row._id)">
                                             <mat-icon>assignment_turned_in</mat-icon>
                                             Revisar
                                         </button>

@@ -10,7 +10,7 @@ import * as Papa from 'papaparse';
 import { CookiesService } from 'src/services/cookie.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-grade-page',
   templateUrl: './grade-page.component.html',
@@ -168,56 +168,61 @@ export class GradePageComponent implements OnInit {
   }
 
   onUpload(event) {
-    const notificacion = this.notificationServ;
-    const provider = this.employeeProvider;
-    const ArrayEmployees: IEmployee[] = [];
-    Papa.parse(event.files[0], {
-      complete: function (results) {
-        if (results.data.length > 0) {
-          results.data.forEach((element, index) => {
-            if (index > 0) {
-              const indice = ArrayEmployees.findIndex(x => x.rfc === element[0]);
-              let tmpEmployee: IEmployee;
-              if (indice !== -1) {
-                const tmpGrade = {
-                  title: element[5],
-                  cedula: element[6],
-                  level: element[7],
-                  abbreviation: element[8],
-                  default: element[9] === 'Si'
-                };
-                ArrayEmployees[indice].grade.push(tmpGrade);
-              } else {
-                tmpEmployee = {
-                  rfc: element[0],
-                  name: {
-                    firstName: element[1],
-                    lastName: element[2],
-                    fullName: element[1].concat(' ', element[2])
-                  },
-                  area: element[3],
-                  position: element[4],
-                  grade: [{
+    let notificacion = this.notificationServ;
+    let provider = this.employeeProvider;
+    let ArrayEmployees: IEmployee[] = [];
+    if (event.target.files && event.target.files[0]) {
+      Papa.parse(event.target.files[0], {
+        complete: function (results) {
+          if (results.data.length > 0) {
+            results.data.forEach((element, index) => {
+              if (index > 0) {
+                let indice = ArrayEmployees.findIndex(x => x.rfc === element[0]);
+                let tmpEmployee: IEmployee;
+                if (indice !== -1) {
+                  let tmpGrade = {
                     title: element[5],
                     cedula: element[6],
                     level: element[7],
-                    abbreviation: element[8],
-                    default: element[9] === 'Si'
-                  }]
+                    abbreviation: element[8]
+                    //,default: element[9] === 'Si'
+                  };
+                  ArrayEmployees[indice].grade.push(tmpGrade);
+                } else {
+                  if (element.length >= 9) {
+                    tmpEmployee = {
+                      rfc: element[0],
+                      name: {
+                        firstName: element[1],
+                        lastName: element[2],
+                        fullName: element[1].concat(" ", element[2])
+                      },
+                      area: element[3],
+                      position: element[4],
+                      grade: [{
+                        title: element[5],
+                        cedula: element[6],
+                        level: element[7],
+                        abbreviation: element[8]
+                        //,default: element[9] === 'Si'
+                      }]
+                    };
+                    ArrayEmployees.push(tmpEmployee);
+                  }
                 };
-                ArrayEmployees.push(tmpEmployee);
               }
-            }
-          });
-          provider.csvEmployeGrade(ArrayEmployees).subscribe(res => {
-            notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');
-          }, error => {
-            console.log(error);
-          });
+            });
+            console.log("Array emplo", ArrayEmployees);
+            provider.csvEmployeGrade(ArrayEmployees).subscribe(res => {
+              notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');
+            }, error => {
+              console.log(error);
+            });
+          }
         }
-      }
-    });
-    // this.fileUpload.clear();
+      });
+    }
+    //this.fileUpload.clear();
   }
 
   applyFilter(filterValue: string) {

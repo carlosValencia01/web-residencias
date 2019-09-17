@@ -6,6 +6,8 @@ import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
 import { CookiesService } from 'src/services/cookie.service';
 import { NotificationsServices } from 'src/services/notifications.service';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
+import { RequestService } from 'src/services/request.service';
+import { eRequest } from 'src/enumerators/request.enum';
 
 @Component({
   selector: 'app-steep-component',
@@ -13,53 +15,36 @@ import { eNotificationType } from 'src/enumerators/notificationType.enum';
   styleUrls: ['./steep-component.component.scss']
 })
 export class SteepComponentComponent implements OnInit {
-  @ViewChild('stepper') stepperComponent: MatStepper;
-  // @Input('Request') RequestId: String;
-  RequestId: String;
+  @ViewChild('stepper') stepperComponent: MatStepper;  
   Request: iRequest;
   ObjectRequestTmp: iRequest;
   ObjectRequest: iRequest;
   SteepOneCompleted: boolean;
   SteepTwoCompleted: boolean;
   SteepThreeCompleted: boolean;
-
-  constructor(
-    public dialogRef: MatDialogRef<SteepComponentComponent>,
-    @Inject(MAT_DIALOG_DATA) public data,
-    public _RequestProvider: RequestProvider,
-    private cookiesService: CookiesService,
-    private notificationsServ: NotificationsServices,
-  ) {
+  constructor(public dialogRef: MatDialogRef<SteepComponentComponent>,
+    @Inject(MAT_DIALOG_DATA) public data, public _RequestProvider: RequestProvider,
+    private cookiesService: CookiesService, private notificationsServ: NotificationsServices,
+    public _RequestService: RequestService) {
     this.Request = data.Request;
-    this.RequestId = data.Request._id;
   }
 
   ngOnInit() {
   }
 
   ngAfterContentInit() {
-    this._RequestProvider.getRequestById(this.RequestId).subscribe(
-      data => {
-        // console.log("reques", this.data);
-        // this.ObjectRequestTmp = <iRequest>data.request[0];
-        this.ObjectRequestTmp = <iRequest>data.request[0];
-        this.ObjectRequestTmp.student = data.request[0].studentId;
-        this.ObjectRequestTmp.studentId = this.ObjectRequestTmp.student._id;
-        console.log('object tmp', this.ObjectRequestTmp);
-        // this.ObjectRequestTmp.student = data.request[0].studentId;
-        // this.ObjectRequestTmp.studentId = this.ObjectRequest.student._id;
-      }
-    );
-    // this.ObjectRequest = this.ObjectRequestTmp;
-    console.log('RTEQUEST', this.RequestId);
+    this.updateRequest(this.Request);
+  }
 
+  async updateRequest(request) {
+    await this.delay(150);
+    this._RequestService.AddRequest(request, eRequest.VERIFIED);    
   }
 
   Next(index: number): void {
     switch (index) {
       case 0:
         {
-          // this.stepperComponent.selectedIndex = 1;
           this.SteepOneCompleted = true;
           this.updateSteeps(1);
           break;
@@ -74,10 +59,10 @@ export class SteepComponentComponent implements OnInit {
           doer: this.cookiesService.getData().user.name.fullName,
           observation: '',
           operation: eStatusRequest.ACCEPT,
-          phase: this.ObjectRequestTmp.phase
+          phase: this.Request.phase
         };
 
-        this._RequestProvider.updateRequest(this.RequestId, data).subscribe(data => {
+        this._RequestProvider.updateRequest(this.Request._id, data).subscribe(data => {
           this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.dialogRef.close(true);
         }, error => {
@@ -92,14 +77,13 @@ export class SteepComponentComponent implements OnInit {
   Back(index: number): void {
     switch (index) {
       case 1: {
-        this.stepperComponent.selectedIndex = 0;
-        this.SteepOneCompleted = false;
+        // this.stepperComponent.selectedIndex = 0;
+        // this.SteepOneCompleted = false;
         break;
       }
       case 2: {
-        this.stepperComponent.selectedIndex = 1;
-        this.SteepTwoCompleted = false;
-        // console.log("complete", this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted);
+        // this.stepperComponent.selectedIndex = 1;
+        // this.SteepTwoCompleted = false;
         break;
       }
     }
