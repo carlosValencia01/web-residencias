@@ -8,17 +8,17 @@ import { GraduationProvider } from '../../providers/graduation.prov';
 import { NotificationsServices } from '../../services/notifications.service';
 
 
-
 @Component({
-  selector: 'app-survey-page',
-  templateUrl: './survey-page.component.html',
-  styleUrls: ['./survey-page.component.scss']
+  selector: 'app-survey-questions-page',
+  templateUrl: './survey-questions-page.component.html',
+  styleUrls: ['./survey-questions-page.component.scss']
 })
-export class SurveyPageComponent implements OnInit {
+export class SurveyQuestionsPageComponent implements OnInit {
+
   public nc = null;
   public idDocAlumn = null;
   public activeEvent = null;
-  public graduateItem = null;
+  public profileItem = null;
 
   // Variable donde se guardan las preguntas
   public questions = [];
@@ -40,48 +40,40 @@ export class SurveyPageComponent implements OnInit {
   constructor(    
     private firestoreService: FirebaseService,
     private router: Router,
-    private graduationProv : GraduationProvider,
-    private notificationsServices: NotificationsServices,
     ) 
   {
     this.idDocAlumn=this.router.url.split('/')[2];
     this.nc=this.router.url.split('/')[3];
-    let subs =  this.firestoreService.getActivedEvent().subscribe(
-      res => {
-        subs.unsubscribe();
-        this.activeEvent = res[0].payload.doc.id;
-        let sub = firestoreService.getGraduate(this.idDocAlumn,this.activeEvent).subscribe(
-          graduate=>{
-            sub.unsubscribe();
-            if(!isNullOrUndefined(graduate)){   
-              this.graduateItem = graduate.payload.data();  
-              if(!this.graduateItem.survey){
-                if(this.nc == graduate.payload.get('nc')){
-                  this.itsOK=true;
-                  this.getQuestionsSurvey(); //todo OK
-                }else{
-                  this.itsOK=false; //no coincide el NC con el ID
-                }
-              }else{
-                this.itsOK = false; //ya respondio la encuesta
-                Swal.fire({
-                  title: 'Encuesta Finalizada',
-                  text: "Click en aceptar para finalizar",
-                  type: 'info',
-                  allowOutsideClick: false,
-                  confirmButtonColor: '#3085d6',
-                  confirmButtonText: 'Aceptar'
-                }).then((result) => {     
-                  if (result.value) {
-                    window.location.assign("/") //salir de la encuesta
-                  }
-                }) 
-              }                         
+    let sub = firestoreService.getProfile(this.idDocAlumn).subscribe(
+      profile=>{
+        sub.unsubscribe();
+        if(!isNullOrUndefined(profile)){   
+          this.profileItem = profile.payload.data();  
+          if(!this.profileItem.survey){
+            if(this.nc == profile.payload.get('ncAlumno')){
+              this.itsOK=true;
+              this.getQuestionsSurvey(); //todo OK
             }else{
-              this.itsOK=false; //no existe el alumno
+              this.itsOK=false; //no coincide el NC con el ID
             }
-          }
-        )
+          }else{
+            this.itsOK = false; //ya respondio la encuesta
+            Swal.fire({
+              title: 'Encuesta Finalizada',
+              text: "Click en aceptar para finalizar",
+              type: 'info',
+              allowOutsideClick: false,
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {     
+              if (result.value) {
+                window.location.assign("/") //salir de la encuesta
+              }
+            }) 
+          }                         
+        }else{
+          this.itsOK=false; //no existe el alumno
+        }
       }
     );
 
@@ -126,8 +118,9 @@ export class SurveyPageComponent implements OnInit {
     if(this.contQuestion < this.questions.length-1){
       this.contQuestion++;
     }else{
-      this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then();
-      this.sendQR(this.graduateItem);
+      console.log(this.idDocAlumn);
+      console.log(this.answersQuestions);
+      this.firestoreService.saveProfileAnswersQuestions(this.idDocAlumn,this.answersQuestions).then();
       Swal.fire({
         title: 'Encuesta Finalizada',
         text: "Click en aceptar para finalizar",
@@ -137,19 +130,10 @@ export class SurveyPageComponent implements OnInit {
         confirmButtonText: 'Aceptar'
       }).then((result) => {     
         if (result.value) {
-          window.location.assign("/") //salir de la encuesta
+          window.location.assign("/surveyFind") //salir de la encuesta
         }
       })
     }
   }
 
-  sendQR(item) {
-      this.graduationProv.sendQR(item.correo,this.idDocAlumn,item.nombre).subscribe(
-        res=>{
-          this.notificationsServices.showNotification(0, 'Tu Invitación Fué Enviada','');
-        },
-        err =>{this.notificationsServices.showNotification(1, 'No se pudo enviar la invitación:','');
-        }
-      );
-  }
 }

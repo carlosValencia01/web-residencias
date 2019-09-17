@@ -67,6 +67,10 @@ import { LoaderDataGraduationPageComponent } from '../pages/loader-data-graduati
 import { GraduationEventsPageComponent } from '../pages/graduation-events-page/graduation-events-page.component';
 import { CoordinationRequestsTablePageComponent } from '../pages/coordination-requests-table-page/coordination-requests-table-page.component';
 import { SurveyPageComponent } from '../pages/survey-page/survey-page.component';
+import { SurveyRegisterPageComponent } from '../pages/survey-register-page/survey-register-page.component';
+import { SurveyFindPageComponent } from '../pages/survey-find-page/survey-find-page.component';
+import { SurveyQuestionsPageComponent } from '../pages/survey-questions-page/survey-questions-page.component';
+
 
 import { GradePageComponent } from 'src/pages/grade-page/grade-page.component';
 import { VinculacionPageComponent } from 'src/pages/vinculacion-page/vinculacion-page.component';
@@ -188,6 +192,9 @@ import { RequestViewComponent } from './request-view/request-view.component';
     ConfirmDialogComponent,
     SteepComponentComponent,
     RequestViewComponent,
+    SurveyRegisterPageComponent,
+    SurveyFindPageComponent,
+    SurveyQuestionsPageComponent,
   ],
   imports: [
     BrowserModule,
