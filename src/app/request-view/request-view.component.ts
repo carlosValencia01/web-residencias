@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, ViewChild, EventEmitter, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { iRequest } from 'src/entities/request.model';
 import { iIntegrant } from 'src/entities/integrant.model';
@@ -11,6 +11,7 @@ import { NotificationsServices } from 'src/services/notifications.service';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
 import { eFILES } from 'src/enumerators/document.enum';
 import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
+import { Api } from 'src/providers/api.prov';
 
 @Component({
   selector: 'app-request-view',
@@ -21,21 +22,20 @@ export class RequestViewComponent implements OnInit {
   @Input('Request') RequestId: String;
   @ViewChild('observations') txtObservation: ElementRef;
   public frmRequest: FormGroup;
-  private fileData: any;
-  private userInformation: any;
   private request: iRequest;
   private isToggle = false;
-  private isLoadFile: boolean;
   private isLoadImage: boolean;
   private resource: string;
   private integrants: Array<iIntegrant> = [];
+
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
     private notificationsServ: NotificationsServices,
     private requestProvider: RequestProvider,
     private dateFormat: DatePipe,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private api: Api,
   ) {
     console.log('VIEW RES', this.RequestId);
   }
@@ -65,6 +65,7 @@ export class RequestViewComponent implements OnInit {
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
     });
   }
+
   assignName(): void {
     const nameArray = this.request.student.fullName.split(/\s*\s\s*/);
     let name = '';
@@ -104,7 +105,6 @@ export class RequestViewComponent implements OnInit {
     );
   }
 
-
   generateImageFromBlob(image: Blob): void {
     const reader = new FileReader();
     this.isLoadImage = false;
@@ -118,7 +118,6 @@ export class RequestViewComponent implements OnInit {
     }
   }
 
-
   watchObservations(): void {
     const ref = this.dialog.open(ObservationsComponentComponent, {
       data: {
@@ -131,4 +130,7 @@ export class RequestViewComponent implements OnInit {
     });
   }
 
+  getProjectCover() {
+    window.open(`${this.api.getURL()}/student/projectCover/${this.request._id}`, '_blank');
+  }
 }

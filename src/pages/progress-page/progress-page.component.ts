@@ -151,7 +151,7 @@ export class ProgressPageComponent implements OnInit {
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '45em'
+      width: '60em'
     });
 
     ref.afterClosed().subscribe((valor: any) => {

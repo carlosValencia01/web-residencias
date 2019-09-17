@@ -1,202 +1,110 @@
-<h1 mat-dialog-title>Solicitud</h1>
+<div mat-dialog-title>
+  <button class="btn btn-outline-secondary" (click)="getProjectCover()">Ver proyecto</button>
+</div>
 <mat-dialog-content>
   <form [formGroup]="frmRequest">
-    <div class="form-group">
-      <label class="form-col-form-label" for="name">Nombre</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-user"></i></span>
+    <div class="row">
+      <div class="form-group col-md-12 col-lg-6">
+        <label class="form-col-form-label" for="name">Nombre</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-user"></i></span>
+          </div>
+          <input type="text" class="form-control" id="name" formControlName="name" placeholder="Nombre">
         </div>
-        <input type="text"
-          [ngClass]="(!frmRequest.get('name').valid && frmRequest.get('name').touched)?'form-control is-invalid':'form-control'"
-          id="name" formControlName="name" placeholder="Nombre" oninput="this.value = this.value.toUpperCase()">
-        <div class="invalid-feedback" *ngIf="!frmRequest.get('name').valid && frmRequest.get('name').touched">
-          <span *ngIf="frmRequest.get('name').errors['required']">
-            ¡Por favor ingrese un nombre!
-          </span>
+      </div>
+      <div class="form-group col-md-12 col-lg-6">
+        <label class="form-col-form-label" for="lastname">Apellidos</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-user"></i></span>
+          </div>
+          <input type="text" class="form-control" id="lastname" formControlName="lastname" placeholder="Apellidos">
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="lastname">Apellidos</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-user"></i></span>
+    <div class="row">
+      <div class="form-group col-md-12 col-lg-6">
+        <label class="form-col-form-label" for="telephone">Número Telefónico</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-phone"></i></span>
+          </div>
+          <input type="text" class="form-control" id="telephone" formControlName="telephone" placeholder="(311)-102-3456">
         </div>
-        <input type="text"
-          [ngClass]="(!frmRequest.get('lastname').valid && frmRequest.get('lastname').touched)?'form-control is-invalid':'form-control'"
-          id="lastname" formControlName="lastname" placeholder="Apellidos"
-          oninput="this.value = this.value.toUpperCase()">
-        <div class="invalid-feedback" *ngIf="!frmRequest.get('lastname').valid && frmRequest.get('lastname').touched">
-          <span *ngIf="frmRequest.get('lastname').errors['required']">
-            ¡Por favor ingrese sus apellidos!
-          </span>
+      </div>
+      <div class="form-group col-md-12 col-lg-6">
+        <label class="form-col-form-label" for="email">Correo electrónico</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+          </div>
+          <input type="text" class="form-control" id="email" formControlName="email" placeholder="Correo electrónico">
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="telephone">Número Telefónico</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-phone"></i></span>
+    <div class="row">
+      <div class="form-group col-md-12 col-lg-6">
+        <label class="form-col-form-label" for="adviser">Asesor</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-male"></i></span>
+          </div>
+          <input type="text" class="form-control" id="adviser" formControlName="adviser" placeholder="Nombre del Asesor">
         </div>
-        <input type="text"
-          [ngClass]="(!frmRequest.get('telephone').valid && frmRequest.get('telephone').touched)?'form-control is-invalid':'form-control'"
-          id="telephone" formControlName="telephone" placeholder="(311)-102-3456">
-        <div class="invalid-feedback" *ngIf="!frmRequest.get('telephone').valid && frmRequest.get('telephone').touched">
-          <span *ngIf="frmRequest.get('telephone').errors['required']">
-            Número telefónico obligatorio
-          </span>
-
-          <span *ngIf="frmRequest.get('telephone').errors['pattern']">
-            Número telefónico incorrecto
-          </span>
+      </div>
+      <div class="form-group col-md-12 col-lg-6">
+        <label class="form-col-form-label" for="noIntegrants">Número de integrantes</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-group"></i></span>
+          </div>
+          <input type="text" class="form-control" id="noIntegrants" formControlName="noIntegrants" placeholder="Número de integrantes">
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="email">Correo electrónico</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-        </div>
-        <input type="text"
-          [ngClass]="(!frmRequest.get('email').valid && frmRequest.get('email').touched)?'form-control is-invalid':'form-control'"
-          id="email" formControlName="email" placeholder="Correo electrónico"
-          oninput="this.value = this.value.toUpperCase()">
-        <div class="invalid-feedback" *ngIf="!frmRequest.get('email').valid && frmRequest.get('email').touched">
-          <span *ngIf="frmRequest.get('email').errors['required']">
-            Correo electrónico obligatorio
-          </span>
-          <span *ngIf="frmRequest.get('email').errors['email']">
-            Ingrese un correo válido
-          </span>
+    <div class="row">
+      <div class="form-group col-md-12 col-lg-12">
+        <label class="form-col-form-label" for="project">Proyecto</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-folder"></i></span>
+          </div>
+          <input type="text" class="form-control" id="project" formControlName="project" placeholder="Nombre del proyecto">
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="adviser">Asesor</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-male"></i></span>
+    <div class="row">
+      <div class="form-group col-md-12 col-lg-6">
+        <label class="form-col-form-label" for="product">Producto</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-thermometer"></i></span>
+          </div>
+          <input type="text" class="form-control" id="product" formControlName="product" placeholder="Producto">
         </div>
-        <input type="text"
-          [ngClass]="(!frmRequest.get('adviser').valid && frmRequest.get('adviser').touched)?'form-control is-invalid':'form-control'"
-          id="adviser" formControlName="adviser" placeholder="Nombre del Asesor"
-          oninput="this.value = this.value.toUpperCase()">
-        <div class="input-group-append" (click)="selectAdviser()">
-          <span class="input-group-text">...</span>
-        </div>
-        <div class="invalid-feedback" *ngIf="!frmRequest.get('adviser').valid && frmRequest.get('adviser').touched">
-          <span *ngIf="frmRequest.get('adviser').errors['required']">
-            Nombre del asesor obligatorio
-          </span>
+      </div>
+      <div class="form-group col-md-12 col-lg-6">
+        <label class="form-col-form-label" for="date">Día propuesto para titulación</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+          </div>
+          <input type="text" class="form-control" id="date" formControlName="dateProposed">
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="noIntegrants">Número de integrantes</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-group"></i></span>
-        </div>
-        <input type="text" pKeyFilter="pnum"
-          [ngClass]="(!frmRequest.get('noIntegrants').valid && frmRequest.get('noIntegrants').touched)?'form-control is-invalid':'form-control'"
-          id="noIntegrants" formControlName="noIntegrants" placeholder="Número de integrantes"
-          oninput="this.value = this.value.toUpperCase()">
-        <div class="input-group-append" (click)="addIntegrants()" *ngIf="this.frmRequest.get('noIntegrants').value>1">
-          <span class="input-group-text">...</span>
-        </div>
-        <div class="invalid-feedback"
-          *ngIf="!frmRequest.get('noIntegrants').valid && frmRequest.get('noIntegrants').touched">
-          <span *ngIf="frmRequest.get('noIntegrants').errors['required']">
-            Número de integrantes obligatorio
-          </span>
-          <span *ngIf="frmRequest.get('noIntegrants').errors['pattern']">
-            Ingrese un valor superior a 0
-          </span>
-
-          <span *ngIf="frmRequest.get('noIntegrants').errors['notEntered']">
-            Registro de integrantes obligatorio
-          </span>
-
-        </div>
+    <div class="row">
+      <div class="form-group col-md-12 col-lg-6" stlye="padding: 0.375rem 0.75rem">
+        <button type="button" [ngClass]="isToggle?'btn btn-outline-primary btn-block':'btn btn-outline-danger btn-block'" disabled>
+          <span *ngIf="isToggle">Con Mención Honorífica</span>
+          <span *ngIf="!isToggle">Sin Mención Honorífica</span>
+        </button>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="project">Proyecto</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-folder"></i></span>
-        </div>
-        <input type="text"
-          [ngClass]="(!frmRequest.get('project').valid && frmRequest.get('project').touched)?'form-control is-invalid':'form-control'"
-          id="project" formControlName="project" placeholder="Nombre del proyecto"
-          oninput="this.value = this.value.toUpperCase()">
-        <div class="invalid-feedback" *ngIf="!frmRequest.get('project').valid && frmRequest.get('project').touched">
-          <span *ngIf="frmRequest.get('project').errors['required']">
-            Nombre del proyecto obligatorio
-          </span>
-        </div>
+      <div class="form-group col-md-12 col-lg-6" stlye="padding: 0.375rem 0.75rem">
+        <button type="button" class="btn btn-outline-primary btn-block" (click)="watchObservations()">
+          Observaciones</button>
       </div>
-    </div>
-    <div class="form-group">
-      <div>
-        <label class="form-col-form-label" for="project">Portada del Proyecto</label>
-        <div *ngIf="isLoadImage" class="form-group form-actions d-flex justify-content-center">
-          <img [src]="resource" style="width: 300px; height: 300px;">
-        </div>
-        <div *ngIf="!isLoadImage" class="cssload-thecube">
-          <div class="cssload-cube cssload-c1"></div>
-          <div class="cssload-cube cssload-c2"></div>
-          <div class="cssload-cube cssload-c4"></div>
-          <div class="cssload-cube cssload-c3"></div>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="name">Producto</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-thermometer"></i></span>
-        </div>
-        <input type="text"
-          [ngClass]="(!frmRequest.get('product').valid && frmRequest.get('product').touched)?'form-control is-invalid':'form-control'"
-          id="product" formControlName="product" placeholder="Producto" oninput="this.value = this.value.toUpperCase()">
-        <div class="invalid-feedback" *ngIf="!frmRequest.get('product').valid && frmRequest.get('product').touched">
-          <span *ngIf="frmRequest.get('product').errors['required']">
-            ¡Por favor ingrese el producto obtenido!
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-col-form-label" for="dateProposed">Día propuesto para titulación</label>
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-        </div>
-        <input type="text"
-          [ngClass]="(!frmRequest.get('dateProposed').valid && frmRequest.get('dateProposed').touched)?'form-control is-invalid':'form-control'"
-          id="date" formControlName="dateProposed" type="date">
-        <div class="invalid-feedback"
-          *ngIf="!frmRequest.get('dateProposed').valid && frmRequest.get('dateProposed').touched">
-          <span *ngIf="frmRequest.get('dateProposed').errors['required']">
-            Día propuesto obligatorio
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="form-group" stlye="padding: 0.375rem 0.75rem">
-      <button type="button" [ngClass]="isToggle?'btn btn-outline-primary btn-block':'btn btn-outline-danger btn-block'"
-        (click)="onToggle()" disabled>
-        <span *ngIf="isToggle">Con Mención Honorífica</span>
-        <span *ngIf="!isToggle">Sin Mención Honorífica</span>
-      </button>
-    </div> 
-    <div class="form-group" stlye="padding: 0.375rem 0.75rem">
-      <button type="button" class="btn btn-outline-primary btn-block" (click)="watchObservations()">
-        Observaciones</button>
     </div>
   </form>
 </mat-dialog-content>

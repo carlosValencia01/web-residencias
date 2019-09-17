@@ -13,6 +13,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
 import { iIntegrant } from 'src/entities/integrant.model';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Api } from 'src/providers/api.prov';
 
 @Component({
   selector: 'app-request-modal',
@@ -23,16 +24,13 @@ export class RequestModalComponent implements OnInit {
   @Output('onSubmit') btnSubmitRequest = new EventEmitter<boolean>();
   @ViewChild('observations') txtObservation: ElementRef;
   public frmRequest: FormGroup;
-  private fileData: any;
   private userInformation: any;
   private request: iRequest;
   private isToggle = false;
-  private isLoadFile: boolean;
   private isLoadImage: boolean;
   private resource: string;
   private integrants: Array<iIntegrant> = [];
 
-  // private msnObservations: Message[] = [];
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -40,8 +38,11 @@ export class RequestModalComponent implements OnInit {
     private requestProvider: RequestProvider,
     private dateFormat: DatePipe,
     private router: Router,
-    private routeActive: ActivatedRoute, public dialog: MatDialog, public dialogRef: MatDialogRef<RequestModalComponent>,
+    private routeActive: ActivatedRoute,
+    public dialog: MatDialog,
+    public dialogRef: MatDialogRef<RequestModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private api: Api,
   ) {
     this.userInformation = this.cookiesService.getData().user;
   }
@@ -109,7 +110,6 @@ export class RequestModalComponent implements OnInit {
     );
   }
 
-
   generateImageFromBlob(image: Blob): void {
     const reader = new FileReader();
     this.isLoadImage = false;
@@ -168,5 +168,9 @@ export class RequestModalComponent implements OnInit {
       hasBackdrop: true,
       width: '45em',
     });
+  }
+
+  getProjectCover() {
+    window.open(`${this.api.getURL()}/student/projectCover/${this.request._id}`, '_blank');
   }
 }
