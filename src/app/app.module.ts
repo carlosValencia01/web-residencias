@@ -51,6 +51,8 @@ import { MatDatepickerModule, MatNativeDateModule, MatRadioModule} from '@angula
 import {MatFileUploadModule } from 'mat-file-upload';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { NgxSmartModalModule } from 'ngx-smart-modal';
+import { MatButtonModule } from "@angular/material";
+
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { HomePageComponent } from '../pages/home-page/home-page.component';
@@ -238,9 +240,10 @@ import { RequestViewComponent } from './request-view/request-view.component';
     AppRoutingModule,
     NgxSmartModalModule.forRoot(),
     MatFileUploadModule ,
-    NgxPaginationModule
+    NgxPaginationModule,
     // RouterModule.forRoot(appRouters),
-    // TreetableModule
+    // TreetableModule,
+    MatButtonModule
   ],
   providers: [
     CookieService,

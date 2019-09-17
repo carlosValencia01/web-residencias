@@ -3,6 +3,9 @@ import { FirebaseService } from 'src/services/firebase.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { isNullOrUndefined } from 'util';
+import { ok } from 'assert';
+import { GraduationProvider } from '../../providers/graduation.prov';
+import { NotificationsServices } from '../../services/notifications.service';
 
 
 
@@ -24,7 +27,13 @@ export class SurveyPageComponent implements OnInit {
   //Contador de pregunta
   public contQuestion = 0;
 
-  //Variable para almacenar Respuestas
+  // Verificar si son preguntas con carita o radio/abiertas
+  public survey = true;
+  public radioPrimerEmpleo;
+  public empleoFamiliar;
+  public recomendations;
+
+  // Variable para almacenar Respuestas
   public answersQuestions = [];
 
     //variable para validar ID y NC
@@ -32,6 +41,8 @@ export class SurveyPageComponent implements OnInit {
   constructor(    
     private firestoreService: FirebaseService,
     private router: Router,
+    private graduationProv : GraduationProvider,
+    private notificationsServices: NotificationsServices
     ) 
   {
     this.idDocAlumn=this.router.url.split('/')[2];
@@ -84,28 +95,56 @@ export class SurveyPageComponent implements OnInit {
   }
 
   nextQuestion(answer){
-    //this.answersQuestions["idQuestion"]=this.contQuestion+1;
-    let score = answer == 'Muy Buena' ? 3 : answer == 'Buena' ? 2 : answer == 'Regular' ? 1 : 0;
-    this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:answer,score:score})
+    if(this.contQuestion <= 5){
+      let score = answer == 'Muy Buena' ? 3 : answer == 'Buena' ? 2 : answer == 'Regular' ? 1 : 0;
+      this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:answer,score:score})
+    }
+    if(this.contQuestion < this.questions.length-1){
+      this.contQuestion++;
+      if(this.contQuestion > 5){
+        this.survey=false;
+      }
+    }
+  }
+
+  nextQuestionPE(){
+    this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:this.radioPrimerEmpleo,empleoFamiliar:this.empleoFamiliar});
+    if(this.contQuestion < this.questions.length-1){
+      this.contQuestion++;
+    }
+  }
+
+  nextQuestionRecomendations(){
+    this.answersQuestions.push({idQuestion:this.contQuestion+1,question:this.questions[this.contQuestion].descripcion,answer:this.recomendations});
     if(this.contQuestion < this.questions.length-1){
       
       this.contQuestion++;
     }else{
-      console.log(this.answersQuestions);
+      this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then();
+      this.sendQR(this.graduateItem);
       Swal.fire({
         title: 'Encuesta Finalizada',
         text: "Click en aceptar para finalizar",
-        type: 'success',
+        type: 'info',
         allowOutsideClick: false,
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'Aceptar'
       }).then((result) => {     
         if (result.value) {
-          this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then(
-            updated=> window.location.assign("/") //salir de la encuesta
-          );
+          window.location.assign("/") //salir de la encuesta
         }
-      }) 
+      })
     }
+  }
+
+  sendQR(item) {
+    this.graduationProv.sendQR(item.correo,this.idDocAlumn,item.nombre).subscribe(
+      res=>{
+        this.notificationsServices.showNotification(1, 'Tu Invitación Fué Enviada','');
+      },
+      err =>{
+        this.notificationsServices.showNotification(2, 'No se pudo enviar la invitación:','');
+      }
+    ) 
   }
 }

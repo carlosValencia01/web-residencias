@@ -20,7 +20,7 @@
                      <mat-card-title><h3>{{contQuestion+1}}.- {{questions[contQuestion].descripcion}}:</h3></mat-card-title>
                   </mat-card-header>
                </div>
-               <mat-card-content>
+               <mat-card-content *ngIf="survey">
                   <table class="table table-striped">
                      <tr>
                         <td>
@@ -46,34 +46,40 @@
                      </tr>
                   </table>
                </mat-card-content>
+
+               <mat-card-content *ngIf="!survey && contQuestion === 6">
+                     <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="radioPrimerEmpleo">
+                        <table class="table">
+                           <tr>
+                              <td>
+                                 <mat-radio-button value="Un Año">Un Año</mat-radio-button>
+                              </td>
+                              <td>
+                                 <mat-radio-button value="Dos Años">Dos Años</mat-radio-button>
+                              </td>
+                              <td>
+                                 <mat-radio-button value="Tres O Más Tiempo">Tres O Más Tiempo</mat-radio-button>
+                              </td>
+                              <td>
+                                 <mat-radio-button value="Empleo Familiar">Empleo Familiar</mat-radio-button><br>
+                                 <mat-form-field class="example-full-width" appearance="fill" *ngIf="radioPrimerEmpleo === 'Empleo Familiar'">
+                                    <mat-label>¿Cúal?</mat-label>
+                                    <input matInput [(ngModel)]="empleoFamiliar">
+                                 </mat-form-field>                            
+                              </td>
+                           </tr>
+                        </table>
+                     </mat-radio-group>
+                     <button mat-raised-button color="primary" [disabled]="!radioPrimerEmpleo || (radioPrimerEmpleo == 'Empleo Familiar' && !empleoFamiliar)" (click)="nextQuestionPE()">Continuar</button>
+               </mat-card-content>
+
+               <mat-card-content *ngIf="!survey && contQuestion === 7">
+                  <textarea matInput [(ngModel)]="recomendations" style="width:400px; border:double 4px black;" maxlength="200">
+                  </textarea><br><br>
+                  <button mat-raised-button color="primary" [disabled]="!recomendations" (click)="nextQuestionRecomendations()">Finalizar</button>
+               </mat-card-content>
+
             </mat-card>           
         </div>
     </div>
-    <!-- <div class="container-fluid" *ngIf="questions.length>0; else empty">
-       <div class="container mt-3 p-2" *ngFor="let question of questions | slice:0:1">
-          <div class="row">
-             <div class="col-12 p-3 text-center">
-                {{question.descripcion}}
-             </div>
-          </div>
-          <div class="row justify-content-center">
-             <button class="btn btn-success" (click)="saveAnswer(question.id,'MB')">Muy Buena</button>
-             <button class="btn btn-success ml-1" (click)="saveAnswer(question.id,'B')">Buena</button>
-             <button class="btn btn-success ml-1" (click)="saveAnswer(question.id,'R')">Regular</button>
-             <button class="btn btn-success ml-1" (click)="saveAnswer(question.id,'M')">Mala</button>
-          </div>
-       </div>
-     </div>
-     <ng-template #empty>
-        <div class="container mt-3 p-2 text-center" *ngIf="contesto==true">
-           <div class="form-group">
-              <label for="opinion">Opinión o recomendación para mejorar la formación profesional de un egresado de su carrera</label>
-              <textarea type="textarea" class="form-control" id="opinion"  rows="5" cols="35"></textarea>
-           </div>
-           <div class="row justify-content-center">
-              <button class="btn btn-primary">Guardar encuesta</button>
-           </div>
-        </div>
-     </ng-template>
-      -->
    </div>         
