@@ -71,9 +71,18 @@ export class FirebaseService {
     return this.db.collection("perfilAlumno").doc(idProfile).set(data);
   }
 
+  public createProfileNew(data: any){
+    return this.db.collection("perfilAlumno").add(data);
+  }
+
   //obtener perfil Alumno
   public getProfile(idProfile: string){
     return this.db.collection("perfilAlumno").doc(idProfile).snapshotChanges();
+  }
+
+  //obtener todos los perfiles Alumno
+  public getProfiles() {
+    return this.db.collection("perfilAlumno").snapshotChanges();
   }
 
   //obtener preguntas Encuestra
@@ -84,6 +93,11 @@ export class FirebaseService {
   //guardar respuestas Encuesta
   public saveAnswersQuestions(idStudent: string, data: any,event){
     return this.db.collection(event).doc(idStudent).update({respuestas:data,survey:true});
+  }
+
+  //guardar respuestas Encuesta
+  public saveProfileAnswersQuestions(idProfile: string, data: any){
+    return this.db.collection('perfilAlumno').doc(idProfile).update({respuestas:data});
   }
 
   //crear pregunta 

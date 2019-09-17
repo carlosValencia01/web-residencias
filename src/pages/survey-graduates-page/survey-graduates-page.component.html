@@ -50,17 +50,8 @@
                 </mat-error>
               </mat-form-field>
 
-              <mat-form-field class="example-full-width" appearance="outline">
-                <mat-label>Especialidad</mat-label>
-                <input matInput formControlName="especialidadAlumno"
-                        [errorStateMatcher]="matcher">
-                <mat-error>
-                  <span *ngIf="!graduateForm.get('especialidadAlumno').valid && graduateForm.get('especialidadAlumno').touched">Ingrese su especialidad</span>
-                </mat-error>
-              </mat-form-field>
-
               <mat-form-field appearance="outline">
-                  <mat-label>Mes y Año de Egreso</mat-label>
+                  <mat-label>Fecha de Egreso</mat-label>
                   <input matInput [matDatepicker]="picker"
                           formControlName="egresoAlumno" [errorStateMatcher]="matcher">
                   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -79,7 +70,7 @@
 
               <div class="row justify-content-center mt-3">                  
                   <div >
-                    <button type="submit" class="btn btn-success">Guardar y Continuar</button>
+                    <button type="submit" [disabled]="!graduateForm.valid" class="btn btn-success">Guardar y Continuar</button>
                   </div>                            
               </div>
             </form>

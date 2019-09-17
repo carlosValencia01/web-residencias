@@ -19,7 +19,9 @@ import { CoordinationRequestsTablePageComponent } from './pages/coordination-req
 import { SurveyPageComponent } from './pages/survey-page/survey-page.component';
 import { ListGraduatesPageComponent } from './pages/list-graduates-page/list-graduates-page.component';
 import { SurveyGraduatesPageComponent } from './pages/survey-graduates-page/survey-graduates-page.component';
-
+import { SurveyRegisterPageComponent } from './pages/survey-register-page/survey-register-page.component'
+import { SurveyFindPageComponent } from './pages/survey-find-page/survey-find-page.component';
+import { SurveyQuestionsPageComponent } from './pages/survey-questions-page/survey-questions-page.component';
 const appRoutes: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
@@ -37,6 +39,11 @@ const appRoutes: Routes = [
   { path: 'coordinationRequestsTable', component: CoordinationRequestsTablePageComponent, pathMatch: 'full' },
   { path: 'surveyGraduates/:id/:nc', component: SurveyGraduatesPageComponent, pathMatch: 'full' },
   { path: 'survey/:id/:nc', component: SurveyPageComponent, pathMatch: 'full' },
+  { path: 'surveyFind', component: SurveyFindPageComponent , pathMatch: 'full' },
+  { path: 'surveyRegister/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
+  { path: 'surveyRegister/:id/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
+  { path: 'surveyQuestions/:id/:nc', component: SurveyQuestionsPageComponent , pathMatch: 'full' },
+
 ];
 
 @NgModule({

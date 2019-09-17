@@ -296,17 +296,17 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Enviar invitación al alumno seleccionado (status == Verificado)
   sendOneMail(item) {
-    if(item.status == 'Verificado'){
+    if(item.survey){
       this.graduationProv.sendQR(item.email,item.id,item.name).subscribe(
         res=>{
-          this.notificationsServices.showNotification(1, 'Invitación enviada a:',item.nc);
+          this.notificationsServices.showNotification(0, 'Invitación enviada a:',item.nc);
         },
-        err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc);
+        err =>{this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:',item.nc);
         }
       );
     }
     else{
-      this.notificationsServices.showNotification(3,item.nc,'Aun no se realiza el pago correspondiente');
+      this.notificationsServices.showNotification(2,item.nc,'Encuesta de Egresados aun no ha sido respondida');
     }
   }
 
@@ -337,14 +337,14 @@ export class ListGraduatesPageComponent implements OnInit {
       if(item.status == 'Verificado'){
         this.graduationProv.sendSurvey(item.email,item.id,item.name, item.nc).subscribe(
           res=>{
-            this.notificationsServices.showNotification(1, 'Encuesta enviada a:',item.nc);
+            this.notificationsServices.showNotification(0, 'Encuesta enviada a:',item.nc);
           },
-          err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc);
+          err =>{this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:',item.nc);
           }
         );
       }
       else{
-        this.notificationsServices.showNotification(3,item.nc,'Aun no se realiza el pago correspondiente');
+        this.notificationsServices.showNotification(2,item.nc,'Aun no se realiza el pago correspondiente');
       }
     }
 
