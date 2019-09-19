@@ -126,7 +126,9 @@ export class SurveyPageComponent implements OnInit {
     if(this.contQuestion < this.questions.length-1){
       this.contQuestion++;
     }else{
-      this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then();
+      //this.firestoreService.saveAnswersQuestions(this.idDocAlumn,this.answersQuestions,this.activeEvent).then();
+      this.firestoreService.saveProfileAnswersQuestions(this.idDocAlumn,this.answersQuestions).then();
+      this.firestoreService.updateStatusSurvey(this.idDocAlumn,this.activeEvent).then();
       this.sendQR(this.graduateItem);
       Swal.fire({
         title: 'Encuesta Finalizada',

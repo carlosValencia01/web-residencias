@@ -104,7 +104,7 @@ export class SurveyGraduatesPageComponent implements OnInit {
       res => {
           this.firestoreService.createProfile(idDoc,data).then(
             created=>{
-              this.router.navigate(['/survey',this.id,this.nc]);  
+              window.location.assign('/survey/'+this.id+'/'+this.nc);  
             }
           );    
       }

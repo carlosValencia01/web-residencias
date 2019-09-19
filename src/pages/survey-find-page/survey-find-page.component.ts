@@ -21,7 +21,7 @@ export class SurveyFindPageComponent implements OnInit {
 
   //Buscar alumno
   public ncInput = '';
-  public data;
+  public findProfile;
   public docId;
 
   constructor(
@@ -42,7 +42,7 @@ export class SurveyFindPageComponent implements OnInit {
       'emailGraduateInput': ['', [Validators.required, Validators.email]],
     });
     this.ncInput = '';
-    this.data = null;
+    this.findProfile = false;
     this.docId = null;
   }
 
@@ -67,29 +67,28 @@ export class SurveyFindPageComponent implements OnInit {
               alumnosSnapshot.forEach((alumnosData: any) => {
                 if(this.ncInput === alumnosData.payload.doc.data().nc){
                   this.docId = alumnosData.payload.doc.id;
-                  this.router.navigate(['/surveyRegister',this.docId,this.ncInput]);  
-                  this.data = {
-                    nc : alumnosData.payload.doc.data().nc,
-                    nombre : alumnosData.payload.doc.data().nombre,
-                    nombreApellidos : alumnosData.payload.doc.data().nombreApellidos,
-                    carrera : alumnosData.payload.doc.data().carrera,
-                    carreraCompleta : alumnosData.payload.doc.data().carreraCompleta,
-                    correo : alumnosData.payload.doc.data().correo,
-                    estatus : alumnosData.payload.doc.data().estatus,
-                    degree : alumnosData.payload.doc.data().degree,
-                    observations : alumnosData.payload.doc.data().observations,
-                    survey : alumnosData.payload.doc.data().survey,
-                    respuestas: alumnosData.payload.doc.data().respuestas
-                  }              
+                  this.findProfile = true;
                 }
               })
-              if(this.data === null){
-                this.router.navigate(['/surveyRegister',this.ncInput]);  
+              if(this.findProfile){
+                window.location.assign('/surveyRegister/'+this.docId+'/'+this.ncInput);          
+              } else {
+                this.firestoreService.getProfiles().subscribe((profilesSnapshot) => {
+                  profilesSnapshot.forEach((profileData: any) => {
+                    if(this.ncInput === profileData.payload.doc.data().ncAlumno){
+                      this.docId = profileData.payload.doc.id;
+                      this.findProfile = true;
+                    }
+                  })
+                  if(this.findProfile){
+                    window.location.assign('/surveyRegister/'+this.docId+'/'+this.ncInput);          
+                  } else{
+                    window.location.assign('/surveyRegister/'+0+'/'+this.ncInput);  
+                  }
+                });
               }
             });
-          }
-        );
-        
+        });
       } else {
         this.notificationsServices.showNotification(1, 'Atención','No se ha ingresado ningún número de contról.');
       }   

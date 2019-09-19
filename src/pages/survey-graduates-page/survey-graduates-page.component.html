@@ -7,7 +7,7 @@
             <form [formGroup]="graduateForm" (ngSubmit)="onFormSubmit(graduateForm.value)">
               <mat-form-field class="example-full-width" appearance="outline">
                 <mat-label>Nombre del Alumno</mat-label>
-                <input matInput formControlName="nombreAlumno"
+                <input readonly matInput formControlName="nombreAlumno"
                         [errorStateMatcher]="matcher">
                 <mat-error>
                   <span *ngIf="!graduateForm.get('nombreAlumno').valid && graduateForm.get('nombreAlumno').touched">Ingrese su nombre</span>
@@ -16,7 +16,7 @@
 
               <mat-form-field class="example-full-width" appearance="outline">
                 <mat-label>No. de Contról</mat-label>
-                <input matInput formControlName="ncAlumno"
+                <input readonly matInput formControlName="ncAlumno"
                         [errorStateMatcher]="matcher">
                 <mat-error>
                   <span *ngIf="!graduateForm.get('ncAlumno').valid && graduateForm.get('ncAlumno').touched">Ingrese su número de contról</span>
@@ -25,7 +25,7 @@
 
               <mat-form-field class="example-full-width" appearance="outline">
                 <mat-label>Correo Electrónico</mat-label>
-                <input matInput formControlName="correoAlumno"
+                <input readonly matInput formControlName="correoAlumno"
                         [errorStateMatcher]="matcher">
                 <mat-error>
                   <span *ngIf="!graduateForm.get('correoAlumno').valid && graduateForm.get('correoAlumno').touched">Ingrese su correo electrónico</span>
@@ -43,7 +43,7 @@
 
               <mat-form-field class="example-full-width" appearance="outline">
                 <mat-label>Carrera</mat-label>
-                <input matInput formControlName="carreraAlumno"
+                <input readonly matInput formControlName="carreraAlumno"
                         [errorStateMatcher]="matcher">
                 <mat-error>
                   <span *ngIf="!graduateForm.get('carreraAlumno').valid && graduateForm.get('carreraAlumno').touched">Ingrese su carrera</span>

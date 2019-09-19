@@ -3,10 +3,6 @@ import { FirebaseService } from 'src/services/firebase.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { isNullOrUndefined } from 'util';
-import { ok } from 'assert';
-import { GraduationProvider } from '../../providers/graduation.prov';
-import { NotificationsServices } from '../../services/notifications.service';
-
 
 @Component({
   selector: 'app-survey-questions-page',
@@ -17,7 +13,7 @@ export class SurveyQuestionsPageComponent implements OnInit {
 
   public nc = null;
   public idDocAlumn = null;
-  public activeEvent = null;
+  public eventActived = null;
   public profileItem = null;
 
   // Variable donde se guardan las preguntas
@@ -67,7 +63,7 @@ export class SurveyQuestionsPageComponent implements OnInit {
               confirmButtonText: 'Aceptar'
             }).then((result) => {     
               if (result.value) {
-                window.location.assign("/") //salir de la encuesta
+                window.location.assign("/surveyFind") //salir de la encuesta
               }
             }) 
           }                         
@@ -118,21 +114,46 @@ export class SurveyQuestionsPageComponent implements OnInit {
     if(this.contQuestion < this.questions.length-1){
       this.contQuestion++;
     }else{
-      console.log(this.idDocAlumn);
-      console.log(this.answersQuestions);
-      this.firestoreService.saveProfileAnswersQuestions(this.idDocAlumn,this.answersQuestions).then();
-      Swal.fire({
-        title: 'Encuesta Finalizada',
-        text: "Click en aceptar para finalizar",
-        type: 'info',
-        allowOutsideClick: false,
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar'
-      }).then((result) => {     
-        if (result.value) {
-          window.location.assign("/surveyFind") //salir de la encuesta
+      this.firestoreService.getActivedEvent().subscribe(
+        res => {
+          this.eventActived = res[0].payload.doc.id;
+          this.firestoreService.getGraduate(this.idDocAlumn,this.eventActived).subscribe(
+            res => {
+              var data = res.payload.data();
+              if(data !== undefined){ // Verificar que existan datos de alumno en evento principal
+                this.firestoreService.updateStatusSurvey(this.idDocAlumn,this.eventActived).then();
+                this.firestoreService.saveProfileAnswersQuestions(this.idDocAlumn,this.answersQuestions).then();
+                Swal.fire({
+                  title: 'Encuesta Finalizada',
+                  text: "Click en aceptar para finalizar",
+                  type: 'info',
+                  allowOutsideClick: false,
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'Aceptar'
+                }).then((result) => {     
+                  if (result.value) {
+                    window.location.assign("/surveyFind") //salir de la encuesta
+                  }
+                })
+              } else {
+                this.firestoreService.saveProfileAnswersQuestions(this.idDocAlumn,this.answersQuestions).then();
+                Swal.fire({
+                  title: 'Encuesta Finalizada',
+                  text: "Click en aceptar para finalizar",
+                  type: 'info',
+                  allowOutsideClick: false,
+                  confirmButtonColor: '#3085d6',
+                  confirmButtonText: 'Aceptar'
+                }).then((result) => {     
+                  if (result.value) {
+                    window.location.assign("/surveyFind") //salir de la encuesta
+                  }
+                })
+              }
+            }
+          );
         }
-      })
+      );
     }
   }
 
