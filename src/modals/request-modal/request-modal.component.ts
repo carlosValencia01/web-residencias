@@ -14,6 +14,8 @@ import { ObservationsComponentComponent } from 'src/components/observations-comp
 import { iIntegrant } from 'src/entities/integrant.model';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Api } from 'src/providers/api.prov';
+import { uRequest } from 'src/entities/request';
+import { ImageToBase64Service } from '../../services/img.to.base63.service';
 
 @Component({
   selector: 'app-request-modal',
@@ -30,6 +32,7 @@ export class RequestModalComponent implements OnInit {
   private isLoadImage: boolean;
   private resource: string;
   private integrants: Array<iIntegrant> = [];
+  private oRequest: uRequest;
 
   constructor(
     public studentProvider: StudentProvider,
@@ -43,6 +46,7 @@ export class RequestModalComponent implements OnInit {
     public dialogRef: MatDialogRef<RequestModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private api: Api,
+    private imgService: ImageToBase64Service,
   ) {
     this.userInformation = this.cookiesService.getData().user;
   }
@@ -108,6 +112,7 @@ export class RequestModalComponent implements OnInit {
         this.generateImageFromBlob(data);
       }
     );
+    this.oRequest = new uRequest(this.request, this.imgService);
   }
 
   generateImageFromBlob(image: Blob): void {
@@ -172,5 +177,9 @@ export class RequestModalComponent implements OnInit {
 
   getProjectCover() {
     window.open(`${this.api.getURL()}/student/projectCover/${this.request._id}`, '_blank');
+  }
+
+  getRequestPDF() {
+    window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
   }
 }

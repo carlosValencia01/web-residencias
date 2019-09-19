@@ -196,7 +196,7 @@
             <label class="form-col-form-label" for="project">Portada del Proyecto</label>
             <div class="form-group form-actions">
               <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
-              <button [disabled]="!isEdit" type="button" class="btn btn-outline-primary btn-block"
+              <button [disabled]="!isEdit" type="button" class="btn btn-outline-success btn-block"
                 (click)="fileUpload.click()">Cargar Portada
               </button>
             </div>
@@ -205,7 +205,7 @@
             <label class="form-col-form-label" for="project">Portada del Proyecto</label>
             <div class="form-group form-actions">
               <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
-              <button type="button" class="btn btn-outline-primary btn-block"
+              <button type="button" [class]="fileData ? 'btn btn-outline-success btn-block' : 'btn btn-outline-danger btn-block'"
                 (click)="fileUpload.click()">Cargar Portada
               </button>
             </div>
