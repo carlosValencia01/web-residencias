@@ -40,7 +40,6 @@ const appRoutes: Routes = [
   { path: 'surveyGraduates/:id/:nc', component: SurveyGraduatesPageComponent, pathMatch: 'full' },
   { path: 'survey/:id/:nc', component: SurveyPageComponent, pathMatch: 'full' },
   { path: 'surveyFind', component: SurveyFindPageComponent , pathMatch: 'full' },
-  { path: 'surveyRegister/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
   { path: 'surveyRegister/:id/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
   { path: 'surveyQuestions/:id/:nc', component: SurveyQuestionsPageComponent , pathMatch: 'full' },
 

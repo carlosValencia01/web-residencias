@@ -16,7 +16,7 @@
 
             <mat-form-field class="example-full-width" appearance="outline">
               <mat-label>No. de Contról</mat-label>
-              <input matInput formControlName="ncAlumno"
+              <input readonly matInput formControlName="ncAlumno"
                       [errorStateMatcher]="matcher">
               <mat-error>
                 <span *ngIf="!graduateForm.get('ncAlumno').valid && graduateForm.get('ncAlumno').touched">Ingrese su número de contról</span>
