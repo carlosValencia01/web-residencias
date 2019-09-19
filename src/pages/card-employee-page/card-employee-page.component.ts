@@ -12,7 +12,7 @@ import { CookiesService } from 'src/services/cookie.service';
 import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
 
 @Component({
@@ -84,14 +84,12 @@ export class CardEmployeePageComponent implements OnInit {
     private notificationServ: NotificationsServices,
     private hotkeysService: HotkeysService,
     private router: Router,
-    private cookiesServ: CookiesService
+    private cookiesService: CookiesService,
+    private routeActive: ActivatedRoute,
   ) {
-
-    if (this.cookiesServ.getData().user.role !== 1 &&
-      this.cookiesServ.getData().user.role !== 0 && this.cookiesServ.getData().user.role !== 4) {
+    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-
     this.getBase64ForStaticImages();
     this.cleanCurrentEmployee();
 

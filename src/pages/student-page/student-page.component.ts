@@ -6,7 +6,7 @@ import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { NotificationsServices } from '../../services/notifications.service';
 import { HotkeysService, Hotkey } from 'angular2-hotkeys';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
@@ -68,13 +68,14 @@ export class StudentPageComponent implements OnInit {
     private modalService: NgbModal,
     private notificationServ: NotificationsServices,
     private hotkeysService: HotkeysService,
-    private cookiesServ: CookiesService,
-    private router: Router
+    private cookiesService: CookiesService,
+    private router: Router,
+    private routeActive: ActivatedRoute,
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
 
-    if (this.cookiesServ.getData().user.role !== 1 && this.cookiesServ.getData().user.role !== 0) {
+    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
 
@@ -123,7 +124,6 @@ export class StudentPageComponent implements OnInit {
   }
 
   newStudent() {
-    // console.log('Current Student' + this.currentStudent);
     this.isNewStudent = true;
     this.hiddenFormDiv();
     this.cleanCurrentStudent();
@@ -155,7 +155,6 @@ export class StudentPageComponent implements OnInit {
 
       this.currentStudent = student;
     }, error => {
-      // console.log(error);
       this.loading = false;
       this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al guardar, intente nuevamente', '');
     }, () => this.loading = false);
@@ -165,7 +164,6 @@ export class StudentPageComponent implements OnInit {
 
     this.studentProv.verifyStatus(student.controlNumber)
       .subscribe(res => {
-        // console.log(res);
         this.haveSubjects = res.status === 1 ? true : false;
         if (this.haveSubjects) {
           this.isNewStudent = false;
@@ -184,7 +182,6 @@ export class StudentPageComponent implements OnInit {
           this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
         }
       }, error => {
-        // console.log(error.status);
         if (error.status === 401) {
           this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
         } else {
@@ -199,8 +196,6 @@ export class StudentPageComponent implements OnInit {
   // Generacion de PDF *************************************************************************************//#endregion
 
   getBase64ForStaticImages() {
-    // console.log(this.studentProv.getApiURL());
-
     this.imageToBase64Serv.getBase64('assets/imgs/front.jpg').then(res1 => {
       this.frontBase64 = res1;
     });
@@ -248,11 +243,8 @@ export class StudentPageComponent implements OnInit {
 
     if (student.nss) {
       this.loading = true;
-
-      // console.log(student);
       this.studentProv.verifyStatus(student.controlNumber)
         .subscribe(res => {
-          // console.log(res);
           this.haveSubjects = res.status === 1 ? true : false;
           if (this.haveSubjects) {
             if (student.filename) {
@@ -261,12 +253,8 @@ export class StudentPageComponent implements OnInit {
 
                 const reader = new FileReader();
                 reader.addEventListener('load', () => {
-                  // this.imageToShow = reader.result;
-
                   this.imageToBase64Serv.getBase64(reader.result).then(res3 => {
                     this.imageProfileTest = res3;
-                    // console.log(this.imageProfileTest);
-
                     const doc = new jsPDF({
                       unit: 'mm',
                       format: [88.6, 56],
@@ -302,7 +290,6 @@ export class StudentPageComponent implements OnInit {
                   reader.readAsDataURL(data);
                 }
               }, error => {
-                // console.log(error);
               }, () => this.loading = false);
             } else {
               this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
@@ -311,7 +298,6 @@ export class StudentPageComponent implements OnInit {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
           }
         }, error => {
-          // console.log(error.status);
           if (error.status === 401) {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
           } else {
@@ -319,15 +305,9 @@ export class StudentPageComponent implements OnInit {
           }
           this.loading = false;
         }, () => this.loading = false);
-
-      // console.log(student);
     } else {
       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
     }
-
-
-
-
   }
 
   // Busqueda de estudiantes *************************************************************************************//#endregion
@@ -348,7 +328,6 @@ export class StudentPageComponent implements OnInit {
       }
 
     }, err => {
-      // console.log('err', err);
     }, () => this.loading = false);
   }
 
@@ -395,10 +374,8 @@ export class StudentPageComponent implements OnInit {
       this.loading = true;
       this.studentProv.updateStudent(this.currentStudent._id, this.currentStudent).subscribe(res => {
         if (this.imgForSend) {
-          // console.log('Hay una foto que enviar');
           this.uploadFile(this.currentStudent._id, false);
         } else {
-          // console.log('No hay foto que enviar');
           this.showForm = true;
           if (this.search) {
             this.searchStudent(true);
@@ -406,7 +383,6 @@ export class StudentPageComponent implements OnInit {
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno actualizado correctamente', '');
         }
       }, error => {
-        // console.log(error);
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
       }, () => this.loading = false);
     }
@@ -422,7 +398,6 @@ export class StudentPageComponent implements OnInit {
   imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.file;
     this.croppedImageBase64 = event.base64;
-    // console.log('Event', event.file);
   }
 
   imageLoaded() {
@@ -469,12 +444,9 @@ export class StudentPageComponent implements OnInit {
 
   getImage() {
     this.studentProv.getProfileImage(this.currentStudent._id).subscribe(res => {
-      // console.log(res);
       this.haveImage = true;
     }, error => {
-      // console.log(error);
       if (error.status === 404) {
-        // console.log('No tiene imagen');
         this.haveImage = false;
         this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
@@ -487,7 +459,6 @@ export class StudentPageComponent implements OnInit {
     fd.append('image', this.croppedImage);
     this.loading = true;
     this.studentProv.updatePhoto(id, fd).subscribe(res => {
-      // console.log(res);
       const student: any = res;
       this.currentStudent = student.student;
 
@@ -499,7 +470,6 @@ export class StudentPageComponent implements OnInit {
       this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Fotografía actualizada correctamente', '');
       this.haveImage = true;
     }, error => {
-      // console.log(error);
       this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
     }, () => this.loading = false);
   }
@@ -526,9 +496,7 @@ export class StudentPageComponent implements OnInit {
       this.createImageFromBlob(data);
       this.haveImage = true;
     }, error => {
-      // console.log(error);
       if (error.status === 404) {
-        // console.log('No tiene imagen');
         this.haveImage = false;
         this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;

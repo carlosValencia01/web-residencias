@@ -10,7 +10,7 @@ import { CookiesService } from '../../services/cookie.service';
 import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
 
 
@@ -51,18 +51,17 @@ export class OneStudentPageComponent implements OnInit {
     private modalService: NgbModal,
     private notificationServ: NotificationsServices,
     private router: Router,
-    private cookiesServ: CookiesService
+    private cookiesService: CookiesService,
+    private routeActive: ActivatedRoute,
   ) {
-    if (this.cookiesServ.getData().user.role !== 2) {
+    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.getBase64ForStaticImages();
   }
 
   ngOnInit() {
-    const _id = this.cookiesServ.getData().user._id;
-    // const nc = this.cookiesServ.getData().user.email;
-    // console.log(nc);
+    const _id = this.cookiesService.getData().user._id;
     this.loading = true;
     this.studentProv.getStudentById(_id)
       .subscribe(res => {
@@ -111,73 +110,6 @@ export class OneStudentPageComponent implements OnInit {
         return 'ING. EN TEC. DE LA INF. Y COM.';
     }
   }
-
-  /*generatePDF() { // 'p', 'mm', [68,20]
-
-    const student = this.currentStudent;
-
-    if (student.filename) {
-      this.loading=true;
-      this.studentProv.getImageTest(student._id).subscribe(data => {
-
-        const reader = new FileReader();
-        reader.addEventListener('load', () => {
-          // this.imageToShow = reader.result;
-
-          this.imageToBase64Serv.getBase64(reader.result).then(res3 => {
-            this.imageProfileTest = res3;
-
-            const doc = new jsPDF({
-              unit: 'mm',
-              format: [88.6, 56],
-              orientation: 'landscape'
-            });
-            // cara frontal de la credencial
-            doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-            doc.addImage(this.imageProfileTest, 'JPEG', 3.6, 7.1, 25.8, 31);
-
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(7);
-            doc.setFont('helvetica');
-            doc.setFontType('bold');
-            doc.text(49, 30.75, doc.splitTextToSize(student.fullName, 35));
-            doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
-            doc.text(49, 46.5, doc.splitTextToSize(student.nss, 35));
-
-            doc.setFontSize(20);
-            doc.setTextColor(255,255,255);
-            doc.text(5,30, 'Muestra No Imprimible');
-
-            doc.addPage();
-            // // cara trasera de la credencial
-            doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
-
-            // // foto del estudiante
-
-            // // Numero de control con codigo de barra
-            doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46.8, 39.2, 33, 12);
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(8);
-            doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
-
-            doc.setFontSize(20);
-            doc.setTextColor(255,255,255);
-            doc.text(5,30, 'Muestra No Imprimible');
-
-            window.open(doc.output('bloburl'), '_blank');
-          });
-        }, false);
-
-        if (data) {
-          reader.readAsDataURL(data);
-        }
-      }, error => {
-        console.log(error);
-      }, ()=>this.loading=false);
-    } else {
-      this.notificationServ.showNotification(2, 'No cuenta con fotografía', '');
-    }
-  }*/
 
   // Cropper Image ***************************************************************************************************//#endregion
 
