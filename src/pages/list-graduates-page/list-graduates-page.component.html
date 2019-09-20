@@ -136,32 +136,37 @@
                   </tr>
                </tbody>
                <tfoot align="right">
-                     <td colspan="6">
-                        <div class="div-actionsFoot">
-                           <tr>
-                              <td *ngIf="role === 'administration' && searchCarreer !== '' || role === 'coordinator' && searchCarreer !== '' ">
-                                 <div class="div-img" ngbTooltip="Generar Papeletas" tooltipClass="my-custom-class">
-                                    <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
-                                 </div>
-                              </td>
-                              <td>
-                                 <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
-                                    <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
-                                 </div>
-                              </td>
-                              <td>
-                                 <div class="div-img" ngbTooltip="Generar Reporte" tooltipClass="my-custom-class">
-                                    <img src="../../assets/icons/pdfReport.svg" class="action" (click)="generateReport()">
-                                 </div>
-                              </td>
-                              <td *ngIf="role === 'administration'">
-                                 <div class="div-img" ngbTooltip="Enviar a todos" tooltipClass="my-custom-class">
-                                    <img src="../../assets/icons/sendAllEmail.svg" class="action" (click)="confirmSendEmailAll()">
-                                 </div>
-                              </td>
-                           </tr>
-                        </div>
-                     </td>
+                  <td>
+                     <div style="color:rgb(55, 89, 149); text-align: center;">
+                           <h6>Total de alumnos: {{totalAlumnos}}</h6>
+                     </div>  
+                  </td>
+                  <td colspan="5">
+                     <div class="div-actionsFoot">
+                        <tr>
+                           <td *ngIf="role === 'administration' && searchCarreer !== '' || role === 'coordinator' && searchCarreer !== '' ">
+                              <div class="div-img" ngbTooltip="Generar Papeletas" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
+                              </div>
+                           </td>
+                           <td>
+                              <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
+                              </div>
+                           </td>
+                           <td>
+                              <div class="div-img" ngbTooltip="Generar Reporte" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/pdfReport.svg" class="action" (click)="generateReport()">
+                              </div>
+                           </td>
+                           <td *ngIf="role === 'administration'">
+                              <div class="div-img" ngbTooltip="Enviar a todos" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/sendAllEmail.svg" class="action" (click)="confirmSendEmailAll()">
+                              </div>
+                           </td>
+                        </tr>
+                     </div>
+                  </td>
                </tfoot>
             </table>
             <div class='div-pagination'>
@@ -195,7 +200,6 @@
                   </tr>
                </tbody>
             </table>
-
       </div>
    </div>
 

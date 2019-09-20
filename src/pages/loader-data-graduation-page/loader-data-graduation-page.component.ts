@@ -148,7 +148,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
       this.csvObjects.forEach(async (student) =>{
         await this.firebaseService.loadCSV(student,this.collection).then(resp =>{}).catch(err=>{});
       });
-      this.notificationsServices.showNotification(1,'Exito','Alumnos registrados correctamente');
+      this.notificationsServices.showNotification(0,'Exito','Alumnos registrados correctamente');
     }
     if(this.type == "1"){
       this.csvObjects.forEach( student=>{
@@ -168,9 +168,9 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     
       this.graduationProv.sendQR(item.correo,item.id,item.nombre).subscribe(
         res=>{
-          this.notificationsServices.showNotification(1, 'Invitación enviada a:',item.nc);
+          this.notificationsServices.showNotification(0, 'Invitación enviada a:',item.nc);
         },
-        err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc);
+        err =>{this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:',item.nc);
         }
       );
     
