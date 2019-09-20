@@ -47,6 +47,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   //Variable donde se almacenan los alumnos filtrados
   public alumnosReport = [];
+  public totalAlumnos;
 
   //Variable para almacenar los alumnos verificados e imprimir papeletas
   public alumnosBallotPaper = [];
@@ -70,7 +71,6 @@ export class ListGraduatesPageComponent implements OnInit {
     private routeActive: ActivatedRoute,
     ) {
       let rol = this.cookiesService.getData().user.role;
-      console.log(rol,'soy rol');
       
       if (rol !== 0 && rol !== 5 && rol !== 6 &&
       rol !== 9)
@@ -147,8 +147,8 @@ export class ListGraduatesPageComponent implements OnInit {
         });
 
         this.alumnosReport =  this.alumnos;
+        this.totalAlumnos = this.alumnosReport.length;
         this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
-
       });
   }
 
@@ -167,7 +167,8 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus: 'Pagado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
-      this.notificationsServices.showNotification(1, 'Pago confirmado para:',item.nc);
+      this.eventFilterReport();
+      this.notificationsServices.showNotification(0, 'Pago confirmado para:',item.nc);
     }, (error) => {
       console.log(error);
     });
@@ -188,7 +189,8 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus: 'Registrado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
-      this.notificationsServices.showNotification(1, 'Pago removido para:',item.nc);
+      this.eventFilterReport();
+      this.notificationsServices.showNotification(0, 'Pago removido para:',item.nc);
     }, (error) => {
       console.log(error);
     });
@@ -209,7 +211,8 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus: 'Asistió'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
-      this.notificationsServices.showNotification(1, 'Pago removido para:',item.nc);
+      this.eventFilterReport();
+      this.notificationsServices.showNotification(0, 'Asistencia registrada para:',item.nc);
     }, (error) => {
       console.log(error);
     });
@@ -416,23 +419,41 @@ export class ListGraduatesPageComponent implements OnInit {
                       this.searchSA,
                       this.searchSM
                     );
+    
+    var cantidadStatus = this.filterItems(
+      this.searchCarreer,
+      this.searchSR,
+      this.searchSP,
+      this.searchSV,
+      this.searchSA,
+      this.searchSM
+    ).length;
+
+    var cantidadCarrera = this.filterItemsCarreer(this.searchCarreer).length;
+
+    if(cantidadStatus == 0){
+      if(this.searchSRC || this.searchSPC || this.searchSVC || this.searchSAC || this.searchSMC){
+        this.totalAlumnos = 0;
+      } else {
+        this.totalAlumnos = cantidadCarrera;
+      }
+    } else {
+      if(this.searchSRC || this.searchSPC || this.searchSVC || this.searchSAC || this.searchSMC){
+        this.totalAlumnos = cantidadStatus;
+      } else {
+        this.totalAlumnos = cantidadCarrera;
+      }
+    }
+
 
       if(Object.keys(this.alumnosReport).length === 0){
         if(!this.searchSRC && !this.searchSPC && !this.searchSVC && !this.searchSAC && !this.searchSMC){
           this.alumnosReport =  this.alumnos;
         }
-
-        if(this.searchCarreer == '' && this.searchSR == '~' && this.searchSP == '~' && this.searchSV == '~' && this.searchSA == '~' && this.searchSM == '~'){
-          this.alumnosReport =  this.alumnos;
-        }
-
-        if(this.searchCarreer != ''){
-          this.alumnosReport = this.filterItemsCarreer(this.searchCarreer);
-        }
       }
       this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
   }
-
+ 
   // FILTRADO POR CARRERA O ESTATUS
   filterItems(carreer,sR,sP,sV,sA,sM) {
     return this.alumnos.filter(function(alumno) {
@@ -530,7 +551,6 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(7);
     doc.text(hour, pageWidth-45, pageHeight -5, 'center');
 
-    this.notificationsServices.showNotification(1, 'Reporte Generado','Se generó reporte con filtros actuales.');
     window.open(doc.output('bloburl'), '_blank');
     //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
@@ -727,6 +747,7 @@ export class ListGraduatesPageComponent implements OnInit {
       degree : true
     };
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
       Swal.fire("Título Asignado", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
@@ -748,6 +769,7 @@ export class ListGraduatesPageComponent implements OnInit {
       degree : false
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
       Swal.fire("Título Removido", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
@@ -819,6 +841,7 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus: item.status
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
       Swal.fire("Observaciones Guardadas", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
