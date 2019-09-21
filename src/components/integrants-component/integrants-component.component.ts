@@ -2,6 +2,7 @@ import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { sourceDataProvider } from 'src/providers/sourceData.prov';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA, MatSort, MatPaginator } from '@angular/material';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-integrants-component',
@@ -16,6 +17,8 @@ export class IntegrantsComponentComponent implements OnInit {
   public careers: string[];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  public isEditing = false;
+
   constructor(
     public dialogRef: MatDialogRef<IntegrantsComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -47,11 +50,25 @@ export class IntegrantsComponentComponent implements OnInit {
   }
 
   onRemove(data): void {
-    const indice = this.integrants.findIndex(x => x.controlNumber === data.controlNumber);
-    if (indice !== -1) {
-      this.integrants.splice(indice, 1);
-      this.refresh();
-    }
+    Swal.fire({
+      title: '¿Quitar integrante?',
+      text: `Está por eliminar al integrante ${data.name}`,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Quitar'
+    }).then((result) => {
+      if (result.value) {
+        const indice = this.integrants.findIndex(x => x.controlNumber === data.controlNumber);
+        if (indice !== -1) {
+          this.integrants.splice(indice, 1);
+          this.refresh();
+        }
+      }
+    });
   }
 
   onRowEditSave(data): void {
@@ -62,6 +79,8 @@ export class IntegrantsComponentComponent implements OnInit {
         'controlNumber': this.integrants[indice].controlNumber,
         'career': this.integrants[indice].career,
       });
+    this.frmIntegrants.get('controlNumber').disable();
+    this.isEditing = true;
   }
 
   onSave() {
@@ -80,8 +99,12 @@ export class IntegrantsComponentComponent implements OnInit {
         career: this.frmIntegrants.get('career').value,
       };
     }
+    this.frmIntegrants.get('controlNumber').enable();
+    this.isEditing = false;
     console.log('integrants', this.integrants);
-    this.frmIntegrants.reset();
+    this.frmIntegrants.reset({
+      career: 'Seleccione la Carrera'
+    });
     this.refresh();
   }
 

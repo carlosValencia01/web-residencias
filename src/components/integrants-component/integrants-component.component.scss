@@ -24,3 +24,15 @@ td, th {
 td > mat-icon {
   cursor: pointer!important;
 }
+
+.message-note {
+  width: 100%;
+  color: red;
+  font-size: 15px;
+  padding: 10px;
+  text-align: center!important;
+  border-radius: 10px;
+  border: 2px solid red;
+  margin-left: auto;
+  margin-right: auto;
+}
