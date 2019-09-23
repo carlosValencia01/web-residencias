@@ -342,7 +342,7 @@ export class ListGraduatesPageComponent implements OnInit {
     // Enviar encuesta al alumno seleccionado (status == Verificado)
     sendOneMailSurvey(item) {
       if(item.status == 'Verificado'){
-        this.graduationProv.sendSurvey(item.email,item.id,item.name, item.nc).subscribe(
+        this.graduationProv.sendSurvey(item.email,item.id,item.name, item.nc, item.carreerComplete).subscribe(
           res=>{
             this.notificationsServices.showNotification(0, 'Encuesta enviada a:',item.nc);
           },
