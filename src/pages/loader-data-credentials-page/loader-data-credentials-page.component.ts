@@ -5,7 +5,7 @@ import { NotificationsServices } from '../../services/notifications.service';
 import { StudentProvider } from '../../providers/student.prov';
 import { EmployeeProvider } from '../../providers/employee.prov';
 import { CookiesService } from 'src/services/cookie.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
 
 @Component({
@@ -57,10 +57,10 @@ export class LoaderDataCredentialsPageComponent implements OnInit {
     private employeerProv: EmployeeProvider,
     private notificationServ: NotificationsServices,
     private router: Router,
-    private cookiesServ: CookiesService
+    private cookiesService: CookiesService,
+    private routeActive: ActivatedRoute,
   ) {
-    if (
-      this.cookiesServ.getData().user.role !== 0 ) {
+    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
    }
