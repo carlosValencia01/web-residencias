@@ -1,54 +1,24 @@
 <div class="content-general">
-
-    <!-- <div class="card text-center">
-        <div class="card-header">
-            Bienvenidos
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Sistema de Gestión de Servicios Escolares del Instituto Tecnológico de Tepic</h5>
-            <p class="card-text">Servicios Escolares</p>
-            <a *ngIf="role==='secretary'" routerLink="student" class="btn btn-primary">Buscar Alumnos</a>
-        </div>
-        <div class="card-footer text-muted">
-            Tecnológico Nacional de México campus Tepic
-        </div>
-    </div> -->
-
     <div class="row">
-        <div *ngIf="role==='secretary' || role==='administration'" class="col-12 col-sm-4 col-md-4 col-lg-3">
-            <a routerLink="student">
-                <div class="card text-white bg-dark">
-                    <img class="card-img-top" src="../../assets/imgs/studentAvatar.png" alt="Card image" style="width: 100%">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">Credenciales Estudiantes</h5>
-                    </div>
+        <div *ngFor="let item of rol.permissions.slice(1)" class="col-12 col-sm-4 col-md-4 col-lg-3">
+            <a *ngIf="!item.items.length" [routerLink]="item.routerLink">
+                <div [ngClass]="rol.name === 'Estudiante' ? 'card card-itt card-body' : 'card text-white bg-dark card-body'"
+                   style="margin:3px 0px;">
+                    <i class="material-icons text-center" style="font-size:36px;">{{item.icon}}</i>
+                    <h5 class="card-title text-center">{{item.label}}</h5>
                 </div>
             </a>
-        </div>
-
-        <div *ngIf="role==='secretary' || role==='administration'" class="col-12 col-sm-4 col-md-4 col-lg-3">
-            <a routerLink="employeeCard">
-                <div class="card text-white bg-dark">
-                    <img class="card-img-top" src="../../assets/imgs/employeeAvatar.png" alt="Card image" style="width: 100%">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">Credenciales Trabajadores</h5>
-                    </div>
+            <div *ngIf="item.items.length">
+                <div *ngFor="let sub of item.items">
+                    <a [routerLink]="sub.routerLink">
+                        <div [ngClass]="rol.name === 'Estudiante' ? 'card card-itt card-body' : 'card text-white bg-dark card-body'"
+                           style="margin:3px 0px;">
+                            <i class="material-icons text-center" style="font-size:36px;">{{sub.icon}}</i>
+                            <h5 class="card-title text-center">{{sub.label}}</h5>
+                        </div>
+                    </a>
                 </div>
-            </a>
-        </div>
-
-        <div *ngIf="role==='student'" ngbTooltip="Mi credencial"  class="col-xs-4 col-sm-3 col-md-3 col-lg-2" style="text-align: center">
-            <a routerLink="oneStudentPage">
-                <div class="card card-itt">
-                    <!-- <img class="card-img-top" src="../../assets/imgs/myCredentials.png" alt="Card image" style="width: 100%"> -->
-                    <div class="card-body">
-                        <span placement="top" >
-                            <fa name="id-card" style="color:white" class="fa-2x"></fa>
-                        </span>
-                        <!-- <h4 class="card-title text-center">Mi credencial</h4> -->
-                    </div>
-                </div>
-            </a>
+            </div>
         </div>
     </div>
 </div>

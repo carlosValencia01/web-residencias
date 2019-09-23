@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CookiesService } from '../../services/cookie.service';
+import { iRole } from '../../entities/role.model';
 
 @Component({
   selector: 'app-home-page',
@@ -7,31 +8,15 @@ import { CookiesService } from '../../services/cookie.service';
   styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements OnInit {
-  public role: string;
+  public rol: iRole;
 
   constructor(
     private cookiesServ: CookiesService,
-  ) { }
+  ) {
+    this.rol = this.cookiesServ.getData().user.rol;
+  }
 
   ngOnInit() {
-    // console.log(this.cookiesServ.getData().user.role);
-    switch (this.cookiesServ.getData().user.role) {
-      case 0:
-        this.role = 'administration';
-        break;
-      case 1:
-        this.role = 'secretary';
-        break;
-      case 2:
-        this.role = 'student';
-        break;
-      case 3:
-        this.role = 'employee';
-        break;
-      case 4:
-        this.role = 'rechumanos';
-        break;
-    }
   }
 
 }
