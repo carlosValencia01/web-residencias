@@ -22,6 +22,8 @@ import { SurveyGraduatesPageComponent } from './pages/survey-graduates-page/surv
 import { SurveyRegisterPageComponent } from './pages/survey-register-page/survey-register-page.component'
 import { SurveyFindPageComponent } from './pages/survey-find-page/survey-find-page.component';
 import { SurveyQuestionsPageComponent } from './pages/survey-questions-page/survey-questions-page.component';
+import { SurveyListPageComponent } from './pages/survey-list-page/survey-list-page.component'
+
 const appRoutes: Routes = [
   { path: '', component: HomePageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
@@ -42,6 +44,7 @@ const appRoutes: Routes = [
   { path: 'surveyFind', component: SurveyFindPageComponent , pathMatch: 'full' },
   { path: 'surveyRegister/:id/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
   { path: 'surveyQuestions/:id/:nc', component: SurveyQuestionsPageComponent , pathMatch: 'full' },
+  { path: 'encuestaEgresados', component: SurveyListPageComponent , pathMatch: 'full' },
 
 ];
 

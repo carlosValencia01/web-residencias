@@ -148,6 +148,7 @@ import { ProgressPageComponent } from 'src/pages/progress-page/progress-page.com
 import { ConfirmDialogComponent } from 'src/components/confirm-dialog/confirm-dialog.component';
 import { SteepComponentComponent } from './steep-component/steep-component.component';
 import { RequestViewComponent } from './request-view/request-view.component';
+import { SurveyListPageComponent } from '../pages/survey-list-page/survey-list-page.component';
 
 @NgModule({
   declarations: [
@@ -195,6 +196,7 @@ import { RequestViewComponent } from './request-view/request-view.component';
     SurveyRegisterPageComponent,
     SurveyFindPageComponent,
     SurveyQuestionsPageComponent,
+    SurveyListPageComponent,
   ],
   imports: [
     BrowserModule,

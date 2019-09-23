@@ -27,7 +27,8 @@ export class SurveyRegisterPageComponent implements OnInit {
   public telefonoAlumno:string = null;
   public carreraAlumno:string = null;
   public egresoAlumno: Date = null;
-  public tituloAlumno:string = null;
+  public tituloAlumno: string = null;
+  public generoAlumno: string = null;
 
 
   constructor(
@@ -52,6 +53,7 @@ export class SurveyRegisterPageComponent implements OnInit {
       'carreraAlumno' : [this.carreraAlumno, Validators.required],
       'egresoAlumno' : [new Date(this.egresoAlumno), Validators.required],
       'tituloAlumno' : [this.tituloAlumno, Validators.required],
+      'generoAlumno' : [this.generoAlumno, Validators.required],
     });
   }
 
@@ -74,6 +76,7 @@ export class SurveyRegisterPageComponent implements OnInit {
                 this.carreraAlumno = this.data.carreraCompleta;
                 this.egresoAlumno = this.data.fechaEgreso ? this.data.fechaEgreso: '';
                 this.tituloAlumno = (this.data.degree) ? 'Si':'No';
+                this.generoAlumno = (this.data.generoAlumno) ? this.data.generoAlumno : '';
                 this.validateForm();
               }else{
                 Swal.fire({
@@ -102,6 +105,7 @@ export class SurveyRegisterPageComponent implements OnInit {
                       this.carreraAlumno = this.data.carreraAlumno ? this.data.carreraAlumno: '';
                       this.egresoAlumno = this.data.egresoAlumno ? this.data.egresoAlumno: '';
                       this.tituloAlumno = this.data.tituloAlumno ? this.data.tituloAlumno: '';
+                      this.generoAlumno = (this.data.generoAlumno) ? this.data.generoAlumno : '';
                       this.validateForm();
                     }else{
                       Swal.fire({
@@ -125,6 +129,7 @@ export class SurveyRegisterPageComponent implements OnInit {
                     this.carreraAlumno = null;
                     this.egresoAlumno =  new Date ('');
                     this.tituloAlumno = null;
+                    this.generoAlumno = null;
                     this.validateForm();
                   }
                 });

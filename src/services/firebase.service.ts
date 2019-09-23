@@ -97,7 +97,7 @@ export class FirebaseService {
 
   //guardar respuestas Encuesta
   public saveProfileAnswersQuestions(idProfile: string, data: any){
-    return this.db.collection('perfilAlumno').doc(idProfile).update({respuestas:data,survey:true});
+    return this.db.collection('perfilAlumno').doc(idProfile).update({respuestas:data,survey:true,fechaEncuesta:new Date()});
   }
 
   //cambiar status Survey en evento principal
@@ -108,5 +108,10 @@ export class FirebaseService {
   //crear pregunta 
   public setQuestion(idQuestion, description){
     return this.db.collection('preguntasEncuesta').doc(idQuestion).set({descripcion:description});
+  }
+
+  // Obtener las encuesta 
+  public getSurvey() {
+    return this.db.collection('perfilAlumno').snapshotChanges();
   }
 }

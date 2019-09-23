@@ -13,6 +13,12 @@
                 <span *ngIf="!graduateForm.get('nombreAlumno').valid && graduateForm.get('nombreAlumno').touched">Ingrese su nombre</span>
               </mat-error>
             </mat-form-field>
+            
+            <label class="tituloLabel" id="example-radio-group-label">Género:</label>
+            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="generoAlumno">
+              <mat-radio-button value="Masculino">Masculino</mat-radio-button>
+              <mat-radio-button value="Femenino">Femenino</mat-radio-button>
+            </mat-radio-group>
 
             <mat-form-field class="example-full-width" appearance="outline">
               <mat-label>No. de Contról</mat-label>

@@ -27,6 +27,7 @@ export class SurveyGraduatesPageComponent implements OnInit {
   public carreraAlumno:string = null;
   public egresoAlumno: Date = null;
   public tituloAlumno:string = null;
+  public generoAlumno: string = null;
 
 
   constructor(
@@ -51,6 +52,7 @@ export class SurveyGraduatesPageComponent implements OnInit {
       'carreraAlumno' : [this.carreraAlumno, Validators.required],
       'egresoAlumno' : [new Date(this.egresoAlumno), Validators.required],
       'tituloAlumno' : [this.tituloAlumno,[]],
+      'generoAlumno' : [this.generoAlumno, Validators.required],
     });
   }
 
@@ -73,6 +75,7 @@ export class SurveyGraduatesPageComponent implements OnInit {
                 this.carreraAlumno = this.data.carreraCompleta;
                 this.egresoAlumno = this.data.fechaEgreso ? this.data.fechaEgreso: '';
                 this.tituloAlumno = (this.data.degree) ? 'Si':'No';
+                this.generoAlumno = (this.data.generoAlumno) ? this.data.generoAlumno : '';
                 this.validateForm();
               }else{
                 Swal.fire({

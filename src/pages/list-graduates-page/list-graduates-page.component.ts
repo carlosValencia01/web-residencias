@@ -8,6 +8,7 @@ import { ExporterService } from 'src/services/exporter.service'
 import Swal from 'sweetalert2';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import { CheckboxControlValueAccessor } from '@angular/forms';
+import TableToExcel from "@linways/table-to-excel";
 
 
 declare const require: any;
@@ -37,6 +38,8 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchSA : string = '';
   public searchSM : string = '';
 
+  public showTotal = true;
+
   //Imagenes para Reportes
   public logoTecNM: any;
   public logoSep: any;
@@ -46,8 +49,9 @@ export class ListGraduatesPageComponent implements OnInit {
   public alumnos = [];
 
   //Variable donde se almacenan los alumnos filtrados
-  public alumnosReport = [];
-  public totalAlumnos;
+  public alumnosReport = []; // Variable donde se almacenan los alumnos para el reporte
+  public totalAlumnos; //Obtener total de alumnos con filtros de estatus y carrera
+  public totalAlumnosFilter; //Obtener total de alumnos con filto de busqueda de alumno
 
   //Variable para almacenar los alumnos verificados e imprimir papeletas
   public alumnosBallotPaper = [];
@@ -136,7 +140,7 @@ export class ListGraduatesPageComponent implements OnInit {
           carreerComplete : alumno.payload.doc.get("carreraCompleta"),
           email: alumno.payload.doc.get("correo"),
           status: alumno.payload.doc.get("estatus"),
-          degree: alumno.payload.doc.get("degree"),
+          degree: alumno.payload.doc.get("degree") ? true:false,
           observations: alumno.payload.doc.get("observations"),
           survey: alumno.payload.doc.get("survey")
         }});
@@ -148,7 +152,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
         this.alumnosReport =  this.alumnos;
         this.totalAlumnos = this.alumnosReport.length;
-        this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
+        this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'');
       });
   }
 
@@ -430,6 +434,7 @@ export class ListGraduatesPageComponent implements OnInit {
     ).length;
 
     var cantidadCarrera = this.filterItemsCarreer(this.searchCarreer).length;
+    console.log(this.alumnosReport);
 
     if(cantidadStatus == 0){
       if(this.searchSRC || this.searchSPC || this.searchSVC || this.searchSAC || this.searchSMC){
@@ -444,14 +449,13 @@ export class ListGraduatesPageComponent implements OnInit {
         this.totalAlumnos = cantidadCarrera;
       }
     }
-
-
+      
       if(Object.keys(this.alumnosReport).length === 0){
         if(!this.searchSRC && !this.searchSPC && !this.searchSVC && !this.searchSAC && !this.searchSMC){
           this.alumnosReport =  this.alumnos;
         }
       }
-      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
+      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'');
   }
  
   // FILTRADO POR CARRERA O ESTATUS
@@ -557,15 +561,20 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Exportar alumnos a excel
   excelExport(){
-    this.excelService.exportAsExcelFile(this.alumnosReport,'Graduacion '+this.searchCarreer);
-    this.notificationsServices.showNotification(1, 'Datos Exportados','Se exportaron datos con filtros actuales.');
+    this.notificationsServices.showNotification(0, 'Datos Exportados','Los datos se exportaron con éxito');
+    TableToExcel.convert(document.getElementById("tableReportExcel"), {
+      name: "Reporte Graduación.xlsx",
+      sheet: {
+        name: "Alumnos"
+      }
+    });
   }
 
   // Generar papeletas de alumnos verificados
   generateBallotPaper(){
     if(this.alumnosBallotPaper.length !== 0){
       // Obtener alumnos cuyo estatus sea 'Verificado' && Carrera = al filtro seleccionado
-      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
+      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'');
 
       // Dividir total de alumnos verificados en segmentos de 4
       let divAlumnosBallotPaper = [];
@@ -852,4 +861,22 @@ export class ListGraduatesPageComponent implements OnInit {
     this.page=ev;
   }
 
+  eventFilter(item){
+    if (item != ''){
+      this.showTotal = false;
+      var total = this.getNumberFilterItems(item).length;
+      this.totalAlumnosFilter = total;
+    }
+    else {
+      this.showTotal = true;
+    }
+  }
+
+  getNumberFilterItems(item) {
+    return this.alumnos.filter(function(alumno) {
+      return alumno.nc.toLowerCase().indexOf(item.toLowerCase()) > -1 ||
+             alumno.name.toLowerCase().indexOf(item.toLowerCase()) > -1 ||
+             alumno.email.toLowerCase().indexOf(item.toLowerCase()) > -1 ;
+    })
+  }
 }
