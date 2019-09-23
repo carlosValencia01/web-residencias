@@ -4,71 +4,71 @@
          <strong>Listado de Alumnos {{collection.toUpperCase()}}</strong>
       </div>
       <div class="card-body">
-         <div class="row">
-            <div class="col-4">
-               <div class="form-group">
-                  <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno...">
+         <div style="overflow-x:auto;">
+            <div class="row">
+               <div class="col-4">
+                  <div class="form-group">
+                     <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno..." (keyup)="eventFilter(searchText)">
+                  </div>
+               </div>
+               <div class="col-3">
+                  <div class="form-group">
+                     <select [(ngModel)]="searchCarreer" class="form-control" (change)="eventFilterReport()">
+                        <option value=''>Todas las carreras</option>
+                        <option value='IBQ'>Ingeniería Bioquímica</option>
+                        <option value='IGE'>Ingeniería en Gestión Empresarial</option>
+                        <option value='IC '>Ingeniería Civil</option>
+                        <option value='ARQ'>Arquitectura</option>
+                        <option value='IQ'>Ingeniería Química</option>
+                        <option value='IM'>Ingeniería Mecatrónica</option>
+                        <option value='IE'>Ingeniería Eléctrica</option>
+                        <option value='LA'>Licenciatura en Administración</option>
+                        <option value='ITIC'>Ingeniería en Tecnologías de la Información y Comunicación</option>
+                        <option value='ISC'>Ingeniaría en Sistemas Computacionales</option>
+                        <option value='II'>Ingeniaría Industrial</option>
+                        <option value='MCA'>Maestría en Ciencias en Alimentos</option>
+                     </select>
+                  </div>
+               </div>
+               <div class="col-2">
+                  <table class="table table-bordered">
+                     <tr>
+                        <td id="checkRegistrado">
+                           <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Registrado" tooltipClass="my-custom-class">
+                                 <input [(ngModel)]="searchSRC" type="checkbox" class="custom-control-input" id="defaultInline2" value="Registrado" (change)="eventFilterReport()">
+                                 <label class="custom-control-label" for="defaultInline2">R</label>
+                           </div>
+                        </td>
+                        <td id="checkPagado">
+                           <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Pagado" tooltipClass="my-custom-class">
+                                 <input [(ngModel)]="searchSPC" type="checkbox" class="custom-control-input" id="defaultInline3" value="Pagado" (change)="eventFilterReport()">
+                                 <label class="custom-control-label" for="defaultInline3">P</label>
+                           </div>
+                        </td>
+                        <td id="checkVerificado">
+                           <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Verificado" tooltipClass="my-custom-class">
+                                 <input [(ngModel)]="searchSVC" type="checkbox" class="custom-control-input" id="defaultInline4" value="Verificado" (change)="eventFilterReport()">
+                                 <label class="custom-control-label" for="defaultInline4">V</label>
+                           </div>
+                        </td>
+                        <td id="checkAsistio">
+                           <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Asistió" tooltipClass="my-custom-class">
+                                 <input [(ngModel)]="searchSAC" type="checkbox" class="custom-control-input" id="defaultInline5" value="Asistió" (change)="eventFilterReport()">
+                                 <label class="custom-control-label" for="defaultInline5">A</label>
+                           </div>
+                        </td>
+                        <td id="checkMencionado">
+                           <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Mencionado" tooltipClass="my-custom-class">
+                                 <input [(ngModel)]="searchSMC" type="checkbox" class="custom-control-input" id="defaultInline6" value="Mencionado" (change)="eventFilterReport()">
+                                 <label class="custom-control-label" for="defaultInline6">M</label>
+                           </div>
+                        </td>
+                     </tr>
+                  </table>
                </div>
             </div>
-            <div class="col-3">
-               <div class="form-group">
-                  <select [(ngModel)]="searchCarreer" class="form-control" (change)="eventFilterReport()">
-                     <option value=''>Todas las carreras</option>
-                     <option value='IBQ'>Ingeniería Bioquímica</option>
-                     <option value='IGE'>Ingeniería en Gestión Empresarial</option>
-                     <option value='IC '>Ingeniería Civil</option>
-                     <option value='ARQ'>Arquitectura</option>
-                     <option value='IQ'>Ingeniería Química</option>
-                     <option value='IM'>Ingeniería Mecatrónica</option>
-                     <option value='IE'>Ingeniería Eléctrica</option>
-                     <option value='LA'>Licenciatura en Administración</option>
-                     <option value='ITIC'>Ingeniería en Tecnologías de la Información y Comunicación</option>
-                     <option value='ISC'>Ingeniaría en Sistemas Computacionales</option>
-                     <option value='II'>Ingeniaría Industrial</option>
-                     <option value='MCA'>Maestría en Ciencias en Alimentos</option>
-                  </select>
-               </div>
-            </div>
-            <div class="col-2">
-               <table class="table table-bordered">
-                  <tr>
-                     <td id="checkRegistrado">
-                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Registrado" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSRC" type="checkbox" class="custom-control-input" id="defaultInline2" value="Registrado" (change)="eventFilterReport()">
-                              <label class="custom-control-label" for="defaultInline2">R</label>
-                        </div>
-                     </td>
-                     <td id="checkPagado">
-                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Pagado" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSPC" type="checkbox" class="custom-control-input" id="defaultInline3" value="Pagado" (change)="eventFilterReport()">
-                              <label class="custom-control-label" for="defaultInline3">P</label>
-                        </div>
-                     </td>
-                     <td id="checkVerificado">
-                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Verificado" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSVC" type="checkbox" class="custom-control-input" id="defaultInline4" value="Verificado" (change)="eventFilterReport()">
-                              <label class="custom-control-label" for="defaultInline4">V</label>
-                        </div>
-                     </td>
-                     <td id="checkAsistio">
-                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Asistió" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSAC" type="checkbox" class="custom-control-input" id="defaultInline5" value="Asistió" (change)="eventFilterReport()">
-                              <label class="custom-control-label" for="defaultInline5">A</label>
-                        </div>
-                     </td>
-                     <td id="checkMencionado">
-                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Mencionado" tooltipClass="my-custom-class">
-                              <input [(ngModel)]="searchSMC" type="checkbox" class="custom-control-input" id="defaultInline6" value="Mencionado" (change)="eventFilterReport()">
-                              <label class="custom-control-label" for="defaultInline6">M</label>
-                        </div>
-                     </td>
-                  </tr>
 
-               </table>
-            </div>
-         </div>
-
-         <table class="table table-striped table-bordered table-hover" id="my-table">
+            <table class="table table-striped table-bordered table-hover" id="my-table">
                <thead>
                   <tr>
                      <th>Número de Control</th>
@@ -83,7 +83,11 @@
                   <tr *ngFor="let item of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
                   currentPage: page };">
                      <td (click)="observationsModal(item)">{{item.nc}} </td>
-                     <td (click)="observationsModal(item)">{{item.name}}</td>
+                     <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer != 'LA' && item.carreer != 'ARQ' && item.carreer != 'MCA'"><b>ING.</b> {{item.name}}</td>
+                     <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer == 'LA'"><b>LIC.</b> {{item.name}}</td>
+                     <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer == 'ARQ'"><b>ARQ.</b> {{item.name}}</td>
+                     <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer == 'MCA'"><b>MC.</b> {{item.name}}</td>
+                     <td (click)="observationsModal(item)" *ngIf="!item.degree">{{item.name}}</td>
                      <td (click)="observationsModal(item)">{{item.carreer}}</td>
                      <td (click)="observationsModal(item)">{{item.email}}</td>
                      <td class="{{item.status}}">{{item.status}}</td>
@@ -105,7 +109,7 @@
                                        <img src="../../assets/icons/survey.svg" class="action" (click)="confirmSendEmailSurvey(item)">
                                  </div>
                               </td>
-                              <td *ngIf="item.status === 'Verificado' && role === 'administration'">
+                              <td *ngIf="(item.status === 'Pagado' || item.status === 'Verificado') && role === 'administration'">
                                  <div class="div-img" ngbTooltip="Registrar Asistencia" tooltipClass="my-custom-class" >
                                        <img src="../../assets/icons/presence.svg" class="action" (click)="confirmPresenceEvent(item)">
                                  </div>
@@ -136,43 +140,50 @@
                   </tr>
                </tbody>
                <tfoot align="right">
-                     <td colspan="6">
-                        <div class="div-actionsFoot">
-                           <tr>
-                              <td *ngIf="role === 'administration' && searchCarreer !== '' || role === 'coordinator' && searchCarreer !== '' ">
-                                 <div class="div-img" ngbTooltip="Generar Papeletas" tooltipClass="my-custom-class">
-                                    <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
-                                 </div>
-                              </td>
-                              <td>
-                                 <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
-                                    <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
-                                 </div>
-                              </td>
-                              <td>
-                                 <div class="div-img" ngbTooltip="Generar Reporte" tooltipClass="my-custom-class">
-                                    <img src="../../assets/icons/pdfReport.svg" class="action" (click)="generateReport()">
-                                 </div>
-                              </td>
-                              <td *ngIf="role === 'administration'">
-                                 <div class="div-img" ngbTooltip="Enviar a todos" tooltipClass="my-custom-class">
-                                    <img src="../../assets/icons/sendAllEmail.svg" class="action" (click)="confirmSendEmailAll()">
-                                 </div>
-                              </td>
-                           </tr>
-                        </div>
-                     </td>
+                  <td>
+                     <div style="color:rgb(55, 89, 149); text-align: center;">
+                           <h6 *ngIf="showTotal">Total de alumnos: {{totalAlumnos}}</h6>
+                           <h6 *ngIf="!showTotal">Total de alumnos: {{totalAlumnosFilter}}</h6>
+                     </div>  
+                  </td>
+                  <td colspan="5">
+                     <div class="div-actionsFoot">
+                        <tr>
+                           <td *ngIf="role === 'administration' && searchCarreer !== '' || role === 'coordinator' && searchCarreer !== '' ">
+                              <div class="div-img" ngbTooltip="Generar Papeletas" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
+                              </div>
+                           </td>
+                           <td>
+                              <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
+                              </div>
+                           </td>
+                           <td>
+                              <div class="div-img" ngbTooltip="Generar Reporte" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/pdfReport.svg" class="action" (click)="generateReport()">
+                              </div>
+                           </td>
+                           <td *ngIf="role === 'administration'">
+                              <div class="div-img" ngbTooltip="Enviar a todos" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/sendAllEmail.svg" class="action" (click)="confirmSendEmailAll()">
+                              </div>
+                           </td>
+                        </tr>
+                     </div>
+                  </td>
                </tfoot>
             </table>
             <div class='div-pagination'>
                   <pagination-controls [id]="pag"
                      directionLinks="true"
                      (pageChange)="pageChanged($event)"
-                      responsive="true"
-                      previousLabel="Anterior"
-                      nextLabel="Siguiente">
+                        responsive="true"
+                        previousLabel="Anterior"
+                        nextLabel="Siguiente">
                   </pagination-controls>
             </div>
+         </div>
 
             <!-- Tabla reporte alumnos-->
              <table class="table table-striped table-bordered table-hover" id="tableReport">
@@ -189,11 +200,51 @@
                   <tr *ngFor="let alumno of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText}; let indice=index">
                      <td>{{indice+1}}</td>
                      <td>{{alumno.nc}} </td>
-                     <td>{{alumno.nameLastName}}</td>
+                     <td *ngIf="alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA'"><b>ING.</b> {{alumno.nameLastName}}</td>
+                     <td *ngIf="alumno.degree && alumno.carreer == 'LA'"><b>LIC.</b> {{alumno.nameLastName}}</td>
+                     <td *ngIf="alumno.degree && alumno.carreer == 'ARQ'"><b>ARQ.</b> {{alumno.nameLastName}}</td>
+                     <td *ngIf="alumno.degree && alumno.carreer == 'MCA'"><b>MC.</b> {{alumno.nameLastName}}</td>
+                     <td *ngIf="!alumno.degree">{{alumno.nameLastName}}</td>
                      <td>{{alumno.carreer}}</td>
                      <td class="{{alumno.status}}">{{alumno.status}}</td>
                   </tr>
                </tbody>
+            </table>
+
+            <!-- Tabla reporte alumnos Excel-->
+            <table class="table table-striped table-bordered table-hover" id="tableReportExcel" data-cols-width="9,21,46,66,28,15,15,11,21">
+                  <thead>
+                     <tr>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control</th>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno</th>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Correo</th>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Titulado</th>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Estatus</th>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Encuesta</th>
+                        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Observaciones</th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr *ngFor="let alumno of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText}; let indice=index">
+                        <td data-f-sz="12">{{indice+1}}</td>
+                        <td data-f-sz="12">{{alumno.nc}} </td>
+                        <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA'"><b>ING.</b> {{alumno.nameLastName}}</td>
+                        <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'LA'"><b>LIC.</b> {{alumno.nameLastName}}</td>
+                        <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'ARQ'"><b>ARQ.</b> {{alumno.nameLastName}}</td>
+                        <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'MCA'"><b>MC.</b> {{alumno.nameLastName}}</td>
+                        <td data-f-sz="12" *ngIf="!alumno.degree">{{alumno.nameLastName}}</td>
+                        <td data-f-sz="12">{{alumno.carreerComplete}}</td>
+                        <td data-f-sz="12">{{alumno.email}}</td>
+                        <td data-f-sz="12" *ngIf="alumno.degree">Si</td>
+                        <td data-f-sz="12" *ngIf="!alumno.degree">No</td>
+                        <td data-f-sz="12" class="{{alumno.status}}">{{alumno.status}}</td>
+                        <td data-f-sz="12" *ngIf="alumno.survey">Si</td>
+                        <td data-f-sz="12" *ngIf="!alumno.survey">No</td>
+                        <td data-f-sz="12">{{alumno.observations}}</td>
+                     </tr>
+                  </tbody>
             </table>
 
       </div>

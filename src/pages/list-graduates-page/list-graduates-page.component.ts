@@ -3,11 +3,12 @@ import { FirebaseService } from 'src/services/firebase.service';
 import { NotificationsServices } from '../../services/notifications.service';
 import { GraduationProvider } from '../../providers/graduation.prov';
 import { CookiesService } from 'src/services/cookie.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ExporterService } from 'src/services/exporter.service'
 import Swal from 'sweetalert2';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import { CheckboxControlValueAccessor } from '@angular/forms';
+import TableToExcel from "@linways/table-to-excel";
 
 
 declare const require: any;
@@ -37,6 +38,8 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchSA : string = '';
   public searchSM : string = '';
 
+  public showTotal = true;
+
   //Imagenes para Reportes
   public logoTecNM: any;
   public logoSep: any;
@@ -46,7 +49,9 @@ export class ListGraduatesPageComponent implements OnInit {
   public alumnos = [];
 
   //Variable donde se almacenan los alumnos filtrados
-  public alumnosReport = [];
+  public alumnosReport = []; // Variable donde se almacenan los alumnos para el reporte
+  public totalAlumnos; //Obtener total de alumnos con filtros de estatus y carrera
+  public totalAlumnosFilter; //Obtener total de alumnos con filto de busqueda de alumno
 
   //Variable para almacenar los alumnos verificados e imprimir papeletas
   public alumnosBallotPaper = [];
@@ -66,12 +71,13 @@ export class ListGraduatesPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     private excelService: ExporterService,
-    private imageToBase64Serv: ImageToBase64Service
+    private imageToBase64Serv: ImageToBase64Service,
+    private routeActive: ActivatedRoute,
     ) {
-      if (this.cookiesService.getData().user.role !== 0 &&
-      this.cookiesService.getData().user.role !== 5 &&
-      this.cookiesService.getData().user.role !== 6 &&
-      this.cookiesService.getData().user.role !== 9)
+      let rol = this.cookiesService.getData().user.role;
+      
+      if (rol !== 0 && rol !== 5 && rol !== 6 &&
+      rol !== 9)
        {
         this.router.navigate(['/']);
       }
@@ -134,7 +140,7 @@ export class ListGraduatesPageComponent implements OnInit {
           carreerComplete : alumno.payload.doc.get("carreraCompleta"),
           email: alumno.payload.doc.get("correo"),
           status: alumno.payload.doc.get("estatus"),
-          degree: alumno.payload.doc.get("degree"),
+          degree: alumno.payload.doc.get("degree") ? true:false,
           observations: alumno.payload.doc.get("observations"),
           survey: alumno.payload.doc.get("survey")
         }});
@@ -145,8 +151,8 @@ export class ListGraduatesPageComponent implements OnInit {
         });
 
         this.alumnosReport =  this.alumnos;
-        this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
-
+        this.totalAlumnos = this.alumnosReport.length;
+        this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'');
       });
   }
 
@@ -165,7 +171,8 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus: 'Pagado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
-      this.notificationsServices.showNotification(1, 'Pago confirmado para:',item.nc);
+      this.eventFilterReport();
+      this.notificationsServices.showNotification(0, 'Pago confirmado para:',item.nc);
     }, (error) => {
       console.log(error);
     });
@@ -186,7 +193,8 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus: 'Registrado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
-      this.notificationsServices.showNotification(1, 'Pago removido para:',item.nc);
+      this.eventFilterReport();
+      this.notificationsServices.showNotification(0, 'Pago removido para:',item.nc);
     }, (error) => {
       console.log(error);
     });
@@ -207,7 +215,8 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus: 'Asistió'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
-      this.notificationsServices.showNotification(1, 'Pago removido para:',item.nc);
+      this.eventFilterReport();
+      this.notificationsServices.showNotification(0, 'Asistencia registrada para:',item.nc);
     }, (error) => {
       console.log(error);
     });
@@ -294,17 +303,17 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Enviar invitación al alumno seleccionado (status == Verificado)
   sendOneMail(item) {
-    if(item.status == 'Verificado'){
+    if(item.survey){
       this.graduationProv.sendQR(item.email,item.id,item.name).subscribe(
         res=>{
-          this.notificationsServices.showNotification(1, 'Invitación enviada a:',item.nc);
+          this.notificationsServices.showNotification(0, 'Invitación enviada a:',item.nc);
         },
-        err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc);
+        err =>{this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:',item.nc);
         }
       );
     }
     else{
-      this.notificationsServices.showNotification(3,item.nc,'Aun no se realiza el pago correspondiente');
+      this.notificationsServices.showNotification(2,item.nc,'Encuesta de Egresados aun no ha sido respondida');
     }
   }
 
@@ -333,16 +342,16 @@ export class ListGraduatesPageComponent implements OnInit {
     // Enviar encuesta al alumno seleccionado (status == Verificado)
     sendOneMailSurvey(item) {
       if(item.status == 'Verificado'){
-        this.graduationProv.sendSurvey(item.email,item.id,item.name, item.nc).subscribe(
+        this.graduationProv.sendSurvey(item.email,item.id,item.name, item.nc, item.carreerComplete).subscribe(
           res=>{
-            this.notificationsServices.showNotification(1, 'Encuesta enviada a:',item.nc);
+            this.notificationsServices.showNotification(0, 'Encuesta enviada a:',item.nc);
           },
-          err =>{this.notificationsServices.showNotification(2, 'No se pudo enviar el correo a:',item.nc);
+          err =>{this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:',item.nc);
           }
         );
       }
       else{
-        this.notificationsServices.showNotification(3,item.nc,'Aun no se realiza el pago correspondiente');
+        this.notificationsServices.showNotification(2,item.nc,'Aun no se realiza el pago correspondiente');
       }
     }
 
@@ -414,23 +423,41 @@ export class ListGraduatesPageComponent implements OnInit {
                       this.searchSA,
                       this.searchSM
                     );
+    
+    var cantidadStatus = this.filterItems(
+      this.searchCarreer,
+      this.searchSR,
+      this.searchSP,
+      this.searchSV,
+      this.searchSA,
+      this.searchSM
+    ).length;
 
+    var cantidadCarrera = this.filterItemsCarreer(this.searchCarreer).length;
+    console.log(this.alumnosReport);
+
+    if(cantidadStatus == 0){
+      if(this.searchSRC || this.searchSPC || this.searchSVC || this.searchSAC || this.searchSMC){
+        this.totalAlumnos = 0;
+      } else {
+        this.totalAlumnos = cantidadCarrera;
+      }
+    } else {
+      if(this.searchSRC || this.searchSPC || this.searchSVC || this.searchSAC || this.searchSMC){
+        this.totalAlumnos = cantidadStatus;
+      } else {
+        this.totalAlumnos = cantidadCarrera;
+      }
+    }
+      
       if(Object.keys(this.alumnosReport).length === 0){
         if(!this.searchSRC && !this.searchSPC && !this.searchSVC && !this.searchSAC && !this.searchSMC){
           this.alumnosReport =  this.alumnos;
         }
-
-        if(this.searchCarreer == '' && this.searchSR == '~' && this.searchSP == '~' && this.searchSV == '~' && this.searchSA == '~' && this.searchSM == '~'){
-          this.alumnosReport =  this.alumnos;
-        }
-
-        if(this.searchCarreer != ''){
-          this.alumnosReport = this.filterItemsCarreer(this.searchCarreer);
-        }
       }
-      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
+      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'');
   }
-
+ 
   // FILTRADO POR CARRERA O ESTATUS
   filterItems(carreer,sR,sP,sV,sA,sM) {
     return this.alumnos.filter(function(alumno) {
@@ -528,22 +555,26 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(7);
     doc.text(hour, pageWidth-45, pageHeight -5, 'center');
 
-    this.notificationsServices.showNotification(1, 'Reporte Generado','Se generó reporte con filtros actuales.');
     window.open(doc.output('bloburl'), '_blank');
     //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
 
   // Exportar alumnos a excel
   excelExport(){
-    this.excelService.exportAsExcelFile(this.alumnosReport,'Graduacion '+this.searchCarreer);
-    this.notificationsServices.showNotification(1, 'Datos Exportados','Se exportaron datos con filtros actuales.');
+    this.notificationsServices.showNotification(0, 'Datos Exportados','Los datos se exportaron con éxito');
+    TableToExcel.convert(document.getElementById("tableReportExcel"), {
+      name: "Reporte Graduación.xlsx",
+      sheet: {
+        name: "Alumnos"
+      }
+    });
   }
 
   // Generar papeletas de alumnos verificados
   generateBallotPaper(){
     if(this.alumnosBallotPaper.length !== 0){
       // Obtener alumnos cuyo estatus sea 'Verificado' && Carrera = al filtro seleccionado
-      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'Verificado');
+      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer,'');
 
       // Dividir total de alumnos verificados en segmentos de 4
       let divAlumnosBallotPaper = [];
@@ -725,6 +756,7 @@ export class ListGraduatesPageComponent implements OnInit {
       degree : true
     };
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
       Swal.fire("Título Asignado", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
@@ -746,6 +778,7 @@ export class ListGraduatesPageComponent implements OnInit {
       degree : false
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
       Swal.fire("Título Removido", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
@@ -817,6 +850,7 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus: item.status
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
       Swal.fire("Observaciones Guardadas", "Para: "+item.nameLastName, "success");
     }, (error) => {
       console.log(error);
@@ -827,4 +861,22 @@ export class ListGraduatesPageComponent implements OnInit {
     this.page=ev;
   }
 
+  eventFilter(item){
+    if (item != ''){
+      this.showTotal = false;
+      var total = this.getNumberFilterItems(item).length;
+      this.totalAlumnosFilter = total;
+    }
+    else {
+      this.showTotal = true;
+    }
+  }
+
+  getNumberFilterItems(item) {
+    return this.alumnos.filter(function(alumno) {
+      return alumno.nc.toLowerCase().indexOf(item.toLowerCase()) > -1 ||
+             alumno.name.toLowerCase().indexOf(item.toLowerCase()) > -1 ||
+             alumno.email.toLowerCase().indexOf(item.toLowerCase()) > -1 ;
+    })
+  }
 }

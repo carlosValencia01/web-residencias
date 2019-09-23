@@ -26,4 +26,20 @@ export class CookiesService {
     checkCookie(name: string): boolean {
         return this.cookieService.check(name);
     }
+
+    isAllowed(url: string): boolean {
+        const array = this.getData().user.rol.permissions;
+        for (let i = 0; i < array.length; i++) {
+            let isCorrect = false;
+            if (typeof (array[i].items) !== 'undefined' && array[i].items.length > 0) {
+                isCorrect = array[i].items.findIndex(x => x.routerLink === url) !== -1;
+            } else {
+                isCorrect = array[i].routerLink === url;
+            }
+            if (isCorrect) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

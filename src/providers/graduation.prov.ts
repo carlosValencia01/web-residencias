@@ -15,8 +15,8 @@ export class GraduationProvider {
         .pipe(map(data => data.json()));
     }
 
-    sendSurvey(email: string, id: string, nombre: string, nc: string) {
-        return this.api.post('graduationmail/survey', { to_email: [email], id: id, name: nombre, nc: nc })
+    sendSurvey(email: string, id: string, nombre: string, nc: string, carrera: string) {
+        return this.api.post('graduationmail/survey', { to_email: [email], id: id, name: nombre, nc: nc, carreer: carrera })
         .pipe(map(data => data.json()));
     }
 }

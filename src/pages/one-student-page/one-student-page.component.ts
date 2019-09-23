@@ -11,6 +11,7 @@ import * as jsPDF from 'jspdf';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { Router } from '@angular/router';
+import { eNotificationType } from 'src/enumerators/notificationType.enum';
 
 
 @Component({
@@ -20,51 +21,39 @@ import { Router } from '@angular/router';
 })
 export class OneStudentPageComponent implements OnInit {
 
-  loading: boolean = false;
-
+  loading = false;
   showNotFound = false;
-
   showImg = false;
-
   frontBase64: any;
   backBase64: any;
-
   imageProfileTest: any;
-
   currentStudent: any;
-
   errorForm = false;
   photoStudent = '';
-
   imageToShow: any;
-
   errorInputsTag = {
     errorStudentFullName: false,
     errorStudentNumberControl: false,
     errorStudentNSS: false,
     errorStudentCareer: false,
   };
-
   imageChangedEvent: any = '';
   croppedImage: any = '';
   croppedImageBase64: any = '';
   imgForSend: boolean;
   closeResult: string;
   haveSubjects: boolean;
-
   selectedFile: File = null;
 
   constructor(
-
     private studentProv: StudentProvider,
     private imageToBase64Serv: ImageToBase64Service,
     private modalService: NgbModal,
     private notificationServ: NotificationsServices,
     private router: Router,
-    private cookiesServ: CookiesService,
+    private cookiesServ: CookiesService
   ) {
-    if (this.cookiesServ.getData().user.role !== 2
-      || this.cookiesServ.getData().user.status === 'egresado') {
+    if (this.cookiesServ.getData().user.role !== 2) {
       this.router.navigate(['/']);
     }
     this.getBase64ForStaticImages();
@@ -74,7 +63,7 @@ export class OneStudentPageComponent implements OnInit {
     const _id = this.cookiesServ.getData().user._id;
     // const nc = this.cookiesServ.getData().user.email;
     // console.log(nc);
-    this.loading=true;
+    this.loading = true;
     this.studentProv.getStudentById(_id)
       .subscribe(res => {
         this.showImg = false;
@@ -83,7 +72,7 @@ export class OneStudentPageComponent implements OnInit {
         this.getImageFromService(res.student[0]._id);
       }, error => {
         console.log(error);
-      }, ()=> this.loading=false);
+      }, () => this.loading = false);
   }
 
   // Generacion de PDF *************************************************************************************//#endregion
@@ -96,7 +85,6 @@ export class OneStudentPageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/back.jpg').then(res2 => {
       this.backBase64 = res2;
     });
-
   }
 
   textToBase64Barcode(text) {
@@ -109,7 +97,6 @@ export class OneStudentPageComponent implements OnInit {
     if (career.length < 33) {
       return career;
     }
-
     switch (career) {
       case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
         return 'DOC. EN CIENCIAS DE ALIMENTOS';
@@ -123,7 +110,6 @@ export class OneStudentPageComponent implements OnInit {
       default:
         return 'ING. EN TEC. DE LA INF. Y COM.';
     }
-
   }
 
   /*generatePDF() { // 'p', 'mm', [68,20]
@@ -208,6 +194,7 @@ export class OneStudentPageComponent implements OnInit {
   imageLoaded() {
     // show cropper
   }
+
   loadImageFailed() {
     // show message
   }
@@ -252,7 +239,7 @@ export class OneStudentPageComponent implements OnInit {
       if (error.status === 404) {
         this.photoStudent = 'assets/imgs/imgNotFound.png';
       }
-    }, ()=>this.loading=false);
+    }, () => this.loading = false);
   }
 
   uploadFile() {
@@ -260,16 +247,16 @@ export class OneStudentPageComponent implements OnInit {
     const fd = new FormData();
     fd.append('image', this.croppedImage);
 
-    this.loading=true;
+    this.loading = true;
     this.studentProv.updatePhoto(id, fd).subscribe((res) => {
-      const data:any = res;
+      const data: any = res;
       this.currentStudent = data.student;
       this.imgForSend = false;
-      this.notificationServ.showNotification(1, 'Fotografía actualizada correctamente', '');
+      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Fotografía actualizada correctamente', '');
 
     }, error => {
       console.log(error);
-    }, () => this.loading=false);
+    }, () => this.loading = false);
   }
 
   // Zona de test :D *********************************************************************************************//#region
@@ -289,7 +276,7 @@ export class OneStudentPageComponent implements OnInit {
   }
 
   getImageFromService(id) {
-    this.loading=true;
+    this.loading = true;
     this.studentProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
 
@@ -299,7 +286,7 @@ export class OneStudentPageComponent implements OnInit {
         this.photoStudent = 'assets/imgs/imgNotFound.png';
         this.showImg = true;
       }
-    },()=>this.loading=false);
+    }, () => this.loading = false);
   }
 
 }
