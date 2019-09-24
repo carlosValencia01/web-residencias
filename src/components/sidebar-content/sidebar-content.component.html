@@ -48,19 +48,19 @@
     <div *ngFor="let item of menu">
       <div *ngIf="!isUndefined(item.items) || item.items.length > 0; else noSubmenu">
         <button mat-menu-item [matMenuTriggerFor]="sub_menu">
-          <mat-icon>{{item.icon}}</mat-icon>
+          <img class="menu-item-img" src="assets/icons/{{item.icon}}.svg" alt="">
           <span>{{item.label}}</span>
         </button>
         <mat-menu #sub_menu>
           <button *ngFor="let submenu of item.items" mat-menu-item routerLink="{{submenu.routerLink}}" (click)="closeMenu()">
-            <mat-icon>{{submenu.icon}}</mat-icon>
+            <img class="menu-item-img" src="assets/icons/{{submenu.icon}}.svg" alt="">
             <span>{{submenu.label}}</span>
           </button>
         </mat-menu>
       </div>
       <ng-template #noSubmenu>
         <button mat-menu-item  [matMenuTriggerFor]="sub_menu2" routerLink="{{item.routerLink}}" (click)="closeMenu()">
-          <mat-icon>{{item.icon}}</mat-icon>
+          <img class="menu-item-img" src="assets/icons/{{item.icon}}.svg" alt="">
           <span>{{item.label}}</span>
         </button>
         <mat-menu #sub_menu2>
