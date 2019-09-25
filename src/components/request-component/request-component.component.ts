@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { StudentProvider } from 'src/providers/student.prov';
 import { CookiesService } from 'src/services/cookie.service';
 import { eCAREER } from 'src/enumerators/career.enum';
@@ -10,8 +10,7 @@ import { RequestProvider } from 'src/providers/request.prov';
 import { eOperation } from 'src/enumerators/operation.enum';
 import { DatePipe } from '@angular/common';
 import { iRequest } from 'src/entities/request.model';
-import { IEmployee } from 'src/entities/employee.model';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeAdviserComponent } from 'src/components/employee-adviser/employee-adviser.component';
 import { IntegrantsComponentComponent } from 'src/components/integrants-component/integrants-component.component';
 import { iIntegrant } from 'src/entities/integrant.model';
@@ -33,13 +32,10 @@ export class RequestComponentComponent implements OnInit {
   private fileData: any;
   private frmData: any;
   private isLoadFile: boolean;
-  public isLoadImage: boolean;
   private userInformation: any;
   private typeCareer: any;
   public operationMode: eOperation;
   private request: iRequest;
-  public resource: string;
-  private employees: IEmployee[];
   public isToggle = false;
   public observations: string;
   public viewObservation = false;
@@ -92,7 +88,8 @@ export class RequestComponentComponent implements OnInit {
         this.loadRequest(res);
         this.operationMode = eOperation.EDIT;
         this.observations = this.request.observation;
-        if (this.request.status === eStatusRequest.REJECT) {
+        const lastHistoryIndex = this.request.history.length - 1;
+        if (this.request.history[lastHistoryIndex].status === eStatusRequest.REJECT && this.request.observation) {
           this.viewObservation = true;
         }
       } else {
@@ -101,10 +98,6 @@ export class RequestComponentComponent implements OnInit {
     }, error => {
       this.operationMode = eOperation.NEW;
     });
-  }
-
-  revisedView(): void {
-    this.viewObservation = false;
   }
 
   assignName(): void {
@@ -123,7 +116,6 @@ export class RequestComponentComponent implements OnInit {
     this.request.student = request.request[0].studentId;
     this.request.studentId = this.request.student._id;
     this.integrants = this.request.integrants;
-    this.request.status;
     this.assignName();
 
     this.frmRequest.setValue({
@@ -141,17 +133,13 @@ export class RequestComponentComponent implements OnInit {
     });
     this.disabledControl();
     this.isToggle = this.request.honorificMention;
-    this.studentProvider.getResource(this.request.studentId, eFILES.PROYECTO).subscribe(
-      data => {
-        this.generateImageFromBlob(data);
-      }
-    );
   }
 
   Edit(): void {
     this.isEdit = !this.isEdit;
     this.disabledControl();
   }
+
   disabledControl(): void {
     this.frmRequest.get('name').markAsUntouched();
     this.frmRequest.get('lastname').markAsUntouched();
@@ -187,6 +175,7 @@ export class RequestComponentComponent implements OnInit {
       this.frmRequest.get('honorific').disable();
     }
   }
+
   onUpload(event): void {
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
@@ -198,19 +187,6 @@ export class RequestComponentComponent implements OnInit {
         this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App',
           'Error, su archivo debe ser de tipo PDF');
       }
-    }
-  }
-
-  generateImageFromBlob(image: Blob): void {
-    const reader = new FileReader();
-    this.isLoadImage = false;
-    reader.addEventListener('load', () => {
-      const result: any = reader.result;
-      this.resource = result;
-      this.isLoadImage = true;
-    }, false);
-    if (image) {
-      reader.readAsDataURL(image);
     }
   }
 
@@ -286,6 +262,7 @@ export class RequestComponentComponent implements OnInit {
           this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Editada Correctamente');
             this.isEdit = false;
+            this.viewObservation = false;
             this.getRequest();
             this.btnSubmitRequest.emit(true);
           }, error => {
@@ -321,6 +298,9 @@ export class RequestComponentComponent implements OnInit {
   }
 
   selectAdviser(): void {
+    if (this.frmRequest.disabled) {
+      return;
+    }
     this.frmRequest.get('adviser').markAsUntouched();
     this.frmRequest.get('adviser').setErrors(null);
     const ref = this.dialog.open(EmployeeAdviserComponent, {
@@ -335,13 +315,15 @@ export class RequestComponentComponent implements OnInit {
     ref.afterClosed().subscribe((result) => {
       if (result) {
         this.frmRequest.patchValue({ 'adviser': result.Employee });
-        // if(this.operationMode===eOperation.NEW)
         this.deptoInfo = result.Depto;
       }
     });
   }
 
   addIntegrants(): void {
+    if (this.frmRequest.disabled) {
+      return;
+    }
     this.frmRequest.get('noIntegrants').setErrors(null);
     const ref = this.dialog.open(IntegrantsComponentComponent, {
       data: {
