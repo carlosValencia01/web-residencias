@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, ApplicationRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { RequestComponentComponent } from 'src/components/request-component/request-component.component';
 import { ContextState } from 'src/providers/State/ContextState';
 import { eRequest } from 'src/enumerators/request.enum';
@@ -8,7 +8,6 @@ import { StudentProvider } from 'src/providers/student.prov';
 import { MatStepper } from '@angular/material';
 import { iRequest } from 'src/entities/request.model';
 import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
-import * as jsPDF from 'jspdf';
 import { uRequest } from 'src/entities/request';
 import { ImageToBase64Service } from 'src/services/img.to.base63.service';
 import { IStudent } from 'src/entities/student.model';
@@ -16,6 +15,7 @@ import { ViewerComponentComponent } from 'src/components/viewer-component/viewer
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationsServices } from 'src/services/notifications.service';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
+
 @Component({
   selector: 'app-titulacion-page',
   templateUrl: './titulacion-page.component.html',
@@ -48,6 +48,8 @@ export class TitulacionPageComponent implements OnInit {
   ProcessVerifiedMessage: String = 'En espera del registro de tu proyecto';
   CompletedVerifiedMessage: String = 'Tú proyecto ha sido registrado';
   ProcessReleasedMessage: String = 'En espera de la liberación del proyecto';
+  CompletedReleasedMessage: String = 'Tú proyecto ha sido liberado';
+
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
@@ -75,7 +77,6 @@ export class TitulacionPageComponent implements OnInit {
   ngAfterContentInit() {
     // Obtengo el indice de mi estado y le indico que me posicione en ese Step
     this.loadRequest();
-
   }
 
   loadRequest() {
@@ -107,12 +108,11 @@ export class TitulacionPageComponent implements OnInit {
   SelectItem(): void {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
-    
+
     this.Steeps = new ContextState(phase, status);
-    console.log("estatus", this.Steeps.getIndex());
-    console.log("estatus", phase, status);
-    console.log("estatus", this.Request.phase, this.Request.status);
-    // this.stepperComponent.selectedIndex = this.Steeps.getIndex();
+    console.log('estatus', this.Steeps.getIndex());
+    console.log('estatus', phase, status);
+    console.log('estatus', this.Request.phase, this.Request.status);
     this.StatusComponent = this.Steeps.state.status;
     this.enableSteps(phase);
   }
@@ -127,7 +127,7 @@ export class TitulacionPageComponent implements OnInit {
 
   enableSteps(phase: eRequest): void {
     this.resetSteep();
-    console.log("fase", phase);
+    console.log('fase', phase);
     switch (phase) {
       case eRequest.GENERATED: {
 
@@ -170,19 +170,19 @@ export class TitulacionPageComponent implements OnInit {
     }
     (async () => {
       await this.delay(100);
-      console.log("index",this.Steeps.getIndex());
+      console.log('index',this.Steeps.getIndex());
       this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     })();
   }
 
-
-
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
   resetSteep(): void {
-    this.SteepOneCompleted = this.SteepTwoCompleted = this.SteepThreeCompleted = this.SteepFourCompleted =this.SteepFiveCompleted= this.SteepSixCompleted=false;
+    this.SteepOneCompleted = this.SteepTwoCompleted = this.SteepThreeCompleted = this.SteepFourCompleted = this.SteepFiveCompleted = this.SteepSixCompleted = false;
   }
+
   valores() {
     console.log(this.stepperComponent);
     console.log('STEP INDEX', this.stepperComponent.selectedIndex);
@@ -190,5 +190,4 @@ export class TitulacionPageComponent implements OnInit {
     console.log('STEP INDEX', this.stepperComponent.selectedIndex = 2);
     console.log('values', this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted);
   }
-
 }

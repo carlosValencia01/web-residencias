@@ -14,8 +14,7 @@
       </div>
     </div>
   </mat-step>
-  <mat-step [stepControl]="secondFormGroup" [completed]="SteepTwoCompleted">
-    <!-- <form [formGroup]="secondFormGroup"> -->
+  <mat-step [completed]="SteepTwoCompleted">
     <ng-template matStepLabel>ACEPTACIÓN DE SOLICITUD</ng-template>
     <div *ngIf="SteepTwoCompleted">
       <app-process-component [Message]="CompletedSentMessage"></app-process-component>
@@ -25,10 +24,8 @@
         <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessSentMessage"></app-process-component>
       </div>
     </div>
-    <!-- </form> -->
   </mat-step>
   <mat-step [completed]="SteepThreeCompleted">
-    <!-- <form [formGroup]="thirdFormGroup"> -->
     <ng-template matStepLabel>REGISTRO DE PROYECTO</ng-template>
     <div *ngIf="SteepThreeCompleted">
       <app-viewer-component [Request]="Request" [Phase]="'Registrado'"></app-viewer-component>
@@ -39,17 +36,15 @@
         <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessVerifiedMessage"></app-process-component>
       </div>
     </div>
-    <!-- </form> -->
   </mat-step>
   <mat-step [completed]="SteepFourCompleted">
     <ng-template matStepLabel>LIBERACIÓN DE PROYECTO</ng-template>
     <div *ngIf="SteepFourCompleted">
-      <!-- <app-viewer-component [Request]="Request" [Phase]="'Registrado'"></app-viewer-component> -->
-      <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
+      <app-viewer-component [Request]="Request" [Phase]="'Liberado'"></app-viewer-component>
+      <app-process-component [Message]="CompletedReleasedMessage"></app-process-component>
     </div>
     <div *ngIf="!SteepFourCompleted">
       <div [ngSwitch]="StatusComponent">
-        <!-- <app-steep-component [Request]="'5d7599ed45e02a331c0e4f6b'"></app-steep-component> -->
         <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
       </div>
     </div>

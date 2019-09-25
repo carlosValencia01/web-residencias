@@ -3,8 +3,8 @@ import { iRequest } from 'src/entities/request.model';
 import { eRequest } from 'src/enumerators/request.enum';
 import { uRequest } from 'src/entities/request';
 import { ImageToBase64Service } from 'src/services/img.to.base63.service';
-import * as jsPDF from 'jspdf';
 import { RequestService } from 'src/services/request.service';
+import { Api } from 'src/providers/api.prov';
 
 @Component({
   selector: 'app-viewer-component',
@@ -18,30 +18,30 @@ export class ViewerComponentComponent implements OnInit {
   @Input('Phase') _Phase: eRequest;
   private message: string;
   private oRequest: uRequest;
-  private file: jsPDF;
   private PHASE: eRequest;
-  constructor(private imgService: ImageToBase64Service, private _RequestService: RequestService) { }
+  constructor(
+    private imgService: ImageToBase64Service,
+    private _RequestService: RequestService,
+    private api: Api,
+  ) { }
 
   ngOnInit() {
 
   }
 
   ngAfterContentInit() {
-
     this._RequestService.requestUpdate.subscribe(
-      (response: any) => {        
+      (response: any) => {
         this.oRequest = new uRequest(response.Request, this.imgService);
-        this.PHASE=<eRequest>response.Phase;
+        this.PHASE = <eRequest>response.Phase;
         this.loadMessage(response.Phase);
       }
     );
-
     if (typeof (this._Request) !== 'undefined') {
-      this.oRequest = new uRequest(this._Request, this.imgService);      
-      this.PHASE=<eRequest>this._Phase;
+      this.oRequest = new uRequest(this._Request, this.imgService);
+      this.PHASE = <eRequest>this._Phase;
       this.loadMessage(<eRequest>this._Phase);
     }
-
   }
 
   loadMessage(phase: eRequest): void {
@@ -61,7 +61,6 @@ export class ViewerComponentComponent implements OnInit {
       case eRequest.VALIDATED: {
         this.message = 'Visualizar Petición';
         break;
-
       }
       case eRequest.RELEASED: {
         this.message = 'Hoja de Liberación';
@@ -76,17 +75,15 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.CAPTURED: {
-        this.message = 'Visualizar Petición';
+        this.message = 'Descargar solicitud';
         break;
       }
-      default: {
-
-      }
+      default: {}
     }
   }
 
   view(): void {
-    console.log("registered", this.oRequest);
+    console.log('registered', this.oRequest);
     switch (this.PHASE) {
       case eRequest.GENERATED: {
         break;
@@ -99,10 +96,9 @@ export class ViewerComponentComponent implements OnInit {
       }
       case eRequest.VALIDATED: {
         break;
-
       }
       case eRequest.RELEASED: {
-        window.open(this.oRequest.projectRelease().output('bloburl'), '_blank');
+        window.open(`${this.api.getURL()}/student/document/liberacion/${this._Request._id}`, '_blank');
         break;
       }
       case eRequest.REGISTERED: {
@@ -110,7 +106,6 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.VERIFIED: {
-        // window.open('..\\..\\assets\\imgs\\requirementsSheet.pdf', '_blank');
         window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
         break;
       }
@@ -118,9 +113,7 @@ export class ViewerComponentComponent implements OnInit {
         window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
         break;
       }
-      default: {
-
-      }
+      default: {}
     }
   }
 }
