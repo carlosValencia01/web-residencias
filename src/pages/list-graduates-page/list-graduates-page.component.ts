@@ -222,6 +222,40 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
+    // Cambias estatus a Verificado
+    verifyEvent(item){
+      let itemUpdate = {
+        nc : item.nc,
+        nombre : item.name,
+        nombreApellidos : item.nameLastName,
+        carrera : item.carreer,
+        carreraCompleta : item.carreerComplete,
+        correo : item.email,
+        degree: item.degree ? item.degree:false,
+        observations: item.observations ? item.observations:'',
+        survey: item.survey ? item.survey:false,
+        estatus: 'Verificado'
+      }
+      this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
+      this.notificationsServices.showNotification(0, 'Verificación registrada para:',item.nc);
+      this.sendSurveyGraduate(item);
+      }, (error) => {
+        console.log(error);
+      });
+    }
+
+    // Enviar encuesta al verificar alumno desde la web
+    sendSurveyGraduate(item){
+      this.graduationProv.sendSurvey(item.email,item.id,item.name, item.nc, item.carreerComplete).subscribe(
+        res=>{
+          this.notificationsServices.showNotification(0, 'Encuesta enviada a:',item.nc);
+        },
+        err =>{this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:',item.nc);
+        }
+      );
+    }
+
   // Confirmar pago
   confirmPaidEvent(item){
     Swal.fire({
@@ -241,6 +275,24 @@ export class ListGraduatesPageComponent implements OnInit {
     })
   }
 
+  // Confirmar verificar alumno
+  verifyStudent(item){
+    Swal.fire({
+      title: 'Verificar Alumno',
+      text: item.name,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        this.verifyEvent(item);
+      }
+    })
+  }
   // Confirmar remover pago
   confirmRemovePaidEvent(item){
     Swal.fire({
