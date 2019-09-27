@@ -7,7 +7,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ExporterService } from 'src/services/exporter.service'
 import Swal from 'sweetalert2';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
-import { CheckboxControlValueAccessor } from '@angular/forms';
 import TableToExcel from "@linways/table-to-excel";
 
 
@@ -142,7 +141,9 @@ export class ListGraduatesPageComponent implements OnInit {
           status: alumno.payload.doc.get("estatus"),
           degree: alumno.payload.doc.get("degree") ? true:false,
           observations: alumno.payload.doc.get("observations"),
-          survey: alumno.payload.doc.get("survey")
+          survey: alumno.payload.doc.get("survey"),
+          bestAverage: alumno.payload.doc.get("mejorPromedio") ? alumno.payload.doc.get("mejorPromedio"):false,
+          average: alumno.payload.doc.get("promedio") ? alumno.payload.doc.get("promedio"):0
         }});
 
         //Ordenar Alumnos por Apellidos
@@ -168,6 +169,8 @@ export class ListGraduatesPageComponent implements OnInit {
       degree: item.degree ? item.degree:false,
       observations: item.observations ? item.observations:'',
       survey: item.survey ? item.survey:false,
+      mejorPromedio : item.bestAverage ? item.bestAverage:false,
+      promedio : item.average ? item.average:0,
       estatus: 'Pagado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -190,6 +193,8 @@ export class ListGraduatesPageComponent implements OnInit {
       degree: item.degree ? item.degree:false,
       observations: item.observations ? item.observations:'',
       survey: item.survey ? item.survey:false,
+      mejorPromedio : item.bestAverage ? item.bestAverage:false,
+      promedio : item.average ? item.average:0,
       estatus: 'Registrado'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -212,6 +217,8 @@ export class ListGraduatesPageComponent implements OnInit {
       degree: item.degree ? item.degree:false,
       observations: item.observations ? item.observations:'',
       survey: item.survey ? item.survey:false,
+      mejorPromedio : item.bestAverage ? item.bestAverage:false,
+      promedio : item.average ? item.average:0,
       estatus: 'Asistió'
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -234,6 +241,8 @@ export class ListGraduatesPageComponent implements OnInit {
         degree: item.degree ? item.degree:false,
         observations: item.observations ? item.observations:'',
         survey: item.survey ? item.survey:false,
+        mejorPromedio : item.bestAverage ? item.bestAverage:false,
+        promedio : item.average ? item.average:0,
         estatus: 'Verificado'
       }
       this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
@@ -537,7 +546,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
  // Generar reporte de alumnos
   generateReport(){
-    var doc = new jsPDF('p', 'pt');
+    var doc = new jsPDF('l', 'pt');
 
     // Header
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
@@ -554,6 +563,15 @@ export class ListGraduatesPageComponent implements OnInit {
 
     doc.autoTable({
       html: '#tableReport',
+      theme: 'grid',
+      columnStyles: {
+        0: {cellWidth: 'wrap'},
+        1: {cellWidth: 'wrap'},
+        2: {cellWidth: 'wrap'},
+        3: {cellWidth: 'wrap'},
+        4: {cellWidth: 'wrap'},
+        5: {cellWidth: 270}
+      },
       didParseCell: function (data) {
           if(data.row.cells[4].text[0] === 'Registrado'){
             data.cell.styles.fillColor = [71, 178, 218];
@@ -593,7 +611,7 @@ export class ListGraduatesPageComponent implements OnInit {
     var mes = (m < 10) ? '0' + m : m;
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    doc.addImage(this.logoTecTepic, 'PNG',282.64, pageHeight  - 47, 30,30); // Logo SEP
+    doc.addImage(this.logoTecTepic, 'PNG',(pageWidth / 2)-15, pageHeight  - 47, 30,30); // Logo SEP
     let footer = "© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n";
     doc.setTextColor(0,0,0);
     doc.setFontStyle('bold');
@@ -805,7 +823,9 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus : item.status,
       observations: item.observations ? item.observations:'',
       survey: item.survey ? item.survey:false,
-      degree : true
+      degree : true,
+      mejorPromedio : item.bestAverage ? item.bestAverage:false,
+      promedio : item.average ? item.average:0
     };
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
       this.eventFilterReport();
@@ -827,7 +847,9 @@ export class ListGraduatesPageComponent implements OnInit {
       estatus : item.status,
       observations: item.observations ? item.observations:'',
       survey: item.survey ? item.survey:false,
-      degree : false
+      degree : false,
+      mejorPromedio : item.bestAverage ? item.bestAverage:false,
+      promedio : item.average ? item.average:0
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
       this.eventFilterReport();
@@ -899,7 +921,9 @@ export class ListGraduatesPageComponent implements OnInit {
       degree: item.degree ? item.degree:false,
       observations: newObservations,
       survey: item.survey ? item.survey:false,
-      estatus: item.status
+      estatus: item.status,
+      mejorPromedio : item.bestAverage ? item.bestAverage:false,
+      promedio : item.average ? item.average:0
     }
     this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
       this.eventFilterReport();
@@ -930,5 +954,110 @@ export class ListGraduatesPageComponent implements OnInit {
              alumno.name.toLowerCase().indexOf(item.toLowerCase()) > -1 ||
              alumno.email.toLowerCase().indexOf(item.toLowerCase()) > -1 ;
     })
+  }
+
+  confirmBestAverage(item){
+    var id = 'inputAverage';
+    Swal.fire({
+      title: 'Asignar Mejor Promedio',
+      imageUrl: '../../assets/icons/bestAverage.svg',
+      imageWidth: 100,
+      imageHeight: 100,
+      imageAlt: 'Custom image',
+      html:
+        '<input id="inputAverage"></input>  ',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Asignar'
+    }).then((result) => {
+      if (result.value) {
+        var average = (<HTMLInputElement>document.getElementById(id)).value;
+        this.asignBestAverage(item,average);
+      }
+    })
+  }
+
+  asignBestAverage(item,average){
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      nombreApellidos : item.nameLastName,
+      carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
+      correo : item.email,
+      degree: item.degree ? item.degree:false,
+      observations: item.observations ? item.observations:'',
+      survey: item.survey ? item.survey:false,
+      estatus: item.status,
+      mejorPromedio : true,
+      promedio : average
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
+      Swal.fire("Promedio Asignado", "Para: "+item.nameLastName, "success");
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+  generateReportBestAverage(){
+    var doc = new jsPDF('p', 'pt');
+
+    // Header
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+    doc.addImage(this.logoSep, 'PNG', 36, 5, 110, 27); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth-120, 2, 82, 35); // Logo TecNM
+
+    let header = "Reporte Alumnos Mejor Promedio";
+    doc.setTextColor(0,0,0);
+    doc.setFontSize(15);
+    doc.setFontStyle('bold');
+    doc.text(header, pageWidth / 2, 30 , 'center');
+
+    doc.autoTable({
+      html: '#tableReportBestAverage',
+      theme: 'striped',
+      columnStyles: {
+        0: {cellWidth: 150},
+        1: {cellWidth: 200},
+        2: {cellWidth: 60 , halign: 'center'},
+        3: {cellWidth: 'auto'},
+      },
+      didParseCell: function (data) {
+          if(data.row.cells[1].text[0] === 'Nombre del Alumno'){
+            data.cell.styles.fillColor = [17, 32, 67];
+            data.cell.styles.textColor = [255,255,255];
+            data.cell.styles.fontSize =  10;
+          }
+      }
+    });
+
+    // FOOTER
+    var  today = new Date();
+    var m = today.getMonth() + 1;
+    var mes = (m < 10) ? '0' + m : m;
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    doc.addImage(this.logoTecTepic, 'PNG',(pageWidth / 2)-15, pageHeight  - 47, 30,30); // Logo SEP
+    let footer = "© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n";
+    doc.setTextColor(0,0,0);
+    doc.setFontStyle('bold');
+    doc.setFontSize(7);
+    doc.text(footer, pageWidth / 2, pageHeight -12, 'center');
+
+    //Hour PDF
+    let hour = today.getDate()+'/' +mes+'/'+today.getFullYear()+' - '+today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
+    doc.setTextColor(100);
+    doc.setFontStyle('bold');
+    doc.setFontSize(7);
+    doc.text(hour, pageWidth-45, pageHeight -5, 'center');
+
+    window.open(doc.output('bloburl'), '_blank');
+    //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
 }

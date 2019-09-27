@@ -141,6 +141,11 @@
                                        <img src="../../assets/imgs/logros.png" class="action" (click)="observationsModal(item)">
                                  </div>
                               </td>
+                              <td *ngIf=" role === 'administration' && item.bestAverage !== true ">
+                                 <div class="div-img" ngbTooltip="Mejor Promedio" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/bestAverage.svg" class="action" (click)="confirmBestAverage(item)">
+                                 </div>
+                              </td>
                            </tr>
                         </div>
                      </td>
@@ -164,6 +169,11 @@
                            <td>
                               <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
                                  <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
+                              </div>
+                           </td>
+                           <td>
+                              <div class="div-img" ngbTooltip="Generar Reporte Mejor Promedio" tooltipClass="my-custom-class">
+                                 <img src="../../assets/icons/bestAverage.svg" class="action" (click)="generateReportBestAverage()">
                               </div>
                            </td>
                            <td>
@@ -196,6 +206,7 @@
                      <th>Nombre del Alumno</th>
                      <th>Carrera</th>
                      <th>Estatus</th>
+                     <th>Observaciones</th>
                   </tr>
                </thead>
                <tbody>
@@ -210,6 +221,7 @@
                      <td *ngIf="!alumno.degree">{{alumno.nameLastName}}</td>
                      <td>{{alumno.carreer}}</td>
                      <td class="{{alumno.status}}">{{alumno.status}}</td>
+                     <td>{{alumno.observations}}</td>
                   </tr>
                </tbody>
             </table>
@@ -249,6 +261,32 @@
                         <td data-f-sz="12">{{alumno.observations}}</td>
                      </tr>
                   </tbody>
+            </table>
+
+
+            <!-- Tabla reporte alumnos mejor promedio PDF-->
+            <table class="table table-striped table-bordered table-hover" id="tableReportBestAverage">
+               <thead>
+                  <tr>
+                     <th>Carrera</th>
+                     <th>Nombre del Alumno</th>
+                     <th>Promedio</th>
+                     <th>Comentarios</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let alumno of alumnosReport">
+                     <td *ngIf="alumno.bestAverage === true">{{alumno.carreerComplete}}</td>
+                     <td *ngIf="(alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA' && alumno.carreer != 'DCA') && alumno.bestAverage === true"><b>ING.</b> {{alumno.name}}</td>
+                     <td *ngIf="(alumno.degree && alumno.carreer == 'LA') && alumno.bestAverage === true"><b>LIC.</b> {{alumno.name}}</td>
+                     <td *ngIf="(alumno.degree && alumno.carreer == 'ARQ') && alumno.bestAverage === true"><b>ARQ.</b> {{alumno.name}}</td>
+                     <td *ngIf="(alumno.degree && alumno.carreer == 'MCA') && alumno.bestAverage === true"><b>MCA.</b> {{alumno.name}}</td>
+                     <td *ngIf="(alumno.degree && alumno.carreer == 'DCA') && alumno.bestAverage === true"><b>DCA.</b> {{alumno.name}}</td>
+                     <td *ngIf="!alumno.degree && alumno.bestAverage === true">{{alumno.name}}</td>
+                     <td *ngIf="alumno.bestAverage === true">{{alumno.average}}</td>
+                     <td *ngIf="(alumno.status !== 'Asistió' && alumno.status !== 'Mencionado') && alumno.bestAverage === true">SOLICITAMOS A SU COORDINADOR NOS HAGA EL FAVOR DE PASAR A RECOGER EL RECONOCIMIENTO.</td>
+                  </tr>
+               </tbody>
             </table>
 
       </div>
