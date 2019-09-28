@@ -1060,4 +1060,75 @@ export class ListGraduatesPageComponent implements OnInit {
     window.open(doc.output('bloburl'), '_blank');
     //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
+
+    // Confirmar regresar status de mencionado a asistió por alumno
+    confirmReturnStatus(item){
+      Swal.fire({
+        title: 'Regresar Estatus a Asistió',
+        text: "Para "+item.name,
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar'
+      }).then((result) => {
+        if (result.value) {
+          this.returnAsistenceEvent(item);
+        }
+      })
+    }
+
+    // Confirmar regresar status de mencionado a asistió por carrera
+    confirmReturnStatusCarreer(){
+      Swal.fire({
+        title: 'Regresar Estatus a Asistió',
+        text: "Para "+this.searchCarreer,
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar'
+      }).then((result) => {
+        if (result.value) {
+          this.asistenceEventCarreer();
+        }
+      })
+    }
+
+    asistenceEventCarreer(){
+      this.alumnos.forEach(async student =>{
+        if(student.carreer === this.searchCarreer){
+          if(student.status === "Mencionado"){
+            await this.returnAsistenceEvent(student);
+          }
+        }
+      });
+    }
+
+    returnAsistenceEvent(item){
+      let itemUpdate = {
+        nc : item.nc,
+        nombre : item.name,
+        nombreApellidos : item.nameLastName,
+        carrera : item.carreer,
+        carreraCompleta : item.carreerComplete,
+        correo : item.email,
+        degree: item.degree ? item.degree:false,
+        observations: item.observations ? item.observations:'',
+        survey: item.survey ? item.survey:false,
+        mejorPromedio : item.bestAverage ? item.bestAverage:false,
+        promedio : item.average ? item.average:0,
+        estatus: 'Asistió'
+      }
+      this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+        this.eventFilterReport();
+      }, (error) => {
+        console.log(error);
+      });
+    }
+
 }
