@@ -1073,9 +1073,10 @@ export class ListGraduatesPageComponent implements OnInit {
         cancelButtonColor: '#d33',
         cancelButtonText: 'Cancelar',
         confirmButtonText: 'Confirmar'
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.value) {
-          this.returnAsistenceEvent(item);
+          await this.returnAsistenceEvent(item);
+          this.firestoreService.resetActiveCareer();
         }
       })
     }
@@ -1095,18 +1096,24 @@ export class ListGraduatesPageComponent implements OnInit {
       }).then((result) => {
         if (result.value) {
           this.asistenceEventCarreer();
+          
         }
       })
     }
 
-    asistenceEventCarreer(){
+    asistenceEventCarreer(){      
+    
+      let changeStatus=false;
       this.alumnos.forEach(async student =>{
         if(student.carreer === this.searchCarreer){
-          if(student.status === "Mencionado"){
+          if(student.status === "Mencionado"){            
+            changeStatus=true;            
             await this.returnAsistenceEvent(student);
           }
         }
-      });
+      });      
+      if(changeStatus)   this.firestoreService.resetActiveCareer();
+      
     }
 
     returnAsistenceEvent(item){

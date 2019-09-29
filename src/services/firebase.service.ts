@@ -114,4 +114,42 @@ export class FirebaseService {
   public getSurvey() {
     return this.db.collection('perfilAlumno').snapshotChanges();
   }
+
+  //obtiene carrera con posicion menor
+  public getCareerActive(){
+    return this.db.collection('carreras', ref=>ref.orderBy('posicion')).snapshotChanges().pipe(
+      map( carreras=> {if(carreras.length>0) return carreras[0].payload.doc.data(); else return null})
+    );
+  }
+
+  //activar carrera actual
+  public setActiveCareer():void{
+    let sub = this.getCareerActive().subscribe(
+      (res:any)=>{
+        sub.unsubscribe();
+        this.db.collection('carreras').doc(res.nombre).update({activo:true});
+      }
+    )
+  }
+
+  //todas las carreras
+  public getCareers(){
+    return this.db.collection('carreras', ref=>ref.orderBy('posicion')).snapshotChanges().pipe(
+      map( carreras=> carreras.map(carrera=>carrera.payload.doc.data()))
+    );
+  }
+
+  //cambia los estatus de las carreras
+  public resetActiveCareer() : void{
+    let sub1 = this.getCareers().subscribe(
+      (careers)=>{
+        sub1.unsubscribe();        
+        careers.forEach(async (career : any)=>{
+          await this.db.collection('carreras').doc(career.nombre).update({activo:false,mencionada:false}).then( res=>res);
+        });
+        this.setActiveCareer();
+      },
+      err=>{sub1.unsubscribe(); }
+    )
+  }
 }
