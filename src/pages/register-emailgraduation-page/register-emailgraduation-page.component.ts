@@ -69,6 +69,7 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
   }
 
   searchAlumno(){
+      this.foundNc = true;
       if (this.ncInput !== '') {
         this.firestoreService.getGraduates(this.router.url.split('/')[2]).subscribe((alumnosSnapshot) => {
           alumnosSnapshot.forEach((alumnosData: any) => {
@@ -82,20 +83,23 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
                 carreraCompleta : alumnosData.payload.doc.data().carreraCompleta,
                 estatus: alumnosData.payload.doc.data().estatus,
                 degree: alumnosData.payload.doc.data().degree,
-                observations: alumnosData.payload.doc.data().observations
+                observations: alumnosData.payload.doc.data().observations ? alumnosData.payload.doc.data().observations:'',
+                survey: alumnosData.payload.doc.data().survey ? alumnosData.payload.doc.data().survey:false,
+                mejorPromedio: alumnosData.payload.doc.data().mejorPromedio ? alumnosData.payload.doc.data().mejorPromedio:false ,
+                promedio: alumnosData.payload.doc.data().promedio ? alumnosData.payload.doc.data().promedio:'' 
               }              
               this.dataUpdate = data;
+              console.log(this.dataUpdate);
               data = null;
               this.hidden = true;
             }
           })
           if(this.dataUpdate === null){
-            //this.notificationsServices.showNotification(2, 'Error','No se encontró alumno con NC: '+this.ncInput);
             this.foundNc = false;
           }
         });
       } else {
-        this.notificationsServices.showNotification(3, 'Atención','No se ha ingresado ningún número de contról.');
+        this.notificationsServices.showNotification(2, 'Atención','No se ha ingresado ningún número de contról.');
       }
       
   }
@@ -109,14 +113,14 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
       //Actualizar registro
       if(this.dataUpdate != null){
         this.firestoreService.updateGraduate(this.docId,this.dataUpdate,collection).then(() => {
-          this.notificationsServices.showNotification(1,'Exito','Correo actualizado exitosamente para '+this.dataUpdate.nc);
+          this.notificationsServices.showNotification(0,'Exito','Correo actualizado exitosamente para '+this.dataUpdate.nc);
           this.initializeForm();
         }, (error) => {
           console.log(error);
         });       
       }
       else{
-        this.notificationsServices.showNotification(2, 'Error','No se encontró alumno con nc: '+this.ncInput);
+        this.notificationsServices.showNotification(1, 'Error','No se encontró alumno con nc: '+this.ncInput);
       }
     }
   }
