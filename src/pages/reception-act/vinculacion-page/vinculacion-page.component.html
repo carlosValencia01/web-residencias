@@ -1,0 +1,94 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-home"></i>Home</li>
+    <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-globe"></i>Ingles</li>
+  </ol>
+</nav>
+
+<div class="row">
+  <div class="col-10">
+    <mat-form-field appearance="outline">
+      <input matInput [(ngModel)]="search" placeholder="Búsqueda">
+      <mat-icon matSuffix (click)="getStudent()">search</mat-icon>
+    </mat-form-field>
+  </div>
+  <div class="col-2">
+    <div class="form-group">
+      <div class="text-center">
+        <input #fileUpload type="file" accept=".csv" (change)="onUpload($event)" style="display: none">
+        <button mat-mini-fab class="mr-1" color="primary" (click)="fileUpload.click()">
+          <mat-icon>archive</mat-icon>
+        </button>
+        <button mat-mini-fab class="mr-1" color="primary" (click)="addNewStudent()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-mini-fab color="primary" (click)="refresh()">
+          <mat-icon>update</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- <button mat-mini-fab color="primary" (click)="addNewStudent()">
+        <mat-icon>add</mat-icon>
+      </button> -->
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-12">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort>
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="_id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+          <td mat-cell *matCellDef="let row"> {{row._id}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="numeroControl">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Número de control </th>
+          <td mat-cell *matCellDef="let row"> {{row.controlNumber}} </td>
+        </ng-container>
+
+        <!-- Progress Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
+          <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="carrera">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Carrera </th>
+          <td mat-cell *matCellDef="let row"> {{row.career}} </td>
+        </ng-container>
+
+        <!-- Color Column -->
+        <ng-container matColumnDef="liberacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Liberación </th>
+          <td mat-cell *matCellDef="let row"> {{row.english}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+          <td mat-cell *matCellDef="let row" (click)="onRowRemove(row)">
+            <mat-icon>cancel</mat-icon>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    </div>
+  </div>
+</div>

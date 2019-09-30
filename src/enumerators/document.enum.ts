@@ -1,5 +1,0 @@
-export enum eFILES {
-    CURP= 'CURP',
-    PROYECTO= 'PROYECTO',
-    ACTA_NACIMIENTO= 'ACTA_NACIMIENTO'
-}
