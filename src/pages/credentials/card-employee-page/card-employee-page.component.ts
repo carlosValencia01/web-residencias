@@ -219,7 +219,7 @@ export class CardEmployeePageComponent implements OnInit {
             this.imageProfileTest = res3;
             const doc = new jsPDF({
               unit: 'mm',
-              format: [88.6, 56],
+              format: [251, 158], // Medidas correctas: [88.6, 56]
               orientation: 'landscape'
             });
             // cara frontal de la credencial
