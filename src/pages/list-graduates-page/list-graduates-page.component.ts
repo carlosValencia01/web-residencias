@@ -23,6 +23,7 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchText : string;
 
   //Variables para filtrar alumnos y generar reporte
+  public searchSurvey : string = ''; 
   public searchCarreer : string = '';
 
   public searchSRC = false;
@@ -1062,7 +1063,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
     // Confirmar regresar status de mencionado a asistió por alumno
-    confirmReturnStatus(item){
+    confirmReturnStatusA(item){
       Swal.fire({
         title: 'Regresar Estatus a Asistió',
         text: "Para "+item.name,
@@ -1082,9 +1083,9 @@ export class ListGraduatesPageComponent implements OnInit {
     }
 
     // Confirmar regresar status de mencionado a asistió por carrera
-    confirmReturnStatusCarreer(){
+    confirmReturnStatusCarreerA(){
       Swal.fire({
-        title: 'Regresar Estatus a Asistió',
+        title: 'Regresar Estatus \n Mencionado → Asistió',
         text: "Para "+this.searchCarreer,
         type: 'question',
         showCancelButton: true,
@@ -1102,7 +1103,7 @@ export class ListGraduatesPageComponent implements OnInit {
     }
 
     asistenceEventCarreer(){      
-    
+
       let changeStatus=false;
       this.alumnos.forEach(async student =>{
         if(student.carreer === this.searchCarreer){
@@ -1138,4 +1139,153 @@ export class ListGraduatesPageComponent implements OnInit {
       });
     }
 
+    // Mostar modal para actualizar email de un alumno
+  emailModal(item){
+    console.log(item);
+    if(this.role === 'administration'){
+      var id = 'newEmailInput';
+      if(item.email){
+        Swal.fire({
+          title: 'Actualizar Correo',
+          imageUrl: '../../assets/icons/sendEmail.svg',
+          imageWidth: 100,
+          imageHeight: 100,
+          imageAlt: 'Custom image',
+          html:
+          '<textarea rows="1" cols="30" id="newEmailInput">'+item.email+'</textarea>  ',
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Guardar'
+        }).then((result) => {
+          if (result.value) {
+            var correoNuevo = (<HTMLInputElement>document.getElementById(id)).value;
+            this.saveEmail(item,correoNuevo);
+          }
+        })
+      }else{
+        Swal.fire({
+          title: 'Actualizar Correo',
+          imageUrl: '../../assets/icons/sendEmail.svg',
+          imageWidth: 100,
+          imageHeight: 100,
+          imageAlt: 'Custom image',
+          html:
+          '<textarea rows="1" cols="30" id="newEmailInput"></textarea>  ',
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Guardar'
+        }).then((result) => {
+          if (result.value) {
+            var correoNuevo = (<HTMLInputElement>document.getElementById(id)).value;
+            this.saveEmail(item,correoNuevo);
+          }
+        })
+      }
+    }
+  }
+
+  saveEmail(item,newEmail){
+    let itemUpdate = {
+      nc : item.nc,
+      nombre : item.name,
+      nombreApellidos : item.nameLastName,
+      carrera : item.carreer,
+      carreraCompleta : item.carreerComplete,
+      correo : newEmail,
+      degree: item.degree ? item.degree:false,
+      observations: item.observations ? item.observations:'',
+      survey: item.survey ? item.survey:false,
+      estatus: item.status,
+      mejorPromedio : item.bestAverage ? item.bestAverage:false,
+      promedio : item.average ? item.average:0
+    }
+    this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+      this.eventFilterReport();
+      Swal.fire("Correo Actualizado", "Para: "+item.nameLastName, "success");
+    }, (error) => {
+      console.log(error);
+    });
+  }
+
+    // Confirmar regresar status de asistió a verificado por alumno
+    confirmReturnStatusV(item){
+      Swal.fire({
+        title: 'Regresar Estatus a Verificado',
+        text: "Para "+item.name,
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar'
+      }).then(async (result) => {
+        if (result.value) {
+          await this.returnVerifiedEvent(item);
+        }
+      })
+    }
+
+    returnVerifiedEvent(item){
+      let itemUpdate = {
+        nc : item.nc,
+        nombre : item.name,
+        nombreApellidos : item.nameLastName,
+        carrera : item.carreer,
+        carreraCompleta : item.carreerComplete,
+        correo : item.email,
+        degree: item.degree ? item.degree:false,
+        observations: item.observations ? item.observations:'',
+        survey: item.survey ? item.survey:false,
+        mejorPromedio : item.bestAverage ? item.bestAverage:false,
+        promedio : item.average ? item.average:0,
+        estatus: 'Verificado'
+      }
+      this.firestoreService.updateGraduate(item.id,itemUpdate,this.collection).then(() => {
+        this.eventFilterReport();
+      }, (error) => {
+        console.log(error);
+      });
+    }
+
+    // Confirmar regresar status de asistió a verificado por carrera
+    confirmReturnStatusCarreerV(){
+      Swal.fire({
+        title: 'Regresar Estatus \n Asistió → Verificado',
+        text: "Para "+this.searchCarreer,
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar'
+      }).then((result) => {
+        if (result.value) {
+          this.verifiedEventCarreer();        
+        }
+      })
+    }
+
+    verifiedEventCarreer(){      
+      this.alumnos.forEach(async student =>{
+        if(student.carreer === this.searchCarreer){
+          if(student.status === "Asistió"){            
+            await this.returnVerifiedEvent(student);
+          }
+        }
+      });            
+    }
+
+    getSurvey(){
+      window.setTimeout("functionName()",10000);
+      var cant = (<HTMLTableElement>document.getElementById("tableReport")).rows.length-1;
+      this.totalAlumnos = cant;
+    }
 }

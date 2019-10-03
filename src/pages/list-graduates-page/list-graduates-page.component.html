@@ -4,11 +4,20 @@
          <strong>Listado de Alumnos {{collection.toUpperCase()}}</strong>
       </div>
       <div class="card-body">
-         <div style="overflow-x:auto;">
+         <div style="overflow-x:auto; padding-top: 20px;">
             <div class="row">
-               <div class="col-4">
+               <div class="col-2">
                   <div class="form-group">
                      <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno..." (keyup)="eventFilter(searchText)">
+                  </div>
+               </div>
+               <div class="col-2">
+                  <div class="form-group">
+                     <select [(ngModel)]="searchSurvey" class="form-control" (focusout)="getSurvey()">
+                        <option value=''>Todas las Encuestas</option>
+                        <option value='true'>Contestadas</option>
+                        <option value='false'>No Contestadas</option>
+                     </select>                     
                   </div>
                </div>
                <div class="col-3">
@@ -81,7 +90,7 @@
                   </tr>
                </thead>
                <tbody>
-                  <tr *ngFor="let item of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
+                  <tr *ngFor="let item of alumnosReport | filter:{survey:searchSurvey} | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
                   currentPage: page };">
                      <td (click)="observationsModal(item)">{{item.nc}} </td>
                      <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer != 'LA' && item.carreer != 'ARQ' && item.carreer != 'MCA' && item.carreer != 'DCA'"><b>ING.</b> {{item.name}}</td>
@@ -146,9 +155,19 @@
                                        <img src="../../assets/icons/bestAverage.svg" class="action" (click)="confirmBestAverage(item)">
                                  </div>
                               </td>
+                              <td *ngIf=" role === 'administration' ">
+                                 <div class="div-img" ngbTooltip="Actualizar Correo" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/graduate.svg" class="action" (click)="emailModal(item)">
+                                 </div>
+                              </td>
                               <td *ngIf="item.status === 'Mencionado' && role === 'administration'">
                                  <div class="div-img" ngbTooltip="Regresar a Asistió" tooltipClass="my-custom-class" >
-                                       <img src="../../assets/icons/back.svg" class="action" (click)="confirmReturnStatus(item)">
+                                       <img src="../../assets/icons/back.svg" class="action" (click)="confirmReturnStatusA(item)">
+                                 </div>
+                              </td>
+                              <td *ngIf="item.status === 'Asistió' && role === 'administration'">
+                                 <div class="div-img" ngbTooltip="Regresar a Verificado" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/imgs/backVerified.png" class="action" (click)="confirmReturnStatusV(item)">
                                  </div>
                               </td>
                            </tr>
@@ -167,8 +186,13 @@
                      <div class="div-actionsFoot">
                         <tr>
                            <td *ngIf="role === 'administration' && searchCarreer !== '' ">
+                              <div class="div-img" ngbTooltip="Regresar {{searchCarreer}} a Verificado" tooltipClass="my-custom-class" >
+                                    <img src="../../assets/imgs/backVerified.png" class="action" (click)="confirmReturnStatusCarreerV()">
+                              </div>
+                           </td>
+                           <td *ngIf="role === 'administration' && searchCarreer !== '' ">
                               <div class="div-img" ngbTooltip="Regresar {{searchCarreer}} a Asistió" tooltipClass="my-custom-class" >
-                                    <img src="../../assets/icons/back.svg" class="action" (click)="confirmReturnStatusCarreer()">
+                                    <img src="../../assets/icons/back.svg" class="action" (click)="confirmReturnStatusCarreerA()">
                               </div>
                            </td>
                            <td *ngIf="role === 'administration' && searchCarreer !== '' || role === 'coordinator' && searchCarreer !== '' ">
@@ -220,7 +244,7 @@
                   </tr>
                </thead>
                <tbody>
-                  <tr *ngFor="let alumno of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText}; let indice=index">
+                  <tr *ngFor="let alumno of alumnosReport | filter:{survey:searchSurvey} |filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText}; let indice=index">
                      <td>{{indice+1}}</td>
                      <td>{{alumno.nc}} </td>
                      <td *ngIf="alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA' && alumno.carreer != 'DCA'"><b>ING.</b> {{alumno.nameLastName}}</td>
