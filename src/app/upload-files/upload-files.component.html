@@ -4,251 +4,961 @@
   </div>
   <div class="card-body">
     <div class="row">
-      <div class="col-4 ">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Acta de Nacimiento
-            <span *ngIf="UploadActa" (click)="onRemove('ACTA_NACIMIENTO')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadActa">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'ACTA_NACIMIENTO')"
-                style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadActa.status==='Process',
+            'accept':UploadActa.status==='Accept',
+            'reject':UploadActa.status==='Reject',
+            'none':UploadActa.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadActa.status==='Process', 'acceptText':UploadActa.status==='Accept', 'rejectText':UploadActa.status==='Reject','noneText':UploadActa.status=== 'None'}">
+                Acta Nacimiento
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadActa type="file" accept="application/pdf" (change)="onUpload($event,'REVALIDACION')"
+              style="display: none">
+            <div [ngSwitch]="UploadActa.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner> -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadActa.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadActa.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadActa.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadActa">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadActa.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadActa.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadActa.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('ACTA_NACIMIENTO')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('ACTA_NACIMIENTO')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadActa.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadActa.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('ACTA_NACIMIENTO')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadActa.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('ACTA_NACIMIENTO')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('ACTA_NACIMIENTO')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadActa.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadActa.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
-
-      <div class="col-4">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Curp
-            <span *ngIf="UploadCurp" (click)="onRemove('CURP')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadCurp">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'CURP')"
-                style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadCurp.status==='Process',
+            'accept':UploadCurp.status==='Accept',
+            'reject':UploadCurp.status==='Reject',
+            'none':UploadCurp.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadCurp.status==='Process', 'acceptText':UploadCurp.status==='Accept', 'rejectText':UploadCurp.status==='Reject','noneText':UploadCurp.status=== 'None'}">
+                Curp
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadCurp type="file" accept="application/pdf" (change)="onUpload($event,'CURP')"
+              style="display: none">
+            <div [ngSwitch]="UploadCurp.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadCurp.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadCurp.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadCurp.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadCurp">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadCurp.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadCurp.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadCurp.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CURP')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CURP')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadCurp.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCurp.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CURP')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadCurp.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CURP')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CURP')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadCurp.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCurp.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
-
-      <div class="col-4">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Certificado Bachillerato
-            <span *ngIf="UploadCertificado" (click)="onRemove('CERTIFICADO_BACHILLERATO')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadCertificado">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf"
-                (change)="onUpload($event,'CERTIFICADO_BACHILLERATO')" style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadCertificado.status==='Process',
+            'accept':UploadCertificado.status==='Accept',
+            'reject':UploadCertificado.status==='Reject',
+            'none':UploadCertificado.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadCertificado.status==='Process', 'acceptText':UploadCertificado.status==='Accept', 'rejectText':UploadCertificado.status==='Reject','noneText':UploadCertificado.status=== 'None'}">
+                Certificado Bachillerato</p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadCert type="file" accept="application/pdf"
+              (change)="onUpload($event,'CERTIFICADO_BACHILLERATO')" style="display: none">
+            <div [ngSwitch]="UploadCertificado.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadCertificado.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadCertificado.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadCertificado.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadCertificado">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadCertificado.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadCertificado.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                </mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                </mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadCertificado.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_BACHILLERATO')">email
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_BACHILLERATO')">close
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                  </mat-icon>
+                </div>
+                <div *ngIf="!UploadCertificado.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCert.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CERTIFICADO_BACHILLERATO')">message
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                  </mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadCertificado.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_BACHILLERATO')">email
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_BACHILLERATO')">close
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                  </mat-icon>
+                </div>
+                <div *ngIf="!UploadCertificado.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCert.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+          'process':UploadCedula.status==='Process',
+          'accept':UploadCedula.status==='Accept',
+          'reject':UploadCedula.status==='Reject',
+          'none':UploadCedula.status=== 'None'
+        }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadCedula.status==='Process', 'acceptText':UploadCedula.status==='Accept', 'rejectText':UploadCedula.status==='Reject','noneText':UploadCedula.status=== 'None'}">
+                Cédula Técnico
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadCedula type="file" accept="application/pdf" (change)="onUpload($event,'CEDULA_TECNICA')"
+              style="display: none">
+            <div [ngSwitch]="UploadCedula.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadCedula.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadCedula.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadCedula.file.name}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadCedula.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadCedula.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CEDULA_TECNICA')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CEDULA_TECNICA')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadCedula.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCedula.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CEDULA_TECNICA')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadCedula.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CEDULA_TECNICA')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CEDULA_TECNICA')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadCedula.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCedula.click()">attach_file</mat-icon>
+                </div>
+              </div>
+            </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
     </div>
     <div class="row mt-3">
-      <div class="col-4">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Cédula Técnico
-            <span *ngIf="UploadCedula" (click)="onRemove('CEDULA_TECNICA')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadCedula">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'CEDULA_TECNICA')"
-                style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadLicenciatura.status==='Process',
+            'accept':UploadLicenciatura.status==='Accept',
+            'reject':UploadLicenciatura.status==='Reject',
+            'none':UploadLicenciatura.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadLicenciatura.status==='Process', 'acceptText':UploadLicenciatura.status==='Accept', 'rejectText':UploadLicenciatura.status==='Reject','noneText':UploadLicenciatura.status=== 'None'}">
+                Certificado Licenciatura
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadLicenciatura type="file" accept="application/pdf" (change)="onUpload($event,'CERTIFICADO_LICENCIATURA')"
+              style="display: none">
+            <div [ngSwitch]="UploadLicenciatura.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner> -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadLicenciatura.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadLicenciatura.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadLicenciatura.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadCedula">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadCedula.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadLicenciatura.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadLicenciatura.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_LICENCIATURA')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_LICENCIATURA')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadLicenciatura.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadLicenciatura.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CERTIFICADO_LICENCIATURA')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadLicenciatura.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_LICENCIATURA')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_LICENCIATURA')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadLicenciatura.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadLicenciatura.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
-
-      <div class="col-4">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Certificado Licenciatura
-            <span *ngIf="UploadLicenciatura" (click)="onRemove('CERTIFICADO_LICENCIATURA')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadLicenciatura">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf"
-                (change)="onUpload($event,'CERTIFICADO_LICENCIATURA')" style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadServicio.status==='Process',
+            'accept':UploadServicio.status==='Accept',
+            'reject':UploadServicio.status==='Reject',
+            'none':UploadServicio.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadServicio.status==='Process', 'acceptText':UploadServicio.status==='Accept', 'rejectText':UploadServicio.status==='Reject','noneText':UploadServicio.status=== 'None'}">
+                Servicio Social
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadServicio type="file" accept="application/pdf" (change)="onUpload($event,'SERVICIO_SOCIAL')"
+              style="display: none">
+            <div [ngSwitch]="UploadServicio.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadServicio.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadServicio.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadServicio.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadLicenciatura">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadLicenciatura.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadServicio.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('SERVICIO_SOCIAL')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('SERVICIO_SOCIAL')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadServicio.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('SERVICIO_SOCIAL')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('SERVICIO_SOCIAL')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('SERVICIO_SOCIAL')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadServicio.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadServicio.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('SERVICIO_SOCIAL')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('SERVICIO_SOCIAL')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadServicio.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('SERVICIO_SOCIAL')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('SERVICIO_SOCIAL')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('SERVICIO_SOCIAL')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadServicio.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadServicio.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
-
-      <div class="col-4">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Servicio Social
-            <span *ngIf="UploadServicio" (click)="onRemove('SERVICIO_SOCIAL')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadServicio">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'SERVICIO_SOCIAL')"
-                style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadIngles.status==='Process',
+            'accept':UploadIngles.status==='Accept',
+            'reject':UploadIngles.status==='Reject',
+            'none':UploadIngles.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadIngles.status==='Process', 'acceptText':UploadIngles.status==='Accept', 'rejectText':UploadIngles.status==='Reject','noneText':UploadIngles.status=== 'None'}">
+                Liberación Ingles</p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadIngles type="file" accept="application/pdf"
+              (change)="onUpload($event,'LIBERACION_INGLES')" style="display: none">
+            <div [ngSwitch]="UploadIngles.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadIngles.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadIngles.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadIngles.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadServicio">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadServicio.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadIngles.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('LIBERACION_INGLES')">visibility
+                </mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('LIBERACION_INGLES')">visibility
+                </mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadIngles.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('LIBERACION_INGLES')">email
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('LIBERACION_INGLES')">close
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('LIBERACION_INGLES')">visibility
+                  </mat-icon>
+                </div>
+                <div *ngIf="!UploadIngles.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadIngles.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('LIBERACION_INGLES')">message
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('LIBERACION_INGLES')">visibility
+                  </mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadIngles.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('LIBERACION_INGLES')">email
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('LIBERACION_INGLES')">close
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('LIBERACION_INGLES')">visibility
+                  </mat-icon>
+                </div>
+                <div *ngIf="!UploadIngles.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadIngles.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+          'process':UploadPago.status==='Process',
+          'accept':UploadPago.status==='Accept',
+          'reject':UploadPago.status==='Reject',
+          'none':UploadPago.status=== 'None'
+        }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadPago.status==='Process', 'acceptText':UploadPago.status==='Accept', 'rejectText':UploadPago.status==='Reject','noneText':UploadPago.status=== 'None'}">
+                Cédula Técnico
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadPago type="file" accept="application/pdf" (change)="onUpload($event,'RECIBO')"
+              style="display: none">
+            <div [ngSwitch]="UploadPago.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadPago.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadPago.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadPago.file.name}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadPago.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('RECIBO')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('RECIBO')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadPago.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('RECIBO')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('RECIBO')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('RECIBO')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadPago.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadPago.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('RECIBO')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('RECIBO')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadPago.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('RECIBO')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('RECIBO')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('RECIBO')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadPago.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadPago.click()">attach_file</mat-icon>
+                </div>
+              </div>
+            </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
     </div>
 
     <div class="row mt-3">
-      <div class="col-4">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Constancia de Ingles
-            <span *ngIf="UploadIngles" (click)="onRemove('LIBERACION_INGLES')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadIngles">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'LIBERACION_INGLES')"
-                style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadRevalidacion.status==='Process',
+            'accept':UploadRevalidacion.status==='Accept',
+            'reject':UploadRevalidacion.status==='Reject',
+            'none':UploadRevalidacion.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadRevalidacion.status==='Process', 'acceptText':UploadRevalidacion.status==='Accept', 'rejectText':UploadRevalidacion.status==='Reject','noneText':UploadRevalidacion.status=== 'None'}">
+                Revalidación
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadRevalidacion type="file" accept="application/pdf" (change)="onUpload($event,'REVALIDACION')"
+              style="display: none">
+            <div [ngSwitch]="UploadRevalidacion.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner> -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadRevalidacion.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadRevalidacion.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadRevalidacion.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadIngles">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadIngles.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadRevalidacion.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('REVALIDACION')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('REVALIDACION')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadRevalidacion.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('REVALIDACION')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('REVALIDACION')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('REVALIDACION')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadRevalidacion.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadRevalidacion.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('REVALIDACION')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('REVALIDACION')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadRevalidacion.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('REVALIDACION')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('REVALIDACION')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('REVALIDACION')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadRevalidacion.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadRevalidacion.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
-
-      <div class="col-4">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Recibo de Pago
-            <span *ngIf="UploadPago" (click)="onRemove('RECIBO')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadPago">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'RECIBO')"
-                style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadCurp.status==='Process',
+            'accept':UploadCurp.status==='Accept',
+            'reject':UploadCurp.status==='Reject',
+            'none':UploadCurp.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadCurp.status==='Process', 'acceptText':UploadCurp.status==='Accept', 'rejectText':UploadCurp.status==='Reject','noneText':UploadCurp.status=== 'None'}">
+                Curp
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadCurp type="file" accept="application/pdf" (change)="onUpload($event,'CURP')"
+              style="display: none">
+            <div [ngSwitch]="UploadCurp.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadCurp.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadCurp.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadCurp.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadPago">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadPago.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadCurp.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadCurp.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CURP')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CURP')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadCurp.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCurp.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CURP')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadCurp.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CURP')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CURP')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadCurp.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCurp.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
-
-      <div class="col-4">
-        <div class="card text-center" style="width: 18rem;">
-          <div class="card-header">
-            Certificado Revalidación
-            <span *ngIf="UploadRevalidacion" (click)="onRemove('REVALIDACION')">
-              <i style="float: right;" class="fa fa-trash"></i>
-            </span>
-          </div>
-          <div class="card-body">
-            <div *ngIf="!UploadRevalidacion">
-              <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-              <p class="card-text">Archivo no cargado</p>
-              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event,'REVALIDACION')"
-                style="display: none">
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Cargar</button>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+            'process':UploadCertificado.status==='Process',
+            'accept':UploadCertificado.status==='Accept',
+            'reject':UploadCertificado.status==='Reject',
+            'none':UploadCertificado.status=== 'None'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadCertificado.status==='Process', 'acceptText':UploadCertificado.status==='Accept', 'rejectText':UploadCertificado.status==='Reject','noneText':UploadCertificado.status=== 'None'}">
+                Certificado Bachillerato</p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadCert type="file" accept="application/pdf"
+              (change)="onUpload($event,'CERTIFICADO_BACHILLERATO')" style="display: none">
+            <div [ngSwitch]="UploadCertificado.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadCertificado.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadCertificado.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadCertificado.file.name}}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngIf="UploadRevalidacion">
-              <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
-              <p class="card-text">{{UploadRevalidacion.name}}</p>
-              <button type="button" class="btn btn-primary btn-sm btn-block"
-                (click)="fileUpload.click()">Enviar</button>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadCertificado.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                </mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                </mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadCertificado.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_BACHILLERATO')">email
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_BACHILLERATO')">close
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                  </mat-icon>
+                </div>
+                <div *ngIf="!UploadCertificado.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCert.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CERTIFICADO_BACHILLERATO')">message
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                  </mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadCertificado.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_BACHILLERATO')">email
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_BACHILLERATO')">close
+                  </mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')">visibility
+                  </mat-icon>
+                </div>
+                <div *ngIf="!UploadCertificado.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCert.click()">attach_file</mat-icon>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+      <div class="col-3">
+        <mat-card [ngClass]="{
+          'process':UploadCedula.status==='Process',
+          'accept':UploadCedula.status==='Accept',
+          'reject':UploadCedula.status==='Reject',
+          'none':UploadCedula.status=== 'None'
+        }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadCedula.status==='Process', 'acceptText':UploadCedula.status==='Accept', 'rejectText':UploadCedula.status==='Reject','noneText':UploadCedula.status=== 'None'}">
+                Cédula Técnico
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input #fileUploadCedula type="file" accept="application/pdf" (change)="onUpload($event,'CEDULA_TECNICA')"
+              style="display: none">
+            <div [ngSwitch]="UploadCedula.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner>
+                Procesando -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadCedula.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadCedula.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadCedula.file.name}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div [ngSwitch]="UploadCedula.status">
+              <div *ngSwitchCase="'Accept'">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+              </div>
+              <div *ngSwitchCase="'Reject'" class="text-center">
+                <div *ngIf="UploadCedula.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CEDULA_TECNICA')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CEDULA_TECNICA')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadCedula.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCedula.click()">attach_file</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CEDULA_TECNICA')">message</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+                </div>
+              </div>
+              <div *ngSwitchDefault>
+                <div *ngIf="UploadCedula.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CEDULA_TECNICA')">email</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CEDULA_TECNICA')">close</mat-icon>
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')">visibility</mat-icon>
+                </div>
+                <div *ngIf="!UploadCedula.file">
+                  <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCedula.click()">attach_file</mat-icon>
+                </div>
+              </div>
+            </div>
+          </mat-card-actions>
+        </mat-card>
       </div>
     </div>
+
+   
   </div>
 </div>

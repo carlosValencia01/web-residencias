@@ -14,7 +14,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { HotkeyModule } from 'angular2-hotkeys';
 import { SidebarModule } from 'ng-sidebar';
-
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 // Pages
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
 import { HomePageComponent } from '../pages/home-page/home-page.component';
@@ -62,13 +62,16 @@ import {
   MatCheckboxModule, MatProgressBarModule, MatGridListModule,
   MatTableModule, MatPaginatorModule, MatDialogModule,
   MatSidenavModule, MatToolbarModule, MatButtonToggleModule, MatSlideToggleModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatProgressSpinnerModule,
+  MatSelectModule
 } from '@angular/material';
 
-import {MatFileUploadModule } from 'mat-file-upload';
+import { MatFileUploadModule } from 'mat-file-upload';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { NgxSmartModalModule, NgxSmartModalService } from 'ngx-smart-modal';
 // import { TreetableModule } from 'ng-material-treetable';
+// import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 
 // Routes
 import { AppRoutingModule } from 'src/app-routing.module';
@@ -83,6 +86,10 @@ import { RequestViewComponent } from './request-view/request-view.component';
 import { RequestService } from 'src/services/request.service';
 import { ReleaseComponentComponent } from './release-component/release-component.component';
 import { UploadFilesComponent } from './upload-files/upload-files.component';
+import { DocumentsValidComponent } from './documents-valid/documents-valid.component';
+import { ExtendViewerComponent } from './extend-viewer/extend-viewer.component';
+import { DocumentReviewComponent } from './document-review/document-review.component';
+import { ExpedienteComponent } from './expediente/expediente.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +111,7 @@ import { UploadFilesComponent } from './upload-files/upload-files.component';
     EnglishComponent,
     TitulacionPageComponent,
     RequestComponentComponent,
-    ViewerComponentComponent ,
+    ViewerComponentComponent,
     ProcessComponentComponent,
     EmployeeAdviserComponent,
     ObservationsComponentComponent,
@@ -116,6 +123,10 @@ import { UploadFilesComponent } from './upload-files/upload-files.component';
     RequestViewComponent,
     ReleaseComponentComponent,
     UploadFilesComponent,
+    DocumentsValidComponent,
+    ExtendViewerComponent,
+    DocumentReviewComponent,
+    ExpedienteComponent,
   ],
   imports: [
     BrowserModule,
@@ -152,8 +163,12 @@ import { UploadFilesComponent } from './upload-files/upload-files.component';
     MatSlideToggleModule,
     AppRoutingModule,
     NgxSmartModalModule.forRoot(),
-    MatFileUploadModule ,
+    MatFileUploadModule,
     MatSnackBarModule,
+    NgxExtendedPdfViewerModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,    
+    // SweetAlert2Module
     // TreetableModule
   ],
   providers: [
@@ -161,7 +176,7 @@ import { UploadFilesComponent } from './upload-files/upload-files.component';
     CookiesService,
     FormErrorsService,
     NotificationsServices,
-    ImageToBase64Service,    
+    ImageToBase64Service,
     RequestService,
     Api,
     UserProvider,
@@ -182,7 +197,9 @@ import { UploadFilesComponent } from './upload-files/upload-files.component';
     RequestModalComponent,
     ConfirmDialogComponent,
     SteepComponentComponent,
-    ReleaseComponentComponent
+    ReleaseComponentComponent,
+    ExtendViewerComponent,
+    DocumentReviewComponent
   ],
   bootstrap: [AppComponent]
 })

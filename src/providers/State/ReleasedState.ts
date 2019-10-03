@@ -6,7 +6,7 @@ import { DeliveredState } from './DeliveredState';
 
 export class ReleasedState extends iState {
     router = 'oneStudentPage';
-    index = 3;
+    index = 4;
     phase: eRequest =  eRequest.RELEASED;
     public next(context: ContextState): void {
         context.state = new DeliveredState();

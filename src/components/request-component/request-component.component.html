@@ -18,7 +18,7 @@
             <input type="text"
                    [ngClass]="(!frmRequest.get('name').valid && frmRequest.get('name').touched)?'form-control is-invalid':'form-control'"
                    id="name" formControlName="name" placeholder="Nombre"
-                   oninput="this.value = this.value.toUpperCase()">
+                   oninput="this.value = this.value.toUpperCase()" readonly>
             <div class="invalid-feedback" *ngIf="!frmRequest.get('name').valid && frmRequest.get('name').touched">
             <span *ngIf="frmRequest.get('name').errors['required']">
               ¡Por favor ingrese un nombre!
@@ -35,7 +35,7 @@
             <input type="text"
                    [ngClass]="(!frmRequest.get('lastname').valid && frmRequest.get('lastname').touched)?'form-control is-invalid':'form-control'"
                    id="lastname" formControlName="lastname" placeholder="Apellidos"
-                   oninput="this.value = this.value.toUpperCase()">
+                   oninput="this.value = this.value.toUpperCase()" readonly>
             <div class="invalid-feedback"
                  *ngIf="!frmRequest.get('lastname').valid && frmRequest.get('lastname').touched">
             <span *ngIf="frmRequest.get('lastname').errors['required']">

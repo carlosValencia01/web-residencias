@@ -1,0 +1,89 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-home"></i>Home</li>
+    <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-university"></i>Grados</li>
+  </ol>
+</nav>
+
+<mat-card style="background: #e2e6ea">
+  <div class="row">
+    <div class="col-3" *ngFor="let document of documents">
+      <mat-card>
+        <mat-card-subtitle>
+          <div class="row">
+            <div class="col-8 text-left">
+              <p style="margin-top: 10px">{{document.name}}</p>
+            </div>
+            <div class="col-4 text-right">
+              <button mat-icon-button [matMenuTriggerFor]="menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item>
+                  <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
+                  <span>Aceptar</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon [ngStyle]="{'color':'#dc3545'}">thumb_down</mat-icon>
+                  <span>Rechazar</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon>pan_tool</mat-icon>
+                  <span>En espera</span>
+                </button>
+              </mat-menu>
+
+            </div>
+          </div>
+        </mat-card-subtitle>
+        <mat-card-content>
+          <div class="text-center" *ngIf="document.status==='wait'">
+            <h5>Pendiente <mat-icon [ngStyle]="{'color':'#ffc107'}">hourglass_full</mat-icon>
+            </h5>
+            <div class="mt-3 progress" style="height: 5px;">
+              <div class="progress-bar progress-bar-striped bg-warning" style="width: 100%;" role="progressbar"
+                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              </div>
+            </div>
+          </div>
+          <div class="text-center" *ngIf="document.status==='reject'">
+            <h5>Rechazado <mat-icon [ngStyle]="{'color':'#dc3545'}">error</mat-icon>
+            </h5>
+            <div class="mt-3 progress" style="height: 5px;">
+              <div class="progress-bar progress-bar-striped bg-danger" style="width: 100%;" role="progressbar"
+                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              </div>
+            </div>
+          </div>
+          <div class="text-center" *ngIf="document.status==='success'">
+            <h5>Aceptado
+              <mat-icon [ngStyle]="{'color':'#28a745'}">verified_user</mat-icon>
+            </h5>
+
+            <div class="mt-3 progress" style="height: 5px;">
+              <div class="progress-bar-striped bg-success" style="width: 100%;" role="progressbar" aria-valuenow="0"
+                aria-valuemin="0" aria-valuemax="100">
+              </div>
+            </div>
+
+          </div>
+          <!-- <div class="mt-3 text-center" *ngIf="document.status==='wait'">
+            <mat-progress-bar class="sucess" mode="determinate" value="100"></mat-progress-bar>
+          </div> -->
+        </mat-card-content>
+        <mat-card-actions>
+          <div class="text-center"><small style="color:#1565c0">Visualizar</small></div>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    <div class="col-3"></div>
+    <div class="col-3"></div>
+    <div class="col-3"></div>
+  </div>
+  <div class="row">
+    <div class="col-3"></div>
+    <div class="col-3"></div>
+    <div class="col-3"></div>
+    <div class="col-3"></div>
+  </div>
+</mat-card>

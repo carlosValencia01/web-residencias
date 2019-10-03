@@ -16,6 +16,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Api } from 'src/providers/api.prov';
 import { uRequest } from 'src/entities/request';
 import { ImageToBase64Service } from '../../services/img.to.base63.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-request-modal',
@@ -140,7 +141,13 @@ export class RequestModalComponent implements OnInit {
   reject(): void {
     const observation = String(this.frmRequest.get('observations').value).trim();
     if (typeof (observation) === 'undefined' || observation === '') {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', 'Es necesario agregar una observación');
+      Swal.fire({
+        type: 'error',
+        title: 'Oops...',
+        text: 'Es necesario agregar una observación',
+        showCloseButton: true,
+      });
+      // this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', 'Es necesario agregar una observación');
       this.txtObservation.nativeElement.focus();
       return;
     }

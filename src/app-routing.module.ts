@@ -10,6 +10,9 @@ import { GradePageComponent } from './pages/grade-page/grade-page.component';
 import { VinculacionPageComponent } from './pages/vinculacion-page/vinculacion-page.component';
 //  import { VinculacionPageComponent } from "./pages/vinculacion-page/vinculacion-page.component";
 import { ProgressPageComponent } from './pages/progress-page/progress-page.component';
+import { DocumentsValidComponent } from './app/documents-valid/documents-valid.component';
+import { DocumentReviewComponent } from './app/document-review/document-review.component';
+import { ExpedienteComponent } from './app/expediente/expediente.component';
 // import { StepComponent } from "./app/step/step.component";
 
 const appRoutes: Routes = [
@@ -21,7 +24,9 @@ const appRoutes: Routes = [
   { path: 'grades', component: GradePageComponent, pathMatch: 'full' },
   { path: 'english', component: VinculacionPageComponent, pathMatch: 'full' },
   { path: 'graduation', component: TitulacionPageComponent, pathMatch: 'full' },
-  { path: 'progressPage', component: ProgressPageComponent, pathMatch: 'full' }
+  { path: 'progressPage', component: ProgressPageComponent, pathMatch: 'full' },
+  { path: 'progressPage/:id', component: DocumentReviewComponent, pathMatch: 'full' },
+  { path: 'progressPage/:id/expediente', component: ExpedienteComponent, pathMatch: 'full' }
 ];
 
 @NgModule({

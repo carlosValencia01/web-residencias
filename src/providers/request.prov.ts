@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Api } from './api.prov';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class RequestProvider {
-    constructor(public api: Api) { }
+    constructor(public api: Api,
+        private http: HttpClient) { }
 
     getAllRequest() {
         return this.api.get('request')
@@ -26,5 +29,18 @@ export class RequestProvider {
 
     releasedRequest(_id, data) {
         return this.api.put(`request/${_id}/released`, data, true).pipe(map(request => request.json()));
+    }
+
+    uploadFile(_id, data) {
+        return this.api.post(`request/${_id}/file`, data, true).pipe(map(request => request.json()));
+    }
+
+    getResource(id: string, resource: string): Observable<Blob> {
+        return this.http.get(`${this.api.getURL()}/request/${id}/file/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
+
+    }
+
+    updateFileStatus(_id, data){
+        return this.api.put(`request/${_id}/file`, data).pipe(map(request => request.json()));
     }
 }

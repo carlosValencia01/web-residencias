@@ -21,6 +21,8 @@ import { ReleaseComponentComponent } from 'src/app/release-component/release-com
 import { RequestService } from 'src/services/request.service';
 import { eRequest } from 'src/enumerators/request.enum';
 import { eFILES } from 'src/enumerators/document.enum';
+import { DocumentReviewComponent } from 'src/app/document-review/document-review.component';
+import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
 
 @Component({
   selector: 'app-progress-page',
@@ -46,7 +48,8 @@ export class ProgressPageComponent implements OnInit {
     private router: Router,
     private routeActive: ActivatedRoute,
     private imgService: ImageToBase64Service,
-    public _RequestService: RequestService
+    public _RequestService: RequestService,
+    private activeRoute: ActivatedRoute
   ) {
     console.log('cookie', this.cookiesService.getData());
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -145,6 +148,7 @@ export class ProgressPageComponent implements OnInit {
       default:
         value = 'Ninguno';
     }
+    console.log("value de status", value);
     return value;
   }
 
@@ -198,33 +202,35 @@ export class ProgressPageComponent implements OnInit {
     });
 
     ref.afterClosed().subscribe(result => {
-      console.log("rr", result);
       if (typeof (result) !== 'undefined') {
-        console.log(" Request tmp", tmpRequest);
-        console.log(" Request tmp", result);
-
-        // const data = {
-        //   ControlNumber: tmpRequest.student.controlNumber,
-        //   FullName: tmpRequest.student.fullName,
-        //   Career: tmpRequest.student.career,
-        //   file: result,
-        //   Document: eFILES.RELEASED,
-        // }
         let frmData = new FormData();
         frmData.append('file', result);
         frmData.append('ControlNumber', tmpRequest.student.controlNumber);
         frmData.append('FullName', tmpRequest.student.fullName);
         frmData.append('Career', tmpRequest.student.career);
         frmData.append('Document', eFILES.RELEASED);
-        frmData.append("Doer",this.cookiesService.getData().user.name.fullName);
+        frmData.append("Doer", this.cookiesService.getData().user.name.fullName);
         this.requestProvider.releasedRequest(Identificador, frmData).subscribe(data => {
-          console.log("consulta", data);
+          this.loadRequest();
         }, error => {
-          console.log("errr", error);
+          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
         })
       }
     });
+  }
 
+  Review(Identificador): void {
+    this.router.navigate([Identificador], { relativeTo: this.activeRoute });
+    // this.dialog.open(DocumentReviewComponent, {
+    //   data: this.getRequestById(Identificador),
+    //   disableClose: true,
+    //   hasBackdrop: true,
+    //   width: '60em'      
+    // });
+  }
+
+  seeRecord(Identificador): void {
+    this.router.navigate([Identificador + '/expediente'], { relativeTo: this.activeRoute });
   }
   acceptRequest(Identificador): void {
     const data = {
@@ -269,6 +275,20 @@ export class ProgressPageComponent implements OnInit {
   getRequestById(_id: string): iRequest {
     const indexRequest = this.request.findIndex(x => x._id === _id);
     return this.request[indexRequest];
+  }
+
+  viewHistory(_id: string): void {
+    const tmpRequest = this.getRequestById(_id);
+    console.log("view", _id, "", tmpRequest);
+    const ref = this.dialog.open(ObservationsComponentComponent, {
+      data: {
+        phase: 'Solicitado',
+        request: tmpRequest
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '45em',
+    });
   }
 }
 

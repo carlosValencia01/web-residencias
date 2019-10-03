@@ -45,7 +45,7 @@ export class ViewerComponentComponent implements OnInit {
   }
 
   loadMessage(phase: eRequest): void {
-    switch (phase) {
+    switch (phase) {      
       case eRequest.GENERATED: {
         this.message = 'Visualizar Petición';
         break;
@@ -61,8 +61,8 @@ export class ViewerComponentComponent implements OnInit {
       case eRequest.VALIDATED: {
         this.message = 'Visualizar Petición';
         break;
-      }
-      case eRequest.RELEASED: {
+      }      
+      case eRequest.RELEASED: {        
         this.message = 'Hoja de Liberación';
         break;
       }
@@ -93,6 +93,7 @@ export class ViewerComponentComponent implements OnInit {
       }
       case eRequest.ASSIGNED: {
         break;
+        
       }
       case eRequest.VALIDATED: {
         break;

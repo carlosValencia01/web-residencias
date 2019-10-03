@@ -42,7 +42,8 @@ export interface iRequest {
             type: string,
             dateRegister: Date,
             nameFile: string,
-            status: string
+            status: string,
+            observation: string
         }
     ];
 }

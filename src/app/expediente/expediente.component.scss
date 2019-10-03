@@ -1,17 +1,3 @@
-span:hover{
-    cursor: pointer;
-}
-
-.mat-card{
-    width: 100%;
-}
-.mat-card-subtitle{
-    color: #000000;
-}
-.mat-icon:hover{
-    cursor: pointer
-}
-
 .reject{
     background: rgba(239, 89, 88, 0.2);
     border: 1px solid #dc5251;
@@ -19,6 +5,15 @@ span:hover{
 }
 .rejectText{   
     color: #b64443;
+}
+
+.none{    
+    background: rgba(70, 77, 238, 0.2);
+    border: 1px solid #4047db;
+    color: #353bb5;
+}
+.noneText{
+    color: #353bb5;
 }
 
 .accept{       
@@ -39,12 +34,6 @@ span:hover{
 .processText {
     color: #c0a22b;   
 }
-
-.none{    
-    background: rgba(70, 77, 238, 0.2);
-    border: 1px solid #4047db;
-    color: #353bb5;
-}
-.noneText{
-    color: #353bb5;
+img:hover {
+    cursor: pointer;
 }

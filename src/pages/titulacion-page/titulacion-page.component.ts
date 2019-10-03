@@ -15,7 +15,8 @@ import { ViewerComponentComponent } from 'src/components/viewer-component/viewer
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationsServices } from 'src/services/notifications.service';
 import { eNotificationType } from 'src/enumerators/notificationType.enum';
-
+import { RequestService } from 'src/services/request.service';
+import { RequestProvider } from 'src/providers/request.prov';
 @Component({
   selector: 'app-titulacion-page',
   templateUrl: './titulacion-page.component.html',
@@ -35,7 +36,8 @@ export class TitulacionPageComponent implements OnInit {
   SteepFiveCompleted: boolean;
   SteepSixCompleted: boolean;
   SteepSevenCompleted: boolean;
-
+  SteepEightCompleted: boolean;
+  SteepNineCompleted: boolean;
   // Variables globales
   Steeps: ContextState; // Estado donde se encuentra la solicitud
   Request: iRequest;  // Objeto Solicitud
@@ -60,7 +62,9 @@ export class TitulacionPageComponent implements OnInit {
     private imgService: ImageToBase64Service,
     private router: Router,
     private routeActive: ActivatedRoute,
-    private srvNotifications: NotificationsServices) {
+    private srvNotifications: NotificationsServices,
+    private requestService: RequestService,
+    private requestProvider: RequestProvider) {
 
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -108,11 +112,11 @@ export class TitulacionPageComponent implements OnInit {
   SelectItem(): void {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
-
+    this.requestService.AddRequest(this.Request, phase);
     this.Steeps = new ContextState(phase, status);
-    console.log('estatus', this.Steeps.getIndex());
-    console.log('estatus', phase, status);
-    console.log('estatus', this.Request.phase, this.Request.status);
+    // console.log('estatus', this.Steeps.getIndex());
+    // console.log('estatus', phase, status);
+    // console.log('estatus', this.Request.phase, this.Request.status);
     this.StatusComponent = this.Steeps.state.status;
     this.enableSteps(phase);
   }
@@ -142,19 +146,19 @@ export class TitulacionPageComponent implements OnInit {
 
       }
       case eRequest.DELIVERED: {
-        this.SteepFiveCompleted = (phase === eRequest.DELIVERED ? false : true);
+        this.SteepSixCompleted = (phase === eRequest.DELIVERED ? false : true);
       }
       case eRequest.RELEASED: {
         // this.SteepFourCompleted = (phase === eRequest.RELEASED ? this.Steeps.state.status === eStatusRequest.NONE : true);
-        this.SteepFourCompleted = (phase === eRequest.RELEASED ? false : true);
+        this.SteepFiveCompleted = (phase === eRequest.RELEASED ? false : true);
       }
       case eRequest.REGISTERED: {
         // this.SteepFourCompleted = (phase === eRequest.REGISTERED ? this.Steeps.state.status === eStatusRequest.NONE : true);
-        this.SteepFourCompleted = (phase === eRequest.REGISTERED ? false: true);
+        this.SteepFourCompleted = (phase === eRequest.REGISTERED ? false : true);
       }
       case eRequest.VERIFIED: {
         // this.SteepThreeCompleted = (phase === eRequest.VERIFIED ? this.Steeps.state.status === eStatusRequest.NONE : true);
-        this.SteepThreeCompleted = (phase === eRequest.VERIFIED ? false: true);
+        this.SteepThreeCompleted = (phase === eRequest.VERIFIED ? false : true);
       }
       case eRequest.SENT: {
         // this.SteepTwoCompleted = (phase === eRequest.SENT ? this.Steeps.state.status === eStatusRequest.NONE : true);
@@ -170,7 +174,7 @@ export class TitulacionPageComponent implements OnInit {
     }
     (async () => {
       await this.delay(100);
-      console.log('index',this.Steeps.getIndex());
+      console.log('index', this.Steeps.getIndex());
       this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     })();
   }
@@ -189,5 +193,27 @@ export class TitulacionPageComponent implements OnInit {
     // this.stepperComponent.next();
     console.log('STEP INDEX', this.stepperComponent.selectedIndex = 2);
     console.log('values', this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted);
+  }
+
+  viewRequeriments() {
+    window.open('../../assets/Requisitos.pdf', '_blank');
+  }
+  documentsLoad() {
+    const data = {
+      doer: this.cookiesService.getData().user.name.fullName,
+      observation: '',
+      operation: eStatusRequest.ACCEPT,
+      phase: this.Request.phase
+    };
+
+    this.requestProvider.updateRequest(this.Request._id, data).subscribe(
+      data => {
+        this.srvNotifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+        this.loadRequest();
+      },
+      error => {
+        this.srvNotifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      }
+    )
   }
 }

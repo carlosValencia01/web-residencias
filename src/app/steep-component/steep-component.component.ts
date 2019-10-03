@@ -33,13 +33,13 @@ export class SteepComponentComponent implements OnInit {
   }
 
   ngAfterContentInit() {
-    this.updateRequest(this.Request);
+    // this.updateRequest(this.Request);
+    this._RequestService.AddRequest(this.Request, eRequest.VERIFIED);    
   }
 
-  async updateRequest(request) {
-    await this.delay(150);
-    this._RequestService.AddRequest(request, eRequest.VERIFIED);    
-  }
+  // async updateRequest(request) {
+  //   await this.delay(150);    
+  // }
 
   Next(index: number): void {
     switch (index) {

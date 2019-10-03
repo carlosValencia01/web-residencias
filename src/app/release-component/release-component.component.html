@@ -10,9 +10,14 @@
 </div>
 <div mat-dialog-content>
     <div class="card text-center border-dark mb-3">
-        <div class="card-body text-dark">
-            <p class="card-text" *ngIf="!fileName">ARCHIVO NO SELECCIONADO</p>
-            <p class="card-text" *ngIf="fileName">{{fileName}}</p>
+        <div *ngIf="!fileData" class="card-body text-dark">
+            <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+            <p class="card-text">Archivo no cargado</p>
+        </div>
+        <div *ngIf="fileData">
+            <ngx-extended-pdf-viewer [src]="fileData" backgroundColor="#ffffff" [height]="'40vh'"
+                [useBrowserLocale]="true">
+            </ngx-extended-pdf-viewer>
         </div>
         <div class="card-footer">
             <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
