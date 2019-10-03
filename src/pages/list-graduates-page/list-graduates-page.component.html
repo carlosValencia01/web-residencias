@@ -275,26 +275,51 @@
 
 
             <!-- Tabla reporte alumnos mejor promedio PDF-->
-            <table class="table table-striped table-bordered table-hover" id="tableReportBestAverage">
+            <table class="table table-striped table-bordered table-hover" id="tableReportBestAverageIn">
                <thead>
+                     <tr>
+                           <td colspan="3" class="text-center">ASISTIÓ</td>
+                        </tr>
                   <tr>
                      <th>Carrera</th>
                      <th>Nombre del Alumno</th>
-                     <th>Promedio</th>
-                     <th>Comentarios</th>
+                     <th>Promedio</th>                     
                   </tr>
                </thead>
                <tbody>
-                  <tr *ngFor="let alumno of alumnosReport">
-                     <td *ngIf="alumno.bestAverage === true">{{alumno.carreerComplete}}</td>
-                     <td *ngIf="(alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA' && alumno.carreer != 'DCA') && alumno.bestAverage === true"><b>ING.</b> {{alumno.name}}</td>
-                     <td *ngIf="(alumno.degree && alumno.carreer == 'LA') && alumno.bestAverage === true"><b>LIC.</b> {{alumno.name}}</td>
-                     <td *ngIf="(alumno.degree && alumno.carreer == 'ARQ') && alumno.bestAverage === true"><b>ARQ.</b> {{alumno.name}}</td>
-                     <td *ngIf="(alumno.degree && alumno.carreer == 'MCA') && alumno.bestAverage === true"><b>MCA.</b> {{alumno.name}}</td>
-                     <td *ngIf="(alumno.degree && alumno.carreer == 'DCA') && alumno.bestAverage === true"><b>DCA.</b> {{alumno.name}}</td>
-                     <td *ngIf="!alumno.degree && alumno.bestAverage === true">{{alumno.name}}</td>
-                     <td *ngIf="alumno.bestAverage === true">{{alumno.average}}</td>
-                     <td *ngIf="(alumno.status !== 'Asistió' && alumno.status !== 'Mencionado') && alumno.bestAverage === true">SOLICITAMOS A SU COORDINADOR NOS HAGA EL FAVOR DE PASAR A RECOGER EL RECONOCIMIENTO.</td>
+                  <tr *ngFor="let alumno of studentIn">
+                     <td >{{alumno.data.carreraCompleta}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera != 'LA' && alumno.data.carrera != 'ARQ' && alumno.data.carrera != 'MCA' && alumno.data.carrera != 'DCA')"><b>ING.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'LA')"><b>LIC.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'ARQ')"><b>ARQ.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'MCA')"><b>MCA.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'DCA')"><b>DCA.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="!alumno.data.degree">{{alumno.data.nombre}}</td>
+                     <td>{{alumno.data.promedio}}</td>                     
+                  </tr>
+               </tbody>
+            </table>
+            <table class="table table-striped table-bordered table-hover" id="tableReportBestAverageOut">
+               <thead>
+                  <tr>
+                     <td colspan="3" class="text-center">NO ASISTIÓ</td>
+                  </tr>
+                  <tr>
+                     <th>Carrera</th>
+                     <th>Nombre del Alumno</th>
+                     <th>Promedio</th>                     
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let alumno of studentOut">
+                     <td >{{alumno.data.carreraCompleta}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera != 'LA' && alumno.data.carrera != 'ARQ' && alumno.data.carrera != 'MCA' && alumno.data.carrera != 'DCA')"><b>ING.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'LA')"><b>LIC.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'ARQ')"><b>ARQ.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'MCA')"><b>MCA.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'DCA')"><b>DCA.</b> {{alumno.data.nombre}}</td>
+                     <td *ngIf="!alumno.data.degree">{{alumno.data.nombre}}</td>
+                     <td>{{alumno.data.promedio}}</td>                     
                   </tr>
                </tbody>
             </table>

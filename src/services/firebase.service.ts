@@ -152,4 +152,11 @@ export class FirebaseService {
       err=>{sub1.unsubscribe(); }
     )
   }
+
+  //obtiene los mejores promedios
+  public getBestAverages( collection : string){
+    return this.db.collection(collection).snapshotChanges().pipe( map( (alumno )=> alumno.map( alumno => {return {_id:alumno.payload.doc.id,data:alumno.payload.doc.data()}}))).pipe( map(
+      alumno => alumno.filter( (al:any) => al.data.mejorPromedio === true
+    )));
+  }
 }

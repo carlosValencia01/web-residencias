@@ -10,6 +10,7 @@ import { ImageToBase64Service } from '../../services/img.to.base63.service';
 import TableToExcel from "@linways/table-to-excel";
 
 
+
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -63,6 +64,12 @@ export class ListGraduatesPageComponent implements OnInit {
   pageSize = 10;
   collection = null;
   public status = 0;
+
+  studentsBestAverage  = [];
+  studentIn = [];
+  studentOut = [];
+  careersPosition = [];
+
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
@@ -83,6 +90,28 @@ export class ListGraduatesPageComponent implements OnInit {
       this.collection=this.router.url.split('/')[2];
       let sub = this.firestoreService.getEvent(this.collection).subscribe(
         ev =>{ sub.unsubscribe(); this.status=ev.payload.get("estatus");}
+      );
+
+      this.firestoreService.getBestAverages(this.collection).subscribe(
+        (alumnos)=>{
+          let sub = this.firestoreService.getCareers().subscribe(
+            (carreras) =>{ 
+              sub.unsubscribe();
+                        
+              this.careersPosition = carreras.map((carrera : any) => {return {carrera:carrera.nombre,posicion:carrera.posicion}})            
+              this.studentsBestAverage = this.sortGraduates(alumnos);
+              this.studentIn = this.studentsBestAverage.filter( (student : any)=> student.data.estatus === 'Asistió' || student.data.estatus === 'Mencionado');            
+                        
+              this.studentOut = this.studentsBestAverage.filter((student : any)=> student.data.estatus === 'Registrado' || student.data.estatus === 'Pagado' || student.data.estatus === 'Verificado');
+              console.log(this.studentOut);
+              
+            },
+            err => console.log(err)
+          );
+                         
+        } ,
+        err=>{ console.log(err,'error');
+        }
       );
     }
 
@@ -1010,30 +1039,35 @@ export class ListGraduatesPageComponent implements OnInit {
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    doc.addImage(this.logoSep, 'PNG', 36, 5, 110, 27); // Logo SEP
-    doc.addImage(this.logoTecNM, 'PNG', pageWidth-120, 2, 82, 35); // Logo TecNM
+    doc.addImage(this.logoSep, 'PNG', 36, 10, 110, 27); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth-120, 6, 82, 35); // Logo TecNM
 
     let header = "Reporte Alumnos Mejor Promedio";
     doc.setTextColor(0,0,0);
     doc.setFontSize(15);
     doc.setFontStyle('bold');
-    doc.text(header, pageWidth / 2, 30 , 'center');
+    doc.text(header, pageWidth / 2, 50 , 'center');
 
     doc.autoTable({
-      html: '#tableReportBestAverage',
+      html: '#tableReportBestAverageIn',
       theme: 'striped',
+      margin: {top: 100},
+      headStyles:{fillColor:[34, 178, 37],halign:'center'},
       columnStyles: {
         0: {cellWidth: 150},
         1: {cellWidth: 200},
-        2: {cellWidth: 60 , halign: 'center'},
-        3: {cellWidth: 'auto'},
-      },
-      didParseCell: function (data) {
-          if(data.row.cells[1].text[0] === 'Nombre del Alumno'){
-            data.cell.styles.fillColor = [17, 32, 67];
-            data.cell.styles.textColor = [255,255,255];
-            data.cell.styles.fontSize =  10;
-          }
+        2: {cellWidth: 60 , halign: 'center'}
+      }
+    });
+
+    doc.autoTable({
+      html: '#tableReportBestAverageOut',
+      theme: 'striped',      
+      headStyles:{fillColor:[218, 12, 12],halign:'center'},
+      columnStyles: {
+        0: {cellWidth: 150},
+        1: {cellWidth: 200},
+        2: {cellWidth: 60 , halign: 'center'}
       }
     });
 
@@ -1059,6 +1093,22 @@ export class ListGraduatesPageComponent implements OnInit {
 
     window.open(doc.output('bloburl'), '_blank');
     //doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
+  }
+
+  //ordenar los alumnos con mejor promedio por la posicion de la carrera
+  sortGraduates(graduates : any[]){
+    let graduatesSorted=[];
+    for(let i=0; i <this.careersPosition.length ; i++){
+      for(let j=0; j <  graduates.length; j++){                
+        if(graduates[j].data.carrera == this.careersPosition[i].carrera){          
+          graduatesSorted.push(graduates[j]);
+          this.careersPosition.filter( (graduate : any) => graduate.carrera !== graduates[j].data.carrera);
+          break;
+        }
+      }
+    }
+    
+    return graduatesSorted;        
   }
 
     // Confirmar regresar status de mencionado a asistió por alumno
