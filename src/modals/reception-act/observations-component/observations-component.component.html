@@ -1,34 +1,43 @@
-<h1 mat-dialog-title>{{title}}</h1>
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title>Historial</h1>
+  </div>
+  <div class="col-2">
+    <button mat-icon-button [mat-dialog-close] class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
 <mat-dialog-content>
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort>
       <!-- ID Column -->
       <ng-container matColumnDef="phase">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Fase </th>
-        <td mat-cell *matCellDef="let row"> {{row.phase}} </td>
+        <td mat-cell *matCellDef="let row" style="width:15%"> {{row.phase}} </td>
       </ng-container>
 
       <!-- Progress Column -->
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus </th>
-        <td mat-cell *matCellDef="let row"> {{row.status}} </td>
+        <td mat-cell *matCellDef="let row" style="width:15%"> {{row.status}} </td>
       </ng-container>
 
       <!-- Name Column -->
       <ng-container matColumnDef="observation">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Observación </th>
-        <td mat-cell *matCellDef="let row"> {{row.observation}} </td>
+        <td mat-cell *matCellDef="let row" style="width:30%"> {{row.observation}} </td>
       </ng-container>
 
       <!-- Color Column -->
       <ng-container matColumnDef="achievementDateString">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
-        <td mat-cell *matCellDef="let row"> {{row.achievementDateString}} </td>
+        <td mat-cell *matCellDef="let row" style="width:15%"> {{row.achievementDateString}} </td>
       </ng-container>
 
       <ng-container matColumnDef="doer">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Responsable</th>
-        <td mat-cell *matCellDef="let row">
+        <td mat-cell *matCellDef="let row" style="width:25%">
           {{row.doer}}
         </td>
       </ng-container>

@@ -6,8 +6,8 @@ import { ReleasedState } from './ReleasedState';
 
 export class DeliveredState extends iState {
     router = 'student';
-    index = 4;
-    phase: eRequest =  eRequest.DELIVERED;
+    index = 5;
+    phase: eRequest = eRequest.DELIVERED;
 
     public next(context: ContextState): void {
         context.state = new ValidatedState();

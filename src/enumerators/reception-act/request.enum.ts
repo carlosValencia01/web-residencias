@@ -9,7 +9,8 @@ export enum eRequest {
     VALIDATED = 'Validado',  // eede86
     ASSIGNED= 'Asignado',
     REALIZED = 'Realizado',  // 64bc7c
-    GENERATED = 'Generado'     // 2e7d32
+    GENERATED = 'Generado',     // 2e7d32
+    REQUIREMENT = 'Requerimientos'
     // 'Verificado',
     // 'Registrado',
 

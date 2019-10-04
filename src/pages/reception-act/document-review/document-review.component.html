@@ -1,0 +1,159 @@
+<mat-drawer-container class="example-container">
+  <mat-drawer #drawer [mode]="'side'">
+    <!-- <div class="card-header nav-custom"></div> -->
+    <ul class="list-group">
+      <li *ngFor="let document of documents" class="list-group-item d-flex justify-content-between align-items-center"
+        (click)="view(document.type)">
+        <i class="fa fa-file-pdf-o mx-2"></i>
+        {{document.type}}
+        <div [ngSwitch]="document.status">
+          <div *ngSwitchCase="'Pendiente'"><span mat-line
+              class="badge badge-pill badge-process">{{document.status}}</span>
+          </div>
+          <div *ngSwitchCase="'Aceptado'"><span mat-line class="badge badge-pill badge-accept">{{document.status}}
+            </span></div>
+          <div *ngSwitchCase="'Rechazado'"><span mat-line class="badge badge-pill badge-reject">{{document.status}}
+            </span></div>
+          <div *ngSwitchDefault><span mat-line class="badge badge-pill badge-none">{{document.status}} </span></div>
+        </div>
+        <div align="end" *ngIf="document.status==='Pendiente'">
+          <button *ngIf="document.type!='PROYECTO' && document.type!='LIBERACION'" mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>                    
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="check(document.type,'Accept')">
+              <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
+              <span>Aceptar</span>
+            </button>
+            <button mat-menu-item (click)="check(document.type,'Reject')">
+              <mat-icon [ngStyle]="{'color':'#dc3545'}">thumb_down</mat-icon>
+              <span>Rechazar</span>
+            </button>
+            <!-- <button mat-menu-item (click)="check(document.type,'Process')">
+              <mat-icon>pan_tool</mat-icon>
+              <span>En espera</span>
+            </button> -->
+          </mat-menu>
+        </div>
+      </li>
+    </ul>
+  </mat-drawer>
+  <mat-drawer-content>
+    <div style="display: flex;">
+      <div>
+        <div class="nav-custom" (click)="drawer.toggle()">
+          <!-- <div class="nav-custom" (click)="drawer.toggle()"> -->
+          <i *ngIf="drawer.opened" class="fa fa-chevron-left"></i>
+          <i *ngIf="!drawer.opened" class="fa fa-chevron-right"></i>
+          <!-- </div> -->
+        </div>
+      </div>
+      <div style="flex: 1;">
+        <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'90vh'" [useBrowserLocale]="true">
+        </ngx-extended-pdf-viewer>
+      </div>
+    </div>
+
+
+  </mat-drawer-content>
+</mat-drawer-container>
+<!-- <div class="container-fluid" style="background:#E9EBEE ">
+  <mat-drawer-container class="example-container" style="background-color: #E9EBEE;" [hasBackdrop]="false">
+    <mat-drawer #drawer class="example-sidenav" [mode]="side" >
+      <mat-list>
+        <mat-list-item *ngFor="let document of documents">
+          <mat-icon mat-list-icon>folder</mat-icon>
+          <h4 mat-line>{{document.type}}</h4>
+          <p mat-line> {{document.status}} </p>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      </mat-list>
+    </mat-drawer>
+    <mat-drawer-content class="matd">
+      <button mat-mini-fab color="primary" (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-drawer-content>
+  </mat-drawer-container>
+</div> -->
+
+<!-- <div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title>Revisión</h1>
+  </div>
+  <div class="col-2">
+    <button mat-icon-button [mat-dialog-close] class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<div>
+  <table mat-table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="Icon">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+      <td mat-cell *matCellDef="let row" style="width:10%">
+        <mat-icon style="color:#c0a22b">folder</mat-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Archivo">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Archivo </th>
+      <td mat-cell *matCellDef="let row" style="width:40%"> {{row.type}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Fecha">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </th>
+      <td mat-cell *matCellDef="let row" style="width:30%"> {{row.dateRegistered}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Estatus">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Estatus </th>
+      <td mat-cell *matCellDef="let row" style="width:10%">
+        <div [ngSwitch]="row.status">
+          <div *ngSwitchCase="'Pendiente'"><span class="badge badge-pill badge-process">{{row.status}} </span></div>
+          <div *ngSwitchCase="'Aceptado'"><span class="badge badge-pill badge-accept">{{row.status}} </span></div>
+          <div *ngSwitchCase="'Rechazado'"><span class="badge badge-pill badge-reject">{{row.status}} </span></div>
+          <div *ngSwitchDefault><span class="badge badge-pill badge-none">{{row.status}} </span></div>
+        </div>
+
+      </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="View">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+      <td mat-cell *matCellDef="let row" (click)="onRowEdit(row)" style="width:5%">
+        <mat-icon>visibility</mat-icon>
+      </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="Action">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+      <td mat-cell *matCellDef="let row" style="width:5%">
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="check(row.type,'Accept')">
+            <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
+            <span>Aceptar</span>
+          </button>
+          <button mat-menu-item (click)="check(row.type,'Reject')">
+            <mat-icon [ngStyle]="{'color':'#dc3545'}">thumb_down</mat-icon>
+            <span>Rechazar</span>
+          </button>
+          <button mat-menu-item (click)="check(row.type,'Process')">
+            <mat-icon>pan_tool</mat-icon>
+            <span>En espera</span>
+          </button>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+<div class="mt-3" align="end">
+  <button mat-button [mat-dialog-close] cdkFocusInitial>Cerrar</button>
+</div> -->

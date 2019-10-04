@@ -35,7 +35,9 @@
               "./node_modules/font-awesome/scss/font-awesome.scss"
             ],
             "scripts": [
-              "./node_modules/jspdf/dist/jspdf.min.js",              
+              "./node_modules/jspdf/dist/jspdf.min.js",
+              "node_modules/ngx-extended-pdf-viewer/assets/pdf.js",
+              "node_modules/ngx-extended-pdf-viewer/assets/viewer.js",
               "./node_modules/jspdf-autotable/dist/jspdf.plugin.autotable.min.js",
               "./node_modules/jsbarcode/dist/JsBarcode.all.min.js"
             ]
@@ -91,7 +93,22 @@
             "scripts": [],
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/locale",
+                "output": "/assets/locale/"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/images",
+                "output": "/assets/images/"
+              },
+              {
+                "glob": "**/pdf.worker.js",
+                "input": "node_modules/ngx-extended-pdf-viewer/ngx-extended-pdf-viewer/assets",
+                "output": "/assets/"
+              }
             ]
           }
         },

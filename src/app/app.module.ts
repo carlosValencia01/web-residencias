@@ -14,6 +14,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { MatFileUploadModule } from 'mat-file-upload';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSmartModalModule } from 'ngx-smart-modal';
 import { SimpleNotificationsModule } from 'angular2-notifications';
@@ -25,7 +26,20 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 // Material
-import { MatButtonModule, MatDatepickerModule, MatNativeDateModule, MatRadioModule } from '@angular/material';
+import {
+  MatButtonModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatRadioModule,
+  MAT_DIALOG_DEFAULT_OPTIONS,
+  MatProgressBarModule,
+  MatGridListModule,
+  MatToolbarModule,
+  MatSlideToggleModule,
+  MatSnackBarModule,
+  MatProgressSpinnerModule,
+  MatSelectModule
+} from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -79,6 +93,9 @@ import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.pr
 
 // Reception act module
 // Pages
+import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
+import { DocumentsValidComponent } from 'src/pages/reception-act/documents-valid/documents-valid.component';
+import { ExpedienteComponent } from 'src/pages/reception-act/expediente/expediente.component';
 import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-page.component';
 import { ProgressPageComponent } from 'src/pages/reception-act/progress-page/progress-page.component';
 import { TitulacionPageComponent } from 'src/pages/reception-act/titulacion-page/titulacion-page.component';
@@ -131,6 +148,7 @@ import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 import { LoaderComponent } from 'src/components/shared/loader/loader.component';
 // Modals
 import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
+import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 // Providers
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
@@ -160,10 +178,13 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
 
     // Reception act module
     // Pages
+    DocumentReviewComponent,
     GradePageComponent,
     ProgressPageComponent,
     TitulacionPageComponent,
     VinculacionPageComponent,
+    DocumentsValidComponent,
+    ExpedienteComponent,
     // Components
     ProcessComponentComponent,
     RequestComponentComponent,
@@ -201,7 +222,8 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     LoaderComponent,
     // Modals
     ConfirmDialogComponent,
-  ],
+    ExtendViewerComponent,
+],
   imports: [
     // Angular
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -234,8 +256,11 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     MatMenuModule,
     MatNativeDateModule,
     MatPaginatorModule,
+    MatProgressSpinnerModule,
     MatRadioModule,
+    MatSelectModule,
     MatSidenavModule,
+    MatSnackBarModule,
     MatSortModule,
     MatStepperModule,
     MatTableModule,
@@ -243,6 +268,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
 
     // Ngx
     ImageCropperModule,
+    NgxExtendedPdfViewerModule,
     NgxPaginationModule,
     NgxSmartModalModule.forRoot(),
 
@@ -288,9 +314,12 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Providers
     EmployeeProvider,
     StudentProvider,
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
   ],
   entryComponents: [
     // Reception act module
+    // Pages
+    DocumentReviewComponent,
     // Modals
     EmployeeAdviserComponent,
     EmployeeGradeComponent,
@@ -305,6 +334,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Shared
     // Modals
     ConfirmDialogComponent,
+    ExtendViewerComponent,
   ],
   bootstrap: [AppComponent]
 })

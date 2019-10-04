@@ -3,5 +3,6 @@ export enum eStatusRequest {
     PROCESS= 'Process',
     ERROR= 'Error',
     ACCEPT= 'Accept',
-    REJECT= 'Reject'
+    REJECT= 'Reject',
+    EDIT='Edit'
 }

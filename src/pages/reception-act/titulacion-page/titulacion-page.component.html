@@ -1,8 +1,6 @@
 <mat-vertical-stepper [linear]="true" #stepper>
   <mat-step [completed]="SteepOneCompleted">
-    <!-- <mat-step [stepControl]="frmStepOne"> -->
     <ng-template matStepLabel>SOLICITUD DE TITULACIÓN</ng-template>
-
     <div *ngIf="SteepOneCompleted">
       <app-viewer-component [Request]="Request" [Phase]="'Capturado'"></app-viewer-component>
     </div>
@@ -50,18 +48,52 @@
     </div>
   </mat-step>
   <mat-step [completed]="SteepFiveCompleted">
-    <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
+    <ng-template matStepLabel>LISTA DE REQUISITOS</ng-template>
     <div *ngIf="SteepFiveCompleted">
-      <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
+      <div class="d-flex justify-content-center">
+        <a (click)="viewRequeriments()" style=" cursor: pointer">
+          <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 100px; height: 100px">
+        </a>
+      </div>
+      <div class="d-flex justify-content-center">
+        <small>Requisitos</small>
+      </div>
     </div>
     <div *ngIf="!SteepFiveCompleted">
+      <div class="d-flex justify-content-center">
+        <a (click)="viewRequeriments()" style=" cursor: pointer">
+          <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 100px; height: 100px">
+        </a>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button type="button" class="btn btn-outline-success btn-sm" (click)="documentsLoad()">
+          <small>Cargar Archivos</small>
+        </button>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepSixCompleted">
+    <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
+    <div *ngIf="SteepSixCompleted">
+      <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
+    </div>
+    <div *ngIf="!SteepSixCompleted">
+      <app-upload-files></app-upload-files>
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepSevenCompleted">
+    <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
+    <div *ngIf="SteepSevenCompleted">
+      <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
+    </div>
+    <div *ngIf="!SteepSevenCompleted">
       <div [ngSwitch]="StatusComponent">
         <app-upload-files *ngSwitchCase="'None'"></app-upload-files>
         <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
       </div>
     </div>
   </mat-step>
-  <mat-step [completed]="SteepSixCompleted">
+  <mat-step [completed]="SteepEightCompleted">
     <ng-template matStepLabel>PROGRAMACIÓN</ng-template>
     You are now done.
     <div>
@@ -69,7 +101,7 @@
       <button mat-button (click)="stepper.reset()">Reset</button>
     </div>
   </mat-step>
-  <mat-step [completed]="SteepSixCompleted">
+  <mat-step [completed]="SteepNineCompleted">
     <ng-template matStepLabel>FINALIZACIÓN</ng-template>
     You are now done.
     <div>

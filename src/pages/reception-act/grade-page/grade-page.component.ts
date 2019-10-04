@@ -205,7 +205,7 @@ export class GradePageComponent implements OnInit {
                     };
                     ArrayEmployees.push(tmpEmployee);
                   }
-                };
+                }
               }
             });
             console.log('Array emplo', ArrayEmployees);
@@ -227,7 +227,6 @@ export class GradePageComponent implements OnInit {
     }
   }
 }
-
 
 interface IRowSource {
   data:

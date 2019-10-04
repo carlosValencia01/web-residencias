@@ -23,7 +23,8 @@ export class SteepComponentComponent implements OnInit {
   SteepTwoCompleted: boolean;
   SteepThreeCompleted: boolean;
 
-  constructor(public dialogRef: MatDialogRef<SteepComponentComponent>,
+  constructor(
+    public dialogRef: MatDialogRef<SteepComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
     public _RequestProvider: RequestProvider,
     private cookiesService: CookiesService,
@@ -39,11 +40,12 @@ export class SteepComponentComponent implements OnInit {
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
     this.updateRequest(this.Request);
+    // this._RequestService.AddRequest(this.Request, eRequest.VERIFIED);
   }
 
   async updateRequest(request) {
     await this.delay(150);
-    this._RequestService.AddRequest(request, eRequest.VERIFIED);    
+    this._RequestService.AddRequest(request, eRequest.VERIFIED);
   }
 
   Next(index: number): void {
@@ -102,5 +104,4 @@ export class SteepComponentComponent implements OnInit {
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-
 }

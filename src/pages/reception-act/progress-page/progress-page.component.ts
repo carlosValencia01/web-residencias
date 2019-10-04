@@ -18,6 +18,9 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
+import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
+import { ObservationsComponentComponent } from 'src/modals/reception-act/observations-component/observations-component.component';
 
 @Component({
   selector: 'app-progress-page',
@@ -41,12 +44,12 @@ export class ProgressPageComponent implements OnInit {
     private notifications: NotificationsServices,
     private cookiesService: CookiesService,
     private router: Router,
-    private routeActive: ActivatedRoute,
+    private activeRoute: ActivatedRoute,
     private imgService: ImageToBase64Service,
     public _RequestService: RequestService,
   ) {
     console.log('cookie', this.cookiesService.getData());
-    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
+    if (!this.cookiesService.isAllowed(this.activeRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
   }
@@ -142,6 +145,7 @@ export class ProgressPageComponent implements OnInit {
       default:
         value = 'Ninguno';
     }
+    console.log('value de status', value);
     return value;
   }
 
@@ -195,24 +199,29 @@ export class ProgressPageComponent implements OnInit {
     });
 
     ref.afterClosed().subscribe(result => {
-      console.log('rr', result);
       if (typeof (result) !== 'undefined') {
-        console.log(' Request tmp', tmpRequest);
-        console.log(' Request tmp', result);
         const frmData = new FormData();
         frmData.append('file', result);
         frmData.append('ControlNumber', tmpRequest.student.controlNumber);
         frmData.append('FullName', tmpRequest.student.fullName);
         frmData.append('Career', tmpRequest.student.career);
         frmData.append('Document', eFILES.RELEASED);
-        frmData.append('Doer',this.cookiesService.getData().user.name.fullName);
+        frmData.append('Doer', this.cookiesService.getData().user.name.fullName);
         this.requestProvider.releasedRequest(Identificador, frmData).subscribe(data => {
-          console.log('consulta', data);
+          this.loadRequest();
         }, error => {
-          console.log('errr', error);
+          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
         });
       }
     });
+  }
+
+  Review(Identificador): void {
+    this.router.navigate([Identificador], { relativeTo: this.activeRoute });
+  }
+
+  seeRecord(Identificador): void {
+    this.router.navigate([Identificador + '/expediente'], { relativeTo: this.activeRoute });
   }
 
   acceptRequest(Identificador): void {
@@ -260,8 +269,20 @@ export class ProgressPageComponent implements OnInit {
     return this.request[indexRequest];
   }
 
-  applyFilter(value: any) {
+  applyFilter(value: any) { }
 
+  viewHistory(_id: string): void {
+    const tmpRequest = this.getRequestById(_id);
+    console.log('view', _id, '', tmpRequest);
+    const ref = this.dialog.open(ObservationsComponentComponent, {
+      data: {
+        phase: 'Solicitado',
+        request: tmpRequest
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '45em',
+    });
   }
 }
 

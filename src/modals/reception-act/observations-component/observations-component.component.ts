@@ -19,6 +19,7 @@ export class ObservationsComponentComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ObservationsComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
+    console.log("vire", data);
     this.filter = this.data.phase;
     this.request = this.data.request;
     this.observations = <iObservation[]>this.request.history.slice();

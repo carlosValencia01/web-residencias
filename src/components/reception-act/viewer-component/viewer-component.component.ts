@@ -122,4 +122,3 @@ export class ViewerComponentComponent implements OnInit {
     }
   }
 }
-

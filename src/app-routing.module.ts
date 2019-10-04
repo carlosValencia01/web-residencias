@@ -21,6 +21,9 @@ import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-pag
 import { ProgressPageComponent } from 'src/pages/reception-act/progress-page/progress-page.component';
 import { TitulacionPageComponent } from 'src/pages/reception-act/titulacion-page/titulacion-page.component';
 import { VinculacionPageComponent } from 'src/pages/reception-act/vinculacion-page/vinculacion-page.component';
+import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
+import { ExpedienteComponent } from 'src/pages/reception-act/expediente/expediente.component';
+import { DocumentsValidComponent } from 'src/pages/reception-act/documents-valid/documents-valid.component';
 
 // Graduation
 import {
@@ -52,6 +55,8 @@ const appRoutes: Routes = [
   { path: 'grades', component: GradePageComponent, pathMatch: 'full' },
   { path: 'graduation', component: TitulacionPageComponent, pathMatch: 'full' },
   { path: 'progressPage', component: ProgressPageComponent, pathMatch: 'full' },
+  { path: 'progressPage/:id', component: DocumentReviewComponent, pathMatch: 'full' },
+  { path: 'progressPage/:id/expediente', component: ExpedienteComponent, pathMatch: 'full' },
 
   // Graduation
   { path: 'encuestaEgresados', component: SurveyListPageComponent , pathMatch: 'full' },
