@@ -1127,7 +1127,7 @@ export class ListGraduatesPageComponent implements OnInit {
       }).then(async (result) => {
         if (result.value) {
           await this.returnAsistenceEvent(item);
-          this.firestoreService.resetActiveCareer();
+          //this.firestoreService.resetActiveCareer();
         }
       })
     }
@@ -1163,7 +1163,7 @@ export class ListGraduatesPageComponent implements OnInit {
           }
         }
       });      
-      if(changeStatus)   this.firestoreService.resetActiveCareer();
+      //this.firestoreService.resetActiveCareer();
       
     }
 
@@ -1337,5 +1337,35 @@ export class ListGraduatesPageComponent implements OnInit {
       window.setTimeout("functionName()",10000);
       var cant = (<HTMLTableElement>document.getElementById("tableReport")).rows.length-1;
       this.totalAlumnos = cant;
+    }
+
+    // Confirmar cambiar todos los verificados a asistió
+    confirmAllAsistence(){
+      Swal.fire({
+        title: 'Cambiar Estatus \n Verificado → Asistió',
+        text: "Para Todos Los Alumnos",
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar'
+      }).then((result) => {
+        if (result.value) {
+          this.registerAllAsistence();        
+        }
+      })
+    }
+
+    registerAllAsistence(){
+      var alumnosVerificados = [];
+      this.alumnos.forEach(async student =>{
+          if(student.status === "Verificado"){    
+            alumnosVerificados.push(student.id);
+            this.firestoreService.updateFieldGraduate(student.id,{estatus:"Asistió"},this.collection);
+          }
+      });  
+      console.log(alumnosVerificados);  
     }
 }

@@ -185,6 +185,11 @@
                   <td colspan="5">
                      <div class="div-actionsFoot">
                         <tr>
+                           <td *ngIf="role === 'administration'">
+                                 <div class="div-img" ngbTooltip="Cambiar Estatus a Asistió" tooltipClass="my-custom-class" >
+                                       <img src="../../assets/icons/presence.svg" class="action" (click)="confirmAllAsistence()">
+                                 </div>
+                           </td>
                            <td *ngIf="role === 'administration' && searchCarreer !== '' ">
                               <div class="div-img" ngbTooltip="Regresar {{searchCarreer}} a Verificado" tooltipClass="my-custom-class" >
                                     <img src="../../assets/imgs/backVerified.png" class="action" (click)="confirmReturnStatusCarreerV()">
