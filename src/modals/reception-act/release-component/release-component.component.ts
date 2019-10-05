@@ -10,10 +10,13 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 })
 export class ReleaseComponentComponent implements OnInit {
   public fileName: String;
-  private fileData: any;
+  public fileData: any;
   public pdf: any;
-  constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
-    private notifications: NotificationsServices, ) { }
+
+  constructor(
+    public dialogRef: MatDialogRef<ReleaseComponentComponent>,
+    private notifications: NotificationsServices,
+  ) { }
 
   ngOnInit() {
   }
