@@ -29,10 +29,10 @@ export class uRequest {
     private montserratBold: any;
 
     constructor(public _request: iRequest, public _getImage: ImageToBase64Service) {
-        this.getImageToPdf();
+        this.getResourcesToPdf();
     }
 
-    getImageToPdf() {
+    getResourcesToPdf() {
         this._getImage.getBase64('assets/imgs/logo.jpg').then(logo => {
             this.tecNacLogo = logo;
         });
@@ -60,6 +60,7 @@ export class uRequest {
 
     protocolActRequest(): jsPDF {
         const doc = this.newDocumentTec();
+        const sentHistory = this._request.history.filter(x => x.phase === 'Capturado' && x.status === 'Accept').reverse()[0];
         console.log('Listas', doc.getFontList());
         doc.setTextColor(0, 0, 0);
         // Title
@@ -73,7 +74,8 @@ export class uRequest {
         doc.setFontSize(11);
         doc.text(doc.splitTextToSize('Lugar y fecha:', 60), 140, 55, { align: 'left' });
         doc.text(doc.splitTextToSize('Tepic, Nayarit', 60), 170, 55, { align: 'left' });
-        doc.text(doc.splitTextToSize(moment(new Date()).format('LL'), 60), 155, 60, { align: 'left' });
+        doc.text(doc.splitTextToSize(moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LL'), 60),
+            155, 60, { align: 'left' });
 
         // Saludos
         doc.setFont(this.FONT, 'Bold');
@@ -119,6 +121,8 @@ export class uRequest {
 
     projectRegistrationOffice(): jsPDF {
         const doc = this.newDocumentTec();
+        const registerHistory = this._request.history
+            .filter(x => x.phase === 'Verificado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         doc.setTextColor(0, 0, 0);
         // Title
         doc.setFont(this.FONT, 'Bold');
@@ -138,7 +142,8 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Normal');
         doc.text('Departamento de Sistemas Computacionales', this.MARGIN.LEFT, 83, { align: 'left' });
-        doc.text(`Lugar: Tepic, Nayarit y Fecha: ${moment(new Date()).format('LL')}`, this.MARGIN.LEFT, 88, { align: 'left' });
+        doc.text(`Lugar: Tepic, Nayarit y Fecha: ${moment(registerHistory ? registerHistory.achievementDate : new Date()).format('LL')}`,
+            this.MARGIN.LEFT, 88, { align: 'left' });
 
         this.addTable(doc, [
             ['Nombre del proyecto: ', this._request.projectName],
@@ -146,9 +151,11 @@ export class uRequest {
             ['Número de estudiantes ', this._request.noIntegrants]
         ], 93);
 
+        const aceptHistory = this._request.history
+            .filter(x => x.phase === 'Enviado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 50);
         const integrantsLines = 10 * (this._request.noIntegrants - 1);
-        const observationsLines = 5 * Math.ceil(this._request.observation.length / 60);
+        const observationsLines = 5 * Math.ceil(aceptHistory.observation.length / 60);
 
         doc.text('Datos del (de los) estudiante(s):', this.MARGIN.LEFT, 125 + nameProjectLines, { align: 'left' });
         const students: Array<Object> = [];
@@ -164,7 +171,7 @@ export class uRequest {
         doc.rect(this.MARGIN.LEFT, 160 + integrantsLines + nameProjectLines, this.WIDTH
           - (this.MARGIN.RIGHT + this.MARGIN.LEFT - 6), 7 + observationsLines);
         doc.text('Observaciones: ', this.MARGIN.LEFT + 3, 164 + integrantsLines + nameProjectLines, { align: 'left' });
-        doc.text(doc.splitTextToSize(this._request.observation, 150), this.MARGIN.LEFT + 3,
+        doc.text(doc.splitTextToSize(aceptHistory.observation, 150), this.MARGIN.LEFT + 3,
           170 + integrantsLines + nameProjectLines, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
@@ -233,31 +240,34 @@ export class uRequest {
         const doc = this.newDocumentTec();
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Bold');
-        doc.setFontSize(14);
+        doc.setFontSize(11);
         doc.text(doc.splitTextToSize('CONSTANCIA DE NO INCONVENIENCIA PARA EL ACTO DE RECEPCIÓN PROFESIONAL', 150),
           (this.WIDTH / 2), 65, { align: 'center' });
 
-        doc.setFontSize(12);
-
+        doc.setFontSize(10);
+        doc.setFont(this.FONT, 'Normal');
         const date = new Date();
         doc.text(`Tepic, Nayarit a ${moment(date).format('LL')}`, this.MARGIN.LEFT, 100, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
+        doc.setFontSize(11);
         doc.text('C. ' + this._request.student.fullName, (this.WIDTH / 2), 115, { align: 'center' });
 
         doc.setFont(this.FONT, 'Normal');
+        doc.setFontSize(10);
         doc.text(doc.splitTextToSize('Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. ' +
-          'Presentar su Acto de Recepción Profesional, ya que su expediente quedo integrado para tal efecto.', 176),
+          'Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', 176),
           this.MARGIN.LEFT, 130, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
-        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 147, { align: 'left' });
+        doc.setFontSize(11);
+        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
+        doc.text('ISRAEL ARJONA VIZCAÍNO', this.MARGIN.LEFT, 170, { align: 'left' }); // Cambiar de forma dinámica
+        doc.text('JEFE DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });
 
-
-        doc.text('KERVIN GARCIA CARLOS', this.MARGIN.LEFT, 197, { align: 'left' });
-        doc.text('JEFE DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 203, { align: 'left' });
-        doc.text('Sabiduría Tecnológic, Pasión de nuestro Espíritu', this.MARGIN.LEFT, 210, { align: 'left' });
-        doc.text('Clave del instituto 18DIT0002Z', this.MARGIN.LEFT, 217, { align: 'left' });
+        doc.setFontSize(11);
+        doc.text('"Sabiduría Tecnológica, Pasión de nuestro Espíritu" ®', this.MARGIN.LEFT, 186, { align: 'left' });
+        doc.text('Clave del instituto 18DIT0002Z', this.MARGIN.LEFT, 196, { align: 'left' });
 
         return doc;
     }
