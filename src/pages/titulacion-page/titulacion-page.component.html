@@ -40,12 +40,13 @@
   <mat-step [completed]="SteepFourCompleted">
     <ng-template matStepLabel>LIBERACIÓN DE PROYECTO</ng-template>
     <div *ngIf="SteepFourCompleted">
-      <app-viewer-component [Request]="Request" [Phase]="'Liberado'"></app-viewer-component>
+      <!-- <app-viewer-component [Request]="Request" [Phase]="'Liberado'"></app-viewer-component> -->
       <app-process-component [Message]="CompletedReleasedMessage"></app-process-component>
     </div>
     <div *ngIf="!SteepFourCompleted">
       <div [ngSwitch]="StatusComponent">
         <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
+        <app-process-component *ngSwitchCase="'Reject'" [Message]="ProcessReleasedMessage"></app-process-component>
       </div>
     </div>
   </mat-step>
@@ -68,16 +69,19 @@
         </a>
       </div>
       <div class="d-flex justify-content-center">
+        <small>Requisitos</small>
+      </div>
+      <!-- <div class="d-flex justify-content-center">
         <button type="button" class="btn btn-outline-success btn-sm" (click)="documentsLoad()">
           <small>Cargar Archivos</small>
         </button>
-      </div>
+      </div> -->
     </div>
   </mat-step>
   <mat-step [completed]="SteepSixCompleted">
     <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
     <div *ngIf="SteepSixCompleted">
-      <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
+      <app-upload-files></app-upload-files>
     </div>
     <div *ngIf="!SteepSixCompleted">
       <!-- <div [ngSwitch]="StatusComponent"> -->
@@ -88,15 +92,17 @@
   </mat-step>
 
   <mat-step [completed]="SteepSevenCompleted">
-    <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
+    <ng-template matStepLabel>CONSTANCIA DE NO INCONVENIENCIA</ng-template>
     <div *ngIf="SteepSevenCompleted">
-      <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
+      <app-viewer-component [Request]="Request" [Phase]="'Validado'"></app-viewer-component>
+      <!-- <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component> -->
     </div>
     <div *ngIf="!SteepSevenCompleted">
-      <div [ngSwitch]="StatusComponent">
+      <app-viewer-component [Request]="Request" [Phase]="'Validado'"></app-viewer-component>
+      <!-- <div [ngSwitch]="StatusComponent">
         <app-upload-files *ngSwitchCase="'None'"></app-upload-files>
         <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
-      </div>
+      </div> -->
     </div>
   </mat-step>
   <mat-step [completed]="SteepEightCompleted">

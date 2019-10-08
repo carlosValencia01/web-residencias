@@ -35,6 +35,10 @@ export class RequestProvider {
         return this.api.post(`request/${_id}/file`, data, true).pipe(map(request => request.json()));
     }
 
+    omitFile(_id, data) {
+        return this.api.post(`request/${_id}/file/omit`, data).pipe(map(request => request.json()));
+    }
+
     getResource(id: string, resource: string): Observable<Blob> {
         return this.http.get(`${this.api.getURL()}/request/${id}/file/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
 

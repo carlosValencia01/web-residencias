@@ -9,6 +9,8 @@ import { ExtendViewerComponent } from '../extend-viewer/extend-viewer.component'
 import { MatDialog } from '@angular/material';
 import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
 import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
+import { uRequest } from 'src/entities/request';
+import { ImageToBase64Service } from 'src/services/img.to.base63.service';
 
 @Component({
   selector: 'app-expediente',
@@ -18,6 +20,9 @@ import { eStatusRequest } from 'src/enumerators/statusRequest.enum';
 export class ExpedienteComponent implements OnInit {
   public Request: iRequest;
   public Documents: Array<iDocument>;
+  public FileRequest: iDocument;
+  public FileRegistered: iDocument;
+  public FileReleased: iDocument;
   public FileActa: iDocument;
   public FileCurp: iDocument;
   public FileCertificado: iDocument;
@@ -27,19 +32,22 @@ export class ExpedienteComponent implements OnInit {
   public FileIngles: iDocument;
   public FilePago: iDocument;
   public FileRevalidacion: iDocument;
-
+  private _Request: uRequest;
   constructor(
     public requestProvider: RequestProvider,
     private notificationService: NotificationsServices,
     private activatedRoute: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public imgSrv: ImageToBase64Service
   ) {
     this.activatedRoute.params.subscribe(
       (params: Params) => {
         this.requestProvider.getRequestById(params.id).subscribe(
           data => {
             this.Request = data.request[0];
-            console.log("Expe", this.Request);
+            this.Request.student = data.request[0].studentId;
+            console.log("REQUESTTT", this.Request);
+            this._Request = new uRequest(this.Request, imgSrv);
             this.onLoad(this.Request.documents);
             (async () => {
               await this.delay(150);
@@ -62,6 +70,9 @@ export class ExpedienteComponent implements OnInit {
     documents.forEach(element => {
       this.Documents.push({ type: element.type, value: null, status: element.status })
     });
+    this.FileRegistered = this.getDocument(eFILES.REGISTRO);
+    this.FileRequest = this.getDocument(eFILES.SOLICITUD);
+    this.FileReleased = this.getDocument(eFILES.RELEASED);
     this.FileActa = this.getDocument(eFILES.ACTA_NACIMIENTO);
     this.FileCurp = this.getDocument(eFILES.CURP);
     this.FileCedula = this.getDocument(eFILES.CEDULA);
@@ -73,10 +84,47 @@ export class ExpedienteComponent implements OnInit {
     this.FilePago = this.getDocument(eFILES.PAGO);
   }
 
+  onViewPdf(file): void {
+    const type = <eFILES><keyof typeof eFILES>file;
+    let exists: boolean = false;
+    let pdf: any;
+    switch (type) {
+      case eFILES.SOLICITUD: {
+        exists = typeof (this.FileRequest) !== 'undefined';
+        if (exists)
+          pdf = this._Request.protocolActRequest().output('bloburl');
+        break;
+      }
+      case eFILES.REGISTRO: {
+        exists = typeof (this.FileRegistered) !== 'undefined';
+        if (exists)
+          pdf = this._Request.projectRegistrationOffice().output('bloburl');
+        break;
+      }
+    }
+    
+    if (exists) {
+      this.dialog.open(ExtendViewerComponent, {
+        data: {
+          source: pdf,
+          isBase64: true
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '60em',
+        height: '600px'
+      });
+    }
+  }
+
   onView(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let exists: boolean = false;
     switch (type) {
+      case eFILES.RELEASED: {
+        exists = typeof (this.FileReleased) !== 'undefined';
+        break;
+      }
       case eFILES.ACTA_NACIMIENTO: {
         exists = typeof (this.FileActa) !== 'undefined';
         break;

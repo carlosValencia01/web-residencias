@@ -30,22 +30,22 @@ export class ViewerComponentComponent implements OnInit {
   }
 
   ngAfterContentInit() {
-    this._RequestService.requestUpdate.subscribe(
-      (response: any) => {
-        this.oRequest = new uRequest(response.Request, this.imgService);
-        this.PHASE = <eRequest>response.Phase;
-        this.loadMessage(response.Phase);
-      }
-    );
-    if (typeof (this._Request) !== 'undefined') {
+    // this._RequestService.requestUpdate.subscribe(
+    //   (response: any) => {
+    //     this.oRequest = new uRequest(response.Request, this.imgService);
+    //     this.PHASE = <eRequest>response.Phase;
+    //     this.loadMessage(response.Phase);
+    //   }
+    // );
+    // if (typeof (this.oRequest) !== 'undefined') {
       this.oRequest = new uRequest(this._Request, this.imgService);
       this.PHASE = <eRequest>this._Phase;
       this.loadMessage(<eRequest>this._Phase);
-    }
+    // }
   }
 
   loadMessage(phase: eRequest): void {
-    switch (phase) {      
+    switch (phase) {
       case eRequest.GENERATED: {
         this.message = 'Visualizar Petición';
         break;
@@ -59,10 +59,10 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.VALIDATED: {
-        this.message = 'Visualizar Petición';
+        this.message = 'Constancia de No Inconveniencia ';
         break;
-      }      
-      case eRequest.RELEASED: {        
+      }
+      case eRequest.RELEASED: {
         this.message = 'Hoja de Liberación';
         break;
       }
@@ -78,7 +78,7 @@ export class ViewerComponentComponent implements OnInit {
         this.message = 'Descargar solicitud';
         break;
       }
-      default: {}
+      default: { }
     }
   }
 
@@ -93,9 +93,11 @@ export class ViewerComponentComponent implements OnInit {
       }
       case eRequest.ASSIGNED: {
         break;
-        
+
       }
       case eRequest.VALIDATED: {
+        this.oRequest.setRequest(this._Request);
+        window.open(this.oRequest.noInconvenience().output('bloburl'), '_blank');
         break;
       }
       case eRequest.RELEASED: {
@@ -114,7 +116,7 @@ export class ViewerComponentComponent implements OnInit {
         window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
         break;
       }
-      default: {}
+      default: { }
     }
   }
 }

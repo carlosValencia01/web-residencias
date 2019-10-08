@@ -11,7 +11,7 @@ export class RequestService {
         this.Request = request;
         console.log("ADD REQUEST service", this.Request);
         (async () => {
-            await this.delay(150);
+            await this.delay(200);
             this.requestUpdate.emit({ Request: this.Request, Phase: phase });
         })();
     }

@@ -12,16 +12,21 @@
           </div>
           <div *ngSwitchCase="'Aceptado'"><span mat-line class="badge badge-pill badge-accept">{{document.status}}
             </span></div>
+          <div *ngSwitchCase="'Omitido'"><span mat-line class="badge badge-pill badge-omit">{{document.status}}
+            </span></div>
           <div *ngSwitchCase="'Rechazado'"><span mat-line class="badge badge-pill badge-reject">{{document.status}}
             </span></div>
           <div *ngSwitchDefault><span mat-line class="badge badge-pill badge-none">{{document.status}} </span></div>
         </div>
-        <div align="end" *ngIf="document.status==='Pendiente'">
-          <button *ngIf="document.type!='PROYECTO' && document.type!='LIBERACION'" mat-icon-button [matMenuTriggerFor]="menu">
+        <div align="end" *ngIf="document.status==='Pendiente' || document.status==='Aceptado'">
+          <button *ngIf="document.type!='PROYECTO' && document.type!='LIBERACION'
+          && document.type!='SOLICITUD' && document.type!='REGISTRO'
+          " mat-icon-button
+            [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
-          </button>                    
+          </button>
           <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="check(document.type,'Accept')">
+            <button *ngIf="document.status==='Pendiente'" mat-menu-item (click)="check(document.type,'Accept')">
               <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
               <span>Aceptar</span>
             </button>

@@ -157,10 +157,10 @@
                                     <mat-icon>lock_open</mat-icon>
                                     Liberacion
                                 </button>
-                                <!-- <button *ngSwitchCase="'Liberado'" mat-menu-item (click)="releasedRequest(row._id)">
-                                    <mat-icon>assignment_turned_in</mat-icon>
-                                    Revisar
-                                </button> -->
+                                <button *ngSwitchCase="'Liberado'" mat-menu-item (click)="checkReleased(row._id)">
+                                    <mat-icon>thumbs_up_down</mat-icon>
+                                    Validar Liberacion
+                                </button>
                                 <div *ngSwitchCase="'Entregado'">
                                     <button *ngIf="row.status!=='Ninguno'" mat-menu-item (click)="Review(row._id)">
                                         <mat-icon>search</mat-icon>

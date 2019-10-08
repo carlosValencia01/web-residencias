@@ -7,6 +7,7 @@ import { RegisteredState } from './RegisteredState';
 import { SentState } from './SentState';
 import { ReleasedState } from './ReleasedState';
 import { DeliveredState } from './DeliveredState';
+import { ValidatedState } from './ValidatedState';
 
 export class ContextState {
     public state: iState;
@@ -45,6 +46,11 @@ export class ContextState {
                 break;
             }case eRequest.DELIVERED:{
                 this.state = new DeliveredState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.VALIDATED:{
+                this.state = new ValidatedState();
                 this.state.status = status;
                 break;
             }

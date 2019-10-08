@@ -32,6 +32,9 @@ export class uRequest {
         this.getImageToPdf();
     }
 
+    public setRequest(request: iRequest){
+        this._request=request;
+    }
     getImageToPdf() {
         this._getImage.getBase64('assets/imgs/logo.jpg').then(logo => {
             this.tecNacLogo = logo;
@@ -50,11 +53,11 @@ export class uRequest {
         });
 
         this._getImage.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
-          this.montserratNormal = base64.toString().split(',')[1];
+            this.montserratNormal = base64.toString().split(',')[1];
         });
 
         this._getImage.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
-          this.montserratBold = base64.toString().split(',')[1];
+            this.montserratBold = base64.toString().split(',')[1];
         });
     }
 
@@ -88,7 +91,7 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por medio del presente solicito autorización para iniciar trámite de registro del ' +
-          'proyecto de titulación integral:', 185), this.MARGIN.LEFT, 120, { align: 'left' });
+            'proyecto de titulación integral:', 185), this.MARGIN.LEFT, 120, { align: 'left' });
 
         this.addTable(doc, [
             ['Nombre: ', this._request.student.fullName],
@@ -100,7 +103,7 @@ export class uRequest {
         const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 60);
         doc.setFont(this.FONT, 'Normal');
         doc.text('En espera de la aceptación de esta solicitud, quedo a sus órdenes.', this.MARGIN.LEFT,
-          176 + nameProjectLines, { align: 'left' });
+            176 + nameProjectLines, { align: 'left' });
         doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', (this.WIDTH / 2), 213, { align: 'center' });
 
@@ -162,10 +165,10 @@ export class uRequest {
         this.addTable(doc, students, 127 + nameProjectLines);
 
         doc.rect(this.MARGIN.LEFT, 160 + integrantsLines + nameProjectLines, this.WIDTH
-          - (this.MARGIN.RIGHT + this.MARGIN.LEFT - 6), 7 + observationsLines);
+            - (this.MARGIN.RIGHT + this.MARGIN.LEFT - 6), 7 + observationsLines);
         doc.text('Observaciones: ', this.MARGIN.LEFT + 3, 164 + integrantsLines + nameProjectLines, { align: 'left' });
         doc.text(doc.splitTextToSize(this._request.observation, 150), this.MARGIN.LEFT + 3,
-          170 + integrantsLines + nameProjectLines, { align: 'left' });
+            170 + integrantsLines + nameProjectLines, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
         const observationY = 185 + observationsLines + (nameProjectLines - 5) + integrantsLines;
@@ -202,7 +205,7 @@ export class uRequest {
         doc.text('PRESENTE', this.MARGIN.LEFT, 100, { align: 'left' });
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por este medio informo que ha sido liberado el siguiente proyecto para la titulación:',
-          176), this.MARGIN.LEFT, 107, { align: 'left' });
+            176), this.MARGIN.LEFT, 107, { align: 'left' });
 
         this.addTable(doc, [
             ['Nombre del estudiante y/o egresado: ', this._request.student.fullName],
@@ -213,7 +216,7 @@ export class uRequest {
         ], 120);
 
         doc.text(doc.splitTextToSize('Agradezco de antemano su valioso apoyo en esta importante actividad para la ' +
-          'formación profesional de nuestros egresados', 176), this.MARGIN.LEFT, 174, { align: 'left' });
+            'formación profesional de nuestros egresados', 176), this.MARGIN.LEFT, 174, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', (this.WIDTH / 2), 190, { align: 'center' });
@@ -235,7 +238,7 @@ export class uRequest {
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(14);
         doc.text(doc.splitTextToSize('CONSTANCIA DE NO INCONVENIENCIA PARA EL ACTO DE RECEPCIÓN PROFESIONAL', 150),
-          (this.WIDTH / 2), 65, { align: 'center' });
+            (this.WIDTH / 2), 65, { align: 'center' });
 
         doc.setFontSize(12);
 
@@ -247,8 +250,8 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. ' +
-          'Presentar su Acto de Recepción Profesional, ya que su expediente quedo integrado para tal efecto.', 176),
-          this.MARGIN.LEFT, 130, { align: 'left' });
+            'Presentar su Acto de Recepción Profesional, ya que su expediente quedo integrado para tal efecto.', 176),
+            this.MARGIN.LEFT, 130, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 147, { align: 'left' });
@@ -299,7 +302,7 @@ export class uRequest {
         // document.setTextColor(183, 178, 178);
         document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2), 260, { align: 'center' });
         document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01. email: info@ittepic.edu.mx',
-          (this.WIDTH / 2), 265, { align: 'center' });
+            (this.WIDTH / 2), 265, { align: 'center' });
         document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
     }
 

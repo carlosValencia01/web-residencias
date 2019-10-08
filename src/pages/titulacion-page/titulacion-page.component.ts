@@ -143,7 +143,7 @@ export class TitulacionPageComponent implements OnInit {
 
       }
       case eRequest.VALIDATED: {
-
+        this.SteepSevenCompleted = (phase === eRequest.VALIDATED ? false : true);
       }
       case eRequest.DELIVERED: {
         this.SteepSixCompleted = (phase === eRequest.DELIVERED ? false : true);
@@ -198,22 +198,22 @@ export class TitulacionPageComponent implements OnInit {
   viewRequeriments() {
     window.open('../../assets/Requisitos.pdf', '_blank');
   }
-  documentsLoad() {
-    const data = {
-      doer: this.cookiesService.getData().user.name.fullName,
-      observation: '',
-      operation: eStatusRequest.ACCEPT,
-      phase: this.Request.phase
-    };
+  // documentsLoad() {
+  //   const data = {
+  //     doer: this.cookiesService.getData().user.name.fullName,
+  //     observation: '',
+  //     operation: eStatusRequest.ACCEPT,
+  //     phase: this.Request.phase
+  //   };
 
-    this.requestProvider.updateRequest(this.Request._id, data).subscribe(
-      data => {
-        this.srvNotifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
-        this.loadRequest();
-      },
-      error => {
-        this.srvNotifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-      }
-    )
-  }
+  //   this.requestProvider.updateRequest(this.Request._id, data).subscribe(
+  //     data => {
+  //       this.srvNotifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+  //       this.loadRequest();
+  //     },
+  //     error => {
+  //       this.srvNotifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+  //     }
+  //   )
+  // }
 }

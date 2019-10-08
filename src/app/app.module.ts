@@ -90,6 +90,7 @@ import { DocumentsValidComponent } from './documents-valid/documents-valid.compo
 import { ExtendViewerComponent } from './extend-viewer/extend-viewer.component';
 import { DocumentReviewComponent } from './document-review/document-review.component';
 import { ExpedienteComponent } from './expediente/expediente.component';
+import { ReleaseCheckComponent } from './release-check/release-check.component';
 
 @NgModule({
   declarations: [
@@ -127,6 +128,7 @@ import { ExpedienteComponent } from './expediente/expediente.component';
     ExtendViewerComponent,
     DocumentReviewComponent,
     ExpedienteComponent,
+    ReleaseCheckComponent,
   ],
   imports: [
     BrowserModule,
@@ -199,7 +201,8 @@ import { ExpedienteComponent } from './expediente/expediente.component';
     SteepComponentComponent,
     ReleaseComponentComponent,
     ExtendViewerComponent,
-    DocumentReviewComponent
+    DocumentReviewComponent,
+    ReleaseCheckComponent
   ],
   bootstrap: [AppComponent]
 })

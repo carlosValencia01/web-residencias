@@ -8,6 +8,8 @@ import { eNotificationType } from 'src/enumerators/notificationType.enum';
 import { ActivatedRoute, Params } from '@angular/router';
 import { iRequest } from 'src/entities/request.model';
 import Swal from 'sweetalert2';
+import { uRequest } from 'src/entities/request';
+import { ImageToBase64Service } from 'src/services/img.to.base63.service';
 
 
 @Component({
@@ -25,20 +27,22 @@ export class DocumentReviewComponent implements OnInit {
 
   documents: Array<IDocument>;
   request: iRequest;
+  uRequest: uRequest;
   constructor(
     // public dialogRef: MatDialogRef<DocumentReviewComponent>,
     // @Inject(MAT_DIALOG_DATA) public data: any,
     public requestProvider: RequestProvider,
     private notificationService: NotificationsServices,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    public imgSrv: ImageToBase64Service) {
     this.activatedRoute.params.subscribe(
       (params: Params) => {
         console.log("Params", params);
         this.requestProvider.getRequestById(params.id).subscribe(
           data => {
-            console.log("DATA", data);
             this.request = data.request[0];
-            console.log("DATA", this.request);
+            this.request.student = data.request[0].studentId;
+            this.uRequest = new uRequest(this.request, imgSrv);
             this.refresh();
             this.drawer.toggle();
           },
@@ -65,18 +69,38 @@ export class DocumentReviewComponent implements OnInit {
         status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
       });
     });
+    console.log("Documento", this.documents);
     // this.dataSource = new MatTableDataSource(this.documents);
     // this.dataSource.sort = this.sort;
   }
 
+  getDocument(fileType: eFILES): IDocument {
+    return this.documents.find(e => e.type === fileType);
+  }
+
   view(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
-    this.requestProvider.getResource(this.request._id, type).subscribe(data => {
-      this.pdf = data;
-    }, error => {
-      this.notificationService.showNotification(eNotificationType.ERROR,
-        "Titulación App", error);
-    });
+    const archivo = this.getDocument(type);
+    if (archivo.status !== 'Omitido') {
+      switch (type) {
+        case eFILES.SOLICITUD: {
+          this.pdf = this.uRequest.protocolActRequest().output('bloburl');
+          break;
+        }
+        case eFILES.REGISTRO: {
+          this.pdf = this.uRequest.projectRegistrationOffice().output('bloburl');
+          break;
+        }
+        default: {
+          this.requestProvider.getResource(this.request._id, type).subscribe(data => {
+            this.pdf = data;
+          }, error => {
+            this.notificationService.showNotification(eNotificationType.ERROR,
+              "Titulación App", error);
+          });
+        }
+      }
+    }
   }
   getStatus(eStatus: string): string {
     let status = '';
@@ -87,6 +111,11 @@ export class DocumentReviewComponent implements OnInit {
       }
       case eStatusRequest.ACCEPT: {
         status = 'Aceptado';
+        break;
+      }
+
+      case eStatusRequest.OMIT: {
+        status = 'Omitido';
         break;
       }
       case eStatusRequest.REJECT: {
@@ -147,6 +176,7 @@ export class DocumentReviewComponent implements OnInit {
         this.request._id,
         update
       ).subscribe(result => {
+        console.log("RESULTTT", result);
         this.notificationService.showNotification(eNotificationType.SUCCESS, 'Documento aceptado', '');
         this.request = result.request;
         this.refresh();

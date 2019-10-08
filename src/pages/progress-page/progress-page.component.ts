@@ -23,6 +23,8 @@ import { eRequest } from 'src/enumerators/request.enum';
 import { eFILES } from 'src/enumerators/document.enum';
 import { DocumentReviewComponent } from 'src/app/document-review/document-review.component';
 import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
+import { ReleaseCheckComponent } from 'src/app/release-check/release-check.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-progress-page',
@@ -198,17 +200,21 @@ export class ProgressPageComponent implements OnInit {
     const ref = this.dialog.open(ReleaseComponentComponent, {
       disableClose: true,
       hasBackdrop: true,
-      width: '35em'
+      width: '60em'
     });
 
     ref.afterClosed().subscribe(result => {
       if (typeof (result) !== 'undefined') {
         let frmData = new FormData();
-        frmData.append('file', result);
+        frmData.append('file', result.file);
         frmData.append('ControlNumber', tmpRequest.student.controlNumber);
         frmData.append('FullName', tmpRequest.student.fullName);
         frmData.append('Career', tmpRequest.student.career);
         frmData.append('Document', eFILES.RELEASED);
+        frmData.append('President', result.jury[0]);
+        frmData.append('Secretary', result.jury[1]);
+        frmData.append('Vocal', result.jury[2]);
+        frmData.append('Substitute', result.jury[3]);
         frmData.append("Doer", this.cookiesService.getData().user.name.fullName);
         this.requestProvider.releasedRequest(Identificador, frmData).subscribe(data => {
           this.loadRequest();
@@ -272,6 +278,89 @@ export class ProgressPageComponent implements OnInit {
     }, 500);
   }
 
+  checkReleased(_id: string) {
+    const Request = this.getRequestById(_id);
+    this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
+      const dialogRef = this.dialog.open(ReleaseCheckComponent, {
+        data: data,
+        disableClose: true,
+        hasBackdrop: true,
+        width: '50em'
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (typeof (result) !== 'undefined') {
+          let data;
+          if (result) {
+            data = {
+              doer: this.cookiesService.getData().user.name.fullName,
+              observation: '',
+              operation: eStatusRequest.ACCEPT,
+              phase: Request.phase
+            };
+            this.requestProvider.updateRequest(Request._id, data).subscribe(
+              data => {
+                this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                this.loadRequest();
+              },
+              error => {
+                this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+              }
+            );
+          } else {
+
+            const swalWithBootstrapButtons = Swal.mixin({
+              customClass: {
+                confirmButton: 'btn btn-outline-success mx-2',
+                cancelButton: 'btn btn-outline-danger'
+              },
+              buttonsStyling: false
+            });
+
+            swalWithBootstrapButtons.fire({
+              title: 'Motivo',
+              input: 'textarea',
+              confirmButtonText: 'Guardar',
+              cancelButtonText: 'Cancelar',
+              showCloseButton: true,
+              showCancelButton: true,
+              inputValidator: (value) => {
+                if (!value) {
+                  return 'Motivo obligatorio'
+                }
+              }
+            }).then((result) => {
+              if (result.value) {
+                data = {
+                  doer: this.cookiesService.getData().user.name.fullName,
+                  observation: result.value,
+                  operation: eStatusRequest.REJECT,
+                  phase: Request.phase
+                };
+                this.requestProvider.updateRequest(Request._id, data).subscribe(
+                  data => {
+                    this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                    this.loadRequest();
+                  },
+                  error => {
+                    this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+                  }
+                );
+              }
+            });
+          }
+        }
+      },
+        error => {
+          this.notifications.showNotification(eNotificationType.ERROR,
+            "Titulación App", error);
+        });
+    }, error => {
+      this.notifications.showNotification(eNotificationType.ERROR,
+        "Titulación App", error);
+    });
+  }
+
   getRequestById(_id: string): iRequest {
     const indexRequest = this.request.findIndex(x => x._id === _id);
     return this.request[indexRequest];
@@ -279,7 +368,6 @@ export class ProgressPageComponent implements OnInit {
 
   viewHistory(_id: string): void {
     const tmpRequest = this.getRequestById(_id);
-    console.log("view", _id, "", tmpRequest);
     const ref = this.dialog.open(ObservationsComponentComponent, {
       data: {
         phase: 'Solicitado',
