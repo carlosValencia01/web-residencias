@@ -1,3 +1,19 @@
+<div *ngIf="!isOkTitulation; else requestForm">
+  <div class="title">
+    <h2>¡Aviso, acto recepcional!</h2>
+  </div>
+  <div class="message">
+    <span>Aún no cumple con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
+    <span>Los requisitos son:</span>
+    <ul>
+      <li>Ser egresado</li>
+      <li>Contar con el inglés liberado</li>
+    </ul><br>
+    <span>Si ya cuenta con los requisitos anteriores, es necesario esperar a que sea liberado en el sistema.</span>
+  </div>
+</div>
+
+<ng-template #requestForm>
 <mat-vertical-stepper [linear]="true" #stepper>
   <mat-step [completed]="SteepOneCompleted">
     <ng-template matStepLabel>SOLICITUD DE TITULACIÓN</ng-template>
@@ -111,3 +127,4 @@
   </mat-step>
 </mat-vertical-stepper>
 <button (click)="valores()">dawd</button>
+</ng-template>
