@@ -75,7 +75,6 @@ import { Api } from 'src/providers/app/api.prov';
 import { UserProvider } from 'src/providers/app/user.prov';
 // Routes
 import { AppRoutingModule } from 'src/app-routing.module';
-import { ReleaseCheckComponent } from './release-check/release-check.component';
 
 // Credentials module
 // Pages
@@ -114,6 +113,7 @@ import { EnglishComponent } from 'src/modals/reception-act/english/english.compo
 import { IntegrantsComponentComponent } from 'src/modals/reception-act/integrants-component/integrants-component.component';
 import { NewGradeComponent } from 'src/modals/reception-act/new-grade/new-grade.component';
 import { ObservationsComponentComponent } from 'src/modals/reception-act/observations-component/observations-component.component';
+import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/release-check.component';
 import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
@@ -334,13 +334,13 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
+    ReleaseCheckComponent,
 
     // Shared
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
     DocumentReviewComponent,
-    ReleaseCheckComponent
   ],
   bootstrap: [AppComponent]
 })

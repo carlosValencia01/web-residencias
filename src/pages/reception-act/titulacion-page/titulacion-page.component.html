@@ -54,7 +54,7 @@
   <mat-step [completed]="SteepFourCompleted">
     <ng-template matStepLabel>LIBERACIÓN DE PROYECTO</ng-template>
     <div *ngIf="SteepFourCompleted">
-      <!-- <app-viewer-component [Request]="Request" [Phase]="'Liberado'"></app-viewer-component> -->
+      <app-viewer-component [Request]="Request" [Phase]="'Liberado'"></app-viewer-component>
       <app-process-component [Message]="CompletedReleasedMessage"></app-process-component>
     </div>
     <div *ngIf="!SteepFourCompleted">

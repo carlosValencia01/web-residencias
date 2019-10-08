@@ -21,8 +21,9 @@ import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
 import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
 import { ObservationsComponentComponent } from 'src/modals/reception-act/observations-component/observations-component.component';
-import { ReleaseCheckComponent } from 'src/app/release-check/release-check.component';
+import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/release-check.component';
 import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-progress-page',
   templateUrl: './progress-page.component.html',
@@ -211,7 +212,7 @@ export class ProgressPageComponent implements OnInit {
         frmData.append('Secretary', result.jury[1]);
         frmData.append('Vocal', result.jury[2]);
         frmData.append('Substitute', result.jury[3]);
-        frmData.append("Doer", this.cookiesService.getData().user.name.fullName);
+        frmData.append('Doer', this.cookiesService.getData().user.name.fullName);
         this.requestProvider.releasedRequest(Identificador, frmData).subscribe(data => {
           this.loadRequest();
         }, error => {
@@ -344,11 +345,11 @@ export class ProgressPageComponent implements OnInit {
       },
         error => {
           this.notifications.showNotification(eNotificationType.ERROR,
-            "Titulación App", error);
+            'Titulación App', error);
         });
     }, error => {
       this.notifications.showNotification(eNotificationType.ERROR,
-        "Titulación App", error);
+        'Titulación App', error);
     });
   }
 
