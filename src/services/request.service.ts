@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { iRequest } from 'src/entities/request.model';
-import { eRequest } from 'src/enumerators/request.enum';
+import { iRequest } from 'src/entities/reception-act/request.model';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 @Injectable()
 export class RequestService {

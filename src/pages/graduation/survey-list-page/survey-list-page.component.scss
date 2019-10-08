@@ -1,0 +1,51 @@
+.action{
+    width: 25px; 
+    height: 25px;
+}
+
+.div-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+th {
+    background: rgb(21,43,84);
+    color: white;
+}
+
+td {
+    vertical-align: middle;
+}
+
+.div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.div-actionsFoot td:hover{
+    background: rgb(55, 89, 149);
+}
+
+.table-hover tfoot tr:hover {
+    background: rgb(243,243,243);
+    color: white;
+}
+
+.list-survey{
+    overflow-x:auto;
+}
+
+.div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#table-survey{
+    display: none;
+}

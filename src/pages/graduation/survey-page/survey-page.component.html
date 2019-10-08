@@ -1,0 +1,109 @@
+<div class="content-general" *ngIf="questions.length > 0">
+      <div class="card card-shadow">
+         <div class="card-header text-white bg-secondary">
+            <p><strong>II. PERTINENCIA Y DISPONIBILIDAD DE MEDIOS Y RECURSOS PARA EL APRENDIZAJE</strong></p>
+         </div>
+          <div class="example-container mat-elevation-z8">
+              <mat-card class="header-card">
+                 <div class="header">
+                    <mat-card-header>
+                       <mat-card-title>            
+                          <h6>Califique la calidad de la educación profesional proporcionada por el personal docente, así como el Plan de Estudios de la carrera que cursó y las condiciones del plantel en cuanto a la infraestructura</h6>  
+                       </mat-card-title>
+                    </mat-card-header>
+                 </div>
+              </mat-card>  
+              <mat-card class="body-card">
+                 <div class="header">
+                    <mat-card-header>
+                       <mat-card-title><h3>{{contQuestion+1}}.- {{questions[contQuestion].descripcion}}:</h3></mat-card-title>
+                    </mat-card-header>
+                 </div>
+                 <mat-card-content *ngIf="survey">
+                    <table class="table table-striped">
+                       <tr>
+                          <td>
+                             <div class="div-img" ngbTooltip="Muy Buena" tooltipClass="my-custom-class" (click)="nextQuestion('Muy Buena')">
+                                <img src="../../assets/survey/encuestaMB.png" class="action">
+                             </div>
+                          </td>
+                          <td>
+                             <div class="div-img" ngbTooltip="Buena" tooltipClass="my-custom-class" (click)="nextQuestion('Buena')">
+                                <img src="../../assets/survey/encuestaB.png" class="action">
+                             </div>
+                          </td>
+                          <td>
+                             <div class="div-img" ngbTooltip="Regular" tooltipClass="my-custom-class" (click)="nextQuestion('Regular')">
+                                <img src="../../assets/survey/encuestaR.png" class="action">
+                             </div>
+                          </td>
+                          <td>
+                             <div class="div-img" ngbTooltip="Mala" tooltipClass="my-custom-class" (click)="nextQuestion('Mala')">
+                                <img src="../../assets/survey/encuestaMM.png" class="action">
+                             </div>
+                          </td>
+                       </tr>
+                       <tr>
+                          <td>
+                             <div style="background: rgb(108,207,142); border-radius: 7px;">
+                                <strong>Muy Buena</strong>
+                             </div>
+                          </td>
+                          <td>
+                             <div style="background: rgb(117,222,210); border-radius: 7px;">
+                                <strong>Buena</strong>
+                             </div>
+                          </td>
+                          <td>
+                             <div style="background: rgb(252,190,0); border-radius: 7px;">
+                                <strong>Regular</strong>
+                             </div>
+                          </td>
+                          <td>
+                             <div style="background: rgb(247,98,105); border-radius: 7px;">
+                                <strong>Mala</strong>
+                             </div>
+                          </td>
+                       </tr>
+                    </table>
+                 </mat-card-content>
+  
+                 <mat-card-content *ngIf="!survey && contQuestion === 6">
+                       <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="radioPrimerEmpleo">
+                          <table class="table">
+                             <tr>
+                                <td>
+                                   <mat-radio-button value="Un Año">Un Año</mat-radio-button>
+                                </td>
+                                <td>
+                                   <mat-radio-button value="Dos Años">Dos Años</mat-radio-button>
+                                </td>
+                                <td>
+                                   <mat-radio-button value="Tres O Más Tiempo">Tres O Más Tiempo</mat-radio-button>
+                                </td>
+                                <td>
+                                   <mat-radio-button value="Empleo Familiar">Empleo Familiar</mat-radio-button><br>
+                                   <mat-form-field class="example-full-width" appearance="fill" *ngIf="radioPrimerEmpleo === 'Empleo Familiar'">
+                                      <mat-label>¿Cúal?</mat-label>
+                                      <input matInput [(ngModel)]="empleoFamiliar">
+                                   </mat-form-field>                            
+                                </td>
+                                <td>
+                                 <mat-radio-button value="Sin Empleo">Sin Empleo</mat-radio-button>
+                              </td>
+                             </tr>
+                          </table>
+                       </mat-radio-group>
+                       <button mat-raised-button color="primary" [disabled]="!radioPrimerEmpleo || (radioPrimerEmpleo == 'Empleo Familiar' && !empleoFamiliar)" (click)="nextQuestionPE()">Continuar</button>
+                 </mat-card-content>
+  
+                 <mat-card-content *ngIf="!survey && contQuestion === 7">
+                    <textarea matInput [(ngModel)]="recomendations" style="width:400px; border:double 4px black;" maxlength="200">
+                    </textarea><br><br>
+                    <button mat-raised-button color="primary" [disabled]="!recomendations" (click)="nextQuestionRecomendations()">Finalizar</button>
+                 </mat-card-content>
+  
+              </mat-card>           
+          </div>
+      </div>
+     </div> 

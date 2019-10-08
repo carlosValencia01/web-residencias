@@ -1,205 +1,343 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { AppComponent } from './app.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpModule } from '@angular/http';
-import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CustomFormsModule } from 'ng2-validation';
-import { Routes, RouterModule } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
-import { SimpleNotificationsModule } from 'angular2-notifications';
-import { ImageCropperModule } from 'ngx-image-cropper';
+// External modules
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
+import { AppComponent } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
+import { CdkStepperModule } from '@angular/cdk/stepper';
+import { CookieService } from 'ngx-cookie-service';
+import { CustomFormsModule } from 'ng2-validation';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HotkeyModule } from 'angular2-hotkeys';
-import { SidebarModule } from 'ng-sidebar';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpModule } from '@angular/http';
+import { ImageCropperModule } from 'ngx-image-cropper';
+import { MatFileUploadModule } from 'mat-file-upload';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgModule } from '@angular/core';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
-// Pages
-import { LoginPageComponent } from '../pages/login-page/login-page.component';
-import { HomePageComponent } from '../pages/home-page/home-page.component';
-import { StudentPageComponent } from '../pages/student-page/student-page.component';
-import { OneStudentPageComponent } from '../pages/one-student-page/one-student-page.component';
-import { CardEmployeePageComponent } from '../pages/card-employee-page/card-employee-page.component';
-import { LoaderDataCredentialsPageComponent } from '../pages/loader-data-credentials-page/loader-data-credentials-page.component';
-import { GradePageComponent } from 'src/pages/grade-page/grade-page.component';
-import { VinculacionPageComponent } from 'src/pages/vinculacion-page/vinculacion-page.component';
-import { TitulacionPageComponent } from 'src/pages/titulacion-page/titulacion-page.component';
-
-// Components
-import { LoginHeaderComponent } from '../components/login-header/login-header.component';
-import { HomeHeaderComponent } from '../components/home-header/home-header.component';
-import { SidebarContentComponent } from '../components/sidebar-content/sidebar-content.component';
-import { RequestComponentComponent } from 'src/components/request-component/request-component.component';
-import { ViewerComponentComponent } from 'src/components/viewer-component/viewer-component.component';
-import { ProcessComponentComponent } from 'src/components/process-component/process-component.component';
-
-// Modals
-import { NewGradeComponent } from 'src/modals/new-grade/new-grade.component';
-import { EmployeeGradeComponent } from 'src/modals/employee-grade/employee-grade.component';
-import { EnglishComponent } from 'src/modals/english/english.component';
-import { RequestModalComponent } from 'src/modals/request-modal/request-modal.component';
-
-// Services
-import { CookiesService } from '../services/cookie.service';
-import { FormErrorsService } from '../services/forms.errors.service';
-import { NotificationsServices } from '../services/notifications.service';
-import { ImageToBase64Service } from '../services/img.to.base63.service';
-
-// Providers
-import { Api } from '../providers/api.prov';
-import { UserProvider } from '../providers/user.prov';
-import { StudentProvider } from '../providers/student.prov';
-import { EmployeeProvider } from '../providers/employee.prov';
-import { LoaderComponent } from '../components/shared/loader/loader.component';
-import { sourceDataProvider } from 'src/providers/sourceData.prov';
-
-// Angular Material
+import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxSmartModalModule } from 'ngx-smart-modal';
+import { SimpleNotificationsModule } from 'angular2-notifications';
+import { SidebarModule } from 'ng-sidebar';
+// Firestore
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { environment } from 'src/environments/environment';
+// Material
 import {
-  MatListModule, MatButtonModule, MatMenuModule,
-  MatFormFieldModule, MatStepperModule, MatInputModule,
-  MatCardModule, MatIconModule, MAT_DIALOG_DEFAULT_OPTIONS,
-  MatCheckboxModule, MatProgressBarModule, MatGridListModule,
-  MatTableModule, MatPaginatorModule, MatDialogModule,
-  MatSidenavModule, MatToolbarModule, MatButtonToggleModule, MatSlideToggleModule,
+  MatButtonModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatRadioModule,
+  MAT_DIALOG_DEFAULT_OPTIONS,
+  MatProgressBarModule,
+  MatGridListModule,
+  MatToolbarModule,
+  MatSlideToggleModule,
   MatSnackBarModule,
   MatProgressSpinnerModule,
   MatSelectModule
 } from '@angular/material';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
 
-import { MatFileUploadModule } from 'mat-file-upload';
-import { CdkStepperModule } from '@angular/cdk/stepper';
-import { NgxSmartModalModule, NgxSmartModalService } from 'ngx-smart-modal';
-// import { TreetableModule } from 'ng-material-treetable';
-// import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
-
+// App module
+// Pages
+import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
+import { LoginPageComponent } from 'src/pages/app/login-page/login-page.component';
+// Components
+import { HomeHeaderComponent } from 'src/components/app/home-header/home-header.component';
+import { LoginHeaderComponent } from 'src/components/app/login-header/login-header.component';
+import { SidebarContentComponent } from 'src/components/app/sidebar-content/sidebar-content.component';
+// Services
+import { CookiesService } from 'src/services/app/cookie.service';
+import { FormErrorsService } from 'src/services/app/forms.errors.service';
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { NotificationsServices } from 'src/services/app/notifications.service';
+// Providers
+import { Api } from 'src/providers/app/api.prov';
+import { UserProvider } from 'src/providers/app/user.prov';
 // Routes
 import { AppRoutingModule } from 'src/app-routing.module';
-import { EmployeeAdviserComponent } from 'src/components/employee-adviser/employee-adviser.component';
-import { ObservationsComponentComponent } from 'src/components/observations-component/observations-component.component';
-import { IntegrantsComponentComponent } from 'src/components/integrants-component/integrants-component.component';
-import { RequestProvider } from 'src/providers/request.prov';
-import { ProgressPageComponent } from 'src/pages/progress-page/progress-page.component';
-import { ConfirmDialogComponent } from 'src/components/confirm-dialog/confirm-dialog.component';
-import { SteepComponentComponent } from './steep-component/steep-component.component';
-import { RequestViewComponent } from './request-view/request-view.component';
-import { RequestService } from 'src/services/request.service';
-import { ReleaseComponentComponent } from './release-component/release-component.component';
-import { UploadFilesComponent } from './upload-files/upload-files.component';
-import { DocumentsValidComponent } from './documents-valid/documents-valid.component';
-import { ExtendViewerComponent } from './extend-viewer/extend-viewer.component';
-import { DocumentReviewComponent } from './document-review/document-review.component';
-import { ExpedienteComponent } from './expediente/expediente.component';
 import { ReleaseCheckComponent } from './release-check/release-check.component';
+
+// Credentials module
+// Pages
+import { CardEmployeePageComponent } from 'src/pages/credentials/card-employee-page/card-employee-page.component';
+import {
+  LoaderDataCredentialsPageComponent
+} from 'src/pages/credentials/loader-data-credentials-page/loader-data-credentials-page.component';
+import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/one-student-page.component';
+import { StudentPageComponent } from 'src/pages/credentials/student-page/student-page.component';
+
+// Inscriptions module
+// Pages
+import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
+// Providers
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+
+// Reception act module
+// Pages
+import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
+import { DocumentsValidComponent } from 'src/pages/reception-act/documents-valid/documents-valid.component';
+import { ExpedienteComponent } from 'src/pages/reception-act/expediente/expediente.component';
+import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-page.component';
+import { ProgressPageComponent } from 'src/pages/reception-act/progress-page/progress-page.component';
+import { TitulacionPageComponent } from 'src/pages/reception-act/titulacion-page/titulacion-page.component';
+import { VinculacionPageComponent } from 'src/pages/reception-act/vinculacion-page/vinculacion-page.component';
+// Components
+import { ProcessComponentComponent } from 'src/components/reception-act/process-component/process-component.component';
+import { RequestComponentComponent } from 'src/components/reception-act/request-component/request-component.component';
+import { RequestViewComponent } from 'src/components/reception-act/request-view/request-view.component';
+import { UploadFilesComponent } from 'src/components/reception-act/upload-files/upload-files.component';
+import { ViewerComponentComponent } from 'src/components/reception-act/viewer-component/viewer-component.component';
+// Modals
+import { EmployeeAdviserComponent } from 'src/modals/reception-act/employee-adviser/employee-adviser.component';
+import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
+import { EnglishComponent } from 'src/modals/reception-act/english/english.component';
+import { IntegrantsComponentComponent } from 'src/modals/reception-act/integrants-component/integrants-component.component';
+import { NewGradeComponent } from 'src/modals/reception-act/new-grade/new-grade.component';
+import { ObservationsComponentComponent } from 'src/modals/reception-act/observations-component/observations-component.component';
+import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
+import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
+import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
+// Services
+import { RequestService } from 'src/services/reception-act/request.service';
+// Providers
+import { RequestProvider } from 'src/providers/reception-act/request.prov';
+import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
+
+// Graduation module
+// Pages
+import { GraduationEventsPageComponent } from 'src/pages/graduation/graduation-events-page/graduation-events-page.component';
+import { ListGraduatesPageComponent } from 'src/pages/graduation/list-graduates-page/list-graduates-page.component';
+import { LoaderDataGraduationPageComponent } from 'src/pages/graduation/loader-data-graduation-page/loader-data-graduation-page.component';
+import {
+  RegisterEmailgraduationPageComponent
+} from 'src/pages/graduation/register-emailgraduation-page/register-emailgraduation-page.component';
+import { SurveyFindPageComponent } from 'src/pages/graduation/survey-find-page/survey-find-page.component';
+import { SurveyGraduatesPageComponent } from 'src/pages/graduation/survey-graduates-page/survey-graduates-page.component';
+import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/survey-list-page.component';
+import { SurveyPageComponent } from 'src/pages/graduation/survey-page/survey-page.component';
+import { SurveyQuestionsPageComponent } from 'src/pages/graduation/survey-questions-page/survey-questions-page.component';
+import { SurveyRegisterPageComponent } from 'src/pages/graduation/survey-register-page/survey-register-page.component';
+// Pipes
+import { FilterPipe } from 'src/pages/graduation/list-graduates-page/filter.pipe';
+// Services
+import { FirebaseService } from 'src/services/graduation/firebase.service';
+// Providers
+import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
+
+// Shared
+// Components
+import { LoaderComponent } from 'src/components/shared/loader/loader.component';
+// Modals
+import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
+import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
+// Providers
+import { EmployeeProvider } from 'src/providers/shared/employee.prov';
+import { StudentProvider } from 'src/providers/shared/student.prov';
 
 @NgModule({
   declarations: [
+    // App module
+    // Pages
     AppComponent,
-    LoginPageComponent,
-    LoginHeaderComponent,
     HomePageComponent,
-    StudentPageComponent,
+    LoginPageComponent,
+    // Components
     HomeHeaderComponent,
-    OneStudentPageComponent,
-    LoaderComponent,
+    LoginHeaderComponent,
+    SidebarContentComponent,
+
+    // Credentials module
+    // Pages
     CardEmployeePageComponent,
     LoaderDataCredentialsPageComponent,
-    SidebarContentComponent,
+    OneStudentPageComponent,
+    StudentPageComponent,
+
+    // Inscriptions module
+    // Pages
+    InscriptionsPageComponent,
+
+    // Reception act module
+    // Pages
+    DocumentReviewComponent,
     GradePageComponent,
-    EmployeeGradeComponent,
-    NewGradeComponent,
-    VinculacionPageComponent,
-    EnglishComponent,
-    TitulacionPageComponent,
-    RequestComponentComponent,
-    ViewerComponentComponent,
-    ProcessComponentComponent,
-    EmployeeAdviserComponent,
-    ObservationsComponentComponent,
-    IntegrantsComponentComponent,
     ProgressPageComponent,
-    RequestModalComponent,
-    ConfirmDialogComponent,
-    SteepComponentComponent,
-    RequestViewComponent,
-    ReleaseComponentComponent,
-    UploadFilesComponent,
+    TitulacionPageComponent,
+    VinculacionPageComponent,
     DocumentsValidComponent,
+    ExpedienteComponent,
+    // Components
+    ProcessComponentComponent,
+    RequestComponentComponent,
+    RequestViewComponent,
+    UploadFilesComponent,
+    ViewerComponentComponent,
+    // Modals
+    EmployeeAdviserComponent,
+    EmployeeGradeComponent,
+    EnglishComponent,
+    IntegrantsComponentComponent,
+    NewGradeComponent,
+    ObservationsComponentComponent,
+    ReleaseComponentComponent,
+    RequestModalComponent,
+    SteepComponentComponent,
+
+    // Graduation module
+    // Pages
+    GraduationEventsPageComponent,
+    ListGraduatesPageComponent,
+    LoaderDataGraduationPageComponent,
+    RegisterEmailgraduationPageComponent,
+    SurveyFindPageComponent,
+    SurveyGraduatesPageComponent,
+    SurveyListPageComponent,
+    SurveyPageComponent,
+    SurveyQuestionsPageComponent,
+    SurveyRegisterPageComponent,
+    // Pipes
+    FilterPipe,
+
+    // Shared
+    // Components
+    LoaderComponent,
+    // Modals
+    ConfirmDialogComponent,
     ExtendViewerComponent,
     DocumentReviewComponent,
     ExpedienteComponent,
     ReleaseCheckComponent,
   ],
   imports: [
-    BrowserModule,
-    NgbModule.forRoot(),
-    HttpModule,
-    HotkeyModule.forRoot(),
-    HttpClientModule,
-    AngularFontAwesomeModule,
-    FormsModule,
-    ReactiveFormsModule,
-    CustomFormsModule,
-    SimpleNotificationsModule.forRoot(),
-    ImageCropperModule,
+    // Angular
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireStorageModule,
     BrowserAnimationsModule,
-    SidebarModule.forRoot(),
-    MatButtonModule,
-    MatStepperModule,
-    MatFormFieldModule,
+    BrowserModule,
     CdkStepperModule,
-    MatInputModule,
-    MatIconModule,
-    MatMenuModule,
-    MatCardModule,
-    MatListModule,
-    MatCheckboxModule,
-    MatProgressBarModule,
-    MatGridListModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatDialogModule,
-    MatSidenavModule,
-    MatToolbarModule,
+    FormsModule,
+    HttpClientModule,
+    HttpModule,
+    ReactiveFormsModule,
+
+    // Angular2
+    HotkeyModule.forRoot(),
+    SimpleNotificationsModule.forRoot(),
+
+    // Material
+    MatButtonModule,
     MatButtonToggleModule,
-    MatSlideToggleModule,
-    AppRoutingModule,
-    NgxSmartModalModule.forRoot(),
-    MatFileUploadModule,
-    MatSnackBarModule,
-    NgxExtendedPdfViewerModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatFileUploadModule ,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatNativeDateModule,
+    MatPaginatorModule,
     MatProgressSpinnerModule,
-    MatSelectModule,    
-    // SweetAlert2Module
-    // TreetableModule
+    MatRadioModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatStepperModule,
+    MatTableModule,
+    MatTabsModule,
+
+    // Ngx
+    ImageCropperModule,
+    NgxExtendedPdfViewerModule,
+    NgxPaginationModule,
+    NgxSmartModalModule.forRoot(),
+
+    // Others
+    AngularFontAwesomeModule,
+    AppRoutingModule,
+    CustomFormsModule,
+    NgbModule.forRoot(),
+    SidebarModule.forRoot(),
   ],
   providers: [
+    // App module
+    // Providers
+    Api,
+    UserProvider,
+    AngularFirestore,
+    AngularFirestoreModule,
+    // Services
     CookieService,
     CookiesService,
     FormErrorsService,
-    NotificationsServices,
     ImageToBase64Service,
-    RequestService,
-    Api,
-    UserProvider,
-    StudentProvider,
-    EmployeeProvider,
-    sourceDataProvider,
-    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+    NotificationsServices,
+
+    // Inscriptions
+    // Providers
+    InscriptionsProvider,
+
+    // Reception act module
+    // Providers
     RequestProvider,
+    sourceDataProvider,
+    // Services
+    RequestService,
+
+    // Graduation module
+    // Providers
+    GraduationProvider,
+    // Services
+    FirebaseService,
+
+    // Shared
+    // Providers
+    EmployeeProvider,
+    StudentProvider,
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
   ],
   entryComponents: [
-    EnglishComponent,
-    NewGradeComponent,
-    EmployeeGradeComponent,
-    RequestComponentComponent,
+    // Reception act module
+    // Pages
+    DocumentReviewComponent,
+    // Modals
     EmployeeAdviserComponent,
-    ObservationsComponentComponent,
+    EmployeeGradeComponent,
+    EnglishComponent,
     IntegrantsComponentComponent,
-    RequestModalComponent,
-    ConfirmDialogComponent,
-    SteepComponentComponent,
+    NewGradeComponent,
+    ObservationsComponentComponent,
     ReleaseComponentComponent,
+    RequestModalComponent,
+    SteepComponentComponent,
+
+    // Shared
+    // Modals
+    ConfirmDialogComponent,
     ExtendViewerComponent,
     DocumentReviewComponent,
     ReleaseCheckComponent

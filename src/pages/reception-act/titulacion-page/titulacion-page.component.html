@@ -1,0 +1,136 @@
+<div *ngIf="!isOkTitulation; else requestForm">
+  <div class="title">
+    <h2>¡Aviso, acto recepcional!</h2>
+  </div>
+  <div class="message">
+    <span>Aún no cumple con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
+    <span>Los requisitos son:</span>
+    <ul>
+      <li>Ser egresado</li>
+      <li>Contar con el inglés liberado</li>
+    </ul><br>
+    <span>Si ya cuenta con los requisitos anteriores, es necesario esperar a que sea liberado en el sistema.</span>
+  </div>
+</div>
+
+<ng-template #requestForm>
+<mat-vertical-stepper [linear]="true" #stepper>
+  <mat-step [completed]="SteepOneCompleted">
+    <ng-template matStepLabel>SOLICITUD DE TITULACIÓN</ng-template>
+    <div *ngIf="SteepOneCompleted">
+      <app-viewer-component [Request]="Request" [Phase]="'Capturado'"></app-viewer-component>
+    </div>
+    <div *ngIf="!SteepOneCompleted">
+      <div [ngSwitch]="StatusComponent">
+        <app-request-component *ngSwitchCase="'Process'" (onSubmit)=" RequestEvent($event)" [request]="Request">
+        </app-request-component>
+        <app-request-component *ngSwitchDefault (onSubmit)=" RequestEvent($event)"></app-request-component>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepTwoCompleted">
+    <ng-template matStepLabel>ACEPTACIÓN DE SOLICITUD</ng-template>
+    <div *ngIf="SteepTwoCompleted">
+      <app-process-component [Message]="CompletedSentMessage"></app-process-component>
+    </div>
+    <div *ngIf="!SteepTwoCompleted">
+      <div [ngSwitch]="StatusComponent">
+        <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessSentMessage"></app-process-component>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepThreeCompleted">
+    <ng-template matStepLabel>REGISTRO DE PROYECTO</ng-template>
+    <div *ngIf="SteepThreeCompleted">
+      <app-viewer-component [Request]="Request" [Phase]="'Registrado'"></app-viewer-component>
+      <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component>
+    </div>
+    <div *ngIf="!SteepThreeCompleted">
+      <div [ngSwitch]="StatusComponent">
+        <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessVerifiedMessage"></app-process-component>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepFourCompleted">
+    <ng-template matStepLabel>LIBERACIÓN DE PROYECTO</ng-template>
+    <div *ngIf="SteepFourCompleted">
+      <!-- <app-viewer-component [Request]="Request" [Phase]="'Liberado'"></app-viewer-component> -->
+      <app-process-component [Message]="CompletedReleasedMessage"></app-process-component>
+    </div>
+    <div *ngIf="!SteepFourCompleted">
+      <div [ngSwitch]="StatusComponent">
+        <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
+        <app-process-component *ngSwitchCase="'Reject'" [Message]="ProcessReleasedMessage"></app-process-component>
+      </div>
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepFiveCompleted">
+    <ng-template matStepLabel>LISTA DE REQUISITOS</ng-template>
+    <div *ngIf="SteepFiveCompleted">
+      <div class="d-flex justify-content-center">
+        <a (click)="viewRequeriments()" style=" cursor: pointer">
+          <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 100px; height: 100px">
+        </a>
+      </div>
+      <div class="d-flex justify-content-center">
+        <small>Requisitos</small>
+      </div>
+    </div>
+    <div *ngIf="!SteepFiveCompleted">
+      <div class="d-flex justify-content-center">
+        <a (click)="viewRequeriments()" style=" cursor: pointer">
+          <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 100px; height: 100px">
+        </a>
+      </div>
+      <div class="d-flex justify-content-center">
+        <small>Requisitos</small>
+      </div>
+      <!-- <div class="d-flex justify-content-center">
+        <button type="button" class="btn btn-outline-success btn-sm" (click)="documentsLoad()">
+          <small>Cargar Archivos</small>
+        </button>
+      </div> -->
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepSixCompleted">
+    <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
+    <div *ngIf="SteepSixCompleted">
+      <app-upload-files></app-upload-files>
+    </div>
+    <div *ngIf="!SteepSixCompleted">
+      <app-upload-files></app-upload-files>
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepSevenCompleted">
+    <ng-template matStepLabel>CONSTANCIA DE NO INCONVENIENCIA</ng-template>
+    <div *ngIf="SteepSevenCompleted">
+      <app-viewer-component [Request]="Request" [Phase]="'Validado'"></app-viewer-component>
+      <!-- <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component> -->
+    </div>
+    <div *ngIf="!SteepSevenCompleted">
+      <app-viewer-component [Request]="Request" [Phase]="'Validado'"></app-viewer-component>
+      <!-- <div [ngSwitch]="StatusComponent">
+        <app-upload-files *ngSwitchCase="'None'"></app-upload-files>
+        <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
+      </div> -->
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepEightCompleted">
+    <ng-template matStepLabel>PROGRAMACIÓN</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+  <mat-step [completed]="SteepNineCompleted">
+    <ng-template matStepLabel>FINALIZACIÓN</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>
+<button (click)="valores()">dawd</button>
+</ng-template>

@@ -1,0 +1,49 @@
+<div class="content-general">
+  <div class="card card-shadow">
+    <div class="card-header text-white bg-secondary">
+      <strong>Actualizar Correo Graduado</strong>
+    </div>
+    <div class="card-body">
+        <div class="row" *ngIf="!hidden">
+            <div class="col-3">
+               <div class="form-group">
+                  <input [(ngModel)]="ncInput" type="text" class="form-control" placeholder="Ingresar número de contról">
+                  <div class="invalid-feedback" *ngIf="!foundNc">
+                    No se encontró el número de contról
+                  </div>
+               </div>
+            </div>
+            <div class="col-2">
+               <div class="form-group">
+                  <div class="div-img" ngbTooltip="Buscar Alumno" tooltipClass="my-custom-class">
+                      <img src="../../assets/icons/search.svg" class="searchNc" (click)="searchAlumno(ncInput)">
+                  </div>
+               </div>
+            </div>
+        </div>
+      <form *ngIf="hidden" [formGroup]="formEmailGraduate" (ngSubmit)="updateEmail()">
+          <div class="div-dataEmailUpdate">
+              <h6>{{ncInput}} - {{dataUpdate.nombre}} - {{dataUpdate.carreraCompleta}}</h6>
+          </div>  
+          <div class="row">
+            <div class="col-10">
+              <div class="form-group">
+                <input #emailgraduateinput formControlName="emailGraduateInput" type="email" class="form-control" placeholder="Ingresar correo electrónico"
+                [ngClass]="{'is-invalid': (formEmailGraduate.get('emailGraduateInput').errors && formEmailGraduate.get('emailGraduateInput').dirty) || errorEmail}">
+                <div *ngIf="(formEmailGraduate.get('emailGraduateInput').errors && formEmailGraduate.get('emailGraduateInput').dirty) || errorForm">
+                  <div class="invalid-feedback" *ngIf="formEmailGraduate.get('emailGraduateInput').hasError('required') || errorEmail">
+                    Verificar correo ingresado
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-2">
+              <div class="form-group">
+                <button type="submit" class="form-control">Actualizar Correo</button>
+              </div>
+            </div>
+          </div>
+      </form>
+    </div>
+  </div> 
+</div>

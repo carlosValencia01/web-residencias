@@ -1,0 +1,34 @@
+<div class="sidebar-style" *ngIf="survey == false">
+  <div class="profile-card">
+    <img class="profile-icon" [src]="data?.photo || DEFAULT_PROFILE_IMG" alt="">
+    <div>
+      <p class="profile-text">{{ data.name.fullName }}</p>
+      <p class="profile-text">{{ title }}</p>
+    </div>
+  </div>
+  <hr>
+  <div>
+    <div *ngFor="let item of menu">
+      <div *ngIf="!isUndefined(item.items) || item.items.length > 0; else noSubmenu">
+        <button mat-menu-item [matMenuTriggerFor]="sub_menu">
+          <img class="menu-item-img" src="assets/icons/{{item.icon}}.svg" alt="">
+          <span>{{item.label}}</span>
+        </button>
+        <mat-menu #sub_menu>
+          <button *ngFor="let submenu of item.items" mat-menu-item routerLink="{{submenu.routerLink}}" (click)="closeMenu()">
+            <img class="menu-item-img" src="assets/icons/{{submenu.icon}}.svg" alt="">
+            <span>{{submenu.label}}</span>
+          </button>
+        </mat-menu>
+      </div>
+      <ng-template #noSubmenu>
+        <button mat-menu-item  [matMenuTriggerFor]="sub_menu2" routerLink="{{item.routerLink}}" (click)="closeMenu()">
+          <img class="menu-item-img" src="assets/icons/{{item.icon}}.svg" alt="">
+          <span>{{item.label}}</span>
+        </button>
+        <mat-menu #sub_menu2>
+        </mat-menu>
+      </ng-template>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+th {
+    background: rgb(21,43,84);
+    color: white;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background: rgb(55, 89, 149);
+    color: white;
+  }
+  .div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

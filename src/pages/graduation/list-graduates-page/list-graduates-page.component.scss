@@ -1,0 +1,194 @@
+.sendButton{
+    background-color: white;
+    color: black;
+    border: 2px solid #e7e7e7;
+    border-radius: 5px;
+}
+.sendButton:hover {
+    background-color:rgb(38,38,38);
+    color: white;
+}
+
+.action{
+    width: 25px; 
+    height: 25px;
+}
+
+.div-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+th {
+    background: rgb(21,43,84);
+    color: white;
+}
+
+tr:hover{
+    cursor: pointer;
+}
+
+tr>th:hover{
+    cursor: default;
+}
+
+td {
+    vertical-align: middle;
+}
+.table-hover tbody tr{
+    transition: all 300ms ease-out;
+}
+.table-hover tbody tr:hover {
+    background: rgb(55, 89, 149);
+    color: white;
+}
+
+.div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.div-actions{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 100%; 
+    height: 25px;
+}
+
+.div-actionsFoot td:hover{
+    background: rgb(55, 89, 149);
+}
+
+.table-hover tfoot tr:hover {
+    background: rgb(243,243,243);
+    color: white;
+}
+
+.Registrado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgb(77, 190, 224);
+    color: white;
+    border-radius: 15px;
+}
+
+.Pagado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgb(255, 174, 1);
+    color: white;
+    border-radius: 15px;
+}
+
+.Verificado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgb(218, 12, 12);
+    color: white;
+    border-radius: 15px;
+}
+
+.Asistió{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: green;
+    color: white;
+    border-radius: 15px;
+}
+
+.Mencionado{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: rgb(7, 7, 133);
+    color: white;
+    border-radius: 15px;
+}
+
+#checkAll{
+    background: rgb(38, 38, 38);
+    border-radius: 15px;
+    color: white;
+}
+
+#checkRegistrado{
+    background: rgb(77, 190, 224);
+    border-radius: 15px;
+    color: white;
+}
+
+#checkPagado{
+    background: rgb(255, 174, 1);
+    border-radius: 15px;
+    color: white;
+}
+
+#checkVerificado{
+    background: rgb(218, 12, 12);
+    border-radius: 15px;
+    color: white;
+}
+
+#checkAsistio{
+    background: green;
+    border-radius: 15px;
+    color: white;
+}
+
+#checkMencionado{
+    background: rgb(7, 7, 133);
+    border-radius: 15px;
+    color: white;
+}
+
+#tableReport,#tableReportBestAverageOut,#tableReportBestAverageIn{
+    display: none;
+}
+
+#tableReportExcel{
+    display: none;
+}
+
+#tableReportBestAverage{
+    display: none;
+}
+
+.rowRegistrado{
+    background: rgb(77, 190, 224);
+    color: white;
+}
+
+.rowPagado{
+    background: rgb(255, 174, 1);
+    color: white;
+}
+
+.rowVerificado{
+    background: rgb(218, 12, 12);
+    color: white;
+}
+
+.rowAsistió{
+    background: green;
+    color: white;
+}
+
+.rowMencionado{
+    background: rgb(7, 7, 133);
+    color: white;
+}

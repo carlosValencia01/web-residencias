@@ -1,0 +1,26 @@
+.action-icon{
+    width: 25px; 
+    height: 25px;
+    cursor: pointer;
+}
+.inactivo{
+    display: none;
+}
+
+.statusActivo{
+    color: white;
+    background: rgb(0, 187, 45);
+    font-weight: bold;
+    size: 20px;
+}
+.statusEspera{
+    color: white;
+    background: rgb(0, 97, 187);
+    font-weight: bold;
+    size: 20px;
+}
+
+.statusInactivo{
+    font-weight: bold;
+    size: 20px;
+}

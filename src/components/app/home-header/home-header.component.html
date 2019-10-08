@@ -1,0 +1,28 @@
+<div class="header-style header">
+
+  <div class="header-container">
+    <img class="img-tecnm" src="assets/imgs/logoTecNM.png" alt="">
+    <div class="title-style">
+      <p class="title-line">Servicios Escolares</p>
+      <p class="subtitle-line">Tecnológico Nacional de México</p>
+      <p class="title-line">Instituto Tecnológico de Tepic</p>
+    </div>
+    <img class="img-headedr-class" src="assets/imgs/ittepic-sm.png" alt="">
+  </div>
+</div>
+
+<ul class="top" >
+
+  <li *ngIf="survey == false">
+    <a class="navbar-brand" (click)="onMenu()">
+      <img src="assets/icons/menu.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+      Menu
+    </a>
+  </li>
+<div class="row align-items-center justify-content-center text-center"  *ngIf="survey == true" >
+
+  <li class="text-white p-3">Encuesta</li>
+</div>
+
+  <li style="float:right" (click)="logOut()" *ngIf="survey == false"><a>Cerrar sesión</a></li>
+</ul>

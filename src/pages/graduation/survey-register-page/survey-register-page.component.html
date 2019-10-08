@@ -1,0 +1,85 @@
+<div class="content-general" *ngIf="ncAlumno">
+  <div class="card card-shadow">
+     <div class="card-header text-white bg-secondary">
+        <strong>I. PERFIL DEL EGRESADO</strong>             
+     </div>
+      <div class="example-container mat-elevation-z8">
+          <form [formGroup]="graduateForm" (ngSubmit)="onFormSubmit(graduateForm.value)">
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Nombre del Alumno</mat-label>
+              <input matInput formControlName="nombreAlumno"
+                      [errorStateMatcher]="matcher">
+              <mat-error>
+                <span *ngIf="!graduateForm.get('nombreAlumno').valid && graduateForm.get('nombreAlumno').touched">Ingrese su nombre</span>
+              </mat-error>
+            </mat-form-field>
+            
+            <label class="tituloLabel" id="example-radio-group-label">Género:</label>
+            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="generoAlumno">
+              <mat-radio-button value="Masculino">Masculino</mat-radio-button>
+              <mat-radio-button value="Femenino">Femenino</mat-radio-button>
+            </mat-radio-group>
+
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>No. de Contról</mat-label>
+              <input readonly matInput formControlName="ncAlumno"
+                      [errorStateMatcher]="matcher">
+              <mat-error>
+                <span *ngIf="!graduateForm.get('ncAlumno').valid && graduateForm.get('ncAlumno').touched">Ingrese su número de contról</span>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Correo Electrónico</mat-label>
+              <input matInput formControlName="correoAlumno"
+                      [errorStateMatcher]="matcher">
+              <mat-error>
+                <span *ngIf="!graduateForm.get('correoAlumno').valid && graduateForm.get('correoAlumno').touched">Ingrese su correo electrónico</span>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Teléfono</mat-label>
+              <input matInput formControlName="telefonoAlumno"
+                      [errorStateMatcher]="matcher">
+              <mat-error>
+                <span *ngIf="!graduateForm.get('telefonoAlumno').valid && graduateForm.get('telefonoAlumno').touched">Ingrese su número telefónico</span>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="outline">
+              <mat-label>Carrera</mat-label>
+              <input matInput formControlName="carreraAlumno"
+                      [errorStateMatcher]="matcher">
+              <mat-error>
+                <span *ngIf="!graduateForm.get('carreraAlumno').valid && graduateForm.get('carreraAlumno').touched">Ingrese su carrera</span>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de Egreso</mat-label>
+                <input matInput [matDatepicker]="picker"
+                        formControlName="egresoAlumno" [errorStateMatcher]="matcher">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                <mat-error>
+                  <span *ngIf="!graduateForm.get('egresoAlumno').valid && graduateForm.get('egresoAlumno').touched">Ingrese mes y año de egreso</span>
+                </mat-error>
+            </mat-form-field>
+
+            <label class="tituloLabel" id="example-radio-group-label">Titulado(a):</label>
+            <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="tituloAlumno">
+              <mat-radio-button value="Si">Si</mat-radio-button>
+              <mat-radio-button value="No">No</mat-radio-button>
+              <mat-radio-button value="En Proceso">En Proceso</mat-radio-button>
+            </mat-radio-group>
+
+            <div class="row justify-content-center mt-3">                  
+                <div >
+                  <button type="submit" [disabled]="!graduateForm.valid" class="btn btn-success">Guardar y Continuar</button>
+                </div>                            
+            </div>
+          </form>
+        </div>
+  </div>
+</div>

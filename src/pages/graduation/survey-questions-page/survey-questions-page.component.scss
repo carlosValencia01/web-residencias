@@ -1,0 +1,31 @@
+.example-container {
+    position: relative;
+    padding-left: 15%;
+    padding-right: 15%;
+    padding-top: 3%;
+    padding-bottom: 3%;
+}
+
+.header{
+    display:inline-block;
+    text-align: center;
+}
+
+.header-card{
+    position: relative;
+    padding: 5px;
+    text-align: center;
+    background: rgb(21,43,84);
+    color: white;
+}
+
+.body-card{
+    position: relative;
+    padding: 5px;
+    text-align: center;
+}
+
+.action{
+    width: 100px; 
+    height: 100px;
+}

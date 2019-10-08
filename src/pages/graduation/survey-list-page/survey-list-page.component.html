@@ -1,0 +1,132 @@
+<div class="content-general">
+    <div class="card card-shadow">
+       <div class="card-header text-white bg-secondary">
+          <strong>Listado de Alumnos Encuesta Egresados</strong>
+       </div>
+       <div class="card-body">
+         <div class="list-survey">
+          <table class="table table-striped table-bordered" data-cols-width="22,28,12,47,27,16,16,10,16,14,14,14,14,14,14,14,18,20,151">
+                <thead>
+                   <tr>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Género</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Email</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Teléfono</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Fecha Egreso</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Titulado</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Fecha Encuesta</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Respuestas</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 1</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 2</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 3</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 4</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 5</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 6</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Primer Empleo</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Empleo Familiar</th>
+                      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Obseervaciones</th>
+                   </tr>
+                </thead>
+                <tbody>
+                   <tr *ngFor="let alumno of alumnosEncuestados | paginate: {id:pag, itemsPerPage: pageSize, currentPage: page};">
+                     <td data-f-sz="12">{{alumno.NC}}</td>
+                     <td data-f-sz="12">{{alumno.Nombre}}</td>
+                     <td data-f-sz="12">{{alumno.Genero}}</td>
+                     <td data-f-sz="12">{{alumno.Carrera}}</td>
+                     <td data-f-sz="12">{{alumno.Correo}}</td>
+                     <td data-f-sz="12">{{alumno.Telefono}}</td>
+                     <td data-f-sz="12">{{alumno.Fecha_Egreso}}</td>
+                     <td data-f-sz="12">{{alumno.Titulado}}</td>
+                     <td data-f-sz="12">{{alumno.Fecha_Encuesta}}</td>
+                     <td data-f-sz="12" data-fill-color="112043" style="background:rgb(21,43,84);"></td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[0].answer}}</td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[1].answer}}</td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[2].answer}}</td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[3].answer}}</td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[4].answer}}</td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[5].answer}}</td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[6].answer}}</td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[6].empleoFamiliar}}</td>
+                     <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[7].answer}}</td>
+                   </tr>
+                </tbody>
+                <tfoot align="right">
+                   <td>
+                      <div style="color:rgb(55, 89, 149); text-align: center;">
+                            <h6>Encuestas Totales: {{totalAlumnos}}</h6>
+                      </div>  
+                   </td>
+                   <td>
+                        <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
+                           <img src="../../assets/icons/excelExport.svg" class="action" (click)="exportTableToExcel()">
+                        </div>
+                   </td>
+                </tfoot>
+             </table>
+             <div class='div-pagination'>
+               <pagination-controls [id]="pag"
+                  directionLinks="true"
+                  (pageChange)="pageChanged($event)"
+                     responsive="true"
+                     previousLabel="Anterior"
+                     nextLabel="Siguiente">
+               </pagination-controls>
+            </div>
+         </div>
+
+         <!-- Tabla reporte alumnos-->
+      <div class="list-survey">
+         <table class="table table-striped table-bordered" id="table-survey" data-cols-width="22,28,12,47,27,16,16,10,16,14,14,14,14,14,14,14,18,20,151">
+            <thead>
+               <tr>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Género</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Email</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Teléfono</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Fecha Egreso</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Titulado</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Fecha Encuesta</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Respuestas</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 1</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 2</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 3</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 4</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 5</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Pregunta 6</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Primer Empleo</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Empleo Familiar</th>
+                  <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Obseervaciones</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr *ngFor="let alumno of alumnosEncuestados">
+                 <td data-f-sz="12">{{alumno.NC}}</td>
+                 <td data-f-sz="12">{{alumno.Nombre}}</td>
+                 <td data-f-sz="12">{{alumno.Genero}}</td>
+                 <td data-f-sz="12">{{alumno.Carrera}}</td>
+                 <td data-f-sz="12">{{alumno.Correo}}</td>
+                 <td data-f-sz="12">{{alumno.Telefono}}</td>
+                 <td data-f-sz="12">{{alumno.Fecha_Egreso}}</td>
+                 <td data-f-sz="12">{{alumno.Titulado}}</td>
+                 <td data-f-sz="12">{{alumno.Fecha_Encuesta}}</td>
+                 <td data-f-sz="12" data-fill-color="112043" style="background:rgb(21,43,84);"></td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[0].answer}}</td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[1].answer}}</td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[2].answer}}</td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[3].answer}}</td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[4].answer}}</td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[5].answer}}</td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[6].answer}}</td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[6].empleoFamiliar}}</td>
+                 <td data-f-sz="12" *ngIf="alumno.Respuestas != '' ">{{alumno.Respuestas[7].answer}}</td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+       </div>
+    </div>
+ </div>
