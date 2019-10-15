@@ -88,6 +88,7 @@ import { StudentPageComponent } from 'src/pages/credentials/student-page/student
 // Inscriptions module
 // Pages
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
+import { InscriptionsMainPageComponent } from 'src/pages/inscriptions/inscriptions-main-page/inscriptions-main-page.component';
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 
@@ -176,7 +177,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Inscriptions module
     // Pages
     InscriptionsPageComponent,
-
+    InscriptionsMainPageComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,

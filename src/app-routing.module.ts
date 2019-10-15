@@ -15,6 +15,7 @@ import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/
 
 // Inscriptions
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
+import { InscriptionsMainPageComponent } from 'src/pages/inscriptions/inscriptions-main-page/inscriptions-main-page.component';
 
 // Reception act
 import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-page.component';
@@ -49,6 +50,7 @@ const appRoutes: Routes = [
 
   // Inscriptions
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
+  { path: 'inscriptionP', component: InscriptionsMainPageComponent, pathMatch: 'full' },
 
   // Reception act
   { path: 'english', component: VinculacionPageComponent, pathMatch: 'full' },
