@@ -116,4 +116,7 @@ export class StudentProvider {
         return this.http.get(`${this.api.getURL()}/student/${resource.toLocaleLowerCase()}/${id}`, { responseType: 'blob' });
 
     }
+    uploadDocumentDrive(id,data){
+        return this.api.put(`student/document/drive/${id}`, data).pipe(map(res => res.json()));
+    }
 }

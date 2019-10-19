@@ -4,8 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
-
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
+
 import Swal from 'sweetalert2';
 @Component({
   selector: 'app-inscriptions-main-page',

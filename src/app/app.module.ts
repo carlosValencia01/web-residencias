@@ -19,6 +19,21 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSmartModalModule } from 'ngx-smart-modal';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { SidebarModule } from 'ng-sidebar';
+import { DropzoneModule } from 'ngx-dropzone-wrapper';
+import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
+import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+ 
+const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
+  // Change this to your upload POST address:
+  url: 'http://localhost:3004/escolares/credenciales/drive/upload/file',
+  // url: 'http://httpbin.org/post',
+  maxFilesize: 3,
+  acceptedFiles: 'image/*',  
+  maxFiles:1  
+};
+
+
+
 // Firestore
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireStorageModule } from '@angular/fire/storage';
@@ -89,8 +104,12 @@ import { StudentPageComponent } from 'src/pages/credentials/student-page/student
 // Pages
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
 import { InscriptionsMainPageComponent } from 'src/pages/inscriptions/inscriptions-main-page/inscriptions-main-page.component';
+import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component'
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+//services
+import { WizardService } from 'src/services/inscriptions/wizard.service';
+import { UploadFilesService } from 'src/services/inscriptions/upload-files.service';
 
 // Reception act module
 // Pages
@@ -178,6 +197,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Pages
     InscriptionsPageComponent,
     InscriptionsMainPageComponent,
+    InscriptionsUploadFilesPageComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -276,6 +296,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     NgxExtendedPdfViewerModule,
     NgxPaginationModule,
     NgxSmartModalModule.forRoot(),
+    DropzoneModule,
 
     // Others
     AngularFontAwesomeModule,
@@ -298,9 +319,12 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     ImageToBase64Service,
     NotificationsServices,
 
-    // Inscriptions
+    // Inscriptions module
     // Providers
     InscriptionsProvider,
+    //services
+    WizardService,
+    UploadFilesService,
 
     // Reception act module
     // Providers
@@ -320,6 +344,10 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     EmployeeProvider,
     StudentProvider,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+    {
+      provide: DROPZONE_CONFIG,
+      useValue: DEFAULT_DROPZONE_CONFIG
+    },
   ],
   entryComponents: [
     // Reception act module

@@ -1,0 +1,131 @@
+<div class='login-block'>
+    <div class="container">
+  
+      <div class="row justify-content-center align-items-center">
+        <div class="col-md-4 login-sec">
+          <h2 class="text-center">Solicitud de Documentos</h2>
+          <button (click)="createFolder()">Click</button>
+        </div>
+      </div>
+      <!--Fila 1: Certificado Bachillerato y Acta de nacimiento-->
+      <div class='row'>
+        <!--Columna 1: Certificado Bachillerato-->
+        <div class='col-md-6'>
+          <div class='card'>
+            <div class='card-header'>
+              <label for="lblCertificado"><b>CURP</b></label>
+              <p>
+                Descarga tu CURP de la página : https//www.gob.mx/curp.
+              </p>
+            </div>
+            <div class='card-body'>
+              <label><b>Nombre original de archivo: </b>{{dropzoneFileNameCURP}}</label>        
+              <dropzone id="dz2" [config]="config2" [message]="'Haga click o arrastre archivos aquí para subirlos'" (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone> 
+            </div>
+          </div>
+        </div>
+        <!--Columna 2: ACTA DE NACIMIENTO-->
+        <div class='col-md-6'>
+          <div class='card'>
+            <div class='card-header'>
+              <label for="lblCertificado"><b>ACTA DE NACIMIENTO</b></label>
+              <p>
+                Expedida máximo dos años anteriores a la fecha.
+              </p>
+            </div>
+            <div class='card-body'>
+              <label><b>Nombre original de archivo: </b>{{dropzoneFileNameACTA}}</label>        
+              <dropzone id="dz1" [config]="config1" [message]="'Haga click o arrastre archivos aquí para subirlos'"  (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>              
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Fila 2: CURP y COPIA DEL COMPROBANTE--><br>
+      <div class='row'>
+        <!--Columna 1: CURP-->
+        <div class='col-md-6'>
+          <div class='card'>
+            <div class='card-header'>
+              <label for="lblCertificado"><b>RESULTADO DE ANÁLISIS CLÍNICOS</b></label>
+              <p style="text-align: justify;">
+                Biometría Hemática, coproparasitoscópico, examen general de orina, RH y tipo de sangre.
+              </p>
+            </div>
+            <div class='card-body'>
+              <label><b>Nombre original de archivo: </b>{{dropzoneFileNameANALISIS}}</label>   
+              <dropzone id="dz4" [config]="config4" [message]="'Haga click o arrastre archivos aquí para subirlos'" (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>              
+            </div>
+          </div>
+        </div>
+        <!--Columna 2: COPIA DEL COMPROBANTE-->
+        <div class='col-md-6'>
+          <div class='card'>
+            <div class='card-header'>
+              <label for="lblCertificado"><b>COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN</b></label>
+              <p style="text-align: justify;">
+                Copia del recibo de pago bancario sellado por el departamento de Recursos Financieros.
+              </p>
+            </div>
+            <div class='card-body'>
+              <label><b>Nombre original de archivo: </b>{{dropzoneFileNameCOMPROBANTE}}</label> 
+              <dropzone id="dz3" [config]="config3" [message]="'Haga click o arrastre archivos aquí para subirlos'" (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Fila 3: FOTO y Resultado de análisis--><br>
+      <div class='row'>
+        <!--Columna 1: RESULTADO DE ANÁLISIS-->
+        <div class='col-md-6'>
+          <div class='card'>
+            <div class='card-header'>
+              <label for="lblCertificado"><b>NÚMERO DE SEGURO SOCIAL</b></label>
+              <p style="text-align: justify;">
+                Descarga tu número de seguro social en la página oficial del https://www.gob.mx/afiliatealimss.
+              </p>
+            </div>
+            <div class='card-body'>
+              <label><b>Nombre original de archivo: </b>{{dropzoneFileNameNSS}}</label>        
+              <dropzone id="dz6" [config]="config6" [message]="'Haga click o arrastre archivos aquí para subirlos'" (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone> 
+            </div>
+          </div>
+        </div>
+        <!--Columna 2: FOTO-->
+        <div class='col-md-6'>
+          <div class='card'>
+            <div class='card-header'>
+              <label for="lblCertificado"><b>FOTO</b></label>
+            </div>
+            <div class='card-body'>
+              <label><b>Nombre original de archivo: </b>{{dropzoneFileNamePhoto}}</label>       
+              <dropzone id="dz5" [config]="config5" [message]="'Haga click o arrastre archivos aquí para subirlos'" (success)="onUploadSuccess($event)" (error)="onError($event)"></dropzone>             
+            </div>
+          </div>
+  
+        </div>
+      </div>
+      <!--Fila 4: NSS--><br>
+      <div class='row'>
+        <!--Columna 1: NSS-->
+        <div class='col-md-6'>
+  
+          <div class='card'>
+            <div class='card-header'>
+              <label for="lblCertificado"><b>CERTIFICADO DE BACHILLERATO O EQUIVALENTE</b></label>
+              <p style="text-align: justify;">
+                Nota.- Alumnos egresados de Instituciones Privadas y de la Universidad Autónoma de Nayarit, deben
+                legalizar su
+                certificado en la Dirección de Profesiones de la SEMSSICyT.
+              </p>
+            </div>
+            <div class='card-body'>
+              <label><b>Nombre original de archivo: </b>{{dropzoneFileNameCERTIFICADO}}</label> 
+              <dropzone id="dz0" [config]="config" [message]="'Haga click o arrastre archivos aquí para subirlos'" (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>              
+            </div>
+          </div>
+  
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>

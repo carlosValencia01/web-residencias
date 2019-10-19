@@ -24,4 +24,11 @@ export class InscriptionsProvider {
     updatePeriod(data : object, id : string){
         return this.api.put('period/update/'+id,data).pipe(map( res=>res.json()));
     }
+
+    createFolder(folderName : string){
+        return this.api.post('drive/create/folder/'+folderName,'').pipe(map( res=>res.json()));
+    }
+    uploadFile(data){
+        return this.api.post('drive/upload/file/',data).pipe(map( res=>res.json()));
+    }
 }
