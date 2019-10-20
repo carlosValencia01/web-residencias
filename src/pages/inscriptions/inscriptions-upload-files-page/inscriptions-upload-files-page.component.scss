@@ -4,37 +4,49 @@
   background-color: rgb(224, 67, 67);
 }
 
-.login-block{
-  background: rgb(15, 44, 138);  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to bottom, #FFB88C, #DE6262);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to bottom, rgb(15, 44, 138), rgb(15, 44, 138)); 
-  float:left;
-  width:100%;
-  padding : 50px 0;
-}
+
 .banner-sec{background:url(https://static.pexels.com/photos/33972/pexels-photo.jpg)  no-repeat left bottom; background-size:cover; min-height:500px; border-radius: 0 10px 10px 0; padding:0;}
-.container{background:#fff; border-radius: 10px; box-shadow:15px 20px 0px rgba(0,0,0,0.1);}
-.carousel-inner{border-radius:0 10px 10px 0;}
-.carousel-caption{text-align:left; left:5%;}
-.login-sec{padding: 50px 30px; position:relative;}
-.login-sec .copy-text{position:absolute; width:80%; bottom:20px; font-size:13px; text-align:center;}
-.login-sec .copy-text i{color:#FEB58A;}
-.login-sec .copy-text a{color:#E36262;}
-.login-sec h2{margin-bottom:30px; font-weight:800; font-size:30px; color: #DE6262;}
-.login-sec h2:after{content:" "; width:100px; height:5px; background:#FEB58A; display:block; margin-top:20px; border-radius:3px; margin-left:auto;margin-right:auto}
-.btn-login{background: #DE6262; color:#fff; font-weight:600;}
-.banner-text{width:70%; position:absolute; bottom:40px; padding-left:20px;}
-.banner-text h2{color:#fff; font-weight:600;}
-.banner-text h2:after{content:" "; width:100px; height:5px; background:#FFF; display:block; margin-top:20px; border-radius:3px;}
-.banner-text p{color:#fff;}
-#cursorDropzoneFoto{
-  cursor: pointer;
-  background-color: rgb(199, 199, 192);
+.container{background:#fff; box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.1);
+
+  padding: 0 40px 0 40px;}
+
+.login-sec{padding: 20px 30px;}
+
+.login-sec h2{margin-bottom:30px; font-weight:800; font-size:30px; color: rgb(204, 58, 58);}
+.login-sec h2::after{content:" "; width:100px; height:5px; background:rgb(240, 155, 105); display:block; margin-top:20px; border-radius:3px; margin-left:auto;margin-right:auto}
+
+
+
+
+.c-header{
+  color: white;
+  text-align: center;
+  background: #273361 !important;
 }
-#dropzoneFotoLoader{
+.c-header,.label{
+
   cursor: pointer;
-  background-color: rgb(206, 206, 160);
 }
-#dropzonePreview{
-  background-color: rgb(245, 245, 2);
+.c-body{
+  text-align: center;
+  background: rgba(39, 51, 97, 0.3);
+  // border-radius: 0 0 40px 40px;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  padding: 0px;
+  margin: 0px;
+}
+
+.cd{  
+  // border-radius: 0 0 40px 40px;
+  box-shadow: 5px 5px 5px rgba(58, 58, 58, 0.3);
+}
+
+.isDisabled{
+  cursor:default;
+}
+.isDisabled+div{
+  max-height: 0 !important;
+  padding: 0 !important;
 }

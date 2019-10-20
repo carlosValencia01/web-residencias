@@ -25,10 +25,22 @@ export class InscriptionsProvider {
         return this.api.put('period/update/'+id,data).pipe(map( res=>res.json()));
     }
 
-    createFolder(folderName : string){
-        return this.api.post('drive/create/folder/'+folderName,'').pipe(map( res=>res.json()));
+    createFolder(folderName : string, period : string){
+        return this.api.post(`drive/create/folder`,{folderName:folderName,period:period}).pipe(map( res=>res.json()));
+    }
+    createSubFolder(folderName : string, period : string, folderParentId : string){
+        
+        return this.api.post(`drive/create/subfolder`,{folderName:folderName,parentFolderId:folderParentId,period:period}).pipe(map( res=>res.json()));
     }
     uploadFile(data){
         return this.api.post('drive/upload/file/',data).pipe(map( res=>res.json()));
+    }
+
+    getAllFolders(){
+        return this.api.get('drive/get/folders/all').pipe(map( res=>res.json()));
+    }
+
+    getFoldersByPeriod(period){
+        return this.api.get('drive/get/folders/period/'+period).pipe(map( res=>res.json()));
     }
 }

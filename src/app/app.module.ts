@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MatFileUploadModule } from 'mat-file-upload';
+// import { MatFileUploadModule } from 'angular-material-fileupload';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -53,7 +54,9 @@ import {
   MatSlideToggleModule,
   MatSnackBarModule,
   MatProgressSpinnerModule,
-  MatSelectModule
+  MatSelectModule,
+  MatExpansionModule
+  
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -290,7 +293,8 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     MatStepperModule,
     MatTableModule,
     MatTabsModule,
-
+    MatProgressBarModule,
+    MatExpansionModule,
     // Ngx
     ImageCropperModule,
     NgxExtendedPdfViewerModule,

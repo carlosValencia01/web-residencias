@@ -78,14 +78,16 @@ export class InscriptionsMainPageComponent implements OnInit {
     let sub = this.inscriptionsProv.getAllPeriods()
       .subscribe(periods => {       
         this.periods=periods.periods;      
-        this.periods.reverse();                
+        this.periods.reverse();          
+        // console.log(this.periods);
+              
         sub.unsubscribe();
       });
   }
   
   async createPeriod(){
     let lastActivePeriod;
-    let newPeriod,currentYear;
+    let newPeriod,currentYear,initialPeriod;
     
     if(this.periods.length>0){
       lastActivePeriod = this.periods[0].name;   
@@ -95,12 +97,14 @@ export class InscriptionsMainPageComponent implements OnInit {
       }
     }
     else{
-      lastActivePeriod = 'Enero-Junio';
+      lastActivePeriod = 0;
       currentYear = new Date;
       currentYear = currentYear.getFullYear();
+      initialPeriod =document.getElementById('periodo');
     } 
+      
 
-    newPeriod = lastActivePeriod === 'Enero-Junio' ? 'Agosto-Diciembre':newPeriod = 'Enero-Junio';  
+    newPeriod = lastActivePeriod === 0 ? initialPeriod.value :  lastActivePeriod === 'Agosto-Diciembre' ? 'Enero-Junio' : 'Agosto-Diciembre';  
 
     for (let i = 0; i < this.periods.length; i++) {
       if (this.periods[i].active === true) {
@@ -108,9 +112,7 @@ export class InscriptionsMainPageComponent implements OnInit {
           'Periodo activo', `Ya existe un periodo activo '${lastActivePeriod}' no es posible crear otro periodo.`);
         return;
       }
-    }
-    
-    
+    }        
 
     let period = {
       name: newPeriod,
@@ -122,13 +124,23 @@ export class InscriptionsMainPageComponent implements OnInit {
     let confirmdialog = await this.swalDialog('¿Estás seguro de crear este Periodo ?',`El periodo (${period.name} ${period.year}) será activado.`,'question');
 
     if(confirmdialog){
-      this.inscriptionsProv.createPeriod(period).subscribe(res => {
-      
-        this.notificationsServices.showNotification(eNotificationType.SUCCESS,
-          'Exito', 'Periodo creado correctamente.');        
+      this.inscriptionsProv.createPeriod(period).subscribe(async res => {        
         
-          this.refreshDataSource();
+        this.inscriptionsProv.createFolder(period.name+' '+period.year,res.period._id).subscribe(
+          res=>{
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+              'Exito', 'Periodo creado correctamente.'); 
+            
+              this.refreshDataSource();
+          },
+          err=>{
+            console.log(err);
+                 
+          }
+        );                       
+        
       });
     }
   }
+ 
 }
