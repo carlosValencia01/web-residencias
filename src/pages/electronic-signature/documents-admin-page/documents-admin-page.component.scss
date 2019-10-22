@@ -1,0 +1,49 @@
+.document-card {
+  height: auto !important;
+  margin: 5px 0px !important;
+  mat-card {
+    min-width: 100%;
+    max-width: 100%;
+    padding: 5px;
+    mat-card-subtitle {
+      margin: 0px;
+    }
+    mat-card-actions {
+      padding: 8px;
+    }
+  }
+  label {
+    margin: 0px;
+  }
+  mat-icon {
+    margin: 0px 3px;
+    cursor: pointer;
+  }
+}
+
+.department-chip {
+  border-radius: 10px;
+  padding: 2px 4px;
+  margin: 1px;
+  font-size: 10px;
+  background-color: #F58220 !important;
+  color: white !important;
+  font-weight: bold;
+}
+
+.search {
+  width: 100%;
+  border-radius: 10px;
+  padding: 5px 10px;
+  margin: 5px 0px;
+}
+
+.documents-list {
+  max-height: 73vh;
+  overflow: hidden scroll;
+  margin: 10px 0px !important;
+}
+
+.documents-list::-webkit-scrollbar {
+  display: none !important;
+}
