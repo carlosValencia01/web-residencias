@@ -94,4 +94,13 @@ export class EmployeeProvider {
     searchEmployeeByArea() {
         return this.api.get(`employee/area`).pipe(map(res => res.json()));
     }
+
+    getEmployee(email) {
+      return this.api.get(`user/employee/${email}`).pipe(map(res => res.json()));
+    }
+
+    updateProfile(id, data) {
+      return this.api.put(`user/update/${id}`, data).pipe(map(res => res.json()));
+    }
+
 }

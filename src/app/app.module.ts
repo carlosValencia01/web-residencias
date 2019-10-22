@@ -61,6 +61,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
 import { LoginPageComponent } from 'src/pages/app/login-page/login-page.component';
+import { ProfileSettingsComponent } from 'src/pages/app/profile-settings/profile-settings.component';
 // Components
 import { HomeHeaderComponent } from 'src/components/app/home-header/home-header.component';
 import { LoginHeaderComponent } from 'src/components/app/login-header/login-header.component';
@@ -84,6 +85,10 @@ import {
 } from 'src/pages/credentials/loader-data-credentials-page/loader-data-credentials-page.component';
 import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/one-student-page.component';
 import { StudentPageComponent } from 'src/pages/credentials/student-page/student-page.component';
+
+// Electronic signature
+// Pages
+import {ElectronicSignatureComponent} from 'src/pages/electronic-signature/electronic-signature/electronic-signature.component';
 
 // Inscriptions module
 // Pages
@@ -160,6 +165,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     AppComponent,
     HomePageComponent,
     LoginPageComponent,
+    ProfileSettingsComponent,
     // Components
     HomeHeaderComponent,
     LoginHeaderComponent,
@@ -171,6 +177,10 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     LoaderDataCredentialsPageComponent,
     OneStudentPageComponent,
     StudentPageComponent,
+
+    // Electronic signarure
+    // Pages
+    ElectronicSignatureComponent,
 
     // Inscriptions module
     // Pages

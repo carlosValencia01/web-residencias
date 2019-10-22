@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {EmployeeProvider} from '../../providers/employee.prov';
+import {EmployeeProvider} from 'src/providers/shared/employee.prov';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {CookiesService} from 'src/services/cookie.service';
-import {NotificationsServices} from 'src/services/notifications.service';
-import {eNotificationType} from 'src/enumerators/notificationType.enum';
+import {CookiesService} from 'src/services/app/cookie.service';
+import {NotificationsServices} from 'src/services/app/notifications.service';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-profile-settings',
@@ -48,7 +48,7 @@ export class ProfileSettingsComponent implements OnInit {
         ])
     });
 
-    this.email = this.cookiesService.getData()
+    this.email = this.cookiesService.getData();
     this.employeeProvider.getEmployee(this.email.user.email).subscribe(res => {
       this.employee = res;
       this.formGroupData.setValue({
@@ -71,12 +71,19 @@ export class ProfileSettingsComponent implements OnInit {
       employee: this.employee.employee
     }).subscribe(res => {
       if (res.status) {
-        alert('Ocurrió un error');
+        this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
       } else {
-        alert('Datos actualizados correctamente');
+        this.notification.showNotification(eNotificationType.SUCCESS, 'Datos actualizados correctamente', '');
+        this.formGroupData.get('loginPsw').reset();
+        /*this.formGroupData.get('loginPsw').pristine = true;
+        this.formGroupData.get('loginPsw').clearValidators();
+        this.formGroupData.get('loginPsw').markAsUntouched();
+        this.formGroupData.get('loginPsw').markAsPristine();
+        this.formGroupData.get('loginPsw').setValidators([Validators.required]);
+        this.formGroupData.get('loginPsw').updateValueAndValidity();*/
       }
     }, err => {
-      alert('Ocurrió un error');
+      this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
     });
   }
 
@@ -89,12 +96,12 @@ export class ProfileSettingsComponent implements OnInit {
         }
       }).subscribe(res => {
           if (res.status) {
-            alert('Ocurrió un error');
+            this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
           } else {
-            alert('Contraseña actualizada correctamente');
+            this.notification.showNotification(eNotificationType.SUCCESS, 'Contraseña actualizada correctamente', '');
           }
         }, err => {
-          alert('Ocurrió un error');
+        this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
         }
       );
     } else {

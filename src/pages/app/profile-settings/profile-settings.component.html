@@ -26,6 +26,9 @@
         <input matInput type="password" placeholder="Contraseña" formControlName="loginPsw">
         <mat-hint align="start"><strong>Ingrese contraseña de inicio de sesión</strong> </mat-hint>
       </mat-form-field>
+      <mat-error *ngIf="formGroupData.get('loginPsw').hasError('required') && formGroupData.get('loginPsw').touched">
+        Campo <strong>obligatorio</strong>
+      </mat-error>
     </mat-card-content>
     <mat-card-actions>
       <button mat-flat-button color="primary" type="submit">Guardar</button>
@@ -61,56 +64,3 @@
     </mat-card-actions>
   </form>
 </mat-card>
-
-
-<!--<div class="row">
-    <div class="card col-6">
-      <form class="example-form" [formGroup]="formGroupData" (ngSubmit)="onSubmit()">
-        <div class="card-header">
-          <h3>Datos personales</h3>
-        </div>
-        <div class="card-body">
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Nombres" formControlName="name">
-            </mat-form-field>
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Apellidos" formControlName="lastName">
-            </mat-form-field>
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Área" formControlName="area">
-            </mat-form-field>
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Puesto" formControlName="position">
-            </mat-form-field>
-        </div>
-        <div class="card-footer">
-          <div class="example-button-row">
-            <button mat-flat-button color="primary" type="submit">Guardar</button>
-          </div>
-        </div>
-      </form>
-    </div>
-
-    <div class="card col-6">
-      <form class="example-form" [formGroup]="formGroupPsw">
-        <div class="card-header">
-          <h3>Contraseña</h3>
-        </div>
-        <div class="card-body">
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Contraseña actual">
-            </mat-form-field>
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Nueva contraseña">
-            </mat-form-field>
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="Confirmar contraseña">
-            </mat-form-field>
-        </div>
-        <div class="card-footer example-button-row">
-          <button mat-flat-button color="primary">Guardar</button>
-        </div>
-      </form>
-    </div>
-</div>
--->
