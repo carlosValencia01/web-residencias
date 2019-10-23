@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
+import { ProfileSettingsComponent } from 'src/pages/app/profile-settings/profile-settings.component';
 
 // Credentials
 import { CardEmployeePageComponent } from 'src/pages/credentials/card-employee-page/card-employee-page.component';
@@ -12,6 +13,10 @@ import {
 } from 'src/pages/credentials/loader-data-credentials-page/loader-data-credentials-page.component';
 import { StudentPageComponent } from 'src/pages/credentials/student-page/student-page.component';
 import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/one-student-page.component';
+
+// Electronic signature
+// Pages
+import {ElectronicSignatureComponent} from 'src/pages/electronic-signature/electronic-signature/electronic-signature.component';
 
 // Inscriptions
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
@@ -45,12 +50,18 @@ import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/docu
 import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
 
 const appRoutes: Routes = [
-  // Credentials
+  // App
   { path: '', component: HomePageComponent, pathMatch: 'full' },
+  { path: 'profileSettings', component: ProfileSettingsComponent, pathMatch: 'full' },
+
+  // Credentials
   { path: 'employeeCard', component: CardEmployeePageComponent, pathMatch: 'full' },
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
+
+  // Electronic signature
+  { path: 'electronicSignature', component: ElectronicSignatureComponent, pathMatch: 'full' },
 
   // Inscriptions
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
