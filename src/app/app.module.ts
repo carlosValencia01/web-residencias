@@ -26,6 +26,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 // Material
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
   MatButtonModule,
   MatDatepickerModule,
@@ -147,7 +148,7 @@ import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 // Pages
 import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
 // import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
-// import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
+import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
 
 // Shared
 // Components
@@ -158,7 +159,7 @@ import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-vi
 // Providers
 import { DocumentProvider } from 'src/providers/shared/document.prov';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
-// import { PositionProvider } from 'src/providers/shared/position.prov';
+import { PositionProvider } from 'src/providers/shared/position.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 
 @NgModule({
@@ -229,7 +230,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Pages
     DocumentsAdminPageComponent,
     // DocumentsAssignPageComponent,
-    // PositionsAdminPageComponent,
+    PositionsAdminPageComponent,
 
     // Shared
     // Components
@@ -255,6 +256,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     SimpleNotificationsModule.forRoot(),
 
     // Material
+    MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -328,7 +330,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Providers
     DocumentProvider,
     EmployeeProvider,
-    // PositionProvider,
+    PositionProvider,
     StudentProvider,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
   ],
