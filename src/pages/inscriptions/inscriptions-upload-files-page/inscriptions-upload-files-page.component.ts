@@ -8,6 +8,10 @@ import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 
+import { Buffer } from 'buffer';
+
+// var tou8 = require('buffer-to-uint8array');
+// declare const Buffer;
 
 @Component({
   selector: 'app-inscriptions-upload-files-page',
@@ -29,7 +33,9 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   certificateDoc;
   actaDoc;
   clinicDoc;
-  
+  pdfSrc;
+  pub;
+  image;
   /* Dropzone conf */
   @ViewChild(DropzoneComponent) componentRef?: DropzoneComponent;
   
@@ -55,7 +61,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     private router: Router,
     private routeActive: ActivatedRoute,
     private inscriptionsProv: InscriptionsProvider,
-    private studentProv: StudentProvider,
+    private studentProv: StudentProvider,    
    
     ) {
       this.data = this.cookiesService.getData().user;
@@ -107,6 +113,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         this.certificateDoc = documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0];
         this.actaDoc = documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0];
         this.clinicDoc = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
+        console.log(this.imageDoc);
         
       }
     );
@@ -164,7 +171,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     /*Dropzone*/
     this.config = {
       clickable: true, maxFiles: 2,
-      params: {'usuario': this.data.name.fullName,folderId:this.folderId, 'filename': this.data.email+'CERTIFICADO.pdf', 'mimeType': 'application/pdf'},
+      params: {'usuario': this.data.name.fullName,folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO.pdf', 'mimeType': 'application/pdf'},
       accept: (file, done) => {this.dropzoneFileNameCERTIFICADO = file.name; done(); },
       acceptedFiles:'application/pdf',
          
@@ -234,7 +241,8 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       filename:args[1].name,
       type:'DRIVE',
       status:'EN PROCESO',
-      fileIdInDrive:args[1].fileId
+      fileIdInDrive:args[1].fileId,
+      mimeType:args[1].mimeType
     };
     console.log(documentInfo);
     
@@ -291,12 +299,35 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         coll.style.maxHeight = null;
         coll.style.padding = null;
       } else {
-        coll.style.maxHeight = (coll.scrollHeight +25)+ "px";
+        coll.style.maxHeight = "270px";
         coll.style.padding = '10px';
       }
     }else{
       coll.style.maxHeight = null;
       coll.style.padding = null;
     }
+  }
+
+  //visualizar pdf o imagen
+  view(){
+    this.inscriptionsProv.getFile().subscribe(
+      data=>{
+        this.pub = data.file;      
+        //si es una imagen
+        this.image = 'data:image/png;base64,'+this.pub;
+        //si es un archivo pdf
+        let buff = new Buffer(this.pub.data);        
+        this.pdfSrc = buff;        
+        this.pub=true;                
+      },
+      err=>{console.log(err);
+      }
+    )
+  }
+
+  onErrored(error: any) {
+    // do anything
+    console.log(error);
+    
   }
 }

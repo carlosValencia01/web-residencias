@@ -43,4 +43,8 @@ export class InscriptionsProvider {
     getFoldersByPeriod(period){
         return this.api.get('drive/get/folders/period/'+period).pipe(map( res=>res.json()));
     }
+
+    getFile(){
+        return this.api.get('drive/upload').pipe(map( res=>res.json()));
+    }
 }

@@ -4,7 +4,7 @@
           <div class="row justify-content-center align-items-center">
             <div class="col-md-4 login-sec">
               <h2 class="text-center">Solicitud de Documentos</h2>
-              <!-- <button (click)="createFolder()">Click</button> -->
+              <button (click)="view()">Click</button>
             </div>
           </div>
           <!--Fila 1: Certificado Bachillerato y Acta de nacimiento-->
@@ -12,16 +12,26 @@
             <!--Columna 1: Certificado Bachillerato-->
             <div class='col-sm-12 col-md-6'>
               <div class='card cd'>
-                <div [class.isDisabled]="curpDoc !== undefined ? true : false"  class='card-header c-header' (click)="collapse('collapseCURP',curpDoc !== undefined ? true : false)">              
-                    <b>CURP 
-                      <div *ngIf="curpDoc">
-                        <span *ngIf="curpDoc.status === 'EN PROCESO'" class="badge badge-info float-right">EN PROCESO</span>
-                        <span *ngIf="curpDoc.status === 'VALIDADO'" class="badge badge-primary float-right">VALIDADO</span>
-                        <span *ngIf="curpDoc.status === 'ACEPTADO'" class="badge badge-success float-right">ACEPTADO</span>
-                      </div>
-                      <span *ngIf="!curpDoc" class="badge badge-danger float-right">SIN ENVIO</span>
+                <div [class.isDisabled]="curpDoc !== undefined ? true : false"  class='card-header c-header' (click)="collapse('collapseCURP',curpDoc !== undefined ? true : false)">
                     
-                    </b>
+                    <div class="row">
+                      <div class="col-9">
+                        <p>
+                            <b>CURP                                                               
+                              </b>
+                        </p>
+                      </div>
+                      <div class="col-3">
+                          <div *ngIf="curpDoc">
+                              <span *ngIf="curpDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                              <span *ngIf="curpDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                              <span *ngIf="curpDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                            </div>
+                            <span *ngIf="!curpDoc" class="badge badge-danger">SIN ENVIO</span>
+                      </div>
+                      
+                    </div>              
+                    
                     <p>
                       Descarga tu CURP de la página : https//www.gob.mx/curp.
                     </p>                
@@ -37,15 +47,25 @@
             <!--Columna 2: ACTA DE NACIMIENTO-->
             <div class='col-sm-12 col-md-6'>
               <div class='card cd'>
-                <div [class.isDisabled]="actaDoc !== undefined ? true : false"  class='card-header c-header' (click)="collapse('collapseACTA',actaDoc !== undefined ? true : false)">
-                  <b>ACTA DE NACIMIENTO
-                      <div *ngIf="actaDoc">
-                          <span *ngIf="actaDoc.status === 'EN PROCESO'" class="badge badge-info float-right">EN PROCESO</span>
-                          <span *ngIf="actaDoc.status === 'VALIDADO'" class="badge badge-primary float-right">VALIDADO</span>
-                          <span *ngIf="actaDoc.status === 'ACEPTADO'" class="badge badge-success float-right">ACEPTADO</span>
-                        </div>
-                        <span *ngIf="!actaDoc" class="badge badge-danger float-right">SIN ENVIO</span>
-                  </b>
+                <div [class.isDisabled]="actaDoc !== undefined ? true : false"  class='card-header c-header' (click)="collapse('collapseACTA',actaDoc !== undefined ? true : false)">                      
+                  <div class="row">
+                      <div class="col-9">
+                        <p>
+                            <b>ACTA DE NACIMIENTO
+                                
+                            </b>
+                        </p>
+                      </div>
+                      <div class="col-3">
+                          <div *ngIf="actaDoc">
+                              <span *ngIf="actaDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                              <span *ngIf="actaDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                              <span *ngIf="actaDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                            </div>
+                            <span *ngIf="!actaDoc" class="badge badge-danger">SIN ENVIO</span>
+                      </div>
+                    </div>
+                 
                   <p>
                     Expedida máximo dos años anteriores a la fecha.
                   </p>
@@ -63,14 +83,23 @@
             <div class='col-sm-12 col-md-6'>
               <div class='card cd'>
                 <div [class.isDisabled]="clinicDoc !== undefined ? true : false"  class='card-header c-header' (click)="collapse('collapseCLINICOS',clinicDoc !== undefined ? true : false)">
-                  <b>RESULTADO DE ANÁLISIS CLÍNICOS
-                      <div *ngIf="clinicDoc">
-                          <span *ngIf="clinicDoc.status === 'EN PROCESO'" class="badge badge-info float-right">EN PROCESO</span>
-                          <span *ngIf="clinicDoc.status === 'VALIDADO'" class="badge badge-primary float-right">VALIDADO</span>
-                          <span *ngIf="clinicDoc.status === 'ACEPTADO'" class="badge badge-success float-right">ACEPTADO</span>
-                        </div>
-                        <span *ngIf="!clinicDoc" class="badge badge-danger float-right">SIN ENVIO</span>
-                  </b>
+                      
+                  <div class="row">
+                      <div class="col-9">
+                        <p><b>RESULTADO DE ANÁLISIS CLÍNICOS
+                            
+                        </b></p>
+                      </div>
+                      <div class="col-3">
+                          <div *ngIf="clinicDoc">
+                              <span *ngIf="clinicDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                              <span *ngIf="clinicDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                              <span *ngIf="clinicDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                            </div>
+                            <span *ngIf="!clinicDoc" class="badge badge-danger">SIN ENVIO</span>
+                      </div>
+                    </div>
+                  
                   <p>
                     Biometría Hemática, coproparasitoscópico, examen general de orina, RH y tipo de sangre.
                   </p>
@@ -84,15 +113,24 @@
             <!--Columna 2: COPIA DEL COMPROBANTE-->
             <div class='col-sm-12 col-md-6'>
               <div class='card cd'>
-                <div [class.isDisabled]="payDoc !== undefined ? true : false"  class='card-header c-header' (click)="collapse('collapsePAGO',payDoc !== undefined ? true : false)">
-                  <b>COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN
-                      <div *ngIf="payDoc">
-                          <span *ngIf="payDoc.status === 'EN PROCESO'" class="badge badge-info float-right">EN PROCESO</span>
-                          <span *ngIf="payDoc.status === 'VALIDADO'" class="badge badge-primary float-right">VALIDADO</span>
-                          <span *ngIf="payDoc.status === 'ACEPTADO'" class="badge badge-success float-right">ACEPTADO</span>
-                        </div>
-                        <span *ngIf="!payDoc" class="badge badge-danger float-right">SIN ENVIO</span>
-                  </b>
+                <div [class.isDisabled]="payDoc !== undefined ? true : false"  class='card-header c-header' (click)="collapse('collapsePAGO',payDoc !== undefined ? true : false)">                    
+                    <div class="row">
+                      <div class="col-9">
+                        <p>
+                            <b>COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN                                
+                            </b>
+                        </p>
+                      </div>
+                      <div class="col-3">
+                          <div *ngIf="payDoc">
+                              <span *ngIf="payDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                              <span *ngIf="payDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                              <span *ngIf="payDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                            </div>
+                            <span *ngIf="!payDoc" class="badge badge-danger">SIN ENVIO</span>
+                      </div>
+                    </div>
+                  
                   <p >
                     Copia del recibo de pago bancario sellado por el departamento de Recursos Financieros.
                   </p>
@@ -110,14 +148,25 @@
             <div class='col-sm-12 col-md-6'>
               <div class='card cd'>
                 <div [class.isDisabled]="nssDoc !== undefined ? true : false"  class='card-header c-header' (click)="collapse('collapseNSS',nssDoc !== undefined ? true : false)">
-                  <b>NÚMERO DE SEGURO SOCIAL
-                      <div *ngIf="nssDoc">
-                          <span *ngIf="nssDoc.status === 'EN PROCESO'" class="badge badge-info float-right">EN PROCESO</span>
-                          <span *ngIf="nssDoc.status === 'VALIDADO'" class="badge badge-primary float-right">VALIDADO</span>
-                          <span *ngIf="nssDoc.status === 'ACEPTADO'" class="badge badge-success float-right">ACEPTADO</span>
-                        </div>
-                        <span *ngIf="!nssDoc" class="badge badge-danger float-right">SIN ENVIO</span>
-                  </b>
+                    
+                  <div class="row">
+                    <div class="col-9">
+                      <p>
+                          <b>NÚMERO DE SEGURO SOCIAL
+                              
+                          </b>
+                      </p>
+                    </div>
+                    <div class="col-3">
+                        <div *ngIf="nssDoc">
+                            <span *ngIf="nssDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                            <span *ngIf="nssDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                            <span *ngIf="nssDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                          </div>
+                          <span *ngIf="!nssDoc" class="badge badge-danger">SIN ENVIO</span>
+                    </div>
+                  </div>
+                  
                   <p >
                     Descarga tu número de seguro social en la página oficial del https://www.gob.mx/afiliatealimss.
                   </p>
@@ -132,14 +181,23 @@
             <div class='col-sm-12 col-md-6'>
               <div class='card cd'>
                 <div [class.isDisabled]="imageDoc !== undefined ? true : false" class='card-header c-header' (click)="collapse('collapseFOTO',imageDoc !== undefined ? true : false)">
-                  <b>FOTO
-                      <div *ngIf="imageDoc">
-                          <span *ngIf="imageDoc.status === 'EN PROCESO'" class="badge badge-info float-right">EN PROCESO</span>
-                          <span *ngIf="imageDoc.status === 'VALIDADO'" class="badge badge-primary float-right">VALIDADO</span>
-                          <span *ngIf="imageDoc.status === 'ACEPTADO'" class="badge badge-success float-right">ACEPTADO</span>
-                        </div>
-                        <span *ngIf="!imageDoc" class="badge badge-danger float-right">SIN ENVIO</span>
-                  </b>
+                  <div class="row">
+                    <div class="col-9">
+                      <p>
+                          <b>FOTO                              
+                          </b>
+                      </p>
+                    </div>
+                    <div class="col-3">
+                        <div *ngIf="imageDoc">
+                            <span *ngIf="imageDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                            <span *ngIf="imageDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                            <span *ngIf="imageDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                          </div>
+                          <span *ngIf="!imageDoc" class="badge badge-danger">SIN ENVIO</span>
+                    </div>
+                  </div>
+                  
                 </div>
                 <div class='card-body c-body' id="collapseFOTO">
                   <label><b>Nombre original de archivo: </b>{{dropzoneFileNamePhoto}}</label>       
@@ -156,14 +214,25 @@
       
               <div class='card cd'>
                 <div class="card-header c-header" [class.isDisabled]="certificateDoc !== undefined ? true : false"  (click)="collapse('collapseCERT',certificateDoc !== undefined ? true : false)">
-                  <b>CERTIFICADO DE BACHILLERATO O EQUIVALENTE
-                      <div *ngIf="certificateDoc">
-                          <span *ngIf="certificateDoc.status === 'EN PROCESO'" class="badge badge-info float-right">EN PROCESO</span>
-                          <span *ngIf="certificateDoc.status === 'VALIDADO'" class="badge badge-primary float-right">VALIDADO</span>
-                          <span *ngIf="certificateDoc.status === 'ACEPTADO'" class="badge badge-success float-right">ACEPTADO</span>
-                        </div>
-                        <span *ngIf="!certificateDoc" class="badge badge-danger float-right">SIN ENVIO</span>
-                  </b>
+                  <div class="row">
+                    <div class="col-9">
+                      <p>
+
+                        <b>CERTIFICADO DE BACHILLERATO O EQUIVALENTE
+                                                        
+                        </b>                        
+                      </p>
+                    </div>
+                    <div class="col-3">
+                        <div *ngIf="certificateDoc">
+                            <span *ngIf="certificateDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                            <span *ngIf="certificateDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                            <span *ngIf="certificateDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                          </div>  
+                        <span *ngIf="!certificateDoc" class="badge badge-danger">SIN ENVIO</span>
+                    </div>
+                  </div>
+                 
                   <p >
                     Nota.- Alumnos egresados de Instituciones Privadas y de la Universidad Autónoma de Nayarit, deben
                     legalizar su
@@ -182,4 +251,11 @@
           <br>
         </div>
       </div>
-    
+      <!-- <img [src]="image" alt=""> -->
+      <div *ngIf="pub === true">
+          <pdf-viewer [(src)]="pdfSrc" 
+          [render-text]="true"
+          style="display: block;"
+></pdf-viewer>
+          <!-- <ngx-extended-pdf-viewer useBrowserLocale="true" height="80vh" [(src)]="pdfSrc"> </ngx-extended-pdf-viewer> -->
+      <!-- </div> -->
