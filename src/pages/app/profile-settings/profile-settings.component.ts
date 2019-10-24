@@ -4,6 +4,8 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CookiesService} from 'src/services/app/cookie.service';
 import {NotificationsServices} from 'src/services/app/notifications.service';
 import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
+import {ErrorMatcher} from 'src/services/shared/ErrorMatcher';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-profile-settings',
@@ -15,12 +17,22 @@ export class ProfileSettingsComponent implements OnInit {
   public formGroupPsw;
   public email;
   public employee;
+  private user;
+  public isMatchPasswords = false;
 
   constructor(
       private employeeProvider: EmployeeProvider,
       private cookiesService: CookiesService,
       private notification: NotificationsServices,
-  ) { }
+      private activedRoute: ActivatedRoute,
+      private router: Router,
+      public matcher: ErrorMatcher,
+  ) {
+    this.user = this.cookiesService.getData().user;
+    if (!this.cookiesService.isAllowed(this.activedRoute.snapshot.url[0].path)) {
+      this.router.navigate(['/']);
+    }
+  }
 
   ngOnInit() {
     this.formGroupData = new FormGroup({
@@ -62,8 +74,11 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   onSubmit() {
-    this.employee.employee.name.firstName = this.formGroupData.get('name').value;
-    this.employee.employee.name.lastName = this.formGroupData.get('lastName').value;
+    const firstName = this.formGroupData.get('name').value;
+    const lastName = this.formGroupData.get('lastName').value;
+    this.employee.employee.name.firstName = firstName;
+    this.employee.employee.name.lastName = lastName;
+    this.employee.employee.name.fullName = `${firstName} ${lastName}`;
     this.employeeProvider.updateProfile(this.employee.employee._id, {
       user: {
         oldPassword: this.formGroupData.get('loginPsw').value
@@ -75,12 +90,6 @@ export class ProfileSettingsComponent implements OnInit {
       } else {
         this.notification.showNotification(eNotificationType.SUCCESS, 'Datos actualizados correctamente', '');
         this.formGroupData.get('loginPsw').reset();
-        /*this.formGroupData.get('loginPsw').pristine = true;
-        this.formGroupData.get('loginPsw').clearValidators();
-        this.formGroupData.get('loginPsw').markAsUntouched();
-        this.formGroupData.get('loginPsw').markAsPristine();
-        this.formGroupData.get('loginPsw').setValidators([Validators.required]);
-        this.formGroupData.get('loginPsw').updateValueAndValidity();*/
       }
     }, err => {
       this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
@@ -88,7 +97,7 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   onSubmit1() {
-    if (this.formGroupPsw.get('psw').value === this.formGroupPsw.get('confPsw').value) {
+    if (this.isMatchPasswords) {
       this.employeeProvider.updateProfile(this.employee.employee._id, {
         user: {
           oldPassword: this.formGroupPsw.get('loginPsw').value,
@@ -99,6 +108,7 @@ export class ProfileSettingsComponent implements OnInit {
             this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
           } else {
             this.notification.showNotification(eNotificationType.SUCCESS, 'Contraseña actualizada correctamente', '');
+            this.formGroupPsw.reset();
           }
         }, err => {
         this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
@@ -107,6 +117,10 @@ export class ProfileSettingsComponent implements OnInit {
     } else {
       this.notification.showNotification(eNotificationType.ERROR, 'Las contraseñas no coinciden', '');
     }
+  }
+
+  validateMatchPassword() {
+    this.isMatchPasswords = this.formGroupPsw.get('psw').value === this.formGroupPsw.get('confPsw').value ;
   }
 
 }

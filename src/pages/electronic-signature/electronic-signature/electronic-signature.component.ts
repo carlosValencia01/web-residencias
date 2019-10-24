@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {EmployeeProvider} from 'src/providers/shared/employee.prov';
+import {CookiesService} from 'src/services/app/cookie.service';
 
 @Component({
   selector: 'app-electronic-signature',
@@ -8,8 +10,10 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class ElectronicSignatureComponent implements OnInit {
   public formGroupPsw;
+  public email;
+  public employee;
 
-  constructor() {
+  constructor(private employeeProvider: EmployeeProvider, private cookiesService: CookiesService) {
   }
 
   ngOnInit() {
@@ -22,7 +26,10 @@ export class ElectronicSignatureComponent implements OnInit {
   }
 
   onSubmit() {
-
+    this.email = this.cookiesService.getData();
+    this.employeeProvider.getEmployee(this.email.user.email).subscribe(res => {
+      this.employee = res;
+    });
   }
 
 }

@@ -157,6 +157,8 @@ import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-vi
 // Providers
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+// Services
+import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
 
 @NgModule({
   declarations: [
@@ -325,6 +327,8 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     EmployeeProvider,
     StudentProvider,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+    // Services
+    ErrorMatcher,
   ],
   entryComponents: [
     // Reception act module

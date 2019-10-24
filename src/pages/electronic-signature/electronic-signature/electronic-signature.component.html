@@ -1,6 +1,6 @@
 <mat-card class="example-card">
   <mat-card-header>
-    <mat-card-title>Contraseña</mat-card-title>
+    <mat-card-title>Generar firma electrónica</mat-card-title>
   </mat-card-header>
   <form class="example-form" [formGroup]="formGroupPsw" (ngSubmit)="onSubmit()">
     <mat-card-content>
@@ -20,29 +20,3 @@
     </mat-card-actions>
   </form>
 </mat-card>
-
-<!--<div class="row">
-  <div class="card col-6">
-    <form class="example-form" [formGroup]="formGroupPsw" (ngSubmit)="onSubmit()">
-      <div class="card-header">
-        <h3>Creación de firma</h3>
-      </div>
-      <div class="card-body">
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Contraseña" formControlName="psw">
-        </mat-form-field>
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Confirmar contraseña" formControlName="confPsw">
-        </mat-form-field>
-        <mat-form-field *ngIf="this.formGroupPsw.get('psw').value && this.formGroupPsw.get('confPsw').value" class="example-full-width">
-          <input matInput placeholder="Contraseña" formControlName="loginPsw">
-          <mat-hint align="start"><strong>Ingrese contraseña de inicio de sesión</strong> </mat-hint>
-        </mat-form-field>
-      </div>
-      <div class="card-footer example-button-row">
-        <button mat-flat-button color="primary" type="submit">Crear</button>
-      </div>
-    </form>
-  </div>
-</div>
--->
