@@ -38,7 +38,8 @@ import {
   MatSlideToggleModule,
   MatSnackBarModule,
   MatProgressSpinnerModule,
-  MatSelectModule
+  MatSelectModule,
+  MatExpansionModule,
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -89,6 +90,12 @@ import { StudentPageComponent } from 'src/pages/credentials/student-page/student
 // Pages
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
 import { InscriptionsMainPageComponent } from 'src/pages/inscriptions/inscriptions-main-page/inscriptions-main-page.component';
+import { RegisterStudentPageComponent } from 'src/pages/inscriptions/register-student-page/register-student-page.component';
+import { WizardInscriptionPageComponent } from '../pages/inscriptions/wizard-inscription-page/wizard-inscription-page.component';
+import { ContractStudentPageComponent } from '../pages/inscriptions/contract-student-page/contract-student-page.component';
+import { ResumeStudentPageComponent } from '../pages/inscriptions/resume-student-page/resume-student-page.component';
+import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
+
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 
@@ -178,6 +185,10 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Pages
     InscriptionsPageComponent,
     InscriptionsMainPageComponent,
+    RegisterStudentPageComponent,
+    WizardInscriptionPageComponent,
+    ContractStudentPageComponent,
+
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -228,6 +239,8 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     DocumentReviewComponent,
     ExpedienteComponent,
     ReleaseCheckComponent,
+    ResumeStudentPageComponent,
+    ConfirmationStudentPageComponent,
   ],
   imports: [
     // Angular
@@ -270,6 +283,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     MatStepperModule,
     MatTableModule,
     MatTabsModule,
+    MatExpansionModule,
 
     // Ngx
     ImageCropperModule,

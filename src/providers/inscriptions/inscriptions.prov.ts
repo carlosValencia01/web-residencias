@@ -24,4 +24,12 @@ export class InscriptionsProvider {
     updatePeriod(data : object, id : string){
         return this.api.put('period/update/'+id,data).pipe(map( res=>res.json()));
     }
+
+    updateStudent(data : object, id : string){
+        return this.api.put('inscription/updateStudent/'+id,data).pipe(map( res=>res.json()));
+    }
+
+    getStudent(id : string){
+        return this.api.get('inscription/getStudent/'+id).pipe(map( res=>res.json()));
+    }
 }

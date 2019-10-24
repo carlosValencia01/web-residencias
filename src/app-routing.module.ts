@@ -16,6 +16,12 @@ import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/
 // Inscriptions
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
 import { InscriptionsMainPageComponent } from 'src/pages/inscriptions/inscriptions-main-page/inscriptions-main-page.component';
+import { RegisterStudentPageComponent } from 'src/pages/inscriptions/register-student-page/register-student-page.component';
+import { WizardInscriptionPageComponent } from 'src/pages/inscriptions/wizard-inscription-page/wizard-inscription-page.component';
+import { ContractStudentPageComponent } from 'src/pages/inscriptions/contract-student-page/contract-student-page.component';
+import { ResumeStudentPageComponent } from 'src/pages/inscriptions/resume-student-page/resume-student-page.component';
+import { ConfirmationStudentPageComponent } from 'src/pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
+
 
 // Reception act
 import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-page.component';
@@ -27,9 +33,7 @@ import { ExpedienteComponent } from 'src/pages/reception-act/expediente/expedien
 import { DocumentsValidComponent } from 'src/pages/reception-act/documents-valid/documents-valid.component';
 
 // Graduation
-import {
-  RegisterEmailgraduationPageComponent
-} from 'src/pages/graduation/register-emailgraduation-page/register-emailgraduation-page.component';
+import { RegisterEmailgraduationPageComponent } from 'src/pages/graduation/register-emailgraduation-page/register-emailgraduation-page.component';
 import { LoaderDataGraduationPageComponent } from 'src/pages/graduation/loader-data-graduation-page/loader-data-graduation-page.component';
 import { GraduationEventsPageComponent } from 'src/pages/graduation/graduation-events-page/graduation-events-page.component';
 import { SurveyPageComponent } from 'src/pages/graduation/survey-page/survey-page.component';
@@ -51,6 +55,11 @@ const appRoutes: Routes = [
   // Inscriptions
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
   { path: 'inscriptionP', component: InscriptionsMainPageComponent, pathMatch: 'full' },
+  { path: 'registerStudent', component: RegisterStudentPageComponent, pathMatch: 'full' },
+  { path: 'wizardInscription', component: WizardInscriptionPageComponent, pathMatch: 'full' },
+  { path: 'contractStudent', component: ContractStudentPageComponent, pathMatch: 'full' },
+  { path: 'resumeStudent', component: ResumeStudentPageComponent, pathMatch: 'full' },
+  { path: 'confirmationStudent', component: ConfirmationStudentPageComponent, pathMatch: 'full' },
 
   // Reception act
   { path: 'english', component: VinculacionPageComponent, pathMatch: 'full' },

@@ -1,0 +1,30 @@
+table{
+    table-layout: fixed;
+    width: 100%;
+}
+
+.imgProfile{
+    width: 70%;
+    text-align: center;
+    padding-top: 5px;
+}
+
+h6 {
+    font-weight: bold;
+}
+h6 span {
+    font-weight: normal;
+}
+
+hr {
+    border-style: solid;
+    border-width: 3px;
+}
+
+.cardProfile{
+    padding-right: 5px;
+}
+
+.cardData{
+    width: 100%;
+}

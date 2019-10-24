@@ -1,0 +1,21 @@
+<mat-horizontal-stepper [linear]="isLinear" #stepper>
+  <mat-step editable='false'>
+    <ng-template matStepLabel>Formulario</ng-template>
+    <app-register-student-page></app-register-student-page>
+  </mat-step>
+  <mat-step editable='false'>
+      <ng-template matStepLabel>Documentos</ng-template>
+  </mat-step>
+  <mat-step editable='false'>
+    <ng-template matStepLabel>Contrato</ng-template>
+    <app-contract-student-page></app-contract-student-page>
+  </mat-step>
+  <mat-step editable='false'>
+    <ng-template matStepLabel>Resumen</ng-template>
+    <app-resume-student-page></app-resume-student-page>
+  </mat-step>
+  <mat-step editable='false'>
+    <ng-template matStepLabel>Confirmación</ng-template>
+    <app-confirmation-student-page></app-confirmation-student-page>
+  </mat-step>
+</mat-horizontal-stepper>
