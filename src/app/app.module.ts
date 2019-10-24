@@ -26,6 +26,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 // Material
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
   MatButtonModule,
   MatDatepickerModule,
@@ -148,6 +149,12 @@ import { FirebaseService } from 'src/services/graduation/firebase.service';
 // Providers
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 
+// Electronic signature module
+// Pages
+import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
+// import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
+
 // Shared
 // Components
 import { LoaderComponent } from 'src/components/shared/loader/loader.component';
@@ -155,7 +162,9 @@ import { LoaderComponent } from 'src/components/shared/loader/loader.component';
 import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 // Providers
+import { DocumentProvider } from 'src/providers/shared/document.prov';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
+import { PositionProvider } from 'src/providers/shared/position.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
@@ -229,6 +238,12 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Pipes
     FilterPipe,
 
+    // Electronic signature module
+    // Pages
+    DocumentsAdminPageComponent,
+    // DocumentsAssignPageComponent,
+    PositionsAdminPageComponent,
+
     // Shared
     // Components
     LoaderComponent,
@@ -253,6 +268,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     SimpleNotificationsModule.forRoot(),
 
     // Material
+    MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -324,7 +340,9 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
 
     // Shared
     // Providers
+    DocumentProvider,
     EmployeeProvider,
+    PositionProvider,
     StudentProvider,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     // Services

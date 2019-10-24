@@ -44,6 +44,11 @@ import { SurveyFindPageComponent } from 'src/pages/graduation/survey-find-page/s
 import { SurveyQuestionsPageComponent } from 'src/pages/graduation/survey-questions-page/survey-questions-page.component';
 import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/survey-list-page.component';
 
+// Electronic signature
+import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
+// import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
+
 const appRoutes: Routes = [
   // App
   { path: '', component: HomePageComponent, pathMatch: 'full' },
@@ -80,6 +85,11 @@ const appRoutes: Routes = [
   { path: 'surveyGraduates/:id/:nc', component: SurveyGraduatesPageComponent, pathMatch: 'full' },
   { path: 'surveyQuestions/:id/:nc', component: SurveyQuestionsPageComponent , pathMatch: 'full' },
   { path: 'surveyRegister/:id/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
+
+  // Electronic signature
+  { path: 'documentsAdmin', component: DocumentsAdminPageComponent, pathMatch: 'full' },
+  // { path: 'documentsAssign', component: DocumentsAssignPageComponent, pathMatch: 'full' },
+  { path: 'positionsAdmin', component: PositionsAdminPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
