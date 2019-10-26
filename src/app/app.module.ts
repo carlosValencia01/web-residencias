@@ -28,6 +28,7 @@ import { environment } from 'src/environments/environment';
 // Material
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
+  ErrorStateMatcher,
   MatButtonModule,
   MatDatepickerModule,
   MatNativeDateModule,
@@ -39,7 +40,7 @@ import {
   MatSlideToggleModule,
   MatSnackBarModule,
   MatProgressSpinnerModule,
-  MatSelectModule
+  MatSelectModule,
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -308,6 +309,8 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     SidebarModule.forRoot(),
   ],
   providers: [
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+    { provide: ErrorStateMatcher, useClass: ErrorMatcher },
     // App module
     // Providers
     Api,
@@ -344,7 +347,6 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     EmployeeProvider,
     PositionProvider,
     StudentProvider,
-    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     // Services
     ErrorMatcher,
   ],

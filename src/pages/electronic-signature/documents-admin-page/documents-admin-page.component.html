@@ -1,17 +1,21 @@
-<div class="row" style="margin:5px;">
-  <button mat-raised-button color="primary" (click)="newDocument()">Crear documento</button>
-</div>
-<div [ngClass]="showFormPanel ? 'row' : 'row justify-content-center'">
-  <mat-card [ngClass]="showFormPanel ? 'col-sm-12 col-md-5' : 'col-sm-12 col-md-7'">
-    <input placeholder="Buscar documento" class="search" (keyup)="searchDocuments()" [(ngModel)]="searchText"
-      oninput="this.value = this.value.toUpperCase()">
+<div class="row justify-content-center">
+  <mat-card [ngClass]="showFormPanel ? 'col-sm-11 col-md-5 m-2' : 'col-sm-11 col-md-7 m-2'">
+    <div class="row" style="margin:5px;">
+      <button (click)="newDocument()" color="primary" mat-raised-button>Crear documento</button>
+    </div>
+    <mat-form-field appearance="outline" class="col-12">
+      <mat-label>Búsqueda</mat-label>
+      <input (keyup)="searchDocuments()" [(ngModel)]="searchText"
+             [autofocus]="true" matInput
+             oninput="this.value = this.value.toUpperCase()" placeholder="Buscar documento">
+    </mat-form-field>
     <mat-selection-list class="documents-list">
       <mat-list-item *ngFor="let doc of documents" class="document-card">
         <mat-card>
           <mat-card-header>
             <mat-card-title>
               <mat-chip-list selectable="false">
-                <span *ngFor="let department of doc.departments" >
+                <span *ngFor="let department of doc.departments">
                   <span class="department-chip">{{ department }}</span>
                 </span>
               </mat-chip-list>
@@ -19,132 +23,116 @@
             <mat-card-subtitle>{{ doc.name }}</mat-card-subtitle>
           </mat-card-header>
           <mat-card-actions align="end">
-            <button mat-button (click)="viewDocument(doc)">Ver</button>
-            <button mat-button color="primary" (click)="editDocument(doc)">Editar</button>
-            <button [disabled]="doc.departments.length !== 0" mat-button color="warn" (click)="removeDocument(doc)">Eliminar</button>
+            <button (click)="viewDocument(doc)" mat-button>Ver</button>
+            <button (click)="editDocument(doc)" color="primary" mat-button>Editar</button>
+            <button (click)="removeDocument(doc)" [disabled]="doc.departments.length !== 0" color="warn" mat-button>
+              Eliminar
+            </button>
           </mat-card-actions>
         </mat-card>
       </mat-list-item>
     </mat-selection-list>
   </mat-card>
-  <mat-card class="col-sm-12 col-md-7" *ngIf="showFormPanel">
-    <span class="float-right close" placement="top" ngbTooltip="Cerrar">
-      <fa name="times-circle" (click)="closeFormPanel()" style="color:red"></fa>
+  <mat-card *ngIf="showFormPanel" class="col-sm-11 col-md-6 m-2">
+    <span class="float-right close" ngbTooltip="Cerrar" placement="top">
+      <fa (click)="closeFormPanel()" name="times-circle" style="color:red"></fa>
     </span>
-    <form [formGroup]="documentForm" (ngSubmit)="saveDocument()">
+    <form (ngSubmit)="saveDocument()" [formGroup]="documentForm">
       <mat-card-title>{{ titleCardForm }}</mat-card-title>
       <mat-card-content class="card-body">
-        <div class="form-group">
-          <label class="form-col-form-label" for="strategicProcess">Proceso estratégico:</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-cog"></i></span>
-            </div>
-            <input type="text" [ngClass]="(!documentForm.get('strategicProcess').valid &&
-                  documentForm.get('strategicProcess').touched)?'form-control is-invalid':'form-control'"
-              id="strategicProcess" formControlName="strategicProcess" placeholder="Proceso estratégico" oninput="this.value =
-                  this.value.toUpperCase()">
-            <div class="invalid-feedback"
-              *ngIf="!documentForm.get('strategicProcess').valid && documentForm.get('strategicProcess').touched">
+        <div class="row">
+          <mat-form-field [ngClass]="(!documentForm.get('strategicProcess').valid &&
+                  documentForm.get('strategicProcess').touched)?'col-12 is-invalid':'col-12'">
+            <input formControlName="strategicProcess" id="strategicProcess" matInput oninput="this.value =
+                  this.value.toUpperCase()"
+                   placeholder="Proceso estratégico" type="text">
+            <mat-error
+              *ngIf="!documentForm.get('strategicProcess').valid && documentForm.get('strategicProcess').touched"
+              class="invalid-feedback">
               <span *ngIf="documentForm.get('strategicProcess').errors['required']">
                 ¡Por favor ingrese el proceso estratégico!
               </span>
-            </div>
-          </div>
+            </mat-error>
+          </mat-form-field>
         </div>
         <div class="row">
-          <div class="form-group col-md-12 col-lg-6">
-            <label class="form-col-form-label" for="key">Clave:</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fa fa-key"></i></span>
-              </div>
-              <input type="text" [ngClass]="(!documentForm.get('key').valid &&
-                  documentForm.get('key').touched)?'form-control is-invalid':'form-control'" id="key"
-                formControlName="key" placeholder="Clave" oninput="this.value =
-                  this.value.toUpperCase()">
-              <div class="invalid-feedback" *ngIf="!documentForm.get('key').valid && documentForm.get('key').touched">
+          <div class="col-sm-12 col-md-6 p-0">
+            <mat-form-field [ngClass]="(!documentForm.get('key').valid &&
+                  documentForm.get('key').touched)?'col-12 is-invalid':'col-12'">
+              <input formControlName="key" id="key" matInput oninput="this.value = this.value.toUpperCase()"
+                     placeholder="Clave" type="text">
+              <mat-error *ngIf="!documentForm.get('key').valid && documentForm.get('key').touched"
+                         class="invalid-feedback">
                 <span *ngIf="documentForm.get('key').errors['required']">
                   ¡Por favor ingrese la clave!
                 </span>
-              </div>
-            </div>
+              </mat-error>
+            </mat-form-field>
           </div>
-          <div class="form-group col-md-12 col-lg-6">
-            <label class="form-col-form-label" for="code">Código:</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fa fa-code"></i></span>
-              </div>
-              <input type="text" [ngClass]="(!documentForm.get('code').valid &&
-                  documentForm.get('code').touched)?'form-control is-invalid':'form-control'" id="code"
-                formControlName="code" placeholder="Código" oninput="this.value =
-                  this.value.toUpperCase()">
-              <div class="invalid-feedback" *ngIf="!documentForm.get('code').valid && documentForm.get('code').touched">
+          <div class="col-sm-12 col-md-6 p-0">
+            <mat-form-field [ngClass]="(!documentForm.get('code').valid &&
+                  documentForm.get('code').touched)?'col-12 is-invalid':'col-12'">
+              <input formControlName="code" id="code" matInput oninput="this.value = this.value.toUpperCase()"
+                     placeholder="Código" type="text">
+              <mat-error *ngIf="!documentForm.get('code').valid && documentForm.get('code').touched"
+                         class="invalid-feedback">
                 <span *ngIf="documentForm.get('code').errors['required']">
                   ¡Por favor ingrese el código!
                 </span>
-              </div>
-            </div>
+              </mat-error>
+            </mat-form-field>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-col-form-label" for="operativeProcess">Proceso operativo:</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-cog"></i></span>
-            </div>
-            <input type="text" [ngClass]="(!documentForm.get('operativeProcess').valid &&
-                  documentForm.get('operativeProcess').touched)?'form-control is-invalid':'form-control'"
-              id="operativeProcess" formControlName="operativeProcess" placeholder="Proceso operativo" oninput="this.value =
-                  this.value.toUpperCase()">
-            <div class="invalid-feedback"
-              *ngIf="!documentForm.get('operativeProcess').valid && documentForm.get('operativeProcess').touched">
+        <div class="row">
+          <mat-form-field [ngClass]="(!documentForm.get('operativeProcess').valid &&
+                  documentForm.get('operativeProcess').touched)?'col-12 is-invalid':'col-12'">
+            <input formControlName="operativeProcess"
+                   id="operativeProcess"
+                   matInput oninput="this.value =
+                  this.value.toUpperCase()" placeholder="Proceso operativo" type="text">
+            <mat-error
+              *ngIf="!documentForm.get('operativeProcess').valid && documentForm.get('operativeProcess').touched"
+              class="invalid-feedback">
               <span *ngIf="documentForm.get('operativeProcess').errors['required']">
                 ¡Por favor ingrese el proceso operativo!
               </span>
-            </div>
-          </div>
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div class="form-group">
-          <label class="form-col-form-label" for="procedure">Procedimiento:</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-th-list"></i></span>
-            </div>
-            <input type="text" [ngClass]="(!documentForm.get('procedure').valid &&
-                  documentForm.get('procedure').touched)?'form-control is-invalid':'form-control'" id="procedure"
-              formControlName="procedure" placeholder="Procedimiento" oninput="this.value =
-                  this.value.toUpperCase()">
-            <div class="invalid-feedback"
-              *ngIf="!documentForm.get('procedure').valid && documentForm.get('procedure').touched">
+        <div class="row">
+          <mat-form-field [ngClass]="(!documentForm.get('procedure').valid &&
+                  documentForm.get('procedure').touched)?'col-12 is-invalid':'col-12'">
+            <input formControlName="procedure"
+                   id="procedure" matInput
+                   oninput="this.value =
+                  this.value.toUpperCase()" placeholder="Procedimiento" type="text">
+            <mat-error *ngIf="!documentForm.get('procedure').valid && documentForm.get('procedure').touched"
+                       class="invalid-feedback">
               <span *ngIf="documentForm.get('procedure').errors['required']">
                 ¡Por favor ingrese el procedimiento!
               </span>
-            </div>
-          </div>
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div class="form-group">
-          <label class="form-col-form-label" for="name">Nombre:</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-file-text"></i></span>
-            </div>
-            <input type="text" [ngClass]="(!documentForm.get('name').valid &&
-                  documentForm.get('name').touched)?'form-control is-invalid':'form-control'" id="name"
-              formControlName="name" placeholder="Nombre" oninput="this.value =
-                  this.value.toUpperCase()">
-            <div class="invalid-feedback" *ngIf="!documentForm.get('name').valid && documentForm.get('name').touched">
+        <div class="row">
+          <mat-form-field [ngClass]="(!documentForm.get('name').valid &&
+                  documentForm.get('name').touched)?'col-12 is-invalid':'col-12'">
+            <input formControlName="name"
+                   id="name" matInput
+                   oninput="this.value =
+                  this.value.toUpperCase()" placeholder="Nombre" type="text">
+            <mat-error *ngIf="!documentForm.get('name').valid && documentForm.get('name').touched"
+                       class="invalid-feedback">
               <span *ngIf="documentForm.get('name').errors['required']">
                 ¡Por favor ingrese el nombre!
               </span>
-            </div>
-          </div>
+            </mat-error>
+          </mat-form-field>
         </div>
       </mat-card-content>
-      <mat-card-actions align="end" *ngIf="!isViewDetails" style="padding:8px;margin:0px;">
-        <button type="submit" mat-button color="primary" [disabled]="documentForm.invalid">Guardar</button>
-        <button type="button" mat-button color="warn" (click)="documentForm.reset()">Limpiar</button>
+      <mat-card-actions *ngIf="!isViewDetails" align="end" style="padding:8px;margin:0px;">
+        <button [disabled]="documentForm.invalid" color="primary" mat-button type="submit">Guardar</button>
+        <button (click)="documentForm.reset()" color="warn" mat-button type="button">Limpiar</button>
       </mat-card-actions>
     </form>
   </mat-card>
