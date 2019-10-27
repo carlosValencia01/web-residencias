@@ -1,11 +1,14 @@
-<div class="row" style="margin:5px;">
-  <button (click)="newPosition()" color="primary" mat-raised-button>Crear puesto</button>
-</div>
-<div [ngClass]="showFormPanel ? 'row' : 'row justify-content-center'">
-  <mat-card [ngClass]="showFormPanel ? 'col-sm-12 col-md-5' : 'col-sm-12 col-md-7'">
-    <input (keyup)="searchPosition()" [(ngModel)]="searchText" class="search"
-           oninput="this.value = this.value.toUpperCase()"
-           placeholder="Buscar puesto">
+<div class="row justify-content-center">
+  <mat-card [ngClass]="showFormPanel ? 'col-sm-11 col-md-5 m-2' : 'col-sm-11 col-md-7 m-2'">
+    <div class="row" style="margin:5px;">
+      <button (click)="newPosition()" color="primary" mat-raised-button>Crear puesto</button>
+    </div>
+    <mat-form-field appearance="outline" class="col-12">
+      <mat-label>Búsqueda</mat-label>
+      <input (keyup)="searchPosition()" [(ngModel)]="searchText"
+             [autofocus]="true" matInput oninput="this.value = this.value.toUpperCase()"
+             placeholder="Buscar puesto">
+    </mat-form-field>
     <mat-selection-list class="positions-list">
       <mat-list-item *ngFor="let position of positions" class="position-card">
         <mat-card>
@@ -22,7 +25,7 @@
       </mat-list-item>
     </mat-selection-list>
   </mat-card>
-  <mat-card *ngIf="showFormPanel" class="col-sm-12 col-md-7">
+  <mat-card *ngIf="showFormPanel" class="col-sm-11 col-md-6 m-2">
     <span class="float-right close" ngbTooltip="Cerrar" placement="top">
       <fa (click)="closeFormPanel()" name="times-circle" style="color:red"></fa>
     </span>
@@ -52,8 +55,9 @@
           <mat-form-field
             [ngClass]="(!positionForm.get('name').valid && positionForm.get('name').touched)?'col-12 is-invalid':'col-12'"
             id="name" style="padding:0px;">
-            <input [formControl]="positionForm.get('name')" matInput placeholder="Nombre del puesto" type="text"
-                   oninput="this.value = this.value.toUpperCase()">
+            <input [formControl]="positionForm.get('name')" matInput oninput="this.value = this.value.toUpperCase()"
+                   placeholder="Nombre del puesto"
+                   type="text">
           </mat-form-field>
           <mat-error *ngIf="!positionForm.get('name').valid && positionForm.get('name').touched"
                      class="invalid-feedback">
