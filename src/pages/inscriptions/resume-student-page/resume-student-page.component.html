@@ -8,8 +8,7 @@
         <td style="width: 35%;">
           <mat-card class="cardProfile">
             <div style="text-align: center;">
-              <img mat-card-image src="https://k2.okccdn.com/media/img/user/placeholder_2013/pq_800.png"
-                class="imgProfile">
+              <img mat-card-image [src]="image" class="imgProfile">
             </div>
             <mat-card-content>
               <h6>Nombre: <span>{{nombre}}</span></h6>
@@ -19,7 +18,7 @@
             </mat-card-content>
           </mat-card>
         </td>
-        <td colspan="3" style="vertical-align: middle;">
+        <td colspan="3" style="vertical-align: top;">
           <mat-card class="cardData">
             <mat-card-header>
               <h4>Datos Generales</h4>
@@ -31,129 +30,161 @@
               <h6>CURP: <span>{{curp}}</span></h6>
               <h6>NSS (Número de Seguro Social): <span>{{nss}}</span></h6>
             </mat-card-content>
+            <a (click)="showMoreInformation()" style="cursor: pointer;">Ver más ...</a>
+            <!--
+            <mat-accordion>
+              <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    Ver más...
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ng-template matExpansionPanelContent>
+                  <h4>Dirección</h4>
+                  <h6>Calle: <span>{{calle}}</span>&nbsp;&nbsp;&nbsp;Colonia: <span>{{colonia}}</span></h6>
+                  <h6>Código Postal: <span>{{cp}}</span></h6>
+                  <h6>Ciudad: <span>{{ciudad}}</span>&nbsp;&nbsp;&nbsp;Estado: <span>{{estado}}</span></h6>
+                  <h6 *ngIf="etnia == 'Si'">Etnia: <span>{{tipoEtnia}}</span></h6>
+                  <h6 *ngIf="discapacidad == 'Si'">Discapacidad: <span>{{tipoDiscapacidad}}</span></h6>
+                  <br>
+                  <h4>Datos Académicos</h4>
+                  <h6>Escuela Procedencia: <span>{{nombreEP}}</span></h6>
+                  <h6>Promedio: <span>{{promedioEP}}</span></h6>
+                  <h6>Carrera a Cursar: <span>{{carreraCursar}}</span></h6>
+                </ng-template>
+              </mat-expansion-panel>
+            </mat-accordion>
+            -->
           </mat-card><br>
-          <mat-card class="cardData">
-            <mat-card-header>
-              <h4>Dirección</h4>
-            </mat-card-header>
-            <mat-card-content>
-              <h6>Calle: <span>{{calle}}</span>&nbsp;&nbsp;&nbsp;Colonia: <span>{{colonia}}</span></h6>
-              <h6>Código Postal: <span>{{cp}}</span></h6>
-              <h6>Ciudad: <span>{{ciudad}}</span>&nbsp;&nbsp;&nbsp;Estado: <span>{{estado}}</span></h6>
-              <h6 *ngIf="etnia == 'Si'">Etnia: <span>{{tipoEtnia}}</span></h6>
-              <h6 *ngIf="discapacidad == 'Si'">Discapacidad: <span>{{tipoDiscapacidad}}</span></h6>
-            </mat-card-content>
-          </mat-card><br>
-          <mat-card class="cardData">
-            <mat-card-header>
-              <h4>Datos Académicos</h4>
-            </mat-card-header>
-            <mat-card-content>
-              <h6>Escuela Procedencia: <span>{{nombreEP}}</span></h6>
-              <h6>Promedio: <span>{{promedioEP}}</span></h6>
-              <h6>Carrera a Cursar: <span>{{carreraCursar}}</span></h6>
-            </mat-card-content>
-          </mat-card>
         </td>
       </table>
-      <hr>
-      <table>
-        <td style="width: 35%;">
-          <mat-card class="cardData">
-            <mat-card-header>
-              <h4>Documentos</h4>
-            </mat-card-header>
-            <mat-card-content>
-                <mat-accordion>
-                    <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          CERTIFICADO DE BACHILLERATO O EQUIVALENTE
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <ng-template matExpansionPanelContent>
-                      </ng-template>    
-                    </mat-expansion-panel>
-    
-                    <mat-expansion-panel>
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          ACTA DE NACIMIENTO
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <ng-template matExpansionPanelContent>
-                      </ng-template>
-                    </mat-expansion-panel>
-    
-                    <mat-expansion-panel [expanded]='false'>
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          CURP
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <ng-template matExpansionPanelContent>
-                      </ng-template>
-                    </mat-expansion-panel>
-    
-                    <mat-expansion-panel>
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <ng-template matExpansionPanelContent>
-                      </ng-template>
-                    </mat-expansion-panel>
-    
-                    <mat-expansion-panel>
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          RESULTADO DE ANÁLISIS CLÍNICOS
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <ng-template matExpansionPanelContent>
-                      </ng-template>
-                    </mat-expansion-panel>
-    
-                    <mat-expansion-panel>
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          NÚMERO DE SEGURO SOCIAL
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <ng-template matExpansionPanelContent>
-                      </ng-template>
-                    </mat-expansion-panel>
-    
-                    <mat-expansion-panel>
-                      <mat-expansion-panel-header>
-                        <mat-panel-title>
-                          FOTOGRAFÍA
-                        </mat-panel-title>
-                      </mat-expansion-panel-header>
-                      <ng-template matExpansionPanelContent>
-                      </ng-template>
-                    </mat-expansion-panel>
-                  </mat-accordion>
-            </mat-card-content>
-          </mat-card>
-        </td>
-        <td>
-          <mat-card class="cardData">
-            <mat-card-header>
-              <h4>Vista Previa</h4>
-            </mat-card-header>
-            <mat-card-content>
-    
-            </mat-card-content>
-          </mat-card>
-        </td>
-      </table>
-      <div class="row justify-content-center mt-3">
-          <div>
-            <button type="submit" (click)="continue()" class="btn btn-success">Continuar</button>
+      <div class="card mt-3">
+        <div class="card-header text-white bg-secondary">
+          <strong>Documentos</strong>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">
+              <mat-card class="cardDocuments" (click)="onView('Acta')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Acta de Nacimiento
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-3">
+              <mat-card class="cardDocuments" (click)="onView('Certificado')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Certificado de Estudios
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-3">
+              <mat-card class="cardDocuments" (click)="onView('Analisis')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Análisis Clínicos
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-3">
+              <mat-card class="cardDocuments" (click)="onView('Comprobante')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Comprobante de Pago
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
           </div>
         </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3">
+              <mat-card class="cardDocuments" (click)="onView('CURP')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      CURP
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-3">
+              <mat-card class="cardDocuments" (click)="onView('NSS')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      NSS
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-3">
+        <div>
+          <button type="submit" (click)="continue()" class="btn btn-success">Continuar</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

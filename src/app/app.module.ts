@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MatFileUploadModule } from 'mat-file-upload';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -19,6 +20,21 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSmartModalModule } from 'ngx-smart-modal';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { SidebarModule } from 'ng-sidebar';
+import { DropzoneModule } from 'ngx-dropzone-wrapper';
+import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
+import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+ 
+const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
+  // Change this to your upload POST address:
+  url: 'http://localhost:3004/escolares/credenciales/drive/upload/file',
+  // url: 'http://httpbin.org/post',
+  maxFilesize: 3,
+  acceptedFiles: 'image/*',  
+  maxFiles:1  
+};
+
+
+
 // Firestore
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireStorageModule } from '@angular/fire/storage';
@@ -95,9 +111,12 @@ import { WizardInscriptionPageComponent } from '../pages/inscriptions/wizard-ins
 import { ContractStudentPageComponent } from '../pages/inscriptions/contract-student-page/contract-student-page.component';
 import { ResumeStudentPageComponent } from '../pages/inscriptions/resume-student-page/resume-student-page.component';
 import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
-
+import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component'
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+//services
+import { WizardService } from 'src/services/inscriptions/wizard.service';
+import { UploadFilesService } from 'src/services/inscriptions/upload-files.service';
 
 // Reception act module
 // Pages
@@ -188,7 +207,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     RegisterStudentPageComponent,
     WizardInscriptionPageComponent,
     ContractStudentPageComponent,
-
+    InscriptionsUploadFilesPageComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -283,13 +302,14 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     MatStepperModule,
     MatTableModule,
     MatTabsModule,
+    MatProgressBarModule,
     MatExpansionModule,
-
     // Ngx
     ImageCropperModule,
     NgxExtendedPdfViewerModule,
     NgxPaginationModule,
     NgxSmartModalModule.forRoot(),
+    DropzoneModule,
 
     // Others
     AngularFontAwesomeModule,
@@ -297,6 +317,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     CustomFormsModule,
     NgbModule.forRoot(),
     SidebarModule.forRoot(),
+    PdfViewerModule,
   ],
   providers: [
     // App module
@@ -312,9 +333,12 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     ImageToBase64Service,
     NotificationsServices,
 
-    // Inscriptions
+    // Inscriptions module
     // Providers
     InscriptionsProvider,
+    //services
+    WizardService,
+    UploadFilesService,
 
     // Reception act module
     // Providers
@@ -334,6 +358,10 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     EmployeeProvider,
     StudentProvider,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+    {
+      provide: DROPZONE_CONFIG,
+      useValue: DEFAULT_DROPZONE_CONFIG
+    },
   ],
   entryComponents: [
     // Reception act module

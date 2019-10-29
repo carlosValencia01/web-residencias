@@ -6,24 +6,35 @@
     <div class="example-container">
       <table>
         <td>
-          <mat-card class="cardData">
+          <mat-card class="cardData" (click)="onView('Solicitud')" style="cursor: pointer;"
+            ngbTooltip="Descargar Solicitud" tooltipClass="my-custom-class">
             <mat-card-header>
-              <h4>Solicitud</h4>
+              <h4>Solicitud de Inscripción</h4>
             </mat-card-header>
             <mat-card-content>
-              <p>La solicitud contiene la información del alumno,como datos del estudiante, datos generales, datos académicos.</p>
-              <a href="">Enlace del Documento</a>
+              <p>La solicitud contiene la información del alumno,como datos del estudiante, datos generales, datos
+                académicos.</p>
+              <div>
+                <div class="text-center">
+                  <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                </div>
+              </div>
             </mat-card-content>
           </mat-card>
         </td>
         <td>
-          <mat-card class="cardData">
+          <mat-card class="cardData" (click)="onView('Contrato')" style="cursor: pointer;"
+            ngbTooltip="Descargar Contrato" tooltipClass="my-custom-class">
             <mat-card-header>
-              <h4>Contrato</h4>
+              <h4>Contrato con el Estudiante</h4>
             </mat-card-header>
             <mat-card-content>
               <p>Debe ser impreso y entregar firmado al momento de la inscripción.</p>
-              <a href="">Enlace del Documento</a>
+              <div>
+                <div class="text-center">
+                  <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                </div>
+              </div>
             </mat-card-content>
           </mat-card>
         </td>

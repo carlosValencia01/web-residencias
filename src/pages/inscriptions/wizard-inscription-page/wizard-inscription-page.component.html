@@ -5,6 +5,7 @@
   </mat-step>
   <mat-step editable='false'>
       <ng-template matStepLabel>Documentos</ng-template>
+      <app-inscriptions-upload-files-page></app-inscriptions-upload-files-page>
   </mat-step>
   <mat-step editable='false'>
     <ng-template matStepLabel>Contrato</ng-template>
@@ -12,7 +13,7 @@
   </mat-step>
   <mat-step editable='false'>
     <ng-template matStepLabel>Resumen</ng-template>
-    <app-resume-student-page></app-resume-student-page>
+    <app-resume-student-page *ngIf="step == 4"></app-resume-student-page>
   </mat-step>
   <mat-step editable='false'>
     <ng-template matStepLabel>Confirmación</ng-template>
