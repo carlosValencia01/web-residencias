@@ -110,7 +110,8 @@ export class PositionsAdminPageComponent implements OnInit {
     } else {
       this.positionProv.createPosition({
         name: position.name,
-        ascription: position.ascription._id
+        ascription: position.ascription._id,
+        documents: []
       })
         .subscribe(created => {
           if (created && !created.status) {

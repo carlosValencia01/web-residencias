@@ -1,0 +1,74 @@
+<div class="row justify-content-center">
+  <mat-card class="col-sm-11 col-lg-11 m-2">
+    <mat-card-content>
+      <form (ngSubmit)="searchDocuments()" [formGroup]="positionForm">
+        <div class="row">
+          <mat-form-field class="col-sm-12 col-lg-6">
+            <input [matAutocomplete]="department" autofocus
+                   formControlName="department"
+                   matInput oninput="this.value=this.value.toUpperCase()" placeholder="Departamento" type="text">
+            <mat-autocomplete #department (optionSelected)="getPositions()">
+              <mat-option *ngFor="let depto of filteredDepartments | async" [value]="depto.name">
+                {{ depto.name }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error>
+              <span>¡Por favor seleccione un departamento!</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="col-sm-12 col-lg-6">
+            <input [matAutocomplete]="position" formControlName="position" matInput
+                   oninput="this.value=this.value.toUpperCase()" placeholder="Puesto"
+                   type="text">
+            <mat-autocomplete #position (optionSelected)="searchDocuments()">
+              <mat-option *ngFor="let position of filteredPositions | async" [value]="position.name">
+                {{ position.name }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error>
+              <span>¡Por favor seleccione un puesto!</span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <mat-card *ngIf="showDocumentsPanel" class="col-sm-11 col-lg-11 m-2 p-3">
+    <div class="float-right" placement="top-right">
+      <button (click)="updateAssignDocuments()" aria-label="Guardar cambios" mat-icon-button
+              ngbTooltip="Guardar cambios">
+        <mat-icon>save</mat-icon>
+      </button>
+      <button (click)="closeDocumentsPanel()" aria-label="Cerrar panel" mat-icon-button ngbTooltip="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <mat-card-title>Documentos</mat-card-title>
+    <mat-card-content>
+      <mat-card class="m-2 p-2">
+        <mat-card-subtitle>Asignados</mat-card-subtitle>
+        <mat-card-content class="documents-list">
+          <mat-chip-list>
+            <mat-chip (removed)="removeDocument(doc)" *ngFor="let doc of documentsAssigns" class="assigned-chip"
+                      removable>
+              {{ doc.name }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+      </mat-card>
+      <mat-card class="m-2 p-2">
+        <mat-card-subtitle>No asignados</mat-card-subtitle>
+        <mat-card-content class="documents-list">
+          <mat-chip-list>
+            <mat-chip (removed)="addDocument(doc)" *ngFor="let doc of documentsNotAssigns" class="not-assigned-chip"
+                      removable>
+              {{ doc.name }}
+              <mat-icon matChipRemove>check</mat-icon>
+            </mat-chip>
+          </mat-chip-list>
+        </mat-card-content>
+      </mat-card>
+    </mat-card-content>
+  </mat-card>
+</div>

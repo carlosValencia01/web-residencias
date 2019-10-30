@@ -153,7 +153,7 @@ import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 // Electronic signature module
 // Pages
 import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
-// import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
 import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
 
 // Shared
@@ -242,7 +242,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Electronic signature module
     // Pages
     DocumentsAdminPageComponent,
-    // DocumentsAssignPageComponent,
+    DocumentsAssignPageComponent,
     PositionsAdminPageComponent,
 
     // Shared
