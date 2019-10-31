@@ -1,20 +1,36 @@
 <div class="row justify-content-center">
   <mat-card [ngClass]="showFormPanel ? 'col-sm-11 col-md-5 m-2' : 'col-sm-11 col-md-7 m-2'">
-    <div class="row" style="margin:5px;">
+    <div class="row m-2">
       <button (click)="newPosition()" color="primary" mat-raised-button>Crear puesto</button>
     </div>
-    <mat-form-field appearance="outline" class="col-12">
-      <mat-label>Búsqueda</mat-label>
-      <input (keyup)="searchPosition()" [(ngModel)]="searchText"
-             [autofocus]="true" matInput oninput="this.value = this.value.toUpperCase()"
-             placeholder="Buscar puesto">
-    </mat-form-field>
+    <div class="row">
+      <mat-form-field appearance="outline" class="col-12">
+        <mat-label>Departamento</mat-label>
+        <input #departmentElement [formControl]="departmentControl" [matAutocomplete]="departmentAutocomplete" autofocus
+               matInput oninput="this.value=this.value.toUpperCase()" placeholder="Departamento" type="text">
+        <mat-autocomplete #departmentAutocomplete (optionSelected)="getPositions()">
+          <mat-option *ngFor="let department of filteredDepartments | async" [value]="department.name">
+            {{ department.name }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="!departmentControl.valid && departmentControl.touched" class="invalid-feedback">
+        <span *ngIf="departmentControl.errors['required']">
+          ¡Por favor seleccione un departamento!
+        </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field *ngIf="departmentControl.valid" appearance="fill" class="col-12">
+        <mat-label>Búsqueda</mat-label>
+        <input (keyup)="searchPosition()" [(ngModel)]="searchText"
+               matInput oninput="this.value=this.value.toUpperCase()"
+               placeholder="Buscar puesto">
+      </mat-form-field>
+    </div>
     <mat-selection-list class="positions-list">
       <mat-list-item *ngFor="let position of positions" class="position-card">
         <mat-card>
           <mat-card-header>
-            <mat-card-title>{{ position.ascription.name }}</mat-card-title>
-            <mat-card-subtitle>{{ position.name }}</mat-card-subtitle>
+            <mat-card-title>{{ position.name }}</mat-card-title>
           </mat-card-header>
           <mat-card-actions align="end">
             <button (click)="viewPosition(position)" mat-button>Ver</button>
@@ -26,49 +42,34 @@
     </mat-selection-list>
   </mat-card>
   <mat-card *ngIf="showFormPanel" class="col-sm-11 col-md-6 m-2">
-    <span class="float-right close" ngbTooltip="Cerrar" placement="top">
-      <fa (click)="closeFormPanel()" name="times-circle" style="color:red"></fa>
-    </span>
+    <div class="float-right close" placement="top">
+      <button (click)="closeFormPanel()" aria-label="Cerrar panel" mat-icon-button ngbTooltip="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
     <form (ngSubmit)="savePosition()" [formGroup]="positionForm">
       <mat-card-title>{{ titleCardForm }}</mat-card-title>
       <mat-card-content class="card-body">
-        <div>
-          <mat-form-field
-            [ngClass]="(!positionForm.get('ascription').valid && positionForm.get('ascription').touched)?'col-12':'col-12'"
-            id="ascription" style="padding:0px;">
-            <input [formControl]="positionForm.get('ascription')" [matAutocomplete]="ascription" matInput
-                   placeholder="Adscripción" type="text">
-            <mat-autocomplete #ascription="matAutocomplete">
-              <mat-option *ngFor="let department of filteredDepartments | async" [value]="department.name">
-                {{ department.name }}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-          <mat-error *ngIf="!positionForm.get('ascription').valid && positionForm.get('ascription').touched"
-                     class="invalid-feedback">
-            <span *ngIf="positionForm.get('ascription').errors['required']">
-              ¡Por favor seleccione un departamento!
-            </span>
-          </mat-error>
-        </div>
-        <div>
-          <mat-form-field
-            [ngClass]="(!positionForm.get('name').valid && positionForm.get('name').touched)?'col-12 is-invalid':'col-12'"
-            id="name" style="padding:0px;">
-            <input [formControl]="positionForm.get('name')" matInput oninput="this.value = this.value.toUpperCase()"
-                   placeholder="Nombre del puesto"
-                   type="text">
-          </mat-form-field>
+        <mat-form-field appearance="fill" class="col-12">
+          <mat-label>Adscripción</mat-label>
+          <input [value]="departmentControl.value" disabled matInput placeholder="Adscripción" type="text">
+        </mat-form-field>
+        <mat-form-field class="col-12">
+          <input [formControl]="positionForm.get('name')" matInput oninput="this.value = this.value.toUpperCase()"
+                 placeholder="Nombre del puesto"
+                 type="text">
           <mat-error *ngIf="!positionForm.get('name').valid && positionForm.get('name').touched"
                      class="invalid-feedback">
             <span *ngIf="positionForm.get('name').errors['required']">
               ¡Por favor ingrese el nombre del puesto!
             </span>
           </mat-error>
-        </div>
+        </mat-form-field>
       </mat-card-content>
       <mat-card-actions *ngIf="!isViewDetails" align="end" style="padding:8px;margin:0px;">
-        <button [disabled]="positionForm.invalid" color="primary" mat-button type="submit">Guardar</button>
+        <button [disabled]="positionForm.invalid || departmentControl.invalid" color="primary" mat-button type="submit">
+          Guardar
+        </button>
         <button (click)="positionForm.reset()" color="warn" mat-button type="button">Limpiar</button>
       </mat-card-actions>
     </form>

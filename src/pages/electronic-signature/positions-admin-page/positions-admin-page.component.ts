@@ -1,15 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import {CookiesService} from 'src/services/app/cookie.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import Swal from 'sweetalert2';
+
+import {CookiesService} from 'src/services/app/cookie.service';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import {IDepartment} from 'src/entities/shared/department.model';
 import {IPosition} from 'src/entities/shared/position.model';
-import {PositionProvider} from 'src/providers/shared/position.prov';
 import {NotificationsServices} from 'src/services/app/notifications.service';
-import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
-import Swal from 'sweetalert2';
+import {PositionProvider} from 'src/providers/shared/position.prov';
 
 @Component({
   selector: 'app-positions-admin-page',
@@ -17,24 +18,26 @@ import Swal from 'sweetalert2';
   styleUrls: ['./positions-admin-page.component.scss']
 })
 export class PositionsAdminPageComponent implements OnInit {
+  @ViewChild('departmentElement') departmentElement: ElementRef;
   public positionForm: FormGroup;
+  public departmentControl: FormControl;
   public positions: Array<IPosition>;
-  private positionsCopy: Array<IPosition>;
   public departments: Array<IDepartment>;
   public filteredDepartments: Observable<Array<IDepartment>>;
-  private currentPosition: IPosition;
   public titleCardForm: string;
   public searchText: string;
   public showFormPanel = false;
   public isEditing = false;
   public isViewDetails = false;
+  private positionsCopy: Array<IPosition>;
+  private currentPosition: IPosition;
 
   constructor(
-    private router: Router,
     private activatedRoute: ActivatedRoute,
     private cookiesService: CookiesService,
-    private positionProv: PositionProvider,
     private notificationsService: NotificationsServices,
+    private positionProv: PositionProvider,
+    private router: Router,
   ) {
     if (!this.cookiesService.isAllowed(this.activatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -42,25 +45,24 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.initializeForm();
-    this.getAllDepartments();
-    this.getAllPositions();
+    this._initializeForm();
+    this._getAllDepartments();
 
-    this.filteredDepartments = this.positionForm.get('ascription').valueChanges
+    this.filteredDepartments = this.departmentControl.valueChanges
       .pipe(
         startWith(''),
         map(value => this._filterDepartments(value))
       );
   }
 
-  initializeForm() {
+  private _initializeForm() {
+    this.departmentControl = new FormControl(null, Validators.required);
     this.positionForm = new FormGroup({
       'name': new FormControl({value: ''}, Validators.required),
-      'ascription': new FormControl({value: ''}, Validators.required),
     });
   }
 
-  getAllDepartments() {
+  private _getAllDepartments() {
     this.positionProv.getAllDepartments()
       .subscribe(data => {
         this.departments = data.departments;
@@ -69,67 +71,97 @@ export class PositionsAdminPageComponent implements OnInit {
 
   private _filterDepartments(value: string): IDepartment[] {
     const filterValue = value ? value.toLowerCase() : '';
-    return this.departments.filter(department =>
-      department.name.toLowerCase().includes(filterValue));
+    return (this.departments && filterValue) ? this.departments.filter(department =>
+      department.name.toLowerCase().includes(filterValue)) : null;
   }
 
-  getAllPositions() {
-    this.positionProv.getAllPositions()
-      .subscribe(positions => {
-        this.positions = positions.positions;
+  public getPositions() {
+    this.positionProv.getPositionsForDepartment(this._getDepartment(this.departmentControl.value)._id)
+      .subscribe(res => {
+        this.positions = res.positions;
         this.positionsCopy = this.positions;
         if (this.searchText) {
           this.searchPosition();
         }
+        if (this.isEditing || this.isViewDetails) {
+          this.closeFormPanel();
+        }
       });
   }
 
-  searchPosition() {
+  public searchPosition() {
     this.positions = this.positionsCopy
-      .filter(position => JSON.stringify(position).toLowerCase().includes(this.searchText.toLowerCase()));
+      .filter(position => JSON.stringify(position).toLowerCase().includes((this.searchText || '').toLowerCase()));
   }
 
-  savePosition() {
-    const position = this.getFormData();
-    if (this.isEditing) {
-      this.currentPosition.name = position.name;
-      this.currentPosition.ascription = position.ascription;
-      this.positionProv.updatePosition(this.currentPosition)
-        .subscribe(updated => {
-          if (updated.status === 200) {
-            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto modificado correctamente', '');
-            this.positionForm.reset();
-            this.titleCardForm = 'Creando puesto';
-            this.currentPosition = null;
-            this.isEditing = false;
-          } else {
-            this.notificationsService.showNotification(eNotificationType.ERROR,
-              'Error, no se pudo modificar el puesto', 'Intente de nuevo');
-          }
-        });
+  public savePosition() {
+    const position = this._getFormData();
+    if (position.ascription) {
+      if (this.isEditing) {
+        this.currentPosition.name = position.name;
+        this.positionProv.updatePosition(this.currentPosition)
+          .subscribe(updated => {
+            if (updated.status === 200) {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto modificado correctamente', '');
+              this.newPosition();
+            } else {
+              this.notificationsService.showNotification(eNotificationType.ERROR,
+                'Error, no se pudo modificar el puesto', 'Intente de nuevo');
+            }
+          });
+      } else {
+        const positionExists = this.positionsCopy.filter(pos => pos.name.toLowerCase().includes(position.name.toLowerCase()))[0];
+        if (!positionExists) {
+          this._createPosition(position);
+        } else {
+          Swal.fire({
+            title: '¡Puesto similar encontrado en el mismo departamento!',
+            text: `Se ha encontrado el puesto ${positionExists.name},
+             con nombre similar al que intenta crear. ¿Desea crear el nuevo puesto?`,
+            type: 'warning',
+            allowOutsideClick: false,
+            showCancelButton: true,
+            confirmButtonColor: 'green',
+            cancelButtonColor: 'blue',
+            confirmButtonText: 'Crear',
+            cancelButtonText: 'Cancelar',
+            focusCancel: true
+          }).then((result) => {
+            if (result.value) {
+              this._createPosition(position);
+            }
+          });
+        }
+      }
+      this.getPositions();
     } else {
-      this.positionProv.createPosition({
-        name: position.name,
-        ascription: position.ascription._id,
-        documents: []
-      })
-        .subscribe(created => {
-          if (created && !created.status) {
-            this.positionForm.reset();
-            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto creado con éxito', '');
-          } else {
-            this.notificationsService.showNotification(eNotificationType.ERROR,
-              'Ocurrió un error al crear el puesto', 'Intente de nuevo');
-          }
-        });
+      this.notificationsService
+        .showNotification(eNotificationType.INFORMATION, 'Para guardar el puesto, debe seleccionar un departamento', '');
+      this.departmentElement.nativeElement.focus();
     }
-    this.getAllPositions();
   }
 
-  getFormData() {
+  private _createPosition(position) {
+    this.positionProv.createPosition({
+      name: position.name,
+      ascription: position.ascription._id,
+      documents: []
+    })
+      .subscribe(created => {
+        if (created && !created.status) {
+          this.positionForm.reset();
+          this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto creado con éxito', '');
+        } else {
+          this.notificationsService.showNotification(eNotificationType.ERROR,
+            'Ocurrió un error al crear el puesto', 'Intente de nuevo');
+        }
+      });
+  }
+
+  private _getFormData() {
     return {
       name: this.positionForm.get('name').value,
-      ascription: this._getDepartment(this.positionForm.get('ascription').value),
+      ascription: this._getDepartment(this.departmentControl.value),
     };
   }
 
@@ -137,14 +169,13 @@ export class PositionsAdminPageComponent implements OnInit {
     return this.departments.filter(depto => depto.name === name)[0];
   }
 
-  fillForm(position) {
+  private _fillForm(position) {
     this.positionForm.setValue({
       'name': position.name,
-      'ascription': position.ascription.name,
     });
   }
 
-  newPosition() {
+  public newPosition() {
     this.titleCardForm = 'Creando puesto';
     this.positionForm.enable();
     this.positionForm.reset();
@@ -154,28 +185,28 @@ export class PositionsAdminPageComponent implements OnInit {
     this.isViewDetails = false;
   }
 
-  viewPosition(position) {
+  public viewPosition(position) {
     this.titleCardForm = 'Detalles del puesto';
     this.positionForm.markAsUntouched();
     this.positionForm.disable();
     this.isViewDetails = true;
-    this.fillForm(position);
+    this._fillForm(position);
     this.showFormPanel = true;
     this.isEditing = false;
     this.currentPosition = null;
   }
 
-  editPosition(position) {
+  public editPosition(position) {
     this.titleCardForm = 'Actualizando puesto';
     this.currentPosition = position;
     this.positionForm.enable();
-    this.fillForm(position);
+    this._fillForm(position);
     this.showFormPanel = true;
     this.isEditing = true;
     this.isViewDetails = false;
   }
 
-  removePosition(position) {
+  public removePosition(position) {
     Swal.fire({
       title: 'Ésta acción no se puede revertir',
       text: `El puesto ${position.name} adscrito al ${position.ascription.name} se borrará totalmente. ¿Desea borrarlo?`,
@@ -193,11 +224,11 @@ export class PositionsAdminPageComponent implements OnInit {
           .subscribe(deleted => {
             if (deleted.status === 200) {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto borrado con éxito', '');
-              if (this.currentPosition._id === position._id) {
+              if (this.isEditing && this.currentPosition._id === position._id) {
                 this.isEditing = false;
                 this.titleCardForm = 'Creando puesto';
               }
-              this.getAllPositions();
+              this.getPositions();
             } else {
               this.notificationsService.showNotification(eNotificationType.ERROR, 'Error al borrar el puesto', deleted.error);
             }
@@ -206,7 +237,7 @@ export class PositionsAdminPageComponent implements OnInit {
     });
   }
 
-  closeFormPanel() {
+  public closeFormPanel() {
     this.positionForm.reset();
     this.currentPosition = null;
     this.showFormPanel = false;
