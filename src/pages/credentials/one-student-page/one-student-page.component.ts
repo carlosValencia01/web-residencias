@@ -8,7 +8,7 @@ import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
-
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 @Component({
   selector: 'app-one-student-page',
   templateUrl: './one-student-page.component.html',
@@ -39,6 +39,8 @@ export class OneStudentPageComponent implements OnInit {
   closeResult: string;
   haveSubjects: boolean;
   selectedFile: File = null;
+  imageDoc;
+  data;
 
   constructor(
     private studentProv: StudentProvider,
@@ -48,22 +50,25 @@ export class OneStudentPageComponent implements OnInit {
     private router: Router,
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
+    private inscriptionProv : InscriptionsProvider
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.getBase64ForStaticImages();
+    this.data = this.cookiesService.getData().user;
+    this.getDocuments();
   }
 
   ngOnInit() {
-    const _id = this.cookiesService.getData().user._id;
+    const _id = this.data._id;
     this.loading = true;
     this.studentProv.getStudentById(_id)
       .subscribe(res => {
         this.showImg = false;
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0]));
         this.imgForSend = false;
-        this.getImageFromService(res.student[0]._id);
+        // this.getImageFromService(res.student[0]._id);
       }, error => {
         console.log(error);
       }, () => this.loading = false);
@@ -215,5 +220,20 @@ export class OneStudentPageComponent implements OnInit {
       }
     }, () => this.loading = false);
   }
-
+  getDocuments(){
+    this.showImg=false;
+    this.studentProv.getDriveDocuments(this.data._id).subscribe(
+      docs=>{
+        let documents = docs.documents;              
+        this.imageDoc = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0];     
+        this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
+          succss=>{
+            this.showImg=true;
+            this.photoStudent = 'data:image/png;base64,' + succss.file;
+          },
+          err=>{this.photoStudent = 'assets/imgs/imgNotFound.png';}
+        )
+      }
+    );  
+  }
 }

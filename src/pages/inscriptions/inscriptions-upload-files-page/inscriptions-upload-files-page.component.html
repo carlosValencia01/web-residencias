@@ -1,3 +1,20 @@
+<ng-template #content let-c="close('Save click')" let-d="dismiss('Cross click')" let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Seleccione el área de la foto</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="2.5 / 3" format="png"
+      (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (loadImageFailed)="loadImageFailed()"></image-cropper>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-login" (click)="c">Aceptar</button>
+    <button type="button" class="btn btn-link" (click)="d">Cancelar</button>
+  </div>
+</ng-template>
+
 <div class="content-general">
   <div class="card card-shadow">
     <div class="card-header text-white bg-secondary">
@@ -218,9 +235,12 @@
               </div>
             </div>
             <div class='card-body c-body' id="collapseFOTO">
-              <label><b>Nombre original de archivo: </b>{{dropzoneFileNamePhoto}}</label>
+              <!-- <label><b>Nombre original de archivo: </b>{{dropzoneFileNamePhoto}}</label>
               <dropzone id="dz5" [config]="config5" [message]="'Haga click o arrastre archivos aquí para subirlos'"
-                (success)="onUploadSuccess($event)" (error)="onError($event)"></dropzone>
+                (success)="onUploadSuccess($event)" (error)="onError($event)"></dropzone> -->
+                <img class="profile-icon" [src]="photoStudent">
+                <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/x-png,image/jpeg" style="display: none;">  
+                <div (click)="showSelectFileDialog()" class="tag" >Buscar imagen</div>                  
             </div>
           </div>
 
@@ -262,7 +282,7 @@
             <div class='card-body c-body' id="collapseCERT">
               <label><b>Nombre original de archivo: </b>{{dropzoneFileNameCERTIFICADO}}</label>
               <dropzone id="dz0" [config]="config" [message]="'Haga click o arrastre archivos aquí para subirlos'"
-                (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
+                (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)" (click)="dropClick()"></dropzone>
             </div>
           </div>
 
@@ -277,4 +297,7 @@
       </div>
     </div>
   </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
 </div>

@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MatFileUploadModule } from 'mat-file-upload';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
+
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -316,8 +316,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     AppRoutingModule,
     CustomFormsModule,
     NgbModule.forRoot(),
-    SidebarModule.forRoot(),
-    PdfViewerModule,
+    SidebarModule.forRoot(),    
   ],
   providers: [
     // App module
