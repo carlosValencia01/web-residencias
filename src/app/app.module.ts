@@ -289,6 +289,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
+    MatSlideToggleModule,
     MatSnackBarModule,
     MatSortModule,
     MatStepperModule,

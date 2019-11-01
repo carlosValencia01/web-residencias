@@ -59,6 +59,7 @@ export class PositionsAdminPageComponent implements OnInit {
     this.departmentControl = new FormControl(null, Validators.required);
     this.positionForm = new FormGroup({
       'name': new FormControl({value: ''}, Validators.required),
+      'canSign': new FormControl({value: false}),
     });
   }
 
@@ -99,6 +100,7 @@ export class PositionsAdminPageComponent implements OnInit {
     if (position.ascription) {
       if (this.isEditing) {
         this.currentPosition.name = position.name;
+        this.currentPosition.canSign = position.canSign;
         this.positionProv.updatePosition(this.currentPosition)
           .subscribe(updated => {
             if (updated.status === 200) {
@@ -145,6 +147,7 @@ export class PositionsAdminPageComponent implements OnInit {
     this.positionProv.createPosition({
       name: position.name,
       ascription: position.ascription._id,
+      canSign: position.canSign,
       documents: []
     })
       .subscribe(created => {
@@ -161,6 +164,7 @@ export class PositionsAdminPageComponent implements OnInit {
   private _getFormData() {
     return {
       name: this.positionForm.get('name').value,
+      canSign: Boolean(this.positionForm.get('canSign').value),
       ascription: this._getDepartment(this.departmentControl.value),
     };
   }
@@ -172,6 +176,7 @@ export class PositionsAdminPageComponent implements OnInit {
   private _fillForm(position) {
     this.positionForm.setValue({
       'name': position.name,
+      'canSign': position.canSign,
     });
   }
 
