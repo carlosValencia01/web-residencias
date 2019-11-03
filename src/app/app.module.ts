@@ -144,6 +144,7 @@ import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/re
 import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
+import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component'
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
 // Providers
@@ -208,6 +209,9 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     WizardInscriptionPageComponent,
     ContractStudentPageComponent,
     InscriptionsUploadFilesPageComponent,
+    //Modals
+    NewPeriodComponent,
+
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -233,7 +237,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
-
+    
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -377,6 +381,10 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     RequestModalComponent,
     SteepComponentComponent,
     ReleaseCheckComponent,
+    
+    //inscriptions
+    //Modals
+    NewPeriodComponent,
 
     // Shared
     // Modals

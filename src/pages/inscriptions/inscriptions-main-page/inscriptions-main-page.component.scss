@@ -20,3 +20,10 @@ td {
     box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.1);
     padding: 25px;
 }
+
+.div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // cursor: pointer;
+}

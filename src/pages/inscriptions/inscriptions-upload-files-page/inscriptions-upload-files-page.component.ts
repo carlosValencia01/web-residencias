@@ -129,7 +129,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     this.studentProv.getDriveDocuments(this.data._id).subscribe(
       docs=>{
         let documents = docs.documents;
-        console.log(documents);
+        // console.log(documents);
        
         this.curpDoc = documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0];
         this.nssDoc = documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0];
@@ -201,7 +201,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   }
 
   assingConfigForDropzone(){
-        console.log('2',this.curpDoc);
+        // console.log('2',this.curpDoc);
         
     /*Dropzone*/
     this.config = {
@@ -269,11 +269,6 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     this.componentRef.directiveRef.reset();    
   }
 
-  dropClick(){
-    console.log('cloclc');
-    
-  }
-
   public onUploadSuccess(args: any): void {
 
     console.log(args);
@@ -286,7 +281,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         fileIdInDrive:args[1].fileId,
         mimeType:args[1].mimeType
       };
-      console.log(documentInfo);
+      // console.log(documentInfo);
       
       this.studentProv.uploadDocumentDrive(this.data._id,documentInfo).subscribe(
         updated=>{
@@ -322,18 +317,18 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   collapse(ev,disabled){
         
     let coll = document.getElementById(ev);        
-    if(!disabled){
-      if (coll.style.maxHeight){
-        coll.style.maxHeight = null;
-        coll.style.padding = null;
-      } else {
-        coll.style.maxHeight = "270px";
-        coll.style.padding = '10px';
-      }
-    }else{
+    if (coll.style.maxHeight){
       coll.style.maxHeight = null;
       coll.style.padding = null;
+    } else {
+      coll.style.maxHeight = coll.scrollHeight+80 + "px";
+      coll.style.padding = '10px';
     }
+    // if(!disabled){
+    // }else{
+    //   coll.style.maxHeight = null;
+    //   coll.style.padding = null;
+    // }
   }
 
   
@@ -351,7 +346,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
   onErrored(error: any) {
     // do anything
-    console.log(error);    
+    // console.log(error);    
   }
 
   /*Se lanza cuando se cambia la foto*/
@@ -391,7 +386,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   }
   uploadFile() {
     this.loading = true; 
-    console.log('upload');
+    // console.log('upload');
     const red = new FileReader;
     red.addEventListener('load', () => {      
       // console.log(red.result);
@@ -433,7 +428,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.file;
     this.croppedImageBase64 = event.base64;
-    console.log('crop');
+    // console.log('crop');
     
   }
   imageLoaded() {
