@@ -30,7 +30,7 @@
 .c-body{
   text-align: center;
   background: rgba(39, 51, 97, 0.3);
-  // border-radius: 0 0 40px 40px;
+  border-radius: 0 0 40px 40px;
   max-height: 0;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -39,14 +39,37 @@
 }
 
 .cd{  
-  // border-radius: 0 0 40px 40px;
+  border-radius: 0 0 40px 40px;
   box-shadow: 5px 5px 5px rgba(58, 58, 58, 0.3);
 }
 
-.isDisabled{
-  cursor:default;
+// .isDisabled{
+//   cursor:default;
+// }
+// .isDisabled+div{
+//   max-height: 0 !important;
+//   padding: 0 !important;
+// }
+
+.tag {
+  
+  background-color: rgba(0, 0, 0, 0.514);;
+  color: white;  
+  padding-top: 10px;  
+  height: 50px;
+
+  -moz-user-select: none; 
+  -webkit-user-select: none; 
+  -ms-user-select:none;
+   user-select:none;
+  -o-user-select:none;
 }
-.isDisabled+div{
-  max-height: 0 !important;
-  padding: 0 !important;
+
+.tag:hover {
+  cursor: pointer;
+}
+
+.profile-icon {
+  height: 270px;
+  width: 225px;
 }

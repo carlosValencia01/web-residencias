@@ -12,7 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MatFileUploadModule } from 'mat-file-upload';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
+
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -146,6 +146,7 @@ import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/re
 import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
+import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component'
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
 // Providers
@@ -212,6 +213,9 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     InscriptionsUploadFilesPageComponent,
     ProfileInscriptionPageComponent,
     SecretaryInscriptionPageComponent,
+    //Modals
+    NewPeriodComponent,
+
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -237,7 +241,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
-
+    
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -320,8 +324,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     AppRoutingModule,
     CustomFormsModule,
     NgbModule.forRoot(),
-    SidebarModule.forRoot(),
-    PdfViewerModule,
+    SidebarModule.forRoot(),    
   ],
   providers: [
     // App module
@@ -382,6 +385,10 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     RequestModalComponent,
     SteepComponentComponent,
     ReleaseCheckComponent,
+    
+    //inscriptions
+    //Modals
+    NewPeriodComponent,
 
     // Shared
     // Modals

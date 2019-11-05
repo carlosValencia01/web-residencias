@@ -28,7 +28,7 @@ export class SidebarContentComponent implements OnInit {
     this.survey = fulturi.indexOf('survey') !== -1;
     if (!this.survey) {
       this.data = this.cookiesServ.getData().user;
-      console.log(this.data);
+      // console.log(this.data);
       this.status = this.data.status;
     }
   }
@@ -38,7 +38,7 @@ export class SidebarContentComponent implements OnInit {
       const rol: iRole = this.data.rol;
       if (typeof (rol) !== 'undefined') {
         this.menu = rol.permissions;
-        console.log('Menu', this.menu);
+        // console.log('Menu', this.menu);
       }
       this.title = rol.name;
     }

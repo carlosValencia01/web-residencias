@@ -13,7 +13,6 @@ import Swal from 'sweetalert2';
   styleUrls: ['./profile-inscription-page.component.scss']
 })
 export class ProfileInscriptionPageComponent implements OnInit {
-
   _idStudent: String;
   data: any;
   studentData: any;
