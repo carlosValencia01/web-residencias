@@ -29,7 +29,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: 'http://localhost:3004/escolares/credenciales/drive/upload/file',
   // url: 'http://httpbin.org/post',
   maxFilesize: 3,
-  acceptedFiles: 'image/*',  
+  acceptedFiles: 'application/pdf',  
   maxFiles:1  
 };
 

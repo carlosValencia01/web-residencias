@@ -96,12 +96,17 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
           this.activePeriod = periods.periods.filter( period=> period.active===true)[0];
           
           
+          
           if(this.activePeriod){
             
             this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id).subscribe(
               (folders)=>{
                 this.foldersByPeriod=folders.folders;
+                console.log('1');
+                
                 if(this.foldersByPeriod.length>0){
+                  console.log('2');
+                  
                   this.getDocuments();
                   
                 }
@@ -154,13 +159,15 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     );
   }
   checkFolders(){
-    let folderPeriod = this.foldersByPeriod.filter( folder=> folder.idPeriod.name.indexOf(this.activePeriod.name) !==-1 );
+    let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1 );
     //1 search career folder
     let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
     
     let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
     
     if(folderCareer.length>0){
+      console.log('existo');
+      
       // folder exists
       // 2 search folder by student
       let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName);
@@ -295,6 +302,9 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
           
         }
       );
+    }else{
+      this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+        'Exito', 'Documento actualizado correctamente.');
     }
     this.resetDropzoneUploads();
   
@@ -413,9 +423,10 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
                 
               },()=>this.loading=false
             );
+          }else{
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+              'Exito', 'Documento actualizado correctamente.');
           }
-          this.notificationsServices.showNotification(eNotificationType.SUCCESS,
-            'Exito', 'Documento cargado correctamente.');
           this.loading = false; 
         },
         err=>{console.log(err); this.loading = false; 

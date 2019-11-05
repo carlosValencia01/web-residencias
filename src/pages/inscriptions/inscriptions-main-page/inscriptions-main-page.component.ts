@@ -113,7 +113,7 @@ export class InscriptionsMainPageComponent implements OnInit {
     if(confirmdialog){
       this.inscriptionsProv.createPeriod(period).subscribe(async res => {        
         
-        this.inscriptionsProv.createFolder(period.name+' '+period.year,res.period._id).subscribe(
+        this.inscriptionsProv.createFolder(period.periodName+' '+period.year,res.period._id).subscribe(
           res=>{
             this.notificationsServices.showNotification(eNotificationType.SUCCESS,
               'Exito', 'Periodo creado correctamente.'); 
