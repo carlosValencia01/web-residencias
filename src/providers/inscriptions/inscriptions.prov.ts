@@ -33,6 +33,10 @@ export class InscriptionsProvider {
         return this.api.get('inscription/getStudent/'+id).pipe(map( res=>res.json()));
     }
 
+    getStudents(){
+        return this.api.get('inscription/getStudents/').pipe(map( res=>res.json()));
+    }
+
     createFolder(folderName : string, period : string){
         return this.api.post(`drive/create/folder`,{folderName:folderName,period:period}).pipe(map( res=>res.json()));
     }

@@ -22,6 +22,8 @@ import { ContractStudentPageComponent } from 'src/pages/inscriptions/contract-st
 import { ResumeStudentPageComponent } from 'src/pages/inscriptions/resume-student-page/resume-student-page.component';
 import { ConfirmationStudentPageComponent } from 'src/pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
 import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
+import { ProfileInscriptionPageComponent } from 'src/pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
+import { SecretaryInscriptionPageComponent } from 'src/pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
 
 // Reception act
 import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-page.component';
@@ -61,6 +63,9 @@ const appRoutes: Routes = [
   { path: 'resumeStudent', component: ResumeStudentPageComponent, pathMatch: 'full' },
   { path: 'confirmationStudent', component: ConfirmationStudentPageComponent, pathMatch: 'full' },
   { path: 'uploadFiles', component: InscriptionsUploadFilesPageComponent, pathMatch: 'full' },
+  { path: 'profileInscription', component: ProfileInscriptionPageComponent, pathMatch: 'full' },
+  { path: 'secretaryInscriptions', component: SecretaryInscriptionPageComponent, pathMatch: 'full' },
+
 
   // Reception act
   { path: 'english', component: VinculacionPageComponent, pathMatch: 'full' },

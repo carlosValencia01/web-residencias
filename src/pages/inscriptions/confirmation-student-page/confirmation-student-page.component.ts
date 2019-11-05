@@ -38,7 +38,14 @@ export class ConfirmationStudentPageComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    Swal.fire({
+      title: 'ATENCIÓN',
+      text: 'Recuerda que debes descargar la "Solicitud" y "Contrato", mismos que debes entregar en el Departamento de Servicios Escolares.',
+      type: 'info',
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => { });
   }
 
   getIdStudent() {
@@ -67,6 +74,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
   onView(file) {
     switch (file) {
       case "Solicitud": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Descargando Solicitud.', '');
         this.inscriptionsProv.getFile(this.docSolicitud[0].fileIdInDrive, this.docSolicitud[0].filename).subscribe(data => {
           var pubSolicitud = data.file;
           let buffSolicitud = new Buffer(pubSolicitud.data);
@@ -79,6 +87,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         break;
       }
       case "Contrato": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Descargando Contrato.', '');
         this.inscriptionsProv.getFile(this.docContrato[0].fileIdInDrive, this.docContrato[0].filename).subscribe(data => {
           var pubContrato = data.file;
           let buffContrato = new Buffer(pubContrato.data);
@@ -96,14 +105,14 @@ export class ConfirmationStudentPageComponent implements OnInit {
   mostrarAdvertencia() {
     Swal.fire({
       title: 'ATENCIÓN',
-      text: 'Debes descargar la "Solicitud" y "Contrato", mismos que debes entregar en el Departamento de Servicios Escolares.',
-      type: 'info',
+      text: 'Está a punto de finalizar el proceso.',
+      type: 'question',
       showCancelButton: true,
       allowOutsideClick: false,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       cancelButtonText: 'Regresar',
-      confirmButtonText: 'Continuar'
+      confirmButtonText: 'Finalizar'
     }).then((result) => {
       if (result.value) {
         Swal.fire({
@@ -118,7 +127,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
   }
 
   async continue() {
-    var newStep = { stepWizard: 6 }
+    var newStep = { stepWizard: 6, inscriptionStatus: 'Enviado' }
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
       //this.router.navigate(['/wizardInscription']);
       window.location.assign("/");

@@ -8,12 +8,11 @@ import { MatDialog } from '@angular/material';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-wizard-inscription-page',
-  templateUrl: './wizard-inscription-page.component.html',
-  styleUrls: ['./wizard-inscription-page.component.scss'],
+  selector: 'app-profile-inscription-page',
+  templateUrl: './profile-inscription-page.component.html',
+  styleUrls: ['./profile-inscription-page.component.scss']
 })
-export class WizardInscriptionPageComponent implements OnInit {
-  isLinear = false;
+export class ProfileInscriptionPageComponent implements OnInit {
 
   _idStudent: String;
   data: any;

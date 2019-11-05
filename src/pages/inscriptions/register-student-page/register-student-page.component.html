@@ -48,7 +48,7 @@
               <td>
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Número de Contról</mat-label>
-                  <input matInput formControlName="controlNumber" [errorStateMatcher]="matcher">
+                  <input readonly matInput formControlName="controlNumber" [errorStateMatcher]="matcher">
                   <mat-error>
                     <span
                       *ngIf="!registerForm.get('controlNumber').valid && registerForm.get('controlNumber').touched">Ingrese
@@ -319,27 +319,15 @@
             </tr>
             <tr>
               <td colspan="2">
-                <mat-form-field class="example-full-width" appearance="outline">
+                  <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Carrera a Cursar</mat-label>
-                  <select matNativeControl required [(ngModel)]="carreraCursar" formControlName="career">
-                    <option value='INGENIERÍA BIOQUÍMICA'>INGENIERÍA BIOQUÍMICA</option>
-                    <option value='INGENIERÍA EN GESTIÓN EMPRESARIAL'>INGENIERÍA EN GESTIÓN EMPRESARIAL</option>
-                    <option value='INGENIERÍA CIVIL'>INGENIERÍA CIVIL</option>
-                    <option value='ARQUITECTURA'>ARQUITECTURA</option>
-                    <option value='INGENIERÍA QUÍMICA'>INGENIERÍA QUÍMICA</option>
-                    <option value='INGENIERÍA MECATRÓNICA'>INGENIERÍA MECATRÓNICA</option>
-                    <option value='INGENIERÍA ELÉCTRICA'>INGENIERÍA ELÉCTRICA</option>
-                    <option value='LICENCIATURA EN ADMINISTRACIÓN'>LICENCIATURA EN ADMINISTRACIÓN</option>
-                    <option value='INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIÓN'>INGENIERÍA EN TECNOLOGÍAS
-                      DE LA INFORMACIÓN Y COMUNICACIÓN</option>
-                    <option value='INGENIERÍA EN SISTEMAS COMPUTACIONALES'>INGENIERÍA EN SISTEMAS COMPUTACIONALES
-                    </option>
-                    <option value='INGENIERÍA INDUSTRIAL'>INGENIERÍA INDUSTRIAL</option>
-                    <option value='MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN'>MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN
-                    </option>
-                    <option value='MAESTRÍA EN CIENCIAS EN ALIMENTOS'>MAESTRÍA EN CIENCIAS EN ALIMENTOS</option>
-                    <option value='DOCTORADO EN CIENCIAS EN ALIMENTOS'>DOCTORADO EN CIENCIAS EN ALIMENTOS</option>
-                  </select>
+                  <input readonly matInput formControlName="career" [errorStateMatcher]="matcher">
+                  <mat-error>
+                    <span
+                      *ngIf="!registerForm.get('career').valid && registerForm.get('career').touched">Ingrese
+                      su
+                      Carrera a Cursar</span>
+                  </mat-error>
                 </mat-form-field>
               </td>
             </tr>

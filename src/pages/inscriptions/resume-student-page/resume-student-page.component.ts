@@ -137,8 +137,8 @@ export class ResumeStudentPageComponent implements OnInit {
   async continue() {
     var newStep = { stepWizard: 5 }
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
-      this.stepper.next();
-      //window.location.assign("/wizardInscription");
+      //this.stepper.next();
+      window.location.assign("/wizardInscription");
     });
   }
 
@@ -175,6 +175,7 @@ export class ResumeStudentPageComponent implements OnInit {
   onView(file) {
     switch (file) {
       case "Acta": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta de Nacimiento ...', '');
         this.inscriptionsProv.getFile(this.docActa[0].fileIdInDrive, this.docActa[0].filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -196,6 +197,7 @@ export class ResumeStudentPageComponent implements OnInit {
         break;
       }
       case "CURP": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CURP ...', '');
         this.inscriptionsProv.getFile(this.docCurp[0].fileIdInDrive, this.docCurp[0].filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -217,6 +219,7 @@ export class ResumeStudentPageComponent implements OnInit {
         break;
       }
       case "NSS": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando NSS ...', '');
         this.inscriptionsProv.getFile(this.docNss[0].fileIdInDrive, this.docNss[0].filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -238,6 +241,7 @@ export class ResumeStudentPageComponent implements OnInit {
         break;
       }
       case "Certificado": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado de Estudios ...', '');
         this.inscriptionsProv.getFile(this.docCertificado[0].fileIdInDrive, this.docCertificado[0].filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -259,6 +263,7 @@ export class ResumeStudentPageComponent implements OnInit {
         break;
       }
       case "Analisis": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Análisis Clínicos ...', '');
         this.inscriptionsProv.getFile(this.docAnalisis[0].fileIdInDrive, this.docAnalisis[0].filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -280,6 +285,7 @@ export class ResumeStudentPageComponent implements OnInit {
         break;
       }
       case "Comprobante": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Comprobante de Pago ...', '');
         this.inscriptionsProv.getFile(this.docComprobante[0].fileIdInDrive, this.docComprobante[0].filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);

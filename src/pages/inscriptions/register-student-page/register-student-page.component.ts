@@ -9,8 +9,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { Router } from '@angular/router';
-
-const jsPDF = require('jspdf');
+import * as jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-register-student-page',
@@ -27,6 +26,11 @@ export class RegisterStudentPageComponent implements OnInit {
   activePeriod;
   folderId;
   foldersByPeriod = [];
+
+  //Font Montserrat
+  montserratNormal: any;
+  montserratBold: any;
+
 
   // Datos Alumno
   apellidoPaterno: String;
@@ -80,19 +84,20 @@ export class RegisterStudentPageComponent implements OnInit {
     private studentProv: StudentProvider,
     private router: Router,
   ) {
-    this.estadoCivil = 'Soltero(a)'
-    this.estado = 'Nayarit'
-    this.etnia = 'No';
-    this.tipoEtnia = '';
-    this.discapacidad = 'No';
-    this.tipoDiscapacidad = '';
-    this.escuelaProcedencia = 'CBTIS';
-    this.otraEscuela = '';
-    this.carreraCursar = 'INGENIERÍA BIOQUÍMICA';
+    this.getFonts();
     this.getFolderId();
     this.getStudentData(this._idStudent);
-
   }
+
+  getFonts() {
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
+        this.montserratNormal = base64.toString().split(',')[1];
+    });
+
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
+        this.montserratBold = base64.toString().split(',')[1];
+    });
+}
 
   ngOnInit() {
     // Convertir imágenes a base 64 para los reportes
@@ -148,7 +153,7 @@ export class RegisterStudentPageComponent implements OnInit {
   }
 
   async continue() {
-    var newStep = { stepWizard: 2 }
+    var newStep = { stepWizard: 2, inscriptionStatus: 'En Captura' }
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
       this.stepper.next();
       //window.location.assign("/wizardInscription");
@@ -226,7 +231,7 @@ export class RegisterStudentPageComponent implements OnInit {
       this.stepper.next();
     }
     if (index == 6){
-      this.router.navigate(['/']);
+      //this.router.navigate(['/']);
       //window.location.assign("/");
     }
   }
@@ -242,35 +247,42 @@ export class RegisterStudentPageComponent implements OnInit {
   async generatePDF() {
     const doc = new jsPDF();
 
-    // Header
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
 
-    doc.addImage(this.logoSep, 'PNG', 5, 5, 65, 18); // Logo SEP
-    doc.addImage(this.logoTecNM, 'PNG', pageWidth - 68, 2, 60, 20); // Logo TecNM
+    // Header
+    var pageHeight = doc.internal.pageSize.height;
+    var pageWidth = doc.internal.pageSize.width;
+
+    doc.addImage(this.logoSep, 'PNG', 5, 5, 74, 15); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth - 47, 2, 39, 17); // Logo TecNM
 
     doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(15);
-    doc.setFontStyle('bold');
     doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
 
     doc.setTextColor(0, 0, 0);
-    doc.setFontType('normal');
+    doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(13);
     doc.text("Solicitud de Inscripción", pageWidth / 2, 37, 'center');
 
     doc.setTextColor(0, 0, 0);
-    doc.setFontType('normal');
+    doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(13);
     doc.text("Código: ITT-POE-01-02      Revisión: 0", pageWidth / 2, 42, 'center');
 
     doc.setTextColor(0, 0, 0);
-    doc.setFontType('normal');
+    doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(13);
     doc.text("Referencia a la Norma ISO 9001-2015:    8.2.2, 8.2.3, 8.2.1, 8.5.2", pageWidth / 2, 47, 'center');
 
     doc.setTextColor(0, 0, 0);
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(15);
     doc.text("SOLICITUD DE INSCRIPCIÓN", pageWidth / 2, 60, 'center');
 
@@ -285,53 +297,50 @@ export class RegisterStudentPageComponent implements OnInit {
 
     doc.setFontSize(18);
     doc.setTextColor(255, 255, 255);
-    doc.setFont('Times');
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text(15, 72, 'Datos Generales');
 
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.setFont('Times');
-
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Nombre: ', 15, 80);
-    doc.setFontType('normal');
-    doc.text(this.apellidoPaterno + ' ' + this.apellidoMaterno + ' ' + this.nombre, 80, 80);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.apellidoPaterno + ' ' + this.apellidoMaterno + ' ' + this.nombre, 70, 80);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Lugar de nacimiento: ', 15, 85);
-    doc.setFontType('normal');
-    doc.text(this.lugarNacimiento, 80, 85);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.lugarNacimiento, 70, 85);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Fecha de nacimiento: ', 15, 90);
-    doc.setFontType('normal');
-    doc.text(this.fechaNacimiento, 80, 90);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.fechaNacimiento, 70, 90);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Estado Civil: ', 15, 95);
-    doc.setFontType('normal');
-    doc.text(this.estadoCivil, 80, 95);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.estadoCivil, 70, 95);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Correo Electrónico: ', 15, 100);
-    doc.setFontType('normal');
-    doc.text(this.correoElectronico, 80, 100);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.correoElectronico, 70, 100);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('CURP: ', 15, 105);
-    doc.setFontType('normal');
-    doc.text(this.curp, 80, 105);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.curp, 70, 105);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('NSS: ', 15, 110);
-    doc.setFontType('normal');
-    doc.text(this.nss, 80, 110);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.nss, 70, 110);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Número de control: ', 15, 115);
-    doc.setFontType('normal');
-    doc.text(this.numeroControl, 80, 115);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.numeroControl, 70, 115);
 
     // Cuadro 2
     doc.setDrawColor(0);
@@ -344,43 +353,40 @@ export class RegisterStudentPageComponent implements OnInit {
 
     doc.setFontSize(18);
     doc.setTextColor(255, 255, 255);
-    doc.setFont('Times');
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text(15, 132, 'Dirección');
 
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.setFont('Times');
-
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Calle: ', 15, 140);
-    doc.setFontType('normal');
-    doc.text(this.calle, 80, 140);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.calle, 70, 140);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Colonia: ', 15, 145);
-    doc.setFontType('normal');
-    doc.text(this.colonia, 80, 145);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.colonia, 70, 145);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Ciudad: ', 15, 150);
-    doc.setFontType('normal');
-    doc.text(this.ciudad, 80, 150);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.ciudad, 70, 150);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Estado: ', 15, 155);
-    doc.setFontType('normal');
-    doc.text(this.estado, 80, 155);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.estado, 70, 155);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Código Postal: ', 15, 160);
-    doc.setFontType('normal');
-    doc.text(this.cp + '', 80, 160);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.cp + '', 70, 160);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Teléfono: ', 15, 165);
-    doc.setFontType('normal');
-    doc.text(this.telefono + '', 80, 165);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.telefono + '', 70, 165);
 
     // Cuadro 3
     doc.setDrawColor(0);
@@ -393,33 +399,32 @@ export class RegisterStudentPageComponent implements OnInit {
 
     doc.setFontSize(18);
     doc.setTextColor(255, 255, 255);
-    doc.setFont('Times');
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text(15, 182, 'Datos académicos');
 
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.setFont('Times');
-
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Escuela de procedencia: ', 15, 190);
-    doc.setFontType('normal');
-    doc.text(this.escuelaProcedencia + ': ' + this.nombreEP, 80, 190);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(9);
+    doc.text(this.escuelaProcedencia + ': ' + this.nombreEP, 70, 190);
 
-    doc.setFontType('bold');
+    doc.setFontSize(12);
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Otra: ', 15, 195);
-    doc.setFontType('normal');
-    doc.text(this.otraEscuela, 80, 195);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.otraEscuela, 70, 195);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Promedio: ', 15, 200);
-    doc.setFontType('normal');
-    doc.text(this.promedioEP + '', 80, 200);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.promedioEP + '', 70, 200);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('Carrera a cursar: ', 15, 205);
-    doc.setFontType('normal');
-    doc.text(this.carreraCursar, 80, 205);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.carreraCursar, 70, 205);
 
     // Cuadro 4
     doc.setDrawColor(0);
@@ -432,36 +437,36 @@ export class RegisterStudentPageComponent implements OnInit {
 
     doc.setFontSize(18);
     doc.setTextColor(255, 255, 255);
-    doc.setFont('Times');
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text(15, 222, 'Datos extras');
 
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.setFont('Times');
-
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('¿Perteneces a alguna Etnia? ', 15, 230);
-    doc.setFontType('normal');
-    doc.text(this.etnia, 80, 230);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.etnia, 85, 230);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('¿Cuál?', 15, 235);
-    doc.setFontType('normal');
-    doc.text(this.tipoEtnia, 80, 235);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.tipoEtnia, 85, 235);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('¿Tienes alguna discapacidad? ', 15, 240);
-    doc.setFontType('normal');
-    doc.text(this.discapacidad, 80, 240);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.discapacidad, 85, 240);
 
-    doc.setFontType('bold');
+    doc.setFont('Montserrat', 'Bold');
     doc.text('¿Cuál?', 15, 245);
-    doc.setFontType('normal');
-    doc.text(this.tipoDiscapacidad, 80, 245);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(this.tipoDiscapacidad, 85, 245);
 
     let document = doc.output('arraybuffer');
     let binary = this.bufferToBase64(document);
+
+    //window.open(doc.output('bloburl'), '_blank');
+
     await this.saveDocument(binary);
   }
 

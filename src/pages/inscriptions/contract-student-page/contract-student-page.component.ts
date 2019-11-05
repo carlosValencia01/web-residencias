@@ -90,17 +90,7 @@ export class ContractStudentPageComponent implements OnInit {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Contrato ...', '');
         this.generatePDF();
     });
-  }
-
-  async nextStep(){
-    var newStep = { stepWizard: 4 }
-      this.inscriptionsProv.updateStudent(newStep,this._idStudent.toString()).subscribe(res => {
-        //this.stepper.next();
-        window.location.assign("/wizardInscription");
-      });
-  }
-
-  
+  }  
 
   convertNumericalMonth() {
     switch (this.currentDate.getMonth()) {
@@ -158,14 +148,14 @@ export class ContractStudentPageComponent implements OnInit {
   async generatePDF() {
     const currentDate = new Date();
     const img = new Image();
-    img.src = 'https://novaresidencia.000webhostapp.com/imagenes/CONTRATO.jpg';
+    img.src = 'https://i.ibb.co/pPkRJKb/Contrato-Estudiante.png';
     const doc = new jsPDF();
 
     doc.addImage(img, 'jpg', 0, 0, 200, 295);
 
     doc.setFontSize(8);
     doc.setFontType('bold');
-    doc.text(`${this.data.name.fullName}`, 116, 257);
+    doc.text(`${this.data.name.fullName}`, 125, 257);
 
     doc.setFontSize(8);
     doc.setFontType('bold');
@@ -291,6 +281,14 @@ export class ContractStudentPageComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  async nextStep(){
+    var newStep = { stepWizard: 4 }
+      this.inscriptionsProv.updateStudent(newStep,this._idStudent.toString()).subscribe(res => {
+        //this.stepper.next();
+        window.location.assign("/wizardInscription");
+      });
   }
 
 }

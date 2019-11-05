@@ -112,6 +112,8 @@ import { ContractStudentPageComponent } from '../pages/inscriptions/contract-stu
 import { ResumeStudentPageComponent } from '../pages/inscriptions/resume-student-page/resume-student-page.component';
 import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
 import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component'
+import { ProfileInscriptionPageComponent } from '../pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
+import { SecretaryInscriptionPageComponent } from '../pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 //services
@@ -208,6 +210,8 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     WizardInscriptionPageComponent,
     ContractStudentPageComponent,
     InscriptionsUploadFilesPageComponent,
+    ProfileInscriptionPageComponent,
+    SecretaryInscriptionPageComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
