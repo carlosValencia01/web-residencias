@@ -155,15 +155,26 @@ export class ResumeStudentPageComponent implements OnInit {
     )
   }
 
-  getIdDocuments() {
-    this.docActa = this.filterDocuments('ACTA');
-    this.docCertificado = this.filterDocuments('CERTIFICADO');
-    this.docAnalisis = this.filterDocuments('CLINICOS');
-    this.docComprobante = this.filterDocuments('COMPROBANTE');
-    this.docCurp = this.filterDocuments('CURP');
-    this.docNss = this.filterDocuments('NSS');
-    this.docFoto = this.filterDocuments('FOTO');
-    this.findFoto();
+  async getIdDocuments() {
+    this.docActa = await this.filterDocuments('ACTA');
+    this.docCertificado = await this.filterDocuments('CERTIFICADO');
+    this.docAnalisis = await this.filterDocuments('CLINICOS');
+    this.docComprobante = await this.filterDocuments('COMPROBANTE');
+    this.docCurp = await this.filterDocuments('CURP');
+    this.docNss = await this.filterDocuments('NSS');
+    this.docFoto = await this.filterDocuments('FOTO');
+
+    /*Swal.fire({
+      type: 'success',
+      text: 'Datos Cargados',
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      timer: 5000
+    })
+    .then((result) => {
+        this.findFoto();
+    });*/
+    setTimeout(() => {this.findFoto()}, 3000);
   }
 
   filterDocuments(filename) {
@@ -194,6 +205,7 @@ export class ResumeStudentPageComponent implements OnInit {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Titulación App', error);
         });
+
         break;
       }
       case "CURP": {

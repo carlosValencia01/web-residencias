@@ -11,13 +11,13 @@
 <div class="content-general" *ngIf="step == 6">
   <div class="card card-shadow">
     <div class="card-header text-white bg-secondary">
-      <strong>IV. Resúmen</strong>
+      <strong>Perfil del Estudiante</strong>
     </div>
     <div class="example-container" style="padding: 20px;">
       <table>
         <td style="width: 35%;">
           <mat-card class="cardProfile">
-            <div style="text-align: center;">
+            <div style="text-align: center;" *ngIf="image">
               <img mat-card-image [src]="image" class="imgProfile">
             </div>
             <mat-card-content>
@@ -542,6 +542,88 @@
                 <mat-card-actions>
                   <p style="text-align: center;">
                     {{docNss[0].status}}
+                  </p>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+            <div class="col-3">
+              <!--FOTO-->
+              <mat-card *ngIf="docFoto[0].status == 'EN PROCESO'" class="process">
+                <mat-card-header>
+                  <mat-card-title class="processText">Foto</mat-card-title>
+                </mat-card-header>
+                <mat-card-content (click)="onView('Foto')" style="cursor: pointer;" ngbTooltip="Visualizar Foto"
+                  tooltipClass="my-custom-class">
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    {{docFoto[0].status}}
+                  </p>
+                </mat-card-actions>
+              </mat-card>
+              <mat-card *ngIf="docFoto[0].status == 'RECHAZADO'" class="reject">
+                <mat-card-header>
+                  <mat-card-title class="rejectText">Foto</mat-card-title>
+                </mat-card-header>
+                <mat-card-content (click)="onView('Foto')" style="cursor: pointer;" ngbTooltip="Visualizar Foto"
+                  tooltipClass="my-custom-class">
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    {{docFoto[0].status}}
+                  </p>
+                </mat-card-actions>
+                <mat-card-footer style="text-align: center; color: black;">
+                  <button mat-button (click)="updateDocument('Foto')">
+                    <p style="text-align: center;">
+                      Cambiar Documento
+                    </p>
+                  </button>
+                </mat-card-footer>
+              </mat-card>
+              <mat-card *ngIf="docFoto[0].status == 'VALIDADO'" class="validate">
+                <mat-card-header>
+                  <mat-card-title class="validateText">Foto</mat-card-title>
+                </mat-card-header>
+                <mat-card-content (click)="onView('Foto')" style="cursor: pointer;" ngbTooltip="Visualizar Foto"
+                  tooltipClass="my-custom-class">
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    {{docFoto[0].status}}
+                  </p>
+                </mat-card-actions>
+              </mat-card>
+              <mat-card *ngIf="docFoto[0].status == 'ACEPTADO'" class="accept">
+                <mat-card-header>
+                  <mat-card-title class="acceptText">Foto</mat-card-title>
+                </mat-card-header>
+                <mat-card-content (click)="onView('Foto')" style="cursor: pointer;" ngbTooltip="Visualizar Foto"
+                  tooltipClass="my-custom-class">
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    {{docFoto[0].status}}
                   </p>
                 </mat-card-actions>
               </mat-card>

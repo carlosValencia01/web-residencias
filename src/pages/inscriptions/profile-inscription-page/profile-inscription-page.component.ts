@@ -113,9 +113,14 @@ export class ProfileInscriptionPageComponent implements OnInit {
       this.carreraCursar = this.studentData.career ? this.studentData.career : '';
 
       this.step = this.studentData.stepWizard;
+      console.log("Paso: "+this.step);
 
       this.obtenerFechaNacimiento(this.curp);
-      this.getIdDocuments();
+
+
+      if(this.step == 6){
+        this.getIdDocuments();
+      }
 
     });
   }
@@ -149,7 +154,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
     this.docCurp = this.filterDocuments('CURP');
     this.docNss = this.filterDocuments('NSS');
     this.docFoto = this.filterDocuments('FOTO');
-    this.findFoto();
+
+    setTimeout(() => {this.findFoto()}, 3000);
+
   }
 
   filterDocuments(filename) {
@@ -292,6 +299,26 @@ export class ProfileInscriptionPageComponent implements OnInit {
         });
         break;
       }
+      case "Foto": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Fotografía.', '');
+        this.inscriptionsProv.getFile(this.docFoto[0].fileIdInDrive, this.docFoto[0].filename).subscribe(data => {
+            let pub = data.file;
+            let image = 'data:image/png;base64,' +pub;
+            pub = true;
+            Swal.fire({
+              imageUrl: image,
+              imageWidth: 200,
+              imageHeight: 200,
+              imageAlt: 'Custom image',
+              confirmButtonText: 'Aceptar'
+            })
+          },
+          error => {
+            this.notificationService.showNotification(eNotificationType.ERROR,'', error);
+          }
+        )
+        break;
+      }
     }
   }
 
@@ -319,6 +346,10 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Comprobante": {
         this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','COMPROBANTE');
+        break;
+      }
+      case "Foto": {
+        this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','FOTO');
         break;
       }
     }

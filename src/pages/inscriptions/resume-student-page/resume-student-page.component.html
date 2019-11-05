@@ -7,7 +7,7 @@
       <table>
         <td style="width: 35%;">
           <mat-card class="cardProfile">
-            <div style="text-align: center;">
+            <div style="text-align: center;" *ngIf="image">
               <img mat-card-image [src]="image" class="imgProfile">
             </div>
             <mat-card-content>

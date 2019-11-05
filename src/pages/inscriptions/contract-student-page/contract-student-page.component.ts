@@ -255,7 +255,9 @@ export class ContractStudentPageComponent implements OnInit {
       mimeType: "application/pdf",
       nameInDrive: this.data.email+'-CONTRATO.pdf',
       bodyMedia: document,
-      folderId: this.folderId
+      folderId: this.folderId,
+      newF: true, 
+      fileId: ''
     };
     
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(

@@ -479,29 +479,34 @@ export class RegisterStudentPageComponent implements OnInit {
   getFolderId() {
     this.data = this.cookiesServ.getData().user;
     this._idStudent = this.data._id;
+
     this.inscriptionsProv.getAllPeriods().subscribe(
-      periods => {
-        this.activePeriod = periods.periods.filter(period => period.active === true)[0];
-        if (this.activePeriod) {
+      periods=>{
+        this.activePeriod = periods.periods.filter( period=> period.active===true)[0];
+        
+        
+        
+        if(this.activePeriod){
+          
           this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id).subscribe(
-            folders => {
-              this.foldersByPeriod = folders.folders;
-              if (this.foldersByPeriod.length > 0) {
-                let folderStudentName = this.data.email + ' - ' + this.data.name.fullName;
-                let folderStudent = this.foldersByPeriod.filter(folder => folder.name === folderStudentName);
-                if (folderStudent.length > 0) {
-                  // folder exists
-                  this.folderId = folderStudent[0].idFolderInDrive;
-                }
+            (folders)=>{
+              this.foldersByPeriod=folders.folders;
+              console.log('1');
+              
+              if(this.foldersByPeriod.length>0){
+                console.log('2');
+                
+                this.checkFolders();
+                
               }
+              
             },
-            err => {
-              console.log(err, '==============error');
+            err=>{console.log(err,'==============error');
             }
           );
         }
       }
-    );
+    )
   }
 
   saveDocument(document) {
@@ -509,7 +514,9 @@ export class RegisterStudentPageComponent implements OnInit {
       mimeType: "application/pdf",
       nameInDrive: this.data.email+'-SOLICITUD.pdf',
       bodyMedia: document,
-      folderId: this.folderId
+      folderId: this.folderId,
+      newF: true, 
+      fileId: ''
     };
     
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
@@ -518,7 +525,7 @@ export class RegisterStudentPageComponent implements OnInit {
           filename:updated.name,
           type:'DRIVE',
           status:'EN PROCESO',
-          fileIdInDrive:updated.fileId
+          fileIdInDrive:updated.fileId,
         };
         await this.studentProv.uploadDocumentDrive(this.data._id,documentInfo2).subscribe(
           updated=>{
@@ -536,6 +543,52 @@ export class RegisterStudentPageComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  checkFolders(){
+    let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1 );
+    //1 search career folder
+    let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
+    
+    let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
+    
+    if(folderCareer.length>0){
+      console.log('existo');
+      
+      // folder exists
+      // 2 search folder by student
+      let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName);
+      if(folderStudent.length > 0){
+        // folder exists
+        this.folderId = folderStudent[0].idFolderInDrive;
+      }else{
+        // student folder doesn't exists then create new folder
+        this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,folderCareer[0].idFolderInDrive).subscribe(
+          studentF=>{
+            this.folderId = studentF.folder.idFolderInDrive;
+          },
+          err=>{console.log(err);
+          }
+        );
+      }
+    }else{
+      // career folder doesn't exist then create it
+      this.inscriptionsProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive).subscribe(
+        career=>{
+          
+          // student folder doesn't exists then create new folder
+          this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,career.folder.idFolderInDrive).subscribe(
+            studentF=>{
+              this.folderId = studentF.folder.idFolderInDrive;       
+            },
+            err=>{console.log(err);
+            }
+          );
+        },
+        err=>{console.log(err);
+        }
+      );
+    }
   }
 
 }

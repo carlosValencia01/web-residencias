@@ -25,7 +25,7 @@ export class NewPeriodComponent implements OnInit {
      }
 
   ngOnInit() {
-    if(this.data.initialPeriod == 'true' || this.data.operation == 'edit'){
+    if(this.data.operation == 'edit'){
             
       this.formPeriod = new FormGroup({
         'periodName': new FormControl((this.data.period.periodName ? this.data.period.periodName : null),[Validators.required]),
@@ -39,6 +39,18 @@ export class NewPeriodComponent implements OnInit {
         'arecEndShed': new FormControl((this.data.period.arecEndShed ? parseInt(this.data.period.arecEndShed+'') : null),[Validators.required]),
       });  
 
+    }else if (this.data.initialPeriod == 'true' ){
+      this.formPeriod = new FormGroup({   
+        'periodName': new FormControl(null,[Validators.required]),     
+        'initDate': new FormControl(null,[Validators.required]),
+        'endDate': new FormControl(null,[Validators.required]),
+        'insPerInitDate': new FormControl(null,[Validators.required]),
+        'insPerEndDate': new FormControl(null,[Validators.required]),
+        'arecPerInitDate': new FormControl(null,[Validators.required]),
+        'arecPerEndDate': new FormControl(null,[Validators.required]),
+        'arecInitShed': new FormControl(null,[Validators.required]),
+        'arecEndShed': new FormControl(null,[Validators.required]),
+      });
     }else{
       this.formPeriod = new FormGroup({        
         'initDate': new FormControl(null,[Validators.required]),
