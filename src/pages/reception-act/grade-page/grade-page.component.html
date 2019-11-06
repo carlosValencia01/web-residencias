@@ -1,27 +1,28 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><i class="fa fa-home"></i>Home</li>
-    <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-university"></i>Grados</li>
+    <li aria-current="page" class="breadcrumb-item active"><i class="fa fa-university"></i>Grados</li>
   </ol>
 </nav>
 
 <div class="row">
-  <div class="col-10">
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
+  <div class="col-sm-12 col-md-9">
+    <mat-form-field appearance="outline">
+      <mat-label>Búsqueda</mat-label>
+      <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Buscar empleado">
     </mat-form-field>
   </div>
-  <div class="col-2">
+  <div class="col-sm-12 col-md-3">
     <div class="form-group">
       <div class="text-center">
-        <input #fileUpload type="file" accept=".csv" (change)="onUpload($event)" style="display: none">
-        <button mat-mini-fab class="mr-1" color="primary" (click)="fileUpload.click()">
+        <input #fileUpload (change)="onUpload($event)" accept=".csv" style="display: none" type="file">
+        <button (click)="fileUpload.click()" class="m-1" color="primary" mat-mini-fab>
           <mat-icon>archive</mat-icon>
         </button>
-        <button mat-mini-fab color="primary" (click)="addNewGradeEmployee()">
+        <button (click)="addNewGradeEmployee()" class="m-1" color="primary" mat-mini-fab>
           <mat-icon>add</mat-icon>
         </button>
-        <button mat-mini-fab color="primary" (click)="refresh()">
+        <button (click)="refresh()" class="m-1" color="primary" mat-mini-fab>
           <mat-icon>update</mat-icon>
         </button>
       </div>
@@ -29,103 +30,43 @@
   </div>
 </div>
 <div class="mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource" matSort>
-
-    <!-- ID Column -->
-    <ng-container matColumnDef="_id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-      <td mat-cell *matCellDef="let row"> {{row._id}} </td>
+  <table [dataSource]="dataSource" mat-table matSort>
+    <ng-container matColumnDef="fullName">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>Nombre</th>
+      <td *matCellDef="let row" mat-cell> {{row.fullName}} </td>
     </ng-container>
-
-    <!-- Progress Column -->
-    <ng-container matColumnDef="nombre">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </th>
-      <td mat-cell *matCellDef="let row"> {{row.nombre}} </td>
+    <ng-container matColumnDef="rfc">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>RFC</th>
+      <td *matCellDef="let row" mat-cell> {{row.rfc}} </td>
     </ng-container>
-
-    <!-- Name Column -->
-    <ng-container matColumnDef="apellido">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Apellido </th>
-      <td mat-cell *matCellDef="let row"> {{row.apellido}} </td>
+    <ng-container matColumnDef="grades">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>Grados</th>
+      <td *matCellDef="let row" mat-cell> {{row.grades}} </td>
     </ng-container>
-
-    <!-- Color Column -->
-    <ng-container matColumnDef="area">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Area </th>
-      <td mat-cell *matCellDef="let row"> {{row.area}} </td>
+    <ng-container matColumnDef="positions">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>Puestos</th>
+      <td *matCellDef="let row" mat-cell> {{row.positions}} </td>
     </ng-container>
-
-    <ng-container matColumnDef="puesto">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Puesto </th>
-      <td mat-cell *matCellDef="let row"> {{row.puesto}} </td>
-    </ng-container>
-
     <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-      <td mat-cell *matCellDef="let row" (click)="onRowEdit(row)">
-        <mat-icon>edit</mat-icon>
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let row" mat-cell>
+        <button [matMenuTriggerFor]="actions" mat-icon-button>
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #actions>
+          <button (click)="employeeDetails(row)" mat-menu-item>
+            <mat-icon>account_box</mat-icon>
+            Detalles
+          </button>
+          <button (click)="onRowEdit(row)" mat-menu-item>
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+        </mat-menu>
       </td>
     </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
   </table>
-
   <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 </div>
-
-<!-- <div class="ui-g">
-  <div class="ui-g-12">
-    <p-breadcrumb [model]="menuRoute" [home]="home"></p-breadcrumb>
-  </div>
-  <div class="ui-g-12">
-    <p-toolbar>
-      <div class="ui-toolbar-group-left">
-      </div>
-
-      <div class="ui-toolbar-group-right">
-        <div class="ui-inputgroup">
-          <button pButton style="height:2.28em; margin-right: 0.3em;" type="button" label="Nuevo" icon="pi pi-plus"
-            class="ui-button-success" (click)="addNewGradeEmployee()"></button>         
-          <p-fileUpload #fileUpload mode="basic" name="uploadedFiles" customUpload="true" (uploadHandler)="onUpload($event)"
-            accept=".csv" auto="true" chooseLabel="Cargar"></p-fileUpload>
-        </div>
-
-      </div>
-    </p-toolbar>
-  </div>
-
-  <div class="ui-g-12">
-    <p-treeTable #dt [columns]="columns" [value]="rows" [paginator]="true" [rows]="20" [globalFilterFields]="['nombre','apellido']">
-      <ng-template pTemplate="caption">
-        <div style="text-align: left">        
-          <input type="text" pInputText size="50" placeholder="Filtro" (input)="dt.filterGlobal($event.target.value, 'contains')"></div>
-      </ng-template>
-      <ng-template pTemplate="header" let-columns>
-        <tr [ttRow]="rowNode">
-          <th *ngFor="let col of columns" [ngStyle]="{'display': col.display}">{{col.header}}</th>
-          <th style="width:7.3em"></th>
-          <th style="width:4em"></th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
-        <tr>
-          <td *ngFor="let col of columns; let i=index" [ngStyle]="{'display': col.display}">
-            <p-treeTableToggler [rowNode]="rowNode" *ngIf="i==0"></p-treeTableToggler>
-            {{rowData[col.field]}}
-          </td>
-          <td class="ui-resizable-column" style="text-align:center">            
-            <button pButton type="button" class="ui-button-raised ui-button-warning" icon="pi pi-pencil" (click)="onRowEdit(rowNode)"
-              label="Editar"></button>
-            
-          </td>
-          <td class="ui-resizable-column" style="text-align:center">        
-            <button *ngIf="rowNode.level!=0" pButton type="button" class="ui-button-raised ui-button-danger" icon="pi pi-trash"
-              (click)="onRowRemove(rowNode)"></button>
-          </td>
-        </tr>
-      </ng-template>
-    </p-treeTable>
-  </div>
-
-</div> -->

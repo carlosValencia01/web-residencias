@@ -47,6 +47,7 @@ import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/s
 // Electronic signature
 import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
 import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { EmployeePageComponent } from 'src/pages/electronic-signature/employee-page/employee-page.component';
 import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
 
 const appRoutes: Routes = [
@@ -89,6 +90,7 @@ const appRoutes: Routes = [
   // Electronic signature
   { path: 'documentsAdmin', component: DocumentsAdminPageComponent, pathMatch: 'full' },
   { path: 'documentsAssign', component: DocumentsAssignPageComponent, pathMatch: 'full' },
+  { path: 'grades/:id', component: EmployeePageComponent, pathMatch: 'full' },
   { path: 'positionsAdmin', component: PositionsAdminPageComponent, pathMatch: 'full' },
 ];
 

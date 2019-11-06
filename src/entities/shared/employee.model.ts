@@ -1,4 +1,5 @@
 import { IGrade } from '../reception-act/grade.model';
+import { IPosition } from './position.model';
 
 export interface IEmployee {
     _id?: string;
@@ -9,4 +10,5 @@ export interface IEmployee {
     filename?: string;
     isBoss?: boolean;
     grade?: Array<IGrade>;
+    positions?: Array<IPosition>;
 }

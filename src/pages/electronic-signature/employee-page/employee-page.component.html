@@ -1,0 +1,126 @@
+<section *ngIf="employee" class="justify-content-center m-0 p-0">
+  <div class="float-left">
+    <button aria-label="Regresar" class="m-1" mat-flat-button routerLink="/grades">
+      <mat-icon>arrow_back</mat-icon>
+      Atrás
+    </button>
+  </div>
+  <div class="row p-3 col-12 m-0">
+    <mat-card class="col-12">
+      <mat-card-header>
+        <mat-card-title>{{employee.name.fullName}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row">
+          <div class="col-sm-4 col-md-3 pt-2 pl-4 pr-4 pb-2 text-center">
+            <img [src]="employee.filename ? image_src : '../../../assets/imgs/employeeAvatar.png'"
+                 alt="Imagen del empleado"
+                 class="mw-100 mh-100">
+          </div>
+          <div class="col-sm-8 col-md-9 p-sm-4 p-md-2">
+            <mat-label><strong>Nombre(s):</strong> {{employee.name.firstName}}</mat-label>
+            <br><br>
+            <mat-label><strong>Apellidos:</strong> {{employee.name.lastName}}</mat-label>
+            <br><br>
+            <mat-label><strong>RFC:</strong> {{employee.rfc}}</mat-label>
+            <br><br>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="row col-12 m-0">
+    <mat-expansion-panel class="col-12 m-1 mw-100 p-0">
+      <mat-expansion-panel-header>
+        <mat-panel-title><strong>GRADOS</strong></mat-panel-title>
+        <mat-panel-description>{{employee.grade ? employee.grade.length : 0}} grado(s) registrado(s)
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="row justify-content-end m-1">
+        <button (click)="saveGrades()" aria-label="Guardar cambios" class="m-1" color="primary" mat-icon-button
+                mat-mini-fab ngbTooltip="Guardar grados">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button (click)="newGrade()" aria-label="Nuevo grado" class="m-1" color="primary" mat-icon-button
+                mat-mini-fab ngbTooltip="Nuevo grado">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <div *ngIf="employee.grade && employee.grade.length" class="row">
+        <div class="mat-elevation-z8 col-12">
+          <table [dataSource]="dataSourceGrades" class="col-12" mat-table>
+            <ng-container matColumnDef="abbreviation">
+              <th *matHeaderCellDef mat-header-cell>Abreviación</th>
+              <td *matCellDef="let row" mat-cell> {{row.abbreviation}} </td>
+            </ng-container>
+            <ng-container matColumnDef="title">
+              <th *matHeaderCellDef mat-header-cell>Título</th>
+              <td *matCellDef="let row" mat-cell> {{row.title}} </td>
+            </ng-container>
+            <ng-container matColumnDef="cedula">
+              <th *matHeaderCellDef mat-header-cell>Cédula</th>
+              <td *matCellDef="let row" mat-cell> {{row.cedula}} </td>
+            </ng-container>
+            <ng-container matColumnDef="level">
+              <th *matHeaderCellDef mat-header-cell>Nivel</th>
+              <td *matCellDef="let row" mat-cell> {{row.level}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th *matHeaderCellDef mat-header-cell></th>
+              <td (click)="onRowRemoveGrade(row)" *matCellDef="let row" mat-cell>
+                <mat-icon>cancel</mat-icon>
+              </td>
+            </ng-container>
+            <tr *matHeaderRowDef="displayedColumnsGrades" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumnsGrades;" mat-row></tr>
+          </table>
+          <mat-paginator #matPaginatorGrades [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </div>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel class="col-12 m-1 mw-100 p-0">
+      <mat-expansion-panel-header>
+        <mat-panel-title><strong>PUESTOS</strong></mat-panel-title>
+        <mat-panel-description>{{employee.positions ? employee.positions.length : 0}} puesto(s) registrado(s)
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="row justify-content-end m-1">
+        <button (click)="savePositions()" aria-label="Guardar cambios" class="m-1" color="primary" mat-icon-button
+                mat-mini-fab ngbTooltip="Guardar puestos">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button (click)="newPosition()" aria-label="Nuevo puesto" class="m-1" color="primary" mat-icon-button
+                mat-mini-fab ngbTooltip="Nuevo puesto">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <div *ngIf="employee.positions && employee.positions.length" class="row">
+        <div class="mat-elevation-z8 col-12">
+          <table [dataSource]="dataSourcePositions" class="col-12" mat-table>
+            <ng-container matColumnDef="name">
+              <th *matHeaderCellDef mat-header-cell>Puesto</th>
+              <td *matCellDef="let row" mat-cell> {{row.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="ascription">
+              <th *matHeaderCellDef mat-header-cell>Adscripción</th>
+              <td *matCellDef="let row" mat-cell> {{row.ascription.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="canSign">
+              <th *matHeaderCellDef mat-header-cell>Firma electrónica</th>
+              <td *matCellDef="let row" mat-cell> {{row.canSign ? 'Si' : 'No'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th *matHeaderCellDef mat-header-cell></th>
+              <td (click)="onRowRemovePosition(row)" *matCellDef="let row" mat-cell>
+                <mat-icon>cancel</mat-icon>
+              </td>
+            </ng-container>
+            <tr *matHeaderRowDef="displayedColumnsPositions" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumnsPositions;" mat-row></tr>
+          </table>
+          <mat-paginator #matPaginatorPositions [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </div>
+</section>
