@@ -52,7 +52,7 @@
           <div class="row">
             <div class="col-3">
               <!--Acta Nacimiento-->
-              <mat-card *ngIf="docActa[0].status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docActa.status == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Acta de Nacimiento</mat-card-title>
                 </mat-card-header>
@@ -66,11 +66,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docActa[0].status}}
+                    {{docActa.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docActa[0].status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docActa.status == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Acta de Nacimiento</mat-card-title>
                 </mat-card-header>
@@ -84,7 +84,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docActa[0].status}}
+                    {{docActa.status}}
                   </p>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
@@ -95,7 +95,7 @@
                   </button>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docActa[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docActa.status == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Acta de Nacimiento</mat-card-title>
                 </mat-card-header>
@@ -109,11 +109,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docActa[0].status}}
+                    {{docActa.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docActa[0].status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docActa.status == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">Acta de Nacimiento</mat-card-title>
                 </mat-card-header>
@@ -127,14 +127,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docActa[0].status}}
+                    {{docActa.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
             <div class="col-3">
               <!--Certificado Estudios-->
-              <mat-card *ngIf="docCertificado[0].status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docCertificado.status == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Certificado Estudios</mat-card-title>
                 </mat-card-header>
@@ -148,11 +148,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCertificado[0].status}}
+                    {{docCertificado.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docCertificado[0].status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docCertificado.status == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">Certificado Estudios</mat-card-title>
                 </mat-card-header>
@@ -166,11 +166,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCertificado[0].status}}
+                    {{docCertificado.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docCertificado[0].status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docCertificado.status == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Certificado Estudios</mat-card-title>
                 </mat-card-header>
@@ -184,7 +184,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCertificado[0].status}}
+                    {{docCertificado.status}}
                   </p>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
@@ -195,7 +195,7 @@
                   </button>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docCertificado[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docCertificado.status == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Certificado Estudios</mat-card-title>
                 </mat-card-header>
@@ -209,14 +209,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCertificado[0].status}}
+                    {{docCertificado.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
             <div class="col-3">
               <!--Analisis Clinicos-->
-              <mat-card *ngIf="docAnalisis[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docAnalisis.status == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Análisis Clínicos</mat-card-title>
                 </mat-card-header>
@@ -230,11 +230,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docAnalisis[0].status}}
+                    {{docAnalisis.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docAnalisis[0].status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docAnalisis.status == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">Análisis Clínicos</mat-card-title>
                 </mat-card-header>
@@ -248,11 +248,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docAnalisis[0].status}}
+                    {{docAnalisis.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docAnalisis[0].status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docAnalisis.status == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Análisis Clínicos</mat-card-title>
                 </mat-card-header>
@@ -266,7 +266,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docAnalisis[0].status}}
+                    {{docAnalisis.status}}
                   </p>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
@@ -277,7 +277,7 @@
                   </button>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docAnalisis[0].status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docAnalisis.status == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Análisis Clínicos</mat-card-title>
                 </mat-card-header>
@@ -291,14 +291,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docAnalisis[0].status}}
+                    {{docAnalisis.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
             <div class="col-3">
               <!--Comprobante Pago-->
-              <mat-card *ngIf="docComprobante[0].status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docComprobante.status == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
@@ -312,11 +312,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docComprobante[0].status}}
+                    {{docComprobante.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docComprobante[0].status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docComprobante.status == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
@@ -330,7 +330,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docComprobante[0].status}}
+                    {{docComprobante.status}}
                   </p>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
@@ -341,7 +341,7 @@
                   </button>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docComprobante[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docComprobante.status == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
@@ -355,11 +355,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docComprobante[0].status}}
+                    {{docComprobante.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docComprobante[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docComprobante.status == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
@@ -373,7 +373,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docComprobante[0].status}}
+                    {{docComprobante.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
@@ -384,7 +384,7 @@
           <div class="row">
             <div class="col-3">
               <!--Curp-->
-              <mat-card *ngIf="docCurp[0].status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docCurp.status == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">CURP</mat-card-title>
                 </mat-card-header>
@@ -398,11 +398,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCurp[0].status}}
+                    {{docCurp.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docCurp[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docCurp.status == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">CURP</mat-card-title>
                 </mat-card-header>
@@ -416,11 +416,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCurp[0].status}}
+                    {{docCurp.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docCurp[0].status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docCurp.status == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">CURP</mat-card-title>
                 </mat-card-header>
@@ -434,7 +434,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCurp[0].status}}
+                    {{docCurp.status}}
                   </p>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
@@ -445,7 +445,7 @@
                   </button>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docCurp[0].status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docCurp.status == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">CURP</mat-card-title>
                 </mat-card-header>
@@ -459,14 +459,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCurp[0].status}}
+                    {{docCurp.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
             <div class="col-3">
               <!--Nss-->
-              <mat-card *ngIf="docNss[0].status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docNss.status == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">NSS</mat-card-title>
                 </mat-card-header>
@@ -480,11 +480,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docNss[0].status}}
+                    {{docNss.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docNss[0].status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docNss.status == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">NSS</mat-card-title>
                 </mat-card-header>
@@ -498,7 +498,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docNss[0].status}}
+                    {{docNss.status}}
                   </p>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
@@ -509,7 +509,7 @@
                   </button>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docNss[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docNss.status == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">NSS</mat-card-title>
                 </mat-card-header>
@@ -523,11 +523,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docNss[0].status}}
+                    {{docNss.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docNss[0].status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docNss.status == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">NSS</mat-card-title>
                 </mat-card-header>
@@ -541,14 +541,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docNss[0].status}}
+                    {{docNss.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
             <div class="col-3">
               <!--FOTO-->
-              <mat-card *ngIf="docFoto[0].status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docFoto.status == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Foto</mat-card-title>
                 </mat-card-header>
@@ -562,11 +562,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docFoto[0].status}}
+                    {{docFoto.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docFoto[0].status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docFoto.status == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Foto</mat-card-title>
                 </mat-card-header>
@@ -580,7 +580,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docFoto[0].status}}
+                    {{docFoto.status}}
                   </p>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
@@ -591,7 +591,7 @@
                   </button>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docFoto[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docFoto.status == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Foto</mat-card-title>
                 </mat-card-header>
@@ -605,11 +605,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docFoto[0].status}}
+                    {{docFoto.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docFoto[0].status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docFoto.status == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">Foto</mat-card-title>
                 </mat-card-header>
@@ -623,7 +623,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docFoto[0].status}}
+                    {{docFoto.status}}
                   </p>
                 </mat-card-actions>
               </mat-card>

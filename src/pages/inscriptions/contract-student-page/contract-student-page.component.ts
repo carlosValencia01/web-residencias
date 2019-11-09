@@ -34,6 +34,8 @@ export class ContractStudentPageComponent implements OnInit {
   currentDate: Date;
   currentMonth: String;
 
+  loading : boolean;
+
   // Imagenes para Reportes
   public logoTecNM: any;
   public logoSep: any;
@@ -81,8 +83,10 @@ export class ContractStudentPageComponent implements OnInit {
   }
 
   async continue() {
+    this.loading=true;
     var data = { acceptedTerms: this.acceptedTerms, dateAcceptedTerms: this.currentDate }
     await this.updateStudent(data, this._idStudent);
+    
   }
 
   async updateStudent(data, id) {
@@ -246,11 +250,17 @@ export class ContractStudentPageComponent implements OnInit {
     
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
       updated=>{
-        const documentInfo2 = {
-          filename:updated.name,
-          type:'DRIVE',
-          status:'EN PROCESO',
-          fileIdInDrive:updated.fileId
+        const documentInfo2 = {          
+          doc:{
+            filename:updated.name,
+            type:'DRIVE',         
+            fileIdInDrive:updated.fileId
+          },
+            status : {
+            name:'EN PROCESO',
+            active:true,
+            message:'Se envio por primera vez'
+          }
         };
         this.studentProv.uploadDocumentDrive(this.data._id,documentInfo2).subscribe(
           updated=>{
@@ -260,7 +270,7 @@ export class ContractStudentPageComponent implements OnInit {
           err=>{
             console.log(err);
             
-          }
+          }, ()=>this.loading=false
         );
       },
       err=>{

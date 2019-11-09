@@ -134,7 +134,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
 
   async findFoto() {
-    await this.inscriptionsProv.getFile(this.docFoto[0].fileIdInDrive, this.docFoto[0].filename).subscribe(
+    await this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(
       data => {
         this.pub = data.file;
         this.image = 'data:image/png;base64,' + this.pub;
@@ -147,14 +147,29 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
 
   getIdDocuments() {
-    this.docActa = this.filterDocuments('ACTA');
-    this.docCertificado = this.filterDocuments('CERTIFICADO');
-    this.docAnalisis = this.filterDocuments('CLINICOS');
-    this.docComprobante = this.filterDocuments('COMPROBANTE');
-    this.docCurp = this.filterDocuments('CURP');
-    this.docNss = this.filterDocuments('NSS');
-    this.docFoto = this.filterDocuments('FOTO');
+    this.docActa = this.filterDocuments('ACTA')[0];
+    this.docCertificado = this.filterDocuments('CERTIFICADO')[0];
+    this.docAnalisis = this.filterDocuments('CLINICOS')[0];
+    this.docComprobante = this.filterDocuments('COMPROBANTE')[0];
+    this.docCurp = this.filterDocuments('CURP')[0];
+    this.docNss = this.filterDocuments('NSS')[0];
+    this.docFoto = this.filterDocuments('FOTO')[0];
+console.log(this.docActa);
 
+    if(this.docFoto) this.docFoto.status = this.docFoto ? this.docFoto.status.filter( st=> st.active===true)[0].name : '';
+
+    if(this.docCurp)this.docCurp.status = this.docCurp ? this.docCurp.status.filter( st=> st.active===true)[0].name : '';
+     
+    if(this.docActa)this.docActa.status = this.docActa ? this.docActa.status.filter( st=> st.active===true)[0].name : '';
+
+    if(this.docAnalisis)this.docAnalisis.status = this.docAnalisis ? this.docAnalisis.status.filter( st=> st.active===true)[0].name : '';
+
+    if(this.docCertificado) this.docCertificado.status = this.docCertificado ? this.docCertificado.status.filter( st=> st.active===true)[0].name : '';
+
+    if(this.docComprobante)    this.docComprobante.status = this.docComprobante ? this.docComprobante.status.filter( st=> st.active===true)[0].name : '';
+
+    if(this.docNss) this.docNss.status = this.docNss ? this.docNss.status.filter( st=> st.active===true)[0].name : '';
+   
     setTimeout(() => {this.findFoto()}, 3000);
 
   }
@@ -169,7 +184,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     switch (file) {
       case "Acta": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta de Nacimiento.', '');
-        this.inscriptionsProv.getFile(this.docActa[0].fileIdInDrive, this.docActa[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docActa.fileIdInDrive, this.docActa.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -191,7 +206,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "CURP": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CURP.', '');
-        this.inscriptionsProv.getFile(this.docCurp[0].fileIdInDrive, this.docCurp[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docCurp.fileIdInDrive, this.docCurp.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
           var pdfSrc = buff;
@@ -213,7 +228,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "NSS": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando NSS.', '');
-        this.inscriptionsProv.getFile(this.docNss[0].fileIdInDrive, this.docNss[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docNss.fileIdInDrive, this.docNss.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -235,7 +250,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Certificado": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado de Estudios.', '');
-        this.inscriptionsProv.getFile(this.docCertificado[0].fileIdInDrive, this.docCertificado[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docCertificado.fileIdInDrive, this.docCertificado.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -257,7 +272,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Analisis": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Análisis Clínicos.', '');
-        this.inscriptionsProv.getFile(this.docAnalisis[0].fileIdInDrive, this.docAnalisis[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docAnalisis.fileIdInDrive, this.docAnalisis.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -279,7 +294,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Comprobante": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Comprobante de Pago.', '');
-        this.inscriptionsProv.getFile(this.docComprobante[0].fileIdInDrive, this.docComprobante[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docComprobante.fileIdInDrive, this.docComprobante.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -301,7 +316,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Foto": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Fotografía.', '');
-        this.inscriptionsProv.getFile(this.docFoto[0].fileIdInDrive, this.docFoto[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(data => {
             let pub = data.file;
             let image = 'data:image/png;base64,' +pub;
             pub = true;
