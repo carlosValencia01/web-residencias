@@ -108,13 +108,19 @@ export class EmployeeProvider {
         .pipe(map(res => res.json()));
     }
 
-    updateEmployeePositions(employee) {
-      return this.api.put(`employee/positions/${employee._id}`, employee.positions)
+    updateEmployeePositions(id: string, positions: any) {
+      return this.api.put(`employee/positions/${id}`, positions)
         .pipe(map(res => res.json()));
     }
 
-    updateEmployeeGrades(employee) {
-      return this.api.put(`employee/grades/${employee._id}`, employee.grade)
+    updateEmployeeGrades(id: string, grades: any) {
+      return this.api.put(`employee/grades/${id}`, grades)
+        .pipe(map(res => res.json()));
+    }
+
+    updateGradesAndPositions(id: string, data: Object) {
+      return this.api
+        .put(`employee/gradesPositions/${id}`, data)
         .pipe(map(res => res.json()));
     }
 }
