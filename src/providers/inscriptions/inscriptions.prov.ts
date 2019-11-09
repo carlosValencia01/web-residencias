@@ -17,6 +17,10 @@ export class InscriptionsProvider {
         return this.api.get('period').pipe(map( res=>res.json()));
     }
 
+    getActivePeriod(){
+        return this.api.get('period/active').pipe(map( res=>res.json()));
+    }
+
     createPeriod(data : object){
         return this.api.post('period/create',data).pipe(map( res=>res.json()));
     }

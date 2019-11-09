@@ -87,7 +87,7 @@ export class ContractStudentPageComponent implements OnInit {
 
   async updateStudent(data, id) {
     await this.inscriptionsProv.updateStudent(data, id).subscribe(res => {
-        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Contrato ...', '');
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Contrato ...', 'Esto puede tardar unos minutos');
         this.generatePDF();
     });
   }  
@@ -225,29 +225,13 @@ export class ContractStudentPageComponent implements OnInit {
   getFolderId() {
     this.data = this.cookiesServ.getData().user;
     this._idStudent = this.data._id;
-    this.inscriptionsProv.getAllPeriods().subscribe(
-      periods => {
-        this.activePeriod = periods.periods.filter(period => period.active === true)[0];
-        if (this.activePeriod) {
-          this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id).subscribe(
-            folders => {
-              this.foldersByPeriod = folders.folders;
-              if (this.foldersByPeriod.length > 0) {
-                let folderStudentName = this.data.email + ' - ' + this.data.name.fullName;
-                let folderStudent = this.foldersByPeriod.filter(folder => folder.name === folderStudentName);
-                if (folderStudent.length > 0) {
-                  // folder exists
-                  this.folderId = folderStudent[0].idFolderInDrive;
-                }
-              }
-            },
-            err => {
-              console.log(err, '==============error');
-            }
-          );
+    this.studentProv.getFolderId(this._idStudent).subscribe(
+      student=>{
+        if(student.folder.idFolderInDrive){// folder exists
+          this.folderId = student.folder.idFolderInDrive;
+          console.log(this.folderId,'folder student exists');     
         }
-      }
-    );
+      });
   }
 
   saveDocument(document) {

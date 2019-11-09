@@ -4,7 +4,6 @@ import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.pr
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { MatStepper } from '@angular/material/stepper';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
@@ -68,6 +67,8 @@ export class RegisterStudentPageComponent implements OnInit {
   eRNss = '^[0-9]{11}$';
   eRTelefono = '^[0-9]{10}$';
   eRCp = '^[0-9]{4,5}$';
+
+  loading : boolean;
 
   // Imagenes para Reportes
   public logoTecNM: any;
@@ -142,14 +143,17 @@ export class RegisterStudentPageComponent implements OnInit {
   }
 
   async onFormSubmit(form: NgForm) {
+    this.loading=true;
     await this.updateStudent(form, this._idStudent);
   }
 
   async updateStudent(data, id) {
+    
     await this.inscriptionsProv.updateStudent(data, id).subscribe(res => {
+
       this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Solicitud ...', '');
       this.generatePDF();
-    });
+    }, err=>{});
   }
 
   async continue() {
@@ -163,7 +167,7 @@ export class RegisterStudentPageComponent implements OnInit {
   getStudentData(id) {
     this.inscriptionsProv.getStudent(id).subscribe(res => {
       this.studentData = res.student[0];
-      console.log(this.studentData);
+      // console.log(this.studentData);
 
       // Obtener Paso del Wizard
       this.stepWizard = this.studentData.stepWizard ? this.studentData.stepWizard : 1;
@@ -480,36 +484,84 @@ export class RegisterStudentPageComponent implements OnInit {
     this.data = this.cookiesServ.getData().user;
     this._idStudent = this.data._id;
 
-    this.inscriptionsProv.getAllPeriods().subscribe(
-      periods=>{
-        this.activePeriod = periods.periods.filter( period=> period.active===true)[0];
-        
-        
-        
-        if(this.activePeriod){
-          
-          this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id).subscribe(
-            (folders)=>{
-              this.foldersByPeriod=folders.folders;
-              console.log('1');
-              
-              if(this.foldersByPeriod.length>0){
-                console.log('2');
+    this.inscriptionsProv.getActivePeriod().subscribe(
+      period=>{
+        if(period.period){
+          this.activePeriod = period.period;                      
+           
+          //first check folderId on Student model
+          this.studentProv.getFolderId(this._idStudent).subscribe(
+            student=>{
+              if(student.folder.idFolderInDrive){// folder exists
+                this.folderId = student.folder.idFolderInDrive;
+                console.log(this.folderId,'folder student exists');
                 
-                this.checkFolders();
+              }else{ //folder doesn't exists then create it
+                let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
+
+                this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id).subscribe(
+                  (folders)=>{
+                    this.foldersByPeriod=folders.folders;                                     
+                    let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1 );
+
+                    // 1 check career folder
+                    let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
+
+                    if(folderCareer.length===0){
+                      
+                      this.inscriptionsProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive).subscribe(
+                        career=>{
+                          
+                          // student folder doesn't exists then create new folder
+                          this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,career.folder.idFolderInDrive).subscribe(
+                            studentF=>{
+                              this.folderId = studentF.folder.idFolderInDrive;                 
+                              
+                              this.studentProv.updateStudent(this._idStudent,{folderId:studentF.folder._id});
+                            },
+                            err=>{console.log(err);
+                            }
+                          );
+                        },
+                        err=>{console.log(err);
+                        }
+                      );
+                    }else{
+                      this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,folderCareer[0].idFolderInDrive).subscribe(
+                        studentF=>{
+                          this.folderId = studentF.folder.idFolderInDrive;   
+                          
+                          this.studentProv.updateStudent(this._idStudent,{folderId:studentF.folder._id}).subscribe(
+                            upd=>{
+                              
+                              
+                            },
+                            err=>{
+                            }
+                          );
+                          
+                        },
+                        err=>{console.log(err);
+                        }
+                      );
+                    }
+                  },
+                  err=>{console.log(err,'==============error');
+                  }
+                );
+              }                              
                 
-              }
-              
-            },
-            err=>{console.log(err,'==============error');
-            }
-          );
+            });
         }
-      }
-    )
+        else{ // no hay periodo activo
+
+        }    
+      }  
+    );
   }
 
   saveDocument(document) {
+    this.loading=true;
     const documentInfo = {
       mimeType: "application/pdf",
       nameInDrive: this.data.email+'-SOLICITUD.pdf',
@@ -520,13 +572,20 @@ export class RegisterStudentPageComponent implements OnInit {
     };
     
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-      async updated=>{
+      async updated=>{        
         const documentInfo2 = {
-          filename:updated.name,
-          type:'DRIVE',
-          status:'EN PROCESO',
-          fileIdInDrive:updated.fileId,
+          doc:{
+            filename:updated.name,
+            type:'DRIVE',          
+            fileIdInDrive:updated.fileId
+          },
+          status : {
+            name:'EN PROCESO',
+            active:true,
+            message:'Se envio por primera vez'
+          }
         };
+        
         await this.studentProv.uploadDocumentDrive(this.data._id,documentInfo2).subscribe(
           updated=>{
             this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud enviada correctamente.'); 
@@ -536,7 +595,7 @@ export class RegisterStudentPageComponent implements OnInit {
           },
           err=>{
             console.log(err);
-          }
+          },()=>this.loading=false
         );
       },
       err=>{

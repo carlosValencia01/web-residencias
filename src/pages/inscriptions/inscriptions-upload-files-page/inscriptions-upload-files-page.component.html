@@ -239,7 +239,7 @@
               <dropzone id="dz5" [config]="config5" [message]="'Haga click o arrastre archivos aquí para subirlos'"
                 (success)="onUploadSuccess($event)" (error)="onError($event)"></dropzone> -->
                 <img class="profile-icon" [src]="photoStudent">
-                <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/*" style="display: none;">  
+                <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/png,image/jpg,image/jpeg" style="display: none;">  
                 <div (click)="showSelectFileDialog()" class="tag" >Buscar imagen</div>                  
             </div>
           </div>

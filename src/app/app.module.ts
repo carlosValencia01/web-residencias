@@ -26,7 +26,7 @@ import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
  
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
-  url: 'http://localhost:3004/escolares/credenciales/drive/upload/file',
+  url: 'http://localhost:3003/escolares/credenciales/drive/upload/file',
   // url: 'http://httpbin.org/post',
   maxFilesize: 3,
   acceptedFiles: 'application/pdf',  
