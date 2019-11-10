@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
-
+import { MatDialog } from '@angular/material';
+import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
 @Component({
   selector: 'app-secretary-inscription-page',
   templateUrl: './secretary-inscription-page.component.html',
@@ -34,6 +35,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   constructor(
     private inscriptionsProv: InscriptionsProvider,
+    public dialog: MatDialog,
   ) { 
     this.getStudents();
     this.getPeriods();
@@ -121,6 +123,27 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         this.periods.reverse();                        
         sub.unsubscribe();
       });
+  }
+
+  viewExpedient(student){
+    
+    const linkModal = this.dialog.open(ReviewExpedientComponent, {
+      data: {
+        operation: 'view',
+        student:student
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90em',
+      height: '800px'
+    });
+    let sub = linkModal.afterClosed().subscribe(
+      expedient=>{         
+        console.log(expedient);
+        
+      },
+      err=>console.log(err), ()=> sub.unsubscribe()
+    );
   }
 
 }

@@ -1,3 +1,20 @@
+<ng-template #content let-c="close('Save click')" let-d="dismiss('Cross click')" let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Seleccione el área de la foto</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="2.5 / 3" format="png"
+        (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (loadImageFailed)="loadImageFailed()"></image-cropper>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-login" (click)="c">Aceptar</button>
+      <button type="button" class="btn btn-link" (click)="d">Cancelar</button>
+    </div>
+  </ng-template>
+
 <div *ngIf="step != 6">
   <div class="title">
     <h2>¡ATENCIÓN!</h2>
@@ -18,7 +35,15 @@
         <td style="width: 35%;">
           <mat-card class="cardProfile">
             <div style="text-align: center;" *ngIf="image">
-              <img mat-card-image [src]="image" class="imgProfile">
+              <img *ngIf="showImg == true" mat-card-image [src]="image" class="imgProfile">
+              <div *ngIf="showImg == false">
+                  <div class="cssload-thecube">
+                    <div class="cssload-cube cssload-c1"></div>
+                    <div class="cssload-cube cssload-c2"></div>
+                    <div class="cssload-cube cssload-c4"></div>
+                    <div class="cssload-cube cssload-c3"></div>
+                  </div>
+                </div>
             </div>
             <mat-card-content>
               <h6>Nombre: <span>{{nombre}}</span></h6>
@@ -50,9 +75,9 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3">
+            <div class="col-3" *ngIf="docActa">
               <!--Acta Nacimiento-->
-              <mat-card *ngIf="docActa.status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docActa.status.name == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Acta de Nacimiento</mat-card-title>
                 </mat-card-header>
@@ -66,11 +91,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docActa.status}}
+                    {{docActa.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docActa.status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docActa.status.name == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Acta de Nacimiento</mat-card-title>
                 </mat-card-header>
@@ -78,24 +103,27 @@
                   tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docActa.status}}
+                    {{docActa.status.name}}
                   </p>
+                  <span>{{docActa.status.observation}}</span>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
-                  <button mat-button (click)="updateDocument('Acta')">
+                  <!-- <button mat-button (click)="updateDocument('Acta')">
                     <p style="text-align: center;">
                       Cambiar Documento
                     </p>
-                  </button>
+                  </button> -->
+                  <dropzone id="dz1" [config]="config1" [message]="'Cambiar Documento'"
+                  (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docActa.status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docActa.status.name == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Acta de Nacimiento</mat-card-title>
                 </mat-card-header>
@@ -109,11 +137,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docActa.status}}
+                    {{docActa.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docActa.status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docActa.status.name == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">Acta de Nacimiento</mat-card-title>
                 </mat-card-header>
@@ -127,14 +155,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docActa.status}}
+                    {{docActa.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docCertificado">
               <!--Certificado Estudios-->
-              <mat-card *ngIf="docCertificado.status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docCertificado.status.name == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Certificado Estudios</mat-card-title>
                 </mat-card-header>
@@ -148,11 +176,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCertificado.status}}
+                    {{docCertificado.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docCertificado.status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docCertificado.status.name == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">Certificado Estudios</mat-card-title>
                 </mat-card-header>
@@ -166,11 +194,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCertificado.status}}
+                    {{docCertificado.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docCertificado.status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docCertificado.status.name == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Certificado Estudios</mat-card-title>
                 </mat-card-header>
@@ -178,24 +206,27 @@
                   ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCertificado.status}}
+                    {{docCertificado.status.name}}
                   </p>
+                  <span>{{docCertificado.status.observation}}</span>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
-                  <button mat-button (click)="updateDocument('Certificado')">
+                  <!-- <button mat-button (click)="updateDocument('Certificado')">
                     <p style="text-align: center;">
                       Cambiar Documento
                     </p>
-                  </button>
+                  </button> -->
+                  <dropzone id="dz2" [config]="config2" [message]="'Cambiar Documento'"
+                  (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docCertificado.status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docCertificado.status.name == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Certificado Estudios</mat-card-title>
                 </mat-card-header>
@@ -209,14 +240,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCertificado.status}}
+                    {{docCertificado.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docAnalisis">
               <!--Analisis Clinicos-->
-              <mat-card *ngIf="docAnalisis.status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docAnalisis.status.name == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Análisis Clínicos</mat-card-title>
                 </mat-card-header>
@@ -230,11 +261,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docAnalisis.status}}
+                    {{docAnalisis.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docAnalisis.status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docAnalisis.status.name == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">Análisis Clínicos</mat-card-title>
                 </mat-card-header>
@@ -248,11 +279,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docAnalisis.status}}
+                    {{docAnalisis.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docAnalisis.status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docAnalisis.status.name == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Análisis Clínicos</mat-card-title>
                 </mat-card-header>
@@ -260,24 +291,27 @@
                   tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docAnalisis.status}}
+                    {{docAnalisis.status.name}}
                   </p>
+                  <span>{{docAnalisis.status.observation}}</span>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
-                  <button mat-button (click)="updateDocument('Analisis')">
+                  <!-- <button mat-button (click)="updateDocument('Analisis')">
                     <p style="text-align: center;">
                       Cambiar Documento
                     </p>
-                  </button>
+                  </button> -->
+                  <dropzone id="dz3" [config]="config3" [message]="'Cambiar Documento'"
+                  (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docAnalisis.status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docAnalisis.status.name == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Análisis Clínicos</mat-card-title>
                 </mat-card-header>
@@ -291,14 +325,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docAnalisis.status}}
+                    {{docAnalisis.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docComprobante">
               <!--Comprobante Pago-->
-              <mat-card *ngIf="docComprobante.status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docComprobante.status.name == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
@@ -312,11 +346,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docComprobante.status}}
+                    {{docComprobante.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docComprobante.status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docComprobante.status.name == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
@@ -324,24 +358,27 @@
                   ngbTooltip="Visualizar Comprobante" tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docComprobante.status}}
+                    {{docComprobante.status.name}}
                   </p>
+                  <span>{{docComprobante.status.observation}}</span>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
-                  <button mat-button (click)="updateDocument('Comprobante')">
+                  <!-- <button mat-button (click)="updateDocument('Comprobante')">
                     <p style="text-align: center;">
                       Cambiar Documento
                     </p>
-                  </button>
+                  </button> -->
+                  <dropzone id="dz4" [config]="config4" [message]="'Cambiar Documento'"
+                  (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docComprobante.status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docComprobante.status.name == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="validateText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
@@ -355,11 +392,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docComprobante.status}}
+                    {{docComprobante.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docComprobante.status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docComprobante.status.name == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
@@ -373,7 +410,7 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docComprobante.status}}
+                    {{docComprobante.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
@@ -382,9 +419,9 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3">
+            <div class="col-3" *ngIf="docCurp">
               <!--Curp-->
-              <mat-card *ngIf="docCurp.status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docCurp.status.name == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">CURP</mat-card-title>
                 </mat-card-header>
@@ -398,11 +435,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCurp.status}}
+                    {{docCurp.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docCurp.status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docCurp.status.name == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">CURP</mat-card-title>
                 </mat-card-header>
@@ -416,11 +453,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCurp.status}}
+                    {{docCurp.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docCurp.status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docCurp.status.name == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">CURP</mat-card-title>
                 </mat-card-header>
@@ -428,24 +465,27 @@
                   tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCurp.status}}
+                    {{docCurp.status.name}}
                   </p>
+                  <span>{{docCurp.status.observation}}</span>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
-                  <button mat-button (click)="updateDocument('CURP')">
+                  <!-- <button mat-button (click)="updateDocument('CURP')">
                     <p style="text-align: center;">
                       Cambiar Documento
                     </p>
-                  </button>
+                  </button> -->
+                  <dropzone id="dz5" [config]="config5" [message]="'Cambiar Documento'"
+                  (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docCurp.status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docCurp.status.name == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">CURP</mat-card-title>
                 </mat-card-header>
@@ -459,14 +499,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docCurp.status}}
+                    {{docCurp.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docNss">
               <!--Nss-->
-              <mat-card *ngIf="docNss.status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docNss.status.name == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">NSS</mat-card-title>
                 </mat-card-header>
@@ -480,11 +520,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docNss.status}}
+                    {{docNss.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docNss.status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docNss.status.name == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">NSS</mat-card-title>
                 </mat-card-header>
@@ -492,24 +532,27 @@
                   tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docNss.status}}
+                    {{docNss.status.name}}
                   </p>
+                  <span>{{docNss.status.observation}}</span>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
-                  <button mat-button (click)="updateDocument('NSS')">
+                  <!-- <button mat-button (click)="updateDocument('NSS')">
                     <p style="text-align: center;">
                       Cambiar Documento
                     </p>
-                  </button>
+                  </button> -->
+                  <dropzone id="dz6" [config]="config6" [message]="'Cambiar Documento'"
+                  (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docNss.status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docNss.status.name == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">NSS</mat-card-title>
                 </mat-card-header>
@@ -523,11 +566,11 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docNss.status}}
+                    {{docNss.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docNss.status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docNss.status.name == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">NSS</mat-card-title>
                 </mat-card-header>
@@ -541,14 +584,14 @@
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docNss.status}}
+                    {{docNss.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docFoto">
               <!--FOTO-->
-              <mat-card *ngIf="docFoto.status == 'EN PROCESO'" class="process">
+              <mat-card *ngIf="docFoto.status.name == 'EN PROCESO'" class="process">
                 <mat-card-header>
                   <mat-card-title class="processText">Foto</mat-card-title>
                 </mat-card-header>
@@ -556,17 +599,17 @@
                   tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/fileImage.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docFoto.status}}
+                    {{docFoto.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docFoto.status == 'RECHAZADO'" class="reject">
+              <mat-card *ngIf="docFoto.status.name == 'RECHAZADO'" class="reject">
                 <mat-card-header>
                   <mat-card-title class="rejectText">Foto</mat-card-title>
                 </mat-card-header>
@@ -574,24 +617,27 @@
                   tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docFoto.status}}
+                    {{docFoto.status.name}}
                   </p>
+                  <span>{{docFoto.status.observation}}</span>
                 </mat-card-actions>
                 <mat-card-footer style="text-align: center; color: black;">
-                  <button mat-button (click)="updateDocument('Foto')">
+                    <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/png,image/jpg,image/jpeg" style="display: none;"> 
+                  <button mat-button (click)="showSelectFileDialog()">
                     <p style="text-align: center;">
-                      Cambiar Documento
+                      Cambiar Foto
                     </p>
                   </button>
+                 
                 </mat-card-footer>
               </mat-card>
-              <mat-card *ngIf="docFoto.status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docFoto.status.name == 'VALIDADO'" class="validate">
                 <mat-card-header>
                   <mat-card-title class="validateText">Foto</mat-card-title>
                 </mat-card-header>
@@ -599,17 +645,17 @@
                   tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/fileImage.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docFoto.status}}
+                    {{docFoto.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docFoto.status == 'ACEPTADO'" class="accept">
+              <mat-card *ngIf="docFoto.status.name == 'ACEPTADO'" class="accept">
                 <mat-card-header>
                   <mat-card-title class="acceptText">Foto</mat-card-title>
                 </mat-card-header>
@@ -617,13 +663,13 @@
                   tooltipClass="my-custom-class">
                   <div>
                     <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      <img alt="File" src="../../assets/imgs/fileImage.png" style="width: 50px; height: 50px">
                     </div>
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
                   <p style="text-align: center;">
-                    {{docFoto.status}}
+                    {{docFoto.status.name}}
                   </p>
                 </mat-card-actions>
               </mat-card>
@@ -634,3 +680,6 @@
     </div>
   </div>
 </div>
+<div class="center">
+    <app-loader [loading]="loading"></app-loader>
+  </div>

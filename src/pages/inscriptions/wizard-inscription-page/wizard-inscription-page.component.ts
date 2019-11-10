@@ -18,6 +18,8 @@ export class WizardInscriptionPageComponent implements OnInit {
   _idStudent: String;
   data: any;
   studentData: any;
+  
+  isOkPeriod : boolean;
 
   step;
 
@@ -25,8 +27,15 @@ export class WizardInscriptionPageComponent implements OnInit {
     private inscriptionsProv: InscriptionsProvider,
     private cookiesServ: CookiesService,
   ){
-    this.getIdStudent();
-    this.getStudentData(this._idStudent);
+    this.inscriptionsProv.getActivePeriod().subscribe(
+      period=>{ 
+        if(period.period){
+          this.isOkPeriod=true;
+          this.getIdStudent();
+          this.getStudentData(this._idStudent);
+        }
+      }
+    );
   }
 
   ngOnInit() {

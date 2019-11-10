@@ -1,12 +1,13 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { DropzoneComponent , DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
-
 import { Router, ActivatedRoute } from '@angular/router';
+
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+
 import { MatStepper } from '@angular/material/stepper';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
@@ -159,8 +160,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       });
   }
 
-  assingConfigForDropzone(){
-        console.log('2',this.folderId);       
+  assingConfigForDropzone(){        
         
     /*Dropzone*/
     this.config = {
@@ -265,7 +265,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
           status : {
           name:'EN PROCESO',
           active:true,
-          message:'Se actualizo el archivo'
+          message:'Se actualizo el documento'
         }
       };
       this.studentProv.updateDocumentStatus(this.data._id,documentInfo).subscribe(
@@ -407,7 +407,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
                 status : {
                 name:'EN PROCESO',
                 active:true,
-                message:'Se actualizo el archivo'
+                message:'Se actualizo el documento'
               }
             };
             this.studentProv.updateDocumentStatus(this.data._id,documentInfo).subscribe(
