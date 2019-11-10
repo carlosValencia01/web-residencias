@@ -1,12 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild } from '@angular/core';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 import { MatDialog } from '@angular/material';
+import { StudentProvider } from 'src/providers/shared/student.prov';
+import { DropzoneComponent , DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import {NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import Swal from 'sweetalert2';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+
 declare var jsPDF: any;
 
 @Component({
@@ -76,18 +81,44 @@ export class ProfileInscriptionPageComponent implements OnInit {
   montserratNormal: any;
   montserratBold: any;
 
+  folderId;
+  selectedFile: File = null;
+  imageChangedEvent: any = '';
+  closeResult: string;
+  photoStudent = '';
+  imgForSend: boolean;
+  croppedImage: any = '';
+  croppedImageBase64: any = '';
+  loading = false;
+  showImg = false;
+   /* Dropzone conf */
+   @ViewChild(DropzoneComponent) componentRef?: DropzoneComponent;
+  
+   public config1: DropzoneConfigInterface;
+   public config2: DropzoneConfigInterface;
+   public config3: DropzoneConfigInterface;
+   public config4: DropzoneConfigInterface;
+   public config5: DropzoneConfigInterface;
+   public config6: DropzoneConfigInterface;
+   public config7: DropzoneConfigInterface;
+
   constructor( 
     private inscriptionsProv: InscriptionsProvider,
     private notificationsServices: NotificationsServices,
     private cookiesServ: CookiesService,
     public dialog: MatDialog,
     private notificationService: NotificationsServices,
+    private studentProv: StudentProvider,    
+    private modalService: NgbModal,
     private imageToBase64Serv: ImageToBase64Service,
-
   ){
-    this.getFonts();
-    this.getIdStudent();
+    this.getIdStudent();    
     this.getStudentData(this._idStudent);
+    this.studentProv.refreshNeeded$.subscribe(
+      ()=>{
+        this.getIdDocuments();
+      }
+    );
   }
 
   ngOnInit() {
@@ -143,7 +174,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       this.obtenerFechaNacimiento(this.curp);
 
-
+      console.log(this.step,'stpsp');
+      
       if(this.step == 6){
         this.getIdDocuments();
       }
@@ -160,11 +192,12 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
 
   async findFoto() {
-    await this.inscriptionsProv.getFile(this.docFoto[0].fileIdInDrive, this.docFoto[0].filename).subscribe(
+    await this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(
       data => {
         this.pub = data.file;
         this.image = 'data:image/png;base64,' + this.pub;
         this.pub = true;
+        this.showImg=true;
       },
       err => {
         console.log(err);
@@ -173,18 +206,50 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
 
   getIdDocuments() {
-    this.docActa = this.filterDocuments('ACTA');
-    this.docCertificado = this.filterDocuments('CERTIFICADO');
-    this.docAnalisis = this.filterDocuments('CLINICOS');
-    this.docComprobante = this.filterDocuments('COMPROBANTE');
-    this.docCurp = this.filterDocuments('CURP');
-    this.docNss = this.filterDocuments('NSS');
-    this.docFoto = this.filterDocuments('FOTO');
-    this.docSolicitud = this.filterDocuments('SOLICITUD');
-    this.docContrato = this.filterDocuments('CONTRATO');
-    this.docAcuse = this.filterDocuments('ACUSE');
+    this.studentProv.getDriveDocuments(this._idStudent.toString()).subscribe(
+      files=>{
+        let documents = files.documents;
+        
+        this.docCurp = documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0];
+       
+        this.docNss = documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0];
+       
+        this.docFoto = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0];
+        
+        this.docComprobante = documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0];
+        
+        this.docCertificado = documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0];
+        
+       
+        this.docActa = documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0];
+       console.log(this.docActa);
+       
+        this.docAnalisis = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
 
-    setTimeout(() => {this.findFoto()}, 3000);
+        this.checkFolders();
+
+        if(this.docFoto) this.docFoto.status = this.docFoto ? this.docFoto.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docCurp)this.docCurp.status = this.docCurp ? this.docCurp.status.filter( st=> st.active===true)[0] : '';
+        
+        if(this.docActa)this.docActa.status = this.docActa ? this.docActa.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docAnalisis)this.docAnalisis.status = this.docAnalisis ? this.docAnalisis.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docCertificado) this.docCertificado.status = this.docCertificado ? this.docCertificado.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docComprobante)    this.docComprobante.status = this.docComprobante ? this.docComprobante.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docNss) this.docNss.status = this.docNss ? this.docNss.status.filter( st=> st.active===true)[0] : '';
+        this.showImg=false;
+        this.findFoto();
+      }
+    );    
+
+
+    
+   
+    // setTimeout(() => {this.findFoto()}, 3000);
 
   }
 
@@ -198,7 +263,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     switch (file) {
       case "Acta": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta de Nacimiento.', '');
-        this.inscriptionsProv.getFile(this.docActa[0].fileIdInDrive, this.docActa[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docActa.fileIdInDrive, this.docActa.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -220,7 +285,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "CURP": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CURP.', '');
-        this.inscriptionsProv.getFile(this.docCurp[0].fileIdInDrive, this.docCurp[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docCurp.fileIdInDrive, this.docCurp.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
           var pdfSrc = buff;
@@ -242,7 +307,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "NSS": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando NSS.', '');
-        this.inscriptionsProv.getFile(this.docNss[0].fileIdInDrive, this.docNss[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docNss.fileIdInDrive, this.docNss.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -264,7 +329,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Certificado": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado de Estudios.', '');
-        this.inscriptionsProv.getFile(this.docCertificado[0].fileIdInDrive, this.docCertificado[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docCertificado.fileIdInDrive, this.docCertificado.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -286,7 +351,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Analisis": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Análisis Clínicos.', '');
-        this.inscriptionsProv.getFile(this.docAnalisis[0].fileIdInDrive, this.docAnalisis[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docAnalisis.fileIdInDrive, this.docAnalisis.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -308,7 +373,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Comprobante": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Comprobante de Pago.', '');
-        this.inscriptionsProv.getFile(this.docComprobante[0].fileIdInDrive, this.docComprobante[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docComprobante.fileIdInDrive, this.docComprobante.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -330,7 +395,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Foto": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Fotografía.', '');
-        this.inscriptionsProv.getFile(this.docFoto[0].fileIdInDrive, this.docFoto[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(data => {
             let pub = data.file;
             let image = 'data:image/png;base64,' +pub;
             pub = true;
@@ -524,4 +589,190 @@ export class ProfileInscriptionPageComponent implements OnInit {
     });
   }
 
+  checkFolders(){
+    this.studentProv.getFolderId(this._idStudent).subscribe(
+      folder=>{
+        console.log(folder.folder,'asldaosfhasjfnksjdfnlkasnfjnk');
+        
+        if(folder.folder.idFolderInDrive){// folder exists
+          this.folderId = folder.folder.idFolderInDrive;
+          console.log(this.folderId,'folder student exists');
+          this.assingConfigForDropzone();          
+        }
+      });
+  }
+
+  assingConfigForDropzone(){        
+        
+    /*Dropzone*/
+    
+    this.config1 = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-ACTA.pdf', 'mimeType': 'application/pdf', newF: false, fileId: this.docActa.fileIdInDrive},   
+        acceptedFiles:'application/pdf',        
+    };        
+    console.log(this.config1);
+    
+    
+    this.config2 = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO.pdf', 'mimeType': 'application/pdf', newF: false, fileId: this.docCertificado.fileIdInDrive},
+      acceptedFiles:'application/pdf',      
+    };
+    this.config3 = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CLINICOS.pdf', 'mimeType': 'application/pdf', newF: false, fileId: this.docAnalisis.fileIdInDrive},
+      acceptedFiles:'application/pdf',      
+    };
+    this.config4 = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROBANTE.pdf', 'mimeType': 'application/pdf', newF:false, fileId: this.docComprobante.fileIdInDrive},    
+      acceptedFiles:'application/pdf',
+      
+    };
+    this.config5 = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CURP.pdf', 'mimeType': 'application/pdf', newF:false, fileId: this.docCurp.fileIdInDrive},
+      acceptedFiles:'application/pdf',
+      
+    };
+    
+    this.config6 = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-NSS.pdf','mimeType': 'application/pdf', newF: false,fileId: this.docNss.fileIdInDrive},
+      acceptedFiles:'application/pdf',        
+    };
+    
+  }
+  /*  DROPZONE 1 METHODS  */
+  public resetDropzoneUploads(): void {
+    this.componentRef.directiveRef.reset();    
+  }
+
+  public onUploadSuccess(args: any): void {
+    
+    if(args[1].action !== 'create file'){
+      const documentInfo = {      
+        filename:args[1].name,        
+        status : {
+        name:'EN PROCESO',
+        active:true,
+        message:'Se actualizo el documento'
+      }
+    };
+    this.studentProv.updateDocumentStatus(this.data._id,documentInfo).subscribe(
+      res=>{
+        this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+        'Exito', 'Documento actualizado correctamente.');
+      },
+      err=>console.log(err)
+    );
+      
+    }
+    this.resetDropzoneUploads();  
+  }  
+
+  onErrorCommon(args: any) {
+    this.resetDropzoneUploads();
+    if (args[1] === `You can't upload files of this type.`) {
+      this.notificationsServices.showNotification(eNotificationType.ERROR,
+        '!ERROR!', "No se pueden subir archivos con esa extensión!\n Las extensiones permitidas son .pdf");
+     
+    } else {
+      this.notificationsServices.showNotification(eNotificationType.ERROR,
+        '!ERROR!', "No se pueden subir archivos tan pesados!\nEl límite es 3MB");
+    }
+  }
+
+  onErrored(error: any) {
+    // do anything
+    // console.log(error);    
+  }
+
+  /*Se lanza cuando se cambia la foto*/
+  fileChangeEvent(event: any, content) {
+    if (event) {
+      this.selectedFile = <File>event.target.files[0];
+            
+      this.imageChangedEvent = event;
+
+      this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
+        this.closeResult = `Closed with: ${result}`;
+
+        this.photoStudent = this.croppedImageBase64;
+        this.imgForSend = true;        
+
+        this.uploadFile();
+        event.target.value = '';
+      }, (reason) => {
+        event.target.value = '';
+        this.imgForSend = false;
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      });
+    }
+  }
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return `with: ${reason}`;
+    }
+  }
+  showSelectFileDialog() {
+    const input = document.getElementById('fileButton');
+    input.click();
+  }
+  uploadFile() {
+    this.loading = true; 
+    // console.log('upload');
+    const red = new FileReader;
+    red.addEventListener('load', () => {      
+      // console.log(red.result);
+      let file = { 
+        mimeType:this.selectedFile.type, 
+        nameInDrive:this.data.email+'-FOTO.'+this.selectedFile.type.substr(6,this.selectedFile.type.length-1),
+        bodyMedia:red.result.toString().split(',')[1], 
+        folderId:this.folderId,
+        newF: false, 
+        fileId: this.docFoto.fileIdInDrive};
+
+      this.inscriptionsProv.uploadFile2(file).subscribe(
+        resp=>{
+          if(resp.action !== 'create file'){
+            const documentInfo = {      
+                filename:resp.filename,        
+                status : {
+                name:'EN PROCESO',
+                active:true,
+                message:'Se actualizo el documento'
+              }
+            };
+            this.studentProv.updateDocumentStatus(this.data._id,documentInfo).subscribe(
+              res=>{
+                this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+                'Exito', 'Documento actualizado correctamente.');
+              },
+              err=>console.log(err)
+            );                                    
+          }
+          this.loading = false; 
+        },
+        err=>{console.log(err); this.loading = false; 
+        }
+      )
+    }, false);
+    red.readAsDataURL(this.croppedImage);    
+    
+  }
+  imageCropped(event: ImageCroppedEvent) {
+    this.croppedImage = event.file;
+    this.croppedImageBase64 = event.base64;
+    // console.log('crop');
+    
+  }
+  imageLoaded() {
+    // show cropper
+  }
 }

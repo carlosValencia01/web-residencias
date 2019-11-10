@@ -26,7 +26,7 @@ import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
  
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
-  url: 'http://localhost:3004/escolares/credenciales/drive/upload/file',
+  url: 'http://localhost:3003/escolares/credenciales/drive/upload/file',
   // url: 'http://httpbin.org/post',
   maxFilesize: 3,
   acceptedFiles: 'application/pdf',  
@@ -119,6 +119,11 @@ import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.pr
 //services
 import { WizardService } from 'src/services/inscriptions/wizard.service';
 import { UploadFilesService } from 'src/services/inscriptions/upload-files.service';
+//modals
+import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component'
+import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component'
+import { ExpedientHistoryComponent } from 'src/modals/inscriptions/expedient-history/expedient-history.component';
+import { StudentInformationComponent } from '../modals/inscriptions/student-information/student-information.component';
 
 // Reception act module
 // Pages
@@ -146,7 +151,7 @@ import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/re
 import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
-import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component'
+
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
 // Providers
@@ -215,7 +220,9 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     SecretaryInscriptionPageComponent,
     //Modals
     NewPeriodComponent,
-
+    ReviewExpedientComponent,
+    ExpedientHistoryComponent,
+    StudentInformationComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -389,6 +396,9 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     //inscriptions
     //Modals
     NewPeriodComponent,
+    ReviewExpedientComponent,
+    ExpedientHistoryComponent,
+    StudentInformationComponent,
 
     // Shared
     // Modals

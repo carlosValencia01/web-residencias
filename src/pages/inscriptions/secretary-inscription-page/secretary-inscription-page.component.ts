@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { MatDialog } from '@angular/material';
+import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
+import { StudentInformationComponent } from 'src/modals/inscriptions/student-information/student-information.component';
 
 @Component({
   selector: 'app-secretary-inscription-page',
@@ -34,6 +37,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   constructor(
     private inscriptionsProv: InscriptionsProvider,
+    public dialog: MatDialog,
   ) { 
     this.getStudents();
     this.getPeriods();
@@ -91,7 +95,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.A
     );
 
-    console.log(this.listStudents);
+    //console.log(this.listStudents);
 
     if (Object.keys(this.listStudents).length === 0) {
       if (!this.searchEC && !this.searchE && !this.searchEP && !this.searchV && !this.searchA) {
@@ -103,7 +107,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
    // FILTRADO POR CARRERA O ESTATUS
    filterItems(carreer, EC, E, EP, V, A) {
     return this.students.filter(function (student) {
-      console.log(student);
+      //console.log(student);
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
         student.inscriptionStatus.toLowerCase().indexOf(EC.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(E.toLowerCase()) > -1 ||
@@ -123,13 +127,45 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       });
   }
 
-  updateGI(item){
-    console.log(item);
+  updateGI(student){
+    //console.log(student);
+    const linkModal = this.dialog.open(StudentInformationComponent, {
+      data: {
+        operation: 'view',
+        student:student
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90em',
+      height: '800px'
+    });
+    let sub = linkModal.afterClosed().subscribe(
+      information=>{         
+        console.log(information);
+      },
+      err=>console.log(err), ()=> sub.unsubscribe()
+    );
   }
 
-  viewDocuments(item){
-    console.log(item.documents);
-
+  viewExpedient(student){
+    
+    const linkModal = this.dialog.open(ReviewExpedientComponent, {
+      data: {
+        operation: 'view',
+        student:student
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90em',
+      height: '800px'
+    });
+    let sub = linkModal.afterClosed().subscribe(
+      expedient=>{         
+        console.log(expedient);
+        
+      },
+      err=>console.log(err), ()=> sub.unsubscribe()
+    );
   }
 
 }

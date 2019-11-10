@@ -127,6 +127,9 @@ export class StudentProvider {
     getDriveDocuments(studentId : string): Observable<any>  {
         return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
     }
+    getFolderId(studentId : String): Observable<any>  {
+        return this.api.get(`student/get/folderid/${studentId}`).pipe(map(res => res.json()));
+    }
 
     uploadDocumentDrive(id,data): Observable<any> {
         return this.api.put(`student/document/drive/${id}`, data).pipe(map(res => res.json())).pipe(
@@ -134,5 +137,16 @@ export class StudentProvider {
               this._refreshNeeded$.next();
             })
           );
+    }
+    
+    getDriveFolderId(studentId : string): Observable<any>  {
+        return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
+    }
+    updateDocumentStatus(id,data): Observable<any> {
+        return this.api.put(`student/document/status/${id}`, data).pipe(map(res => res.json())).pipe(
+            tap(() => {
+                this._refreshNeeded$.next();
+            })
+            );
     }
 }

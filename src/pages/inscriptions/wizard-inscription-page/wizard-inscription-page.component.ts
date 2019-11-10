@@ -8,42 +8,51 @@ import {Router } from '@angular/router';
   templateUrl: './wizard-inscription-page.component.html',
   styleUrls: ['./wizard-inscription-page.component.scss'],
 })
-export class WizardInscriptionPageComponent implements OnInit {
-  isLinear = false;
+export class WizardInscriptionPageComponent implements OnInit {
+  isLinear = false;
 
-  _idStudent: String;
-  data: any;
-  studentData: any;
+  _idStudent: String;
+  data: any;
+  studentData: any;
+  
+  isOkPeriod : boolean;
 
-  step;
+  step;
 
-  constructor( 
-    private inscriptionsProv: InscriptionsProvider,
-    private cookiesServ: CookiesService,
+  constructor( 
+    private inscriptionsProv: InscriptionsProvider,
+    private cookiesServ: CookiesService,
     private router: Router,
-  ){
-    this.getIdStudent();
-    this.getStudentData(this._idStudent);
-  }
+  ){
+    this.inscriptionsProv.getActivePeriod().subscribe(
+      period=>{ 
+        if(period.period){
+          this.isOkPeriod=true;
+          this.getIdStudent();
+          this.getStudentData(this._idStudent);
+        }
+      }
+    );
+  }
 
-  ngOnInit() {
+  ngOnInit() {
 
-  }
+  }
 
-  getIdStudent() {
-    this.data = this.cookiesServ.getData().user;
-    this._idStudent = this.data._id;
-  }
+  getIdStudent() {
+    this.data = this.cookiesServ.getData().user;
+    this._idStudent = this.data._id;
+  }
 
-  getStudentData(id) {
-    this.inscriptionsProv.getStudent(id).subscribe(res => {
-      this.studentData = res.student[0];
-      this.step = this.studentData.stepWizard;
-      console.log(this.step);
-      if(this.step == 6){
-        //window.location.assign("/profileInscription");
+  getStudentData(id) {
+    this.inscriptionsProv.getStudent(id).subscribe(res => {
+      this.studentData = res.student[0];
+      this.step = this.studentData.stepWizard;
+      console.log(this.step);
+      if(this.step == 6){
+        //window.location.assign("/profileInscription");
         this.router.navigate(['/profileInscription']);
-      }
-    });
-  }
+      }
+    });
+  }
 }

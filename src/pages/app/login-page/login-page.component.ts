@@ -63,7 +63,7 @@ export class LoginPageComponent implements OnInit {
     } else {
       this.userProv.login({ email: this.formLogin.get('usernameInput').value, password: this.formLogin.get('passwordInput').value })
         .subscribe(res => {
-          // console.log(res);
+          console.log(res);
           // Aqui emitiremos la señal, de que todo esta correcto y se cambiara la pagina.
           this.userProv.sendTokenFromAPI(res.token);
           this.cookiesServ.saveData(res);

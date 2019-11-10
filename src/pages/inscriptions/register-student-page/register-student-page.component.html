@@ -211,7 +211,7 @@
               <td>
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>¿Perteneces a alguna Etnia?</mat-label>
-                  <select matNativeControl required [(ngModel)]="etnia" formControlName="etnia" (change)="changeEvent()">
+                  <select matNativeControl required [(ngModel)]="etnia" formControlName="etnia" (change)="changeEventEtnia()">
                     <option value="Si">Si</option>
                     <option value="No">No</option>
                   </select>
@@ -233,7 +233,7 @@
               <td>
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Tienes Alguna Discapacidad?</mat-label>
-                  <select matNativeControl required [(ngModel)]="discapacidad" formControlName="disability" (change)="changeEvent()">
+                  <select matNativeControl required [(ngModel)]="discapacidad" formControlName="disability" (change)="changeEventDiscapacidad()">
                     <option value="Si">Si</option>
                     <option value="No">No</option>
                   </select>
@@ -263,7 +263,7 @@
               <td>
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Escuela de Procedencia</mat-label>
-                  <select matNativeControl required [(ngModel)]="escuelaProcedencia" formControlName="originSchool" (change)="changeEvent()">
+                  <select matNativeControl required [(ngModel)]="escuelaProcedencia" formControlName="originSchool" (change)="changeEventEProcedencia()">
                     <option value="CBTIS">CBTIS</option>
                     <option value="CBTa">CBTa</option>
                     <option value="COBACH">COBACH</option>
@@ -323,4 +323,7 @@
       </form>
     </div>
   </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
 </div>

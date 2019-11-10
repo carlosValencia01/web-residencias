@@ -1,15 +1,7 @@
-::ng-deep .mat-horizontal-stepper-header{
-    pointer-events: none !important;
-}
 
-.imgProfile{
-    width: 70%;
+.process,.reject,.validate,.accept{
+    cursor: pointer;
     text-align: center;
-    padding-top: 5px;
-}
-
-img.imgProfile.mat-card-image{
-    border-radius: 10px;
 }
 
 .process{    
@@ -23,7 +15,7 @@ img.imgProfile.mat-card-image{
 }
 
 .reject{
-    background: rgba(255, 0, 0, 0.2);
+    background: rgba(239, 89, 88, 0.2);
     border: 1px solid #dc5251;
     color: #b64443;
 }
@@ -31,22 +23,22 @@ img.imgProfile.mat-card-image{
     color: #b64443;
 }
 
-.validate{  
-    background: rgba(13, 219, 185, 0.2);
-    border: 1px solid #0cc9aa;
-    color: #0aa68d;  
+.validate{    
+    background: rgba(70, 77, 238, 0.2);
+    border: 1px solid #4047db;
+    color: #353bb5;
 }
 .validateText{
-    color: #0aa68d;
+    color: #353bb5;
 }
 
 .accept{       
-    background: rgb(20, 43, 88);
-    border: 1px solid #4047db;
-    color: #ffffff;
+    background: rgba(13, 219, 185, 0.2);
+    border: 1px solid #0cc9aa;
+    color: #0aa68d;
 }
 .acceptText {
-    color: #ffffff;   
+    color: #0aa68d;;   
 }
 
 .title {
@@ -72,17 +64,59 @@ img.imgProfile.mat-card-image{
     margin: 10px 50px 30px 50px;
 }
 
-  
-h6{
-    font-weight: bold;
-  }
-
-  h6 span {
-    font-weight: normal;
+.noview{
+    max-width: 0;
+    display: none;
 }
-.btn-login {
-    background-color: #4D66A2;
+
+.adjustcard{
+    width: 200px !important;
+    height: 100px !important;
+}
+
+.mat-card-header{
+    position: absolute !important;
+    width: 100% !important;
+    left: 0px !important;
+    top: 38% !important;
+    justify-content: center;
+}
+
+.cardini{
+    width: 200px;
+    height: 200px;
+}
+
+.viewdoc{
+    border: 2px solid steelblue;
+    border-radius: 6px;
+    box-shadow: -1px 1px 10px rgba(0,0,0,0.2);
+}
+
+.viewdocheader{
+    background: rgb(27,57,106);
+    margin-left: 0;
+    width: 100%;
     color: white;
+    height: 60px;
+    padding: 10px;
+}
+
+.imgProfile{
+    width: 50%;
+    text-align: center;
+    padding-top: 5px;
+    margin-top: 5% !important;
+}
+
+img.imgProfile.mat-card-image{
+    border-radius: 10px;
+}
+
+hr{
+    margin-top: 0 !important;
+    margin-bottom: 8px !important;
+    width: 85% !important;
 }
 
 /* DOC LOAD ANIMATION */
@@ -268,3 +302,4 @@ h6{
 }
 
 /* \\PDF LOAD ANIMATION */
+

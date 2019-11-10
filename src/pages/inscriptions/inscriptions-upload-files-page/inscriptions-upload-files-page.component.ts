@@ -1,12 +1,13 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { DropzoneComponent , DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
-
 import { Router, ActivatedRoute } from '@angular/router';
+
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+
 import { MatStepper } from '@angular/material/stepper';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
@@ -89,35 +90,8 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         ()=>{
           this.getDocuments();
         }
-      )
-
-      this.inscriptionsProv.getAllPeriods().subscribe(
-        periods=>{
-          this.activePeriod = periods.periods.filter( period=> period.active===true)[0];
-          
-          
-          
-          if(this.activePeriod){
-            
-            this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id).subscribe(
-              (folders)=>{
-                this.foldersByPeriod=folders.folders;
-                console.log('1');
-                
-                if(this.foldersByPeriod.length>0){
-                  console.log('2');
-                  
-                  this.getDocuments();
-                  
-                }
-                
-              },
-              err=>{console.log(err,'==============error');
-              }
-            );
-          }
-        }
-      )
+      );
+      this.getDocuments();     
       this.getIdStudent();      
   }
   ngOnInit() {        
@@ -143,8 +117,23 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         this.certificateDoc = documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0];
         this.actaDoc = documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0];
         this.clinicDoc = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
+      
+        if(this.imageDoc) this.imageDoc.status = this.imageDoc ? this.imageDoc.status.filter( st=> st.active===true)[0].name : '';
+
+       if(this.curpDoc) this.curpDoc.status = this.curpDoc ? this.curpDoc.status.filter( st=> st.active===true)[0].name : '';
         
+       if(this.actaDoc) this.actaDoc.status = this.actaDoc ? this.actaDoc.status.filter( st=> st.active===true)[0].name : '';
+
+       if(this.clinicDoc) this.clinicDoc.status = this.clinicDoc ? this.clinicDoc.status.filter( st=> st.active===true)[0].name : '';
+
+       if(this.certificateDoc) this.certificateDoc.status = this.certificateDoc ? this.certificateDoc.status.filter( st=> st.active===true)[0].name : '';
+
+       if(this.payDoc) this.payDoc.status = this.payDoc ? this.payDoc.status.filter( st=> st.active===true)[0].name : '';
+
+       if(this.nssDoc) this.nssDoc.status = this.nssDoc ? this.nssDoc.status.filter( st=> st.active===true)[0].name : '';
+      
         this.checkFolders();
+                
         if(this.imageDoc){
           this.inscriptionsProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
             succss=>{              
@@ -159,56 +148,19 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     );
   }
   checkFolders(){
-    let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1 );
-    //1 search career folder
-    let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
-    
-    let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
-    
-    if(folderCareer.length>0){
-      console.log('existo');
-      
-      // folder exists
-      // 2 search folder by student
-      let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName);
-      if(folderStudent.length > 0){
-        // folder exists
-        this.folderId = folderStudent[0].idFolderInDrive;
-        this.assingConfigForDropzone();
-      }else{
-        // student folder doesn't exists then create new folder
-        this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,folderCareer[0].idFolderInDrive).subscribe(
-          studentF=>{
-            this.folderId = studentF.folder.idFolderInDrive;
-            this.assingConfigForDropzone();
-          },
-          err=>{console.log(err);
-          }
-        );
-      }
-    }else{
-      // career folder doesn't exist then create it
-      this.inscriptionsProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive).subscribe(
-        career=>{
-          
-          // student folder doesn't exists then create new folder
-          this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,career.folder.idFolderInDrive).subscribe(
-            studentF=>{
-              this.folderId = studentF.folder.idFolderInDrive;       
-              this.assingConfigForDropzone();                     
-            },
-            err=>{console.log(err);
-            }
-          );
-        },
-        err=>{console.log(err);
+    this.studentProv.getFolderId(this._idStudent).subscribe(
+      folder=>{
+        console.log(folder.folder,'asldaosfhasjfnksjdfnlkasnfjnk');
+        
+        if(folder.folder.idFolderInDrive){// folder exists
+          this.folderId = folder.folder.idFolderInDrive;
+          console.log(this.folderId,'folder student exists');
+          this.assingConfigForDropzone();          
         }
-      );
-    }
+      });
   }
 
-  assingConfigForDropzone(){
-        // console.log('2',this.curpDoc);
+  assingConfigForDropzone(){        
         
     /*Dropzone*/
     this.config = {
@@ -281,12 +233,17 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     console.log(args);
     if(args[1].action == 'create file'){
 
-      const documentInfo = {
-        filename:args[1].name,
-        type:'DRIVE',
-        status:'EN PROCESO',
-        fileIdInDrive:args[1].fileId,
-        mimeType:args[1].mimeType
+      const documentInfo = {      
+        doc:{
+          filename:args[1].name,
+          type:'DRIVE',      
+          fileIdInDrive:args[1].fileId,
+        },
+          status : {
+          name:'EN PROCESO',
+          active:true,
+          message:'Se envio por primera vez'
+        }
       };
       // console.log(documentInfo);
       
@@ -303,8 +260,21 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         }
       );
     }else{
-      this.notificationsServices.showNotification(eNotificationType.SUCCESS,
-        'Exito', 'Documento actualizado correctamente.');
+      const documentInfo = {      
+          filename:args[1].name,        
+          status : {
+          name:'EN PROCESO',
+          active:true,
+          message:'Se actualizo el documento'
+        }
+      };
+      this.studentProv.updateDocumentStatus(this.data._id,documentInfo).subscribe(
+        res=>{
+          this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+          'Exito', 'Documento actualizado correctamente.');
+        },
+        err=>console.log(err)
+      );
     }
     this.resetDropzoneUploads();
   
@@ -407,10 +377,17 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
           if(resp.action == 'create file'){
             
             const documentInfo = {
-              filename:resp.name,
-              type:'DRIVE',
-              status:'EN PROCESO',
-              fileIdInDrive:resp.fileId            
+              
+              doc:{
+                filename:resp.name,
+                type:'DRIVE',                
+                fileIdInDrive:resp.fileId
+              },
+              status : {
+                name:'EN PROCESO',
+                active:true,
+                message:'Se envio por primera vez'
+              }            
             };
             this.studentProv.uploadDocumentDrive(this.data._id,documentInfo).subscribe(
               updated=>{                
@@ -423,9 +400,23 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
                 
               },()=>this.loading=false
             );
-          }else{
-            this.notificationsServices.showNotification(eNotificationType.SUCCESS,
-              'Exito', 'Documento actualizado correctamente.');
+          }else{            
+            
+            const documentInfo = {      
+                filename:resp.filename,        
+                status : {
+                name:'EN PROCESO',
+                active:true,
+                message:'Se actualizo el documento'
+              }
+            };
+            this.studentProv.updateDocumentStatus(this.data._id,documentInfo).subscribe(
+              res=>{
+                this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+                'Exito', 'Documento actualizado correctamente.');
+              },
+              err=>console.log(err)
+            );            
           }
           this.loading = false; 
         },

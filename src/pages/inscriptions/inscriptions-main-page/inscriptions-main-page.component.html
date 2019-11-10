@@ -10,18 +10,12 @@
   </div>
   <div class="row content align-items-center p-2">
     <!-- cabecera filtros  -->
-    <div class="col-sm-6">      
+    <div class="col-sm-9">      
         <input type="text" id="search" placeholder="Buscar..." name="search" class="form-control"/>      
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-4">
       <div class="row">
-        <div class="col-6">
-          <div *ngIf="periods.length === 0">
-            <select name="periodo" id="periodo" class="form-control">
-              <option value="Enero-Junio">Enero-Junio</option>
-              <option value="Agosto-Diciembre">Agosto-Diciembre</option>
-            </select>
-          </div>
+        <div class="col-6">          
         </div>
         <div class="col-6">
           <button class="btn btn-success" (click)="createPeriod()">Crear periodo</button>

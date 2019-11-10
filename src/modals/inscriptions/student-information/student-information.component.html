@@ -1,0 +1,366 @@
+<div class="content-general" *ngIf="numeroControl">
+  <div class="card card-shadow">
+    <div class="card-header text-white bg-secondary">
+      <div class="row">
+        <div class="col-10">
+          <h1 mat-dialog-title>{{title}}</h1>
+        </div>
+        <div class="col-2">
+          <button mat-icon-button (click)="onClose()" class="float-right">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="example-container">
+      <form [formGroup]="registerForm" (ngSubmit)="onFormSubmit(registerForm.value)" class="tp-form">
+        <table style="margin: 0 auto; width: 100%;">
+          <tr>
+            <td>
+              <h6>Número de Contról: <span>{{numeroControl}}</span></h6>
+            </td>
+            <td>
+              <h6>Carrera a Cursar: <span>{{carreraCursar}}</span></h6>
+            </td>
+          </tr>
+        </table><br>
+        <div class="col-12">
+          <mat-tab-group>
+            <mat-tab label="Datos Generales">
+              <div class="card mt-3">
+                <table style="margin: 0 auto; width: 100%;">
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Apellido Paterno</mat-label>
+                        <input matInput formControlName="fatherLastName" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('fatherLastName').valid && registerForm.get('fatherLastName').touched">Ingrese
+                            Apellido Paterno</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Apellido Materno</mat-label>
+                        <input matInput formControlName="motherLastName" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('motherLastName').valid && registerForm.get('motherLastName').touched">Ingrese
+                            Apellido Materno</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Nombre(s)</mat-label>
+                        <input matInput formControlName="firstName" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('firstName').valid && registerForm.get('firstName').touched">Ingrese
+                            su
+                            nombre</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Correo Electrónico</mat-label>
+                        <input matInput formControlName="email" [errorStateMatcher]="matcher">
+                        <mat-error>
+                          <span *ngIf="!registerForm.get('email').valid && registerForm.get('email').touched">Ingrese
+                            Correo Electrónico Válido</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Lugar de Nacimiento</mat-label>
+                        <input matInput formControlName="birthPlace" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('birthPlace').valid && registerForm.get('birthPlace').touched">Ingrese
+                            su
+                            Lugar de Nacimiento</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Estado Civil</mat-label>
+                        <select matNativeControl required [(ngModel)]="estadoCivil" formControlName="civilStatus">
+                          <option value="Soltero(a)">Soltero(a)</option>
+                          <option value="Comprometido(a)">Comprometido(a)</option>
+                          <option value="Casado(a)">Casado(a)</option>
+                          <option value="Divorsiado(a)">Divorciado(a)</option>
+                          <option value="Viudo(a)">Viudo(a)</option>
+                        </select>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>CURP</mat-label>
+                        <input matInput formControlName="curp" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span *ngIf="!registerForm.get('curp').valid && registerForm.get('curp').touched">Ingrese CURP
+                            Válido</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>NSS (Número de Seguro Social)</mat-label>
+                        <input matInput formControlName="nss" [errorStateMatcher]="matcher">
+                        <mat-error>
+                          <span *ngIf="!registerForm.get('nss').valid && registerForm.get('nss').touched">Ingrese NSS
+                            Válido</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </mat-tab>
+            <mat-tab label="Dirección">
+              <div class="card mt-3">
+                <table style="margin: 0 auto; width: 100%;">
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Calle</mat-label>
+                        <input matInput formControlName="street" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span *ngIf="!registerForm.get('street').valid && registerForm.get('street').touched">Ingrese
+                            su
+                            Calle</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Colonia</mat-label>
+                        <input matInput formControlName="suburb" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span *ngIf="!registerForm.get('suburb').valid && registerForm.get('suburb').touched">Ingrese
+                            su
+                            Colonia</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Ciudad</mat-label>
+                        <input matInput formControlName="city" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span *ngIf="!registerForm.get('city').valid && registerForm.get('city').touched">Ingrese su
+                            Ciudad</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Estado</mat-label>
+                        <select matNativeControl required [(ngModel)]="estado" formControlName="state">
+                          <option value="Aguascalientes">Aguascalientes</option>
+                          <option value="Baja California">Baja California</option>
+                          <option value="Baja California Sur">Baja California Sur</option>
+                          <option value="Campeche">Campeche</option>
+                          <option value="Chiapas">Chiapas</option>
+                          <option value="Chihuahua">Chihuahua</option>
+                          <option value="Coahuila de Zaragoza">Coahuila de Zaragoza</option>
+                          <option value="Colima">Colima</option>
+                          <option value="Durango">Durango</option>
+                          <option value="Estado de México">Estado de México</option>
+                          <option value="Guanajuato">Guanajuato</option>
+                          <option value="Guerrero">Guerrero</option>
+                          <option value="Hidalgo">Hidalgo</option>
+                          <option value="Jalisco">Jalisco</option>
+                          <option value="Michoacán">Michoacán</option>
+                          <option value="Morelos">Morelos</option>
+                          <option value="Nayarit">Nayarit</option>
+                          <option value="Nuevo León">Nuevo León</option>
+                          <option value="Oaxaca">Oaxaca</option>
+                          <option value="Puebla">Puebla</option>
+                          <option value="Querétaro">Querétaro</option>
+                          <option value="Quintana Roo">Quintana Roo</option>
+                          <option value="San Luis Potosí">San Luis Potosí</option>
+                          <option value="Sinaloa">Sinaloa</option>
+                          <option value="Sonora">Sonora</option>
+                          <option value="Tabasco">Tabasco</option>
+                          <option value="Tamaulipas">Tamaulipas</option>
+                          <option value="Tlaxcala">Tlaxcala</option>
+                          <option value="Veracruz">Veracruz</option>
+                          <option value="Yucatán">Yucatán</option>
+                          <option value="Zacatecas">Zacatecas</option>
+                        </select>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Código Postal</mat-label>
+                        <input matInput formControlName="cp" [errorStateMatcher]="matcher">
+                        <mat-error>
+                          <span *ngIf="!registerForm.get('cp').valid && registerForm.get('cp').touched">Ingrese Código
+                            Postal Válido</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Teléfono</mat-label>
+                        <input matInput formControlName="phone" [errorStateMatcher]="matcher">
+                        <mat-error>
+                          <span *ngIf="!registerForm.get('phone').valid && registerForm.get('phone').touched">Ingrese
+                            Número Telefónico Válido</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                </table>
+                <hr>
+                <table style="margin: 0 auto; width: 100%;">
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>¿Perteneces a alguna Etnia?</mat-label>
+                        <select matNativeControl required [(ngModel)]="etnia" formControlName="etnia"
+                          (change)="changeEventEtnia()">
+                          <option value="Si">Si</option>
+                          <option value="No">No</option>
+                        </select>
+                      </mat-form-field>
+                    </td>
+                    <td *ngIf="etnia == 'Si'">
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>¿Cuál?</mat-label>
+                        <input matInput formControlName="typeEtnia" [errorStateMatcher]="matcher"
+                          [(ngModel)]="tipoEtnia" oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('typeEtnia').valid && registerForm.get('typeEtnia').touched">Ingrese
+                            su
+                            Etnia</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Tienes Alguna Discapacidad?</mat-label>
+                        <select matNativeControl required [(ngModel)]="discapacidad" formControlName="disability"
+                          (change)="changeEventDiscapacidad()">
+                          <option value="Si">Si</option>
+                          <option value="No">No</option>
+                        </select>
+                      </mat-form-field>
+                    </td>
+                    <td *ngIf="discapacidad == 'Si'">
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>¿Cuál?</mat-label>
+                        <input matInput formControlName="typeDisability" [errorStateMatcher]="matcher"
+                          [(ngModel)]="tipoDiscapacidad" oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('typeDisability').valid && registerForm.get('typeDisability').touched">Ingrese
+                            su
+                            Discapacidad</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </mat-tab>
+            <mat-tab label="Datos Académicos">
+              <div class="card mt-3">
+                <table style="margin: 0 auto; width: 100%;">
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Escuela de Procedencia</mat-label>
+                        <select matNativeControl required [(ngModel)]="escuelaProcedencia"
+                          formControlName="originSchool" (change)="changeEventEProcedencia()">
+                          <option value="CBTIS">CBTIS</option>
+                          <option value="CBTa">CBTa</option>
+                          <option value="COBACH">COBACH</option>
+                          <option value="Cecyte">Cecyte</option>
+                          <option value="Preparatoria">Preparatoria</option>
+                          <option value="CETIS">CETIS</option>
+                          <option value="Sistema abierto">Sistema abierto</option>
+                          <option value="OTRO">OTRO</option>
+                        </select>
+                      </mat-form-field>
+                    </td>
+                    <td *ngIf="escuelaProcedencia == 'OTRO'">
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Especifique</mat-label>
+                        <input matInput formControlName="otherSchool" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('otherSchool').valid && registerForm.get('otherSchool').touched">Especificar
+                            Escuela</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Nombre de la Escuela</mat-label>
+                        <input matInput formControlName="nameOriginSchool" [errorStateMatcher]="matcher"
+                          oninput="this.value = this.value.toUpperCase()">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('nameOriginSchool').valid && registerForm.get('nameOriginSchool').touched">Ingrese
+                            su
+                            Escuela de Procedencia</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                    <td>
+                      <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Promedio</mat-label>
+                        <input matInput formControlName="averageOriginSchool" [errorStateMatcher]="matcher">
+                        <mat-error>
+                          <span
+                            *ngIf="!registerForm.get('averageOriginSchool').valid && registerForm.get('averageOriginSchool').touched">Ingrese
+                            su
+                            Promedio</span>
+                        </mat-error>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+        <div class="row justify-content-center mt-3">
+          <div>
+            <button type="submit" [disabled]="!registerForm.valid" class="btn btn-success">Actualizar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
+</div>
