@@ -142,6 +142,9 @@ export class StudentProvider {
     getDriveFolderId(studentId : string): Observable<any>  {
         return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
     }
+    getPeriodId(studentId : string): Observable<any>  {
+        return this.api.get(`student/get/periodinscription/${studentId}`).pipe(map(res => res.json()));
+    }
     updateDocumentStatus(id,data): Observable<any> {
         return this.api.put(`student/document/status/${id}`, data).pipe(map(res => res.json())).pipe(
             tap(() => {

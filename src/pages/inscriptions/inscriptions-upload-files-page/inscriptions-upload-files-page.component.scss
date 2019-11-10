@@ -23,7 +23,17 @@
   text-align: center;
   background: #273361 !important;
 }
-.c-header,.label{
+.cheaderok{
+  color: white;
+  text-align: center;
+  background: #276142 !important;
+}
+.cheaderrequired{
+  color: white;
+  text-align: center;
+  background: #680c0c !important;
+}
+.c-header,.label,.cheaderrequired,.cheaderok{
 
   cursor: pointer;
 }

@@ -8,6 +8,7 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 
 
+
 const jsPDF = require('jspdf');
 
 @Component({
@@ -231,10 +232,13 @@ export class ContractStudentPageComponent implements OnInit {
     this._idStudent = this.data._id;
     this.studentProv.getFolderId(this._idStudent).subscribe(
       student=>{
-        if(student.folder.idFolderInDrive){// folder exists
-          this.folderId = student.folder.idFolderInDrive;
-          console.log(this.folderId,'folder student exists');     
-        }
+        console.log(student,'contratooo');
+        if(student.folder){// folder exists
+          if(student.folder.idFolderInDrive){
+            this.folderId = student.folder.idFolderInDrive;
+            console.log(this.folderId,'folder student exists');                     
+          }
+        }          
       });
   }
 
@@ -275,6 +279,7 @@ export class ContractStudentPageComponent implements OnInit {
       },
       err=>{
         console.log(err);
+        this.loading=false
       }
     );
   }

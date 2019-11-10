@@ -148,14 +148,19 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     );
   }
   checkFolders(){
+    console.log(this._idStudent
+      );
+    
     this.studentProv.getFolderId(this._idStudent).subscribe(
       folder=>{
-        console.log(folder.folder,'asldaosfhasjfnksjdfnlkasnfjnk');
+        console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
         
-        if(folder.folder.idFolderInDrive){// folder exists
-          this.folderId = folder.folder.idFolderInDrive;
-          console.log(this.folderId,'folder student exists');
-          this.assingConfigForDropzone();          
+        if(folder.folder){// folder exists
+          if(folder.folder.idFolderInDrive){
+            this.folderId = folder.folder.idFolderInDrive;
+            console.log(this.folderId,'folder student exists');
+            this.assingConfigForDropzone();          
+          }
         }
       });
   }

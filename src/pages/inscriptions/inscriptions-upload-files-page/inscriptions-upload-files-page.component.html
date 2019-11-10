@@ -133,11 +133,12 @@
         <!--Columna 2: COPIA DEL COMPROBANTE-->
         <div class='col-sm-12 col-md-6'>
           <div class='card cd'>
-            <div [class.isDisabled]="payDoc !== undefined ? true : false" class='card-header c-header'
+            <div [class.cheaderrequired]="!payDoc" [class.cheaderok]="payDoc"  [class.isDisabled]="payDoc !== undefined ? true : false" class='card-header'
               (click)="collapse('collapsePAGO',payDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-9">
                   <p>
+                      <span *ngIf="!payDoc" class="text-warning"> REQUERIDO </span>
                     <b>COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN
                     </b>
                   </p>
@@ -252,12 +253,12 @@
         <div class='col-sm-12 col-md-6'>
 
           <div class='card cd'>
-            <div class="card-header c-header" [class.isDisabled]="certificateDoc !== undefined ? true : false"
+            <div class="card-header c-header" [class.cheaderrequired]="!certificateDoc" [class.cheaderok]="certificateDoc" [class.isDisabled]="certificateDoc !== undefined ? true : false"
               (click)="collapse('collapseCERT',certificateDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-9">
                   <p>
-
+                      <span *ngIf="!certificateDoc" class="text-warning"> REQUERIDO </span>
                     <b>CERTIFICADO DE BACHILLERATO O EQUIVALENTE
 
                     </b>
