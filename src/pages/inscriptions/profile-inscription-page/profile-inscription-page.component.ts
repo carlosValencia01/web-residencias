@@ -468,7 +468,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     
     this.config1 = {
       clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-ACTA.pdf', 'mimeType': 'application/pdf', newF: false, fileId: this.docActa.fileIdInDrive},   
+      params: {folderId:this.folderId, 'filename': this.data.email+'-ACTA.pdf', 'mimeType': 'application/pdf', newF: this.docActa ? false :true, fileId:this.docActa ? this.docActa.fileIdInDrive :''},   
         acceptedFiles:'application/pdf',        
     };        
     console.log(this.config1);
@@ -481,7 +481,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     };
     this.config3 = {
       clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-CLINICOS.pdf', 'mimeType': 'application/pdf', newF: false, fileId: this.docAnalisis.fileIdInDrive},
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CLINICOS.pdf', 'mimeType': 'application/pdf', newF: this.docAnalisis ? false :true, fileId:this.docAnalisis ? this.docAnalisis.fileIdInDrive :''},
       acceptedFiles:'application/pdf',      
     };
     this.config4 = {
@@ -492,14 +492,14 @@ export class ProfileInscriptionPageComponent implements OnInit {
     };
     this.config5 = {
       clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-CURP.pdf', 'mimeType': 'application/pdf', newF:false, fileId: this.docCurp.fileIdInDrive},
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CURP.pdf', 'mimeType': 'application/pdf', newF: this.docCurp ? false :true, fileId:this.docCurp ? this.docCurp.fileIdInDrive :''},
       acceptedFiles:'application/pdf',
       
     };
     
     this.config6 = {
       clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-NSS.pdf','mimeType': 'application/pdf', newF: false,fileId: this.docNss.fileIdInDrive},
+      params: {folderId:this.folderId, 'filename': this.data.email+'-NSS.pdf','mimeType': 'application/pdf', newF: this.docNss ? false :true, fileId:this.docNss ? this.docNss.fileIdInDrive :''},
       acceptedFiles:'application/pdf',        
     };
     
@@ -528,6 +528,33 @@ export class ProfileInscriptionPageComponent implements OnInit {
       err=>console.log(err)
     );
       
+    }else{
+      const documentInfo = {      
+        doc:{
+          filename:args[1].name,
+          type:'DRIVE',      
+          fileIdInDrive:args[1].fileId,
+        },
+          status : {
+          name:'EN PROCESO',
+          active:true,
+          message:'Se envio por primera vez'
+        }
+      };
+      // console.log(documentInfo);
+      
+      this.studentProv.uploadDocumentDrive(this.data._id,documentInfo).subscribe(
+        updated=>{
+              
+          this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+            'Exito', 'Documento cargado correctamente.');
+            
+        },
+        err=>{
+          console.log(err);
+          
+        }
+      );
     }
     this.resetDropzoneUploads();  
   }  
@@ -595,8 +622,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         nameInDrive:this.data.email+'-FOTO.'+this.selectedFile.type.substr(6,this.selectedFile.type.length-1),
         bodyMedia:red.result.toString().split(',')[1], 
         folderId:this.folderId,
-        newF: false, 
-        fileId: this.docFoto.fileIdInDrive};
+        newF: this.docFoto ? false:true, fileId: this.docFoto ? this.docFoto.fileIdInDrive:''};
 
       this.inscriptionsProv.uploadFile2(file).subscribe(
         resp=>{
@@ -616,6 +642,31 @@ export class ProfileInscriptionPageComponent implements OnInit {
               },
               err=>console.log(err)
             );                                    
+          }else{
+            const documentInfo = {
+              
+              doc:{
+                filename:resp.name,
+                type:'DRIVE',                
+                fileIdInDrive:resp.fileId
+              },
+              status : {
+                name:'EN PROCESO',
+                active:true,
+                message:'Se envio por primera vez'
+              }            
+            };
+            this.studentProv.uploadDocumentDrive(this.data._id,documentInfo).subscribe(
+              updated=>{                
+                this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+                  'Exito', 'Documento cargado correctamente.');
+                        
+              },
+              err=>{
+                console.log(err);
+                
+              },()=>this.loading=false
+            );
           }
           this.loading = false; 
         },

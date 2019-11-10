@@ -160,6 +160,34 @@
                 </mat-card-actions>
               </mat-card>
             </div>
+            <div class="col-3" *ngIf="!docActa">
+                <mat-card class="reject">
+                    <mat-card-header>
+                      <mat-card-title class="rejectText">Acta de Nacimiento</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div>
+                        <div class="text-center">
+                          <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                        </div>
+                      </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                      <p style="text-align: center;">
+                        Sin envio
+                      </p>                      
+                    </mat-card-actions>
+                    <mat-card-footer style="text-align: center; color: black;">
+                      <!-- <button mat-button (click)="updateDocument('Acta')">
+                        <p style="text-align: center;">
+                          Cambiar Documento
+                        </p>
+                      </button> -->
+                      <dropzone id="dz1" [config]="config1" [message]="'Subir Documento'"
+                      (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
+                    </mat-card-footer>
+                  </mat-card>
+            </div>
             <div class="col-3" *ngIf="docCertificado">
               <!--Certificado Estudios-->
               <mat-card *ngIf="docCertificado.status.name == 'EN PROCESO'" class="process">
@@ -329,6 +357,34 @@
                   </p>
                 </mat-card-actions>
               </mat-card>
+            </div>
+            <div class="col-3" *ngIf="!docAnalisis">
+                <mat-card class="reject">
+                    <mat-card-header>
+                      <mat-card-title class="rejectText">Análisis Clínicos</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div>
+                        <div class="text-center">
+                          <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                        </div>
+                      </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                      <p style="text-align: center;">
+                        Sin envio
+                      </p>                      
+                    </mat-card-actions>
+                    <mat-card-footer style="text-align: center; color: black;">
+                      <!-- <button mat-button (click)="updateDocument('Acta')">
+                        <p style="text-align: center;">
+                          Cambiar Documento
+                        </p>
+                      </button> -->
+                      <dropzone id="dz3" [config]="config3" [message]="'Subir Documento'"
+                      (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
+                    </mat-card-footer>
+                  </mat-card>
             </div>
             <div class="col-3" *ngIf="docComprobante">
               <!--Comprobante Pago-->
@@ -504,6 +560,34 @@
                 </mat-card-actions>
               </mat-card>
             </div>
+            <div class="col-3" *ngIf="!docCurp">
+                <mat-card class="reject">
+                    <mat-card-header>
+                      <mat-card-title class="rejectText">CURP</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div>
+                        <div class="text-center">
+                          <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                        </div>
+                      </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                      <p style="text-align: center;">
+                        Sin envio
+                      </p>                      
+                    </mat-card-actions>
+                    <mat-card-footer style="text-align: center; color: black;">
+                      <!-- <button mat-button (click)="updateDocument('Acta')">
+                        <p style="text-align: center;">
+                          Cambiar Documento
+                        </p>
+                      </button> -->
+                      <dropzone id="dz5" [config]="config5" [message]="'Subir Documento'"
+                      (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
+                    </mat-card-footer>
+                  </mat-card>
+            </div>
             <div class="col-3" *ngIf="docNss">
               <!--Nss-->
               <mat-card *ngIf="docNss.status.name == 'EN PROCESO'" class="process">
@@ -589,6 +673,34 @@
                 </mat-card-actions>
               </mat-card>
             </div>
+            <div class="col-3" *ngIf="!docNss">
+                <mat-card class="reject">
+                    <mat-card-header>
+                      <mat-card-title class="rejectText">NSS</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div>
+                        <div class="text-center">
+                          <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                        </div>
+                      </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                      <p style="text-align: center;">
+                        Sin envio
+                      </p>                      
+                    </mat-card-actions>
+                    <mat-card-footer style="text-align: center; color: black;">
+                      <!-- <button mat-button (click)="updateDocument('Acta')">
+                        <p style="text-align: center;">
+                          Cambiar Documento
+                        </p>
+                      </button> -->
+                      <dropzone id="dz6" [config]="config6" [message]="'Subir Documento'"
+                      (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
+                    </mat-card-footer>
+                  </mat-card>
+            </div>
             <div class="col-3" *ngIf="docFoto">
               <!--FOTO-->
               <mat-card *ngIf="docFoto.status.name == 'EN PROCESO'" class="process">
@@ -673,6 +785,34 @@
                   </p>
                 </mat-card-actions>
               </mat-card>
+            </div>
+            <div class="col-3" *ngIf="!docFoto">
+                <mat-card class="reject">
+                    <mat-card-header>
+                      <mat-card-title class="rejectText">Foto</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content >
+                      <div>
+                        <div class="text-center">
+                          <img alt="File" src="../../assets/imgs/fileImage.png" style="width: 50px; height: 50px">
+                        </div>
+                      </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                      <p style="text-align: center;">
+                        Sin envio
+                      </p>                      
+                    </mat-card-actions>
+                    <mat-card-footer style="text-align: center; color: black;">
+                        <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton" accept="image/png,image/jpg,image/jpeg" style="display: none;"> 
+                      <button mat-button (click)="showSelectFileDialog()">
+                        <p style="text-align: center;">
+                          Subir Foto
+                        </p>
+                      </button>
+                     
+                    </mat-card-footer>
+                  </mat-card>
             </div>
           </div>
         </div>
