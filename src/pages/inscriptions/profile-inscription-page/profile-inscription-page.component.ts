@@ -6,6 +6,8 @@ import { CookiesService } from 'src/services/app/cookie.service';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 import { MatDialog } from '@angular/material';
 import Swal from 'sweetalert2';
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+declare var jsPDF: any;
 
 @Component({
   selector: 'app-profile-inscription-page',
@@ -32,6 +34,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
   docCurp;
   docNss;
   docFoto;
+  docSolicitud;
+  docContrato;
+  docAcuse;
 
   // Datos Alumno
   nombre: String;
@@ -62,19 +67,40 @@ export class ProfileInscriptionPageComponent implements OnInit {
   promedioEP: Number;
   carreraCursar: String;
 
+  // Imagenes para Reportes
+  public logoTecNM: any;
+  public logoSep: any;
+  public logoTecTepic: any;
+
+  //Font Montserrat
+  montserratNormal: any;
+  montserratBold: any;
+
   constructor( 
     private inscriptionsProv: InscriptionsProvider,
     private notificationsServices: NotificationsServices,
     private cookiesServ: CookiesService,
     public dialog: MatDialog,
     private notificationService: NotificationsServices,
+    private imageToBase64Serv: ImageToBase64Service,
+
   ){
+    this.getFonts();
     this.getIdStudent();
     this.getStudentData(this._idStudent);
   }
 
   ngOnInit() {
-
+    // Convertir imágenes a base 64 para los reportes
+    this.imageToBase64Serv.getBase64('assets/imgs/logoTecNM.png').then(res1 => {
+      this.logoTecNM = res1;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
+      this.logoSep = res2;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
+      this.logoTecTepic = res3;
+    });
   }
 
   getIdStudent() {
@@ -154,6 +180,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
     this.docCurp = this.filterDocuments('CURP');
     this.docNss = this.filterDocuments('NSS');
     this.docFoto = this.filterDocuments('FOTO');
+    this.docSolicitud = this.filterDocuments('SOLICITUD');
+    this.docContrato = this.filterDocuments('CONTRATO');
+    this.docAcuse = this.filterDocuments('ACUSE');
 
     setTimeout(() => {this.findFoto()}, 3000);
 
@@ -319,6 +348,66 @@ export class ProfileInscriptionPageComponent implements OnInit {
         )
         break;
       }
+      case "Solicitud": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Solicitud.', '');
+        this.inscriptionsProv.getFile(this.docSolicitud[0].fileIdInDrive, this.docSolicitud[0].filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            '', error);
+        });
+        break;
+      }
+      case "Contrato": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Contrato.', '');
+        this.inscriptionsProv.getFile(this.docContrato[0].fileIdInDrive, this.docContrato[0].filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            '', error);
+        });
+        break;
+      }
+      case "Acuse": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acuse.', '');
+        var pdfSrc = this.generatePDFAcuse();
+        this.dialog.open(ExtendViewerComponent, {
+          data: {
+            source: pdfSrc,
+            isBase64: true
+          },
+          disableClose: true,
+          hasBackdrop: true,
+          width: '60em',
+          height: '600px'
+        });
+        
+        break;
+      }
     }
   }
 
@@ -374,6 +463,65 @@ export class ProfileInscriptionPageComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Regresar'
     }).then((result) => { });
+  }
+
+  generatePDFAcuse() {
+    const doc = new jsPDF();
+
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+    // Header
+    var pageHeight = doc.internal.pageSize.height;
+    var pageWidth = doc.internal.pageSize.width;
+
+    doc.addImage(this.logoSep, 'PNG', 5, 5, 74, 15); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth - 47, 2, 39, 17); // Logo TecNM
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(15);
+    doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(15);
+    doc.text("ACUSE DE DOCUMENTOS ", pageWidth / 2, 40, 'center');
+
+    var columns = ["No", "Documento", "Estatus"];
+    var data = [
+      [1, "ACTA DE NACIMIENTO", (this.docActa != '') ? this.docActa[0].status:'NO ENVIADO'],
+      [2, "CERTIFICADO DE ESTUDIOS", (this.docCertificado != '') ? this.docCertificado[0].status:'NO ENVIADO'],
+      [3, "ANÁLISIS CLÍNICOS", (this.docAnalisis != '') ? this.docAnalisis[0].status:'NO ENVIADO'],
+      [4, "COMPROBANTE DE PAGO", (this.docComprobante != '') ? this.docComprobante[0].status:'NO ENVIADO'],
+      [5, "CURP", (this.docCurp != '') ? this.docCurp[0].status:'NO ENVIADO'],
+      [6, "NÚMERO DE SEGURO SOCIAL", (this.docNss != '') ? this.docNss[0].status:'NO ENVIADO'],
+      [7, "FOTOGRAFÍA", (this.docFoto != '') ? this.docFoto[0].status:'NO ENVIADO'] 
+    ];
+
+    doc.autoTable(columns,data,
+    { 
+      headStyles: {fillColor: [20, 43, 88]},
+      margin:{ top: 50 }
+    }
+    );
+
+    let document = doc.output('arraybuffer');
+    return document;
+  }
+
+  getFonts() {
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
+        this.montserratNormal = base64.toString().split(',')[1];
+    });
+
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
+        this.montserratBold = base64.toString().split(',')[1];
+    });
   }
 
 }

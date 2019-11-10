@@ -12,6 +12,16 @@
           <table style="margin: 0 auto; width: 100%;">
             <tr>
               <td>
+                <h6>Número de Contról: <span>{{numeroControl}}</span></h6>
+              </td>
+              <td>
+                <h6>Carrera a Cursar: <span>{{carreraCursar}}</span></h6>
+              </td>
+            </tr>
+          </table><br> 
+          <table style="margin: 0 auto; width: 100%;">
+            <tr>
+              <td>
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Apellido Paterno</mat-label>
                   <input matInput formControlName="fatherLastName" [errorStateMatcher]="matcher" oninput="this.value = this.value.toUpperCase()">
@@ -47,13 +57,10 @@
             <tr>
               <td>
                 <mat-form-field class="example-full-width" appearance="outline">
-                  <mat-label>Número de Contról</mat-label>
-                  <input readonly matInput formControlName="controlNumber" [errorStateMatcher]="matcher">
+                  <mat-label>Correo Electrónico</mat-label>
+                  <input matInput formControlName="email" [errorStateMatcher]="matcher">
                   <mat-error>
-                    <span
-                      *ngIf="!registerForm.get('controlNumber').valid && registerForm.get('controlNumber').touched">Ingrese
-                      su
-                      Número de Contról</span>
+                    <span *ngIf="!registerForm.get('email').valid && registerForm.get('email').touched">Ingrese Correo Electrónico Válido</span>
                   </mat-error>
                 </mat-form-field>
               </td>
@@ -75,20 +82,9 @@
                     <option value="Soltero(a)">Soltero(a)</option>
                     <option value="Comprometido(a)">Comprometido(a)</option>
                     <option value="Casado(a)">Casado(a)</option>
-                    <option value="Divorsiado(a)">Divorsiado(a)</option>
+                    <option value="Divorsiado(a)">Divorciado(a)</option>
                     <option value="Viudo(a)">Viudo(a)</option>
                   </select>
-                </mat-form-field>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                <mat-form-field class="example-full-width" appearance="outline">
-                  <mat-label>Correo Electrónico</mat-label>
-                  <input matInput formControlName="email" [errorStateMatcher]="matcher">
-                  <mat-error>
-                    <span *ngIf="!registerForm.get('email').valid && registerForm.get('email').touched">Ingrese Correo Electrónico Válido</span>
-                  </mat-error>
                 </mat-form-field>
               </td>
             </tr>
@@ -215,7 +211,7 @@
               <td>
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>¿Perteneces a alguna Etnia?</mat-label>
-                  <select matNativeControl required [(ngModel)]="etnia" formControlName="etnia">
+                  <select matNativeControl required [(ngModel)]="etnia" formControlName="etnia" (change)="changeEvent()">
                     <option value="Si">Si</option>
                     <option value="No">No</option>
                   </select>
@@ -237,7 +233,7 @@
               <td>
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Tienes Alguna Discapacidad?</mat-label>
-                  <select matNativeControl required [(ngModel)]="discapacidad" formControlName="disability">
+                  <select matNativeControl required [(ngModel)]="discapacidad" formControlName="disability" (change)="changeEvent()">
                     <option value="Si">Si</option>
                     <option value="No">No</option>
                   </select>
@@ -267,7 +263,7 @@
               <td>
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Escuela de Procedencia</mat-label>
-                  <select matNativeControl required [(ngModel)]="escuelaProcedencia" formControlName="originSchool">
+                  <select matNativeControl required [(ngModel)]="escuelaProcedencia" formControlName="originSchool" (change)="changeEvent()">
                     <option value="CBTIS">CBTIS</option>
                     <option value="CBTa">CBTa</option>
                     <option value="COBACH">COBACH</option>
@@ -313,20 +309,6 @@
                       *ngIf="!registerForm.get('averageOriginSchool').valid && registerForm.get('averageOriginSchool').touched">Ingrese
                       su
                       Promedio</span>
-                  </mat-error>
-                </mat-form-field>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                  <mat-form-field class="example-full-width" appearance="outline">
-                  <mat-label>Carrera a Cursar</mat-label>
-                  <input readonly matInput formControlName="career" [errorStateMatcher]="matcher">
-                  <mat-error>
-                    <span
-                      *ngIf="!registerForm.get('career').valid && registerForm.get('career').touched">Ingrese
-                      su
-                      Carrera a Cursar</span>
                   </mat-error>
                 </mat-form-field>
               </td>

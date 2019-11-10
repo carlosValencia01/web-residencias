@@ -15,17 +15,11 @@
     </div>
     <div class="example-container" style="padding: 20px;">
       <table>
-        <td style="width: 35%;">
+        <td style="width: 35%;" *ngIf="image">
           <mat-card class="cardProfile">
-            <div style="text-align: center;" *ngIf="image">
+            <div style="text-align: center; height: 320px;">
               <img mat-card-image [src]="image" class="imgProfile">
             </div>
-            <mat-card-content>
-              <h6>Nombre: <span>{{nombre}}</span></h6>
-              <h6>Número de Contról: <span>{{numeroControl}}</span></h6>
-              <h6>Correo Electrónico: <span>{{correoElectronico}}</span></h6>
-              <h6>Teléfono: <span>{{telefono}}</span></h6>
-            </mat-card-content>
           </mat-card>
         </td>
         <td colspan="3" style="vertical-align: top; padding-left: 20px;">
@@ -34,6 +28,10 @@
               <h4>Datos Generales</h4>
             </mat-card-header>
             <mat-card-content>
+              <h6>Nombre: <span>{{nombre}}</span></h6>
+              <h6>Número de Contról: <span>{{numeroControl}}</span></h6>
+              <h6>Correo Electrónico: <span>{{correoElectronico}}</span></h6>
+              <h6>Teléfono: <span>{{telefono}}</span></h6>
               <h6>Fecha de Nacimiento: <span>{{fechaNacimiento}}</span></h6>
               <h6>Lugar de Nacimiento: <span>{{lugarNacimiento}}</span></h6>
               <h6>Estado Civil: <span>{{estadoCivil}}</span></h6>
@@ -50,7 +48,7 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3">
+            <div class="col-3" *ngIf="docActa != '' ">
               <!--Acta Nacimiento-->
               <mat-card *ngIf="docActa[0].status == 'EN PROCESO'" class="process">
                 <mat-card-header>
@@ -132,7 +130,7 @@
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docCertificado != '' ">
               <!--Certificado Estudios-->
               <mat-card *ngIf="docCertificado[0].status == 'EN PROCESO'" class="process">
                 <mat-card-header>
@@ -214,7 +212,7 @@
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docAnalisis != '' ">
               <!--Analisis Clinicos-->
               <mat-card *ngIf="docAnalisis[0].status == 'VALIDADO'" class="validate">
                 <mat-card-header>
@@ -296,7 +294,7 @@
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docComprobante != '' ">
               <!--Comprobante Pago-->
               <mat-card *ngIf="docComprobante[0].status == 'EN PROCESO'" class="process">
                 <mat-card-header>
@@ -359,9 +357,9 @@
                   </p>
                 </mat-card-actions>
               </mat-card>
-              <mat-card *ngIf="docComprobante[0].status == 'VALIDADO'" class="validate">
+              <mat-card *ngIf="docComprobante[0].status == 'ACEPTADO'" class="accept">
                 <mat-card-header>
-                  <mat-card-title class="validateText">Comprobante Pago</mat-card-title>
+                  <mat-card-title class="acceptText">Comprobante Pago</mat-card-title>
                 </mat-card-header>
                 <mat-card-content (click)="onView('Comprobante')" style="cursor: pointer;"
                   ngbTooltip="Visualizar Comprobante" tooltipClass="my-custom-class">
@@ -382,7 +380,7 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3">
+            <div class="col-3" *ngIf="docCurp != '' ">
               <!--Curp-->
               <mat-card *ngIf="docCurp[0].status == 'ACEPTADO'" class="accept">
                 <mat-card-header>
@@ -464,7 +462,7 @@
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docNss != '' ">
               <!--Nss-->
               <mat-card *ngIf="docNss[0].status == 'EN PROCESO'" class="process">
                 <mat-card-header>
@@ -546,7 +544,7 @@
                 </mat-card-actions>
               </mat-card>
             </div>
-            <div class="col-3">
+            <div class="col-3" *ngIf="docFoto != '' ">
               <!--FOTO-->
               <mat-card *ngIf="docFoto[0].status == 'EN PROCESO'" class="process">
                 <mat-card-header>
@@ -630,6 +628,65 @@
             </div>
           </div>
         </div>
+
+        <div class="card-body">
+            <div class="row">
+              <div class="col-3">
+                <!--Solicitud-->
+                <mat-card class="accept">
+                  <mat-card-header>
+                    <mat-card-title class="acceptText">Solicitud</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content (click)="onView('Solicitud')" style="cursor: pointer;" ngbTooltip="Visualizar Solicitud"
+                    tooltipClass="my-custom-class">
+                    <div>
+                      <div class="text-center">
+                        <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      </div>
+                    </div>
+                  </mat-card-content>
+                  <mat-card-actions>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+              <div class="col-3">
+                <!--Contrato-->
+                <mat-card class="accept">
+                  <mat-card-header>
+                    <mat-card-title class="acceptText">Contrato</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content (click)="onView('Contrato')" style="cursor: pointer;" ngbTooltip="Visualizar Contrato"
+                    tooltipClass="my-custom-class">
+                    <div>
+                      <div class="text-center">
+                        <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                      </div>
+                    </div>
+                  </mat-card-content>
+                  <mat-card-actions>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+              <div class="col-3">
+                  <!--Acuse-->
+                  <mat-card class="accept">
+                    <mat-card-header>
+                      <mat-card-title class="acceptText">Acuse</mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content (click)="onView('Acuse')" style="cursor: pointer;" ngbTooltip="Visualizar Acuse"
+                      tooltipClass="my-custom-class">
+                      <div>
+                        <div class="text-center">
+                          <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                        </div>
+                      </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                    </mat-card-actions>
+                  </mat-card>
+                </div>
+            </div>
+          </div>
       </div>
     </div>
   </div>

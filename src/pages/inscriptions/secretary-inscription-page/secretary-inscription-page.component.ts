@@ -123,4 +123,13 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       });
   }
 
+  updateGI(item){
+    console.log(item);
+  }
+
+  viewDocuments(item){
+    console.log(item.documents);
+
+  }
+
 }
