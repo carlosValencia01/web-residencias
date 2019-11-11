@@ -11,7 +11,8 @@ export class NewPeriodComponent implements OnInit {
 
   title = 'Nuevo Periodo';
   formPeriod : FormGroup;
-
+  year = new Date();
+  minDate = new Date(this.year.getFullYear(),0,1);
   myFilter = (d: Date): boolean => {
     const day = d.getDay();
     // Prevent Saturday and Sunday from being selected.

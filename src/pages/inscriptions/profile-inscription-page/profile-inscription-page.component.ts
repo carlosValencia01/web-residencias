@@ -149,11 +149,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
       this.carreraCursar = this.studentData.career ? this.studentData.career : '';
 
       this.step = this.studentData.stepWizard;
-      console.log("Paso: "+this.step);
+      // console.log("Paso: "+this.step);
 
       this.obtenerFechaNacimiento(this.curp);
 
-      console.log(this.step,'stpsp');
+      // console.log(this.step,'stpsp');
       
       if(this.step == 6){
         this.getIdDocuments();
@@ -201,7 +201,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         
        
         this.docActa = documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0];
-       console.log(this.docActa);
+      //  console.log(this.docActa);
        
         this.docAnalisis = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
 
@@ -452,11 +452,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
   checkFolders(){
     this.studentProv.getFolderId(this._idStudent).subscribe(
       folder=>{
-        console.log(folder.folder,'asldaosfhasjfnksjdfnlkasnfjnk');
+        // console.log(folder.folder,'asldaosfhasjfnksjdfnlkasnfjnk');
         
         if(folder.folder.idFolderInDrive){// folder exists
           this.folderId = folder.folder.idFolderInDrive;
-          console.log(this.folderId,'folder student exists');
+          // console.log(this.folderId,'folder student exists');
           this.assingConfigForDropzone();          
         }
       });
@@ -471,7 +471,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       params: {folderId:this.folderId, 'filename': this.data.email+'-ACTA.pdf', 'mimeType': 'application/pdf', newF: this.docActa ? false :true, fileId:this.docActa ? this.docActa.fileIdInDrive :''},   
         acceptedFiles:'application/pdf',        
     };        
-    console.log(this.config1);
+    // console.log(this.config1);
     
     
     this.config2 = {

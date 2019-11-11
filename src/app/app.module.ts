@@ -26,8 +26,8 @@ import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
  
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
-  url: 'http://localhost:3003/escolares/credenciales/drive/upload/file',
-  // url: 'http://httpbin.org/post',
+  // url: 'http://localhost:3003/escolares/credenciales/drive/upload/file',
+  url: environment.filesURL,  
   maxFilesize: 3,
   acceptedFiles: 'application/pdf',  
   maxFiles:1  
@@ -187,6 +187,7 @@ import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-vi
 // Providers
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { CareerProvider } from 'src/providers/shared/career.prov';
 
 @NgModule({
   declarations: [
@@ -369,6 +370,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Providers
     EmployeeProvider,
     StudentProvider,
+    CareerProvider,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     {
       provide: DROPZONE_CONFIG,

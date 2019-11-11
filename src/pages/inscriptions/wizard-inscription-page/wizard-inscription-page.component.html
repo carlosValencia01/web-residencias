@@ -1,4 +1,4 @@
-<div *ngIf="!isOkPeriod; else wizard">
+<div *ngIf="isOkPeriod === 2 || isOpen === 1">
   <div class="title">
     <h2>¡Aviso, inscripción!</h2>
   </div>
@@ -9,29 +9,41 @@
   </div>
 </div>
 
+<div *ngIf="isOpen === 2">
+    <div class="title">
+      <h2>¡Aviso, inscripción!</h2>
+    </div>
+    <div class="message">
+      <span>El periodo de inscripciones ha terminado.</span><br><br>
+      <br>
+      <span>Acude al Departamento de Servicios Escolares para más información</span>
+    </div>
+  </div>
 
+<!-- <ng-template > -->
+  <div *ngIf="isOkPeriod === 0 && isOpen === 0">
 
-<ng-template #wizard>
-  <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="step != 6">
-    <mat-step editable='false'>
-      <ng-template matStepLabel>Formulario</ng-template>
-      <app-register-student-page></app-register-student-page>
-    </mat-step>
-    <mat-step editable='false'>
-      <ng-template matStepLabel>Documentos</ng-template>
-      <app-inscriptions-upload-files-page></app-inscriptions-upload-files-page>
-    </mat-step>
-    <mat-step editable='false'>
-      <ng-template matStepLabel>Contrato</ng-template>
-      <app-contract-student-page></app-contract-student-page>
-    </mat-step>
-    <mat-step editable='false'>
-      <ng-template matStepLabel>Resumen</ng-template>
-      <app-resume-student-page *ngIf="step == 4"></app-resume-student-page>
-    </mat-step>
-    <mat-step editable='false'>
-      <ng-template matStepLabel>Confirmación</ng-template>
-      <app-confirmation-student-page *ngIf="step == 5"></app-confirmation-student-page>
-    </mat-step>
-  </mat-horizontal-stepper>
-</ng-template>
+    <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="step != 6">
+      <mat-step editable='false'>
+        <ng-template matStepLabel>Formulario</ng-template>
+        <app-register-student-page></app-register-student-page>
+      </mat-step>
+      <mat-step editable='false'>
+        <ng-template matStepLabel>Documentos</ng-template>
+        <app-inscriptions-upload-files-page></app-inscriptions-upload-files-page>
+      </mat-step>
+      <mat-step editable='false'>
+        <ng-template matStepLabel>Contrato</ng-template>
+        <app-contract-student-page></app-contract-student-page>
+      </mat-step>
+      <mat-step editable='false'>
+        <ng-template matStepLabel>Resumen</ng-template>
+        <app-resume-student-page *ngIf="step == 4"></app-resume-student-page>
+      </mat-step>
+      <mat-step editable='false'>
+        <ng-template matStepLabel>Confirmación</ng-template>
+        <app-confirmation-student-page *ngIf="step == 5"></app-confirmation-student-page>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </div>
+<!-- </ng-template> -->

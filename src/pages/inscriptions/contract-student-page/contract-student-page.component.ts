@@ -54,7 +54,7 @@ export class ContractStudentPageComponent implements OnInit {
     this.convertNumericalMonth();
     this.getIdStudent();
     this.getFolderId();
-    console.log(this.currentDate);
+    // console.log(this.currentDate);
   }
 
   ngOnInit() {
@@ -80,7 +80,7 @@ export class ContractStudentPageComponent implements OnInit {
 
   onChange(event) {
     this.acceptedTerms = !this.acceptedTerms;
-    console.log(this.acceptedTerms);
+    // console.log(this.acceptedTerms);
   }
 
   async continue() {
@@ -232,11 +232,11 @@ export class ContractStudentPageComponent implements OnInit {
     this._idStudent = this.data._id;
     this.studentProv.getFolderId(this._idStudent).subscribe(
       student=>{
-        console.log(student,'contratooo');
+        // console.log(student,'contratooo');
         if(student.folder){// folder exists
           if(student.folder.idFolderInDrive){
             this.folderId = student.folder.idFolderInDrive;
-            console.log(this.folderId,'folder student exists');                     
+            // console.log(this.folderId,'folder student exists');                     
           }
         }          
       });

@@ -490,7 +490,7 @@ export class RegisterStudentPageComponent implements OnInit {
           this.activePeriod = period.period;                      
           this.studentProv.getPeriodId(this._idStudent.toString()).subscribe(
             per=>{
-              console.log(per.student.idPeriodInscription, 'idperrrrr');              
+              // console.log(per.student.idPeriodInscription, 'idperrrrr');              
               
               if(!per.student.idPeriodInscription){
                 this.studentProv.updateStudent(this._idStudent,{idPeriodInscription:this.activePeriod._id});
@@ -503,20 +503,21 @@ export class RegisterStudentPageComponent implements OnInit {
               if(student.folder){// folder exists
                 if(student.folder.idFolderInDrive){
                   this.folderId = student.folder.idFolderInDrive;
-                  console.log(this.folderId,'folder student exists');                     
+                  // console.log(this.folderId,'folder student exists');                     
                 }
                 else{ //folder doesn't exists then create it
-                console.log('222');
+                // console.log('222');
                 
                   this.createFolder();
                 }         
-              } else{console.log('333');
+              } else{
+                // console.log('333');
                this.createFolder();}
                 
             });
         }
         else{ // no hay periodo activo
-          console.log('444');
+          // console.log('444');
           
         }    
       }  
@@ -528,7 +529,7 @@ export class RegisterStudentPageComponent implements OnInit {
   
     this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id).subscribe(
       (folders)=>{
-        console.log(folders,'folderss');
+        // console.log(folders,'folderss');
         
         this.foldersByPeriod=folders.folders;                                     
         let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1 );
@@ -537,17 +538,17 @@ export class RegisterStudentPageComponent implements OnInit {
         let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
 
         if(folderCareer.length===0){
-          console.log('1');
+          // console.log('1');
           
           this.inscriptionsProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive).subscribe(
             career=>{
-              console.log('2');
+              // console.log('2');
               
               // student folder doesn't exists then create new folder
               this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,career.folder.idFolderInDrive).subscribe(
                 studentF=>{
                   this.folderId = studentF.folder.idFolderInDrive;                 
-                  console.log('3');
+                  // console.log('3');
                   
                   this.studentProv.updateStudent(this._idStudent,{folderId:studentF.folder._id});
                 },
@@ -559,12 +560,12 @@ export class RegisterStudentPageComponent implements OnInit {
             }
           );
         }else{
-          console.log('2.1');
+          // console.log('2.1');
           
           this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,folderCareer[0].idFolderInDrive).subscribe(
             studentF=>{
               this.folderId = studentF.folder.idFolderInDrive;   
-              console.log('3.1');
+              // console.log('3.1');
               
               this.studentProv.updateStudent(this._idStudent,{folderId:studentF.folder._id}).subscribe(
                 upd=>{
@@ -638,7 +639,7 @@ export class RegisterStudentPageComponent implements OnInit {
     let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
     
     if(folderCareer.length>0){
-      console.log('existo');
+      // console.log('existo');
       
       // folder exists
       // 2 search folder by student

@@ -19,7 +19,8 @@ export class WizardInscriptionPageComponent implements OnInit {
   data: any;
   studentData: any;
   
-  isOkPeriod : boolean;
+  isOkPeriod = 3;
+  isOpen = 3;
 
   step;
 
@@ -27,19 +28,33 @@ export class WizardInscriptionPageComponent implements OnInit {
     private inscriptionsProv: InscriptionsProvider,
     private cookiesServ: CookiesService,
   ){
-    this.inscriptionsProv.getActivePeriod().subscribe(
-      period=>{ 
-        if(period.period){
-          this.isOkPeriod=true;
-          this.getIdStudent();
-          this.getStudentData(this._idStudent);
-        }
-      }
-    );
+    this.init();
   }
 
   ngOnInit() {
+    
+  }
 
+  init(){
+    this.inscriptionsProv.getActivePeriod().subscribe(
+      period=>{ 
+        if(period.period){
+          this.isOkPeriod= 0;
+          // console.log(period.period);
+          let initDate = new Date(period.period.insPerInitDate);
+          let endDate = new Date(period.period.insPerEndDate);
+          let today = new Date();
+
+          this.isOpen = today >= initDate ? today <= endDate ? 0 : 2 : 1;
+          console.log(this.isOpen);
+          
+          this.getIdStudent();
+          this.getStudentData(this._idStudent);
+        }else{
+          this.isOkPeriod=2;
+        }
+      }
+    );
   }
 
   getIdStudent() {
@@ -51,7 +66,7 @@ export class WizardInscriptionPageComponent implements OnInit {
     this.inscriptionsProv.getStudent(id).subscribe(res => {
       this.studentData = res.student[0];
       this.step = this.studentData.stepWizard;
-      console.log(this.step);
+      // console.log(this.step);
       if(this.step == 6){
         window.location.assign("/profileInscription");
       }

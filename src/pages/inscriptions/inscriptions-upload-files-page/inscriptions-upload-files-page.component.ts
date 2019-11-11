@@ -153,12 +153,12 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     
     this.studentProv.getFolderId(this._idStudent).subscribe(
       folder=>{
-        console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
+        // console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
         
         if(folder.folder){// folder exists
           if(folder.folder.idFolderInDrive){
             this.folderId = folder.folder.idFolderInDrive;
-            console.log(this.folderId,'folder student exists');
+            // console.log(this.folderId,'folder student exists');
             this.assingConfigForDropzone();          
           }
         }
@@ -235,7 +235,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
   public onUploadSuccess(args: any): void {
 
-    console.log(args);
+    // console.log(args);
     if(args[1].action == 'create file'){
 
       const documentInfo = {      

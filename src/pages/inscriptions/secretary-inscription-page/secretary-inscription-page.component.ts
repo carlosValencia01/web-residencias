@@ -93,7 +93,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.A
     );
 
-    console.log(this.listStudents);
+    // console.log(this.listStudents);
 
     if (Object.keys(this.listStudents).length === 0) {
       if (!this.searchEC && !this.searchE && !this.searchEP && !this.searchV && !this.searchA) {
@@ -105,7 +105,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
    // FILTRADO POR CARRERA O ESTATUS
    filterItems(carreer, EC, E, EP, V, A) {
     return this.students.filter(function (student) {
-      console.log(student);
+      // console.log(student);
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
         student.inscriptionStatus.toLowerCase().indexOf(EC.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(E.toLowerCase()) > -1 ||
@@ -119,7 +119,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     let sub = this.inscriptionsProv.getAllPeriods()
       .subscribe(periods => {       
         this.periods=periods.periods;     
-        console.log(this.periods); 
+        // console.log(this.periods); 
         this.periods.reverse();                        
         sub.unsubscribe();
       });
@@ -139,7 +139,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     });
     let sub = linkModal.afterClosed().subscribe(
       expedient=>{         
-        console.log(expedient);
+        // console.log(expedient);
         
       },
       err=>console.log(err), ()=> sub.unsubscribe()

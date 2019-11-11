@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-
 import { Router, ActivatedRoute } from '@angular/router';
+
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
+import { CareerProvider } from 'src/providers/shared/career.prov';
+import { StudentProvider } from 'src/providers/shared/student.prov';
+
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { MatDialog } from '@angular/material';
 import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component';
@@ -21,6 +24,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   page = 1;
   pag;
   pageSize = 5;
+  careers = {};
 
   constructor(
     private notificationsServices: NotificationsServices,
@@ -29,6 +33,8 @@ export class InscriptionsMainPageComponent implements OnInit {
     private routeActive: ActivatedRoute,
     private inscriptionsProv: InscriptionsProvider, 
     public dialog: MatDialog,
+    private careerProv: CareerProvider,
+    private stProv : StudentProvider,
   ) {    
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -69,7 +75,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   }
 
   confirmedPeriodChange(row, msg){  
-    console.log(row);
+    // console.log(row);
           
     // const customPeriod = {      
     //   periodName: row.periodName,
@@ -227,4 +233,49 @@ export class InscriptionsMainPageComponent implements OnInit {
     }).then((result) => { });
   }
  
+  updateCareer(){
+    this.careerProv.getAllCareers().subscribe(
+      res=>{
+        let  careers = res.careers;        
+        careers.forEach( career => {
+          this.careers[career.fullName] = career._id;
+        });
+        console.log(this.careers);
+        this.stProv.getAllStudents().subscribe(
+          async res2=>{
+            let students = res2.students;
+            console.log('1');
+            let ff = false;
+            for await (const student of students){
+              let career = this.careers[student.career];                  
+              let f = await this.up(student,career);
+                    console.log(f);
+              ff=true;             
+              
+            };
+            if(ff) console.log('3');                        
+          }
+        )
+      }
+    )
+  }
+ async up(student,career){
+    return await this.stProv.updateStudent(student._id,{careerId:career}).toPromise()
+              .then( 
+                rest=>{console.log('2'); return rest;
+                }
+              ).catch( err=>console.log(err)
+              );
+  }
+  insert(){
+    let careers = [
+      {fullName:'ARQUITECTURA',shortName:'ARQUITECTURA',acronym:'ARQ'},
+      {fullName:'INGENIERÍA CIVIL',shortName:'ING. CIVIL',acronym:'IC'}
+    ];
+    this.careerProv.newCareer({careers:careers}).subscribe(
+      res=>console.log(res),
+      err=>console.log(err)
+    );
+  }
+
 }

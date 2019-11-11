@@ -37,7 +37,7 @@
     </div>
     <div class="col-md-4"> 
       <mat-form-field>
-        <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker" placeholder="Fecha inicio" formControlName="initDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker" placeholder="Fecha inicio" formControlName="initDate" [errorStateMatcher]="matcher">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
@@ -48,7 +48,7 @@
     </div>
     <div class="col-md-4">
       <mat-form-field>
-        <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker2" placeholder="Fecha fin" formControlName="endDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker2" placeholder="Fecha fin" formControlName="endDate" [errorStateMatcher]="matcher">
         <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
         <mat-datepicker #picker2></mat-datepicker>
       </mat-form-field>
@@ -68,7 +68,7 @@
     <div class="col-md-3"></div>
     <div class="col-md-3"> 
       <mat-form-field>
-        <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker3" placeholder="Fecha inicio" formControlName="insPerInitDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker3" placeholder="Fecha inicio" formControlName="insPerInitDate" [errorStateMatcher]="matcher">
         <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
         <mat-datepicker #picker3></mat-datepicker>
       </mat-form-field>
@@ -80,7 +80,7 @@
     </div>
     <div class="col-md-3">
       <mat-form-field>
-        <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker4" placeholder="Fecha fin" formControlName="insPerEndDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker4" placeholder="Fecha fin" formControlName="insPerEndDate" [errorStateMatcher]="matcher">
         <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
         <mat-datepicker #picker4></mat-datepicker>
       </mat-form-field>
@@ -101,7 +101,7 @@
       <div class="col-md-3"></div>
     <div class="col-md-3"> 
       <mat-form-field>
-        <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker5" placeholder="Fecha inicio" formControlName="arecPerInitDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker5" placeholder="Fecha inicio" formControlName="arecPerInitDate" [errorStateMatcher]="matcher">
         <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
         <mat-datepicker #picker5></mat-datepicker>
       </mat-form-field>
@@ -113,7 +113,7 @@
     </div>
     <div class="col-md-3">
       <mat-form-field>
-        <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker6" placeholder="Fecha fin" formControlName="arecPerEndDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker6" placeholder="Fecha fin" formControlName="arecPerEndDate" [errorStateMatcher]="matcher">
         <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
         <mat-datepicker #picker6></mat-datepicker>
       </mat-form-field>
