@@ -38,6 +38,22 @@
             </mat-card-content>
           </mat-card>
         </td>
+        <td>
+          <mat-card class="cardData" (click)="onView('Acuse')" style="cursor: pointer;" ngbTooltip="Descargar Acuse"
+            tooltipClass="my-custom-class">
+            <mat-card-header>
+              <h4>Acuse de Documentos</h4>
+            </mat-card-header>
+            <mat-card-content>
+              <p>El acuse contiene la lista de los documentos a entregar.</p>
+              <div>
+                <div class="text-center">
+                  <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </td>
       </table>
       <div class="row justify-content-center mt-3">
         <div>
@@ -46,4 +62,7 @@
       </div>
     </div>
   </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
 </div>

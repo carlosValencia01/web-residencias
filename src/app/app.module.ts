@@ -123,6 +123,7 @@ import { UploadFilesService } from 'src/services/inscriptions/upload-files.servi
 import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component'
 import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component'
 import { ExpedientHistoryComponent } from 'src/modals/inscriptions/expedient-history/expedient-history.component';
+import { StudentInformationComponent } from '../modals/inscriptions/student-information/student-information.component';
 
 // Reception act module
 // Pages
@@ -222,6 +223,7 @@ import { CareerProvider } from 'src/providers/shared/career.prov';
     NewPeriodComponent,
     ReviewExpedientComponent,
     ExpedientHistoryComponent,
+    StudentInformationComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -398,6 +400,7 @@ import { CareerProvider } from 'src/providers/shared/career.prov';
     NewPeriodComponent,
     ReviewExpedientComponent,
     ExpedientHistoryComponent,
+    StudentInformationComponent,
 
     // Shared
     // Modals

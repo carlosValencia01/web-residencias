@@ -5,14 +5,14 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 import { MatDialog } from '@angular/material';
-
 import { StudentProvider } from 'src/providers/shared/student.prov';
-
 import { DropzoneComponent , DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 import {NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
-
 import Swal from 'sweetalert2';
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+
+declare var jsPDF: any;
 
 @Component({
   selector: 'app-profile-inscription-page',
@@ -39,6 +39,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
   docCurp;
   docNss;
   docFoto;
+  docSolicitud;
+  docContrato;
+  docAcuse;
 
   // Datos Alumno
   nombre: String;
@@ -69,6 +72,14 @@ export class ProfileInscriptionPageComponent implements OnInit {
   promedioEP: Number;
   carreraCursar: String;
 
+  // Imagenes para Reportes
+  public logoTecNM: any;
+  public logoSep: any;
+  public logoTecTepic: any;
+
+  //Font Montserrat
+  montserratNormal: any;
+  montserratBold: any;
 
   folderId;
   selectedFile: File = null;
@@ -99,7 +110,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
     private notificationService: NotificationsServices,
     private studentProv: StudentProvider,    
     private modalService: NgbModal,
+    private imageToBase64Serv: ImageToBase64Service,
   ){
+    this.getFonts();
     this.getIdStudent();    
     this.getStudentData(this._idStudent);
     this.studentProv.refreshNeeded$.subscribe(
@@ -110,7 +123,16 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+    // Convertir imágenes a base 64 para los reportes
+    this.imageToBase64Serv.getBase64('assets/imgs/logoTecNM.png').then(res1 => {
+      this.logoTecNM = res1;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
+      this.logoSep = res2;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
+      this.logoTecTepic = res3;
+    });
   }
 
   getIdStudent() {
@@ -205,6 +227,10 @@ export class ProfileInscriptionPageComponent implements OnInit {
        
         this.docAnalisis = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
 
+        this.docSolicitud = documents.filter( docc => docc.filename.indexOf('SOLICITUD') !== -1)[0];;
+
+        this.docContrato = documents.filter( docc => docc.filename.indexOf('CONTRATO') !== -1)[0];;
+
         this.checkFolders();
 
         if(this.docFoto) this.docFoto.status = this.docFoto ? this.docFoto.status.filter( st=> st.active===true)[0] : '';
@@ -217,9 +243,15 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
         if(this.docCertificado) this.docCertificado.status = this.docCertificado ? this.docCertificado.status.filter( st=> st.active===true)[0] : '';
 
-        if(this.docComprobante)    this.docComprobante.status = this.docComprobante ? this.docComprobante.status.filter( st=> st.active===true)[0] : '';
+        if(this.docComprobante) this.docComprobante.status = this.docComprobante ? this.docComprobante.status.filter( st=> st.active===true)[0] : '';
 
         if(this.docNss) this.docNss.status = this.docNss ? this.docNss.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docSolicitud) this.docSolicitud.status = this.docSolicitud ? this.docSolicitud.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docContrato) this.docContrato.status = this.docContrato ? this.docContrato.status.filter( st=> st.active===true)[0] : '';
+
+
         this.showImg=false;
         this.findFoto();
       }
@@ -242,6 +274,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     switch (file) {
       case "Acta": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta de Nacimiento.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docActa.fileIdInDrive, this.docActa.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -256,6 +289,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -264,6 +298,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "CURP": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CURP.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docCurp.fileIdInDrive, this.docCurp.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -278,6 +313,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -286,6 +322,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "NSS": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando NSS.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docNss.fileIdInDrive, this.docNss.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -300,6 +337,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -308,6 +346,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Certificado": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado de Estudios.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docCertificado.fileIdInDrive, this.docCertificado.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -322,6 +361,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -330,6 +370,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Analisis": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Análisis Clínicos.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docAnalisis.fileIdInDrive, this.docAnalisis.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -344,6 +385,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -352,6 +394,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Comprobante": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Comprobante de Pago.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docComprobante.fileIdInDrive, this.docComprobante.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -366,6 +409,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -374,6 +418,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Foto": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Fotografía.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(data => {
             let pub = data.file;
             let image = 'data:image/png;base64,' +pub;
@@ -384,12 +429,48 @@ export class ProfileInscriptionPageComponent implements OnInit {
               imageHeight: 200,
               imageAlt: 'Custom image',
               confirmButtonText: 'Aceptar'
-            })
+            });
+            this.loading = false; 
           },
           error => {
             this.notificationService.showNotification(eNotificationType.ERROR,'', error);
           }
         )
+        break;
+      }
+      case "Solicitud": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Solicitud.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.docSolicitud.fileIdInDrive, this.docSolicitud.filename).subscribe(data => {
+          var pubSolicitud = data.file;
+          let buffSolicitud = new Buffer(pubSolicitud.data);
+          var pdfSrcSolicitud = buffSolicitud;
+          var blob = new Blob([pdfSrcSolicitud], {type: "application/pdf"}); 
+          this.loading = false;          
+          window.open( URL.createObjectURL(blob) );
+        }, error => {
+          console.log(error);
+        });
+        break;
+      }
+      case "Contrato": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Contrato.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.docContrato.fileIdInDrive, this.docContrato.filename).subscribe(data => {
+          var pubContrato = data.file;
+          let buffContrato = new Buffer(pubContrato.data);
+          var pdfSrcContrato = buffContrato;
+          var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});  
+          this.loading = false;         
+          window.open( URL.createObjectURL(blob) );
+        }, error => {
+          console.log(error);
+        });
+        break;
+      }
+      case "Acuse": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acuse.', '');
+        this.generatePDFAcuse();
         break;
       }
     }
@@ -447,6 +528,80 @@ export class ProfileInscriptionPageComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Regresar'
     }).then((result) => { });
+  }
+
+  generatePDFAcuse() {
+    this.loading = true; 
+    const doc = new jsPDF();
+
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+    // Header
+    var pageHeight = doc.internal.pageSize.height;
+    var pageWidth = doc.internal.pageSize.width;
+
+    doc.addImage(this.logoSep, 'PNG', 5, 5, 74, 15); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth - 47, 2, 39, 17); // Logo TecNM
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(15);
+    doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(12);
+    doc.text("Acuse de entrega de documentación para integración de expediente", pageWidth / 2, 37, 'center');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(12);
+    doc.text("Inscripción", pageWidth / 2, 42, 'center');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Nombre del Alumno:",15,55,'left');
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(10);
+    doc.text(this.studentData.fullName,57,55,'left');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Número de contról:",137,55,'left');
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(10);
+    doc.text(this.studentData.controlNumber,177,55,'left');
+
+    var columns = ["No", "Documento", "Estatus"];
+    var data = [
+      [1, "ACTA DE NACIMIENTO", (this.docActa != '') ? this.docActa.status.name:'NO ENVIADO'],
+      [2, "CERTIFICADO DE ESTUDIOS", (this.docCertificado != '') ? this.docCertificado.status.name:'NO ENVIADO'],
+      [3, "ANÁLISIS CLÍNICOS", (this.docAnalisis != '') ? this.docAnalisis.status.name:'NO ENVIADO'],
+      [4, "COMPROBANTE DE PAGO", (this.docComprobante != '') ? this.docComprobante.status.name:'NO ENVIADO'],
+      [5, "CURP", (this.docCurp != '') ? this.docCurp.status.name:'NO ENVIADO'],
+      [6, "NÚMERO DE SEGURO SOCIAL", (this.docNss != '') ? this.docNss.status.name:'NO ENVIADO'],
+      [7, "FOTOGRAFÍA", (this.docFoto != '') ? this.docFoto.status.name:'NO ENVIADO'] 
+    ];
+
+    doc.autoTable(columns,data,
+    { 
+      headStyles: {fillColor: [20, 43, 88]},
+      margin:{ top: 60 }
+    }
+    );
+    this.loading = false; 
+    window.open(doc.output('bloburl'), '_blank');
+  }
+
+  getFonts() {
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
+        this.montserratNormal = base64.toString().split(',')[1];
+    });
+
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
+        this.montserratBold = base64.toString().split(',')[1];
+    });
   }
 
   checkFolders(){

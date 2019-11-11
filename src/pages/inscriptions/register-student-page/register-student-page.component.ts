@@ -131,9 +131,9 @@ export class RegisterStudentPageComponent implements OnInit {
       'cp': [this.cp, [Validators.pattern(this.eRCp), Validators.required]],
       'phone': [this.telefono, [Validators.pattern(this.eRTelefono), Validators.required]],
       'etnia': [this.etnia, Validators.required],
-      'typeEtnia': [this.tipoEtnia,''],
+      'typeEtnia': [this.tipoEtnia,Validators.required],
       'disability': [this.discapacidad, Validators.required],
-      'typeDisability': [this.tipoDiscapacidad,''],
+      'typeDisability': [this.tipoDiscapacidad,Validators.required],
       'originSchool': [this.escuelaProcedencia, Validators.required],
       'otherSchool': [this.otraEscuela, Validators.required],
       'nameOriginSchool': [this.nombreEP, Validators.required],
@@ -189,13 +189,13 @@ export class RegisterStudentPageComponent implements OnInit {
       this.estado = this.studentData.state ? this.studentData.state : '';
       this.cp = this.studentData.cp ? this.studentData.cp : '';
       this.telefono = this.studentData.phone ? this.studentData.phone : '';
-      this.etnia = this.studentData.etnia ? this.studentData.etnia : '';
-      this.tipoEtnia = this.studentData.typeEtnia ? this.studentData.typeEtnia : '';
-      this.discapacidad = this.studentData.disability ? this.studentData.disability : '';
-      this.tipoDiscapacidad = this.studentData.typeDisability ? this.studentData.typeDisability : '';
+      this.etnia = this.studentData.etnia ? this.studentData.etnia : 'No';
+      this.tipoEtnia = this.studentData.typeEtnia ? this.studentData.typeEtnia : ' ';
+      this.discapacidad = this.studentData.disability ? this.studentData.disability : 'No';
+      this.tipoDiscapacidad = this.studentData.typeDisability ? this.studentData.typeDisability : ' ';
       // Datos Académicos
-      this.escuelaProcedencia = this.studentData.originSchool ? this.studentData.originSchool : '';
-      this.otraEscuela = this.studentData.otherSchool ? this.studentData.otherSchool : '';
+      this.escuelaProcedencia = this.studentData.originSchool ? this.studentData.originSchool : 'CBTIS';
+      this.otraEscuela = this.studentData.otherSchool ? this.studentData.otherSchool : ' ';
       this.nombreEP = this.studentData.nameOriginSchool ? this.studentData.nameOriginSchool : '';
       this.promedioEP = this.studentData.averageOriginSchool ? this.studentData.averageOriginSchool : '';
       this.carreraCursar = this.studentData.career ? this.studentData.career : '';
@@ -207,7 +207,7 @@ export class RegisterStudentPageComponent implements OnInit {
         this.tipoDiscapacidad = ' ';
       }
       if (this.escuelaProcedencia != 'OTRO') {
-        this.nombreEP == ' ';
+        this.otraEscuela = ' ';
       }
       this.obtenerFechaNacimiento(this.curp);
       this.loadStepWizard(this.stepWizard);
@@ -675,6 +675,36 @@ export class RegisterStudentPageComponent implements OnInit {
         }
       );
     }
+  }
+
+  changeEventEtnia(){
+    if (this.etnia == 'No') {
+      this.tipoEtnia = ' ';
+    }
+    if (this.etnia == 'Si') {
+      this.tipoEtnia = '';
+    }
+    this.validateForm();
+  }
+
+  changeEventDiscapacidad(){
+    if (this.discapacidad == 'No') {
+      this.tipoDiscapacidad = ' ';
+    }
+    if (this.discapacidad == 'Si') {
+      this.tipoDiscapacidad = '';
+    }
+    this.validateForm();
+  }
+
+  changeEventEProcedencia(){
+    if (this.escuelaProcedencia != 'OTRO') {
+      this.otraEscuela = ' ';
+    }
+    if (this.escuelaProcedencia == 'OTRO') {
+      this.otraEscuela = '';
+    }
+    this.validateForm();
   }
 
 }

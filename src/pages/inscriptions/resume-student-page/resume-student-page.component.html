@@ -5,17 +5,11 @@
     </div>
     <div class="example-container" style="padding: 20px;">
       <table>
-        <td style="width: 35%;">
+        <td style="width: 35%;" *ngIf="image">
           <mat-card class="cardProfile">
             <div style="text-align: center;" *ngIf="image">
               <img mat-card-image [src]="image" class="imgProfile">
             </div>
-            <mat-card-content>
-              <h6>Nombre: <span>{{nombre}}</span></h6>
-              <h6>Número de Contról: <span>{{numeroControl}}</span></h6>
-              <h6>Correo Electrónico: <span>{{correoElectronico}}</span></h6>
-              <h6>Teléfono: <span>{{telefono}}</span></h6>
-            </mat-card-content>
           </mat-card>
         </td>
         <td colspan="3" style="vertical-align: top;">
@@ -24,6 +18,10 @@
               <h4>Datos Generales</h4>
             </mat-card-header>
             <mat-card-content>
+              <h6>Nombre: <span>{{nombre}}</span></h6>
+              <h6>Número de Contról: <span>{{numeroControl}}</span></h6>
+              <h6>Correo Electrónico: <span>{{correoElectronico}}</span></h6>
+              <h6>Teléfono: <span>{{telefono}}</span></h6>
               <h6>Fecha de Nacimiento: <span>{{fechaNacimiento}}</span></h6>
               <h6>Lugar de Nacimiento: <span>{{lugarNacimiento}}</span></h6>
               <h6>Estado Civil: <span>{{estadoCivil}}</span></h6>
@@ -31,30 +29,6 @@
               <h6>NSS (Número de Seguro Social): <span>{{nss}}</span></h6>
             </mat-card-content>
             <a (click)="showMoreInformation()" style="cursor: pointer;">Ver más ...</a>
-            <!--
-            <mat-accordion>
-              <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    Ver más...
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <ng-template matExpansionPanelContent>
-                  <h4>Dirección</h4>
-                  <h6>Calle: <span>{{calle}}</span>&nbsp;&nbsp;&nbsp;Colonia: <span>{{colonia}}</span></h6>
-                  <h6>Código Postal: <span>{{cp}}</span></h6>
-                  <h6>Ciudad: <span>{{ciudad}}</span>&nbsp;&nbsp;&nbsp;Estado: <span>{{estado}}</span></h6>
-                  <h6 *ngIf="etnia == 'Si'">Etnia: <span>{{tipoEtnia}}</span></h6>
-                  <h6 *ngIf="discapacidad == 'Si'">Discapacidad: <span>{{tipoDiscapacidad}}</span></h6>
-                  <br>
-                  <h4>Datos Académicos</h4>
-                  <h6>Escuela Procedencia: <span>{{nombreEP}}</span></h6>
-                  <h6>Promedio: <span>{{promedioEP}}</span></h6>
-                  <h6>Carrera a Cursar: <span>{{carreraCursar}}</span></h6>
-                </ng-template>
-              </mat-expansion-panel>
-            </mat-accordion>
-            -->
           </mat-card><br>
         </td>
       </table>
@@ -64,8 +38,9 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3">
-              <mat-card class="cardDocuments" (click)="onView('Acta')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+            <div class="col-3" *ngIf="docActa != ''">
+              <mat-card class="cardDocuments" (click)="onView('Acta')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
                   <mat-card-subtitle>
                     <p class="titleDocuments">
@@ -82,8 +57,9 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="col-3">
-              <mat-card class="cardDocuments" (click)="onView('Certificado')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+            <div class="col-3" *ngIf="docCertificado != ''">
+              <mat-card class="cardDocuments" (click)="onView('Certificado')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
                   <mat-card-subtitle>
                     <p class="titleDocuments">
@@ -100,8 +76,9 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="col-3">
-              <mat-card class="cardDocuments" (click)="onView('Analisis')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+            <div class="col-3" *ngIf="docAnalisis != ''">
+              <mat-card class="cardDocuments" (click)="onView('Analisis')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
                   <mat-card-subtitle>
                     <p class="titleDocuments">
@@ -118,8 +95,9 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="col-3">
-              <mat-card class="cardDocuments" (click)="onView('Comprobante')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+            <div class="col-3" *ngIf="docComprobante != ''">
+              <mat-card class="cardDocuments" (click)="onView('Comprobante')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
                   <mat-card-subtitle>
                     <p class="titleDocuments">
@@ -140,8 +118,9 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3">
-              <mat-card class="cardDocuments" (click)="onView('CURP')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+            <div class="col-3" *ngIf="docCurp != ''">
+              <mat-card class="cardDocuments" (click)="onView('CURP')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
                   <mat-card-subtitle>
                     <p class="titleDocuments">
@@ -158,8 +137,9 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="col-3">
-              <mat-card class="cardDocuments" (click)="onView('NSS')" style="cursor: pointer;" ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+            <div class="col-3" *ngIf="docNss != ''">
+              <mat-card class="cardDocuments" (click)="onView('NSS')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
                   <mat-card-subtitle>
                     <p class="titleDocuments">
@@ -187,4 +167,7 @@
       </div>
     </div>
   </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
 </div>
