@@ -21,6 +21,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
   _idStudent: String;
   data: any;
   studentData: any;
+  loading = false; 
 
    //Documentos
    docActa;
@@ -112,13 +113,15 @@ export class ConfirmationStudentPageComponent implements OnInit {
   }
 
   onView(file) {
+    this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando '+file+'.', '');
+    this.loading = true; 
     switch (file) {
       case "Solicitud": {
-        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Solicitud.', '');
         this.inscriptionsProv.getFile(this.docSolicitud[0].fileIdInDrive, this.docSolicitud[0].filename).subscribe(data => {
           var pubSolicitud = data.file;
           let buffSolicitud = new Buffer(pubSolicitud.data);
           var pdfSrcSolicitud = buffSolicitud;
+          this.loading = false; 
           var blob = new Blob([pdfSrcSolicitud], {type: "application/pdf"});
           
           //FileSaver.saveAs(blob,this.data.email+'-Solicitud.pdf');
@@ -130,11 +133,11 @@ export class ConfirmationStudentPageComponent implements OnInit {
         break;
       }
       case "Contrato": {
-        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Contrato.', '');
         this.inscriptionsProv.getFile(this.docContrato[0].fileIdInDrive, this.docContrato[0].filename).subscribe(data => {
           var pubContrato = data.file;
           let buffContrato = new Buffer(pubContrato.data);
           var pdfSrcContrato = buffContrato;
+          this.loading = false; 
           var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});
           
           //FileSaver.saveAs(blob,this.data.email+'-Contrato.pdf');
@@ -146,7 +149,6 @@ export class ConfirmationStudentPageComponent implements OnInit {
         break;
       }
       case "Acuse": {
-        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acuse.', '');
         this.generatePDFAcuse();
         break;
       }
@@ -209,8 +211,23 @@ export class ConfirmationStudentPageComponent implements OnInit {
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
-    doc.setFontSize(15);
-    doc.text("ACUSE DE DOCUMENTOS ", pageWidth / 2, 40, 'center');
+    doc.setFontSize(12);
+    doc.text("Acuse de entrega de documentación para integración de expediente", pageWidth / 2, 37, 'center');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(12);
+    doc.text("Inscripción", pageWidth / 2, 42, 'center');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Nombre del Alumno:",15,55,'left');
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(10);
+    doc.text(this.studentData.fullName,57,55,'left');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Número de contról:",137,55,'left');
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(10);
+    doc.text(this.studentData.controlNumber,177,55,'left');
 
     var columns = ["No", "Documento", "Estatus"];
     var data = [
@@ -226,9 +243,10 @@ export class ConfirmationStudentPageComponent implements OnInit {
     doc.autoTable(columns,data,
     { 
       headStyles: {fillColor: [20, 43, 88]},
-      margin:{ top: 50 }
+      margin:{ top: 60 }
     }
     );
+    this.loading = false; 
     window.open(doc.output('bloburl'), '_blank');
   }
 

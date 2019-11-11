@@ -112,6 +112,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     private modalService: NgbModal,
     private imageToBase64Serv: ImageToBase64Service,
   ){
+    this.getFonts();
     this.getIdStudent();    
     this.getStudentData(this._idStudent);
     this.studentProv.refreshNeeded$.subscribe(
@@ -226,6 +227,10 @@ export class ProfileInscriptionPageComponent implements OnInit {
        
         this.docAnalisis = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
 
+        this.docSolicitud = documents.filter( docc => docc.filename.indexOf('SOLICITUD') !== -1)[0];;
+
+        this.docContrato = documents.filter( docc => docc.filename.indexOf('CONTRATO') !== -1)[0];;
+
         this.checkFolders();
 
         if(this.docFoto) this.docFoto.status = this.docFoto ? this.docFoto.status.filter( st=> st.active===true)[0] : '';
@@ -238,9 +243,15 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
         if(this.docCertificado) this.docCertificado.status = this.docCertificado ? this.docCertificado.status.filter( st=> st.active===true)[0] : '';
 
-        if(this.docComprobante)    this.docComprobante.status = this.docComprobante ? this.docComprobante.status.filter( st=> st.active===true)[0] : '';
+        if(this.docComprobante) this.docComprobante.status = this.docComprobante ? this.docComprobante.status.filter( st=> st.active===true)[0] : '';
 
         if(this.docNss) this.docNss.status = this.docNss ? this.docNss.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docSolicitud) this.docSolicitud.status = this.docSolicitud ? this.docSolicitud.status.filter( st=> st.active===true)[0] : '';
+
+        if(this.docContrato) this.docContrato.status = this.docContrato ? this.docContrato.status.filter( st=> st.active===true)[0] : '';
+
+
         this.showImg=false;
         this.findFoto();
       }
@@ -263,6 +274,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     switch (file) {
       case "Acta": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta de Nacimiento.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docActa.fileIdInDrive, this.docActa.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -277,6 +289,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -285,6 +298,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "CURP": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CURP.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docCurp.fileIdInDrive, this.docCurp.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -299,6 +313,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -307,6 +322,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "NSS": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando NSS.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docNss.fileIdInDrive, this.docNss.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -321,6 +337,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -329,6 +346,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Certificado": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado de Estudios.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docCertificado.fileIdInDrive, this.docCertificado.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -343,6 +361,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -351,6 +370,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Analisis": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Análisis Clínicos.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docAnalisis.fileIdInDrive, this.docAnalisis.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -365,6 +385,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -373,6 +394,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Comprobante": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Comprobante de Pago.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docComprobante.fileIdInDrive, this.docComprobante.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -387,6 +409,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
+          this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             '', error);
@@ -395,6 +418,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Foto": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Fotografía.', '');
+        this.loading = true; 
         this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(data => {
             let pub = data.file;
             let image = 'data:image/png;base64,' +pub;
@@ -405,7 +429,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
               imageHeight: 200,
               imageAlt: 'Custom image',
               confirmButtonText: 'Aceptar'
-            })
+            });
+            this.loading = false; 
           },
           error => {
             this.notificationService.showNotification(eNotificationType.ERROR,'', error);
@@ -415,62 +440,37 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Solicitud": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Solicitud.', '');
-        this.inscriptionsProv.getFile(this.docSolicitud[0].fileIdInDrive, this.docSolicitud[0].filename).subscribe(data => {
-          var pub = data.file;
-          let buff = new Buffer(pub.data);
-          var pdfSrc = buff;
-          this.dialog.open(ExtendViewerComponent, {
-            data: {
-              source: pdfSrc,
-              isBase64: true
-            },
-            disableClose: true,
-            hasBackdrop: true,
-            width: '60em',
-            height: '600px'
-          });
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.docSolicitud.fileIdInDrive, this.docSolicitud.filename).subscribe(data => {
+          var pubSolicitud = data.file;
+          let buffSolicitud = new Buffer(pubSolicitud.data);
+          var pdfSrcSolicitud = buffSolicitud;
+          var blob = new Blob([pdfSrcSolicitud], {type: "application/pdf"}); 
+          this.loading = false;          
+          window.open( URL.createObjectURL(blob) );
         }, error => {
-          this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
+          console.log(error);
         });
         break;
       }
       case "Contrato": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Contrato.', '');
-        this.inscriptionsProv.getFile(this.docContrato[0].fileIdInDrive, this.docContrato[0].filename).subscribe(data => {
-          var pub = data.file;
-          let buff = new Buffer(pub.data);
-          var pdfSrc = buff;
-          this.dialog.open(ExtendViewerComponent, {
-            data: {
-              source: pdfSrc,
-              isBase64: true
-            },
-            disableClose: true,
-            hasBackdrop: true,
-            width: '60em',
-            height: '600px'
-          });
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.docContrato.fileIdInDrive, this.docContrato.filename).subscribe(data => {
+          var pubContrato = data.file;
+          let buffContrato = new Buffer(pubContrato.data);
+          var pdfSrcContrato = buffContrato;
+          var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});  
+          this.loading = false;         
+          window.open( URL.createObjectURL(blob) );
         }, error => {
-          this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
+          console.log(error);
         });
         break;
       }
       case "Acuse": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acuse.', '');
-        var pdfSrc = this.generatePDFAcuse();
-        this.dialog.open(ExtendViewerComponent, {
-          data: {
-            source: pdfSrc,
-            isBase64: true
-          },
-          disableClose: true,
-          hasBackdrop: true,
-          width: '60em',
-          height: '600px'
-        });
-        
+        this.generatePDFAcuse();
         break;
       }
     }
@@ -531,6 +531,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
 
   generatePDFAcuse() {
+    this.loading = true; 
     const doc = new jsPDF();
 
     // @ts-ignore
@@ -554,29 +555,43 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
-    doc.setFontSize(15);
-    doc.text("ACUSE DE DOCUMENTOS ", pageWidth / 2, 40, 'center');
+    doc.setFontSize(12);
+    doc.text("Acuse de entrega de documentación para integración de expediente", pageWidth / 2, 37, 'center');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(12);
+    doc.text("Inscripción", pageWidth / 2, 42, 'center');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Nombre del Alumno:",15,55,'left');
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(10);
+    doc.text(this.studentData.fullName,57,55,'left');
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Número de contról:",137,55,'left');
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(10);
+    doc.text(this.studentData.controlNumber,177,55,'left');
 
     var columns = ["No", "Documento", "Estatus"];
     var data = [
-      [1, "ACTA DE NACIMIENTO", (this.docActa != '') ? this.docActa[0].status:'NO ENVIADO'],
-      [2, "CERTIFICADO DE ESTUDIOS", (this.docCertificado != '') ? this.docCertificado[0].status:'NO ENVIADO'],
-      [3, "ANÁLISIS CLÍNICOS", (this.docAnalisis != '') ? this.docAnalisis[0].status:'NO ENVIADO'],
-      [4, "COMPROBANTE DE PAGO", (this.docComprobante != '') ? this.docComprobante[0].status:'NO ENVIADO'],
-      [5, "CURP", (this.docCurp != '') ? this.docCurp[0].status:'NO ENVIADO'],
-      [6, "NÚMERO DE SEGURO SOCIAL", (this.docNss != '') ? this.docNss[0].status:'NO ENVIADO'],
-      [7, "FOTOGRAFÍA", (this.docFoto != '') ? this.docFoto[0].status:'NO ENVIADO'] 
+      [1, "ACTA DE NACIMIENTO", (this.docActa != '') ? this.docActa.status.name:'NO ENVIADO'],
+      [2, "CERTIFICADO DE ESTUDIOS", (this.docCertificado != '') ? this.docCertificado.status.name:'NO ENVIADO'],
+      [3, "ANÁLISIS CLÍNICOS", (this.docAnalisis != '') ? this.docAnalisis.status.name:'NO ENVIADO'],
+      [4, "COMPROBANTE DE PAGO", (this.docComprobante != '') ? this.docComprobante.status.name:'NO ENVIADO'],
+      [5, "CURP", (this.docCurp != '') ? this.docCurp.status.name:'NO ENVIADO'],
+      [6, "NÚMERO DE SEGURO SOCIAL", (this.docNss != '') ? this.docNss.status.name:'NO ENVIADO'],
+      [7, "FOTOGRAFÍA", (this.docFoto != '') ? this.docFoto.status.name:'NO ENVIADO'] 
     ];
 
     doc.autoTable(columns,data,
     { 
       headStyles: {fillColor: [20, 43, 88]},
-      margin:{ top: 50 }
+      margin:{ top: 60 }
     }
     );
-
-    let document = doc.output('arraybuffer');
-    return document;
+    this.loading = false; 
+    window.open(doc.output('bloburl'), '_blank');
   }
 
   getFonts() {

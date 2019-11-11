@@ -3,6 +3,9 @@ import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.pr
 import { MatDialog } from '@angular/material';
 import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
 import { StudentInformationComponent } from 'src/modals/inscriptions/student-information/student-information.component';
+import TableToExcel from '@linways/table-to-excel';
+import { NotificationsServices } from 'src/services/app/notifications.service';
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-secretary-inscription-page',
@@ -13,6 +16,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   students;
   listStudents;
   periods = [];
+  loading = false;
 
   // filter nc,nombre
   public searchText: string;
@@ -38,6 +42,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   constructor(
     private inscriptionsProv: InscriptionsProvider,
     public dialog: MatDialog,
+    private notificationService: NotificationsServices,
   ) { 
     this.getStudents();
     this.getPeriods();
@@ -166,6 +171,35 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
+  }
+
+  // Exportar alumnos a excel
+  excelExport() {
+    this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
+    this.loading = true;
+    TableToExcel.convert(document.getElementById('tableReportExcel'), {
+      name: 'Reporte Alumnos Inscripcion.xlsx',
+      sheet: {
+        name: 'Alumnos'
+      }
+    });
+    this.loading = false;
+  }
+
+  // Generar Carátulas
+  generateCovers() {
+    this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO CARÁTULAS', '');
+    this.loading = true;
+    // METODO AQUI
+    this.loading = false;
+  }
+
+  // Generar Pestañas
+  generateLabels() {
+    this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO PESTAÑAS', '');
+    this.loading = true;
+    // METODO AQUI
+    this.loading = false;
   }
 
 }

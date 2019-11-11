@@ -9,6 +9,10 @@ table{
     padding-top: 5px;
 }
 
+img.imgProfile.mat-card-image{
+    border-radius: 10px;
+}
+
 h6 {
     font-weight: bold;
 }
@@ -23,6 +27,7 @@ hr {
 
 .cardProfile{
     padding-right: 5px;
+    height: 350px;
 }
 
 .cardData{
