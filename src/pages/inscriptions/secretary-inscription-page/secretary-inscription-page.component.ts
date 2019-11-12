@@ -3,9 +3,12 @@ import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.pr
 import { MatDialog } from '@angular/material';
 import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
 import { StudentInformationComponent } from 'src/modals/inscriptions/student-information/student-information.component';
+import { ReviewAnalysisComponent } from 'src/modals/inscriptions/review-analysis/review-analysis.component'
 import TableToExcel from '@linways/table-to-excel';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
+import { CookiesService } from 'src/services/app/cookie.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-secretary-inscription-page',
@@ -17,6 +20,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   listStudents;
   periods = [];
   loading = false;
+
+  rolName;
 
   // filter nc,nombre
   public searchText: string;
@@ -43,7 +48,15 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     private inscriptionsProv: InscriptionsProvider,
     public dialog: MatDialog,
     private notificationService: NotificationsServices,
+    private cookiesService: CookiesService,
+    private routeActive: ActivatedRoute,
+    private router: Router,
   ) { 
+    this.rolName = this.cookiesService.getData().user.rol.name;
+    console.log(this.rolName);
+    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
+      this.router.navigate(['/']);
+    }
     this.getStudents();
     this.getPeriods();
   }
@@ -56,6 +69,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.inscriptionsProv.getStudents().subscribe(res => {
       this.students = res.students;
       this.listStudents = this.students;
+      console.log(this.listStudents);
     });
   }
 
@@ -153,7 +167,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   viewExpedient(student){
-    
     const linkModal = this.dialog.open(ReviewExpedientComponent, {
       data: {
         operation: 'view',
@@ -200,6 +213,26 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.loading = true;
     // METODO AQUI
     this.loading = false;
+  }
+
+  viewAnalysis(student){
+    const linkModal = this.dialog.open(ReviewAnalysisComponent, {
+      data: {
+        operation: 'view',
+        student:student
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90em',
+      height: '800px'
+    });
+    let sub = linkModal.afterClosed().subscribe(
+      analysis=>{         
+        console.log(analysis);
+        
+      },
+      err=>console.log(err), ()=> sub.unsubscribe()
+    );
   }
 
 }

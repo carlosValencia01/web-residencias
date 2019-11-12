@@ -124,6 +124,7 @@ import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-perio
 import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component'
 import { ExpedientHistoryComponent } from 'src/modals/inscriptions/expedient-history/expedient-history.component';
 import { StudentInformationComponent } from '../modals/inscriptions/student-information/student-information.component';
+import { ReviewAnalysisComponent } from '../modals/inscriptions/review-analysis/review-analysis.component';
 
 // Reception act module
 // Pages
@@ -223,6 +224,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     ReviewExpedientComponent,
     ExpedientHistoryComponent,
     StudentInformationComponent,
+    ReviewAnalysisComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -399,6 +401,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     ReviewExpedientComponent,
     ExpedientHistoryComponent,
     StudentInformationComponent,
+    ReviewAnalysisComponent,
 
     // Shared
     // Modals

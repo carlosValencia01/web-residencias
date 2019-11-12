@@ -1,0 +1,36 @@
+<div class="content-general">
+  <div class="card card-shadow">
+    <div class="card-header text-white bg-secondary">
+      <div class="row">
+        <div class="col-10">
+          <h1 mat-dialog-title>{{title}}</h1>
+        </div>
+        <div class="col-2">
+          <button mat-icon-button (click)="onClose()" class="float-right">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="example-container">
+      <div class="row text-center">
+        <div class="col-12">
+          <div *ngIf="showDocument == true">
+            <ngx-extended-pdf-viewer [src]="pdfSrc" backgroundColor="#ffffff" [height]="'59vh'"
+              [useBrowserLocale]="true"></ngx-extended-pdf-viewer>
+          </div>
+        </div>
+      </div>
+      <div class="row text-center p-2" *ngIf="showDocument == true">
+        <div class="col-12">
+          <textarea  [(ngModel)]="observations" style="border:groove 2px black; width: 500px; border-radius:5px;">
+          </textarea><br>
+          <button class="btn btn-primary ml-4" [disabled]="observations == ''" (click)="saveObservations()" style="margin-top: 5px;">Guardar Observaciones</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
+</div>
