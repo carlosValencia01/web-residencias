@@ -159,6 +159,7 @@ import { EmployeePageComponent } from 'src/pages/electronic-signature/employee-p
 import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
 // Modals
 import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
+import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
 
 // Shared
 // Components
@@ -251,6 +252,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     PositionsAdminPageComponent,
     // Modals
     NewPositionComponent,
+    PositionsHistoryComponent,
 
     // Shared
     // Components
@@ -377,6 +379,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Electronic signature
     // Modals
     NewPositionComponent,
+    PositionsHistoryComponent,
 
     // Shared
     // Modals

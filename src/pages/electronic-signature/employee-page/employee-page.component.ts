@@ -13,6 +13,7 @@ import {IPosition} from 'src/entities/shared/position.model';
 import {NewGradeComponent} from 'src/modals/reception-act/new-grade/new-grade.component';
 import {NewPositionComponent} from 'src/modals/electronic-signature/new-position/new-position.component';
 import {NotificationsServices} from 'src/services/app/notifications.service';
+import {PositionsHistoryComponent} from 'src/modals/electronic-signature/positions-history/positions-history.component';
 
 @Component({
   selector: 'app-employee-page',
@@ -33,7 +34,7 @@ export class EmployeePageComponent implements OnInit {
   public displayedColumnsGrades: string[];
   public displayedColumnsPositions: string[];
   public employee: IEmployee;
-  public positions: Array<IPosition>;
+  public positions: {actives, inactives};
   public grades: Array<IGrade>;
   public image_src: any;
   public isChangedPositions = false;
@@ -57,7 +58,7 @@ export class EmployeePageComponent implements OnInit {
       this.employeeProvider.getEmployeeById(params.id)
         .subscribe(data => {
           this.employee = data.employee;
-          this.positions = this.employee.positions.slice();
+          this.positions = this._separatePositions(this.employee.positions);
           this.grades = this.employee.grade.slice();
           this._refreshGradesTable();
           this._refreshPositionsTable();
@@ -96,7 +97,7 @@ export class EmployeePageComponent implements OnInit {
     Swal.fire({
       title: 'Borrar puesto',
       text: `El puesto ${row.name} del empleado ${this.employee.name.fullName}, se va a borrar. ¿Desea continuar?`,
-      type: 'question',
+      type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonColor: 'red',
@@ -106,7 +107,31 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.positions.splice(this.positions.indexOf(<IGrade>row), 1);
+        this.positions.actives.splice(this.positions.actives.indexOf(<IPosition>row), 1);
+        this._refreshPositionsTable();
+        this.isChangedPositions = true;
+      }
+    });
+  }
+
+  public onRowDisablePosition(row: IPosition) {
+    Swal.fire({
+      title: 'Inhabilitar puesto',
+      text: `El puesto ${row.name} del empleado ${this.employee.name.fullName}, se va a inhabilitar. ¿Desea continuar?`,
+      type: 'question',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      confirmButtonColor: 'red',
+      cancelButtonColor: 'blue',
+      confirmButtonText: 'Inhabilitar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: true
+    }).then((result) => {
+      if (result.value) {
+        const position = this.positions.actives.find(pos => pos.position._id === row._id);
+        this.positions.actives.splice(this.positions.actives.indexOf(position), 1);
+        position.deactivateDate = new Date();
+        this.positions.inactives.push(position);
         this._refreshPositionsTable();
         this.isChangedPositions = true;
       }
@@ -154,11 +179,12 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this._saveEmployeePositions(this.positions)
+        const allPositions = this._joinPositions(this.positions);
+        this._saveEmployeePositions(allPositions)
           .then(_ => {
             this.notifications.showNotification(eNotificationType.SUCCESS, 'Puestos', '¡Actualización exitosa!');
             this.isChangedPositions = false;
-            this.employee.positions = this.positions.slice();
+            this.employee.positions = allPositions.slice();
           })
           .catch(_ => {
             this.notifications.showNotification(eNotificationType.ERROR, 'Puestos', '¡Actualización fallida, intente de nuevo!');
@@ -200,7 +226,11 @@ export class EmployeePageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((position: IPosition) => {
       if (position) {
-        this.positions.push(position);
+        const pos = {
+          position: position,
+          activateDate: new Date()
+        };
+        this.positions.actives.push(pos);
         this._refreshPositionsTable();
         this.isChangedPositions = true;
       }
@@ -221,7 +251,8 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then(async (result) => {
       if (result.value) {
-        await this._callSaveGradesAndPositions('Puestos y grados guardados con éxito', this.positions, this.grades);
+        const allPositions = this._joinPositions(this.positions);
+        await this._callSaveGradesAndPositions('Puestos y grados guardados con éxito', allPositions, this.grades);
       }
     });
   }
@@ -241,7 +272,7 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.positions = this.employee.positions.slice();
+        this.positions = this._separatePositions(this.employee.positions);
         this.grades = this.employee.grade.slice();
         this.isChangedPositions = false;
         this.isChangedGrades = false;
@@ -266,7 +297,7 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.positions = this.employee.positions.slice();
+        this.positions = this._separatePositions(this.employee.positions);
         this.isChangedPositions = false;
         this._refreshPositionsTable();
       }
@@ -315,7 +346,8 @@ export class EmployeePageComponent implements OnInit {
         focusConfirm: true
       }).then(async (result) => {
         if (result.value) {
-          if (await this._callSaveGradesAndPositions('Datos guardados con éxito', this.positions, this.grades)) {
+          const allPositions = this._joinPositions(this.positions);
+          if (await this._callSaveGradesAndPositions('Datos guardados con éxito', allPositions, this.grades)) {
             this._back();
           }
         } else {
@@ -329,6 +361,18 @@ export class EmployeePageComponent implements OnInit {
     }
   }
 
+  public showPositionsHistory() {
+    this.dialog.open(PositionsHistoryComponent, {
+      id: 'PositionsHistoryModal',
+      data: {
+        positions: this.employee.positions
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '50em'
+    });
+  }
+
   private _createImageFromBlob(image: Blob) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
@@ -339,14 +383,14 @@ export class EmployeePageComponent implements OnInit {
     }
   }
 
-  private async _callSaveGradesAndPositions(messageOk: string, positions: Array<IPosition>, grades: Array<IGrade>) {
+  private _callSaveGradesAndPositions(messageOk: string, positions: Array<any>, grades: Array<IGrade>) {
     return new Promise(resolve => {
       this._saveEmployeeGradesAndPositions(positions, grades)
         .then(_ => {
           this.notifications.showNotification(eNotificationType.SUCCESS, '¡Actualización!', messageOk);
           this.isChangedPositions = false;
           this.isChangedGrades = false;
-          this.employee.positions = this.positions.slice();
+          this.employee.positions = positions.slice();
           this.employee.grade = this.grades.slice();
           resolve(true);
         })
@@ -363,11 +407,11 @@ export class EmployeePageComponent implements OnInit {
   }
 
   private _refreshPositionsTable(): void {
-    this.dataSourcePositions.data = this.positions;
+    this.dataSourcePositions.data = this.positions.actives.map(pos => pos.position);
     this.dataSourcePositions.paginator = this.paginatorPositions;
   }
 
-  private _saveEmployeePositions(positions: Array<IPosition>) {
+  private _saveEmployeePositions(positions: Array<any>) {
     return new Promise((resolve, reject) => {
       this.employeeProvider.updateEmployeePositions(this.employee._id, positions)
         .subscribe(_ => {
@@ -389,7 +433,7 @@ export class EmployeePageComponent implements OnInit {
     });
   }
 
-  private _saveEmployeeGradesAndPositions(positions: Array<IPosition>, grades: Array<IGrade>) {
+  private _saveEmployeeGradesAndPositions(positions: Array<any>, grades: Array<IGrade>) {
     return new Promise((resolve, reject) => {
       this.employeeProvider
         .updateGradesAndPositions(this.employee._id, {
@@ -406,6 +450,25 @@ export class EmployeePageComponent implements OnInit {
 
   private _back() {
     this.router.navigate(['/grades']);
+  }
+
+  private _separatePositions(allPositions: Array<any>): {actives, inactives} {
+    return {
+      actives: allPositions.filter(pos => pos.status === 'ACTIVE').map(({status, ...pos}) => pos).slice(),
+      inactives: allPositions.filter(pos => pos.status === 'INACTIVE').map(({status, ...pos}) => pos).slice(),
+    };
+  }
+
+  private _joinPositions(positions: {actives, inactives}): Array<{position, status}> {
+    const actives = positions.actives.map(pos => {
+      pos.status = 'ACTIVE';
+      return pos;
+    });
+    const inactives = positions.inactives.map(pos => {
+      pos.status = 'INACTIVE';
+      return pos;
+    });
+    return actives.concat(inactives);
   }
 }
 

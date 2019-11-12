@@ -11,5 +11,5 @@ export interface IEmployee {
     position?: string;
     filename?: string;
     grade?: Array<IGrade>;
-    positions?: Array<IPosition>;
+    positions?: Array<any>;
 }

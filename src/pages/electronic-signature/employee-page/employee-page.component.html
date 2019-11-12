@@ -17,6 +17,10 @@
                 class="m-1" color="primary" mat-icon-button mat-mini-fab ngbTooltip="Guardar todo">
           <mat-icon>done_all</mat-icon>
         </button>
+        <button (click)="showPositionsHistory()" *ngIf="employee.positions && employee.positions.length" aria-label="Historial de puestos" class="m-1" color="accent"
+                mat-icon-button mat-mini-fab ngbTooltip="Historial de puestos">
+          <mat-icon>assignment_ind</mat-icon>
+        </button>
       </div>
       <mat-card-header>
         <mat-card-title>{{employee.name.fullName}}</mat-card-title>
@@ -44,7 +48,7 @@
     <mat-expansion-panel class="col-12 m-1 mw-100 p-0">
       <mat-expansion-panel-header>
         <mat-panel-title><strong>PUESTOS</strong></mat-panel-title>
-        <mat-panel-description>{{positions ? positions.length : 0}} puesto(s) registrado(s)
+        <mat-panel-description>{{positions.actives ? positions.actives.length : 0}} puesto(s) activo(s) registrado(s)
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="row justify-content-end m-1">
@@ -62,7 +66,7 @@
           <mat-icon>add</mat-icon>
         </button>
       </div>
-      <div *ngIf="positions && positions.length" class="row">
+      <div *ngIf="positions.actives && positions.actives.length" class="row">
         <div class="mat-elevation-z8 col-12">
           <table [dataSource]="dataSourcePositions" class="col-12" mat-table>
             <ng-container matColumnDef="name">
@@ -79,8 +83,20 @@
             </ng-container>
             <ng-container matColumnDef="actions">
               <th *matHeaderCellDef mat-header-cell></th>
-              <td (click)="onRowRemovePosition(row)" *matCellDef="let row" mat-cell>
-                <mat-icon>cancel</mat-icon>
+              <td *matCellDef="let row" mat-cell>
+                <button [matMenuTriggerFor]="actions" mat-icon-button>
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #actions>
+                  <button (click)="onRowRemovePosition(row)" mat-menu-item>
+                    <mat-icon>delete_forever</mat-icon>
+                    Borrar
+                  </button>
+                  <button (click)="onRowDisablePosition(row)" mat-menu-item>
+                    <mat-icon>visibility_off</mat-icon>
+                    Inhabilitar
+                  </button>
+                </mat-menu>
               </td>
             </ng-container>
             <tr *matHeaderRowDef="displayedColumnsPositions" mat-header-row></tr>
