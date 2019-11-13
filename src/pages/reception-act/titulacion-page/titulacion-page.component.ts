@@ -45,6 +45,8 @@ export class TitulacionPageComponent implements OnInit {
   StatusComponent: eStatusRequest; // Status del proceso actual
   oRequest: uRequest;
   public isOkTitulation: boolean;
+  public isGraduate: boolean;
+  public isApprovedEnglish: boolean;
 
   // Mensajes
   ProcessSentMessage: String = 'En espera de que tú solicitud sea aceptada';
@@ -69,7 +71,12 @@ export class TitulacionPageComponent implements OnInit {
     private requestProvider: RequestProvider
   ) {
     const user = this.cookiesService.getData().user;
-    this.isOkTitulation = user.english && user.graduate;
+    // this.isApprovedEnglish = user.english;
+    // this.isGraduate = user.graduate;
+    // this.isOkTitulation = user.english && user.graduate;
+    this.isApprovedEnglish = true;
+    this.isGraduate = true;
+    this.isOkTitulation = true;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }

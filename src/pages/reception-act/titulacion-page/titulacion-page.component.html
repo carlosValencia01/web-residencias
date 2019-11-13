@@ -3,12 +3,46 @@
     <h2>¡Aviso, acto recepcional!</h2>
   </div>
   <div class="message">
-    <span>Aún no cumple con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
+    <span>Aún no cumples con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
     <span>Los requisitos son:</span>
-    <ul>
-      <li>Ser egresado</li>
-      <li>Contar con el inglés liberado</li>
-    </ul><br>
+    <div class="row" style="justify-content:center;">
+      <mat-card [ngClass]="isApprovedEnglish ? 'requirement-card card-green': 'requirement-card card-red'">
+        <mat-card-header>
+          <mat-card-subtitle>INGLÉS</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <img mat-card-image style="width:70px;margin:5px;"
+            [src]="isApprovedEnglish ? 'src/assets/imgs/approved.png' : 'src/assets/imgs/notApproved.png'">
+        </mat-card-content>
+        <mat-card-footer>
+          <div *ngIf="isApprovedEnglish; else notApprovedEnglish">
+            <p>Ya cuentas con el inglés liberado</p>
+          </div>
+          <ng-template #notApprovedEnglish>
+            <p>Nota: Aún no tienes el inglés liberado,
+              favor de asistir al departamento de vinculación</p>
+          </ng-template>
+        </mat-card-footer>
+      </mat-card>
+      <mat-card [ngClass]="isGraduate ? 'requirement-card card-green' : 'requirement-card card-red'">
+        <mat-card-header>
+          <mat-card-subtitle>EGRESADO</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <img mat-card-image style="width:70px;margin:5px;"
+            [src]="isGraduate ? 'src/assets/imgs/approved.png' : 'src/assets/imgs/notApproved.png'">
+        </mat-card-content>
+        <mat-card-footer>
+          <div *ngIf="isGraduate; else notGraduate">
+            <p>Ya cuentas con el estatus de egresado</p>
+          </div>
+          <ng-template #notGraduate>
+            <p>Nota: Aún no tienes estatus de egresado,
+            favor de asistir al departamento de servicios escolares</p>
+          </ng-template>
+        </mat-card-footer>
+      </mat-card>
+    </div><br>
     <span>Si ya cuenta con los requisitos anteriores, es necesario esperar a que sea liberado en el sistema.</span>
   </div>
 </div>
