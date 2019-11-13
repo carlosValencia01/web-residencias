@@ -1,17 +1,19 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { EmployeeProvider } from 'src/providers/shared/employee.prov';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FormErrorsService } from 'src/services/app/forms.errors.service';
-import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationsServices } from 'src/services/app/notifications.service';
-import { HotkeysService, Hotkey } from 'angular2-hotkeys';
-import { CookiesService } from 'src/services/app/cookie.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Hotkey, HotkeysService} from 'angular2-hotkeys';
+import {ImageCroppedEvent} from 'ngx-image-cropper/src/image-cropper.component';
+import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import * as jsPDF from 'jspdf';
-import * as JsBarcode from 'jsbarcode';
-import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
-import { ActivatedRoute, Router } from '@angular/router';
-import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
+
+import {CookiesService} from 'src/services/app/cookie.service';
+import {EmployeeProvider} from 'src/providers/shared/employee.prov';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
+import {FormErrorsService} from 'src/services/app/forms.errors.service';
+import {IEmployee} from 'src/entities/shared/employee.model';
+import {ImageToBase64Service} from 'src/services/app/img.to.base63.service';
+import {IPosition} from 'src/entities/shared/position.model';
+import {NotificationsServices} from 'src/services/app/notifications.service';
 
 @Component({
   selector: 'app-card-employee-page',
@@ -20,34 +22,20 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 })
 export class CardEmployeePageComponent implements OnInit {
   @ViewChild('searchinput') searchInput: ElementRef;
-  loading = false;
-  data: Array<any>;
-  search: any;
-  showTable = false;
-  showNotFound = false;
-  showForm = false;
-  isNewEmployee = false;
-  haveImage = false;
-  showImg = false;
-  frontBase64: any;
-  backBase64: any;
-  imageProfileTest: any;
-  currentEmployee = {
-    name: {
-      lastName: '',
-      firstName: '',
-      fullName: ''
-    },
-    area: 'default',
-    _id: '1',
-    rfc: '',
-    position: ''
-  };
-  formEmployee: FormGroup;
-  errorForm = false;
-  photoEmployee = '';
-  imageToShow: any;
-  errorInputsTag = {
+  public employee: IEmployee;
+  public loading = false;
+  public search: any;
+  public showTable = false;
+  public showNotFound = false;
+  public showNotFoundPositions = false;
+  public showForm = false;
+  public isNewEmployee = false;
+  public haveImage = false;
+  public showImg = false;
+  public formEmployee: FormGroup;
+  public errorForm = false;
+  public photoEmployee = '';
+  public errorInputsTag = {
     errorEmployeeLastName: false,
     errorEmployeeFirstName: false,
     errorEmployeeRFC: false,
@@ -55,53 +43,39 @@ export class CardEmployeePageComponent implements OnInit {
     errorEmployeeCareer: false,
     errorEmployeePosition: false,
   };
-  imageChangedEvent: any = '';
-  croppedImage: any = '';
-  croppedImageBase64: any = '';
-  imgForSend: boolean;
-  closeResult: string;
-  selectedFile: File = null;
+  public imageChangedEvent: any = '';
+  private currentPosition: IPosition;
+  private frontBase64: any;
+  private backBase64: any;
+  private imageProfileTest: any;
+  private imageToShow: any;
+  private croppedImage: any = '';
+  private croppedImageBase64: any = '';
+  private imgForSend: boolean;
+  private closeResult: string;
+  private selectedFile: File = null;
 
   constructor(
+    private cookiesService: CookiesService,
     private employeeProv: EmployeeProvider,
-    private imageToBase64Serv: ImageToBase64Service,
-    public formBuilder: FormBuilder,
+    private formBuilder: FormBuilder,
     private formErrosrServ: FormErrorsService,
+    private hotkeysService: HotkeysService,
+    private imageToBase64Serv: ImageToBase64Service,
     private modalService: NgbModal,
     private notificationServ: NotificationsServices,
-    private hotkeysService: HotkeysService,
-    private router: Router,
-    private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
+    private router: Router,
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.getBase64ForStaticImages();
-    this.cleanCurrentEmployee();
 
-    this.hotkeysService.add(new Hotkey('f1', (event: KeyboardEvent): boolean => {
-      this.newEmployee();
-      return false; // Prevent bubbling
-    }));
     this.hotkeysService.add(new Hotkey('f2', (event: KeyboardEvent): boolean => {
       this.hiddenFormDiv();
       return false; // Prevent bubbling
     }));
-  }
-
-  cleanCurrentEmployee() {
-    this.currentEmployee = {
-      name: {
-        lastName: '',
-        firstName: '',
-        fullName: ''
-      },
-      area: '',
-      _id: '1',
-      rfc: '',
-      position: ''
-    };
   }
 
   ngOnInit() {
@@ -109,18 +83,18 @@ export class CardEmployeePageComponent implements OnInit {
   }
 
   // Formulario *************************************************************************************//#endregion
-  initializeForm() {
+  private initializeForm() {
     this.formEmployee = this.formBuilder.group({
-      'firstNameInput': ['', [Validators.required]],
-      'lastNameInput': ['', [Validators.required]],
-      'RFCInput': ['', [Validators.required]],
-      'areaInput': ['', [Validators.required]],
-      'positionInput': ['', [Validators.required]]
+      'firstNameInput': [{value: '', disabled: true}, [Validators.required]],
+      'lastNameInput': [{value: '', disabled: true}, [Validators.required]],
+      'RFCInput': [{value: '', disabled: true}, [Validators.required]],
+      'areaInput': [{value: '', disabled: true}, [Validators.required]],
+      'positionInput': [{value: '', disabled: true}, [Validators.required]]
     });
     this.searchInput.nativeElement.focus();
   }
 
-  hiddenFormDiv() {
+  public hiddenFormDiv() {
     this.formEmployee.reset();
     this.errorForm = false;
     this.errorInputsTag.errorEmployeeFirstName = false;
@@ -132,49 +106,10 @@ export class CardEmployeePageComponent implements OnInit {
     this.showForm = false;
   }
 
-  newEmployee() {
-    this.isNewEmployee = true;
-    this.hiddenFormDiv();
-    this.cleanCurrentEmployee();
-    this.photoEmployee = 'assets/imgs/employeeAvatar.png';
-    this.showImg = true;
-    this.imgForSend = false;
-    this.showForm = true;
-    this.haveImage = false;
-  }
-
-  newEmployeeData() {
-    this.loading = true;
-    const data = {
-      rfc: this.formEmployee.get('RFCInput').value.toUpperCase(),
-      name: {
-        firstName: this.formEmployee.get('firstNameInput').value.toUpperCase(),
-        lastName: this.formEmployee.get('lastNameInput').value.toUpperCase(),
-        fullName: (this.formEmployee.get('firstNameInput').value + ' ' + this.formEmployee.get('lastNameInput').value).toUpperCase()
-      },
-      position: this.formEmployee.get('positionInput').value.toUpperCase(),
-      area: this.formEmployee.get('areaInput').value.toUpperCase()
-    };
-
-    this.employeeProv.newEmployee(data).subscribe(res => {
-      if (this.imgForSend) {
-        this.uploadFile(this.currentEmployee._id, false);
-      } else {
-        this.showForm = true;
-        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Trabajador agregado correctamente', '');
-      }
-      const employee: any = res;
-      this.currentEmployee = employee;
-    }, error => {
-      this.loading = false;
-      this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al guardar, intente nuevamente', '');
-    }, () => this.loading = false);
-  }
-
-  showFormValues(employee) {
+  public showFormValues(employee, position) {
+    this.currentPosition = position;
     this.isNewEmployee = false;
     this.showImg = false;
-    this.currentEmployee = JSON.parse(JSON.stringify(employee));
     this.imgForSend = false;
 
     this.getImageFromService(employee._id);
@@ -182,15 +117,14 @@ export class CardEmployeePageComponent implements OnInit {
     this.formEmployee.get('RFCInput').setValue(employee.rfc);
     this.formEmployee.get('firstNameInput').setValue(employee.name.firstName);
     this.formEmployee.get('lastNameInput').setValue(employee.name.lastName);
-    this.formEmployee.get('positionInput').setValue(employee.position);
-    this.formEmployee.get('areaInput').setValue(employee.area);
+    this.formEmployee.get('positionInput').setValue(position.name);
+    this.formEmployee.get('areaInput').setValue(position.ascription.name);
 
     this.showForm = true;
   }
 
   // Generacion de PDF *************************************************************************************//#endregion
-
-  getBase64ForStaticImages() {
+  private getBase64ForStaticImages() {
     this.imageToBase64Serv.getBase64('assets/imgs/employeeFront1.jpg').then(res1 => {
       this.frontBase64 = res1;
     });
@@ -198,17 +132,10 @@ export class CardEmployeePageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/employeeBack2.jpg').then(res2 => {
       this.backBase64 = res2;
     });
-
   }
 
-  textToBase64Barcode(text) {
-    const canvas = document.createElement('canvas');
-    JsBarcode(canvas, text, { format: 'CODE128', displayValue: false });
-    return canvas.toDataURL('image/png');
-  }
-
-  generatePDF(employee) { // 'p', 'mm', [68,20]
-
+  public generatePDF(employee, position?) { // 'p', 'mm', [68,20]
+    this.currentPosition = position ? position : this.currentPosition;
     if (employee.filename) {
       this.loading = true;
       this.employeeProv.getImageTest(employee._id).subscribe(data => {
@@ -231,8 +158,8 @@ export class CardEmployeePageComponent implements OnInit {
             doc.setFont('helvetica');
             doc.setFontType('bold');
             doc.text(49, 23.9, doc.splitTextToSize(employee.name.fullName, 38));
-            doc.text(49, 32.1, doc.splitTextToSize(employee.area, 38));
-            doc.text(49, 40.6, doc.splitTextToSize(employee.position, 38));
+            doc.text(49, 32.1, doc.splitTextToSize(this.currentPosition.ascription.name, 38));
+            doc.text(49, 40.6, doc.splitTextToSize(this.currentPosition.name, 38));
 
             doc.addPage();
             // // cara trasera de la credencial
@@ -259,111 +186,62 @@ export class CardEmployeePageComponent implements OnInit {
 
   }
 
-  // Busqueda de estudiantes *************************************************************************************//#endregion
-
-  searchEmployee(showForm) {
+  // Búsqueda de empleado *************************************************************************************//#endregion
+  public searchEmployee(showForm) {
     this.showForm = showForm;
     this.loading = true;
     if (this.search) {
       this.search = this.search.toUpperCase();
     }
-    this.employeeProv.searchEmployeeRFC(this.search).subscribe(res => {
-      this.data = res.employees;
+    this.employeeProv.searchEmployeeRFC(this.search)
+      .subscribe(employee => {
+        this.employee = employee;
 
-      if (this.data.length > 0) {
-        this.showTable = true;
-        this.showNotFound = false;
-      } else {
+        if (this.employee) {
+          if (!this.employee.positions.length) {
+            this.showNotFoundPositions = true;
+            this.showTable = false;
+            this.showNotFound = false;
+          } else {
+            this.showTable = true;
+            this.showNotFoundPositions = false;
+            this.showNotFound = false;
+          }
+        } else {
+          this.showTable = false;
+          this.showNotFoundPositions = false;
+          this.showNotFound = true;
+        }
+      }, err => {
+        console.log('err', err);
         this.showTable = false;
         this.showNotFound = true;
-      }
-
-    }, err => {
-      console.log('err', err);
-    }, () => this.loading = false);
-  }
-
-  // Actualizacion de información basica (sin imagen) ************************************************************//#endregion
-
-  formValidation(): boolean {
-    let invalid = false;
-
-    if (this.formEmployee.invalid) {
-      this.errorForm = true;
-      this.formErrosrServ.getErros(this.formEmployee).forEach(key => {
-        switch (key.keyControl) {
-          case 'RFCInput':
-            this.errorInputsTag.errorEmployeeRFC = true;
-            break;
-          case 'firstNameInput':
-            this.errorInputsTag.errorEmployeeFirstName = true;
-            break;
-          case 'lastNameInput':
-            this.errorInputsTag.errorEmployeeLastName = true;
-            break;
-          case 'positionInput':
-            this.errorInputsTag.errorEmployeePosition = true;
-            break;
-          case 'areaInput':
-            this.errorInputsTag.errorEmployeeArea = true;
-            break;
-        }
-      });
-      invalid = true;
-    }
-
-    return invalid;
-  }
-
-  updateEmployeeData() {
-    this.isNewEmployee = false;
-    if (!this.formValidation()) {
-      this.currentEmployee.rfc = this.formEmployee.get('RFCInput').value.toUpperCase();
-      this.currentEmployee.name.firstName = this.formEmployee.get('firstNameInput').value.toUpperCase();
-      this.currentEmployee.name.lastName = this.formEmployee.get('lastNameInput').value.toUpperCase();
-      // tslint:disable-next-line:max-line-length
-      this.currentEmployee.name.fullName = (this.formEmployee.get('firstNameInput').value + ' ' + this.formEmployee.get('lastNameInput').value).toUpperCase();
-      this.currentEmployee.position = this.formEmployee.get('positionInput').value.toUpperCase();
-      this.currentEmployee.area = this.formEmployee.get('areaInput').value.toUpperCase();
-
-      this.loading = true;
-      this.employeeProv.updateEmployee(this.currentEmployee._id, this.currentEmployee).subscribe(res => {
-        if (this.imgForSend) {
-          this.uploadFile(this.currentEmployee._id, false);
-        } else {
-          this.showForm = true;
-          if (this.search) {
-            this.searchEmployee(true);
-          }
-          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Trabajador actualizado correctamente', '');
-        }
-      }, error => {
-        this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
+        this.showNotFoundPositions = false;
+        this.loading = false;
       }, () => this.loading = false);
-    }
   }
 
   // Cropper Image ***************************************************************************************************//#endregion
-
-  showSelectFileDialog() {
+  public showSelectFileDialog() {
     const input = document.getElementById('fileButton');
     input.click();
   }
 
-  imageCropped(event: ImageCroppedEvent) {
+  public imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.file;
     this.croppedImageBase64 = event.base64;
   }
 
-  imageLoaded() {
+  public imageLoaded() {
     // show cropper
   }
-  loadImageFailed() {
+
+  public loadImageFailed() {
     // show message
   }
 
   /*Se lanza cuando se cambia la foto*/
-  fileChangeEvent(event: any, content) {
+  public fileChangeEvent(event: any, content) {
     if (event) {
       this.selectedFile = <File>event.target.files[0];
 
@@ -377,7 +255,7 @@ export class CardEmployeePageComponent implements OnInit {
 
         const showForm = this.isNewEmployee;
 
-        this.uploadFile(this.currentEmployee._id, showForm);
+        this.uploadFile(this.employee._id, showForm);
         event.target.value = '';
       }, (reason) => {
         event.target.value = '';
@@ -397,26 +275,13 @@ export class CardEmployeePageComponent implements OnInit {
     }
   }
 
-  getImage() {
-    this.employeeProv.getProfileImage(this.currentEmployee._id).subscribe(res => {
-      this.haveImage = true;
-
-    }, error => {
-      if (error.status === 404) {
-        this.haveImage = false;
-        this.photoEmployee = 'assets/imgs/employeeAvatar.png';
-        this.showImg = true;
-      }
-    });
-  }
-
-  uploadFile(id, showForm) {
+  private uploadFile(id, showForm) {
     const fd = new FormData();
     fd.append('image', this.croppedImage);
     this.loading = true;
     this.employeeProv.updatePhoto(id, fd).subscribe(res => {
       const employee: any = res;
-      this.currentEmployee = employee.employee;
+      this.employee.filename = employee.employee.filename;
 
       this.imgForSend = false;
       this.showForm = showForm;
@@ -431,8 +296,7 @@ export class CardEmployeePageComponent implements OnInit {
   }
 
   // Zona de test :D *********************************************************************************************//#region
-
-  createImageFromBlob(image: Blob) {
+  private createImageFromBlob(image: Blob) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
       this.imageToShow = reader.result;
@@ -445,7 +309,7 @@ export class CardEmployeePageComponent implements OnInit {
     }
   }
 
-  getImageFromService(id) {
+  private getImageFromService(id) {
     this.loading = true;
     this.employeeProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
