@@ -3,25 +3,22 @@ import { map } from 'rxjs/operators';
 import { Api } from '../app/api.prov';
 
 @Injectable()
-export class UserProvider {
-  constructor(
-    public api: Api,
-  ) {
-
+export class ESignatureProvider {
+  constructor(private api: Api) {
   }
 
-  addUser(data) {
-    return this.api.post('user/register', data)
-      .pipe(map(user => user.json()));
+  createDocument(data) {
+    return this.api.postE('eSignature/create', data)
+      .pipe(map(res => res.json()));
   }
 
-  login(data) {
-    return this.api.post('user/login', data)
-      .pipe(map(user => user.json()));
+  getDocument() {
+    return this.api.getE('eSignature')
+      .pipe(map(data => data));
   }
 
-  getAllUsers() {
-    return this.api.get('user')
-      .pipe(map(users => users.json()));
+  hasESignature(rfc) {
+    return this.api.getE(`eSignature/has/${rfc}`)
+      .pipe(map(res => res.json()));
   }
 }

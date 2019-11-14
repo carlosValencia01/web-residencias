@@ -4,7 +4,6 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CookiesService} from 'src/services/app/cookie.service';
 import {NotificationsServices} from 'src/services/app/notifications.service';
 import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
-import {ErrorMatcher} from 'src/services/shared/ErrorMatcher';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
@@ -25,8 +24,7 @@ export class ProfileSettingsComponent implements OnInit {
       private cookiesService: CookiesService,
       private notification: NotificationsServices,
       private activedRoute: ActivatedRoute,
-      private router: Router,
-      public matcher: ErrorMatcher,
+      private router: Router
   ) {
     this.user = this.cookiesService.getData().user;
     if (!this.cookiesService.isAllowed(this.activedRoute.snapshot.url[0].path)) {
