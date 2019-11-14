@@ -17,6 +17,11 @@ export class DocumentProvider {
             .pipe(map(docs => docs.json()));
     }
 
+    getAllDocumentsOnly() {
+        return this.api.get('document/allDocuments')
+            .pipe(map(docs => docs.json()));
+    }
+
     createDocument(document) {
         return this.api.post('document/create', document)
             .pipe(map(created => created.json()));

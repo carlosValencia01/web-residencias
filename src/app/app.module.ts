@@ -47,6 +47,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -155,8 +156,12 @@ import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 // Electronic signature module
 // Pages
 import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
-// import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { EmployeePageComponent } from 'src/pages/electronic-signature/employee-page/employee-page.component';
 import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
+// Modals
+import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
+import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
 
 // Shared
 // Components
@@ -244,8 +249,12 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Electronic signature module
     // Pages
     DocumentsAdminPageComponent,
-    // DocumentsAssignPageComponent,
+    DocumentsAssignPageComponent,
+    EmployeePageComponent,
     PositionsAdminPageComponent,
+    // Modals
+    NewPositionComponent,
+    PositionsHistoryComponent,
 
     // Shared
     // Components
@@ -279,6 +288,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     MatChipsModule,
     MatDatepickerModule,
     MatDialogModule,
+    MatExpansionModule,
     MatFileUploadModule ,
     MatFormFieldModule,
     MatIconModule,
@@ -291,6 +301,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
+    MatSlideToggleModule,
     MatSnackBarModule,
     MatSortModule,
     MatStepperModule,
@@ -370,6 +381,11 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
+
+    // Electronic signature
+    // Modals
+    NewPositionComponent,
+    PositionsHistoryComponent,
 
     // Shared
     // Modals

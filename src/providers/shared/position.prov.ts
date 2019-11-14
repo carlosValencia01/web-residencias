@@ -33,12 +33,17 @@ export class PositionProvider {
     }
 
     updateDocumentAssign(positionId, documents) {
-        return this.api.put(`position/updateDocumentAssign/${positionId}`, documents)
+        return this.api.put(`position/updateDocumentAssign/${positionId}`, {documents: documents })
             .pipe(map(updated => updated.json()));
     }
 
     getAllDepartments() {
         return this.api.get('department/all')
             .pipe(map(departments => departments.json()));
+    }
+
+    getPositionsForDepartment(departmentId) {
+        return this.api.get(`position/getPositions/${departmentId}`)
+            .pipe(map(res => res.json()));
     }
 }

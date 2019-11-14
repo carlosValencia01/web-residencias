@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { CookiesService } from 'src/services/app/cookie.service';
-import { DocumentProvider } from 'src/providers/shared/document.prov';
-import { IDocument } from 'src/entities/shared/document.model';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { NotificationsServices } from 'src/services/app/notifications.service';
-import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
 import Swal from 'sweetalert2';
+
+import {CookiesService} from 'src/services/app/cookie.service';
+import {DocumentProvider} from 'src/providers/shared/document.prov';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
+import {IDocument} from 'src/entities/shared/document.model';
+import {NotificationsServices} from 'src/services/app/notifications.service';
 
 @Component({
   selector: 'app-documents-admin-page',
@@ -16,20 +17,20 @@ import Swal from 'sweetalert2';
 export class DocumentsAdminPageComponent implements OnInit {
   public documentForm: FormGroup;
   public documents: Array<IDocument>;
-  private documentsCopy: Array<IDocument>;
-  private currentDocument: IDocument;
   public titleCardForm: string;
   public searchText: string;
   public showFormPanel = false;
   public isEditing = false;
   public isViewDetails = false;
+  private documentsCopy: Array<IDocument>;
+  private currentDocument: IDocument;
 
   constructor(
-    private router: Router,
     private activatedRoute: ActivatedRoute,
     private cookiesService: CookiesService,
     private documentProv: DocumentProvider,
     private notificationsService: NotificationsServices,
+    private router: Router,
   ) {
     if (!this.cookiesService.isAllowed(this.activatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);

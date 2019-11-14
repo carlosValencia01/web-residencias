@@ -34,9 +34,11 @@
     </mat-selection-list>
   </mat-card>
   <mat-card *ngIf="showFormPanel" class="col-sm-11 col-md-6 m-2">
-    <span class="float-right close" ngbTooltip="Cerrar" placement="top">
-      <fa (click)="closeFormPanel()" name="times-circle" style="color:red"></fa>
-    </span>
+    <div class="float-right close" placement="top">
+      <button (click)="closeFormPanel()" aria-label="Cerrar panel" mat-icon-button ngbTooltip="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
     <form (ngSubmit)="saveDocument()" [formGroup]="documentForm">
       <mat-card-title>{{ titleCardForm }}</mat-card-title>
       <mat-card-content class="card-body">

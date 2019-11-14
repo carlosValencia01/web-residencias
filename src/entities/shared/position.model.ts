@@ -5,5 +5,6 @@ export interface IPosition {
     _id?: string;
     name?: string;
     ascription?: IDepartment;
+    canSign?: boolean;
     documents?: Array<IDocument>;
 }
