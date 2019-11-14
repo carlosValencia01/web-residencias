@@ -24,6 +24,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
   data: any;
   studentData: any;
 
+  //Observaciones Análisis
+  observationsA;
+
   step;
 
   //Foto del Estudiante
@@ -143,6 +146,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
   getStudentData(id) {
     this.inscriptionsProv.getStudent(id).subscribe(res => {
       this.studentData = res.student[0];
+      this.observationsA = this.studentData.observationsAnalysis ? this.studentData.observationsAnalysis:'';
 
       // Datos Alumno
       this.nombre = this.studentData.fullName ? this.studentData.fullName : '';
@@ -840,5 +844,16 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
   imageLoaded() {
     // show cropper
+  }
+
+  showObservationsAnalysis(){
+    Swal.fire({
+      title: 'Observaciones',
+      text: this.observationsA,
+      type: 'info',
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {});
   }
 }

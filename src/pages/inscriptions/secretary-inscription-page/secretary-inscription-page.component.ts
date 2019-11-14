@@ -304,4 +304,72 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     );
   }
 
+  filterDocuments(document,student){
+    switch (document) {
+      case "Acta": {
+        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('ACTA') !== -1)[0]:'';
+        if(doc != undefined){
+          return doc.status[doc.status.length-1].name;
+        }
+        else{
+          return "SIN ENVÍO";
+        }
+      }
+      case "Certificado": {
+        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0]:'';
+        if(doc != undefined){
+          return doc.status[doc.status.length-1].name;
+        }
+        else{
+          return "SIN ENVÍO";
+        }
+      }
+      case "Analisis": {
+        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('CLINICOS') !== -1)[0]:'';
+        if(doc != undefined){
+          return doc.status[doc.status.length-1].name;
+        }
+        else{
+          return "SIN ENVÍO";
+        }
+      }
+      case "Comprobante": {
+        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0]:'';
+        if(doc != undefined){
+          return doc.status[doc.status.length-1].name;
+        }
+        else{
+          return "SIN ENVÍO";
+        }
+      }
+      case "Curp": {
+        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('CURP') !== -1)[0]:'';
+        if(doc != undefined){
+          return doc.status[doc.status.length-1].name;
+        }
+        else{
+          return "SIN ENVÍO";
+        }
+      }
+      case "Nss": {
+        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('NSS') !== -1)[0]:'';
+        if(doc != undefined){
+          return doc.status[doc.status.length-1].name;
+        }
+        else{
+          return "SIN ENVÍO";
+        }
+      }
+      case "Foto": {
+        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0]:'';
+        if(doc != undefined){
+          return doc.status[doc.status.length-1].name;
+        }
+        else{
+          return "SIN ENVÍO";
+        }
+      }
+    }
+  }
+
 }
