@@ -229,6 +229,11 @@ export class ConfirmationStudentPageComponent implements OnInit {
     doc.setFontSize(10);
     doc.text(this.studentData.controlNumber,177,55,'left');
 
+    doc.line((pageWidth / 2)-35, 150, (pageWidth / 2)+35, 150);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Firma del Estudiante", pageWidth / 2, 160, 'center');
+
     var columns = ["No", "Documento", "Estatus"];
     var data = [
       [1, "ACTA DE NACIMIENTO", (this.docActa != '') ? 'ENVIADO':'NO ENVIADO'],

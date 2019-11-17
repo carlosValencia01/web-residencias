@@ -577,6 +577,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
     doc.setFontSize(10);
     doc.text(this.studentData.controlNumber,177,55,'left');
 
+    doc.line((pageWidth / 2)-35, 150, (pageWidth / 2)+35, 150);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Firma del Estudiante", pageWidth / 2, 160, 'center');
+
     var columns = ["No", "Documento", "Estatus"];
     var data = [
       [1, "ACTA DE NACIMIENTO", (this.docActa != '') ? this.docActa.status.name:'NO ENVIADO'],
@@ -591,7 +596,25 @@ export class ProfileInscriptionPageComponent implements OnInit {
     doc.autoTable(columns,data,
     { 
       headStyles: {fillColor: [20, 43, 88]},
-      margin:{ top: 60 }
+      margin:{ top: 60 },
+      didParseCell: function (data) {
+        if(data.row.cells[2].text[0] === 'ACEPTADO'){
+          data.cell.styles.fillColor = [17, 32, 71];
+          data.cell.styles.textColor = [255, 255, 255];
+        }
+        if(data.row.cells[2].text[0] === 'VALIDADO'){
+          data.cell.styles.fillColor = [199, 247, 237];
+          data.cell.styles.textColor = [255, 255, 255];
+        }
+        if(data.row.cells[2].text[0] === 'RECHAZADO'){
+          data.cell.styles.fillColor = [251, 191, 193];
+          data.cell.styles.textColor = [255, 255, 255];
+        }
+        if(data.row.cells[2].text[0] === 'EN PROCESO'){
+          data.cell.styles.fillColor = [255, 245, 204];
+          data.cell.styles.textColor = [255, 255, 255];
+        }
+      }
     }
     );
     this.loading = false; 
