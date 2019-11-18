@@ -81,4 +81,18 @@ export class ReviewAnalysisComponent implements OnInit {
    
   }
 
+  observationsGood(){
+    if(this.observations != ''){
+      this.observations += ' ';
+    }
+    this.observations += "Todo bien, sigue así. ";
+  }
+
+  observationsBad(){
+    if(this.observations != ''){
+      this.observations += ' ';
+    }
+    this.observations += "FAVOR DE ACUDIR INMEDIATAMENTE AL CONSULTORIO MÉDICO. ";
+  }
+
 }

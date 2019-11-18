@@ -22,10 +22,29 @@
         </div>
       </div>
       <div class="row text-center p-2" *ngIf="showDocument == true">
-        <div class="col-12">
-          <textarea  [(ngModel)]="observations" style="border:groove 2px black; width: 500px; border-radius:5px;">
-          </textarea><br>
-          <button class="btn btn-primary ml-4" [disabled]="observations == ''" (click)="saveObservations()" style="margin-top: 5px;">Guardar Observaciones</button>
+        <div class="col-12" style="text-align: center;">
+          <table style="margin: 0 auto;">
+            <tr>
+              <td rowspan="2">
+                <textarea [(ngModel)]="observations" style="border:groove 2px black; width: 500px; border-radius:5px;">
+                </textarea>
+              </td>
+              <td>
+                <div class="div-img" ngbTooltip="Todo Bien" tooltipClass="my-custom-class">
+                  <img src="../../../assets/icons/presence.svg" class="action" (click)="observationsGood()">
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="div-img" ngbTooltip="Advertencia" tooltipClass="my-custom-class">
+                  <img src="../../../assets/icons/remove-paid.svg" class="action" (click)="observationsBad()">
+                </div>
+              </td>
+            </tr>
+          </table>
+          <button class="btn btn-primary ml-4" [disabled]="observations == ''" (click)="saveObservations()"
+            style="margin-top: 5px;">Guardar Observaciones</button>
         </div>
       </div>
     </div>
