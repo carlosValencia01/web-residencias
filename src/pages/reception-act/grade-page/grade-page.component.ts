@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as Papa from 'papaparse';
+import Swal from 'sweetalert2';
 
 import { CookiesService } from 'src/services/app/cookie.service';
 import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
@@ -137,54 +138,47 @@ export class GradePageComponent implements OnInit {
   }
 
   onUpload(event) {
-    const notificacion = this.notificationServ;
+    const notification = this.notificationServ;
     const provider = this.employeeProvider;
     const ArrayEmployees: IEmployee[] = [];
     if (event.target.files && event.target.files[0]) {
       Papa.parse(event.target.files[0], {
-        complete: function (results) {
+        complete: async results => {
           if (results.data.length > 0) {
-            results.data.forEach((element, index) => {
+            const elements = results.data;
+            await this._asyncForEach(elements, async (element, index) => {
               if (index > 0) {
-                const indice = ArrayEmployees.findIndex(x => x.rfc === element[0]);
-                let tmpEmployee: IEmployee;
-                if (indice !== -1) {
-                  const tmpGrade = {
-                    title: element[5],
-                    cedula: element[6],
-                    level: element[7],
-                    abbreviation: element[8]
-                  };
-                  ArrayEmployees[indice].grade.push(tmpGrade);
+                const employeeIndex = ArrayEmployees.findIndex(x => x.rfc === element[0]);
+                if (employeeIndex !== -1) {
+                  const {value: updateEmployee} = await Swal.fire({
+                    title: 'Empleado duplicado',
+                    text: `El empleado con RFC ${element[0]}, está duplicado. ¿Desea actualizar o descartar los nuevos datos?`,
+                    type: 'question',
+                    allowOutsideClick: false,
+                    showCancelButton: true,
+                    confirmButtonColor: 'blue',
+                    cancelButtonColor: 'red',
+                    confirmButtonText: 'Actualizar',
+                    cancelButtonText: 'Descartar',
+                    focusConfirm: true
+                  });
+                  if (updateEmployee) {
+                    ArrayEmployees.splice(employeeIndex, 1);
+                    ArrayEmployees.push(this._buildEmployeeStructure(element));
+                  }
                 } else {
-                  if (element.length >= 9) {
-                    tmpEmployee = {
-                      rfc: element[0],
-                      name: {
-                        firstName: element[1],
-                        lastName: element[2],
-                        fullName: element[1].concat(' ', element[2])
-                      },
-                      area: element[3],
-                      position: element[4],
-                      grade: [{
-                        title: element[5],
-                        cedula: element[6],
-                        level: element[7],
-                        abbreviation: element[8]
-                      }],
-                      positions: element[9]
-                    };
-                    ArrayEmployees.push(tmpEmployee);
+                  if (elements[index].length >= 5) {
+                    ArrayEmployees.push(this._buildEmployeeStructure(element));
                   }
                 }
               }
             });
             console.log('Array emplo', ArrayEmployees);
-            provider.csvEmployeGrade(ArrayEmployees).subscribe(res => {
-              notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');
+            provider.csvEmployeGrade(ArrayEmployees).subscribe(_ => {
+              notification.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
             }, error => {
               console.log(error);
+              notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
             });
           }
         }
@@ -196,6 +190,25 @@ export class GradePageComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
+    }
+  }
+
+  private _buildEmployeeStructure(data: Array<any>): IEmployee {
+    return {
+      rfc: data[0],
+      name: {
+        firstName: data[1],
+        lastName: data[2],
+        fullName: data[1].concat(' ', data[2])
+      },
+      gender: data[3],
+      birthDate: data[4]
+    };
+  }
+
+  private async _asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
     }
   }
 }

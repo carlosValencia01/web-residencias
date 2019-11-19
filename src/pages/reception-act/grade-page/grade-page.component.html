@@ -16,13 +16,14 @@
     <div class="form-group">
       <div class="text-center">
         <input #fileUpload (change)="onUpload($event)" accept=".csv" style="display: none" type="file">
-        <button (click)="fileUpload.click()" class="m-1" color="primary" mat-mini-fab>
-          <mat-icon>archive</mat-icon>
+        <button (click)="fileUpload.click()" class="m-1" color="primary" mat-mini-fab
+                ngbTooltip="Cargar empleados de archivo .csv">
+          <mat-icon>group_add</mat-icon>
         </button>
-        <button (click)="addNewGradeEmployee()" class="m-1" color="primary" mat-mini-fab>
-          <mat-icon>add</mat-icon>
+        <button (click)="addNewGradeEmployee()" class="m-1" color="primary" mat-mini-fab ngbTooltip="Nuevo empleado">
+          <mat-icon>person_add</mat-icon>
         </button>
-        <button (click)="refresh()" class="m-1" color="primary" mat-mini-fab>
+        <button (click)="refresh()" class="m-1" color="primary" mat-mini-fab ngbTooltip="Actualizar tabla">
           <mat-icon>update</mat-icon>
         </button>
       </div>
