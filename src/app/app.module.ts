@@ -125,6 +125,7 @@ import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedie
 import { ExpedientHistoryComponent } from 'src/modals/inscriptions/expedient-history/expedient-history.component';
 import { StudentInformationComponent } from '../modals/inscriptions/student-information/student-information.component';
 import { ReviewAnalysisComponent } from '../modals/inscriptions/review-analysis/review-analysis.component';
+import { SecretaryAssignmentComponent } from '../modals/inscriptions/secretary-assignment/secretary-assignment.component';
 
 // Reception act module
 // Pages
@@ -226,6 +227,7 @@ import { CareerProvider } from 'src/providers/shared/career.prov';
     ExpedientHistoryComponent,
     StudentInformationComponent,
     ReviewAnalysisComponent,
+    SecretaryAssignmentComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -404,6 +406,7 @@ import { CareerProvider } from 'src/providers/shared/career.prov';
     ExpedientHistoryComponent,
     StudentInformationComponent,
     ReviewAnalysisComponent,
+    SecretaryAssignmentComponent,
 
     // Shared
     // Modals

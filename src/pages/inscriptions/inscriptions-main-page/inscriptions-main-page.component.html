@@ -4,13 +4,13 @@
     <div class="card-header text-white bg-secondary">
       <strong>Proceso de inscripción</strong>
     </div>    
-    <button type="button" (click)="updateCareer()">Update</button>    
-    <button type="button" (click)="insert()">CREATE</button>    
+    <button type="button" (click)="insert()">Crear colección carreras</button>    
+    <button type="button" (click)="updateCareer()">Cargar carreras a los alumnos</button>    
   </div>
   <div class="row content align-items-center p-2">
     <!-- cabecera filtros  -->
     <div class="col-sm-9">      
-        <input type="text" id="search" placeholder="Buscar..." name="search" class="form-control"/>      
+        <!-- <input type="text" id="search" placeholder="Buscar..." name="search" class="form-control"/>       -->
     </div>
     <div class="col-sm-3">
       <div class="row text-center">        
@@ -40,7 +40,10 @@
             <td>
               <!-- <button class="btn btn-info">Ver</button> -->
               <button class="btn btn-info" (click)="periodDetail(period)">Detalles</button>
-              <button *ngIf="period.active===true" class="btn btn-primary ml-1" (click)="editPeriod(period)">Actualizar</button>
+              <div *ngIf="period.active===true" class="ml-1">
+                <button class="btn btn-primary" (click)="editPeriod(period)">Actualizar</button>
+                <button class="btn btn-warning" (click)="secretaryAssignment(period)">Asignar</button>
+              </div>
               <button *ngIf="period.active===true" class="btn btn-danger ml-1" (click)="updatePeriodo(period)">Desactivar</button>
               
             </td>

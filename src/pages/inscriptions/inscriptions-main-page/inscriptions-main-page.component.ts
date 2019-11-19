@@ -10,6 +10,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { MatDialog } from '@angular/material';
 import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component';
+import { SecretaryAssignmentComponent } from 'src/modals/inscriptions/secretary-assignment/secretary-assignment.component';
 
 import Swal from 'sweetalert2';
 @Component({
@@ -44,6 +45,7 @@ export class InscriptionsMainPageComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.getCareers();
     
   }
   pageChanged(ev) {
@@ -75,21 +77,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   }
 
   confirmedPeriodChange(row, msg){  
-    // console.log(row);
-          
-    // const customPeriod = {      
-    //   periodName: row.periodName,
-    //   year: row.year,
-    //   initDate: row.initDate,      
-    //   endDate: row.endDate,      
-    //   insPerInitDate: row.insPerInitDate,      
-    //   insPerEndDate: row.insPerEndDate,      
-    //   arecPerInitDate: row.arecPerInitDate,      
-    //   arecPerEndDate: row.arecPerEndDate,      
-    //   arecInitShed: row.arecInitShed,      
-    //   arecEndShed: row.arecEndShed,      
-    //   active: false
-    // };
+
     this.inscriptionsProv.updatePeriod(row,row._id).subscribe(res => {    
               
       this.notificationsServices.showNotification(eNotificationType.SUCCESS,
@@ -232,37 +220,36 @@ export class InscriptionsMainPageComponent implements OnInit {
       confirmButtonText: 'Regresar'
     }).then((result) => { });
   }
- 
-  updateCareer(){
+
+  getCareers(){
     this.careerProv.getAllCareers().subscribe(
       res=>{
-        let  careers = res.careers;        
-        careers.forEach( career => {
-          this.careers[career.fullName] = career._id;
-        });
-        console.log(this.careers);
+        if(res.careers){
+          let  careers = res.careers;        
+          careers.forEach( career => {
+            this.careers[career.fullName] = career._id;
+          });
+        }
+      });
+  }
+
+  updateCareer(){            
         this.stProv.getAllStudents().subscribe(
           async res2=>{
-            let students = res2.students;
-            console.log('1');
-            let ff = false;
+            let students = res2.students;                        
             for await (const student of students){
               let career = this.careers[student.career];                  
-              let f = await this.up(student,career);
-                    console.log(f);
-              ff=true;             
-              
-            };
-            if(ff) console.log('3');                        
+              let f = await this.up(student,career);              
+            }            
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+              'Carreras agregadas', '');
           }
-        )
-      }
-    )
+        );          
   }
  async up(student,career){
     return await this.stProv.updateStudent(student._id,{careerId:career}).toPromise()
               .then( 
-                rest=>{console.log('2'); return rest;
+                rest=>{return rest;
                 }
               ).catch( err=>console.log(err)
               );
@@ -270,12 +257,40 @@ export class InscriptionsMainPageComponent implements OnInit {
   insert(){
     let careers = [
       {fullName:'ARQUITECTURA',shortName:'ARQUITECTURA',acronym:'ARQ'},
-      {fullName:'INGENIERÍA CIVIL',shortName:'ING. CIVIL',acronym:'IC'}
+      {fullName:'INGENIERÍA CIVIL',shortName:'ING. CIVIL',acronym:'IC'},
+      {fullName:'INGENIERÍA BIOQUÍMICA',shortName:'ING. BIOQUÍMICA',acronym:'IBQ'},
+      {fullName:'INGENIERÍA EN GESTIÓN EMPRESARIAL',shortName:'ING. EN GESTIÓN EMPRESARIAL',acronym:'IGE'},
+      {fullName:'INGENIERÍA QUIMICA',shortName:'ING. QUIMICA',acronym:'IQ'},
+      {fullName:'INGENIERÍA MECATRÓNICA',shortName:'ING. MECATRÓNICA',acronym:'IM'},
+      {fullName:'INGENIERÍA ELÉCTRICA',shortName:'ING. ELÉCTRICA',acronym:'IE'},
+      {fullName:'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES',shortName:'ING. EN TICS',acronym:'ITICS'},
+      {fullName:'INGENIERÍA EN SISTEMAS COMPUTACIONALES',shortName:'ING. EN SISTEMAS COMPUTACIONALES',acronym:'ISC'},
+      {fullName:'INGENIERÍA INDUSTRIAL',shortName:'ING. INDUSTRIAL',acronym:'II'},
+      {fullName:'LICENCIATURA EN ADMINISTRACIÓN',shortName:'LIC. ADMINISTRACIÓN',acronym:'LA'},
+      {fullName:'MAESTRÍA EN CIENCIAS DE LOS ALIMENTOS',shortName:'M. CIENCIAS DE LOS ALIMENTOS',acronym:'MCA'},
+      {fullName:'DOCTORADO EN CIENCIAS DE LOS ALIMENTOS',shortName:'D. CIENCIAS DE LOS ALIMENTOS',acronym:'DCA'},
     ];
     this.careerProv.newCareer({careers:careers}).subscribe(
-      res=>console.log(res),
+      res=>{
+        this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+        'Carreras creadas', '');
+        this.getCareers();
+      },
       err=>console.log(err)
     );
+  }
+
+  secretaryAssignment(period){
+    const linkModal = this.dialog.open(SecretaryAssignmentComponent, {
+      data: {
+        operation: 'create',
+        period: period
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '60em',
+      height: '620px'
+    });
   }
 
 }

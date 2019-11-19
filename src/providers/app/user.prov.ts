@@ -24,6 +24,10 @@ export class UserProvider {
         return this.api.get('user')
             .pipe(map(users => users.json()));
     }
+    getSecretaries() {
+        return this.api.get('user/secretaries')
+            .pipe(map(users => users.json()));
+    }
 
     removeUser(id) {
         return this.api.delete(`user/${id}`)
@@ -42,5 +46,10 @@ export class UserProvider {
 
     sendTokenFromAPI(token) {
         this.api.setToken(token);
+    }
+
+    update(id,data){
+        return this.api.put(`user/update/user/${id}`, { data: data })
+            .pipe(map(user => user.json()));
     }
 }
