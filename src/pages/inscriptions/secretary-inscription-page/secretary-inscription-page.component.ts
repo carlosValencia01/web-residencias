@@ -26,9 +26,13 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   rolName;
 
+  docAnalisis;
+
+
   // filter nc,nombre
   public searchText = '';
   public searchCarreer = '';
+  public searchDictamen = '';
 
   public searchEC = false;
   public searchE = false;
@@ -182,6 +186,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     let sub = linkModal.afterClosed().subscribe(
       information=>{         
         console.log(information);
+        this.getStudents();
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -285,23 +290,33 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   viewAnalysis(student){
-    const linkModal = this.dialog.open(ReviewAnalysisComponent, {
-      data: {
-        operation: 'view',
-        student:student
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '90em',
-      height: '800px'
-    });
-    let sub = linkModal.afterClosed().subscribe(
-      analysis=>{         
-        console.log(analysis);
-        
-      },
-      err=>console.log(err), ()=> sub.unsubscribe()
-    );
+    if(student.documents != ''){
+      var docAnalisis = student.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? student.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
+      if(docAnalisis != ''){
+        const linkModal = this.dialog.open(ReviewAnalysisComponent, {
+          data: {
+            operation: 'view',
+            student:student
+          },
+          disableClose: true,
+          hasBackdrop: true,
+          width: '90em',
+          height: '800px'
+        });
+        let sub = linkModal.afterClosed().subscribe(
+          analysis=>{         
+            console.log(analysis);
+            this.getStudents();
+          },
+          err=>console.log(err), ()=> sub.unsubscribe()
+        );
+      } else {
+        this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene análisis clínicos.');   
+      }
+    } else {
+      this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene expediente.');   
+    }
+    
   }
 
   filterDocuments(document,student){
