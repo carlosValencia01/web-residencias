@@ -1,8 +1,48 @@
-<div class="d-flex justify-content-center">
+<div class="card" [ngClass]="
+{  
+  'success':Type==='Accept',
+  'none':Type==='None'
+}">
+  <div class="row no-gutters">
+    <div class="col-3">
+      <div class="card-body text-center" [ngSwitch]="Type">
+        <img *ngSwitchCase="'Accept'" alt="File" src="../../../assets/imgs/aprobado.png"
+          style="width: 80px; height: 80px;">
+        <img *ngSwitchCase="'None'" alt="File" src="../../../assets/imgs/revision.png"
+          style="width: 80px; height: 80px;">
+      </div>
+    </div>
+    <div class="col-9">
+      <div class="card-body" [ngSwitch]="Type">
+        <h4 class="card-title text-left" *ngSwitchCase="'Accept'">¡Éxito!</h4>
+        <h4 class="card-title text-left" *ngSwitchCase="'None'"></h4>
+        <div class="text-center">
+          <h6 class="card-title" *ngIf="existTitle">{{Title}}</h6>
+          <a (click)="view()" style=" cursor: pointer">
+            <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 75px; height: 75px">
+          </a>
+          <p class="card-text">{{message}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 
+<div class="card border-success mb-3" style="max-width: 18rem;">
+  <div class="card-header">Header</div>
+  <div class="card-body text-success">
+    <h5 class="card-title">Success card title</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.
+    </p>
+  </div>
+</div> -->
+
+<!-- <div class="d-flex justify-content-center">
   <a (click)="view()" style=" cursor: pointer">
     <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 100px; height: 100px">
   </a>
 </div>
 <div class="d-flex justify-content-center">
   <p>{{message}}</p>
-</div>
+</div> -->

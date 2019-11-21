@@ -7,7 +7,10 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ProcessComponentComponent implements OnInit {
   @Input('Message') Message: String;
-  constructor() { }
+  @Input('Type') Type: String;  
+  constructor() { 
+
+  }
 
   ngOnInit() {
   }

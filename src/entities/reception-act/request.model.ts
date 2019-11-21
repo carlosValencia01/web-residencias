@@ -12,12 +12,14 @@ export interface iRequest {
     applicationDateLocal?: string;
     projectName?: string;
     product?: string;
+    proposedHour?: number;
     proposedDate?: Date;
     email?: string;
     actDate?: Date;
     honorificMention?: boolean;
     adviserId?: string;
     adviser?: string;
+    place?: string;
     noIntegrants?: number;
     integrants?: Array<iIntegrant>;
     department?: { name: string, boss: string };
@@ -25,8 +27,10 @@ export interface iRequest {
     status?: string;
     telephone?: string;
     lastModified?: Date;
+    lastModifiedLocal?: string;
     doer?: string;
     observation?: string;
+    jury?: Array<string>;
     history?: [
         {
             phase: string,

@@ -19,6 +19,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSmartModalModule } from 'ngx-smart-modal';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { SidebarModule } from 'ng-sidebar';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { ContextMenuModule } from 'ngx-contextmenu';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+
 // Firestore
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireStorageModule } from '@angular/fire/storage';
@@ -56,7 +60,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 // App module
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
@@ -153,7 +157,19 @@ import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-vi
 // Providers
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
-
+import { ScheduleComponent } from '../components/reception-act/schedule/schedule.component';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { CustomDateFormatter } from 'src/providers/reception-act/custom-date-formatter.provider';
+import { DiaryComponent } from '../pages/reception-act/diary/diary.component';
+import { RangePageComponent } from './range-page/range-page.component';
+import { RangeModalComponent } from './range-modal/range-modal.component';
+import { RangeProvider } from 'src/providers/reception-act/range.prov';
+import { NewEventComponent } from './new-event/new-event.component';
+import { ViewMoreComponent } from './view-more/view-more.component';
+import { StepperDocumentComponent } from './stepper-document/stepper-document.component';
+import { UploadDeliveredComponent } from './upload-delivered/upload-delivered.component';
+registerLocaleData(localeEs);
 @NgModule({
   declarations: [
     // App module
@@ -227,6 +243,14 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     DocumentReviewComponent,
     ExpedienteComponent,
     ReleaseCheckComponent,
+    ScheduleComponent,
+    DiaryComponent,
+    RangePageComponent,
+    RangeModalComponent,
+    NewEventComponent,
+    ViewMoreComponent,
+    StepperDocumentComponent,
+    UploadDeliveredComponent,
   ],
   imports: [
     // Angular
@@ -252,7 +276,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     MatChipsModule,
     MatDatepickerModule,
     MatDialogModule,
-    MatFileUploadModule ,
+    MatFileUploadModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -269,7 +293,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     MatStepperModule,
     MatTableModule,
     MatTabsModule,
-
+    MatSlideToggleModule,
     // Ngx
     ImageCropperModule,
     NgxExtendedPdfViewerModule,
@@ -280,8 +304,14 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     AngularFontAwesomeModule,
     AppRoutingModule,
     CustomFormsModule,
+    NgxMaterialTimepickerModule,
     NgbModule.forRoot(),
     SidebarModule.forRoot(),
+    ContextMenuModule.forRoot(),    
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory
+    }),    
   ],
   providers: [
     // App module
@@ -305,6 +335,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Providers
     RequestProvider,
     sourceDataProvider,
+    RangeProvider,
     // Services
     RequestService,
 
@@ -318,6 +349,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     // Providers
     EmployeeProvider,
     StudentProvider,
+    CustomDateFormatter,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
   ],
   entryComponents: [
@@ -335,12 +367,16 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
     RequestModalComponent,
     SteepComponentComponent,
     ReleaseCheckComponent,
-
+    RangeModalComponent,
+    StepperDocumentComponent,
+    UploadDeliveredComponent,
     // Shared
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
     DocumentReviewComponent,
+    NewEventComponent,
+    ViewMoreComponent
   ],
   bootstrap: [AppComponent]
 })

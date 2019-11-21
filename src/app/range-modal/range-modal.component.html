@@ -1,0 +1,122 @@
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title>{{title}}</h1>
+  </div>
+  <div class="col-2">
+    <button mat-icon-button [mat-dialog-close] class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<form [formGroup]="frmRange" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+
+    <div class="row">
+      <div class="form-group col-4">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker" placeholder="Inicio" formControlName="start">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group col-4">
+        <mat-form-field>
+          <input matInput [matDatepicker]="picker2" placeholder="Fin" formControlName="end">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group col-4">
+        <mat-form-field>
+          <input matInput type="number" placeholder="Cantidad" formControlName="quantity" min="2">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-4" data-toggle="tooltip" title="Arquitectua">
+        <mat-slide-toggle (change)="changed({event:$event, value:'ARQUITECTURA'})">
+          <img alt="File" src="../../assets/imgs/careers/arq.png" style="width: 20px; height: 20px">
+          <small>Arquitectua</small>
+        </mat-slide-toggle>
+      </div>
+      <div class="col-4" data-toggle="tooltip" title="Ingeniería Bioquímica">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_BIOQUIMICA'})">
+          <img alt="File" src="../../assets/imgs/careers/ibq.png" style="width: 20px; height: 20px">
+          <small>Ingeniería Bioquímica</small>
+        </mat-slide-toggle>
+      </div>
+      <div class="col-4" data-toggle="tooltip" title="Ingeniería Civil">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_CIVIL'})">
+          <img alt="File" src="../../assets/imgs/careers/ic.png" style="width: 20px; height: 20px">
+          <small>Ingeniería Civil</small>
+        </mat-slide-toggle>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-4" data-toggle="tooltip" title="Ingeniería Eléctrica">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_ELECTRICA'})">
+          <img alt="File" src="../../assets/imgs/careers/ie.png" style="width: 20px; height: 20px">
+          <small>Ingeniería Eléctrica</small>
+        </mat-slide-toggle>
+      </div>
+      <div class="col-4" data-toggle="tooltip" title="Ingeniería En Gestión Empresarial">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_EN_GESTION_EMPRESARIAL'})">
+          <img alt="File" src="../../assets/imgs/careers/ige.png" style="width: 20px; height: 20px">
+          <small>Ingeniería En Gestión Empresarial</small>
+        </mat-slide-toggle>
+      </div>
+      <div class="col-4" data-toggle="tooltip" title="Ingeniería Industrial">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_INDUSTRIAL'})">
+          <img alt="File" src="../../assets/imgs/careers/ii.png" style="width: 20px; height: 20px">
+          <small>Ingeniería Industrial</small>
+        </mat-slide-toggle>
+      </div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-4" data-toggle="tooltip" title="Ingeniería Mecatrónica">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_MECATRONICA'})">
+          <img alt="File" src="../../assets/imgs/careers/imc.png" style="width: 20px; height: 20px">
+          <small>Ingeniería Mecatrónica</small>
+        </mat-slide-toggle>
+      </div>
+      <div class="col-4" data-toggle="tooltip" title="Ingeniería Química">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_QUIMICA'})">
+          <img alt="File" src="../../assets/imgs/careers/iq.png" style="width: 20px; height: 20px">
+          <small>Ingeniería Química</small>
+        </mat-slide-toggle>
+      </div>
+      <div class="col-4" data-toggle="tooltip" title="Licenciatura En Administración">
+        <mat-slide-toggle (change)="changed({event:$event, value:'LICENCIATURA_EN_ADMINISTRACION'})">
+          <img alt="File" src="../../assets/imgs/careers/la.png" style="width: 20px; height: 20px">
+          <small>Licenciatura En Administración</small>
+        </mat-slide-toggle>
+      </div>
+    </div>
+
+
+    <div class="row mt-3">
+      <div class="col-6" data-toggle="tooltip" title="Ingeniería En Sistemas Computacionales">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_EN_SISTEMAS_COMPUTACIONALES'})">
+          <img alt="File" src="../../assets/imgs/careers/isc.png" style="width: 20px; height: 20px">
+          <small>Ingeniería En Sistemas Computacionales</small>
+        </mat-slide-toggle>
+      </div>
+      <div class="col-6" data-toggle="tooltip" title="Ingeniería En Tecnologías De La Información">
+        <mat-slide-toggle (change)="changed({event:$event, value:'INGENIERIA_EN_TECNOLOGIAS_DE_LA_INFORMACION_Y_COMUNICACIONES'})">
+          <img alt="File" src="../../assets/imgs/careers/itic.png" style="width: 20px; height: 20px">
+          <small>Ingeniería En Tecnologías De La Información</small>
+        </mat-slide-toggle>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button color="primary" type="submit" [disabled]="!frmRange.valid">Guardar</button>
+    <button mat-stroked-button color="warn" type="button" (click)="onClose()" mat-dialog-close>Cancelar</button>
+  </mat-dialog-actions>
+</form>
