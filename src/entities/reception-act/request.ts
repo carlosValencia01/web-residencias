@@ -29,13 +29,14 @@ export class uRequest {
     private montserratBold: any;
 
     constructor(public _request: iRequest, public _getImage: ImageToBase64Service) {
-        this.getImageToPdf();
+        this._getImageToPdf();
     }
 
-    public setRequest(request: iRequest){
-        this._request=request;
+    public setRequest(request: iRequest) {
+        this._request = request;
     }
-    getImageToPdf() {
+
+    private _getImageToPdf() {
         this._getImage.getBase64('assets/imgs/logo.jpg').then(logo => {
             this.tecNacLogo = logo;
         });
@@ -275,7 +276,121 @@ export class uRequest {
         return doc;
     }
 
-    private newDocumentTec(): jsPDF {
+    public professionalEthicsOath(): jsPDF {
+      const doc = this.newDocumentTec(false, false);
+      const initialHeight = 35;
+      const lineHeight = 7;
+      doc.setTextColor(0, 0, 0);
+      doc.setFont(this.FONT, 'Bold');
+      doc.setFontSize(18);
+      this._drawUnderlineText(doc, 'JURAMENTO DE ÉTICA PROFESIONAL', initialHeight, 'center');
+      doc.setFontSize(14);
+      this._drawUnderlineText(doc, `YO: ${this._request.student.fullName}`, initialHeight + (lineHeight * 3), 'center');
+      this._drawUnderlineText(doc, `COMO: ${this._request.student.career}`, initialHeight + (lineHeight * 5), 'center');
+      doc.setFont(this.FONT, 'Normal');
+      doc.setFontSize(17);
+      doc.text(
+        // tslint:disable-next-line:max-line-length
+        `DEDICO MIS CONOCIMIENTOS PROFESIONALES AL PROGRESO Y MEJORAMIENTO DEL BIENESTAR HUMANO, ME COMPROMETO A DAR UN RENDIMIENTO MÁXIMO, A PARTICIPAR TAN SOLO EN EMPRESAS DIGNAS, A VIVIR Y TRABAJAR DE ACUERDO CON LAS LEYES PROPIAS DEL HOMBRE Y EL MÁS ELEVADO NIVEL DE CONDUCTA PROFESIONAL, A PREFERIR EL SERVICIO AL PROVECHO, EL HONOR Y LA CALIDAD PROFESIONAL A LA VENTAJA PERSONAL, EL BIEN PÚBLICO A TODA CONSIDERACIÓN, CON RESPETO Y HONRADEZ HAGO EL PRESENTE JURAMENTO.`,
+        this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 9),
+        {lineHeightFactor: 1.35, maxWidth: (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), align: 'justify'},
+        null, 'justify');
+      doc.setFontSize(14);
+      this._drawCenterTextWithLineUp(doc, 'FIRMA', initialHeight + (lineHeight * 26.5));
+      doc.text(moment(new Date()).format('LL').toUpperCase(), this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 31));
+      return doc;
+    }
+
+    public codeProfessionalEthics(): jsPDF {
+      const doc = this.newDocumentTec(false, false);
+      const initialHeight = 30;
+      const lineHeight = 7;
+      const startLine = this.MARGIN.LEFT + 10;
+      const endLine = this.MARGIN.RIGHT + 10;
+      const lineWidth = this.WIDTH - (startLine + endLine);
+      const rules = [
+        `I.- LAS NORMAS MÁS ELEVADAS DE INTEGRIDAD Y LIMPIA CONDUCTA DEBERÁN GUIARLOS EN TODAS SUS RELACIONES.`,
+        `II.- MANTENDRÁ EN TODO MOMENTO ANTE EL PÚBLICO LA DIGNIDAD DE LA PROFESIÓN EN GENERAL Y LA REPUTACIÓN DEL INSTITUTO.`,
+        `III.- DEBE EVITAR Y DESALENTAR DECLARACIONES SENSACIONALISTAS, EXAGERADAS Y SIN GARANTÍA.`,
+        // tslint:disable-next-line:max-line-length
+        `IV.- REHUSARÁ COMPROMETERSE, CUALQUIERAQUE SEA LA REMUNERACIÓN, EN TRABAJOS QUE CREAN NO SERÁN BENEFICIOSOS PARA SUS CLIENTES, A NO SER QUE ADVIERTAN PRIMERO A ESTOS SOBRE LA IMPROBABILIDAD DE ÉXITO DE LOS RESULTADOS.`,
+        // tslint:disable-next-line:max-line-length
+        `V.- MANTENDRÁ EL PRINCIPIO DE QUE LOS HONORARIOS IRRAZONABLEMENTE BAJOS POR LABORES PROFESIONALES, PROPENDEN A UN TRABAJO INFERIOR Y SIN GARANTÍA.`,
+        `VI.- RECHAZARÁ LA PRESTACIÓN DE SU NOMBRE A EMPRESAS EN ENTREDICHO.`,
+        // tslint:disable-next-line:max-line-length
+        `VII.- SERÁ CONSERVADOR EN TODOS SUS PRESUPUESTOS, INFORMES, TESTIMONIOS, ETC. PARTICULARMENTE EN LOS QUE SE RELACIONEN CON LA PROMOCION O IMPULSIÓN DE EMPRESAS.`,
+        `VIII.- NO ACEPTARÁ NINGÚN CARGO CONTRARIO A LA LEY O AL BIENESTAR PÚBLICO.`,
+        // tslint:disable-next-line:max-line-length
+        `IX.- CUANDO UN TITULO_DE_GRADO*, EMPRENDA TRABAJOS PARA OTROS, EN RELACIÓN CON LOS CUALES HAYA REALIZADO ASESORÍAS, MEJORAS O ACTIVIDADES EMPRESARIALES, SERÁ PREFERIBLE QUE CONSIGA UN ACUERDO QUE CONSIDERE DE SU PROPIEDAD.`,
+        // tslint:disable-next-line:max-line-length
+        `X.- UN TITULO_DE_GRADO*, NO PUEDE ACEPTAR HONORABLEMENTE REMUNERACIONES, COMPENSACIONES FINANCIERAS NI NADA SEMEJANTE MÁS QUE DE UNA SOLA DE LAS PARTES INTERESADAS, A NO SER QUE TENGA EL CONSENTIMIENTO DE TODAS LAS DEMÁS.`,
+        // tslint:disable-next-line:max-line-length
+        `XI.- UN TITULO_DE_GRADO* NO ACEPTARÁ COMPENSACIÓN DIRECTA NI INDIRECTA POR CUALQUIER, NI POR CONSULTA, NI OPERACIÓN DE PARTES QUE TRATEN CON SU CLIENTE O EMPRESARIO, SIN EL CONSENTIMIENTO O CONOCIMIENTO DE ÉSTE.`,
+        // tslint:disable-next-line:max-line-length
+        `XII.- CUANDO UN TITULO_DE_GRADO* SEA CONSULTADO PARA DECIDIR SOBRE EL USO DE PROCEDIMIENTOS EN LOS QUE TENGAN ALGÚN INTERÉS FINANCIERO DEBERÁ ESTABLECERSE CLARAMENTE SU SITUACIÓN EN LA MATERIA, ANTES DE COMPROMETERSE.`,
+        // tslint:disable-next-line:max-line-length
+        `XIII.- UN TITULO_DE_GRADO*, DEBE ESFORZARSE EN TODO MOMENTO PARA ACREDITAR TRABAJOS A QUIENES, TAN LEJOS COMO SU CONOCIMIENTO ALCANCE SEAN LOSO AUTORES REALES DE ELLOS.`,
+        // tslint:disable-next-line:max-line-length
+        `XIV.- NO ADMITIRÁ ANUNCIOS INDIGNOS, SENSACIONALES NI ENGAÑOS, ASÍ COMO EL USO DE NOMBRES O FOTOGRAFÍAS DE LOS INTEGRANTES DEL INSTITUTO COMO AYUDA DE TALES ANUNCIOS, Y LA UTILIZACIÓN DEL NOMBRE DE ÉSTE INSTITUTO EN RELACIÓN CON ELLOS NO SE TOLERARÁ.`
+      ];
+      doc.setTextColor(0, 0, 0);
+      doc.setFont(this.FONT, 'Normal');
+      doc.setFontSize(14);
+      doc.text('SECRETARÍA DE EDUCACIÓN PÚBLICA', this.WIDTH / 2, initialHeight, {align: 'center'});
+      doc.setFont(this.FONT, 'Bold');
+      doc.text('TECNOLÓGICO NACIONAL DE MÉXICO', this.WIDTH / 2, initialHeight + lineHeight, {align: 'center'});
+      doc.setFontSize(16);
+      this._drawUnderlineText(doc, 'CÓDIGO DE ÉTICA PROFESIONAL', initialHeight + (lineHeight * 4), 'center');
+      this._drawUnderlineText(doc, `${this._request.student.career}`, initialHeight + (lineHeight * 5), 'center');
+      doc.setFont(this.FONT, 'Normal');
+      doc.setFontSize(12);
+      doc.text('EL INSTITUTO CONFÍA EN QUE LAS REGLAS SIGUIENTES GUIARÁN LOS ACTOS DE SUS EGRESADOS:',
+        startLine, initialHeight + (lineHeight * 8), {maxWidth: lineWidth}, null, 'justify');
+      let totalLines = 9.5;
+      rules.slice(0, 14).forEach((rule, index, array) => {
+        const ruleData = rule.replace('TITULO_DE_GRADO*', this._request.student.career);
+        const linesRule = Math.ceil(ruleData.length / 60);
+        totalLines += 1.5;
+        let y = initialHeight + (lineHeight * totalLines);
+        if (this._changePage(this.HEIGHT - this.MARGIN.BOTTOM, y, y + (lineHeight * linesRule))) {
+          doc.addPage();
+          totalLines = 0;
+          y = initialHeight + (lineHeight * totalLines);
+        }
+        doc.text(ruleData, startLine, y, {lineHeightFactor: 1.35, maxWidth: lineWidth}, null, 'justify');
+        totalLines += linesRule;
+      });
+      return doc;
+    }
+
+    private _changePage(heightPage, startY, endY): boolean {
+      return (startY >= heightPage || endY >= heightPage);
+    }
+
+    private _drawCenterTextWithLineUp(doc, text, y) {
+      const textWidth = doc.getTextWidth(text);
+      doc.rect((this.WIDTH / 2) - (textWidth / 2 + 10), y, textWidth + 20, 0.5, 'F');
+      doc.text(text, (this.WIDTH / 2), y + 5, { align: 'center' });
+    }
+
+    private _drawUnderlineText(doc, text, y, textAlign) {
+      const lineWidth = doc.getTextWidth(text);
+      const align = textAlign.toLowerCase();
+      const lineStart = this._selectStartLineByAlign(align, lineWidth);
+      doc.text(text, align === 'center' ? lineStart + (lineWidth / 2) : lineStart, y, {align: align});
+      doc.rect(align === 'right' ? lineStart - lineWidth : lineStart, y + 1, lineWidth, 0.5, 'F');
+    }
+
+    private _selectStartLineByAlign(align, lineWidth): number {
+      switch (align.toLowerCase()) {
+        case 'left': return this.MARGIN.LEFT;
+        case 'center': return (this.WIDTH / 2) - (lineWidth / 2);
+        case 'right': return this.WIDTH - this.MARGIN.RIGHT;
+        case 'justify': return this.MARGIN.LEFT;
+      }
+    }
+
+    private newDocumentTec(header = true, footer = true): jsPDF {
         const doc = new jsPDF({
             unit: 'mm',
             format: 'letter'
@@ -286,8 +401,12 @@ export class uRequest {
         doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
         doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
         doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
-        this.addHeaderTec(doc);
-        this.addFooterTec(doc);
+        if (header) {
+          this.addHeaderTec(doc);
+        }
+        if (footer) {
+          this.addFooterTec(doc);
+        }
         return doc;
     }
 

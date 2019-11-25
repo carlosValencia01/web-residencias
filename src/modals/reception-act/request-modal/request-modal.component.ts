@@ -43,6 +43,7 @@ export class RequestModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private imgService: ImageToBase64Service,
   ) {
+    console.log("dd",this.cookiesService.getData());
     this.userInformation = this.cookiesService.getData().user;
   }
 
@@ -59,7 +60,7 @@ export class RequestModalComponent implements OnInit {
         'observations': new FormControl(null),
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl({ value: 1, disabled: true }, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
-        'dateProposed': new FormControl({ value: null, disabled: true }, Validators.required),
+        // 'dateProposed': new FormControl({ value: null, disabled: true }, Validators.required),
         'honorific': new FormControl({ value: false, disabled: true }, Validators.required)
       });
     this.requestProvider.getRequestById(this.data.Id).subscribe(res => {
@@ -96,7 +97,7 @@ export class RequestModalComponent implements OnInit {
       'observations': this.request.observation,
       'project': this.request.projectName,
       'product': this.request.product,
-      'dateProposed': this.dateFormat.transform(this.request.proposedDate, 'yyyy-MM-dd'),
+      // 'dateProposed': this.dateFormat.transform(this.request.proposedDate, 'yyyy-MM-dd'),
       'honorific': this.request.honorificMention,
     });
     this.isToggle = this.request.honorificMention;
@@ -104,12 +105,25 @@ export class RequestModalComponent implements OnInit {
   }
 
   accept(): void {
-    const data = {
-      doer: this.cookiesService.getData().user.name.fullName,
-      operation: eStatusRequest.ACCEPT,
-      observation: this.frmRequest.get('observations').value
-    };
-    this.updateRequest(data);
+    Swal.fire({
+      title: '¿Está seguro de aceptar la solicitud?',
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {
+      if (result.value) {
+        const data = {
+          doer: this.cookiesService.getData().user.name.fullName,
+          operation: eStatusRequest.ACCEPT,
+          observation: this.frmRequest.get('observations').value
+        };
+        this.updateRequest(data);
+      }
+    });
   }
 
   reject(): void {
@@ -124,13 +138,29 @@ export class RequestModalComponent implements OnInit {
       this.txtObservation.nativeElement.focus();
       return;
     }
-    const data = {
-      doer: this.cookiesService.getData().user.name.fullName,
-      observation: observation,
-      operation: eStatusRequest.REJECT,
-      phase: this.request.phase
-    };
-    this.updateRequest(data);
+
+    Swal.fire({
+      title: '¿Está seguro de rechazar la solicitud?',
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {
+      if (result.value) {
+        const data = {
+          doer: this.cookiesService.getData().user.name.fullName,
+          observation: observation,
+          operation: eStatusRequest.REJECT,
+          phase: this.request.phase
+        };
+        this.updateRequest(data);
+      }
+    });
+
+
   }
 
   updateRequest(data: any) {

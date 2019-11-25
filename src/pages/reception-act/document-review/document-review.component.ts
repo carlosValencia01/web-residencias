@@ -10,6 +10,7 @@ import { iRequest } from 'src/entities/reception-act/request.model';
 import Swal from 'sweetalert2';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { CookiesService } from 'src/services/app/cookie.service';
 
 
 @Component({
@@ -34,7 +35,8 @@ export class DocumentReviewComponent implements OnInit {
     public requestProvider: RequestProvider,
     private notificationService: NotificationsServices,
     private activatedRoute: ActivatedRoute,
-    public imgSrv: ImageToBase64Service) {
+    public imgSrv: ImageToBase64Service,
+    private _CookiesService: CookiesService) {
     this.activatedRoute.params.subscribe(
       (params: Params) => {
         console.log("Params", params);
@@ -63,7 +65,9 @@ export class DocumentReviewComponent implements OnInit {
   refresh(): void {
     this.documents = [];
     this.request.documents.forEach(element => {
-      // if (element.type !== eFILES.PROYECTO && element.type !== eFILES.RELEASED)
+      if (element.type !== eFILES.PROYECTO && element.type !== eFILES.RELEASED
+        && element.type !== eFILES.SOLICITUD && element.type !== eFILES.REGISTRO
+        )
       this.documents.push({
         type: element.type, dateRegistered: element.dateRegister,
         status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
@@ -132,7 +136,8 @@ export class DocumentReviewComponent implements OnInit {
     let update = {
       Document: type,
       Status: status,
-      Observation: ''
+      Observation: '',
+      Doer:this._CookiesService.getData().user.name.fullName
     };
     if (status === eStatusRequest.REJECT) {
       const swalWithBootstrapButtons = Swal.mixin({

@@ -9,6 +9,7 @@ import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import Swal from 'sweetalert2';
+import { StepperDocumentComponent } from 'src/app/stepper-document/stepper-document.component';
 
 @Component({
   selector: 'app-upload-files',
@@ -52,7 +53,7 @@ export class UploadFilesComponent implements OnInit {
 
   onLoad(documents) {
     this.Documents = [];
-    if (typeof (document) !== 'undefined') {      
+    if (typeof (documents) !== 'undefined') {
       documents.forEach(element => {
         this.Documents.push({ type: element.type, dateRegistered: element.dateRegistered, path: element.nameFile, status: element.status, isBase64: true, observation: element.observation });
       });
@@ -88,7 +89,7 @@ export class UploadFilesComponent implements OnInit {
 
   getDocument(fileType: eFILES): IDocument {
     // if(typeof(this.Documents)!=='undefined' && this.Documents!==null)
-      return this.Documents.find(e => e.type === fileType);
+    return this.Documents.find(e => e.type === fileType);
     // else
     //   return undefined;
   }
@@ -333,6 +334,83 @@ export class UploadFilesComponent implements OnInit {
     }
   }
 
+  onUploadNew(file): void {
+    const dialogRef = this.dialog.open(StepperDocumentComponent, {
+      data: {
+        Documento: file
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '45em',
+      height: '550px'
+    });
+
+    dialogRef.afterClosed().subscribe((fileUpload: any) => {
+      if (typeof (fileUpload) !== 'undefined') {
+        const type = <eFILES><keyof typeof eFILES>file;
+        const archivo = this.getDocument(type);
+        if (typeof (archivo) === 'undefined') {
+          this.Documents.push({
+            type: type, dateRegistered: new Date(), path: '',
+            status: eStatusRequest.NONE, file: fileUpload.file, isBase64: false
+          });
+          console.log("Docume", this.Documents);
+        } else {
+          archivo.file = fileUpload.file;
+          archivo.isBase64 = false;
+        }
+
+        switch (type) {
+          case eFILES.ACTA_NACIMIENTO: {
+            this.UploadActa.file = fileUpload.file;
+            this.UploadActa.isBase64 = false;
+            break;
+          }
+          case eFILES.CURP: {
+            this.UploadCurp.file = fileUpload.file;
+            this.UploadCurp.isBase64 = false;
+            break;
+          }
+          case eFILES.CERTIFICADO_B: {
+            this.UploadCertificado.file = fileUpload.file;
+            this.UploadCertificado.isBase64 = false;
+            break;
+          }
+          case eFILES.CEDULA: {
+            this.UploadCedula.file = fileUpload.file;
+            this.UploadCedula.isBase64 = false;
+            break;
+          }
+          case eFILES.CERTIFICADO_L: {
+            this.UploadLicenciatura.file = fileUpload.file;
+            this.UploadLicenciatura.isBase64 = false;
+            break;
+          }
+          case eFILES.SERVICIO: {
+            this.UploadServicio.file = fileUpload.file;
+            this.UploadServicio.isBase64 = false;
+            break;
+          }
+          case eFILES.INGLES: {
+            this.UploadIngles.file = fileUpload.file;
+            this.UploadIngles.isBase64 = false;
+            break;
+          }
+          case eFILES.PAGO: {
+            this.UploadPago.file = fileUpload.file;
+            this.UploadPago.isBase64 = false;
+            break;
+          }
+          case eFILES.CERTIFICADO_R: {
+            this.UploadRevalidacion.file = fileUpload.file;
+            this.UploadRevalidacion.isBase64 = false;
+            break;
+          }
+        }
+      }
+    });
+
+  }
   onUpload(event, file): void {
     if (typeof (event.target.files) !== 'undefined' && event.target.files.length > 0) {
       const type = <eFILES><keyof typeof eFILES>file;
@@ -340,8 +418,10 @@ export class UploadFilesComponent implements OnInit {
       console.log("Srhico upo", archivo);
       console.log("archivo type", type);
       if (typeof (archivo) === 'undefined') {
-        this.Documents.push({ type: type, dateRegistered: new Date(), path: '',
-          status: eStatusRequest.NONE, file: event.target.files[0], isBase64: false });
+        this.Documents.push({
+          type: type, dateRegistered: new Date(), path: '',
+          status: eStatusRequest.NONE, file: event.target.files[0], isBase64: false
+        });
       } else {
         archivo.file = event.target.files[0];
         archivo.isBase64 = false;

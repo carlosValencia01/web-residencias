@@ -17,6 +17,8 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
+import * as moment from 'moment';
+moment.locale('es');
 
 @Component({
   selector: 'app-titulacion-page',
@@ -47,15 +49,21 @@ export class TitulacionPageComponent implements OnInit {
   public isOkTitulation: boolean;
   public isGraduate: boolean;
   public isApprovedEnglish: boolean;
-
+  public titrationHour: string;
   // Mensajes
   ProcessSentMessage: String = 'En espera de que tú solicitud sea aceptada';
-  CompletedSentMessage: String = 'Tú solicitud ha sido aceptada';
+  CompletedSentMessage: String = 'TÚ SOLICITUD HA SIDO ACEPTADA'; //'Tú solicitud ha sido aceptada';
   ProcessVerifiedMessage: String = 'En espera del registro de tu proyecto';
-  CompletedVerifiedMessage: String = 'Tú proyecto ha sido registrado';
+  CompletedVerifiedMessage: String = 'TÚ PROYECTO HA SIDO REGISTRADO'; //'Tú proyecto ha sido registrado';
   ProcessReleasedMessage: String = 'En espera de la liberación del proyecto';
-  CompletedReleasedMessage: String = 'Tú proyecto ha sido liberado';
-
+  CompletedReleasedMessage: String = 'TÚ PROYECTO HA SIDO LIBERADO';//'Tú proyecto ha sido liberado';
+  ProcessReleasedValidMessage: String = 'EN ESPERA DE LA VALIDACIÓN';
+  CompletedReleasedValidMessage: String = 'LIBERACIÓN APROBADA';
+  CompletedDeliveredMessage: String = 'EN ESPERA DE LA HOJA DE NO INCONVENIENCIA';
+  ProcessAssignedMessage: String = 'En espera de que tú fecha sea aceptada';
+  WaitAssignedMessage: String = 'Ha ocurrido un inconveniente con la fecha, espera ha ser contactado';
+  RejectAssignedMessage: String = 'Su petición de titulación ha sido rechazada, registre una nueva fecha';
+  CancelledAssignedMessage: String = 'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada, registre una nueva fecha';
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
@@ -71,12 +79,9 @@ export class TitulacionPageComponent implements OnInit {
     private requestProvider: RequestProvider
   ) {
     const user = this.cookiesService.getData().user;
-    // this.isApprovedEnglish = user.english;
-    // this.isGraduate = user.graduate;
-    // this.isOkTitulation = user.english && user.graduate;
-    this.isApprovedEnglish = true;
-    this.isGraduate = true;
-    this.isOkTitulation = true;
+    this.isApprovedEnglish = user.english;
+    this.isGraduate = user.graduate;
+    this.isOkTitulation = true; //user.english && user.graduate;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -121,6 +126,11 @@ export class TitulacionPageComponent implements OnInit {
     }
   }
 
+  Schedule($event): void {
+    if ($event) {
+      this.loadRequest();
+    }
+  }
   SelectItem(): void {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
@@ -145,10 +155,18 @@ export class TitulacionPageComponent implements OnInit {
 
       }
       case eRequest.REALIZED: {
-
+        this.SteepEightCompleted = (phase === eRequest.REALIZED ? false : true);
       }
       case eRequest.ASSIGNED: {
-
+        this.SteepEightCompleted = (phase === eRequest.ASSIGNED ? false : true);
+        let hours = this.Request.proposedHour / 60;
+        let minutes = this.Request.proposedHour % 60;
+        let tmpFecha = new Date(this.Request.proposedDate);
+        tmpFecha.setHours(hours, minutes, 0, 0);
+        this.titrationHour =moment(tmpFecha).format('llll');        
+          // ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
+        this.CancelledAssignedMessage = this.StatusComponent === eStatusRequest.CANCELLED ? this.Request.observation : '';
+        this.RejectAssignedMessage = this.StatusComponent === eStatusRequest.REJECT ? this.Request.observation : '';
       }
       case eRequest.VALIDATED: {
         this.SteepSevenCompleted = (phase === eRequest.VALIDATED ? false : true);

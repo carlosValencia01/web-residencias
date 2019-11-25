@@ -1,11 +1,42 @@
-<div class="card text-center">
+<div class="card" [ngClass]="
+{
+  'process':Type==='Process',
+  'success':Type==='Accept',
+  'error':Type==='Error'
+}">
+  <div class="row no-gutters">
+    <div class="col-4">
+      <div class="card-body text-center" [ngSwitch]="Type">
+        <img *ngSwitchCase="'Accept'" alt="File" src="../../../assets/imgs/aprobado.png"
+          style="width: 80px; height: 80px;">
+        <img *ngSwitchCase="'Process'" alt="File" src="../../../assets/imgs/reloj.png"
+          style="width: 80px; height: 80px;">
+        <img *ngSwitchCase="'Error'" alt="File" src="../../../assets/imgs/ErrorIcon.png"
+          style="width: 80px; height: 80px;">
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="card-body" [ngSwitch]="Type">
+        <h4 class="card-title text-left" *ngSwitchCase="'Accept'">¡Éxito!</h4>
+        <h4 class="card-title text-left" *ngSwitchCase="'Process'">¡Procesando!</h4>
+        <h4 class="card-title text-left" *ngSwitchCase="'Error'">¡Error!</h4>
+        <div class="text-center">
+          <h6 class="card-title" *ngIf="existTitle">{{Title}}</h6>
+          <p class="card-text">{{Message}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="card text-center">
   <div class="card-body">
     <h5 class="card-title">{{Message}}</h5>
-    <!-- <div class="d-flex justify-content-center">
+    <<div class="d-flex justify-content-center">
         <mat-progress-spinner color="primary" mode="indeterminate" diameter="100" value="100"></mat-progress-spinner>
     </div>    
     <p class="card-text">
       ESTA OPERACIÓN PUEDE TOMAR ALGUNOS DÍAS      
-    </p> -->
+    </p> 
   </div>
-</div>
+</div> -->

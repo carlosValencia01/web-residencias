@@ -19,7 +19,13 @@ export class ViewerComponentComponent implements OnInit {
   @Input('RequestId') RequestId?: String;
   // tslint:disable-next-line: no-input-rename
   @Input('Phase') _Phase: eRequest;
+  // tslint:disable-next-line: no-input-rename
+  @Input('Title') _Title: String;
+  // tslint:disable-next-line: no-input-rename
+  @Input('Type') Type: String;
   public message: string;
+  public Title: String;
+  public existTitle: boolean;
   private oRequest: uRequest;
   private PHASE: eRequest;
 
@@ -43,9 +49,11 @@ export class ViewerComponentComponent implements OnInit {
     //   }
     // );
     // if (typeof (this.oRequest) !== 'undefined') {
-      this.oRequest = new uRequest(this._Request, this.imgService);
-      this.PHASE = <eRequest>this._Phase;
-      this.loadMessage(<eRequest>this._Phase);
+    this.oRequest = new uRequest(this._Request, this.imgService);
+    this.PHASE = <eRequest>this._Phase;
+    this.loadMessage(<eRequest>this._Phase);
+    this.existTitle = this._Title !== '';
+    this.Title = this._Title;
     // }
   }
 
@@ -77,6 +85,10 @@ export class ViewerComponentComponent implements OnInit {
       }
       case eRequest.VERIFIED: {
         this.message = 'Registro de Proyecto';
+        break;
+      }
+      case eRequest.SENT: {
+        this.message = 'Hoja de Requisitos';
         break;
       }
       case eRequest.CAPTURED: {
@@ -114,6 +126,10 @@ export class ViewerComponentComponent implements OnInit {
       }
       case eRequest.VERIFIED: {
         window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
+        break;
+      }
+      case eRequest.SENT: {
+        window.open('../../../assets/Requisitos.pdf', '_blank');
         break;
       }
       case eRequest.CAPTURED: {

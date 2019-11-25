@@ -1,3 +1,6 @@
+<div *ngIf="isReject" class="alert alert-danger" role="alert">
+    {{information.observation}}
+</div>
 <div class="row">
     <div class="col-10">
         <h1 mat-dialog-title>Liberación</h1>
@@ -9,14 +12,16 @@
     </div>
 </div>
 
-<form [formGroup]="frmConsejo" (ngSubmit)="onSave()">
-    <div mat-dialog-content>
+<div mat-dialog-content>
+    <form [formGroup]="frmConsejo" (ngSubmit)="onSave()">
         <div class="card border-dark mb-3 p-3" style="height: 100%;">
             <div class="row">
                 <div class="col-6 text-center">
-                    <div *ngIf="!fileData" class="card-body text-dark pt-5">
-                        <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                        <p class="card-text">Archivo no cargado</p>
+                    <div *ngIf="!fileData" class="card-body text-dark" style="color: #08a3bc;
+                    background-color: rgba(10, 215, 247, 0.2);
+                    border-color: #09c6e3; height: 100%; padding-top: 30%;">
+                        <img alt="File" src="../../assets/imgs/notfound.png" style="width: 80px; height: 80px">
+                        <p class="card-text"> <strong>ARCHIVO NO CARGADO</strong></p>
                     </div>
                     <div *ngIf="fileData">
                         <ngx-extended-pdf-viewer [src]="fileData" backgroundColor="#ffffff" [height]="'40vh'"
@@ -49,8 +54,9 @@
                         <div class="col-sm-8">
                             <div class="input-group input-group-sm mb-3">
                                 <input type="text" class="form-control" id="secretary" formControlName="secretary"
-                                    placeholder="Secretario" readonly [ngClass]="(!frmConsejo.get('secretary').valid &&
-                                frmConsejo.get('secretary').touched)?'form-control is-invalid':'form-control'">
+                                    placeholder="Secretario" readonly
+                                    [ngClass]="(!frmConsejo.get('secretary').valid &&
+                                                frmConsejo.get('secretary').touched)?'form-control is-invalid':'form-control'">
                                 <div class="input-group-append" (click)="selectEmployee('secretary')">
                                     <span class="input-group-text btn">...</span>
                                 </div>
@@ -102,6 +108,16 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label for="substitute" class="col-sm-4 col-form-label col-form-label-sm mb-3">Hora del
+                            Acto</label>
+                        <div class="col-sm-8">
+                            <div class="ngx-timepicker-field-example">
+                                <ngx-timepicker-field #time [format]="24">
+                                </ngx-timepicker-field>
+                            </div>
+                        </div>
+                    </div>
 
                     <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
                         style="display: none">
@@ -110,25 +126,10 @@
                     </button>
                 </div>
             </div>
-            <!-- <div *ngIf="!fileData" class="card-body text-dark">
-            <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-            <p class="card-text">Archivo no cargado</p>
         </div>
-        <div *ngIf="fileData">
-            <ngx-extended-pdf-viewer [src]="fileData" backgroundColor="#ffffff" [height]="'40vh'"
-                [useBrowserLocale]="true">
-            </ngx-extended-pdf-viewer>
+        <div mat-dialog-actions align="end">
+            <button [disabled]="frmConsejo.invalid" mat-button type="submit">Guardar</button>
+            <button mat-button [mat-dialog-close] cdkFocusInitial>Cancelar</button>
         </div>
-        <div class="card-footer">
-            <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
-            <button type="button" class="btn btn-outline-primary btn-block" (click)="fileUpload.click()">
-                Cargar archivo de liberación
-            </button>
-        </div> -->
-        </div>
-    </div>
-    <div mat-dialog-actions align="end">
-        <button [disabled]="frmConsejo.invalid" mat-button type="submit">Guardar</button>
-        <button mat-button [mat-dialog-close] cdkFocusInitial>Cancelar</button>
-    </div>
-</form>
+    </form>
+</div>

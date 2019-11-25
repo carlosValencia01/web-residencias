@@ -45,6 +45,9 @@ import { SurveyRegisterPageComponent } from 'src/pages/graduation/survey-registe
 import { SurveyFindPageComponent } from 'src/pages/graduation/survey-find-page/survey-find-page.component';
 import { SurveyQuestionsPageComponent } from 'src/pages/graduation/survey-questions-page/survey-questions-page.component';
 import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/survey-list-page.component';
+import { DiaryComponent } from './pages/reception-act/diary/diary.component';
+import { RangePageComponent } from './app/range-page/range-page.component';
+import { StepperDocumentComponent } from './app/stepper-document/stepper-document.component';
 
 const appRoutes: Routes = [
   // Credentials
@@ -70,21 +73,22 @@ const appRoutes: Routes = [
   // Reception act
   { path: 'english', component: VinculacionPageComponent, pathMatch: 'full' },
   { path: 'grades', component: GradePageComponent, pathMatch: 'full' },
+  { path: 'diary', component: DiaryComponent, pathMatch: 'full' },
   { path: 'graduation', component: TitulacionPageComponent, pathMatch: 'full' },
   { path: 'progressPage', component: ProgressPageComponent, pathMatch: 'full' },
   { path: 'progressPage/:id', component: DocumentReviewComponent, pathMatch: 'full' },
   { path: 'progressPage/:id/expediente', component: ExpedienteComponent, pathMatch: 'full' },
 
   // Graduation
-  { path: 'encuestaEgresados', component: SurveyListPageComponent , pathMatch: 'full' },
+  { path: 'encuestaEgresados', component: SurveyListPageComponent, pathMatch: 'full' },
   { path: 'graduationEvents', component: GraduationEventsPageComponent, pathMatch: 'full' },
   { path: 'listGraduates/:eventId', component: ListGraduatesPageComponent, pathMatch: 'full' },
   { path: 'loaderDataGraduation/:eventId/:type', component: LoaderDataGraduationPageComponent, pathMatch: 'full' },
   { path: 'registerGraduate/:eventId', component: RegisterEmailgraduationPageComponent, pathMatch: 'full' },
   { path: 'survey/:id/:nc', component: SurveyPageComponent, pathMatch: 'full' },
-  { path: 'surveyFind', component: SurveyFindPageComponent , pathMatch: 'full' },
+  { path: 'surveyFind', component: SurveyFindPageComponent, pathMatch: 'full' },
   { path: 'surveyGraduates/:id/:nc', component: SurveyGraduatesPageComponent, pathMatch: 'full' },
-  { path: 'surveyQuestions/:id/:nc', component: SurveyQuestionsPageComponent , pathMatch: 'full' },
+  { path: 'surveyQuestions/:id/:nc', component: SurveyQuestionsPageComponent, pathMatch: 'full' },
   { path: 'surveyRegister/:id/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
 ];
 
