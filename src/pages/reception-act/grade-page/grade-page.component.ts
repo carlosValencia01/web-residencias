@@ -1,16 +1,17 @@
 import { Component, OnInit, ViewChild, Injectable } from '@angular/core';
-import { EmployeeProvider } from 'src/providers/shared/employee.prov';
-import { NotificationsServices } from 'src/services/app/notifications.service';
-import { IEmployee } from 'src/entities/shared/employee.model';
-import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
-import { IGrade } from 'src/entities/reception-act/grade.model';
-import { eOperation } from 'src/enumerators/reception-act/operation.enum';
-import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
-import * as Papa from 'papaparse';
-import { CookiesService } from 'src/services/app/cookie.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { Router, ActivatedRoute } from '@angular/router';
+import * as Papa from 'papaparse';
+import Swal from 'sweetalert2';
+
+import { CookiesService } from 'src/services/app/cookie.service';
+import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
+import { EmployeeProvider } from 'src/providers/shared/employee.prov';
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
+import { eOperation } from 'src/enumerators/reception-act/operation.enum';
+import { IEmployee } from 'src/entities/shared/employee.model';
+import { NotificationsServices } from 'src/services/app/notifications.service';
 
 @Component({
   selector: 'app-grade-page',
@@ -19,27 +20,27 @@ import { MatDialog } from '@angular/material/dialog';
 })
 @Injectable()
 export class GradePageComponent implements OnInit {
-  displayedColumns: string[];
-  dataSource: MatTableDataSource<IGradeTable>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  employees: any;
-  search: string;
-  isFirst: number;
+  public dataSource: MatTableDataSource<IGradeTable>;
+  public displayedColumns: string[];
+  private employees: any;
 
   constructor(
+    private cookiesService: CookiesService,
+    public dialog: MatDialog,
     public employeeProvider: EmployeeProvider,
     private notificationServ: NotificationsServices,
-    public dialog: MatDialog,
-    private cookiesService: CookiesService,
-    private router: Router, private routeActive: ActivatedRoute) {
+    private routeActive: ActivatedRoute,
+    private router: Router,
+  ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
   }
 
   ngOnInit() {
-    this.displayedColumns = ['nombre', 'apellido', 'area', 'puesto', 'action'];
+    this.displayedColumns = ['fullName', 'rfc', 'grades', 'positions', 'action'];
     this.getEmployees();
   }
 
@@ -49,58 +50,25 @@ export class GradePageComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  castRowToEmploye(row: IGradeTable): IEmployee {
-    const employee: IEmployee = {
-      name: {
-        firstName: row.nombre,
-        lastName: row.apellido
-      },
-      area: row.area,
-      position: row.puesto,
-      _id: row._id
-    };
-
-    const grades: IGrade[] = [];
-    row.grades.forEach(element => {
-      const grade: IGrade = {
-        title: element.apellido,
-        cedula: element.area,
-        level: element.puesto,
-        abbreviation: element.nombre
-      };
-      grades.push(grade);
-    });
-    employee.grade = grades;
-    return employee;
+  castRowToEmployee(row: IGradeTable): IEmployee {
+    return row.employee;
   }
 
-  castEmployeRow(employee: IEmployee): IGradeTable {
+  castEmployeeRow(employee: IEmployee): IGradeTable {
     const tmp: IGradeTable = {
-      nombre: employee.name.firstName,
-      apellido: employee.name.lastName,
-      area: employee.area,
-      puesto: employee.position,
       _id: employee._id,
+      rfc: employee.rfc,
+      fullName: employee.name.fullName,
+      grades: employee.grade ? employee.grade.length : 0,
+      positions: employee.positions ? employee.positions.length : 0,
+      employee: employee,
       action: '',
-      grades: []
     };
-
-    const grades = new Array<IGradeTable>();
-    employee.grade.forEach(grade => {
-      grades.push({
-        nombre: grade.abbreviation,
-        apellido: grade.title,
-        area: grade.cedula,
-        puesto: grade.level,
-        _id: employee._id
-      });
-    });
-    tmp.grades = grades.slice();
     return tmp;
   }
 
-  onRowEdit(row: any) {
-      const employee: IEmployee = this.castRowToEmploye(row);
+  onRowEdit(row: IGradeTable) {
+      const employee: IEmployee = this.castRowToEmployee(row);
       const dialogRef = this.dialog.open(EmployeeGradeComponent, {
         data: {
           Employee: employee,
@@ -113,11 +81,11 @@ export class GradePageComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe((employeeResult: IEmployee) => {
         if (employeeResult) {
+          employeeResult.name.fullName = employeeResult.name.firstName.concat(' ', employeeResult.name.lastName);
           this.employeeProvider.updateEmployee(employeeResult._id, employeeResult).subscribe(data => {
             this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Empleado actualizado exitosamente', '');
-            this.employees[this.employees.indexOf(row)] = this.castEmployeRow(employeeResult);
+            this.employees[this.employees.indexOf(row)] = this.castEmployeeRow(employeeResult);
             this.refresh();
-
           }, error => {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
           });
@@ -125,12 +93,16 @@ export class GradePageComponent implements OnInit {
       });
   }
 
+  employeeDetails(row: IGradeTable) {
+    this.router.navigate([row._id], {relativeTo: this.routeActive});
+  }
+
   getEmployees() {
     const Empleados = new Array<Object>();
     this.employeeProvider.getAllEmployee()
       .subscribe(data => {
         data.employees.forEach(element => {
-          Empleados.push(this.castEmployeRow(element));
+          Empleados.push(this.castEmployeeRow(element));
         });
         this.employees = Empleados;
         this.refresh();
@@ -156,8 +128,8 @@ export class GradePageComponent implements OnInit {
         this.employeeProvider.newEmployee(employeeResult).subscribe(data => {
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Empleado registrado exitosamente', '');
           employeeResult._id = data._id;
-          this.employees.push(this.castRowToEmploye(employeeResult));
-          this.refresh();
+          this.employees.push(this.castEmployeeRow(employeeResult));
+          this.router.navigate([employeeResult._id], {relativeTo: this.routeActive});
         }, error => {
           this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
         });
@@ -166,53 +138,47 @@ export class GradePageComponent implements OnInit {
   }
 
   onUpload(event) {
-    const notificacion = this.notificationServ;
+    const notification = this.notificationServ;
     const provider = this.employeeProvider;
     const ArrayEmployees: IEmployee[] = [];
     if (event.target.files && event.target.files[0]) {
       Papa.parse(event.target.files[0], {
-        complete: function (results) {
+        complete: async results => {
           if (results.data.length > 0) {
-            results.data.forEach((element, index) => {
+            const elements = results.data;
+            await this._asyncForEach(elements, async (element, index) => {
               if (index > 0) {
-                const indice = ArrayEmployees.findIndex(x => x.rfc === element[0]);
-                let tmpEmployee: IEmployee;
-                if (indice !== -1) {
-                  const tmpGrade = {
-                    title: element[5],
-                    cedula: element[6],
-                    level: element[7],
-                    abbreviation: element[8]
-                  };
-                  ArrayEmployees[indice].grade.push(tmpGrade);
+                const employeeIndex = ArrayEmployees.findIndex(x => x.rfc === element[0]);
+                if (employeeIndex !== -1) {
+                  const {value: updateEmployee} = await Swal.fire({
+                    title: 'Empleado duplicado',
+                    text: `El empleado con RFC ${element[0]}, está duplicado. ¿Desea actualizar o descartar los nuevos datos?`,
+                    type: 'question',
+                    allowOutsideClick: false,
+                    showCancelButton: true,
+                    confirmButtonColor: 'blue',
+                    cancelButtonColor: 'red',
+                    confirmButtonText: 'Actualizar',
+                    cancelButtonText: 'Descartar',
+                    focusConfirm: true
+                  });
+                  if (updateEmployee) {
+                    ArrayEmployees.splice(employeeIndex, 1);
+                    ArrayEmployees.push(this._buildEmployeeStructure(element));
+                  }
                 } else {
-                  if (element.length >= 9) {
-                    tmpEmployee = {
-                      rfc: element[0],
-                      name: {
-                        firstName: element[1],
-                        lastName: element[2],
-                        fullName: element[1].concat(' ', element[2])
-                      },
-                      area: element[3],
-                      position: element[4],
-                      grade: [{
-                        title: element[5],
-                        cedula: element[6],
-                        level: element[7],
-                        abbreviation: element[8]
-                      }]
-                    };
-                    ArrayEmployees.push(tmpEmployee);
+                  if (elements[index].length >= 5) {
+                    ArrayEmployees.push(this._buildEmployeeStructure(element));
                   }
                 }
               }
             });
             console.log('Array emplo', ArrayEmployees);
-            provider.csvEmployeGrade(ArrayEmployees).subscribe(res => {
-              notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');
+            provider.csvEmployeGrade(ArrayEmployees).subscribe(_ => {
+              notification.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
             }, error => {
               console.log(error);
+              notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
             });
           }
         }
@@ -226,16 +192,33 @@ export class GradePageComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-}
 
-interface IRowSource {
-  data:
-  {
-    nombre?: string, apellido?: string, area?: string, puesto?: string, _id?: string
-  };
-  children?: Array<IRowSource>;
+  private _buildEmployeeStructure(data: Array<any>): IEmployee {
+    return {
+      rfc: data[0],
+      name: {
+        firstName: data[1],
+        lastName: data[2],
+        fullName: data[1].concat(' ', data[2])
+      },
+      gender: data[3],
+      birthDate: data[4]
+    };
+  }
+
+  private async _asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  }
 }
 
 interface IGradeTable {
-  nombre?: string; apellido?: string; area?: string; puesto?: string; _id?: string; grades?: Array<IGradeTable>; action?: string;
+  _id?: string;
+  rfc?: string;
+  fullName?: string;
+  grades?: number;
+  positions?: number;
+  employee?: IEmployee;
+  action?: string;
 }

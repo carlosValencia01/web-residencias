@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title>{{title}}</h1>
+  </div>
+  <div class="col-2">
+    <button [mat-dialog-close] class="float-right" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<form (ngSubmit)="onSubmit()" [formGroup]="positionForm">
+  <mat-dialog-content>
+    <div class="row">
+      <mat-form-field class="col-sm-12 col-lg-6">
+        <input [matAutocomplete]="department" autofocus
+               formControlName="department"
+               matInput oninput="this.value=this.value.toUpperCase()" placeholder="Departamento" type="text">
+        <mat-autocomplete #department (optionSelected)="getPositions()">
+          <mat-option *ngFor="let depto of filteredDepartments | async" [value]="depto.name">
+            {{ depto.name }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error>
+          <span>¡Por favor seleccione un departamento!</span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-lg-6">
+        <input [matAutocomplete]="position" formControlName="position" matInput
+               oninput="this.value=this.value.toUpperCase()" placeholder="Puesto"
+               type="text">
+        <mat-autocomplete #position>
+          <mat-option *ngFor="let position of filteredPositions | async" [value]="position.name">
+            {{ position.name }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error>
+          <span>¡Por favor seleccione un puesto!</span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button [disabled]="!positionForm.valid" class="m-1" color="primary" mat-stroked-button type="submit">Guardar
+    </button>
+    <button (click)="onClose()" class="m-1" color="warn" mat-dialog-close mat-stroked-button type="button">Cancelar
+    </button>
+  </mat-dialog-actions>
+</form>

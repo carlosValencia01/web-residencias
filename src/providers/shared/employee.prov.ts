@@ -94,4 +94,33 @@ export class EmployeeProvider {
     searchEmployeeByArea() {
         return this.api.get(`employee/area`).pipe(map(res => res.json()));
     }
+
+    getEmployee(email) {
+      return this.api.get(`user/employee/${email}`).pipe(map(res => res.json()));
+    }
+
+    updateProfile(id, data) {
+      return this.api.put(`user/update/${id}`, data).pipe(map(res => res.json()));
+    }
+
+    getEmployeeById(employeeId: string) {
+      return this.api.get(`employee/${employeeId}`)
+        .pipe(map(res => res.json()));
+    }
+
+    updateEmployeePositions(id: string, positions: any) {
+      return this.api.put(`employee/positions/${id}`, positions)
+        .pipe(map(res => res.json()));
+    }
+
+    updateEmployeeGrades(id: string, grades: any) {
+      return this.api.put(`employee/grades/${id}`, grades)
+        .pipe(map(res => res.json()));
+    }
+
+    updateGradesAndPositions(id: string, data: Object) {
+      return this.api
+        .put(`employee/gradesPositions/${id}`, data)
+        .pipe(map(res => res.json()));
+    }
 }

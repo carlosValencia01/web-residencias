@@ -45,7 +45,9 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 // Material
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
+  ErrorStateMatcher,
   MatButtonModule,
   MatDatepickerModule,
   MatNativeDateModule,
@@ -81,6 +83,7 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
 import { LoginPageComponent } from 'src/pages/app/login-page/login-page.component';
+import { ProfileSettingsComponent } from 'src/pages/app/profile-settings/profile-settings.component';
 // Components
 import { HomeHeaderComponent } from 'src/components/app/home-header/home-header.component';
 import { LoginHeaderComponent } from 'src/components/app/login-header/login-header.component';
@@ -104,6 +107,10 @@ import {
 } from 'src/pages/credentials/loader-data-credentials-page/loader-data-credentials-page.component';
 import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/one-student-page.component';
 import { StudentPageComponent } from 'src/pages/credentials/student-page/student-page.component';
+
+// Electronic signature
+// Pages
+import {ElectronicSignatureComponent} from 'src/pages/electronic-signature/electronic-signature/electronic-signature.component';
 
 // Inscriptions module
 // Pages
@@ -182,6 +189,16 @@ import { FirebaseService } from 'src/services/graduation/firebase.service';
 // Providers
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 
+// Electronic signature module
+// Pages
+import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
+import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { EmployeePageComponent } from 'src/pages/electronic-signature/employee-page/employee-page.component';
+import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
+// Modals
+import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
+import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
+
 // Shared
 // Components
 import { LoaderComponent } from 'src/components/shared/loader/loader.component';
@@ -189,9 +206,13 @@ import { LoaderComponent } from 'src/components/shared/loader/loader.component';
 import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 // Providers
+import { DocumentProvider } from 'src/providers/shared/document.prov';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
+import { PositionProvider } from 'src/providers/shared/position.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CareerProvider } from 'src/providers/shared/career.prov';
+// Services
+import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
 
 import { ScheduleComponent } from '../components/reception-act/schedule/schedule.component';
 import { registerLocaleData } from '@angular/common';
@@ -213,6 +234,7 @@ registerLocaleData(localeEs);
     AppComponent,
     HomePageComponent,
     LoginPageComponent,
+    ProfileSettingsComponent,
     // Components
     HomeHeaderComponent,
     LoginHeaderComponent,
@@ -224,6 +246,10 @@ registerLocaleData(localeEs);
     LoaderDataCredentialsPageComponent,
     OneStudentPageComponent,
     StudentPageComponent,
+
+    // Electronic signarure
+    // Pages
+    ElectronicSignatureComponent,
 
     // Inscriptions module
     // Pages
@@ -281,6 +307,16 @@ registerLocaleData(localeEs);
     // Pipes
     FilterPipe,
 
+    // Electronic signature module
+    // Pages
+    DocumentsAdminPageComponent,
+    DocumentsAssignPageComponent,
+    EmployeePageComponent,
+    PositionsAdminPageComponent,
+    // Modals
+    NewPositionComponent,
+    PositionsHistoryComponent,
+
     // Shared
     // Components
     LoaderComponent,
@@ -318,6 +354,7 @@ registerLocaleData(localeEs);
     SimpleNotificationsModule.forRoot(),
 
     // Material
+    MatAutocompleteModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -326,6 +363,8 @@ registerLocaleData(localeEs);
     MatDatepickerModule,
     MatDialogModule,
     MatFileUploadModule,
+    MatExpansionModule,
+    MatFileUploadModule ,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -337,6 +376,7 @@ registerLocaleData(localeEs);
     MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
+    MatSlideToggleModule,
     MatSnackBarModule,
     MatSortModule,
     MatStepperModule,
@@ -367,6 +407,8 @@ registerLocaleData(localeEs);
     }),    
   ],
   providers: [
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+    { provide: ErrorStateMatcher, useClass: ErrorMatcher },
     // App module
     // Providers
     Api,
@@ -403,7 +445,9 @@ registerLocaleData(localeEs);
 
     // Shared
     // Providers
+    DocumentProvider,
     EmployeeProvider,
+    PositionProvider,
     StudentProvider,
     CareerProvider,
     CustomDateFormatter,
@@ -412,6 +456,8 @@ registerLocaleData(localeEs);
       provide: DROPZONE_CONFIG,
       useValue: DEFAULT_DROPZONE_CONFIG
     },
+    // Services
+    ErrorMatcher,
   ],
   entryComponents: [
     // Reception act module
@@ -439,6 +485,12 @@ registerLocaleData(localeEs);
     RangeModalComponent,
     StepperDocumentComponent,
     UploadDeliveredComponent,
+
+    // Electronic signature
+    // Modals
+    NewPositionComponent,
+    PositionsHistoryComponent,
+
     // Shared
     // Modals
     ConfirmDialogComponent,
