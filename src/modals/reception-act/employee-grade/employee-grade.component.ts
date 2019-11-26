@@ -23,6 +23,7 @@ export class EmployeeGradeComponent implements OnInit {
     this.Operation = data.Operation;
     this.Employee = <IEmployee>{
       rfc: '',
+      curp: '',
       name: {
         firstName: '',
         lastName: '',
@@ -45,6 +46,9 @@ export class EmployeeGradeComponent implements OnInit {
       'rfc': new FormControl(
         this.Operation === eOperation.EDIT ? this.Employee.rfc : null,
         [Validators.required, Validators.minLength(10), Validators.maxLength(13)]),
+      'curp': new FormControl(
+        this.Operation === eOperation.EDIT ? this.Employee.curp : null,
+        [Validators.required, Validators.minLength(18), Validators.maxLength(18)]),
       'name': new FormControl(
         (this.Operation === eOperation.EDIT ? this.Employee.name.firstName : null), Validators.required),
       'lastname': new FormControl(
@@ -58,6 +62,7 @@ export class EmployeeGradeComponent implements OnInit {
 
   onSubmit() {
     this.Employee.rfc = this.frmNewEmployeeGrade.get('rfc').value;
+    this.Employee.curp = this.frmNewEmployeeGrade.get('curp').value;
     this.Employee.name.firstName = this.frmNewEmployeeGrade.get('name').value;
     this.Employee.name.lastName = this.frmNewEmployeeGrade.get('lastname').value;
     this.Employee.gender = this.frmNewEmployeeGrade.get('gender').value;

@@ -167,17 +167,15 @@ export class GradePageComponent implements OnInit {
                     ArrayEmployees.push(this._buildEmployeeStructure(element));
                   }
                 } else {
-                  if (elements[index].length >= 5) {
+                  if (elements[index].length >= 6) {
                     ArrayEmployees.push(this._buildEmployeeStructure(element));
                   }
                 }
               }
             });
-            console.log('Array emplo', ArrayEmployees);
             provider.csvEmployeGrade(ArrayEmployees).subscribe(_ => {
               notification.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
-            }, error => {
-              console.log(error);
+            }, _ => {
               notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
             });
           }
@@ -196,13 +194,14 @@ export class GradePageComponent implements OnInit {
   private _buildEmployeeStructure(data: Array<any>): IEmployee {
     return {
       rfc: data[0],
+      curp: data[1],
       name: {
-        firstName: data[1],
-        lastName: data[2],
-        fullName: data[1].concat(' ', data[2])
+        firstName: data[2],
+        lastName: data[3],
+        fullName: data[2].concat(' ', data[3])
       },
-      gender: data[3],
-      birthDate: data[4]
+      gender: data[4],
+      birthDate: data[5]
     };
   }
 

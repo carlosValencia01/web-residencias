@@ -40,6 +40,8 @@
               <br><br>
               <mat-label><strong>RFC:</strong> {{employee.rfc}}</mat-label>
               <br><br>
+              <mat-label><strong>CURP:</strong> {{employee.curp}}</mat-label>
+              <br><br>
             </div>
             <div class="col-sm-12 col-md-6">
               <mat-label><strong>Género:</strong> {{employee.gender}}</mat-label>
@@ -116,7 +118,7 @@
             <tr *matHeaderRowDef="displayedColumnsPositions" mat-header-row></tr>
             <tr *matRowDef="let row; columns: displayedColumnsPositions;" mat-row></tr>
           </table>
-          <mat-paginator #matPaginatorPositions [pageSizeOptions]="[1, 3, 5, 10]"></mat-paginator>
+          <mat-paginator #matPaginatorPositions [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
         </div>
       </div>
     </mat-expansion-panel>
@@ -168,7 +170,7 @@
             <tr *matHeaderRowDef="displayedColumnsGrades" mat-header-row></tr>
             <tr *matRowDef="let row; columns: displayedColumnsGrades;" mat-row></tr>
           </table>
-          <mat-paginator #matPaginatorGrades [pageSizeOptions]="[1, 3, 5, 10]"></mat-paginator>
+          <mat-paginator #matPaginatorGrades [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
         </div>
       </div>
     </mat-expansion-panel>
