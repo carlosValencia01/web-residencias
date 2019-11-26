@@ -7,19 +7,19 @@
   </div>
   <div class="row p-3 col-12 m-0">
     <mat-card class="col-12">
-      <div class="float-right m-1">
-        <button (click)="discardAllChanges()" *ngIf="isChangedPositions || isChangedGrades"
-                aria-label="Descartar todos los cambios" class="m-1" color="warn" mat-icon-button mat-mini-fab
-                ngbTooltip="Descartar todos los cambios">
-          <mat-icon>restore</mat-icon>
+      <div class="col-1 float-right m-1">
+        <button (click)="showPositionsHistory()" *ngIf="employee.positions && employee.positions.length" aria-label="Historial de puestos" class="m-1" color="accent"
+                mat-icon-button mat-mini-fab ngbTooltip="Historial de puestos">
+          <mat-icon>assignment_ind</mat-icon>
         </button>
         <button (click)="saveAll()" *ngIf="isChangedPositions || isChangedGrades" aria-label="Guardar cambios"
                 class="m-1" color="primary" mat-icon-button mat-mini-fab ngbTooltip="Guardar todo">
           <mat-icon>done_all</mat-icon>
         </button>
-        <button (click)="showPositionsHistory()" *ngIf="employee.positions && employee.positions.length" aria-label="Historial de puestos" class="m-1" color="accent"
-                mat-icon-button mat-mini-fab ngbTooltip="Historial de puestos">
-          <mat-icon>assignment_ind</mat-icon>
+        <button (click)="discardAllChanges()" *ngIf="isChangedPositions || isChangedGrades"
+                aria-label="Descartar todos los cambios" class="m-1" color="warn" mat-icon-button mat-mini-fab
+                ngbTooltip="Descartar todos los cambios">
+          <mat-icon>restore</mat-icon>
         </button>
       </div>
       <mat-card-header>
@@ -32,13 +32,29 @@
                  alt="Imagen del empleado"
                  class="mw-100 mh-100">
           </div>
-          <div class="col-sm-8 col-md-9 p-sm-4 p-md-2">
-            <mat-label><strong>Nombre(s):</strong> {{employee.name.firstName}}</mat-label>
-            <br><br>
-            <mat-label><strong>Apellidos:</strong> {{employee.name.lastName}}</mat-label>
-            <br><br>
-            <mat-label><strong>RFC:</strong> {{employee.rfc}}</mat-label>
-            <br><br>
+          <div class="row col-sm-8 col-md-9 p-sm-4 p-md-2">
+            <div class="col-sm-12 col-md-6">
+              <mat-label><strong>Nombre(s):</strong> {{employee.name.firstName}}</mat-label>
+              <br><br>
+              <mat-label><strong>Apellidos:</strong> {{employee.name.lastName}}</mat-label>
+              <br><br>
+              <mat-label><strong>RFC:</strong> {{employee.rfc}}</mat-label>
+              <br><br>
+              <mat-label><strong>CURP:</strong> {{employee.curp}}</mat-label>
+              <br><br>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <mat-label><strong>Género:</strong> {{employee.gender}}</mat-label>
+              <br><br>
+              <mat-label><strong>Cumpleaños:</strong> {{employeeeBirthDate.split(' ').slice(0, 3).join(' ')}}</mat-label>
+              <br><br>
+              <mat-label><strong>Puestos activos:</strong>
+                <ul *ngFor="let pos of employee.positions" style="margin-bottom:0px;">
+                  <li *ngIf="pos.status === 'ACTIVE'">{{pos.position.name}} ({{pos.position.ascription.shortName}})</li>
+                </ul>
+              </mat-label>
+              <br><br>
+            </div>
           </div>
         </div>
       </mat-card-content>
@@ -102,7 +118,7 @@
             <tr *matHeaderRowDef="displayedColumnsPositions" mat-header-row></tr>
             <tr *matRowDef="let row; columns: displayedColumnsPositions;" mat-row></tr>
           </table>
-          <mat-paginator #matPaginatorPositions [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+          <mat-paginator #matPaginatorPositions [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
         </div>
       </div>
     </mat-expansion-panel>
@@ -154,7 +170,7 @@
             <tr *matHeaderRowDef="displayedColumnsGrades" mat-header-row></tr>
             <tr *matRowDef="let row; columns: displayedColumnsGrades;" mat-row></tr>
           </table>
-          <mat-paginator #matPaginatorGrades [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+          <mat-paginator #matPaginatorGrades [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
         </div>
       </div>
     </mat-expansion-panel>

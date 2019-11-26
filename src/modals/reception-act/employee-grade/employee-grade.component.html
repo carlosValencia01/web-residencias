@@ -26,6 +26,21 @@
           </span>
         </mat-error>
       </mat-form-field>
+      <mat-form-field class="col-sm-12 col-md-6">
+        <input [maxLength]="18" [minLength]="18" formControlName="curp"
+               matInput oninput="this.value=this.value.toUpperCase()" placeholder="CURP" required type="text">
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('curp').valid && frmNewEmployeeGrade.get('curp').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('curp').errors['required']">
+            ¡CURP obligatoria!
+          </span>
+          <span *ngIf="frmNewEmployeeGrade.get('curp').errors['minlength']">
+            ¡Mínimo 18 caracteres!
+          </span>
+          <span *ngIf="frmNewEmployeeGrade.get('curp').errors['maxlength']">
+            ¡Máximo 18 caracteres!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="row">
       <mat-form-field class="col-sm-12 col-md-6">
