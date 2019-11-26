@@ -30,7 +30,7 @@
       </mat-step>
       <mat-step editable='false'>
         <ng-template matStepLabel>Documentos</ng-template>
-        <app-inscriptions-upload-files-page></app-inscriptions-upload-files-page>
+        <app-inscriptions-upload-files-page *ngIf="step == 2"></app-inscriptions-upload-files-page>
       </mat-step>
       <mat-step editable='false'>
         <ng-template matStepLabel>Contrato</ng-template>

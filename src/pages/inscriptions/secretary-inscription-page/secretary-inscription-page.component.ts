@@ -315,23 +315,27 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     if(student.documents != ''){
       var docAnalisis = student.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? student.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
       if(docAnalisis != ''){
-        const linkModal = this.dialog.open(ReviewAnalysisComponent, {
-          data: {
-            operation: 'view',
-            student:student
-          },
-          disableClose: true,
-          hasBackdrop: true,
-          width: '90em',
-          height: '800px'
-        });
-        let sub = linkModal.afterClosed().subscribe(
-          analysis=>{         
-            console.log(analysis);
-            this.getStudents();
-          },
-          err=>console.log(err), ()=> sub.unsubscribe()
-        );
+        if(docAnalisis.status[docAnalisis.status.length-1].name == "VALIDADO" || docAnalisis.status[docAnalisis.status.length-1].name == "ACEPTADO"){
+          const linkModal = this.dialog.open(ReviewAnalysisComponent, {
+            data: {
+              operation: 'view',
+              student:student
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '90em',
+            height: '800px'
+          });
+          let sub = linkModal.afterClosed().subscribe(
+            analysis=>{         
+              console.log(analysis);
+              this.getStudents();
+            },
+            err=>console.log(err), ()=> sub.unsubscribe()
+          );
+        } else {
+          this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Aun no son Validados/Aceptados los análisis clínicos.');   
+        }
       } else {
         this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene análisis clínicos.');   
       }
