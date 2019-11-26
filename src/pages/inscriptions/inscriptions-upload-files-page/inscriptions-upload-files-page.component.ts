@@ -11,6 +11,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
 import { MatStepper } from '@angular/material/stepper';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-inscriptions-upload-files-page',
@@ -95,7 +96,14 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       this.getIdStudent();      
   }
   ngOnInit() {        
-       
+    Swal.fire({
+      title: 'ATENCIÓN',
+      text: 'En caso de no contar con el CERTIFICADO DE ESTUDIOS, subir CARTA COMPROMISO en el apartado correspondiente.',
+      type: 'info',
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => { });
   }
 
   getIdStudent() {

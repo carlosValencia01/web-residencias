@@ -159,8 +159,8 @@ export class RegisterStudentPageComponent implements OnInit {
   async continue() {
     var newStep = { stepWizard: 2, inscriptionStatus: 'En Captura' }
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
-      this.stepper.next();
-      //window.location.assign("/wizardInscription");
+      //this.stepper.next();
+      window.location.assign("/wizardInscription");
     });
   }
 

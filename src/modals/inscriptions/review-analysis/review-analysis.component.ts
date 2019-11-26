@@ -4,6 +4,7 @@ import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.pr
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-review-analysis',
@@ -65,10 +66,10 @@ export class ReviewAnalysisComponent implements OnInit {
     },(err)=>{},()=>this.loading=false);
   }
 
-  async saveObservations() {
+  async saveObservations(observaciones,warning) {
     this.loading=true;
     this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Guardando Observaciones.', '');
-    await this.inscriptionsProv.updateStudent({observationsAnalysis:this.observations},this.studentData._id).subscribe(res => {
+    await this.inscriptionsProv.updateStudent({observationsAnalysis:observaciones,warningAnalysis:warning},this.studentData._id).subscribe(res => {
     }, err=>{},
     ()=>{
       this.loading=false
@@ -77,22 +78,100 @@ export class ReviewAnalysisComponent implements OnInit {
     });
   }
 
-  async updateStudent(data, id) {
-   
-  }
-
   observationsGood(){
-    if(this.observations != ''){
-      this.observations += ' ';
+    if(this.observations == ''){
+      const id = 'observaciones';
+      Swal.fire({
+        title: 'Observaciones',
+        imageUrl: '../../../assets/icons/listgraduation.svg',
+        imageWidth: 100,
+        imageHeight: 100,
+        imageAlt: 'Custom image',
+        html:
+          '<textarea rows="4" cols="30" id="observaciones">Todo bien, sigue así. </textarea>  ',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Guardar'
+      }).then((result) => {
+        if (result.value) {
+          const observations = (<HTMLInputElement>document.getElementById(id)).value;
+          this.saveObservations(observations,false);
+        }
+      });
+    } else {
+      const id = 'observaciones';
+      Swal.fire({
+        title: 'Observaciones',
+        imageUrl: '../../../assets/icons/listgraduation.svg',
+        imageWidth: 100,
+        imageHeight: 100,
+        imageAlt: 'Custom image',
+        html:
+          '<textarea rows="4" cols="30" id="observaciones">'+this.observations+'</textarea>  ',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Guardar'
+      }).then((result) => {
+        if (result.value) {
+          const observations = (<HTMLInputElement>document.getElementById(id)).value;
+          this.saveObservations(observations,false);
+        }
+      });
     }
-    this.observations += "Todo bien, sigue así. ";
   }
 
   observationsBad(){
-    if(this.observations != ''){
-      this.observations += ' ';
+    if(this.observations == ''){
+      const id = 'observaciones';
+      Swal.fire({
+        title: 'Observaciones',
+        imageUrl: '../../../assets/icons/listgraduation.svg',
+        imageWidth: 100,
+        imageHeight: 100,
+        imageAlt: 'Custom image',
+        html:
+          '<textarea rows="4" cols="30" id="observaciones">FAVOR DE ACUDIR INMEDIATAMENTE AL CONSULTORIO MÉDICO. </textarea>  ',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Guardar'
+      }).then((result) => {
+        if (result.value) {
+          const observations = (<HTMLInputElement>document.getElementById(id)).value;
+          this.saveObservations(observations,true);
+        }
+      });
+    } else {
+      const id = 'observaciones';
+      Swal.fire({
+        title: 'Observaciones',
+        imageUrl: '../../../assets/icons/listgraduation.svg',
+        imageWidth: 100,
+        imageHeight: 100,
+        imageAlt: 'Custom image',
+        html:
+          '<textarea rows="4" cols="30" id="observaciones">'+this.observations+'</textarea>  ',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Guardar'
+      }).then((result) => {
+        if (result.value) {
+          const observations = (<HTMLInputElement>document.getElementById(id)).value;
+          this.saveObservations(observations,true);
+        }
+      });
     }
-    this.observations += "FAVOR DE ACUDIR INMEDIATAMENTE AL CONSULTORIO MÉDICO. ";
   }
 
 }

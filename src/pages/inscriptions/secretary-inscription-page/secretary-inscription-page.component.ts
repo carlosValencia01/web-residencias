@@ -3,13 +3,17 @@ import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.pr
 import { MatDialog } from '@angular/material';
 import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
 import { StudentInformationComponent } from 'src/modals/inscriptions/student-information/student-information.component';
-import { ReviewAnalysisComponent } from 'src/modals/inscriptions/review-analysis/review-analysis.component'
+import { ReviewAnalysisComponent } from 'src/modals/inscriptions/review-analysis/review-analysis.component';
+import { ReviewCredentialsComponent } from 'src/modals/inscriptions/review-credentials/review-credentials.component';
 import TableToExcel from '@linways/table-to-excel';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import Swal from 'sweetalert2';
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 const jsPDF = require('jspdf');
+import * as JsBarcode from 'jsbarcode';
 
 @Component({
   selector: 'app-secretary-inscription-page',
@@ -28,11 +32,16 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   docAnalisis;
 
+  credentialStudents;
+  frontBase64: any;
+  backBase64: any;
+
 
   // filter nc,nombre
   public searchText = '';
   public searchCarreer = '';
   public searchDictamen = '';
+  public searchAdvertencia = '';
 
   public searchEC = false;
   public searchE = false;
@@ -52,6 +61,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   pageSize = 10;
 
   constructor(
+    private imageToBase64Serv: ImageToBase64Service,
     private inscriptionsProv: InscriptionsProvider,
     public dialog: MatDialog,
     private notificationService: NotificationsServices,
@@ -66,6 +76,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     }
     this.getStudents();
     this.getPeriods();
+    this.getBase64ForStaticImages();
+
   }
 
   ngOnInit() {
@@ -83,6 +95,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
       this.listStudents = this.students;
       this.listCovers = this.listStudents;
+      this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
       
       //console.log(this.listStudents);
     });
@@ -138,6 +151,15 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.listCovers = this.filterItemsCovers(this.searchCarreer,this.searchText);
     //console.log(this.listCovers);
 
+    this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
+
+  }
+
+  // FILTRADO POR CARRERA
+  filterItemsCarreer(carreer) {
+    return this.students.filter(function (student) {
+      return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1;
+    });
   }
 
    // FILTRADO POR CARRERA O ESTATUS
@@ -400,6 +422,19 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.loading = false;
   }
 
+   // Generar plantilla CM Excel
+   excelExportCM() {
+    this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
+    this.loading = true;
+    TableToExcel.convert(document.getElementById('tableReportExcelCM'), {
+      name: 'Reporte Consultorio Médico.xlsx',
+      sheet: {
+        name: 'Alumnos'
+      }
+    });
+    this.loading = false;
+  }
+
   complete10Dig(number){
     var num = number.toString();
     while (num.length<10){
@@ -427,6 +462,216 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         return (`${day}${month}${year}`)
       }
     }
+  }
+
+  registerCredential(item){
+    Swal.fire({
+      title: 'Registrar Impresión de Credencial',
+      text: 'Para ' + item.controlNumber,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        this.loading=true;
+        this.inscriptionsProv.updateStudent({printCredential:true},item._id).subscribe(res => {
+        }, err=>{},
+        ()=>{
+          this.loading=false
+          this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
+          this.getStudents();
+        });
+      }
+    });
+  }
+
+  removeCredential(item){
+    Swal.fire({
+      title: 'Remover Impresión de Credencial',
+      text: 'Para ' + item.controlNumber,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        this.loading=true;
+        this.inscriptionsProv.updateStudent({printCredential:false},item._id).subscribe(res => {
+        }, err=>{},
+        ()=>{
+          this.loading=false
+          this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Removida.');
+          this.getStudents();
+        });
+      }
+    });
+  }
+
+  async generateCredentials(){
+    var numCredentials = 0;
+    var tempStudents = [];
+    if(this.credentialStudents.length != 0){
+      this.loading = true;
+      const doc = new jsPDF({
+        unit: 'mm',
+        format: [251, 158], // Medidas correctas: [88.6, 56]
+        orientation: 'landscape'
+      });
+
+      for(var i = 0; i < this.credentialStudents.length; i++){
+        if(this.credentialStudents[i].documents != ''){
+          var docFoto = this.credentialStudents[i].documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? this.credentialStudents[i].documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+          if(docFoto != ''){
+            // VERIFICAR SI LA FOTO ESTÁ EN ESTATUS ACEPTADO
+            if(docFoto.status[docFoto.status.length-1].name == "ACEPTADO"){
+              // VERIFICAR SI LA CREDENCIAL AUN NO ESTÁ IMPRESA
+              if(this.credentialStudents[i].printCredential != true){
+                tempStudents.push(this.credentialStudents[i]);
+                numCredentials ++;
+                // cara frontal de la credencial
+                doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
+                  
+                //FOTOGRAFIA DEL ALUMNO
+                var foto = await this.findFoto(docFoto);
+                //console.log(foto);
+                doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
+
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(7);
+                doc.setFont('helvetica');
+                doc.setFontType('bold');
+                doc.text(49, 30.75, doc.splitTextToSize(this.credentialStudents[i].fullName ? this.credentialStudents[i].fullName : '', 35));
+                doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(this.credentialStudents[i].career ? this.credentialStudents[i].career : ''), 35));
+                doc.text(49, 46.5, doc.splitTextToSize(this.credentialStudents[i].nss ? this.credentialStudents[i].nss : '', 35));
+
+                // cara trasera de la credencial
+                doc.addPage();
+                doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
+
+                // Numero de control con codigo de barra
+                doc.addImage(this.textToBase64Barcode(this.credentialStudents[i].controlNumber ? this.credentialStudents[i].controlNumber : ''), 'PNG', 46.8, 39.2, 33, 12);
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(8);
+                doc.text(57, 53.5, doc.splitTextToSize(this.credentialStudents[i].controlNumber ? this.credentialStudents[i].controlNumber : '', 35));
+
+                //OTRA CREDENCIAL
+                if(i != (this.credentialStudents.length)-1){
+                  doc.addPage();
+                }
+              } else {
+                console.log(this.credentialStudents[i].controlNumber+' - Credencial ya fue impresa.');
+              }
+            } else {
+              console.log(this.credentialStudents[i].controlNumber+' - Foto no aceptada.');
+            }
+          } else { 
+            console.log(this.credentialStudents[i].controlNumber+' - No tiene foto.');
+          }
+        } else {
+          console.log(this.credentialStudents[i].controlNumber+' - No tiene expediente.');
+        }
+      }
+      var pageCount = doc.internal.getNumberOfPages();
+      if(pageCount%2 != 0){
+        doc.deletePage(pageCount);
+      }
+      this.loading = false;
+      if(numCredentials != 0){
+        var credentials = doc.output('arraybuffer');
+        // Abrir Modal para visualizar credenciales
+        const linkModal = this.dialog.open(ReviewCredentialsComponent, {
+          data: {
+            operation: 'view',
+            credentials:credentials,
+            students:tempStudents
+          },
+          disableClose: true,
+          hasBackdrop: true,
+          width: '90em',
+          height: '800px'
+        });
+        let sub = linkModal.afterClosed().subscribe(
+          credentials=>{         
+            console.log(credentials);
+            this.getStudents();
+          },
+          err=>console.log(err), ()=> sub.unsubscribe()
+        );
+
+        //window.open(doc.output('bloburl'), '_blank');
+      } else {
+        this.notificationService.showNotification(eNotificationType.INFORMATION, 'No Hay Credenciales Para Imprimir', '');
+      }
+    } else {
+      this.notificationService.showNotification(eNotificationType.INFORMATION, 'No Hay Credenciales Para Imprimir', '');
+    }
+  }
+
+  //GENERAR PDF
+  getBase64ForStaticImages() {
+    this.imageToBase64Serv.getBase64('assets/imgs/front.jpg').then(res1 => {
+      this.frontBase64 = res1;
+    });
+
+    this.imageToBase64Serv.getBase64('assets/imgs/back2.jpg').then(res2 => {
+      this.backBase64 = res2;
+    });
+  }
+
+  textToBase64Barcode(text) {
+    const canvas = document.createElement('canvas');
+    JsBarcode(canvas, text, { format: 'CODE128', displayValue: false });
+    return canvas.toDataURL('image/png');
+  }
+
+  reduceCareerString(career: string): string {
+    if (career.length < 33) {
+      return career;
+    }
+
+    switch (career) {
+      case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
+        return 'DOC. EN CIENCIAS DE ALIMENTOS';
+
+      case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
+        return 'ING. EN GESTION EMPRESARIAL';
+
+
+      case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
+        return 'ING. EN SISTEMAS COMPUTACIONALES';
+
+      case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+        return 'MAESTRÍA EN TEC. DE LA INFORMACIÓN';
+
+      case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+        return 'MAEST. EN CIENCIAS DE ALIMENTOS';
+
+      default:
+        return 'ING. EN TEC. DE LA INF. Y COM.';
+    }
+
+  }
+
+  async findFoto(docFoto) {
+    return new Promise(resolve => {
+      this.inscriptionsProv.getFile(docFoto.fileIdInDrive, docFoto.filename).subscribe(
+        data => {
+          var pub = data.file;
+          var image = 'data:image/png;base64,' + pub;
+          resolve(image);
+        },
+        err => {
+          console.log(err);
+        }
+      )
+    });
   }
 
 }
