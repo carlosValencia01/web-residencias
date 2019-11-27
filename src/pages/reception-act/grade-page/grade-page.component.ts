@@ -44,17 +44,17 @@ export class GradePageComponent implements OnInit {
     this.getEmployees();
   }
 
-  refresh(): void {
+  private refresh(): void {
     this.dataSource = new MatTableDataSource(this.employees);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  castRowToEmployee(row: IGradeTable): IEmployee {
+  private castRowToEmployee(row: IGradeTable): IEmployee {
     return row.employee;
   }
 
-  castEmployeeRow(employee: IEmployee): IGradeTable {
+  private castEmployeeRow(employee: IEmployee): IGradeTable {
     const tmp: IGradeTable = {
       _id: employee._id,
       rfc: employee.rfc,
@@ -67,7 +67,7 @@ export class GradePageComponent implements OnInit {
     return tmp;
   }
 
-  onRowEdit(row: IGradeTable) {
+  public onRowEdit(row: IGradeTable) {
       const employee: IEmployee = this.castRowToEmployee(row);
       const dialogRef = this.dialog.open(EmployeeGradeComponent, {
         data: {
@@ -93,11 +93,11 @@ export class GradePageComponent implements OnInit {
       });
   }
 
-  employeeDetails(row: IGradeTable) {
+  public employeeDetails(row: IGradeTable) {
     this.router.navigate([row._id], {relativeTo: this.routeActive});
   }
 
-  getEmployees() {
+  private getEmployees() {
     const Empleados = new Array<Object>();
     this.employeeProvider.getAllEmployee()
       .subscribe(data => {
@@ -111,7 +111,7 @@ export class GradePageComponent implements OnInit {
       });
   }
 
-  addNewGradeEmployee() {
+  public addNewGradeEmployee() {
     const ref = this.dialog.open(EmployeeGradeComponent, {
       id: 'EmployeeModal',
       data: {
@@ -137,7 +137,7 @@ export class GradePageComponent implements OnInit {
     });
   }
 
-  onUpload(event) {
+  public onUpload(event) {
     const notification = this.notificationServ;
     const provider = this.employeeProvider;
     const ArrayEmployees: IEmployee[] = [];
@@ -175,6 +175,7 @@ export class GradePageComponent implements OnInit {
             });
             provider.csvEmployeGrade(ArrayEmployees).subscribe(_ => {
               notification.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
+              this.refreshEmployees();
             }, _ => {
               notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
             });
@@ -184,11 +185,15 @@ export class GradePageComponent implements OnInit {
     }
   }
 
-  applyFilter(filterValue: string) {
+  public applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  public refreshEmployees() {
+    this.getEmployees();
   }
 
   private _buildEmployeeStructure(data: Array<any>): IEmployee {

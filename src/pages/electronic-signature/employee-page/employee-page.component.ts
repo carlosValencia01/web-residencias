@@ -2,9 +2,8 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatPaginator, MatTableDataSource} from '@angular/material';
 import Swal from 'sweetalert2';
+import * as Papa from 'papaparse';
 import * as moment from 'moment';
-moment.locale('es');
-
 import {EmployeeProvider} from 'src/providers/shared/employee.prov';
 import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import {eOperation} from 'src/enumerators/reception-act/operation.enum';
@@ -16,6 +15,8 @@ import {NewGradeComponent} from 'src/modals/reception-act/new-grade/new-grade.co
 import {NewPositionComponent} from 'src/modals/electronic-signature/new-position/new-position.component';
 import {NotificationsServices} from 'src/services/app/notifications.service';
 import {PositionsHistoryComponent} from 'src/modals/electronic-signature/positions-history/positions-history.component';
+
+moment.locale('es');
 
 @Component({
   selector: 'app-employee-page',
@@ -57,23 +58,7 @@ export class EmployeePageComponent implements OnInit {
   ngOnInit() {
     this.displayedColumnsGrades = ['abbreviation', 'title', 'cedula', 'level', 'actions'];
     this.displayedColumnsPositions = ['name', 'ascription', 'canSign', 'actions'];
-    this.activatedRoute.params.subscribe((params: Params) => {
-      this.employeeProvider.getEmployeeById(params.id)
-        .subscribe(data => {
-          this.employee = data.employee;
-          this.employeeeBirthDate = moment(this.employee.birthDate).format('LL');
-          this.positions = this._separatePositions(this.employee.positions);
-          this.grades = this.employee.grade.slice();
-          this._refreshGradesTable();
-          this._refreshPositionsTable();
-          if (this.employee.filename) {
-            this.employeeProvider.getImageTest(this.employee._id)
-              .subscribe(img_data => {
-                this._createImageFromBlob(img_data);
-              });
-          }
-        });
-    });
+    this.activatedRoute.params.subscribe((params: Params) => this._getEmployee(params.id));
   }
 
   public onRowRemoveGrade(row: IGrade) {
@@ -378,6 +363,66 @@ export class EmployeePageComponent implements OnInit {
     });
   }
 
+  public onUploadPositions(event) {
+    const arrayPositions = [];
+    if (event.target.files && event.target.files[0]) {
+      Papa.parse(event.target.files[0], {
+        complete: async results => {
+          if (results.data.length > 1) {
+            const positions = results.data.slice(1);
+            positions.forEach(position => (position.length >= 3) ? arrayPositions.push(this._buildPositionStructure(position)) : null);
+            this.employeeProvider.uploadCsvPositions(this.employee._id, arrayPositions)
+              .subscribe(_ => {
+                this.notifications.showNotification(eNotificationType.SUCCESS, 'Los puestos se han guardado con éxito', '');
+                this._getEmployee(this.employee._id);
+              }, _ => {
+                this.notifications.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los puestos', '');
+              });
+          }
+        }
+      });
+    }
+  }
+
+  public onUploadGrades(event) {
+    const arrayGrades: IGrade[] = [];
+    if (event.target.files && event.target.files[0]) {
+      Papa.parse(event.target.files[0], {
+        complete: async results => {
+          if (results.data.length > 1) {
+            const grades = results.data.slice(1);
+            grades.forEach(grade => (grade.length >= 4) ? arrayGrades.push(this._buildGradeStructure(grade)) : null);
+            this.employeeProvider.uploadCsvGrades(this.employee._id, arrayGrades)
+              .subscribe(_ => {
+                this.notifications.showNotification(eNotificationType.SUCCESS, 'Los grados se han guardado con éxito', '');
+                this._getEmployee(this.employee._id);
+              }, _ => {
+                this.notifications.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los grados', '');
+              });
+          }
+        }
+      });
+    }
+  }
+
+  private _getEmployee(employeeId: string) {
+    this.employeeProvider.getEmployeeById(employeeId)
+      .subscribe(data => {
+        this.employee = data.employee;
+        this.employeeeBirthDate = moment(this.employee.birthDate).format('LL');
+        this.positions = this._separatePositions(this.employee.positions);
+        this.grades = this.employee.grade.slice();
+        this._refreshGradesTable();
+        this._refreshPositionsTable();
+        if (this.employee.filename) {
+          this.employeeProvider.getImageTest(this.employee._id)
+            .subscribe(img_data => {
+              this._createImageFromBlob(img_data);
+            });
+        }
+      });
+  }
+
   private _createImageFromBlob(image: Blob) {
     const reader = new FileReader();
     reader.addEventListener('load', () => {
@@ -474,6 +519,24 @@ export class EmployeePageComponent implements OnInit {
       return pos;
     });
     return actives.concat(inactives);
+  }
+
+  private _buildPositionStructure(data: Array<any>) {
+    return {
+      name: data[0],
+      ascription: data[1],
+      activateDate: new Date(data[2]),
+      deactivateDate: data[3] ? new Date(data[3]) : null
+    };
+  }
+
+  private _buildGradeStructure(data: Array<any>): IGrade {
+    return <IGrade> {
+      title: data[0],
+      cedula: data[1],
+      abbreviation: data[2],
+      level: data[3],
+    };
   }
 }
 
