@@ -3,6 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {map, startWith} from 'rxjs/operators';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs';
+import Swal from 'sweetalert2';
 
 import {eOperation} from 'src/enumerators/reception-act/operation.enum';
 import {IDepartment} from 'src/entities/shared/department.model';
@@ -23,6 +24,7 @@ export class NewPositionComponent implements OnInit {
   private positions: Array<IPosition>;
   private operationMode: eOperation;
   private position: IPosition;
+  private employeeId: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -30,6 +32,8 @@ export class NewPositionComponent implements OnInit {
     private dialogRef: MatDialogRef<NewPositionComponent>,
   ) {
     this.operationMode = this.data.operationMode;
+    this.employeeId = this.data.employeeId;
+    this.title = 'Nuevo puesto';
     if (this.operationMode === eOperation.EDIT) {
       this.position = <IPosition>this.data.position;
     }
@@ -70,9 +74,9 @@ export class NewPositionComponent implements OnInit {
   public getPositions(): void {
     const departmentId = this._findDepartmentId(this.positionForm.get('department').value);
     if (departmentId) {
-      this.positionProv.getPositionsForDepartment(departmentId)
-        .subscribe(res => {
-          this.positions = res.positions;
+      this.positionProv.getAvailablePositionsForDepartment(this.employeeId, departmentId)
+        .subscribe(positions => {
+          this.positions = positions;
           this.positionForm.get('position').reset();
         });
     }
@@ -98,7 +102,15 @@ export class NewPositionComponent implements OnInit {
   onSubmit(): void {
     const positionName = this.positionForm.get('position').value;
     this.position = this._findPosition(positionName);
-    this.dialogRef.close(this.position);
+    if (this.position) {
+      this.dialogRef.close(this.position);
+    } else {
+      Swal.fire(
+        'Puesto incorrecto',
+        'No hay un puesto seleccionado',
+        'info'
+      );
+    }
   }
 
   onClose(): void {

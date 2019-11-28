@@ -2,6 +2,8 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatPaginator, MatTableDataSource} from '@angular/material';
 import Swal from 'sweetalert2';
+import * as moment from 'moment';
+moment.locale('es');
 
 import {EmployeeProvider} from 'src/providers/shared/employee.prov';
 import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
@@ -39,6 +41,7 @@ export class EmployeePageComponent implements OnInit {
   public image_src: any;
   public isChangedPositions = false;
   public isChangedGrades = false;
+  public employeeeBirthDate: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -58,6 +61,7 @@ export class EmployeePageComponent implements OnInit {
       this.employeeProvider.getEmployeeById(params.id)
         .subscribe(data => {
           this.employee = data.employee;
+          this.employeeeBirthDate = moment(this.employee.birthDate).format('LL');
           this.positions = this._separatePositions(this.employee.positions);
           this.grades = this.employee.grade.slice();
           this._refreshGradesTable();
@@ -217,7 +221,8 @@ export class EmployeePageComponent implements OnInit {
     const dialogRef = this.dialog.open(NewPositionComponent, {
       id: 'NewPositionModal',
       data: {
-        operationMode: eOperation.NEW
+        operationMode: eOperation.NEW,
+        employeeId: this.employee._id
       },
       disableClose: true,
       hasBackdrop: true,

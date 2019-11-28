@@ -4,6 +4,7 @@ import { IPosition } from './position.model';
 export interface IEmployee {
     _id?: string;
     rfc?: string;
+    curp?: string;
     name: {firstName?: string, lastName?: string, fullName?: string};
     gender?: string;
     birthDate?: Date;

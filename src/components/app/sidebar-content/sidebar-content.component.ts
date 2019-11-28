@@ -38,7 +38,12 @@ export class SidebarContentComponent implements OnInit {
       const rol: iRole = this.data.rol;
       if (typeof (rol) !== 'undefined') {
         this.menu = rol.permissions;
-        // console.log('Menu', this.menu);
+        this.menu.forEach((value, index) => {
+          if (value.label === 'Perfil') {
+            this.menu.splice(index, 1);
+          }
+        });
+        console.log('Menu', this.menu);
       }
       this.title = rol.name;
     }

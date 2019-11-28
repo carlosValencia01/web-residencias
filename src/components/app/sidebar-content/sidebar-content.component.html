@@ -4,7 +4,7 @@
     <div>
       <p class="profile-text">{{ data.name.fullName }}</p>
       <p class="profile-text">{{ title }}</p>
-      <span class="profile-chip">Perfil</span>
+      <span *ngIf="title !== 'Estudiante'" class="profile-chip">Perfil</span>
     </div>
   </div>
   <hr>
