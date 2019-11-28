@@ -41,6 +41,8 @@ export class TitulacionPageComponent implements OnInit {
   SteepSevenCompleted: boolean;
   SteepEightCompleted: boolean;
   SteepNineCompleted: boolean;
+  SteepTenCompleted: boolean;
+  SteepElevenCompleted: boolean;
   // Variables globales
   Steeps: ContextState; // Estado donde se encuentra la solicitud
   Request: iRequest;  // Objeto Solicitud
@@ -59,11 +61,23 @@ export class TitulacionPageComponent implements OnInit {
   CompletedReleasedMessage: String = 'TÚ PROYECTO HA SIDO LIBERADO';//'Tú proyecto ha sido liberado';
   ProcessReleasedValidMessage: String = 'EN ESPERA DE LA VALIDACIÓN';
   CompletedReleasedValidMessage: String = 'LIBERACIÓN APROBADA';
-  CompletedDeliveredMessage: String = 'EN ESPERA DE LA HOJA DE NO INCONVENIENCIA';
+  ProcessValidatedMessage: String = 'EN ESPERA DE LA HOJA DE NO INCONVENIENCIA';
   ProcessAssignedMessage: String = 'En espera de que tú fecha sea aceptada';
   WaitAssignedMessage: String = 'Ha ocurrido un inconveniente con la fecha, espera ha ser contactado';
   RejectAssignedMessage: String = 'Su petición de titulación ha sido rechazada, registre una nueva fecha';
   CancelledAssignedMessage: String = 'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada, registre una nueva fecha';
+  ProcessRealizedMessage: String = 'En espera de la realización';
+  CompletedRealizedMessage: String = 'ACTO RECEPCIONAL APROBADO';
+  RejectRealizedMessage: String = 'ACTO RECEPCIONAL REPROBADO';
+  ProcessGeneratedMessage: String = 'EN ESPERA DEL ACTA DE EXAMEN';
+  AcceptGeneratedMessage: String = 'ACTA DE EXAMEN GENERADA';
+  AcceptGeneratedMessageSubtitle: String = 'FAVOR DE PASAR A RECOGER SUS DOCUMENTOS';
+  CompletedGeneratedMessage: String = 'ACTA DE EXAMEN ENTREGADA';
+  ProcessTitledMessage: String = 'EN ESPERA DE NOTIFICACIÓN PARA RECEPCIÓN DEL TÍTULO';
+  CompletedTitledMessage: String = 'TÍTULO PROFESIONAL';
+  ProcessTitledMessageSubtitle: String = 'FAVOR DE SUBIR LOS SIGUIENTE DOCUMENTOS PARA LA ENTREGA DEL TÍTULO';
+  AcceptTitledMessage: String = 'TÍTULO PROFESIONAL LISTO PARA SER ENTREGADO';
+  FinalizedTitledMessage: String = 'TÍTULO PROFESIONAL ENTREGADO';
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
@@ -131,7 +145,9 @@ export class TitulacionPageComponent implements OnInit {
       this.loadRequest();
     }
   }
+  
   SelectItem(): void {
+    console.log("REQUEST", this.Request);
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
     this.requestService.AddRequest(this.Request, phase);
@@ -151,11 +167,15 @@ export class TitulacionPageComponent implements OnInit {
     this.resetSteep();
     console.log('fase', phase);
     switch (phase) {
+      case eRequest.TITLED: {
+        this.SteepElevenCompleted = (this.StatusComponent === eStatusRequest.FINALIZED ? true : false);
+        // this.SteepElevenCompleted = (phase === eRequest.TITLED ? false : true);
+      }
       case eRequest.GENERATED: {
-
+        this.SteepTenCompleted = (phase === eRequest.GENERATED ? false : true);
       }
       case eRequest.REALIZED: {
-        this.SteepEightCompleted = (phase === eRequest.REALIZED ? false : true);
+        this.SteepNineCompleted = (phase === eRequest.REALIZED ? false : true);
       }
       case eRequest.ASSIGNED: {
         this.SteepEightCompleted = (phase === eRequest.ASSIGNED ? false : true);
@@ -163,8 +183,8 @@ export class TitulacionPageComponent implements OnInit {
         let minutes = this.Request.proposedHour % 60;
         let tmpFecha = new Date(this.Request.proposedDate);
         tmpFecha.setHours(hours, minutes, 0, 0);
-        this.titrationHour =moment(tmpFecha).format('llll');        
-          // ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
+        this.titrationHour = moment(tmpFecha).format('llll');
+        // ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
         this.CancelledAssignedMessage = this.StatusComponent === eStatusRequest.CANCELLED ? this.Request.observation : '';
         this.RejectAssignedMessage = this.StatusComponent === eStatusRequest.REJECT ? this.Request.observation : '';
       }
@@ -195,7 +215,7 @@ export class TitulacionPageComponent implements OnInit {
     }
     (async () => {
       await this.delay(100);
-      console.log('index', this.Steeps.getIndex());
+      // console.log('index', this.Steeps.getIndex());
       this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     })();
   }

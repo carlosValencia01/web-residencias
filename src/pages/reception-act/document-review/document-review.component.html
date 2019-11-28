@@ -1,6 +1,5 @@
-<mat-drawer-container class="example-container">
-  <mat-drawer #drawer [mode]="'side'">
-    <!-- <div class="card-header nav-custom"></div> -->
+<!-- <div class="row">
+  <div class="col-4">
     <ul class="list-group">
       <li *ngFor="let document of documents" class="list-group-item d-flex justify-content-between align-items-center"
         (click)="view(document.type)">
@@ -20,9 +19,8 @@
         </div>
         <div align="end" *ngIf="document.status==='Pendiente' || document.status==='Aceptado'">
           <button *ngIf="document.type!='PROYECTO' && document.type!='LIBERACION'
-          && document.type!='SOLICITUD' && document.type!='REGISTRO'
-          " mat-icon-button
-            [matMenuTriggerFor]="menu">
+                && document.type!='SOLICITUD' && document.type!='REGISTRO'
+                " mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
@@ -34,10 +32,76 @@
               <mat-icon [ngStyle]="{'color':'#dc3545'}">thumb_down</mat-icon>
               <span>Rechazar</span>
             </button>
-            <!-- <button mat-menu-item (click)="check(document.type,'Process')">
-              <mat-icon>pan_tool</mat-icon>
-              <span>En espera</span>
-            </button> -->
+          </mat-menu>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="col-1"
+    style="color: #08a3bc;background-color: rgba(10, 215, 247, 0.2);border:1px solid #09c6e3; height: 100%; max-width: 20px;">
+    <i class="fa fa-chevron-left"></i>
+  </div>
+  <div class="col-7 text-center" style="color: #08a3bc;
+  background-color: rgba(10, 215, 247, 0.2);
+  border-color: #09c6e3; height: 100%; width: 100%;">
+    <img alt="File" src="../../assets/imgs/notfound.png" style="width: 80px; height: 80px">
+    <p class="card-text"> <strong>ARCHIVO NO CARGADO</strong></p>    
+  </div>
+</div> -->
+
+
+
+
+<mat-drawer-container class="example-container">
+  <mat-drawer #drawer [mode]="'side'">
+    <ul class="list-group">
+      <li *ngFor="let document of documents" class="list-group-item d-flex justify-content-between align-items-center"
+        (click)="view(document.type)">
+        <i class="fa fa-file-pdf-o mx-2"></i>
+        {{document.type}}
+        <div [ngSwitch]="document.status">
+          <div *ngSwitchCase="'Pendiente'"><span mat-line
+              class="badge badge-pill badge-process">{{document.status}}</span>
+          </div>
+          <div *ngSwitchCase="'Aceptado'"><span mat-line class="badge badge-pill badge-accept">{{document.status}}
+            </span></div>
+          <div *ngSwitchCase="'Omitido'"><span mat-line class="badge badge-pill badge-omit">{{document.status}}
+            </span></div>
+          <div *ngSwitchCase="'Rechazado'"><span mat-line class="badge badge-pill badge-reject">{{document.status}}
+            </span></div>
+          <div *ngSwitchDefault><span mat-line class="badge badge-pill badge-none">{{document.status}} </span></div>
+        </div>
+        <div align="end"
+          *ngIf="(document.status==='Pendiente' || document.status==='Aceptado') && document.type!='FOTOS'">
+          <button *ngIf="document.type!='PROYECTO' && document.type!='LIBERACION'
+          && document.type!='SOLICITUD' && document.type!='REGISTRO'
+          " mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button *ngIf="document.status==='Pendiente'" mat-menu-item (click)="check(document.type,'Accept')">
+              <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
+              <span>Aceptar</span>
+            </button>
+            <button mat-menu-item (click)="check(document.type,'Reject')">
+              <mat-icon [ngStyle]="{'color':'#dc3545'}">thumb_down</mat-icon>
+              <span>Rechazar</span>
+            </button>
+          </mat-menu>
+        </div>
+        <div align="end" *ngIf="document.type==='FOTOS'">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="check(document.type,'Accept')">
+              <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
+              <span>Aceptar</span>
+            </button>
+            <button mat-menu-item (click)="check(document.type,'Reject')">
+              <mat-icon [ngStyle]="{'color':'#dc3545'}">thumb_down</mat-icon>
+              <span>Rechazar</span>
+            </button>
           </mat-menu>
         </div>
       </li>
@@ -47,10 +111,8 @@
     <div style="display: flex;">
       <div>
         <div class="nav-custom" (click)="drawer.toggle()">
-          <!-- <div class="nav-custom" (click)="drawer.toggle()"> -->
           <i *ngIf="drawer.opened" class="fa fa-chevron-left"></i>
           <i *ngIf="!drawer.opened" class="fa fa-chevron-right"></i>
-          <!-- </div> -->
         </div>
       </div>
       <div style="flex: 1;">
@@ -58,10 +120,9 @@
         </ngx-extended-pdf-viewer>
       </div>
     </div>
-
-
   </mat-drawer-content>
 </mat-drawer-container>
+
 <!-- <div class="container-fluid" style="background:#E9EBEE ">
   <mat-drawer-container class="example-container" style="background-color: #E9EBEE;" [hasBackdrop]="false">
     <mat-drawer #drawer class="example-sidenav" [mode]="side" >

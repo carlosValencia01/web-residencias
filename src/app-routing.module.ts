@@ -53,6 +53,7 @@ import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/s
 import { DiaryComponent } from './pages/reception-act/diary/diary.component';
 import { RangePageComponent } from './app/range-page/range-page.component';
 import { StepperDocumentComponent } from './app/stepper-document/stepper-document.component';
+import { ViewAppointmentPageComponent } from './app/view-appointment-page/view-appointment-page.component';
 
 // Electronic signature
 import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
@@ -91,9 +92,11 @@ const appRoutes: Routes = [
   { path: 'english', component: VinculacionPageComponent, pathMatch: 'full' },
   { path: 'grades', component: GradePageComponent, pathMatch: 'full' },
   { path: 'diary', component: DiaryComponent, pathMatch: 'full' },
+  { path: 'appointment', component: ViewAppointmentPageComponent, pathMatch: 'full' },
   { path: 'graduation', component: TitulacionPageComponent, pathMatch: 'full' },
   { path: 'progressPage', component: ProgressPageComponent, pathMatch: 'full' },
   { path: 'progressPage/:id', component: DocumentReviewComponent, pathMatch: 'full' },
+  { path: 'progressPage/:id/titled', component: DocumentReviewComponent, pathMatch: 'full' },
   { path: 'progressPage/:id/expediente', component: ExpedienteComponent, pathMatch: 'full' },
 
   // Graduation

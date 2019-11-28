@@ -42,13 +42,12 @@ export class ScheduleComponent implements OnInit {
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices, private _RequestService: RequestService,
     private _CookiesService: CookiesService) {
     const user = this._CookiesService.getData().user;
-    console.log("USER", user);
     this.career = user.career;
   }
   ngOnInit() {
     this._RequestService.requestUpdate.subscribe(
-      (result) => {        
-        console.log("re sched", result.Request);
+      (result) => {
+        // console.log("re sched", result.Request);
         this.request = result.Request;
         let hours = this.request.proposedHour / 60;
         let minutes = this.request.proposedHour % 60;
@@ -59,16 +58,20 @@ export class ScheduleComponent implements OnInit {
     // this.schedule(this.viewDate.getMonth(), this.viewDate.getFullYear());
   }
 
+  //Retorna los eventos que estan en la misma hora que el estudiante
   getEvents(Schedule: any): Array<ISchedule> {
     let diary: Array<ISchedule> = [];
     Schedule.forEach(element => {
-      if (element._id.career[0] === this.career && this.request.proposedHour === element._id.minutes) {
+      //  Para agregar los eventos de acuerdo a la hora y por carrera, se quita para tomar en cuenta todas los eventos
+      // if (element._id.career[0] === this.career && this.request.proposedHour === element._id.minutes) 
+      if (this.request.proposedHour === element._id.minutes) {
         diary.push({ career: element._id.career[0], date: element._id.date, minutes: element._id.minutes, count: element.count });
       }
     });
     return diary;
   }
 
+  //Obtiene los rangos de fecha
   getRanges(Ranges: any): void {
     this.ranges = [];
     Ranges.forEach(element => {
@@ -83,6 +86,7 @@ export class ScheduleComponent implements OnInit {
     });
   }
 
+  //Obtiene los espacios ocupados 
   schedule(month: number, year: number): void {
     this.events = [];
     this.appointments = [];
@@ -90,11 +94,19 @@ export class ScheduleComponent implements OnInit {
       month: month,
       year: year
     }).subscribe(data => {
+      // console.log("ESPACIOS DISPO", data.Schedule);
       if (typeof (data.Schedule) !== "undefined") {
         this.getRanges(data.Ranges);
         const diary = this.getEvents(data.Schedule)
         diary.forEach(e => {
+          // const sDate: string[] = e.date.toString().split('-');
+          // let tmpDate: Date = new Date(
+          //   Number(sDate[0]),
+          //   Number(sDate[1]),
+          //   Number(sDate[2]),
+          //   0, 0, 0, 0);
           let tmpDate: Date = new Date(e.date);
+          tmpDate.setHours(0, 0, 0, 0);
           tmpDate.setHours(e.minutes / 60);
           tmpDate.setMinutes(e.minutes % 60);
           for (let i = 0; i < e.count; i++) { this.events.push({ title: '', start: tmpDate }); }
@@ -102,7 +114,7 @@ export class ScheduleComponent implements OnInit {
           tmpDate.setHours(0, 0, 0, 0);
           this.appointments.push({ date: tmpDate, count: e.count });
         });
-
+        console.log("APPOINTMENTS", this.appointments);
         // data.Schedule.forEach(element => {
         //   for (let i = 0; i < element.count; i++) {
         //     this.events.push({ title: '', start: element._id });
@@ -135,13 +147,17 @@ export class ScheduleComponent implements OnInit {
         } else {
           let lDate: Date = new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate());
           lDate.setHours(0, 0, 0, 0);
-          // let tmp: { fecha: Date, count: Number } = this.citas.find(x => x.fecha.getTime() === lDate.getTime());                             
+          // let tmp: { fecha: Date, count: Number } = this.citas.find(x => x.fecha.getTime() === lDate.getTime());   
+
           let tmp: { date: Date, count: Number } = this.appointments.find(x => x.date.getTime() === lDate.getTime());
+          console.log("compar", lDate.getTime(), "dd", tmp);
+          console.log("ranges", this.ranges);
           let tmpRange = this.ranges.find(x => x.start.getTime() <= lDate.getTime() && lDate.getTime() <= x.end.getTime());
           if (typeof (tmp) === 'undefined')
             day.cssClass = 'free';
           else {
-            let limite = typeof (tmpRange) !== 'undefined' ? tmpRange.quantity : 1;
+            //Descomentar para usar rangos
+            let limite = 1; //typeof (tmpRange) !== 'undefined' ? tmpRange.quantity : 1;
             if (tmp.count >= limite)
               day.cssClass = 'complete';
             else

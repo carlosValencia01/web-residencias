@@ -1,19 +1,17 @@
 import { ContextState } from './ContextState';
-import { RealizedState } from './RealizedState';
+import { GeneratedState } from './GeneratedState';
 import { iState } from './iState';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
-import { TitledState } from './TitledState';
 
-export class GeneratedState extends iState {
+export class TitledState extends iState {
     router = 'employeeCard';
-    index = 9;
-    phase: eRequest = eRequest.GENERATED;
-
+    index = 10;
+    phase: eRequest = eRequest.TITLED;
     public next(context: ContextState): void {
-        context.state = new TitledState();
+
     }
 
     public back(context: ContextState): void {
-        context.state = new RealizedState();
+        context.state = new GeneratedState();
     }
 }

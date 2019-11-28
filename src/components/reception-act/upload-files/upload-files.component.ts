@@ -10,6 +10,7 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import Swal from 'sweetalert2';
 import { StepperDocumentComponent } from 'src/app/stepper-document/stepper-document.component';
+import { CookiesService } from 'src/services/app/cookie.service';
 
 @Component({
   selector: 'app-upload-files',
@@ -28,6 +29,8 @@ export class UploadFilesComponent implements OnInit {
   public UploadIngles: IDocument;
   public UploadPago: IDocument;
   public UploadRevalidacion: IDocument;
+  public UploadPhotos: IDocument;
+  public isEditable: boolean;
   constructor(
     private requestService: RequestService,
     public dialog: MatDialog,
@@ -43,9 +46,11 @@ export class UploadFilesComponent implements OnInit {
     this.UploadIngles = { type: eFILES.INGLES, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadPago = { type: eFILES.PAGO, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadRevalidacion = { type: eFILES.CERTIFICADO_R, status: eStatusRequest.NONE, file: null, isBase64: false };
+    this.UploadPhotos = { type: eFILES.PHOTOS, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.requestService.requestUpdate.subscribe(
       (result) => {
         this.Request = result.Request;
+        this.isEditable = result.IsEdit;
         this.onLoad(this.Request.documents);
       }
     );
@@ -84,6 +89,9 @@ export class UploadFilesComponent implements OnInit {
 
       const isPago = this.getDocument(eFILES.PAGO);
       this.UploadPago = typeof (isPago) === 'undefined' ? this.UploadPago : isPago;
+
+      const isPhotos = this.getDocument(eFILES.PHOTOS);
+      this.UploadPhotos = typeof (isPhotos) === 'undefined' ? this.UploadPhotos : isPhotos;
     }
   }
 
@@ -145,14 +153,14 @@ export class UploadFilesComponent implements OnInit {
         break;
       }
     }
-    console.log('ES BASE ', isBase64, 'pdf', pdf, 'type', typeof (pdf));
+    // console.log('ES BASE ', isBase64, 'pdf', pdf, 'type', typeof (pdf));
     if (!isBase64) {
       if (pdf !== null) {
-        this.openView(pdf, isBase64);
+        this.openView(pdf, isBase64, type);
       }
     } else {
       this.requestProvider.getResource(this.Request._id, type).subscribe(data => {
-        this.openView(data, isBase64);
+        this.openView(data, isBase64, type);
       }, error => {
         this.notificationServices.showNotification(eNotificationType.ERROR,
           'Titulación App', error);
@@ -161,11 +169,12 @@ export class UploadFilesComponent implements OnInit {
 
   }
 
-  openView(source: any, isBase64: boolean): void {
+  openView(source: any, isBase64: boolean, type: eFILES): void {
     this.dialog.open(ExtendViewerComponent, {
       data: {
         source: source,
-        isBase64: isBase64
+        isBase64: isBase64,
+        title: type
       },
       disableClose: true,
       hasBackdrop: true,
@@ -214,6 +223,10 @@ export class UploadFilesComponent implements OnInit {
         message = this.UploadRevalidacion.observation;
         break;
       }
+      case eFILES.PHOTOS: {
+        message = this.UploadPhotos.observation;
+        break;
+      }
     }
     Swal.fire({
       type: 'error',
@@ -232,7 +245,7 @@ export class UploadFilesComponent implements OnInit {
     frmData.append('FullName', this.Request.student.fullName);
     frmData.append('Career', this.Request.student.career);
     frmData.append('Document', type);
-
+    frmData.append('IsEdit', this.isEditable ? "true" : "false");
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
         frmData.append('file', this.UploadActa.file);
@@ -283,8 +296,12 @@ export class UploadFilesComponent implements OnInit {
 
     this.requestProvider.uploadFile(this.Request._id, frmData).subscribe(data => {
       const doc = this.getDocument(type);
-      doc.status = eStatusRequest.PROCESS;
-      document.status = eStatusRequest.PROCESS;
+      doc.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;
+      document.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;//eStatusRequest.PROCESS;
+      if (this.isEditable) {
+        this.onRemove(file);
+        this.notificationServices.showNotification(eNotificationType.SUCCESS, "Titulación App", "Documento cambiado");
+      }
     }, error => {
       this.notificationServices.showNotification(eNotificationType.ERROR,
         "Titulación App", error);
@@ -297,38 +314,47 @@ export class UploadFilesComponent implements OnInit {
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
         this.UploadActa.file = null;
+        this.UploadActa.isBase64 = this.isEditable ? true : this.UploadActa.isBase64;
         break;
       }
       case eFILES.CURP: {
         this.UploadCurp.file = null;
+        this.UploadCurp.isBase64 = this.isEditable ? true : this.UploadCurp.isBase64;
         break;
       }
       case eFILES.CERTIFICADO_B: {
         this.UploadCertificado.file = null;
+        this.UploadCertificado.isBase64 = this.isEditable ? true : this.UploadCertificado.isBase64;
         break;
       }
       case eFILES.CEDULA: {
         this.UploadCedula.file = null;
+        this.UploadCedula.isBase64 = this.isEditable ? true : this.UploadCedula.isBase64;
         break;
       }
       case eFILES.CERTIFICADO_L: {
         this.UploadLicenciatura.file = null;
+        this.UploadLicenciatura.isBase64 = this.isEditable ? true : this.UploadLicenciatura.isBase64;
         break;
       }
       case eFILES.SERVICIO: {
         this.UploadServicio.file = null;
+        this.UploadServicio.isBase64 = this.isEditable ? true : this.UploadServicio.isBase64;
         break;
       }
       case eFILES.INGLES: {
         this.UploadIngles.file = null;
+        this.UploadIngles.isBase64 = this.isEditable ? true : this.UploadIngles.isBase64;
         break;
       }
       case eFILES.PAGO: {
         this.UploadPago.file = null;
+        this.UploadPago.isBase64 = this.isEditable ? true : this.UploadPago.isBase64;
         break;
       }
       case eFILES.CERTIFICADO_R: {
         this.UploadRevalidacion.file = null;
+        this.UploadRevalidacion.isBase64 = this.isEditable ? true : this.UploadRevalidacion.isBase64;
         break;
       }
     }
