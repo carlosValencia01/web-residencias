@@ -169,6 +169,8 @@ import { NewEventComponent } from './new-event/new-event.component';
 import { ViewMoreComponent } from './view-more/view-more.component';
 import { StepperDocumentComponent } from './stepper-document/stepper-document.component';
 import { UploadDeliveredComponent } from './upload-delivered/upload-delivered.component';
+import { ViewAppointmentPageComponent } from './view-appointment-page/view-appointment-page.component';
+import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
 registerLocaleData(localeEs);
 @NgModule({
   declarations: [
@@ -251,6 +253,8 @@ registerLocaleData(localeEs);
     ViewMoreComponent,
     StepperDocumentComponent,
     UploadDeliveredComponent,
+    ViewAppointmentPageComponent,
+    UploadFileTitledComponent,
   ],
   imports: [
     // Angular

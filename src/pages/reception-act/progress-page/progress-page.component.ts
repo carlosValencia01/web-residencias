@@ -71,7 +71,7 @@ export class ProgressPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadRequest();
+    this.loadRequest(true);
     this.displayedColumns = ['controlNumber', 'fullName', 'career', 'phase', 'status', 'applicationDateLocal', 'lastModifiedLocal', 'action'];
     this.statusOptions = [
       { icon: 'accessibility_new', option: 'Todos' },
@@ -86,9 +86,9 @@ export class ProgressPageComponent implements OnInit {
     ];
   }
 
-  loadRequest(): void {
+  loadRequest(isInit: boolean = false): void {
     let filter = '';
-    console.log("dd",this.role);
+    console.log("dd", this.role);
     // switch (this.cookiesService.getData().user.rol.name) {
     switch (this.role) {
       case eRole.CHIEFACADEMIC: {
@@ -99,8 +99,12 @@ export class ProgressPageComponent implements OnInit {
         filter = 'coordinacion';
         break;
       }
-      case eRole.SECRETARY: {
+      case eRole.SECRETARYACEDMIC: {
         filter = 'secretaria';
+        break;
+      }
+      case eRole.HEADSCHOOLSERVICE: {
+        filter='escolares'
         break;
       }
       case eRole.STUDENTSERVICES: {
@@ -130,9 +134,12 @@ export class ProgressPageComponent implements OnInit {
           this.request.push(tmp);
         });
         this.requestFilter = this.request.slice(0);
-        this.careers = this.allCarrers.slice(0);
-        this.isAll = true;
+        if (isInit) {
+          this.careers = this.allCarrers.slice(0);
+          this.isAll = true;
+        }
         this.reset = true;
+        this.requestFilter = this.filter(this.careers, this.phases).slice(0);
         this.refresh();
       },
       error => {
@@ -140,10 +147,6 @@ export class ProgressPageComponent implements OnInit {
       });
   }
 
-  cha(): void {
-    this.reset = !this.reset;
-    console.log("Valor reset", this.reset);
-  }
   refresh(): void {
     this.dataSource = new MatTableDataSource(this.requestFilter);
     this.dataSource.paginator = this.paginator;
@@ -244,6 +247,10 @@ export class ProgressPageComponent implements OnInit {
           value = 'Rechazado';
           break;
         }
+      case 'Finalized': {
+        value = 'Finalizado';
+        break;
+      }
       default:
         // value = 'Ninguno'; //17/11
         value = 'Pendiente';
@@ -389,7 +396,7 @@ export class ProgressPageComponent implements OnInit {
         }
         else {
           data.observation = 'Acto recepcional no aprobado';
-          data.observation = eStatusRequest.REJECT;
+          data.operation = eStatusRequest.REJECT;
         }
 
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
@@ -402,6 +409,77 @@ export class ProgressPageComponent implements OnInit {
       }
 
     })
+  }
+
+  generated(Identificador: string, operation: string): void {
+    Swal.fire({
+      title: '¿Está seguro de continuar con la operación?',
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {
+      if (result.value) {
+        const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
+        let data = {
+          doer: this.cookiesService.getData().user.name.fullName,
+          observation: '',
+          operation: eOperation// eStatusRequest.PROCESS
+        };
+        this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
+          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+            (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : 'Acta de Examen Entregada'));
+          this.loadRequest();
+        }, error => {
+          let tmpJson = JSON.parse(error._body);
+          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+        });
+      }
+    });
+  }
+
+  titled(Identificador: string, operation: string): void {
+    const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
+    switch (eOperation) {
+      case eStatusRequest.PROCESS: {
+
+      }
+      case eStatusRequest.FINALIZED: {
+        Swal.fire({
+          title: '¿Está seguro de continuar con la operación?',
+          type: 'question',
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Aceptar'
+        }).then((result) => {
+          if (result.value) {
+            let data = {
+              doer: this.cookiesService.getData().user.name.fullName,
+              observation: '',
+              operation: eOperation// eStatusRequest.PROCESS
+            };
+            this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
+              this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+                (eOperation === eStatusRequest.PROCESS ? 'Alumno notificado' : 'Título Profesional Entregado'));
+              this.loadRequest();
+            }, error => {
+              let tmpJson = JSON.parse(error._body);
+              this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+            });
+          }
+        })
+        break;
+      }
+      case eStatusRequest.ACCEPT: {
+        this.router.navigate([Identificador + '/titled'], { relativeTo: this.activeRoute });
+      }
+    }
   }
 
   Review(Identificador): void {

@@ -1,4 +1,3 @@
-<button (click)="cha()">ddd</button>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><i class="fa fa-home"></i>Home</li>
@@ -349,7 +348,7 @@
                                             </div>
                                             <div *ngSwitchCase="'Registrado'">
                                                 <button mat-menu-item
-                                                    *ngIf="role==='Jefe Académico' || role==='Administrador'"
+                                                    *ngIf="role==='Secretaria Académica' || role==='Administrador'"
                                                     (click)="releasedRequest(row._id)">
                                                     <mat-icon>lock_open</mat-icon>
                                                     Liberacion
@@ -370,8 +369,10 @@
                                                     <mat-icon>search</mat-icon>
                                                     Revisar
                                                 </button>
+                                            </div>
+                                            <div *ngSwitchCase="'Validado'">
                                                 <button
-                                                    *ngIf="row.status==='Aceptado' && (role==='Servicios Estudiantiles' || role==='Administrador')"
+                                                    *ngIf="row.status==='Pendiente' && (role==='Jefe de Servicios Escolares' || role==='Administrador')"
                                                     mat-menu-item (click)="signProof(row._id)">
                                                     <mat-icon>touch_app</mat-icon>
                                                     Firmar Constancias
@@ -404,11 +405,40 @@
                                                     Aprobar
                                                 </button>
                                             </div>
-                                            <button *ngSwitchCase="'Generado'" mat-menu-item
-                                                (click)="openRequestForm(row._id)">
-                                                <mat-icon>assignment_turned_in</mat-icon>
-                                                Revisar
-                                            </button>
+                                            <div *ngSwitchCase="'Generado'">
+                                                <button
+                                                    *ngIf="(role==='Servicios Estudiantiles' || role==='Administrador') && row.status==='Pendiente'"
+                                                    mat-menu-item (click)="generated(row._id,'Process')">
+                                                    <mat-icon>print</mat-icon>
+                                                    Generar Acta
+                                                </button>
+                                                <button
+                                                    *ngIf="(role==='Servicios Estudiantiles' || role==='Administrador') && row.status!=='Pendiente'"
+                                                    mat-menu-item (click)="generated(row._id,'Accept')">
+                                                    <mat-icon>done_all</mat-icon>
+                                                    Entregar Acta
+                                                </button>
+                                            </div>
+                                            <div *ngSwitchCase="'Titulado'">
+                                                <button
+                                                    *ngIf="(role==='Servicios Estudiantiles' || role==='Administrador') && row.status==='Pendiente'"
+                                                    mat-menu-item (click)="titled(row._id,'Process')">
+                                                    <mat-icon>notification_important</mat-icon>
+                                                    Notificar
+                                                </button>
+                                                <button
+                                                    *ngIf="(role==='Servicios Estudiantiles' || role==='Administrador') && row.status==='Proceso'"
+                                                    mat-menu-item (click)="titled(row._id,'Accept')">
+                                                    <mat-icon>verified_user</mat-icon>
+                                                    Validar Documentos
+                                                </button>
+                                                <button
+                                                    *ngIf="(role==='Servicios Estudiantiles' || role==='Administrador') && row.status==='Aceptado'"
+                                                    mat-menu-item (click)="titled(row._id,'Finalized')">
+                                                    <mat-icon>school</mat-icon>
+                                                    Finalizar
+                                                </button>
+                                            </div>
                                             <!-- <button *ngSwitchDefault mat-menu-item (click)="openRequestForm(row._id)">
                                                                   <mat-icon>assignment_turned_in</mat-icon>
                                                                   Revisar

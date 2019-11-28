@@ -5,17 +5,17 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
 @Injectable()
 export class RequestService {
     private Request: iRequest;
-    public requestUpdate = new EventEmitter<{ Request: iRequest, Phase: eRequest }>();
+    public requestUpdate = new EventEmitter<{ Request: iRequest, Phase: eRequest, IsEdit: boolean }>();
 
-    public AddRequest(request: iRequest, phase: eRequest): void {
+    public AddRequest(request: iRequest, phase: eRequest, isEdit: boolean = false): void {
         this.Request = request;
         console.log('ADD REQUEST service', this.Request);
-          (async () => {
+        (async () => {
             await this.delay(150);
-            this.requestUpdate.emit({ Request: this.Request, Phase: phase });
+            this.requestUpdate.emit({ Request: this.Request, Phase: phase, IsEdit: isEdit });
         })();
-        this.requestUpdate.emit({ Request: this.Request, Phase: phase });
-      
+        this.requestUpdate.emit({ Request: this.Request, Phase: phase, IsEdit: isEdit });
+
     }
 
     delay(ms: number) {

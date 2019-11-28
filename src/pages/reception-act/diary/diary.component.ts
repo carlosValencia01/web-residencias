@@ -53,15 +53,18 @@ export class DiaryComponent implements OnInit {
     const tmpFecha = localStorage.getItem('Appointment');
     if (typeof (tmpFecha) !== 'undefined' && tmpFecha) {
       this.viewDate = new Date(tmpFecha);
-      this.view = CalendarView.Week;      
+      this.view = CalendarView.Week;
       localStorage.removeItem('Appointment');
-    }
+    } 
+    // else {
+    //   this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1);
+    // }
   }
   ngOnInit() {
     this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
     this.carrers = this._sourceDataProvider.getCareerAbbreviation();
     this.carrers.push({
-      carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: false,
+      carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
       color: { primary: '#57c7d4', secondary: '#ace3ea' }
     });
   }
@@ -71,8 +74,9 @@ export class DiaryComponent implements OnInit {
     this._RequestProvider.getDiary({
       month: month,
       year: year
-    }).subscribe(data => {      
+    }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
+        console.log("Appoint", data.Diary);
         this.Appointments = data.Diary;
         this.Ranges = data.Ranges;
         // this.generateAppointment(month, year);
@@ -156,6 +160,7 @@ export class DiaryComponent implements OnInit {
   loadAppointment(): void {
     this.events = [];
     this.carrers.forEach(career => {
+      console.log("Carr", career);
       if (career.status) {
         // console.log("Carrera", career);
         let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] };
@@ -163,23 +168,25 @@ export class DiaryComponent implements OnInit {
         if (typeof (tmp) != 'undefined') {
           tmp.values.forEach(element => {
             // console.log("UN VALOR", element);
+            const vFecha = element.proposedDate.toString().split('T')[0].split('-');
             let tmpStart = new Date(element.proposedDate);
             let tmpEnd = new Date(element.proposedDate);
             tmpStart.setHours(0, 0, 0, 0);
             tmpEnd.setHours(0, 0, 0, 0);
             tmpStart.setMinutes(element.proposedHour);
             tmpEnd.setMinutes(element.proposedHour + 60);
+            // let tmpStart = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);
+            // let tmpEnd = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);            
+
             // let hours = element.proposedHour / 60;
             // let minutes = element.proposedHour % 60;
             // let hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
             let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];
-            this.events.push({
-              title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }
-              )
-            });
+            this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
           });
         }
       }
+      console.log("event", this.events);
     });
     this.refresh.next();
   }
@@ -222,7 +229,7 @@ export class DiaryComponent implements OnInit {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
       //Para no llamar a la bd
       // console.log("Rsponse", response);
-      if (typeof (response) !== 'undefined') {        
+      if (typeof (response) !== 'undefined') {
         const index = this.Appointments.findIndex(x => x._id[0] === response.career);
         // console.log("Index", index);
         if (index != -1) {
@@ -241,7 +248,7 @@ export class DiaryComponent implements OnInit {
     })
   }
 
-  addEvent($event): void {    
+  addEvent($event): void {
     const dialogRef = this.dialog.open(NewEventComponent, {
       data: {
         operation: eOperation.DML,

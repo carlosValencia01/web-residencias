@@ -100,17 +100,18 @@
 
       <div class="row" *ngIf="!fileUpload">
         <div class="card-body text-center"
-          style="color: #0aa68d; background-color: rgba(13, 219, 185, 0.2); border-color: #0cc9aa;">
-          <div class="row">
+          style="color: #0aa68d; background-color: rgba(13, 219, 185, 0.2); border-color: #0cc9aa; height: 100%;">
+          <div class="row" style="padding-top: 15%;">
             <div class="col-4"></div>
             <div class="col-4">
-              <img alt="File" src="../../assets/imgs/notfound.png" style="max-width: 100px; max-height: 100px;">
+              <img alt="File" src="../../assets/imgs/notfound.png"
+                style="max-width: 100px; max-height: 100px;">
               <h6>ARCHIVO NO ENCONTRADO</h6>
             </div>
             <div class="col-4"></div>
           </div>
           <div class="row">
-            <div class="col-12">
+            <div class="col-12" style="padding-top: 10%;">
               <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
               <button type="button" id="btnUpload" style="background-color: white; border-radius: 8px;"
                 (click)="fileUpload.click()"><small>Elige un

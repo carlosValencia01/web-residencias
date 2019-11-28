@@ -9,4 +9,5 @@ export enum eStatusRequest {
     WAIT = 'Wait',
     ASSIGN = 'Assign',
     CANCELLED='Cancelled',
+    FINALIZED='Finalized'
 }

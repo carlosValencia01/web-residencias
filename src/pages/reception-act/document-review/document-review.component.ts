@@ -13,6 +13,7 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 
 
+
 @Component({
   selector: 'app-document-review',
   templateUrl: './document-review.component.html',
@@ -22,10 +23,11 @@ export class DocumentReviewComponent implements OnInit {
   displayedColumns: string[];
   opened = true;
   pdf: any;
+  existFile: boolean;
   dataSource: MatTableDataSource<IDocument>;
   @ViewChild('drawer') drawer: MatDrawer;
   @ViewChild(MatSort) sort: MatSort;
-
+  isTitled: boolean;
   documents: Array<IDocument>;
   request: iRequest;
   uRequest: uRequest;
@@ -37,9 +39,10 @@ export class DocumentReviewComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     public imgSrv: ImageToBase64Service,
     private _CookiesService: CookiesService) {
+    if (typeof (this.activatedRoute.snapshot.url[2]) !== 'undefined')
+      this.isTitled = this.activatedRoute.snapshot.url[2].path === 'titled';
     this.activatedRoute.params.subscribe(
       (params: Params) => {
-        console.log("Params", params);
         this.requestProvider.getRequestById(params.id).subscribe(
           data => {
             this.request = data.request[0];
@@ -64,16 +67,27 @@ export class DocumentReviewComponent implements OnInit {
 
   refresh(): void {
     this.documents = [];
-    this.request.documents.forEach(element => {
-      if (element.type !== eFILES.PROYECTO && element.type !== eFILES.RELEASED
-        && element.type !== eFILES.SOLICITUD && element.type !== eFILES.REGISTRO
-        )
-      this.documents.push({
-        type: element.type, dateRegistered: element.dateRegister,
-        status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
+    if (this.isTitled) {
+      this.request.documents.forEach(element => {
+        if (element.type === eFILES.INE || element.type === eFILES.XML || element.type === eFILES.CED_PROFESIONAL)
+          this.documents.push({
+            type: element.type, dateRegistered: element.dateRegister,
+            status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
+          });
       });
-    });
-    console.log("Documento", this.documents);
+    }
+    else {
+      this.request.documents.forEach(element => {
+        if (element.type !== eFILES.PROYECTO && element.type !== eFILES.RELEASED
+          && element.type !== eFILES.SOLICITUD && element.type !== eFILES.REGISTRO
+          && element.type !== eFILES.INCONVENIENCE
+        )
+          this.documents.push({
+            type: element.type, dateRegistered: element.dateRegister,
+            status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
+          });
+      });
+    }
     // this.dataSource = new MatTableDataSource(this.documents);
     // this.dataSource.sort = this.sort;
   }
@@ -84,6 +98,11 @@ export class DocumentReviewComponent implements OnInit {
 
   view(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
+    if (type === eFILES.PHOTOS) {
+      this.existFile = false;
+      return;
+    }
+    this.existFile = true;
     const archivo = this.getDocument(type);
     if (archivo.status !== 'Omitido') {
       switch (type) {
@@ -137,7 +156,7 @@ export class DocumentReviewComponent implements OnInit {
       Document: type,
       Status: status,
       Observation: '',
-      Doer:this._CookiesService.getData().user.name.fullName
+      Doer: this._CookiesService.getData().user.name.fullName
     };
     if (status === eStatusRequest.REJECT) {
       const swalWithBootstrapButtons = Swal.mixin({

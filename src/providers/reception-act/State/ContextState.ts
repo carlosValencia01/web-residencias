@@ -10,6 +10,8 @@ import { DeliveredState } from './DeliveredState';
 import { ValidatedState } from './ValidatedState';
 import { AssignedState } from './AssignedState';
 import { RealizedState } from './RealizedState';
+import { GeneratedState } from './GeneratedState';
+import { TitledState } from './TitledState';
 
 export class ContextState {
     public state: iState;
@@ -61,8 +63,18 @@ export class ContextState {
                 this.state.status = status;
                 break;
             }
-            case eRequest.REALIZED:{
+            case eRequest.REALIZED: {
                 this.state = new RealizedState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.GENERATED: {
+                this.state = new GeneratedState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.TITLED: {
+                this.state = new TitledState();
                 this.state.status = status;
                 break;
             }
