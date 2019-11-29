@@ -12,7 +12,7 @@
   <div class="row text-center">
     <div class="col-12">
       <mat-tab-group>
-        <mat-tab label="First">
+        <mat-tab label="Revisión de expediente {{data.student.fullName}}">
             <div class="card mt-3" *ngIf="clinicDoc">
                 <div class="card-header text-white bg-secondary">
                   <strong>Documentos</strong>
@@ -21,7 +21,7 @@
                   <div [class.col-12]="!viewdoc" [class.col-2]="viewdoc">
                     <div class="card-body">
                       <div class="row">
-                        <div [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                        <div *ngIf="actaDoc "  [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
                           <!--Acta Nacimiento-->
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'EN PROCESO'" (click)="cardClick('acta')" class="process">
                             <mat-card-header>
@@ -76,7 +76,7 @@
                             
                           </mat-card>
                         </div>
-                        <div [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                        <div *ngIf="certificateDoc "  [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
                           <!--Certificado Estudios-->
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" (click)="cardClick('certificado')" *ngIf="certificateDoc.status == 'EN PROCESO'" class="process">
                             <mat-card-header>
@@ -130,7 +130,7 @@
                             
                           </mat-card>
                         </div>
-                        <div [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                        <div *ngIf="clinicDoc "  [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
                           <!--Analisis Clinicos-->
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" (click)="cardClick('clinicos')" *ngIf="clinicDoc.status == 'VALIDADO'" class="validate">
                             <mat-card-header>
@@ -184,7 +184,7 @@
                             
                           </mat-card>
                         </div>
-                        <div [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                        <div  *ngIf="payDoc " [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
                           <!--Comprobante Pago-->
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" (click)="cardClick('comprobante')" *ngIf="payDoc.status == 'EN PROCESO'" class="process">
                             <mat-card-header>
@@ -242,7 +242,7 @@
                     </div>
                     <div class="card-body">
                       <div class="row">
-                        <div [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                        <div *ngIf="curpDoc " [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
                           <!--Curp-->
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" (click)="cardClick('curp')" *ngIf="curpDoc.status == 'ACEPTADO'" class="accept">
                             <mat-card-header>
@@ -296,7 +296,7 @@
                            
                           </mat-card>
                         </div>
-                        <div [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                        <div  *ngIf="nssDoc " [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
                           <!--Nss-->
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" (click)="cardClick('nss')" *ngIf="nssDoc.status == 'EN PROCESO'" class="process">
                             <mat-card-header>
@@ -350,7 +350,7 @@
                             
                           </mat-card>
                         </div>
-                        <div [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                        <div  *ngIf="imageDoc " [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
                           <!--FOTO-->
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" (click)="cardClick('foto')" *ngIf="imageDoc.status == 'EN PROCESO'" class="process">
                             <mat-card-header>
@@ -407,7 +407,7 @@
                       </div>
                     </div>
                   </div>
-                  <div [class.col-10]="viewdoc" [class.noview]="!viewdoc" class="mt-2">
+                  <div  [class.col-10]="viewdoc" [class.noview]="!viewdoc" class="mt-2">
                     <div class="content" [class.viewdoc]="viewdoc">
                       <div class="row text-center viewdocheader">
                         <div class="col-11">
@@ -461,7 +461,7 @@
                             <div *ngIf="refused === 'RECHAZADO'">
                                 <mat-form-field appearance="outline">
                                   <mat-label>Especifique el motivo</mat-label>
-                                  <input matInput formControlName="observation" [errorStateMatcher]="matcher" oninput="this.value = this.value.toUpperCase()">
+                                  <input matInput formControlName="observation" [errorStateMatcher]="matcher" maxlength="200">
                                   <mat-error>
                                     <span
                                       *ngIf="!form.get('observation').valid && form.get('observation').touched">Especificar porque se rechaza.</span>
@@ -477,8 +477,7 @@
                 </div>
               </div>
         
-        </mat-tab>
-        <mat-tab label="Historial"> Content 2 </mat-tab>        
+        </mat-tab>             
       </mat-tab-group>      
     </div>
   </div>

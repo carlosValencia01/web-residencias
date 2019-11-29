@@ -48,7 +48,7 @@ export class ReviewExpedientComponent implements OnInit {
     public dialog: MatDialog,
   ) {
 
-    // console.log(data);
+    console.log(data);
     this.studentProv.refreshNeeded$.subscribe(
       ()=>{
         this.getDocuments();                
@@ -101,7 +101,8 @@ export class ReviewExpedientComponent implements OnInit {
         this.clinicDoc = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
       
         if(this.imageDoc) this.imageDoc.status = this.imageDoc ? this.imageDoc.status.filter( st=> st.active===true)[0].name : '';
-
+        console.log(this.imageDoc,'imageeeen');
+        
        if(this.curpDoc) this.curpDoc.status = this.curpDoc ? this.curpDoc.status.filter( st=> st.active===true)[0].name : '';
         
        if(this.actaDoc) this.actaDoc.status = this.actaDoc ? this.actaDoc.status.filter( st=> st.active===true)[0].name : '';
@@ -174,7 +175,7 @@ export class ReviewExpedientComponent implements OnInit {
       const documentInfo = {      
           filename:this.docto.filename,        
           status : {
-          name:action.status,
+          name:this.data.user === 'Secretaria' ? 'VALIDADO' :'ACEPTADO',
           active:true,
           message: action.status === 'ACEPTADO' ? 'Documento aceptado' : 'Documento rechazado',
           observation: action.status === 'RECHAZADO' ? action.observation : ''
@@ -201,7 +202,7 @@ export class ReviewExpedientComponent implements OnInit {
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '40em',
+      width: '50em',
       height: '520px'
     });  
   }

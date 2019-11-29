@@ -7,10 +7,12 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { DocumentsHelpComponent } from 'src/modals/inscriptions/documents-help/documents-help.component';
 
 import { MatStepper } from '@angular/material/stepper';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-inscriptions-upload-files-page',
@@ -80,6 +82,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     private studentProv: StudentProvider,    
     private stepper: MatStepper,
     private modalService: NgbModal,
+    private dialog : MatDialog
    
     ) {
       this.data = this.cookiesService.getData().user;
@@ -440,5 +443,16 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   }
   imageLoaded() {
     // show cropper
+  }
+  help(document : string){
+    const linkModal = this.dialog.open(DocumentsHelpComponent, {
+      data: {
+        document: document
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '60em',
+      height: '500px'
+    });
   }
 }

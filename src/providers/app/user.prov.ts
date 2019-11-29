@@ -1,13 +1,19 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Api } from './api.prov';
-
+import {Subject} from 'rxjs';
 @Injectable()
 export class UserProvider {
+
+    private _refreshNeeded$ = new Subject<void>();
     constructor(
         public api: Api,
     ) {
 
+    }
+
+    get refreshNeeded$() {
+        return this._refreshNeeded$;
     }
 
     addUser(data) {
@@ -48,8 +54,12 @@ export class UserProvider {
         this.api.setToken(token);
     }
 
-    update(id,data){
-        return this.api.put(`user/update/user/${id}`, { data: data })
-            .pipe(map(user => user.json()));
+    updateCareers(id,data,action){
+        return this.api.put(`user/${action}/career/user/${id}`, data)
+            .pipe(map(user => user.json())).pipe(
+                tap(() => {
+                  this._refreshNeeded$.next();
+                })
+              );;
     }
 }
