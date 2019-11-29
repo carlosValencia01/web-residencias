@@ -67,7 +67,7 @@ export class ProgressPageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.activeRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    this.role = this.cookiesService.getData().user.rol.name;
+    this.role = this.cookiesService.getData().user.rol.name.toLowerCase();
   }
 
   ngOnInit() {
@@ -91,23 +91,23 @@ export class ProgressPageComponent implements OnInit {
     console.log("dd", this.role);
     // switch (this.cookiesService.getData().user.rol.name) {
     switch (this.role) {
-      case eRole.CHIEFACADEMIC: {
+      case eRole.CHIEFACADEMIC.toLowerCase(): {
         filter = 'jefe';
         break;
       }
-      case eRole.COORDINATION: {
+      case eRole.COORDINATION.toLowerCase(): {
         filter = 'coordinacion';
         break;
       }
-      case eRole.SECRETARYACEDMIC: {
+      case eRole.SECRETARYACEDMIC.toLowerCase(): {
         filter = 'secretaria';
         break;
       }
-      case eRole.HEADSCHOOLSERVICE: {
-        filter='escolares'
+      case eRole.HEADSCHOOLSERVICE.toLowerCase(): {
+        filter = 'escolares';
         break;
       }
-      case eRole.STUDENTSERVICES: {
+      case eRole.STUDENTSERVICES.toLowerCase(): {
         filter = 'servicios';
         break;
       }
