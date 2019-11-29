@@ -3,8 +3,12 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
 import { NotificationsServices } from 'src/services/app/notifications.service';
+import {MatDialog} from '@angular/material/dialog';
+
+import {SelectPositionComponent} from 'src/modals/electronic-signature/select-position/select-position.component';
 
 import { UserProvider } from 'src/providers/app/user.prov';
+import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { Router } from '@angular/router';
 @Component({
@@ -27,9 +31,11 @@ export class LoginPageComponent implements OnInit {
   constructor(
     public formBuilder: FormBuilder,
     private userProv: UserProvider,
+    private employeeProv: EmployeeProvider,
     private cookiesServ: CookiesService,
     private notificationsServ: NotificationsServices,
     private router: Router,
+    public dialog: MatDialog
   ) {
     console.log('login');
    }
@@ -62,13 +68,28 @@ export class LoginPageComponent implements OnInit {
       }
     } else {
       this.userProv.login({ email: this.formLogin.get('usernameInput').value, password: this.formLogin.get('passwordInput').value })
-        .subscribe(res => {
+        .subscribe(async (res) => {
           // console.log(res);
           // Aqui emitiremos la señal, de que todo esta correcto y se cambiara la pagina.
+
           this.userProv.sendTokenFromAPI(res.token);
-          this.cookiesServ.saveData(res);
-          this.showAlertDiv = false;
-          this.loginSuccessful.emit();
+
+          let positions;
+          positions = await this.getPositions(res.user.email);
+
+          const dialogRef = this.dialog.open(SelectPositionComponent, {
+            width: '280px',
+            data: {positions: positions},
+            backdropClass: 'backdropBackground'
+          });
+
+          dialogRef.afterClosed().subscribe(result => {
+            if (result.code === 'Ok') {
+              this.cookiesServ.saveData(res);
+              this.showAlertDiv = false;
+              this.loginSuccessful.emit();
+            }
+          });
         }, (error) => {
           console.log(error);
           const msg = JSON.parse(error._body);
@@ -76,6 +97,20 @@ export class LoginPageComponent implements OnInit {
           this.showAlertDiv = true;
         });
     }
+  }
+
+  getPositions(email) {
+    return new Promise(resolve => {
+      this.employeeProv.getEmployee(email).subscribe(
+        res => {
+          this.employeeProv.getEmployeesPositions(res.employee.rfc).subscribe(
+            data => {
+              resolve(data);
+            }
+          );
+        }
+      );
+    });
   }
 
 }

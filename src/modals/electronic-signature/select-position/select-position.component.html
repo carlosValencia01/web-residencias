@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Seleccione un puesto</h1>
+<div mat-dialog-content>
+    <mat-card *ngFor="let position of positions" style="background-color: #2f323e; max-width: 65%; margin-top: 20px; cursor: pointer">
+      <p (click)="onNoClick('Ok')" style="color: #ffffff;">{{position.name}}</p>
+      <!--<button mat-button >Cancelar</button>-->
+    </mat-card>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick('Closed')" >Cancelar</button>
+</div>

@@ -123,4 +123,10 @@ export class EmployeeProvider {
         .put(`employee/gradesPositions/${id}`, data)
         .pipe(map(res => res.json()));
     }
+
+    getEmployeesPositions(rfc) {
+      return this.api.get(`employee/positions/${rfc}`).pipe(
+        map(res => res.json())
+      );
+    }
 }

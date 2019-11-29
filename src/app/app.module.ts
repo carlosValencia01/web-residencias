@@ -176,6 +176,7 @@ import { PositionProvider } from 'src/providers/shared/position.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
+import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
 
 @NgModule({
   declarations: [
@@ -262,6 +263,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
+    SelectPositionComponent
 ],
   imports: [
     // Angular
@@ -391,6 +393,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
+    SelectPositionComponent
   ],
   bootstrap: [AppComponent]
 })
