@@ -25,6 +25,7 @@ export class NewPositionComponent implements OnInit {
   private operationMode: eOperation;
   private position: IPosition;
   private employeeId: string;
+  private currentPositions: {actives, inactives};
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -33,6 +34,7 @@ export class NewPositionComponent implements OnInit {
   ) {
     this.operationMode = this.data.operationMode;
     this.employeeId = this.data.employeeId;
+    this.currentPositions = this.data.currentPositions;
     this.title = 'Nuevo puesto';
     if (this.operationMode === eOperation.EDIT) {
       this.position = <IPosition>this.data.position;
@@ -76,7 +78,8 @@ export class NewPositionComponent implements OnInit {
     if (departmentId) {
       this.positionProv.getAvailablePositionsForDepartment(this.employeeId, departmentId)
         .subscribe(positions => {
-          this.positions = positions;
+          const activePositions = this.currentPositions.actives.map(({position}) => position.name.toUpperCase());
+          this.positions = positions.filter(({name}) => !activePositions.includes(name.toUpperCase()));
           this.positionForm.get('position').reset();
         });
     }
@@ -106,8 +109,9 @@ export class NewPositionComponent implements OnInit {
       this.dialogRef.close(this.position);
     } else {
       Swal.fire(
-        'Puesto incorrecto',
-        'No hay un puesto seleccionado',
+        'Puesto no disponible',
+        `El puesto ingresado no puede ser asignado al empleado.
+        Para más información revise los motivos de no disponibilidad de un puesto.`,
         'info'
       );
     }

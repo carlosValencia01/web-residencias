@@ -207,7 +207,8 @@ export class EmployeePageComponent implements OnInit {
       id: 'NewPositionModal',
       data: {
         operationMode: eOperation.NEW,
-        employeeId: this.employee._id
+        employeeId: this.employee._id,
+        currentPositions: this.positions
       },
       disableClose: true,
       hasBackdrop: true,
