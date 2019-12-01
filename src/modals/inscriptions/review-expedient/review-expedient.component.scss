@@ -71,8 +71,9 @@
 }
 
 .adjustcard{
-    width: 200px !important;
-    height: 100px !important;
+    width: 110px !important;
+	height: 60px !important;
+	box-sizing: unset;
 }
 
 .mat-card-header{
@@ -118,6 +119,15 @@ hr{
     margin-top: 0 !important;
     margin-bottom: 8px !important;
     width: 85% !important;
+}
+
+.mat-card-avatar {   
+    position: absolute;
+	top: -33px;    
+    right: 3px;
+}
+.check{
+	top: -73px !important;    
 }
 
 /* DOC LOAD ANIMATION */

@@ -199,7 +199,8 @@ export class InscriptionsMainPageComponent implements OnInit {
           <h4>Periodo inscripciones</h4>
           <p style="text-align='left'">
             <h6><b>Fecha inicio:</b> ${new Date(period.insPerInitDate).toLocaleDateString("es-MX", dateOptions)}</h6>
-            <h6><b>Fecha fin:</b> ${new Date(period.insPerEndDate).toLocaleDateString("es-MX", dateOptions)}</h6>        
+            <h6><b>Fecha fin:</b> ${new Date(period.insPerEndDate).toLocaleDateString("es-MX", dateOptions)}</h6> 
+            <h6><b>Fecha entrega de certificado:</b> ${new Date(period.certificateDeliveryDate).toLocaleDateString("es-MX", dateOptions)}</h6>        
             <br>
           </p>
           <h4>Periodo acto recepcional</h4>

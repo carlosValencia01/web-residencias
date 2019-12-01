@@ -12,8 +12,8 @@
     <mat-list *ngIf="status">
         <mat-list-item *ngFor="let st of status" [class.refused]="st.name === 'RECHAZADO'" [class.ok]="st.name === 'ACEPTADO' || st.name === 'VALIDADO'" [class.update]="st.message === 'Se actualizo el documento'">           
             <mat-icon  matListIcon *ngIf="st.name === 'RECHAZADO'" >highlight_off</mat-icon> <!-- rechazado-->
-            <mat-icon matListIcon *ngIf="st.name === 'ACEPTADO'" >done</mat-icon>          <!-- aceptado-->
-            <mat-icon matListIcon *ngIf="st.name === 'VALIDADO'" >done_all</mat-icon>      <!-- validado-->
+            <mat-icon matListIcon *ngIf="st.name === 'VALIDADO'" >done</mat-icon>          <!-- aceptado-->
+            <mat-icon matListIcon *ngIf="st.name === 'ACEPTADO'" >done_all</mat-icon>      <!-- validado-->
             <mat-icon matListIcon *ngIf="st.name === 'EN PROCESO' && st.message === 'Se envio por primera vez'" >cloud_upload</mat-icon>          <!-- en proceso (enviado) -->
             <mat-icon matListIcon *ngIf="st.message === 'Se actualizo el documento'">update</mat-icon>          <!-- actualizacion (en proceso, rechazado) -->
 
