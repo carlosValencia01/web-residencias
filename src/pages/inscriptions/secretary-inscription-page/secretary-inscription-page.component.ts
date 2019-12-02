@@ -534,7 +534,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           var docFoto = this.credentialStudents[i].documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? this.credentialStudents[i].documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
           if(docFoto != ''){
             // VERIFICAR SI LA FOTO ESTÁ EN ESTATUS ACEPTADO
-            if(docFoto.status[docFoto.status.length-1].name == "ACEPTADO"){
+            if(docFoto.status[docFoto.status.length-1].name == "ACEPTADO" || docFoto.status[docFoto.status.length-1].name == "VALIDADO"){
               // VERIFICAR SI LA CREDENCIAL AUN NO ESTÁ IMPRESA
               if(this.credentialStudents[i].printCredential != true){
                 tempStudents.push(this.credentialStudents[i]);

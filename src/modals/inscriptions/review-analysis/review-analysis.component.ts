@@ -66,15 +66,32 @@ export class ReviewAnalysisComponent implements OnInit {
     },(err)=>{},()=>this.loading=false);
   }
 
-  async saveObservations(observaciones,warning) {
+  async saveObservationsGood(observaciones,warning) {
     this.loading=true;
-    this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Guardando Observaciones.', '');
     await this.inscriptionsProv.updateStudent({observationsAnalysis:observaciones,warningAnalysis:warning},this.studentData._id).subscribe(res => {
     }, err=>{},
     ()=>{
       this.loading=false
       this.onClose();
       this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Observaciones Guardadas.');
+    });
+  }
+
+  async saveObservationsBad(observaciones,warning) {
+    this.loading=true;
+    await this.inscriptionsProv.updateStudent({observationsAnalysis:observaciones,warningAnalysis:warning},this.studentData._id).subscribe(res => {
+      this.inscriptionsProv.sendNotification(this.studentData.email,"Observaciones de Análisis Clínicos",this.studentData.fullName,observaciones,"Observaciones Análisis Clínicos","Consultorio Médico <cmedico@ittepic.edu.mx>").subscribe(
+        res => {
+          this.notificationsServices.showNotification(0, 'Observaciones enviadas a:', this.studentData.controlNumber);
+        },
+        err => {
+          this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:', this.studentData.controlNumber);
+        }
+      );
+    }, err=>{},
+    ()=>{
+      this.loading=false
+      this.onClose();
     });
   }
 
@@ -98,7 +115,7 @@ export class ReviewAnalysisComponent implements OnInit {
       }).then((result) => {
         if (result.value) {
           const observations = (<HTMLInputElement>document.getElementById(id)).value;
-          this.saveObservations(observations,false);
+          this.saveObservationsGood(observations,false);
         }
       });
     } else {
@@ -120,7 +137,7 @@ export class ReviewAnalysisComponent implements OnInit {
       }).then((result) => {
         if (result.value) {
           const observations = (<HTMLInputElement>document.getElementById(id)).value;
-          this.saveObservations(observations,false);
+          this.saveObservationsGood(observations,false);
         }
       });
     }
@@ -146,7 +163,7 @@ export class ReviewAnalysisComponent implements OnInit {
       }).then((result) => {
         if (result.value) {
           const observations = (<HTMLInputElement>document.getElementById(id)).value;
-          this.saveObservations(observations,true);
+          this.saveObservationsBad(observations,true);
         }
       });
     } else {
@@ -168,7 +185,7 @@ export class ReviewAnalysisComponent implements OnInit {
       }).then((result) => {
         if (result.value) {
           const observations = (<HTMLInputElement>document.getElementById(id)).value;
-          this.saveObservations(observations,true);
+          this.saveObservationsBad(observations,true);
         }
       });
     }
