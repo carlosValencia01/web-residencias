@@ -30,7 +30,7 @@
             <div [class.isDisabled]="curpDoc !== undefined ? true : false" class='card-header c-header' >
 
               <div class="row">
-                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('LA CURP')"><mat-icon>info</mat-icon></div>
+                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('LA CURP','src/assets/pdf/help_curp.pdf')"><mat-icon>info</mat-icon></div>
                   <div class="col-10">
                     <div class="row" (click)="collapse('collapseCURP',curpDoc !== undefined ? true : false)">
                         <div class="col-8" >
@@ -71,7 +71,7 @@
             <div [class.isDisabled]="actaDoc !== undefined ? true : false" class='card-header c-header'
               >
               <div class="row">
-                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('EL ACTA DE NACIMIENTO')"><mat-icon>info</mat-icon></div>
+                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('EL ACTA DE NACIMIENTO','src/assets/pdf/help_acta.pdf')"><mat-icon>info</mat-icon></div>
                   <div class="col-10">
                     <div class="row" (click)="collapse('collapseACTA',actaDoc !== undefined ? true : false)">
                         <div class="col-8" >
@@ -114,7 +114,7 @@
               >
 
               <div class="row">
-                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('LOS RESULTADOS DE ANÁLISIS CLÍNICOS')"><mat-icon>info</mat-icon></div>
+                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('LOS RESULTADOS DE ANÁLISIS CLÍNICOS','src/assets/pdf/help_clinicos.pdf')"><mat-icon>info</mat-icon></div>
                   <div class="col-10">
                     <div class="row" (click)="collapse('collapseCLINICOS',clinicDoc !== undefined ? true : false)">
                         <div class="col-8" >
@@ -151,7 +151,7 @@
             <div [class.cheaderrequired]="!payDoc" [class.cheaderok]="payDoc"  [class.isDisabled]="payDoc !== undefined ? true : false" class='card-header'
               >
               <div class="row">
-                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('LA COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN')"><mat-icon>info</mat-icon></div>
+                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('LA COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN','src/assets/pdf/help_comprobante.pdf')"><mat-icon>info</mat-icon></div>
                   <div class="col-10">
                     <div class="row" (click)="collapse('collapsePAGO',payDoc !== undefined ? true : false)">
                         <div class="col-8" >
@@ -196,7 +196,7 @@
               <div class="card-header c-header" [class.cheaderrequired]="!certificateDoc" [class.cheaderok]="certificateDoc" [class.isDisabled]="certificateDoc !== undefined ? true : false"
                 >
                 <div class="row">
-                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('EL CERTIFICADO DE BACHILLERATO O EQUIVALENTE')"><mat-icon>info</mat-icon></div>
+                  <div class="col-2" ngbTooltip="Ayuda" (click)="help('EL CERTIFICADO DE BACHILLERATO O EQUIVALENTE','src/assets/pdf/help_certificado.pdf')"><mat-icon>info</mat-icon></div>
                   <div class="col-10">
                     <div class="row" (click)="collapse('collapseCERT',certificateDoc !== undefined ? true : false)">
                         <div class="col-8" >
@@ -238,7 +238,7 @@
                   >
     
                   <div class="row">
-                      <div class="col-2" ngbTooltip="Ayuda" (click)="help('EL NÚMERO DE SEGURO SOCIAL')"><mat-icon>info</mat-icon></div>
+                      <div class="col-2" ngbTooltip="Ayuda" (click)="help('EL NÚMERO DE SEGURO SOCIAL','src/assets/pdf/help_nss.pdf')"><mat-icon>info</mat-icon></div>
                       <div class="col-10">
                         <div class="row" (click)="collapse('collapseNSS',nssDoc !== undefined ? true : false)">
                             <div class="col-8" >
@@ -280,7 +280,7 @@
               <div [class.isDisabled]="imageDoc !== undefined ? true : false" class='card-header c-header'
                 >
                 <div class="row">
-                    <div class="col-2" ngbTooltip="Ayuda" (click)="help('LA FOTO')"><mat-icon>info</mat-icon></div>
+                    <!-- <div class="col-2" ngbTooltip="Ayuda" (click)="help('LA FOTO','foto')"><mat-icon>info</mat-icon></div> -->
                     <div class="col-10">
                       <div class="row" (click)="collapse('collapseFOTO',imageDoc !== undefined ? true : false)">
                           <div class="col-8" >

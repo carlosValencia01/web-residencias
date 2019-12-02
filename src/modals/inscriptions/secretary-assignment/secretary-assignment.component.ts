@@ -66,9 +66,11 @@ export class SecretaryAssignmentComponent implements OnInit {
                     car=> car._id !== this.secretaries[i].careers[j].careerId._id) :
                     notin.filter(car=> car._id !== this.secretaries[i].careers[j].careerId._id);              
               }              
-              this.secretaries[i].noCareers = notin.length === 0 ? this.careers : notin;             
+              this.secretaries[i].noCareers = notin.length === 0 ? this.careers : notin;  
+              this.secretaries[i].filteredCareers =    notin.length === 0 ? this.careers : notin;        
             }else{
-              this.secretaries[i].noCareers = [];              
+              this.secretaries[i].noCareers = [];  
+              this.secretaries[i].filteredCareers = []           ;  
             }
                                  
           }                                          
@@ -137,6 +139,19 @@ export class SecretaryAssignmentComponent implements OnInit {
     const career = event.option.value;    
   
     this.updateCareers(career._id,'insert', secre._id);
+    this.careerCtrl.setValue(null);
+  }
+  filter(value,i){     
+    if(value){
+      this.secretaries[i].filteredCareers = this.secretaries[i].noCareers.filter( career=> career.fullName.toLowerCase().indexOf(value.toString().trim().toLowerCase()) !== -1);
+    }
+  }
+  focus(i){
+    this.secretaries[i].filteredCareers = this.secretaries[i].noCareers;
+  }
+  slectedCareer(career,sec){
+    console.log('click',career,sec);
+    this.updateCareers(career._id,'insert', sec._id);
     this.careerCtrl.setValue(null);
   }
 

@@ -9,7 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 export class DocumentsHelpComponent implements OnInit {
 
   title = 'FORMATO DE ENTREGA PARA ';
-  status = [];
+
   constructor(
     public dialogRef: MatDialogRef<DocumentsHelpComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any

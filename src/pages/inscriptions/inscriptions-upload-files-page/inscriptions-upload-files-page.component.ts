@@ -444,15 +444,16 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   imageLoaded() {
     // show cropper
   }
-  help(document : string){
+  help(documentName : string,path : string){
     const linkModal = this.dialog.open(DocumentsHelpComponent, {
       data: {
-        document: document
+        document: documentName,
+        pdf:path
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '60em',
-      height: '500px'
+      width: '70em',
+      height: '90vh'
     });
   }
 }
