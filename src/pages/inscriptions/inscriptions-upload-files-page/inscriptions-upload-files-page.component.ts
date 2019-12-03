@@ -7,11 +7,15 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { DocumentsHelpComponent } from 'src/modals/inscriptions/documents-help/documents-help.component';
 
 import { MatStepper } from '@angular/material/stepper';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import Swal from 'sweetalert2';
+import { MatDialog } from '@angular/material';
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+const jsPDF = require('jspdf');
 
 @Component({
   selector: 'app-inscriptions-upload-files-page',
@@ -53,6 +57,11 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     controlNumber: ''
   };
   search: any;
+
+  // Imagenes para Reportes
+  public logoTecNM: any;
+  public logoSep: any;
+  
   /* Dropzone conf */
   @ViewChild(DropzoneComponent) componentRef?: DropzoneComponent;
   
@@ -81,6 +90,8 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     private studentProv: StudentProvider,    
     private stepper: MatStepper,
     private modalService: NgbModal,
+    private dialog : MatDialog,
+    private imageToBase64Serv: ImageToBase64Service,
    
     ) {
       this.data = this.cookiesService.getData().user;
@@ -96,14 +107,13 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       this.getIdStudent();      
   }
   ngOnInit() {        
-    Swal.fire({
-      title: 'ATENCIÓN',
-      text: 'En caso de no contar con el CERTIFICADO DE ESTUDIOS, subir CARTA COMPROMISO en el apartado correspondiente.',
-      type: 'info',
-      allowOutsideClick: false,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'Aceptar'
-    }).then((result) => { });
+    // Convertir imágenes a base 64 para los reportes
+    this.imageToBase64Serv.getBase64('assets/imgs/logoTecNM.png').then(res1 => {
+      this.logoTecNM = res1;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
+      this.logoSep = res2;
+    });
   }
 
   getIdStudent() {
@@ -448,5 +458,102 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   }
   imageLoaded() {
     // show cropper
+  }
+  help(documentName : string,path : string){
+    const linkModal = this.dialog.open(DocumentsHelpComponent, {
+      data: {
+        document: documentName,
+        pdf:path
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '70em',
+      height: '90vh'
+    });
+  }
+
+  downloadCommitmentLetter(){
+    const fechaLimite = "10 de Enero de 2020.";
+
+    const currentDate = new Date();
+    const img = new Image();
+    img.src = 'src/assets/imgs/CartaCompromiso.png';
+    const doc = new jsPDF();
+
+    doc.addImage(img, 'jpg', 0, 0, 200, 295);
+
+    //Nombre del Alumno
+    doc.setFontSize(9);
+    doc.setFontType('bold');
+    doc.text(`${this.data.name.fullName}`, 55, 193);
+
+    //NC del Alumno
+    doc.setFontSize(9);
+    doc.setFontType('bold');
+    doc.text(`${this.data.email}`, 55, 215);
+
+    //Fecha limite entrega
+    doc.setFontSize(9);
+    doc.setFontType('bold');
+    doc.setTextColor(255,0,0);
+    doc.text(fechaLimite, 105, 146);
+    doc.setTextColor(0,0,0);
+
+    //Dia
+    doc.setFontSize(9);
+    doc.setFontType('bold');
+    doc.text(currentDate.getDate() + '', 114, 52);
+
+    //Mes
+    doc.setFontSize(9);
+    doc.setFontType('bold');
+    const currentMonth = currentDate.getMonth();
+    let newMonth;
+    switch (currentMonth) {
+      case 0: {
+        newMonth = 'Enero'; break;
+      }
+      case 1: {
+        newMonth = 'Febrero'; break;
+      }
+      case 2: {
+        newMonth = 'Marzo'; break;
+      }
+      case 3: {
+        newMonth = 'Abril'; break;
+      }
+      case 4: {
+        newMonth = 'Mayo'; break;
+      }
+      case 5: {
+        newMonth = 'Junio'; break;
+      }
+      case 6: {
+        newMonth = 'Julio'; break;
+      }
+      case 7: {
+        newMonth = 'Agosto'; break;
+      }
+      case 8: {
+        newMonth = 'Septiembre'; break;
+      }
+      case 9: {
+        newMonth = 'Octubre'; break;
+      }
+      case 10: {
+        newMonth = 'Noviembre'; break;
+      }
+      case 11: {
+        newMonth = 'Diciembre'; break;
+      }
+    }
+    doc.text(newMonth, 133, 52);
+    
+    // Año
+    doc.setFontSize(9);
+    doc.setFontType('bold');
+    doc.text(currentDate.getFullYear() + '', 164, 52);
+    
+    window.open(doc.output('bloburl'), '_blank');
   }
 }

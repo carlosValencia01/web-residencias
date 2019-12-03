@@ -4,17 +4,20 @@
     <div class="card-header text-white bg-secondary">
       <strong>Proceso de inscripción</strong>
     </div>    
-    <button type="button" (click)="insert()">Crear colección carreras</button>    
-    <button type="button" (click)="updateCareer()">Cargar carreras a los alumnos</button>    
+    <!-- <button type="button" (click)="insert()">Crear colección carreras</button>    
+    <button type="button" (click)="updateCareer()">Cargar carreras a los alumnos</button>     -->
   </div>
   <div class="row content align-items-center p-2">
+
     <!-- cabecera filtros  -->
-    <div class="col-sm-9">      
-        <!-- <input type="text" id="search" placeholder="Buscar..." name="search" class="form-control"/>       -->
+    <div class="col-sm-6"></div>
+    <div class="col-sm-3">      
+        <button class="btn btn-warning" (click)="secretaryAssignment(period)">Asignar carreras</button>
     </div>
     <div class="col-sm-3">
       <div class="row text-center">        
         <div class="col-12">
+          
           <button class="btn btn-success" (click)="createPeriod()">Crear periodo</button>
         </div>
       </div>
@@ -39,12 +42,11 @@
             <td>{{period.periodName}}</td>
             <td>
               <!-- <button class="btn btn-info">Ver</button> -->
-              <button class="btn btn-info" (click)="periodDetail(period)">Detalles</button>
-              <div *ngIf="period.active===true" class="ml-1">
-                <button class="btn btn-primary" (click)="editPeriod(period)">Actualizar</button>
-                <button class="btn btn-warning" (click)="secretaryAssignment(period)">Asignar</button>
+              <button class="btn btn-info mb-1" (click)="periodDetail(period)">Detalles</button>
+              <div *ngIf="period.active===true">
+                <button class="btn btn-primary mr-1"  (click)="editPeriod(period)">Actualizar</button>                
+                <button class="btn btn-danger" (click)="updatePeriodo(period)">Desactivar</button>
               </div>
-              <button *ngIf="period.active===true" class="btn btn-danger ml-1" (click)="updatePeriodo(period)">Desactivar</button>
               
             </td>
             <td style="background-color:green !important; color:white" *ngIf="period.active===true">Activo</td>

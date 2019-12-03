@@ -23,21 +23,22 @@
     color: #b64443;
 }
 
-.validate{    
-    background: rgba(70, 77, 238, 0.2);
+.accept{    
+	background: rgba(27,57,106,0.2);
+
     border: 1px solid #4047db;
     color: #353bb5;
 }
-.validateText{
+.aceptText{
     color: #353bb5;
 }
 
-.accept{       
+.validate{       
     background: rgba(13, 219, 185, 0.2);
     border: 1px solid #0cc9aa;
     color: #0aa68d;
 }
-.acceptText {
+.validateText {
     color: #0aa68d;;   
 }
 
@@ -70,8 +71,9 @@
 }
 
 .adjustcard{
-    width: 200px !important;
-    height: 100px !important;
+    width: 110px !important;
+	height: 60px !important;
+	box-sizing: unset;
 }
 
 .mat-card-header{
@@ -117,6 +119,15 @@ hr{
     margin-top: 0 !important;
     margin-bottom: 8px !important;
     width: 85% !important;
+}
+
+.mat-card-avatar {   
+    position: absolute;
+	top: -33px;    
+    right: 3px;
+}
+.check{
+	top: -73px !important;    
 }
 
 /* DOC LOAD ANIMATION */

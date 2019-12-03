@@ -42,6 +42,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   public searchCarreer = '';
   public searchDictamen = '';
   public searchAdvertencia = '';
+  public searchCredential = '';
 
   public searchEC = false;
   public searchE = false;
@@ -218,7 +219,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     const linkModal = this.dialog.open(ReviewExpedientComponent, {
       data: {
         operation: 'view',
-        student:student
+        student:student,
+        user: this.cookiesService.getData().user.rol.name
       },
       disableClose: true,
       hasBackdrop: true,
