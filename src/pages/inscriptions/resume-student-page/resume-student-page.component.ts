@@ -206,7 +206,7 @@ export class ResumeStudentPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            'Titulación App', error);
+            'Inscripción App', error);
         });
 
         break;
@@ -231,7 +231,7 @@ export class ResumeStudentPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            'Titulación App', error);
+            'Inscripción App', error);
         });
         break;
       }
@@ -255,7 +255,7 @@ export class ResumeStudentPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            'Titulación App', error);
+            'Inscripción App', error);
         });
         break;
       }
@@ -279,7 +279,7 @@ export class ResumeStudentPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            'Titulación App', error);
+            'Inscripción App', error);
         });
         break;
       }
@@ -303,7 +303,7 @@ export class ResumeStudentPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            'Titulación App', error);
+            'Inscripción App', error);
         });
         break;
       }
@@ -327,7 +327,7 @@ export class ResumeStudentPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            'Titulación App', error);
+            'Inscripción App', error);
         });
         break;
       }

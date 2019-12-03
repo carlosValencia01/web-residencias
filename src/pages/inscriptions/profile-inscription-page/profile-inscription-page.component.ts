@@ -24,6 +24,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
   data: any;
   studentData: any;
 
+  //Observaciones Análisis
+  observationsA;
+
   step;
 
   //Foto del Estudiante
@@ -143,6 +146,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
   getStudentData(id) {
     this.inscriptionsProv.getStudent(id).subscribe(res => {
       this.studentData = res.student[0];
+      this.observationsA = this.studentData.observationsAnalysis ? this.studentData.observationsAnalysis:'';
 
       // Datos Alumno
       this.nombre = this.studentData.fullName ? this.studentData.fullName : '';
@@ -211,21 +215,19 @@ export class ProfileInscriptionPageComponent implements OnInit {
       files=>{
         let documents = files.documents;
         
-        this.docCurp = documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0];
+        this.docCurp = documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] : '';
        
-        this.docNss = documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0];
+        this.docNss = documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] : '';
        
-        this.docFoto = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0];
+        this.docFoto = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
         
-        this.docComprobante = documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0];
+        this.docComprobante = documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
         
-        this.docCertificado = documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0];
+        this.docCertificado = documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
         
+        this.docActa = documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
        
-        this.docActa = documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0];
-      //  console.log(this.docActa);
-       
-        this.docAnalisis = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
+        this.docAnalisis = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
 
         this.docSolicitud = documents.filter( docc => docc.filename.indexOf('SOLICITUD') !== -1)[0];;
 
@@ -573,23 +575,244 @@ export class ProfileInscriptionPageComponent implements OnInit {
     doc.setFontSize(10);
     doc.text(this.studentData.controlNumber,177,55,'left');
 
+    doc.line((pageWidth / 2)-35, 150, (pageWidth / 2)+35, 150);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Firma del Estudiante", pageWidth / 2, 160, 'center');
+
     var columns = ["No", "Documento", "Estatus"];
     var data = [
-      [1, "ACTA DE NACIMIENTO", (this.docActa != '') ? this.docActa.status.name:'NO ENVIADO'],
-      [2, "CERTIFICADO DE ESTUDIOS", (this.docCertificado != '') ? this.docCertificado.status.name:'NO ENVIADO'],
-      [3, "ANÁLISIS CLÍNICOS", (this.docAnalisis != '') ? this.docAnalisis.status.name:'NO ENVIADO'],
-      [4, "COMPROBANTE DE PAGO", (this.docComprobante != '') ? this.docComprobante.status.name:'NO ENVIADO'],
-      [5, "CURP", (this.docCurp != '') ? this.docCurp.status.name:'NO ENVIADO'],
-      [6, "NÚMERO DE SEGURO SOCIAL", (this.docNss != '') ? this.docNss.status.name:'NO ENVIADO'],
-      [7, "FOTOGRAFÍA", (this.docFoto != '') ? this.docFoto.status.name:'NO ENVIADO'] 
+      [1, "ACTA DE NACIMIENTO",""],
+      [2, "CERTIFICADO DE ESTUDIOS",""],
+      [3, "ANÁLISIS CLÍNICOS",""],
+      [4, "COMPROBANTE DE PAGO",""],
+      [5, "CURP",""],
+      [6, "NÚMERO DE SEGURO SOCIAL",""],
+      [7, "FOTOGRAFÍA",""] 
     ];
 
-    doc.autoTable(columns,data,
-    { 
+    doc.autoTable(columns,data,{ 
       headStyles: {fillColor: [20, 43, 88]},
       margin:{ top: 60 }
+    });
+
+    // Acta
+    if(this.docActa != ''){
+      if(this.docActa.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docActa.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docActa.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docActa.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docActa.status.name, 161, 72.25);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 72.25);
     }
-    );
+
+    // Certificado
+    if(this.docCertificado != ''){
+      if(this.docCertificado.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docCertificado.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docCertificado.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docCertificado.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docCertificado.status.name, 161, 79.85);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 79.85);
+    }
+
+    // Analisis 
+    if(this.docAnalisis != ''){
+      if(this.docAnalisis.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docAnalisis.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docAnalisis.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docAnalisis.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docAnalisis.status.name, 161, 87.45);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 87.45);
+    }
+
+    // Comprobante
+    if(this.docComprobante != ''){
+      if(this.docComprobante.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docComprobante.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docComprobante.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docComprobante.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docComprobante.status.name, 161, 95.05);  
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 95.05);
+    }
+
+    // Curp
+    if(this.docCurp != ''){
+      if(this.docCurp.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docCurp.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docCurp.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docCurp.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docCurp.status.name, 161, 102.65);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 102.65);
+    }
+
+    // Nss
+    if(this.docNss != ''){
+      if(this.docNss.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docNss.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docNss.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docNss.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docNss.status.name, 161, 110.25);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 110.25);
+    }
+
+    // Foto
+    if(this.docFoto != ''){
+      if(this.docFoto.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docFoto.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docFoto.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docFoto.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docFoto.status.name, 161, 117.85);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 117.85);
+    }   
+
     this.loading = false; 
     window.open(doc.output('bloburl'), '_blank');
   }
@@ -840,5 +1063,16 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
   imageLoaded() {
     // show cropper
+  }
+
+  showObservationsAnalysis(){
+    Swal.fire({
+      title: 'Observaciones',
+      text: this.observationsA,
+      type: 'info',
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {});
   }
 }

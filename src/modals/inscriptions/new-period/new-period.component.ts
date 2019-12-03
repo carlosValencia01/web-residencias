@@ -38,6 +38,7 @@ export class NewPeriodComponent implements OnInit {
         'arecPerEndDate': new FormControl((this.data.period.arecPerEndDate ? new Date(this.data.period.arecPerEndDate) : null),[Validators.required]),
         'arecInitShed': new FormControl((this.data.period.arecInitShed ? parseInt( this.data.period.arecInitShed+'') : null),[Validators.required]),
         'arecEndShed': new FormControl((this.data.period.arecEndShed ? parseInt(this.data.period.arecEndShed+'') : null),[Validators.required]),
+        'certificateDeliveryDate': new FormControl((this.data.period.certificateDeliveryDate ? this.data.period.certificateDeliveryDate : null),[Validators.required]),
       });  
 
     }else if (this.data.initialPeriod == 'true' ){
@@ -51,6 +52,7 @@ export class NewPeriodComponent implements OnInit {
         'arecPerEndDate': new FormControl(null,[Validators.required]),
         'arecInitShed': new FormControl(null,[Validators.required]),
         'arecEndShed': new FormControl(null,[Validators.required]),
+        'certificateDeliveryDate': new FormControl(null,[Validators.required]),
       });
     }else{
       this.formPeriod = new FormGroup({        
@@ -62,6 +64,7 @@ export class NewPeriodComponent implements OnInit {
         'arecPerEndDate': new FormControl(null,[Validators.required]),
         'arecInitShed': new FormControl(null,[Validators.required]),
         'arecEndShed': new FormControl(null,[Validators.required]),
+        'certificateDeliveryDate': new FormControl(null,[Validators.required]),
       });
     }
   }

@@ -295,6 +295,11 @@
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
+                  <div *ngIf="observationsA != ''" class="text-center" style="cursor: pointer;"
+                    ngbTooltip="Observaciones Análisis" tooltipClass="my-custom-class">
+                    <img alt="File" src="../../assets/icons/infoAnalysis.svg"
+                      style="width: 20px; height: 20px; margin-bottom: 5px;" (click)="showObservationsAnalysis()">
+                  </div>
                   <p style="text-align: center;">
                     {{docAnalisis.status.name}}
                   </p>
@@ -313,6 +318,11 @@
                   </div>
                 </mat-card-content>
                 <mat-card-actions>
+                  <div *ngIf="observationsA != ''" class="text-center" style="cursor: pointer;"
+                    ngbTooltip="Observaciones Análisis" tooltipClass="my-custom-class">
+                    <img alt="File" src="../../assets/icons/infoAnalysis.svg"
+                      style="width: 20px; height: 20px; margin-bottom: 5px;" (click)="showObservationsAnalysis()">
+                  </div>
                   <p style="text-align: center;">
                     {{docAnalisis.status.name}}
                   </p>

@@ -85,7 +85,7 @@ const appRoutes: Routes = [
   { path: 'confirmationStudent', component: ConfirmationStudentPageComponent, pathMatch: 'full' },
   { path: 'uploadFiles', component: InscriptionsUploadFilesPageComponent, pathMatch: 'full' },
   { path: 'profileInscription', component: ProfileInscriptionPageComponent, pathMatch: 'full' },
-  { path: 'secretaryInscriptions', component: SecretaryInscriptionPageComponent, pathMatch: 'full' },
+  { path: 'studentsFiles', component: SecretaryInscriptionPageComponent, pathMatch: 'full' },
 
 
   // Reception act

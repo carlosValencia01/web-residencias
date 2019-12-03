@@ -229,23 +229,146 @@ export class ConfirmationStudentPageComponent implements OnInit {
     doc.setFontSize(10);
     doc.text(this.studentData.controlNumber,177,55,'left');
 
+    doc.line((pageWidth / 2)-35, 150, (pageWidth / 2)+35, 150);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Firma del Estudiante", pageWidth / 2, 160, 'center');
+
     var columns = ["No", "Documento", "Estatus"];
     var data = [
-      [1, "ACTA DE NACIMIENTO", (this.docActa != '') ? 'ENVIADO':'NO ENVIADO'],
-      [2, "CERTIFICADO DE ESTUDIOS", (this.docCertificado != '') ? 'ENVIADO':'NO ENVIADO'],
-      [3, "ANÁLISIS CLÍNICOS", (this.docAnalisis != '') ? 'ENVIADO':'NO ENVIADO'],
-      [4, "COMPROBANTE DE PAGO", (this.docComprobante != '') ? 'ENVIADO':'NO ENVIADO'],
-      [5, "CURP", (this.docCurp != '') ? 'ENVIADO':'NO ENVIADO'],
-      [6, "NÚMERO DE SEGURO SOCIAL", (this.docNss != '') ? 'ENVIADO':'NO ENVIADO'],
-      [7, "FOTOGRAFÍA", (this.docFoto != '') ? 'ENVIADO':'NO ENVIADO'] 
+      [1, "ACTA DE NACIMIENTO",""],
+      [2, "CERTIFICADO DE ESTUDIOS",""],
+      [3, "ANÁLISIS CLÍNICOS",""],
+      [4, "COMPROBANTE DE PAGO",""],
+      [5, "CURP",""],
+      [6, "NÚMERO DE SEGURO SOCIAL",""],
+      [7, "FOTOGRAFÍA",""] 
     ];
 
-    doc.autoTable(columns,data,
-    { 
+    doc.autoTable(columns,data,{ 
       headStyles: {fillColor: [20, 43, 88]},
       margin:{ top: 60 }
+    });
+
+    // Acta
+    if(this.docActa != ''){
+      doc.setTextColor(0,0,0);
+      doc.setFillColor(255, 245, 204);
+      doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('ENVIADO', 161, 72.25);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 72.25);
     }
-    );
+
+    // Certificado
+    if(this.docCertificado != ''){
+      doc.setTextColor(0,0,0);
+      doc.setFillColor(255, 245, 204);
+      doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('ENVIADO', 161, 79.85);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 79.85);
+    }
+
+    // Analisis 
+    if(this.docAnalisis != ''){
+      doc.setTextColor(0,0,0);
+      doc.setFillColor(255, 245, 204);
+      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('ENVIADO', 161, 87.45);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 87.45);
+    }
+
+    // Comprobante
+    if(this.docComprobante != ''){
+      doc.setTextColor(0,0,0);
+      doc.setFillColor(255, 245, 204);
+      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('ENVIADO', 161, 95.05);  
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 95.05);
+    }
+
+    // Curp
+    if(this.docCurp != ''){
+      doc.setTextColor(0,0,0);
+      doc.setFillColor(255, 245, 204);   
+      doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('ENVIADO', 161, 102.65);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 102.65);
+    }
+
+    // Nss
+    if(this.docNss != ''){
+      doc.setTextColor(0,0,0);
+      doc.setFillColor(255, 245, 204);
+      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('ENVIADO', 161, 110.25);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 110.25);
+    }
+
+    // Foto
+    if(this.docFoto != ''){
+      doc.setTextColor(0,0,0);
+      doc.setFillColor(255, 245, 204);
+      doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('ENVIADO', 161, 117.85);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 117.85);
+    }   
+
     this.loading = false; 
     window.open(doc.output('bloburl'), '_blank');
   }

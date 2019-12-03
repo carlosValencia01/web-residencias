@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 import { StudentProvider } from 'src/providers/shared/student.prov';
 
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-expedient-history',
   templateUrl: './expedient-history.component.html',
@@ -35,6 +36,23 @@ export class ExpedientHistoryComponent implements OnInit {
         this.status = documents.filter( docc => docc.filename.indexOf(this.data.filename) !== -1)[0].status;          
       }
     );
+  }
+
+  swalDialog(msg,){
+    return Swal.fire({
+      title: 'Motivo del rechazo',
+      text: msg,
+      type: 'info',
+      showCancelButton: false,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      // cancelButtonColor: '#d33',
+      // cancelButtonText: 'Cancelar',
+      confirmButtonText: 'OK'
+    }).then((result) => {
+      if (result.value)  return true;      
+      else return false;
+    });
   }
 
 }

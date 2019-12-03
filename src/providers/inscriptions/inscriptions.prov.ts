@@ -71,4 +71,9 @@ export class InscriptionsProvider {
     uploadFile2(data){
         return this.api.post('drive/upload/file2/',data).pipe(map( res=>res.json()));
     }
+
+    sendNotification(email: string, titulo: string, nombre: string, mensaje: string, asunto: string, remitente: string) {
+        return this.api.post('inscription/notificationMail', { to_email: [email], title: titulo, name: nombre, message: mensaje, subject: asunto, sender: remitente })
+        .pipe(map(data => data.json()));
+    }
 }

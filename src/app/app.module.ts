@@ -45,7 +45,6 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 // Material
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
   ErrorStateMatcher,
   MatButtonModule,
@@ -61,6 +60,7 @@ import {
   MatProgressSpinnerModule,
   MatSelectModule,
   MatExpansionModule,
+  MatAutocompleteModule
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -123,7 +123,7 @@ import { WizardInscriptionPageComponent } from '../pages/inscriptions/wizard-ins
 import { ContractStudentPageComponent } from '../pages/inscriptions/contract-student-page/contract-student-page.component';
 import { ResumeStudentPageComponent } from '../pages/inscriptions/resume-student-page/resume-student-page.component';
 import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
-import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component'
+import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
 import { ProfileInscriptionPageComponent } from '../pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
 import { SecretaryInscriptionPageComponent } from '../pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
 // Providers
@@ -132,11 +132,15 @@ import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.pr
 import { WizardService } from 'src/services/inscriptions/wizard.service';
 import { UploadFilesService } from 'src/services/inscriptions/upload-files.service';
 //modals
-import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component'
-import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component'
+import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component';
+import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
 import { ExpedientHistoryComponent } from 'src/modals/inscriptions/expedient-history/expedient-history.component';
 import { StudentInformationComponent } from '../modals/inscriptions/student-information/student-information.component';
+import { ReviewAnalysisComponent } from '../modals/inscriptions/review-analysis/review-analysis.component';
+import { SecretaryAssignmentComponent } from '../modals/inscriptions/secretary-assignment/secretary-assignment.component';
+import { ReviewCredentialsComponent } from '../modals/inscriptions/review-credentials/review-credentials.component';
 
+import { DocumentsHelpComponent } from 'src/modals/inscriptions/documents-help/documents-help.component';
 // Reception act module
 // Pages
 import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
@@ -270,6 +274,11 @@ registerLocaleData(localeEs);
     ReviewExpedientComponent,
     ExpedientHistoryComponent,
     StudentInformationComponent,
+    ReviewAnalysisComponent,
+    SecretaryAssignmentComponent,
+    ReviewCredentialsComponent,
+
+    DocumentsHelpComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -391,6 +400,8 @@ registerLocaleData(localeEs);
     MatProgressBarModule,
     MatExpansionModule,
     MatSlideToggleModule,
+    MatAutocompleteModule,
+    
     // Ngx
     ImageCropperModule,
     NgxExtendedPdfViewerModule,
@@ -491,6 +502,10 @@ registerLocaleData(localeEs);
     ReviewExpedientComponent,
     ExpedientHistoryComponent,
     StudentInformationComponent,
+    ReviewAnalysisComponent,
+    SecretaryAssignmentComponent,
+    ReviewCredentialsComponent,
+    DocumentsHelpComponent,
 
     RangeModalComponent,
     StepperDocumentComponent,
