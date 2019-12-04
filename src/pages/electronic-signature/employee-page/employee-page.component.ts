@@ -1,9 +1,11 @@
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Component, OnInit, ViewChild} from '@angular/core';
+import {ComponentType} from '@angular/cdk/overlay';
 import {MatDialog, MatPaginator, MatTableDataSource} from '@angular/material';
 import Swal from 'sweetalert2';
 import * as Papa from 'papaparse';
 import * as moment from 'moment';
+
 import {EmployeeProvider} from 'src/providers/shared/employee.prov';
 import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import {eOperation} from 'src/enumerators/reception-act/operation.enum';
@@ -11,6 +13,7 @@ import {IDepartment} from 'src/entities/shared/department.model';
 import {IEmployee} from 'src/entities/shared/employee.model';
 import {IGrade} from 'src/entities/reception-act/grade.model';
 import {IPosition} from 'src/entities/shared/position.model';
+import {LoadCsvDataComponent} from 'src/modals/shared/load-csv-data/load-csv-data.component';
 import {NewGradeComponent} from 'src/modals/reception-act/new-grade/new-grade.component';
 import {NewPositionComponent} from 'src/modals/electronic-signature/new-position/new-position.component';
 import {NotificationsServices} from 'src/services/app/notifications.service';
@@ -37,7 +40,7 @@ export class EmployeePageComponent implements OnInit {
   public displayedColumnsGrades: string[];
   public displayedColumnsPositions: string[];
   public employee: IEmployee;
-  public positions: {actives, inactives};
+  public positions: { actives, inactives };
   public grades: Array<IGrade>;
   public image_src: any;
   public isChangedPositions = false;
@@ -183,16 +186,10 @@ export class EmployeePageComponent implements OnInit {
   }
 
   public newGrade() {
-    const dialogRef = this.dialog.open(NewGradeComponent, {
-      id: 'NewGradeModal',
-      data: {
-        Operation: eOperation.NEW
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '50em'
-    });
-
+    const data = {
+      Operation: eOperation.NEW
+    };
+    const dialogRef = this._openDialog(NewGradeComponent, 'NewGradeModal', data);
     dialogRef.afterClosed().subscribe((grade: IGrade) => {
       if (grade) {
         this.grades.push(grade);
@@ -203,17 +200,12 @@ export class EmployeePageComponent implements OnInit {
   }
 
   public newPosition() {
-    const dialogRef = this.dialog.open(NewPositionComponent, {
-      id: 'NewPositionModal',
-      data: {
-        operationMode: eOperation.NEW,
-        employeeId: this.employee._id,
-        currentPositions: this.positions
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '50em'
-    });
+    const data = {
+      operationMode: eOperation.NEW,
+      employeeId: this.employee._id,
+      currentPositions: this.positions
+    };
+    const dialogRef = this._openDialog(NewPositionComponent, 'NewPositionModal', data);
 
     dialogRef.afterClosed().subscribe((position: IPosition) => {
       if (position) {
@@ -353,15 +345,10 @@ export class EmployeePageComponent implements OnInit {
   }
 
   public showPositionsHistory() {
-    this.dialog.open(PositionsHistoryComponent, {
-      id: 'PositionsHistoryModal',
-      data: {
-        positions: this.employee.positions
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '50em'
-    });
+    const data = {
+      positions: this.employee.positions
+    };
+    this._openDialog(PositionsHistoryComponent, 'PositionsHistoryModal', data);
   }
 
   public onUploadPositions(event) {
@@ -372,12 +359,29 @@ export class EmployeePageComponent implements OnInit {
           if (results.data.length > 1) {
             const positions = results.data.slice(1);
             positions.forEach(position => (position.length >= 3) ? arrayPositions.push(this._buildPositionStructure(position)) : null);
-            this.employeeProvider.uploadCsvPositions(this.employee._id, arrayPositions)
-              .subscribe(_ => {
-                this.notifications.showNotification(eNotificationType.SUCCESS, 'Los puestos se han guardado con éxito', '');
-                this._getEmployee(this.employee._id);
-              }, _ => {
-                this.notifications.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los puestos', '');
+            const _displayedColumns = ['name', 'ascription', 'activateDate', 'deactivateDate'];
+            const _displayedColumnsName = ['Puesto', 'Departamento', 'Fecha de alta', 'Fecha de baja'];
+            const _data = {
+              config: {
+                title: 'Puestos cargados',
+                displayedColumns: _displayedColumns,
+                displayedColumnsName: _displayedColumnsName
+              },
+              componentData: arrayPositions
+            };
+            const dialogRef = this._openDialog(LoadCsvDataComponent, 'LoadCsvPositions', _data);
+
+            dialogRef.afterClosed()
+              .subscribe((_positions: Array<any>) => {
+                if (_positions && _positions.length) {
+                  this.employeeProvider.uploadCsvPositions(this.employee._id, _positions)
+                    .subscribe(_ => {
+                      this.notifications.showNotification(eNotificationType.SUCCESS, 'Los puestos se han guardado con éxito', '');
+                      this._getEmployee(this.employee._id);
+                    }, _ => {
+                      this.notifications.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los puestos', '');
+                    });
+                }
               });
           }
         }
@@ -393,12 +397,29 @@ export class EmployeePageComponent implements OnInit {
           if (results.data.length > 1) {
             const grades = results.data.slice(1);
             grades.forEach(grade => (grade.length >= 4) ? arrayGrades.push(this._buildGradeStructure(grade)) : null);
-            this.employeeProvider.uploadCsvGrades(this.employee._id, arrayGrades)
-              .subscribe(_ => {
-                this.notifications.showNotification(eNotificationType.SUCCESS, 'Los grados se han guardado con éxito', '');
-                this._getEmployee(this.employee._id);
-              }, _ => {
-                this.notifications.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los grados', '');
+            const _displayedColumns = ['title', 'cedula', 'abbreviation', 'level'];
+            const _displayedColumnsName = ['Titulo', 'Cédula', 'Abreviación', 'Nivel'];
+            const _data = {
+              config: {
+                title: 'Grados cargados',
+                displayedColumns: _displayedColumns,
+                displayedColumnsName: _displayedColumnsName
+              },
+              componentData: arrayGrades
+            };
+            const dialogRef = this._openDialog(LoadCsvDataComponent, 'LoadCsvGrades', _data);
+
+            dialogRef.afterClosed()
+              .subscribe((_grades: Array<any>) => {
+                if (_grades && _grades.length) {
+                  this.employeeProvider.uploadCsvGrades(this.employee._id, _grades)
+                    .subscribe(_ => {
+                      this.notifications.showNotification(eNotificationType.SUCCESS, 'Los grados se han guardado con éxito', '');
+                      this._getEmployee(this.employee._id);
+                    }, _ => {
+                      this.notifications.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los grados', '');
+                    });
+                }
               });
           }
         }
@@ -503,14 +524,14 @@ export class EmployeePageComponent implements OnInit {
     this.router.navigate(['/grades']);
   }
 
-  private _separatePositions(allPositions: Array<any>): {actives, inactives} {
+  private _separatePositions(allPositions: Array<any>): { actives, inactives } {
     return {
       actives: allPositions.filter(pos => pos.status === 'ACTIVE').map(({status, ...pos}) => pos).slice(),
       inactives: allPositions.filter(pos => pos.status === 'INACTIVE').map(({status, ...pos}) => pos).slice(),
     };
   }
 
-  private _joinPositions(positions: {actives, inactives}): Array<{position, status}> {
+  private _joinPositions(positions: { actives, inactives }): Array<{ position, status }> {
     const actives = positions.actives.map(pos => {
       pos.status = 'ACTIVE';
       return pos;
@@ -532,12 +553,22 @@ export class EmployeePageComponent implements OnInit {
   }
 
   private _buildGradeStructure(data: Array<any>): IGrade {
-    return <IGrade> {
+    return <IGrade>{
       title: data[0],
       cedula: data[1],
       abbreviation: data[2],
       level: data[3],
     };
+  }
+
+  private _openDialog(component: ComponentType<any>, id?: string, data?: any) {
+    return this.dialog.open(component, {
+      id: id ? id : '',
+      data: data ? data : null,
+      disableClose: true,
+      hasBackdrop: true,
+      width: '50em'
+    });
   }
 }
 

@@ -167,6 +167,7 @@ import { LoaderComponent } from 'src/components/shared/loader/loader.component';
 // Modals
 import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
+import { LoadCsvDataComponent } from 'src/modals/shared/load-csv-data/load-csv-data.component';
 // Providers
 import { DocumentProvider } from 'src/providers/shared/document.prov';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
@@ -260,6 +261,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
+    LoadCsvDataComponent,
 ],
   imports: [
     // Angular
@@ -385,6 +387,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
+    LoadCsvDataComponent,
   ],
   bootstrap: [AppComponent]
 })

@@ -1,17 +1,18 @@
-import { Component, OnInit, ViewChild, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import { Router, ActivatedRoute } from '@angular/router';
+import {Component, Injectable, OnInit, ViewChild} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {ActivatedRoute, Router} from '@angular/router';
 import * as Papa from 'papaparse';
 import Swal from 'sweetalert2';
 
-import { CookiesService } from 'src/services/app/cookie.service';
-import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
-import { EmployeeProvider } from 'src/providers/shared/employee.prov';
-import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
-import { eOperation } from 'src/enumerators/reception-act/operation.enum';
-import { IEmployee } from 'src/entities/shared/employee.model';
-import { NotificationsServices } from 'src/services/app/notifications.service';
+import {CookiesService} from 'src/services/app/cookie.service';
+import {EmployeeGradeComponent} from 'src/modals/reception-act/employee-grade/employee-grade.component';
+import {EmployeeProvider} from 'src/providers/shared/employee.prov';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
+import {eOperation} from 'src/enumerators/reception-act/operation.enum';
+import {IEmployee} from 'src/entities/shared/employee.model';
+import {LoadCsvDataComponent} from 'src/modals/shared/load-csv-data/load-csv-data.component';
+import {NotificationsServices} from 'src/services/app/notifications.service';
 
 @Component({
   selector: 'app-grade-page',
@@ -140,7 +141,7 @@ export class GradePageComponent implements OnInit {
   public onUpload(event) {
     const notification = this.notificationServ;
     const provider = this.employeeProvider;
-    const ArrayEmployees: IEmployee[] = [];
+    const arrayData: any[] = [];
     if (event.target.files && event.target.files[0]) {
       Papa.parse(event.target.files[0], {
         complete: async results => {
@@ -148,7 +149,7 @@ export class GradePageComponent implements OnInit {
             const elements = results.data;
             await this._asyncForEach(elements, async (element, index) => {
               if (index > 0) {
-                const employeeIndex = ArrayEmployees.findIndex(x => x.rfc === element[0]);
+                const employeeIndex = arrayData.findIndex(x => x.rfc === element[0]);
                 if (employeeIndex !== -1) {
                   const {value: updateEmployee} = await Swal.fire({
                     title: 'Empleado duplicado',
@@ -163,22 +164,44 @@ export class GradePageComponent implements OnInit {
                     focusConfirm: true
                   });
                   if (updateEmployee) {
-                    ArrayEmployees.splice(employeeIndex, 1);
-                    ArrayEmployees.push(this._buildEmployeeStructure(element));
+                    arrayData.splice(employeeIndex, 1);
+                    arrayData.push(this._buildPreviousStructure(element));
                   }
                 } else {
                   if (elements[index].length >= 6) {
-                    ArrayEmployees.push(this._buildEmployeeStructure(element));
+                    arrayData.push(this._buildPreviousStructure(element));
                   }
                 }
               }
             });
-            provider.csvEmployeGrade(ArrayEmployees).subscribe(_ => {
-              notification.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
-              this.refreshEmployees();
-            }, _ => {
-              notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
+            const _displayedColumns = ['rfc', 'curp', 'firstName', 'lastName', 'gender', 'birthDate'];
+            const _displayedColumnsName = ['RFC', 'CURP', 'Nombres', 'Apellidos', 'Género', 'Fecha de nacimiento'];
+            const dialogRef = this.dialog.open(LoadCsvDataComponent, {
+              id: 'LoadEmployeeCsvData',
+              data: {
+                config: {
+                  title: 'Empleados cargados',
+                  displayedColumns: _displayedColumns,
+                  displayedColumnsName: _displayedColumnsName
+                },
+                componentData: arrayData
+              },
+              disableClose: true,
+              hasBackdrop: true,
+              width: '65em',
             });
+            dialogRef.afterClosed()
+              .subscribe(_employees => {
+                if (_employees && _employees.length) {
+                  const _arrayEmployees = _employees.map(this._buildEmployeeStructure);
+                  provider.csvEmployeGrade(_arrayEmployees).subscribe(_ => {
+                    notification.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
+                    this.refreshEmployees();
+                  }, _ => {
+                    notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
+                  });
+                }
+              });
           }
         }
       });
@@ -196,17 +219,28 @@ export class GradePageComponent implements OnInit {
     this.getEmployees();
   }
 
-  private _buildEmployeeStructure(data: Array<any>): IEmployee {
+  private _buildPreviousStructure(data: Array<any>): any {
     return {
       rfc: data[0],
       curp: data[1],
-      name: {
-        firstName: data[2],
-        lastName: data[3],
-        fullName: data[2].concat(' ', data[3])
-      },
+      firstName: data[2],
+      lastName: data[3],
       gender: data[4],
-      birthDate: data[5]
+      birthDate: new Date(data[5])
+    };
+  }
+
+  private _buildEmployeeStructure(data: any): IEmployee {
+    return {
+      rfc: data.rfc,
+      curp: data.curp,
+      name: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        fullName: data.firstName.concat(' ', data.lastName)
+      },
+      gender: data.gender,
+      birthDate: data.birthDate
     };
   }
 

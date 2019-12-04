@@ -1,0 +1,35 @@
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title>{{title}}</h1>
+  </div>
+  <div class="col-2">
+    <button [mat-dialog-close] class="float-right" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<mat-dialog-content>
+  <div class="col-12 mat-elevation-z8">
+    <table [dataSource]="dataSource" class="col-12" mat-table matSort>
+      <ng-container *ngFor="let item of displayedColumns.slice(0, -1);let index=index" [matColumnDef]="item">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsName[index]}}</th>
+        <td *matCellDef="let row" mat-cell>{{displayData(row[item])}}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef mat-header-cell></th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-icon (click)="onRowRemove(row)">cancel</mat-icon>
+        </td>
+      </ng-container>
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button (click)="saveData()" [disabled]="!componentData.length" class="m-1" color="primary" mat-stroked-button
+          type="button">Guardar
+  </button>
+  <button class="m-1" color="warn" mat-dialog-close mat-stroked-button type="button">Cancelar</button>
+</mat-dialog-actions>
