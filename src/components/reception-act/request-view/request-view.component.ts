@@ -56,7 +56,6 @@ export class RequestViewComponent implements OnInit {
         'observations': new FormControl(null),
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl({ value: 1, disabled: true }, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
-        'dateProposed': new FormControl({ value: null, disabled: true }, Validators.required),
         'honorific': new FormControl({ value: false, disabled: true }, Validators.required)
       });
   }
@@ -86,7 +85,6 @@ export class RequestViewComponent implements OnInit {
       'observations': this.request.observation,
       'project': this.request.projectName,
       'product': this.request.product,
-      'dateProposed': this.dateFormat.transform(this.request.proposedDate, 'yyyy-MM-dd'),
       'honorific': this.request.honorificMention,
     });
 
