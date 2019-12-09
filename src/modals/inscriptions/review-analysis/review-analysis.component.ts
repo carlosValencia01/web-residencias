@@ -153,7 +153,7 @@ export class ReviewAnalysisComponent implements OnInit {
         imageHeight: 100,
         imageAlt: 'Custom image',
         html:
-          '<textarea rows="4" cols="30" id="observaciones">FAVOR DE ACUDIR INMEDIATAMENTE AL CONSULTORIO MÉDICO. </textarea>  ',
+          '<textarea rows="4" cols="30" id="observaciones">FAVOR DE ACUDIR INMEDIATAMENTE AL CONSULTORIO MÉDICO DEL INSTITUTO. </textarea>  ',
         showCancelButton: true,
         allowOutsideClick: false,
         confirmButtonColor: '#3085d6',
