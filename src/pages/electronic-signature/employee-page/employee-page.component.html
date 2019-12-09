@@ -1,0 +1,178 @@
+<section *ngIf="employee" class="justify-content-center m-0 p-0">
+  <div class="float-left">
+    <button (click)="goBack()" aria-label="Regresar" class="m-1" mat-flat-button>
+      <mat-icon>arrow_back</mat-icon>
+      Atrás
+    </button>
+  </div>
+  <div class="row p-3 col-12 m-0">
+    <mat-card class="col-12">
+      <div class="col-1 float-right m-1">
+        <button (click)="showPositionsHistory()" *ngIf="employee.positions && employee.positions.length" aria-label="Historial de puestos" class="m-1" color="accent"
+                mat-icon-button mat-mini-fab ngbTooltip="Historial de puestos">
+          <mat-icon>assignment_ind</mat-icon>
+        </button>
+        <button (click)="saveAll()" *ngIf="isChangedPositions || isChangedGrades" aria-label="Guardar cambios"
+                class="m-1" color="primary" mat-icon-button mat-mini-fab ngbTooltip="Guardar todo">
+          <mat-icon>done_all</mat-icon>
+        </button>
+        <button (click)="discardAllChanges()" *ngIf="isChangedPositions || isChangedGrades"
+                aria-label="Descartar todos los cambios" class="m-1" color="warn" mat-icon-button mat-mini-fab
+                ngbTooltip="Descartar todos los cambios">
+          <mat-icon>restore</mat-icon>
+        </button>
+      </div>
+      <mat-card-header>
+        <mat-card-title>{{employee.name.fullName}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row">
+          <div class="col-sm-4 col-md-3 pt-2 pl-4 pr-4 pb-2 text-center">
+            <img [src]="employee.filename ? image_src : '../../../assets/imgs/employeeAvatar.png'"
+                 alt="Imagen del empleado"
+                 class="mw-100 mh-100">
+          </div>
+          <div class="row col-sm-8 col-md-9 p-sm-4 p-md-2">
+            <div class="col-sm-12 col-md-6">
+              <mat-label><strong>Nombre(s):</strong> {{employee.name.firstName}}</mat-label>
+              <br><br>
+              <mat-label><strong>Apellidos:</strong> {{employee.name.lastName}}</mat-label>
+              <br><br>
+              <mat-label><strong>RFC:</strong> {{employee.rfc}}</mat-label>
+              <br><br>
+              <mat-label><strong>CURP:</strong> {{employee.curp}}</mat-label>
+              <br><br>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <mat-label><strong>Género:</strong> {{employee.gender}}</mat-label>
+              <br><br>
+              <mat-label><strong>Cumpleaños:</strong> {{employeeeBirthDate.split(' ').slice(0, 3).join(' ')}}</mat-label>
+              <br><br>
+              <mat-label><strong>Puestos activos:</strong>
+                <ul *ngFor="let pos of employee.positions" style="margin-bottom:0px;">
+                  <li *ngIf="pos.status === 'ACTIVE'">{{pos.position.name}} ({{pos.position.ascription.shortName}})</li>
+                </ul>
+              </mat-label>
+              <br><br>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div class="row col-12 m-0">
+    <mat-expansion-panel class="col-12 m-1 mw-100 p-0">
+      <mat-expansion-panel-header>
+        <mat-panel-title><strong>PUESTOS</strong></mat-panel-title>
+        <mat-panel-description>{{positions.actives ? positions.actives.length : 0}} puesto(s) activo(s) registrado(s)
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="row justify-content-end m-1">
+        <button (click)="discardPositionsChanges()" [disabled]="!isChangedPositions"
+                aria-label="Descartar cambios en los puestos" class="m-1"
+                color="warn" mat-icon-button mat-mini-fab ngbTooltip="Descartar cambios">
+          <mat-icon>restore</mat-icon>
+        </button>
+        <button (click)="savePositions()" [disabled]="!isChangedPositions" aria-label="Guardar cambios" class="m-1"
+                color="primary" mat-icon-button mat-mini-fab ngbTooltip="Guardar puestos">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button (click)="newPosition()" aria-label="Nuevo puesto" class="m-1" color="accent" mat-icon-button
+                mat-mini-fab ngbTooltip="Nuevo puesto">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <div *ngIf="positions.actives && positions.actives.length" class="row">
+        <div class="mat-elevation-z8 col-12">
+          <table [dataSource]="dataSourcePositions" class="col-12" mat-table>
+            <ng-container matColumnDef="name">
+              <th *matHeaderCellDef mat-header-cell>Puesto</th>
+              <td *matCellDef="let row" mat-cell> {{row.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="ascription">
+              <th *matHeaderCellDef mat-header-cell>Adscripción</th>
+              <td *matCellDef="let row" mat-cell> {{row.ascription.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="canSign">
+              <th *matHeaderCellDef mat-header-cell>Firma electrónica</th>
+              <td *matCellDef="let row" mat-cell> {{row.canSign ? 'Si' : 'No'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th *matHeaderCellDef mat-header-cell></th>
+              <td *matCellDef="let row" mat-cell>
+                <button [matMenuTriggerFor]="actions" mat-icon-button>
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #actions>
+                  <button (click)="onRowRemovePosition(row)" mat-menu-item>
+                    <mat-icon>delete_forever</mat-icon>
+                    Borrar
+                  </button>
+                  <button (click)="onRowDisablePosition(row)" mat-menu-item>
+                    <mat-icon>visibility_off</mat-icon>
+                    Inhabilitar
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+            <tr *matHeaderRowDef="displayedColumnsPositions" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumnsPositions;" mat-row></tr>
+          </table>
+          <mat-paginator #matPaginatorPositions [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
+        </div>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel class="col-12 m-1 mw-100 p-0">
+      <mat-expansion-panel-header>
+        <mat-panel-title><strong>GRADOS</strong></mat-panel-title>
+        <mat-panel-description>{{grades ? grades.length : 0}} grado(s) registrado(s)
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="row justify-content-end m-1">
+        <button (click)="discardGradesChanges()" [disabled]="!isChangedGrades" aria-label="Descartar cambios en grados"
+                class="m-1" color="warn" mat-icon-button mat-mini-fab ngbTooltip="Descartar cambios">
+          <mat-icon>restore</mat-icon>
+        </button>
+        <button (click)="saveGrades()" [disabled]="!isChangedGrades" aria-label="Guardar cambios" class="m-1"
+                color="primary" mat-icon-button mat-mini-fab ngbTooltip="Guardar grados">
+          <mat-icon>save</mat-icon>
+        </button>
+        <button (click)="newGrade()" aria-label="Nuevo grado" class="m-1" color="accent" mat-icon-button
+                mat-mini-fab ngbTooltip="Nuevo grado">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <div *ngIf="grades && grades.length" class="row">
+        <div class="mat-elevation-z8 col-12">
+          <table [dataSource]="dataSourceGrades" class="col-12" mat-table>
+            <ng-container matColumnDef="abbreviation">
+              <th *matHeaderCellDef mat-header-cell>Abreviación</th>
+              <td *matCellDef="let row" mat-cell> {{row.abbreviation}} </td>
+            </ng-container>
+            <ng-container matColumnDef="title">
+              <th *matHeaderCellDef mat-header-cell>Título</th>
+              <td *matCellDef="let row" mat-cell> {{row.title}} </td>
+            </ng-container>
+            <ng-container matColumnDef="cedula">
+              <th *matHeaderCellDef mat-header-cell>Cédula</th>
+              <td *matCellDef="let row" mat-cell> {{row.cedula}} </td>
+            </ng-container>
+            <ng-container matColumnDef="level">
+              <th *matHeaderCellDef mat-header-cell>Nivel</th>
+              <td *matCellDef="let row" mat-cell> {{row.level}} </td>
+            </ng-container>
+            <ng-container matColumnDef="actions">
+              <th *matHeaderCellDef mat-header-cell></th>
+              <td (click)="onRowRemoveGrade(row)" *matCellDef="let row" mat-cell>
+                <mat-icon>cancel</mat-icon>
+              </td>
+            </ng-container>
+            <tr *matHeaderRowDef="displayedColumnsGrades" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumnsGrades;" mat-row></tr>
+          </table>
+          <mat-paginator #matPaginatorGrades [pageSizeOptions]="[3, 5, 10]"></mat-paginator>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </div>
+</section>

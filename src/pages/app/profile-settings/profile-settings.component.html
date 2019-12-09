@@ -1,0 +1,75 @@
+<div class="row justify-content-center">
+  <mat-card class="col-sm-12 col-md-5 m-2">
+    <mat-card-header>
+      <mat-card-title>Datos personales</mat-card-title>
+    </mat-card-header>
+    <form (ngSubmit)="onSubmit()" [formGroup]="formGroupData" class="col-12">
+      <mat-card-content>
+        <mat-form-field class="col-12">
+          <input formControlName="name" matInput placeholder="Nombres">
+          <mat-error *ngIf="formGroupData.get('name').hasError('required')">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="col-12">
+          <input formControlName="lastName" matInput placeholder="Apellidos">
+          <mat-error *ngIf="formGroupData.get('lastName').hasError('required')">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="col-12">
+          <input formControlName="area" matInput placeholder="Área">
+        </mat-form-field>
+        <mat-form-field class="col-12">
+          <input formControlName="position" matInput placeholder="Puesto">
+        </mat-form-field>
+        <mat-form-field class="col-12">
+          <input formControlName="loginPsw" matInput placeholder="Contraseña" type="password">
+          <mat-hint align="start"><strong>Ingrese contraseña de inicio de sesión</strong></mat-hint>
+          <mat-error
+            *ngIf="formGroupData.get('loginPsw').hasError('required') && formGroupData.get('loginPsw').touched">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button color="primary" mat-flat-button type="submit" [disabled]="formGroupData.invalid">Actualizar</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+
+  <mat-card class="col-sm-12 col-md-5 m-2">
+    <mat-card-header>
+      <mat-card-title>Contraseña</mat-card-title>
+    </mat-card-header>
+    <form (ngSubmit)="onSubmit1()" [formGroup]="formGroupPsw" class="col-12">
+      <mat-card-content>
+        <mat-form-field class="col-12">
+          <input formControlName="psw" matInput placeholder="Nueva contraseña" type="password">
+          <mat-error *ngIf="formGroupPsw.get('psw').hasError('required') && formGroupPsw.get('psw').touched">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="col-12">
+          <input formControlName="confPsw" matInput placeholder="Confirmar nueva contraseña" type="password" (keyup)="validateMatchPassword()">
+          <mat-error *ngIf="formGroupPsw.get('confPsw').hasError('required') && formGroupPsw.get('confPsw').touched">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-error *ngIf="!isMatchPasswords && formGroupPsw.get('confPsw').touched && !formGroupPsw.get('confPsw').hasError('required')">
+          Las contraseñas no coinciden
+        </mat-error>
+        <mat-form-field *ngIf="this.formGroupPsw.get('psw').value && this.formGroupPsw.get('confPsw').value" class="col-12">
+          <input formControlName="loginPsw" matInput placeholder="Contraseña actual" type="password">
+          <mat-hint align="start"><strong>Ingrese contraseña de inicio de sesión</strong></mat-hint>
+          <mat-error *ngIf="formGroupPsw.get('loginPsw').hasError('required') && formGroupPsw.get('loginPsw').touched">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button color="primary" mat-flat-button type="submit" [disabled]="formGroupPsw.invalid || !isMatchPasswords">Actualizar</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>

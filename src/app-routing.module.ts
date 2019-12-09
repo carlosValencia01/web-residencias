@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
+import { ProfileSettingsComponent } from 'src/pages/app/profile-settings/profile-settings.component';
 
 // Credentials
 import { CardEmployeePageComponent } from 'src/pages/credentials/card-employee-page/card-employee-page.component';
@@ -12,6 +13,10 @@ import {
 } from 'src/pages/credentials/loader-data-credentials-page/loader-data-credentials-page.component';
 import { StudentPageComponent } from 'src/pages/credentials/student-page/student-page.component';
 import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/one-student-page.component';
+
+// Electronic signature
+// Pages
+import {ElectronicSignatureComponent} from 'src/pages/electronic-signature/electronic-signature/electronic-signature.component';
 
 // Inscriptions
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
@@ -43,13 +48,25 @@ import { RangePageComponent } from './app/range-page/range-page.component';
 import { StepperDocumentComponent } from './app/stepper-document/stepper-document.component';
 import { ViewAppointmentPageComponent } from './app/view-appointment-page/view-appointment-page.component';
 
+// Electronic signature
+import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
+import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { EmployeePageComponent } from 'src/pages/electronic-signature/employee-page/employee-page.component';
+import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
+
 const appRoutes: Routes = [
-  // Credentials
+  // App
   { path: '', component: HomePageComponent, pathMatch: 'full' },
+  { path: 'profileSettings', component: ProfileSettingsComponent, pathMatch: 'full' },
+
+  // Credentials
   { path: 'employeeCard', component: CardEmployeePageComponent, pathMatch: 'full' },
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
+
+  // Electronic signature
+  { path: 'electronicSignature', component: ElectronicSignatureComponent, pathMatch: 'full' },
 
   // Inscriptions
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },
@@ -76,6 +93,12 @@ const appRoutes: Routes = [
   { path: 'surveyGraduates/:id/:nc', component: SurveyGraduatesPageComponent, pathMatch: 'full' },
   { path: 'surveyQuestions/:id/:nc', component: SurveyQuestionsPageComponent, pathMatch: 'full' },
   { path: 'surveyRegister/:id/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
+
+  // Electronic signature
+  { path: 'documentsAdmin', component: DocumentsAdminPageComponent, pathMatch: 'full' },
+  { path: 'documentsAssign', component: DocumentsAssignPageComponent, pathMatch: 'full' },
+  { path: 'grades/:id', component: EmployeePageComponent, pathMatch: 'full' },
+  { path: 'positionsAdmin', component: PositionsAdminPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({

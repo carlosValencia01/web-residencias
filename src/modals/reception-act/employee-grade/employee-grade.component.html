@@ -3,287 +3,96 @@
     <h1 mat-dialog-title>{{title}}</h1>
   </div>
   <div class="col-2">
-    <button mat-icon-button [mat-dialog-close] class="float-right">
+    <button [mat-dialog-close] class="float-right" mat-icon-button>
       <mat-icon>close</mat-icon>
     </button>
   </div>
 </div>
-
-<form [formGroup]="frmNewEmployeGrade" (ngSubmit)="onSubmit()">
+<form (ngSubmit)="onSubmit()" [formGroup]="frmNewEmployeeGrade">
   <mat-dialog-content>
     <div class="row">
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-col-form-label" for="name">Nombre</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-user"></i></span>
-            </div>
-            <input type="text"
-              [ngClass]="(!frmNewEmployeGrade.get('name').valid && frmNewEmployeGrade.get('name').touched)?'form-control is-invalid':'form-control'"
-              id="name" formControlName="name" placeholder="Nombre" oninput="this.value = this.value.toUpperCase()">
-            <div class="invalid-feedback"
-              *ngIf="!frmNewEmployeGrade.get('name').valid && frmNewEmployeGrade.get('name').touched">
-              <span *ngIf="frmNewEmployeGrade.get('name').errors['required']">
-                ¡Por favor ingrese un nombre!
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-col-form-label" for="lastname">Apellidos</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-user"></i></span>
-            </div>
-            <input type="text"
-              [ngClass]="(!frmNewEmployeGrade.get('lastname').valid && frmNewEmployeGrade.get('lastname').touched)?'form-control is-invalid':'form-control'"
-              id="lastname" formControlName="lastname" placeholder="Apellidos"
-              oninput="this.value = this.value.toUpperCase()">
-            <div class="invalid-feedback"
-              *ngIf="!frmNewEmployeGrade.get('lastname').valid && frmNewEmployeGrade.get('lastname').touched">
-              <span *ngIf="frmNewEmployeGrade.get('lastname').errors['required']">
-                ¡Por favor ingrese sus apellidos!
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <mat-form-field class="col-sm-12 col-md-6">
+        <input [maxLength]="13" [minLength]="10" formControlName="rfc"
+               matInput oninput="this.value=this.value.toUpperCase()" placeholder="RFC" required type="text">
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('rfc').valid && frmNewEmployeeGrade.get('rfc').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('rfc').errors['required']">
+            ¡RFC obligatorio!
+          </span>
+          <span *ngIf="frmNewEmployeeGrade.get('rfc').errors['minlength']">
+            ¡Mínimo 10 caracteres!
+          </span>
+          <span *ngIf="frmNewEmployeeGrade.get('rfc').errors['maxlength']">
+            ¡Máximo 13 caracteres!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-md-6">
+        <input [maxLength]="18" [minLength]="18" formControlName="curp"
+               matInput oninput="this.value=this.value.toUpperCase()" placeholder="CURP" required type="text">
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('curp').valid && frmNewEmployeeGrade.get('curp').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('curp').errors['required']">
+            ¡CURP obligatoria!
+          </span>
+          <span *ngIf="frmNewEmployeeGrade.get('curp').errors['minlength']">
+            ¡Mínimo 18 caracteres!
+          </span>
+          <span *ngIf="frmNewEmployeeGrade.get('curp').errors['maxlength']">
+            ¡Máximo 18 caracteres!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="row">
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-col-form-label" for="area">Área</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-user"></i></span>
-            </div>
-            <input type="text"
-              [ngClass]="(!frmNewEmployeGrade.get('area').valid && frmNewEmployeGrade.get('area').touched)?'form-control is-invalid':'form-control'"
-              id="area" formControlName="area" placeholder="Area" oninput="this.value = this.value.toUpperCase()">
-            <div class="invalid-feedback"
-              *ngIf="!frmNewEmployeGrade.get('area').valid && frmNewEmployeGrade.get('area').touched">
-              <span *ngIf="frmNewEmployeGrade.get('area').errors['required']">
-                ¡Área obligatoria!
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="form-group">
-          <label class="form-col-form-label" for="position">Puesto</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-user"></i></span>
-            </div>
-            <input type="text"
-              [ngClass]="(!frmNewEmployeGrade.get('position').valid && frmNewEmployeGrade.get('position').touched)?'form-control is-invalid':'form-control'"
-              id="position" formControlName="position" placeholder="Apellidos"
-              oninput="this.value = this.value.toUpperCase()">
-            <div class="invalid-feedback"
-              *ngIf="!frmNewEmployeGrade.get('position').valid && frmNewEmployeGrade.get('position').touched">
-              <span *ngIf="frmNewEmployeGrade.get('position').errors['required']">
-                ¡Puesto obligatorio!
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <mat-form-field class="col-sm-12 col-md-6">
+        <input formControlName="name" matInput oninput="this.value=this.value.toUpperCase()"
+               placeholder="Nombre" required type="text">
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('name').valid && frmNewEmployeeGrade.get('name').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('name').errors['required']">
+            ¡Ingrese el nombre!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-md-6">
+        <input formControlName="lastname" matInput oninput="this.value=this.value.toUpperCase()"
+               placeholder="Apellidos" required type="text">
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('lastname').valid && frmNewEmployeeGrade.get('lastname').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('lastname').errors['required']">
+            ¡Ingrese los apellidos!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
-
     <div class="row">
-      <div class="col-12">
-        <div class="text-right">
-          <button type="button" mat-mini-fab color="primary" (click)="addNewGrade()">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <div class="mat-elevation-z8">
-          <table mat-table [dataSource]="dataSource" matSort>
-
-            <!-- ID Column -->
-            <ng-container matColumnDef="abbreviation">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Abreviación </th>
-              <td mat-cell *matCellDef="let row"> {{row.abbreviation}} </td>
-            </ng-container>
-
-            <!-- Progress Column -->
-            <ng-container matColumnDef="title">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Título </th>
-              <td mat-cell *matCellDef="let row"> {{row.title}} </td>
-            </ng-container>
-
-            <!-- Name Column -->
-            <ng-container matColumnDef="cedula">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cedula </th>
-              <td mat-cell *matCellDef="let row"> {{row.cedula}} </td>
-            </ng-container>
-
-            <!-- Color Column -->
-            <ng-container matColumnDef="level">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Nivel </th>
-              <td mat-cell *matCellDef="let row"> {{row.level}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="action">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-              <td mat-cell *matCellDef="let row" (click)="onRowRemove(row)">
-                <mat-icon>cancel</mat-icon>
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-
-          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-        </div>
-      </div>
+      <mat-radio-group aria-label="Selecciona el género" class="col-sm-12 col-md-6 vertical-radio-group"
+                       formControlName="gender">
+        <mat-label>Género:</mat-label>
+        <mat-radio-button value="FEMENINO">Femenino</mat-radio-button>
+        <mat-radio-button value="MASCULINO">Masculino</mat-radio-button>
+        <mat-radio-button value="OTRO">Otro</mat-radio-button>
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('gender').valid && frmNewEmployeeGrade.get('gender').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('gender').errors['required']">
+            ¡Género obligatorio!
+          </span>
+        </mat-error>
+      </mat-radio-group>
+      <mat-form-field class="col-sm-12 col-md-6">
+        <input [matDatepicker]="birthDatePicker" formControlName="birthDate" matInput placeholder="Fecha de nacimiento"
+               readonly required>
+        <mat-datepicker-toggle [for]="birthDatePicker" matSuffix></mat-datepicker-toggle>
+        <mat-datepicker #birthDatePicker></mat-datepicker>
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('birthDate').valid && frmNewEmployeeGrade.get('birthDate').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('birthDate').errors['required']">
+            ¡Fecha de nacimiento obligatoria!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <!-- <button mat-button mat-dialog-close  mat-stroked-button >Cancel</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial  mat-stroked-button color="primary">Install</button> -->
-    <button mat-stroked-button color="primary" type="submit" [disabled]="!frmNewEmployeGrade.valid">Guardar</button>
-    <button mat-stroked-button color="warn" type="button" (click)="onClose()" mat-dialog-close>Cancelar</button>
+    <button [disabled]="!frmNewEmployeeGrade.valid" class="m-1" color="primary" mat-stroked-button type="submit">
+      Guardar
+    </button>
+    <button (click)="onClose()" class="m-1" color="warn" mat-dialog-close mat-stroked-button type="button">Cancelar
+    </button>
   </mat-dialog-actions>
 </form>
-
-
-
-
-
-<!--
-    <div class="ui-g-12">
-      <p-table #dt [columns]="columns" [value]="grades" [paginator]="true" [rows]="4" [resizableColumns]="true">
-        <ng-template pTemplate="caption">
-          <div class="text-right">
-            <p-button type="button" label="Nuevo" icon="pi pi-plus"
-            styleClass="ui-button-success" (click)="addNewGrade()"></p-button>
-          </div>
-        </ng-template>
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <th *ngFor="let col of columns" pResizableColumn [ngStyle]="{'display': col.display}">
-              {{col.header}}
-            </th>
-            <th style="width:5em"></th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-rowData let-columns="columns">
-          <tr>
-            <td *ngFor="let col of columns" [ngStyle]="{'display': col.display}">
-              {{rowData[col.field]}}
-            </td>
-            <td class="ui-resizable-column" style="text-align:center">
-              <button pButton type="button" icon="pi pi-trash" class="ui-button-danger"
-                (click)="onRowRemove(rowData)"></button>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-    <div class="ui-g-12 text-right">
-      <p-button label="Guardar" style="margin-right: 0.3em" type="submit" [disabled]="!frmNewEmployeGrade.valid"></p-button>
-      <p-button styleClass="ui-button-danger" label="Cancelar" type="button" (click)="onClose()"></p-button>
-    </div> -->
-
-<!-- <div class="ui-g ui-fluid">
-  <form [formGroup]="frmNewEmployeGrade" (ngSubmit)="onSubmit()">
-    <div class="ui-g-12">
-      <div class="ui-g-6">
-        <span class="ui-float-label">
-          <input id="float-input" type="text" size="30" formControlName="name" pInputText>
-          <label for="float-input">Nombre</label>
-        </span>
-        <span class="help-block" *ngIf="!frmNewEmployeGrade.get('name').valid && frmNewEmployeGrade.get('name').touched">
-          <span *ngIf="frmNewEmployeGrade.get('name').errors['required']">
-            Nombre obligatorio
-          </span>
-        </span>
-      </div>
-      <div class="ui-g-6">
-        <span class="ui-float-label">
-          <input id="float-input" type="text" size="30" formControlName="lastname" pInputText>
-          <label for="float-input">Apellidos</label>
-        </span>
-        <span class="help-block" *ngIf="!frmNewEmployeGrade.get('lastname').valid && frmNewEmployeGrade.get('lastname').touched">
-          <span *ngIf="frmNewEmployeGrade.get('lastname').errors['required']">
-            Apellido obligatorio
-          </span>
-        </span>
-      </div>
-    </div>
-    <div class="ui-g-12">
-      <div class="ui-g-6">
-        <span class="ui-float-label">
-          <input id="float-input" type="text" size="30" formControlName="area" pInputText>
-          <label for="float-input">Área</label>
-        </span>
-
-        <span class="help-block" *ngIf="!frmNewEmployeGrade.get('area').valid && frmNewEmployeGrade.get('area').touched">
-          <span *ngIf="frmNewEmployeGrade.get('area').errors['required']">
-            Área obligatorio
-          </span>
-        </span>
-
-      </div>
-      <div class="ui-g-6">
-        <span class="ui-float-label">
-          <input id="float-input" type="text" size="30" formControlName="position" pInputText>
-          <label for="float-input">Puesto</label>
-        </span>
-
-        <span class="help-block" *ngIf="!frmNewEmployeGrade.get('position').valid && frmNewEmployeGrade.get('position').touched">
-          <span *ngIf="frmNewEmployeGrade.get('position').errors['required']">
-            Puesto obligatorio
-          </span>
-        </span>
-      </div>
-
-    </div>
-
-
-    <div class="ui-g-12">
-      <p-table #dt [columns]="columns" [value]="grades" [paginator]="true" [rows]="4" [resizableColumns]="true">
-        <ng-template pTemplate="caption">
-          <div class="text-right">
-            <p-button type="button" label="Nuevo" icon="pi pi-plus"
-            styleClass="ui-button-success" (click)="addNewGrade()"></p-button>
-          </div>
-        </ng-template>
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <th *ngFor="let col of columns" pResizableColumn [ngStyle]="{'display': col.display}">
-              {{col.header}}
-            </th>
-            <th style="width:5em"></th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-rowData let-columns="columns">
-          <tr>
-            <td *ngFor="let col of columns" [ngStyle]="{'display': col.display}">
-              {{rowData[col.field]}}
-            </td>
-            <td class="ui-resizable-column" style="text-align:center">
-              <button pButton type="button" icon="pi pi-trash" class="ui-button-danger"
-                (click)="onRowRemove(rowData)"></button>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-    <div class="ui-g-12 text-right">
-      <p-button label="Guardar" style="margin-right: 0.3em" type="submit" [disabled]="!frmNewEmployeGrade.valid"></p-button>
-      <p-button styleClass="ui-button-danger" label="Cancelar" type="button" (click)="onClose()"></p-button>
-    </div>
-  </form>
-</div> -->

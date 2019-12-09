@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title>Historial de puestos</h1>
+  </div>
+  <div class="col-2">
+    <button [mat-dialog-close] class="float-right" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<mat-dialog-content>
+  <div class="col-12 mat-elevation-z8">
+    <table [dataSource]="dataSource" class="col-12" mat-table matSort>
+      <ng-container matColumnDef="ascription">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Adscripción</th>
+        <td *matCellDef="let row" mat-cell style="width:35%"> {{row.ascription}} </td>
+      </ng-container>
+      <ng-container matColumnDef="position">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Puesto</th>
+        <td *matCellDef="let row" mat-cell style="width:25%"> {{row.position}} </td>
+      </ng-container>
+      <ng-container matColumnDef="canSign">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Firma</th>
+        <td *matCellDef="let row" mat-cell style="width:8%"> {{row.canSign}} </td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Estatus</th>
+        <td *matCellDef="let row" mat-cell style="width:12%"> {{row.status}} </td>
+      </ng-container>
+      <ng-container matColumnDef="activateDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Fecha de activación</th>
+        <td *matCellDef="let row" mat-cell style="width:20%">{{row.activateDate}}</td>
+      </ng-container>
+      <ng-container matColumnDef="deactivateDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header> Fecha de desactivación</th>
+        <td *matCellDef="let row" mat-cell style="width:20%">{{row.deactivateDate}}</td>
+      </ng-container>
+      <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+    </table>
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button class="m-1" color="warn" mat-dialog-close mat-stroked-button type="button">Cerrar</button>
+</mat-dialog-actions>

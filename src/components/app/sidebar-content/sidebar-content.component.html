@@ -1,9 +1,10 @@
 <div class="sidebar-style" *ngIf="survey == false">
-  <div class="profile-card">
+  <div class="profile-card" routerLink="/profileSettings">
     <img class="profile-icon" [src]="data?.photo || DEFAULT_PROFILE_IMG" alt="">
     <div>
       <p class="profile-text">{{ data.name.fullName }}</p>
       <p class="profile-text">{{ title }}</p>
+      <span *ngIf="title !== 'Estudiante'" class="profile-chip">Perfil</span>
     </div>
   </div>
   <hr>

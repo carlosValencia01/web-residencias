@@ -1,0 +1,19 @@
+.assigned-chip {
+  background-color: #008D42;
+  color: white;
+}
+
+.not-assigned-chip {
+  background-color: #F58220;
+  color: white;
+}
+
+.documents-list {
+  max-height: 40vh;
+  overflow: hidden scroll;
+  margin: 10px 0px !important;
+}
+
+.documents-list::-webkit-scrollbar {
+  display: none !important;
+}

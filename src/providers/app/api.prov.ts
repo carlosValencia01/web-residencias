@@ -4,16 +4,19 @@ import { CookiesService } from 'src/services/app/cookie.service';
 
 @Injectable()
 export class Api {
-      url = 'http://localhost:3003/escolares/credenciales';
-    //url = 'https://api.cideti.com.mx/escolares/credenciales';
+    url = 'http://localhost:3003/escolares/credenciales';
+    // url = 'https://api.cideti.com.mx/escolares/credenciales';
     // url = 'http://104.248.94.77/escolares/credenciales';
+    urlE = 'http://localhost:3000/escolares/credenciales';
     headers: Headers = new Headers();
+    headersE: Headers = new Headers();
 
     constructor(
         private http: Http,
         private cookiesServ: CookiesService,
     ) {
         this.headers.append('Content-Type', 'application/json');
+        this.headersE.append('Content-Type', 'application/json');
         // this.headers.append('Authorization', `Bearer ${this.cookiesServ.getData().token}`);
     }
 
@@ -68,6 +71,20 @@ export class Api {
         // .do(res => console.log(res));
     }
 
+    getE(endpoint: string, params?: any) {
+      const options = new RequestOptions({ headers: this.headersE });
+
+      if (params) {
+        const p = new URLSearchParams();
+        // tslint:disable-next-line:forin
+        for (const k in params) {
+          p.set(k, params[k]);
+        }
+        options.search = !options.search && p || options.search;
+      }
+      return this.http.get(this.urlE + '/' + endpoint, options);
+    }
+
     post(endpoint: string, body: any, isUpload = false) {
         // console.log('api:post');
         // console.log("vbody", body);
@@ -78,6 +95,11 @@ export class Api {
             return this.http.post(this.url + '/' + endpoint, body);
         }
         // .do(res => console.log(res));
+    }
+
+    postE(endpoint: string, body: any, isUpload = false) {
+        const options = new RequestOptions({ headers: this.headers });
+        return this.http.post(this.urlE + '/' + endpoint, body, options);
     }
 
     put(endpoint: string, body: any, isUpload = false) {
