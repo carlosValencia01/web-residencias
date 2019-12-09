@@ -1,22 +1,51 @@
-<mat-card class="example-card">
-  <mat-card-header>
-    <mat-card-title>Generar firma electrónica</mat-card-title>
-  </mat-card-header>
-  <form class="example-form" [formGroup]="formGroupPsw" (ngSubmit)="onSubmit()">
-    <mat-card-content>
-      <mat-form-field class="example-full-width">
-        <input matInput type="password" placeholder="Contraseña" formControlName="psw">
-      </mat-form-field>
-      <mat-form-field class="example-full-width">
-        <input matInput type="password" placeholder="Confirmar contraseña" formControlName="confPsw">
-      </mat-form-field>
-      <mat-form-field *ngIf="this.formGroupPsw.get('psw').value && this.formGroupPsw.get('confPsw').value" class="example-full-width">
-        <input matInput type="password" placeholder="Contraseña" formControlName="loginPsw">
-        <mat-hint align="start"><strong>Ingrese contraseña de inicio de sesión</strong> </mat-hint>
-      </mat-form-field>
-    </mat-card-content>
+<div class="row justify-content-center">
+  <mat-card class="col-sm-12 col-md-5 m-2">
+    <mat-card-header>
+      <mat-card-title>Generar firma electrónica</mat-card-title>
+    </mat-card-header>
+    <form class="example-form" [formGroup]="formGroupPsw" (ngSubmit)="onSubmit()">
+      <mat-card-content>
+        <mat-form-field class="example-full-width">
+          <input matInput type="password" placeholder="Contraseña" formControlName="psw">
+          <mat-error *ngIf="formGroupPsw.get('psw').hasError('required') && formGroupPsw.get('psw').touched">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <input matInput type="password" placeholder="Confirmar contraseña" formControlName="confPsw" (keyup)="validateMatchPassword()">
+          <mat-error *ngIf="formGroupPsw.get('confPsw').hasError('required') && formGroupPsw.get('confPsw').touched">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+        <mat-error *ngIf="!isMatchPasswords && formGroupPsw.get('confPsw').touched && !formGroupPsw.get('confPsw').hasError('required')">
+          Las contraseñas no coinciden
+        </mat-error>
+        <mat-form-field *ngIf="this.formGroupPsw.get('psw').value && this.formGroupPsw.get('confPsw').value" class="example-full-width">
+          <input matInput type="password" placeholder="Contraseña" formControlName="loginPsw">
+          <mat-hint align="start"><strong>Ingrese contraseña de inicio de sesión</strong> </mat-hint>
+          <mat-error *ngIf="formGroupPsw.get('loginPsw').hasError('required') && formGroupPsw.get('loginPsw').touched">
+            Campo <strong>obligatorio</strong>
+          </mat-error>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="primary" type="submit" [disabled]="formGroupPsw.invalid  || !isMatchPasswords">Guardar</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+
+  <mat-card class="col-sm-12 col-md-5 m-2">
+    <mat-card-header>
+      <mat-card-title>Descargar firma electrónica</mat-card-title>
+    </mat-card-header>
+    <mat-label *ngIf="eSignatureStatus !== ''">Válido hasta: {{eSignatureStatus}}</mat-label>
+    <br *ngIf="eSignatureStatus !== ''">
+    <mat-label *ngIf="eSignatureStatus !== ''">La firma electrónica tiene validez de 2 años.</mat-label>
+    <br *ngIf="eSignatureStatus !== ''">
+    <mat-label *ngIf="eSignatureStatus !== ''">Sujeto a invalidación por cambio de puesto.</mat-label>
+    <mat-label *ngIf="eSignatureStatus === ''">Aún no tiene una firma electrónica.</mat-label>
     <mat-card-actions>
-      <button mat-flat-button color="primary" type="submit">Guardar</button>
+      <button mat-flat-button style="margin-top: 50px;" color="primary" [disabled]="eSignatureStatus === ''" (click)="onSubmit1()">Descargar</button>
     </mat-card-actions>
-  </form>
-</mat-card>
+  </mat-card>
+</div>

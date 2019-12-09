@@ -92,6 +92,8 @@ import { StudentPageComponent } from 'src/pages/credentials/student-page/student
 // Electronic signature
 // Pages
 import {ElectronicSignatureComponent} from 'src/pages/electronic-signature/electronic-signature/electronic-signature.component';
+// Provider
+import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
 // Inscriptions module
 // Pages
@@ -336,6 +338,10 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     FormErrorsService,
     ImageToBase64Service,
     NotificationsServices,
+
+    // Electronic signature
+    // Providers
+    ESignatureProvider,
 
     // Inscriptions
     // Providers
