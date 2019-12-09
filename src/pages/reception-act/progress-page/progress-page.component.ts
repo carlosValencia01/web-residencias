@@ -332,7 +332,8 @@ export class ProgressPageComponent implements OnInit {
       data: {
         jury: lJury,
         observation: lObservation,
-        minutes: lMinutes
+        minutes: lMinutes,
+        studentCareer: tmpRequest.career
       },
       disableClose: true,
       hasBackdrop: true,
