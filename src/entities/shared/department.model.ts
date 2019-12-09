@@ -6,4 +6,5 @@ export interface IDepartment {
     shortName?: string;
     careers?: Array<Object>;
     Employees?: Array<IEmployee>;
+    boss?: IEmployee;
 }

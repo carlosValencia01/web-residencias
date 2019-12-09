@@ -17,8 +17,10 @@ export class ReleaseComponentComponent implements OnInit {
   public frmConsejo: FormGroup;
   private userInformation: any;
   public isReject: boolean;
-  public information: { jury: Array<string>, observation: string, minutes: number }
+  public information: { jury: Array<string>, observation: string, minutes: number };
   @ViewChild('time') Time: NgxTimepickerFieldComponent;
+  private studentCareer: string;
+
   constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
     private notifications: NotificationsServices, public dialog: MatDialog,
     private cookiesService: CookiesService,
@@ -27,7 +29,7 @@ export class ReleaseComponentComponent implements OnInit {
     this.isReject = typeof (this.information.observation) !== 'undefined';
     console.log("Information", this.information);
     this.userInformation = this.cookiesService.getData().user;
-
+    this.studentCareer = this.data.studentCareer;
   }
 
   ngOnInit() {
@@ -47,9 +49,9 @@ export class ReleaseComponentComponent implements OnInit {
       });
       const hour = this.information.minutes / 60;
       const minutes = this.information.minutes % 60;
-      this.Time.writeValue(hour + ":" + minutes);            
+      this.Time.writeValue(hour + ":" + minutes);
     } else {
-      this.Time.writeValue("7:00");                  
+      this.Time.writeValue("7:00");
     }
   }
 
@@ -61,7 +63,7 @@ export class ReleaseComponentComponent implements OnInit {
     this.frmConsejo.get(button).setErrors(null);
     const ref = this.dialog.open(EmployeeAdviserComponent, {
       data: {
-        carrer: this.userInformation.career
+        carrer: this.studentCareer
       },
       disableClose: true,
       hasBackdrop: true,

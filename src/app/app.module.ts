@@ -235,6 +235,7 @@ import { UploadDeliveredComponent } from './upload-delivered/upload-delivered.co
 import { ViewAppointmentPageComponent } from './view-appointment-page/view-appointment-page.component';
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
 registerLocaleData(localeEs);
+
 @NgModule({
   declarations: [
     // App module
@@ -379,7 +380,6 @@ registerLocaleData(localeEs);
     MatDialogModule,
     MatFileUploadModule,
     MatExpansionModule,
-    MatFileUploadModule ,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -495,6 +495,9 @@ registerLocaleData(localeEs);
     RequestModalComponent,
     SteepComponentComponent,
     ReleaseCheckComponent,
+    RangeModalComponent,
+    StepperDocumentComponent,
+    UploadDeliveredComponent,
     
     //inscriptions
     //Modals
@@ -506,10 +509,6 @@ registerLocaleData(localeEs);
     SecretaryAssignmentComponent,
     ReviewCredentialsComponent,
     DocumentsHelpComponent,
-
-    RangeModalComponent,
-    StepperDocumentComponent,
-    UploadDeliveredComponent,
 
     // Electronic signature
     // Modals
