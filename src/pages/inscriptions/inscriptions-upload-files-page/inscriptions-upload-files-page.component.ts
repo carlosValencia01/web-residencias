@@ -57,6 +57,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     controlNumber: ''
   };
   search: any;
+  certificateDeliveryDate;
 
   // Imagenes para Reportes
   public logoTecNM: any;
@@ -114,6 +115,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
       this.logoSep = res2;
     });
+    this.getCertificateDeliveryDate();
   }
 
   getIdStudent() {
@@ -482,8 +484,6 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       var numeroControl = studentData.controlNumber ? studentData.controlNumber : '';
       var telefono = studentData.phone ? studentData.phone : '';
 
-      const fechaLimite = "10 de Enero de 2020.";
-
       const currentDate = new Date();
       const img = new Image();
       img.src = 'src/assets/imgs/CartaCompromiso.png';
@@ -517,7 +517,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       doc.setFontSize(9);
       doc.setFontType('bold');
       doc.setTextColor(255, 0, 0);
-      doc.text(fechaLimite, 105, 146);
+      doc.text(this.certificateDeliveryDate, 103, 146);
       doc.setTextColor(0, 0, 0);
 
       //Dia
@@ -579,4 +579,15 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       window.open(doc.output('bloburl'), '_blank');
     });
   }
+
+  getCertificateDeliveryDate(){
+    let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    this.inscriptionsProv.getActivePeriod().subscribe(
+      period=>{
+        if(period.period){
+          this.certificateDeliveryDate = new Date(period.period.certificateDeliveryDate).toLocaleDateString("es-MX", dateOptions) 
+        }  
+      });
+  }
+
 }

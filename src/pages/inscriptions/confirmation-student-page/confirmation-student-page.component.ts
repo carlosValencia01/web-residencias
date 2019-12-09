@@ -180,7 +180,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
   }
 
   async continue() {
-    var newStep = { stepWizard: 6, inscriptionStatus: 'Enviado' }
+    var newStep = { stepWizard: 6, inscriptionStatus: 'Enviado', printCredential: false, warningAnalysis: false}
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
       //this.router.navigate(['/wizardInscription']);
       window.location.assign("/profileInscription");
