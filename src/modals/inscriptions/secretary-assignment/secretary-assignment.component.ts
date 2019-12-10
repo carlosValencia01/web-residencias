@@ -17,6 +17,8 @@ export class SecretaryAssignmentComponent implements OnInit {
 
   title = '    ASIGNACIÓN DE CARRERAS ';
   careers = [];
+  careersAvailable = [];
+  filteredCareers = [];
   secretaries = [];
 
   // Career selection chips
@@ -56,24 +58,40 @@ export class SecretaryAssignmentComponent implements OnInit {
     this.careerProv.getAllCareers().subscribe(
       res=>{
         if(res.careers){
-          this.careers = res.careers;                             
-          
-          for(let i=0; i< this.secretaries.length; i++){
-            let notin = [];
-            if( this.secretaries[i].careers.length !== this.careers.length){
-              for(let j=0; j<this.secretaries[i].careers.length;j++){            
-                  notin = notin.length === 0 ? this.careers.filter( 
-                    car=> car._id !== this.secretaries[i].careers[j].careerId._id) :
-                    notin.filter(car=> car._id !== this.secretaries[i].careers[j].careerId._id);              
-              }              
-              this.secretaries[i].noCareers = notin.length === 0 ? this.careers : notin;  
-              this.secretaries[i].filteredCareers =    notin.length === 0 ? this.careers : notin;        
-            }else{
-              this.secretaries[i].noCareers = [];  
-              this.secretaries[i].filteredCareers = []           ;  
+          this.careers = res.careers;
+          this.careersAvailable = this.careers;
+          for(let i=0; i< this.secretaries.length;i++){
+            if(this.secretaries[i].careers){
+              for(let j=0; j<this.secretaries[i].careers.length;j++){
+               this.careersAvailable = this.careersAvailable.filter( car=> car._id !== this.secretaries[i].careers[j].careerId._id);                
+              }
             }
+          }
+          // console.log(this.careersAvailable);
+          
+                    
+          // for(let i=0; i< this.secretaries.length; i++){
+          //   let notin = [];
+          //   if(this.secretaries[i].careers){
+          //     if( this.secretaries[i].careers.length !== this.careers.length){
+          //       for(let j=0; j<this.secretaries[i].careers.length;j++){            
+          //           notin = notin.length === 0 ? this.careers.filter( 
+          //             car=> car._id !== this.secretaries[i].careers[j].careerId._id) :
+          //             notin.filter(car=> car._id !== this.secretaries[i].careers[j].careerId._id);     
+          //       }              
+          //       this.secretaries[i].noCareers = notin.length === 0 ? this.careers : notin;  
+          //       this.secretaries[i].filteredCareers =    notin.length === 0 ? this.careers : notin;        
+          //     }else{
+          //       this.secretaries[i].noCareers = [];  
+          //       this.secretaries[i].filteredCareers = [];           
+          //     }
+          //   }else{
+          //     this.secretaries[i].careers = [];
+          //     this.secretaries[i].noCareers = this.careers;  
+          //     this.secretaries[i].filteredCareers =  this.careers;
+          //   }
                                  
-          }                                          
+          // }                                          
         }
       });
   }
@@ -143,14 +161,16 @@ export class SecretaryAssignmentComponent implements OnInit {
   }
   filter(value,i){     
     if(value){
-      this.secretaries[i].filteredCareers = this.secretaries[i].noCareers.filter( career=> career.fullName.toLowerCase().indexOf(value.toString().trim().toLowerCase()) !== -1);
+      // this.secretaries[i].filteredCareers = this.secretaries[i].noCareers.filter( career=> career.fullName.toLowerCase().indexOf(value.toString().trim().toLowerCase()) !== -1);
+      this.filteredCareers = this.careersAvailable.filter( career=> career.fullName.toLowerCase().indexOf(value.toString().trim().toLowerCase()) !== -1);
     }
   }
   focus(i){
-    this.secretaries[i].filteredCareers = this.secretaries[i].noCareers;
+    // this.secretaries[i].filteredCareers = this.secretaries[i].noCareers;
+    this.filteredCareers = this.careersAvailable;
   }
   slectedCareer(career,sec){
-    console.log('click',career,sec);
+    // console.log('click',career,sec);
     this.updateCareers(career._id,'insert', sec._id);
     this.careerCtrl.setValue(null);
   }

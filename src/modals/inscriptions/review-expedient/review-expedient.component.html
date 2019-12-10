@@ -27,7 +27,7 @@
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'EN PROCESO'"  class="process">                            
                             <mat-card-header>
                                 <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
-                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActaa" (change)="actaChange()"></mat-checkbox>
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActa" (change)="actaChange()"></mat-checkbox>
                                 </div>
                               <mat-card-title class="processText">Acta de Nacimiento</mat-card-title>
                             </mat-card-header>
@@ -44,7 +44,7 @@
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'RECHAZADO'"  class="reject">
                             <mat-card-header>
                                 <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
-                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActaa" (change)="actaChange()"></mat-checkbox>
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActa" (change)="actaChange()"></mat-checkbox>
                                 </div>
                               <mat-card-title class="rejectText">Acta de Nacimiento</mat-card-title>
                             </mat-card-header>
@@ -59,7 +59,7 @@
                           <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'VALIDADO'" class="validate">
                             <mat-card-header>
                                 <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
-                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActaa" (change)="actaChange()"></mat-checkbox>
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActa" (change)="actaChange()"></mat-checkbox>
                                 </div>
                               <mat-card-title class="validateText">Acta de Nacimiento</mat-card-title>
                             </mat-card-header>
@@ -295,7 +295,7 @@
                             <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'VALIDADO'" class="validate">
                               <mat-card-header>
                                   <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
-                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCrup" (change)="curpChange()"></mat-checkbox>
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCurp" (change)="curpChange()"></mat-checkbox>
                                   </div>
                                 <mat-card-title class="validateText">CURP</mat-card-title>
                               </mat-card-header>
@@ -311,7 +311,7 @@
                             <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'RECHAZADO'" class="reject">
                               <mat-card-header>
                                   <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
-                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCrup" (change)="curpChange()"></mat-checkbox>
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCurp" (change)="curpChange()"></mat-checkbox>
                                   </div>
                                 <mat-card-title class="rejectText">CURP</mat-card-title>
                               </mat-card-header>
@@ -326,7 +326,7 @@
                             <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'EN PROCESO'" class="process">
                               <mat-card-header>
                                   <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
-                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCrup" (change)="curpChange()"></mat-checkbox>
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCurp" (change)="curpChange()"></mat-checkbox>
                                   </div>
                                 <mat-card-title class="processText">CURP</mat-card-title>
                               </mat-card-header>
