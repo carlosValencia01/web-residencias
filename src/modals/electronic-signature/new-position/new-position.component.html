@@ -11,16 +11,6 @@
 <form (ngSubmit)="onSubmit()" [formGroup]="positionForm">
   <mat-dialog-content>
     <div class="row">
-      <mat-label class="message-note">
-        Nota: Motivos por los que un puesto puede estar no disponible para asignar
-        <ul>
-          <li>El empleado ya tiene asignado el mismo puesto y está activo</li>
-          <li>Si el puesto es jefe de departamento, es posible que el puesto ya esté asignado a otro empleado</li>
-          <li>El empleado ya tiene un puesto igual en algún otro departamento</li>
-          <li>El puesto no está dado de alta en el departamento</li>
-          <li>El puesto no existe para el departamento seleccionado</li>
-        </ul>
-      </mat-label>
       <mat-form-field class="col-sm-12 col-lg-6">
         <input [matAutocomplete]="department" autofocus
                formControlName="department"
@@ -47,6 +37,10 @@
           <span>¡Por favor seleccione un puesto!</span>
         </mat-error>
       </mat-form-field>
+    </div><br>
+    <div class="message-info">
+      Motivos de no disponibilidad de un puesto:
+      <mat-icon [ngbTooltip]="reasonsList" triggers="click">info</mat-icon>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
@@ -56,3 +50,10 @@
     </button>
   </mat-dialog-actions>
 </form>
+<ng-template #reasonsList>
+  <div class="d-flex flex-column">
+    <span>- El empleado ya tiene activo el puesto.</span>
+    <span>- El puesto ya está asignado a otro empleado (solo para Jefe de departamento).</span>
+    <span>- El puesto no está dado de alta en el departamento.</span>
+  </div>
+</ng-template>
