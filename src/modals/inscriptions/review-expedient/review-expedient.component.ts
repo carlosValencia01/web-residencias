@@ -256,6 +256,7 @@ export class ReviewExpedientComponent implements OnInit {
 
   selectAll(){
     
+    console.log(this.acceptDocuments);
     
     if(!this.checkAll){
       this.selectPendings = 0;
