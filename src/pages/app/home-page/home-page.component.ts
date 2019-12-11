@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { iRole } from 'src/entities/app/role.model';
+import {iPermission} from 'src/entities/app/permissions.model';
 
 @Component({
   selector: 'app-home-page',
@@ -9,6 +10,7 @@ import { iRole } from 'src/entities/app/role.model';
 })
 export class HomePageComponent implements OnInit {
   public rol: iRole;
+  public homeItems: Array<iPermission> = [];
 
   constructor(
     private cookiesServ: CookiesService,
@@ -17,5 +19,10 @@ export class HomePageComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.rol.permissions.forEach(permission => {
+      if (permission.items.length) {
+        this.homeItems = this.homeItems.concat(permission.items);
+      }
+    });
   }
 }
