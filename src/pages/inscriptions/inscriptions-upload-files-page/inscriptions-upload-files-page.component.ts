@@ -40,6 +40,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   pdfSrc;
   pub;
   image;
+  ccDoc;
 
   selectedFile: File = null;
   imageChangedEvent: any = '';
@@ -73,6 +74,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   public config4: DropzoneConfigInterface;
   public config5: DropzoneConfigInterface;
   public config6: DropzoneConfigInterface;
+  public config7: DropzoneConfigInterface;
 
   dropzoneFileNameCERTIFICADO: any;
   dropzoneFileNameACTA: any;
@@ -81,6 +83,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   dropzoneFileNameANALISIS: any;
   dropzoneFileNamePhoto: any;
   dropzoneFileNameNSS: any;
+  dropzoneFileNameCC: any;
 
   constructor(
     private notificationsServices: NotificationsServices,
@@ -137,6 +140,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         this.certificateDoc = documents.filter(docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0];
         this.actaDoc = documents.filter(docc => docc.filename.indexOf('ACTA') !== -1)[0];
         this.clinicDoc = documents.filter(docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
+        this.ccDoc = documents.filter(docc => docc.filename.indexOf('COMPROMISO') !== -1)[0];
 
         if (this.imageDoc) this.imageDoc.status = this.imageDoc ? this.imageDoc.status.filter(st => st.active === true)[0].name : '';
 
@@ -151,6 +155,9 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         if (this.payDoc) this.payDoc.status = this.payDoc ? this.payDoc.status.filter(st => st.active === true)[0].name : '';
 
         if (this.nssDoc) this.nssDoc.status = this.nssDoc ? this.nssDoc.status.filter(st => st.active === true)[0].name : '';
+
+        if (this.ccDoc) this.ccDoc.status = this.ccDoc ? this.ccDoc.status.filter(st => st.active === true)[0].name : '';
+
 
         this.checkFolders();
 
@@ -241,12 +248,14 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       accept: (file, done) => { this.dropzoneFileNameNSS = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
+
+    this.config7 = {
+      clickable: true, maxFiles: 2,
+      params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO.pdf', 'mimeType': 'application/pdf', newF: this.ccDoc ? false : true, fileId: this.ccDoc ? this.ccDoc.fileIdInDrive : '' },
+      accept: (file, done) => { this.dropzoneFileNameCC = file.name; done(); },
+      acceptedFiles: 'application/pdf',
+    };
   }
-
-
-
-
-
 
   /*  DROPZONE 1 METHODS  */
   public resetDropzoneUploads(): void {

@@ -874,6 +874,116 @@
                 </mat-card-footer>
               </mat-card>
             </div>
+            <!--Carta Compromiso-->
+            <div class="col-3" *ngIf="docCompromiso">
+              <mat-card *ngIf="docCompromiso.status.name == 'EN PROCESO'" class="process">
+                <mat-card-header>
+                  <mat-card-title class="processText">Carta Compromiso</mat-card-title>
+                </mat-card-header>
+                <mat-card-content (click)="onView('Compromiso')" style="cursor: pointer;" ngbTooltip="Visualizar Carta Compromiso"
+                  tooltipClass="my-custom-class">
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    {{docCompromiso.status.name}}
+                  </p>
+                </mat-card-actions>
+                <mat-card-footer style="text-align: center; color: black;">
+                  <dropzone id="dz7" [config]="config7" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                    (success)="onUploadSuccess($event)"></dropzone>
+                </mat-card-footer>
+              </mat-card>
+              <mat-card *ngIf="docCompromiso.status.name == 'RECHAZADO'" class="reject">
+                <mat-card-header>
+                  <mat-card-title class="rejectText">Carta Compromiso</mat-card-title>
+                </mat-card-header>
+                <mat-card-content (click)="onView('Compromiso')" style="cursor: pointer;" ngbTooltip="Visualizar Carta Compromiso"
+                  tooltipClass="my-custom-class">
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    {{docCompromiso.status.name}}
+                  </p>
+                  <span>{{docCompromiso.status.observation}}</span>
+                </mat-card-actions>
+                <mat-card-footer style="text-align: center; color: black;">
+                  <dropzone id="dz7" [config]="config7" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                    (success)="onUploadSuccess($event)"></dropzone>
+                </mat-card-footer>
+              </mat-card>
+              <mat-card *ngIf="docCompromiso.status.name == 'VALIDADO'" class="validate">
+                <mat-card-header>
+                  <mat-card-title class="validateText">Carta Compromiso</mat-card-title>
+                </mat-card-header>
+                <mat-card-content (click)="onView('NSS')" style="cursor: pointer;" ngbTooltip="Visualizar Carta Compromiso"
+                  tooltipClass="my-custom-class">
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    {{docCompromiso.status.name}}
+                  </p>
+                </mat-card-actions>
+              </mat-card>
+              <mat-card *ngIf="docCompromiso.status.name == 'ACEPTADO'" class="accept">
+                <mat-card-header>
+                  <mat-card-title class="acceptText">Carta Compromiso</mat-card-title>
+                </mat-card-header>
+                <mat-card-content (click)="onView('Compromiso')" style="cursor: pointer;" ngbTooltip="Visualizar Carta Compromiso"
+                  tooltipClass="my-custom-class">
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    {{docCompromiso.status.name}}
+                  </p>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+            <!--
+            <div class="col-3" *ngIf="!docCompromiso">
+              <mat-card class="reject">
+                <mat-card-header>
+                  <mat-card-title class="rejectText">Carta Compromiso</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <mat-card-actions>
+                  <p style="text-align: center;">
+                    Sin envio
+                  </p>
+                </mat-card-actions>
+                <mat-card-footer style="text-align: center; color: black;">
+                  <dropzone id="dz7" [config]="config7" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                    (success)="onUploadSuccess($event)"></dropzone>
+                </mat-card-footer>
+              </mat-card>
+            </div>
+            -->
+
           </div>
         </div>
 
