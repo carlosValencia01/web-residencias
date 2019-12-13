@@ -116,7 +116,7 @@ export class RegisterStudentPageComponent implements OnInit {
   validateForm() {
     this.registerForm = this.formBuilder.group({
       'fatherLastName': [this.apellidoPaterno, [Validators.required]],
-      'motherLastName': [this.apellidoMaterno, Validators.required],
+      'motherLastName': [this.apellidoMaterno],
       'firstName': [this.nombre, Validators.required],
       'controlNumber': [this.numeroControl, Validators.required],
       'birthPlace': [this.lugarNacimiento, Validators.required],

@@ -145,10 +145,11 @@ export class ResumeStudentPageComponent implements OnInit {
   }
 
   async findFoto() {
+
     await this.inscriptionsProv.getFile(this.docFoto[0].fileIdInDrive, this.docFoto[0].filename).subscribe(
       data => {
         this.pub = data.file;
-        this.image = 'data:image/png;base64,' + this.pub;
+        this.image = this.pub ? 'data:image/png;base64,' + this.pub :  'assets/imgs/profileImgNotFound.jpg';
         this.pub = true;
       },
       err => {
@@ -177,7 +178,12 @@ export class ResumeStudentPageComponent implements OnInit {
     .then((result) => {
         this.findFoto();
     });*/
-    setTimeout(() => {this.findFoto()}, 3000);
+    if(this.docFoto[0]){
+
+      setTimeout(() => {this.findFoto()}, 3000);
+    }else{
+      this.image = 'assets/imgs/profileImgNotFound.jpg';
+    }
   }
 
   filterDocuments(filename) {
