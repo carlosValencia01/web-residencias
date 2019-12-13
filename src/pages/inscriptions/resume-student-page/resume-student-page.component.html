@@ -156,6 +156,25 @@
                 </mat-card-content>
               </mat-card>
             </div>
+            <div class="col-3" *ngIf="docCC != ''">
+              <mat-card class="cardDocuments" (click)="onView('Compromiso')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Carta Compromiso
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
           </div>
         </div>
       </div>

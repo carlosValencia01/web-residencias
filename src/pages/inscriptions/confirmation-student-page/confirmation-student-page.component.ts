@@ -34,6 +34,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
    docSolicitud;
    docContrato;
    docAcuse;
+   docCompromiso;
 
   // Imagenes para Reportes
   public logoTecNM: any;
@@ -103,6 +104,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
     this.docSolicitud = await this.filterDocuments('SOLICITUD');
     this.docContrato = await this.filterDocuments('CONTRATO');
     this.docAcuse = await this.filterDocuments('ACUSE');
+    this.docCompromiso = await this.filterDocuments('COMPROMISO');
 
   }
 
@@ -180,7 +182,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
   }
 
   async continue() {
-    var newStep = { stepWizard: 6, inscriptionStatus: 'Enviado' }
+    var newStep = { stepWizard: 6, inscriptionStatus: 'Enviado', printCredential: false, warningAnalysis: false}
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
       //this.router.navigate(['/wizardInscription']);
       window.location.assign("/profileInscription");
@@ -242,7 +244,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
       [4, "COMPROBANTE DE PAGO",""],
       [5, "CURP",""],
       [6, "NÚMERO DE SEGURO SOCIAL",""],
-      [7, "FOTOGRAFÍA",""] 
+      [7, "FOTOGRAFÍA",""],
+      [8, "CARTA COMPROMISO",""] 
     ];
 
     doc.autoTable(columns,data,{ 
@@ -367,6 +370,23 @@ export class ConfirmationStudentPageComponent implements OnInit {
       doc.setFont('Montserrat', 'Bold');
       doc.setFontSize(10);
       doc.text('NO ENVIADO', 161, 117.85);
+    }   
+
+    // Carta Compromiso
+    if(this.docCompromiso != ''){
+      doc.setTextColor(0,0,0);
+      doc.setFillColor(255, 245, 204);
+      doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('ENVIADO', 161, 125.45);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 125.45);
     }   
 
     this.loading = false; 

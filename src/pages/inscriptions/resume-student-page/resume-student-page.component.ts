@@ -32,6 +32,7 @@ export class ResumeStudentPageComponent implements OnInit {
   docCurp;
   docNss;
   docFoto;
+  docCC;
 
   // Datos Alumno
   nombre: String;
@@ -164,6 +165,7 @@ export class ResumeStudentPageComponent implements OnInit {
     this.docCurp = await this.filterDocuments('CURP');
     this.docNss = await this.filterDocuments('NSS');
     this.docFoto = await this.filterDocuments('FOTO');
+    this.docCC = await this.filterDocuments('COMPROMISO')
 
     /*Swal.fire({
       type: 'success',
@@ -317,6 +319,30 @@ export class ResumeStudentPageComponent implements OnInit {
           this.dialog.open(ExtendViewerComponent, {
             data: {
               source: pdfSrcCurp,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+        break;
+      }
+      case "Compromiso": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Carta Compromiso.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.docCC[0].fileIdInDrive, this.docCC[0].filename).subscribe(data => {
+          var pubCC = data.file;
+          let buffCC = new Buffer(pubCC.data);
+          var pdfSrcCC = buffCC;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrcCC,
               isBase64: true
             },
             disableClose: true,
