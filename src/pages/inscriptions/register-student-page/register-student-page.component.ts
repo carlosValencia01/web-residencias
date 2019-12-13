@@ -150,9 +150,12 @@ export class RegisterStudentPageComponent implements OnInit {
   async updateStudent(data, id) {
     
     await this.inscriptionsProv.updateStudent(data, id).subscribe(res => {
-
-      this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Solicitud ...', '');
-      this.generatePDF();
+      // Actualizar fullName
+      var newFullName = data.firstName+' '+data.fatherLastName+' '+data.motherLastName ;
+      this.inscriptionsProv.updateStudent({fullName:newFullName}, id).subscribe(res => {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Solicitud ...', '');
+        this.generatePDF();
+      });   
     }, err=>{});
   }
 
