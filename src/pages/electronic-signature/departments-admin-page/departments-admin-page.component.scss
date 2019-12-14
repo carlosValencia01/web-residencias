@@ -1,0 +1,35 @@
+.department-card {
+  height: auto !important;
+  margin: 5px 0px !important;
+  mat-card {
+    min-width: 100%;
+    max-width: 100%;
+    padding: 5px;
+    mat-card-title {
+      font-size: 14px;
+    }
+    mat-card-subtitle {
+      margin: 0px;
+    }
+    mat-card-actions {
+      padding: 8px;
+    }
+  }
+  label {
+    margin: 0px;
+  }
+  mat-icon {
+    margin: 0px 3px;
+    cursor: pointer;
+  }
+}
+
+.departments-list {
+  max-height: 60vh;
+  overflow: hidden scroll;
+  margin: 10px 0px !important;
+}
+
+.departments-list::-webkit-scrollbar {
+  display: none !important;
+}
