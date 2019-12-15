@@ -1,3 +1,6 @@
+<div *ngIf="isReject" class="alert alert-danger" role="alert">
+    {{information.observation}}
+</div>
 <div class="row">
     <div class="col-10">
         <h1 mat-dialog-title>Liberación</h1>
@@ -8,26 +11,125 @@
         </button>
     </div>
 </div>
+
 <div mat-dialog-content>
-    <div class="card text-center border-dark mb-3">
-        <div *ngIf="!fileData" class="card-body text-dark">
-            <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-            <p class="card-text">Archivo no cargado</p>
+    <form [formGroup]="frmConsejo" (ngSubmit)="onSave()">
+        <div class="card border-dark mb-3 p-3" style="height: 100%;">
+            <div class="row">
+                <div class="col-6 text-center">
+                    <div *ngIf="!fileData" class="card-body text-dark" style="color: #08a3bc;
+                    background-color: rgba(10, 215, 247, 0.2);
+                    border-color: #09c6e3; height: 100%; padding-top: 30%;">
+                        <img alt="File" src="../../assets/imgs/notfound.png" style="width: 80px; height: 80px">
+                        <p class="card-text"> <strong>ARCHIVO NO CARGADO</strong></p>
+                    </div>
+                    <div *ngIf="fileData">
+                        <ngx-extended-pdf-viewer [src]="fileData" backgroundColor="#ffffff" [height]="'40vh'"
+                            [useBrowserLocale]="true">
+                        </ngx-extended-pdf-viewer>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group row">
+                        <label for="president" class="col-sm-4 col-form-label col-form-label-sm mb-3">Presidente</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-sm mb-3">
+                                <input type="text" class="form-control" id="president" formControlName="president"
+                                    placeholder="Presidente" readonly
+                                    [ngClass]="(!frmConsejo.get('president').valid && frmConsejo.get('president').touched)?'form-control is-invalid':'form-control'">
+                                <div class="input-group-append" (click)="selectEmployee('president')">
+                                    <span class="input-group-text btn">...</span>
+                                </div>
+                                <div class="invalid-feedback"
+                                    *ngIf="!frmConsejo.get('president').valid && frmConsejo.get('president').touched">
+                                    <span *ngIf="frmConsejo.get('president').errors['required']">
+                                        ¡Campo obligatorio!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="secretary" class="col-sm-4 col-form-label col-form-label-sm mb-3">Secretario</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-sm mb-3">
+                                <input type="text" class="form-control" id="secretary" formControlName="secretary"
+                                    placeholder="Secretario" readonly
+                                    [ngClass]="(!frmConsejo.get('secretary').valid &&
+                                                frmConsejo.get('secretary').touched)?'form-control is-invalid':'form-control'">
+                                <div class="input-group-append" (click)="selectEmployee('secretary')">
+                                    <span class="input-group-text btn">...</span>
+                                </div>
+                                <div class="invalid-feedback"
+                                    *ngIf="!frmConsejo.get('secretary').valid && frmConsejo.get('secretary').touched">
+                                    <span *ngIf="frmConsejo.get('secretary').errors['required']">
+                                        ¡Campo obligatorio!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="vocal" class="col-sm-4 col-form-label col-form-label-sm mb-3">Vocal</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-sm mb-3">
+                                <input type="text" class="form-control" id="vocal" formControlName="vocal"
+                                    placeholder="Vocal" readonly
+                                    [ngClass]="(!frmConsejo.get('vocal').valid && frmConsejo.get('vocal').touched)?'form-control is-invalid':'form-control'">
+                                <div class="input-group-append" (click)="selectEmployee('vocal')">
+                                    <span class="input-group-text btn">...</span>
+                                </div>
+                                <div class="invalid-feedback"
+                                    *ngIf="!frmConsejo.get('vocal').valid && frmConsejo.get('vocal').touched">
+                                    <span *ngIf="frmConsejo.get('vocal').errors['required']">
+                                        ¡Campo obligatorio!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="substitute" class="col-sm-4 col-form-label col-form-label-sm mb-3">Suplente</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-sm mb-3">
+                                <input type="text" class="form-control" id="substitute" formControlName="substitute"
+                                    placeholder="Suplente" readonly
+                                    [ngClass]="(!frmConsejo.get('substitute').valid && frmConsejo.get('substitute').touched)?'form-control is-invalid':'form-control'">
+
+                                <div class="input-group-append" (click)="selectEmployee('substitute')">
+                                    <span class="input-group-text btn">...</span>
+                                </div>
+                                <div class="invalid-feedback"
+                                    *ngIf="!frmConsejo.get('substitute').valid && frmConsejo.get('substitute').touched">
+                                    <span *ngIf="frmConsejo.get('substitute').errors['required']">
+                                        ¡Campo obligatorio!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="substitute" class="col-sm-4 col-form-label col-form-label-sm mb-3">Hora del
+                            Acto</label>
+                        <div class="col-sm-8">
+                            <div class="ngx-timepicker-field-example">
+                                <ngx-timepicker-field #time [format]="24">
+                                </ngx-timepicker-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
+                        style="display: none">
+                    <button type="button" class="btn btn-outline-primary btn-sm btn-block" (click)="fileUpload.click()">
+                        Cargar archivo de liberación
+                    </button>
+                </div>
+            </div>
         </div>
-        <div *ngIf="fileData">
-            <ngx-extended-pdf-viewer [src]="fileData" backgroundColor="#ffffff" [height]="'40vh'"
-                [useBrowserLocale]="true">
-            </ngx-extended-pdf-viewer>
+        <div mat-dialog-actions align="end">
+            <button [disabled]="frmConsejo.invalid" mat-button type="submit">Guardar</button>
+            <button mat-button [mat-dialog-close] cdkFocusInitial>Cancelar</button>
         </div>
-        <div class="card-footer">
-            <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
-            <button type="button" class="btn btn-outline-primary btn-block" (click)="fileUpload.click()">
-                Cargar archivo de liberación
-            </button>
-        </div>
-    </div>
-</div>
-<div mat-dialog-actions align="end">
-    <button mat-button (click)="Save()">Guardar</button>
-    <button mat-button [mat-dialog-close] cdkFocusInitial>Cancelar</button>
+    </form>
 </div>

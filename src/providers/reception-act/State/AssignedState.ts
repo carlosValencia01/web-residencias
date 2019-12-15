@@ -6,7 +6,7 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 export class AssignedState extends iState {
     router = 'oneStudentPage';
-    index = 5;
+    index = 7;
     phase: eRequest =  eRequest.ASSIGNED;
 
     public next(context: ContextState): void {

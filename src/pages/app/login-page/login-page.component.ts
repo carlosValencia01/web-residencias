@@ -31,7 +31,7 @@ export class LoginPageComponent implements OnInit {
     private notificationsServ: NotificationsServices,
     private router: Router,
   ) {
-    console.log('login');
+    
    }
 
   ngOnInit() {
@@ -70,7 +70,7 @@ export class LoginPageComponent implements OnInit {
           this.showAlertDiv = false;
           this.loginSuccessful.emit();
         }, (error) => {
-          console.log(error);
+          // console.log(error);
           const msg = JSON.parse(error._body);
           this.messageAlertDiv = msg.error;
           this.showAlertDiv = true;

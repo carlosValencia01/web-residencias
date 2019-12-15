@@ -7,9 +7,14 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 import { MatDialog } from '@angular/material';
+import { uRequest } from 'src/entities/reception-act/request';
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { ObservationsComponentComponent } from 'src/modals/reception-act/observations-component/observations-component.component';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
 import * as moment from 'moment';
+import { RequestService } from 'src/services/reception-act/request.service';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
+import { CookiesService } from 'src/services/app/cookie.service';
 moment.locale('es');
 
 @Component({
@@ -20,6 +25,10 @@ moment.locale('es');
 export class ExpedienteComponent implements OnInit {
   public Request: iRequest;
   public Documents: Array<iDocument>;
+  public FileRequest: iDocument;
+  public FileInconvenience: iDocument;
+  public FileRegistered: iDocument;
+  public FileReleased: iDocument;
   public FileActa: iDocument;
   public FileCurp: iDocument;
   public FileCertificado: iDocument;
@@ -29,19 +38,49 @@ export class ExpedienteComponent implements OnInit {
   public FileIngles: iDocument;
   public FilePago: iDocument;
   public FileRevalidacion: iDocument;
-
+  public FilePhotos: iDocument;
+  private _Request: uRequest;
+  public changeDocument: boolean;
+  public role: string;
+  public isTitled: string;
+  public existJury: boolean;
+  public existTitledDate: boolean;
+  public titledDate: string;
+  public titledHour: string;
+  public registeredDate: string
   constructor(
     public requestProvider: RequestProvider,
     private notificationService: NotificationsServices,
     private activatedRoute: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public imgSrv: ImageToBase64Service,
+    public _RequestService: RequestService,
+    private _CookiesService: CookiesService
   ) {
+    this.role = this._CookiesService.getData().user.rol.name;
+    this.changeDocument = false;
     this.activatedRoute.params.subscribe(
       (params: Params) => {
         this.requestProvider.getRequestById(params.id).subscribe(
           data => {
             this.Request = data.request[0];
-            console.log('Expe', this.Request);
+            console.log("REQUEST EXP", this.Request);
+            this.registeredDate = moment(new Date(this.Request.applicationDate)).format('LL')
+            this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
+            this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length===4;
+            let tmpDate: Date;
+            if (this.existTitledDate) {
+              tmpDate = new Date(this.Request.proposedDate);
+              tmpDate.setHours(0, 0, 0, 0);
+              tmpDate.setHours(this.Request.proposedHour / 60, this.Request.proposedHour % 60, 0, 0);
+            }
+            this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
+            this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
+            console.log("eee",(<eRequest><keyof typeof eRequest>this.Request.phase),"dd",(<eStatusRequest><keyof typeof eStatusRequest>this.Request.phase))
+            this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
+
+            this.Request.student = data.request[0].studentId;
+            this._Request = new uRequest(this.Request, imgSrv);
             this.onLoad(this.Request.documents);
             (async () => {
               await this.delay(150);
@@ -59,11 +98,23 @@ export class ExpedienteComponent implements OnInit {
   ngOnInit() {
   }
 
+  changed(): void {
+    if (!this.changeDocument)
+      this._RequestService.AddRequest(this.Request, <eRequest><keyof typeof eRequest>this.Request.phase, true);
+    this.changeDocument = !this.changeDocument;
+    // if (this.changeDocument) {
+    //   this._RequestService.AddRequest(this.Request, <eRequest><keyof typeof eRequest>this.Request.phase);
+    // }
+  }
   onLoad(documents): void {
     this.Documents = [];
     documents.forEach(element => {
       this.Documents.push({ type: element.type, value: null, status: element.status });
     });
+    this.FileRegistered = this.getDocument(eFILES.REGISTRO);
+    this.FileRequest = this.getDocument(eFILES.SOLICITUD);
+    this.FileReleased = this.getDocument(eFILES.RELEASED);
+    this.FileInconvenience = this.getDocument(eFILES.INCONVENIENCE);
     this.FileActa = this.getDocument(eFILES.ACTA_NACIMIENTO);
     this.FileCurp = this.getDocument(eFILES.CURP);
     this.FileCedula = this.getDocument(eFILES.CEDULA);
@@ -73,12 +124,57 @@ export class ExpedienteComponent implements OnInit {
     this.FileIngles = this.getDocument(eFILES.INGLES);
     this.FileServicio = this.getDocument(eFILES.SERVICIO);
     this.FilePago = this.getDocument(eFILES.PAGO);
+    this.FilePhotos = this.getDocument(eFILES.PHOTOS);
+  }
+
+  onViewPdf(file): void {
+    const type = <eFILES><keyof typeof eFILES>file;
+    let exists: boolean = false;
+    let pdf: any;
+    switch (type) {
+      case eFILES.SOLICITUD: {
+        exists = typeof (this.FileRequest) !== 'undefined';
+        if (exists)
+          pdf = this._Request.protocolActRequest().output('bloburl');
+        break;
+      }
+      case eFILES.REGISTRO: {
+        exists = typeof (this.FileRegistered) !== 'undefined';
+        if (exists)
+          pdf = this._Request.projectRegistrationOffice().output('bloburl');
+        break;
+      }
+      case eFILES.INCONVENIENCE: {
+        exists = typeof (this.FileInconvenience) !== 'undefined';
+        if (exists)
+          pdf = this._Request.noInconvenience().output('bloburl');
+        break;
+      }
+    }
+
+    if (exists) {
+      this.dialog.open(ExtendViewerComponent, {
+        data: {
+          source: pdf,
+          isBase64: true,
+          title: type
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '60em',
+        height: '600px'
+      });
+    }
   }
 
   onView(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let exists = false;
     switch (type) {
+      case eFILES.RELEASED: {
+        exists = typeof (this.FileReleased) !== 'undefined';
+        break;
+      }
       case eFILES.ACTA_NACIMIENTO: {
         exists = typeof (this.FileActa) !== 'undefined';
         break;
@@ -121,7 +217,8 @@ export class ExpedienteComponent implements OnInit {
         this.dialog.open(ExtendViewerComponent, {
           data: {
             source: data,
-            isBase64: true
+            isBase64: true,
+            title: type
           },
           disableClose: true,
           hasBackdrop: true,

@@ -1,0 +1,33 @@
+th {
+    background: rgb(21,43,84);
+    color: white;
+}
+
+td {
+    vertical-align: middle;
+    text-align: center;
+}
+.table-hover tbody tr{
+    transition: all 300ms ease-out;
+}
+.table-hover tbody tr:hover {
+    background: rgb(55, 89, 149);
+    color: white;
+}
+
+.content-general{
+    background: white;
+    box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+}
+
+.div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // cursor: pointer;
+}
+
+button{
+    border: solid 2px white;
+}

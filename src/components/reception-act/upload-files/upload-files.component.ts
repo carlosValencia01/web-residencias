@@ -9,6 +9,8 @@ import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import Swal from 'sweetalert2';
+import { StepperDocumentComponent } from 'src/app/stepper-document/stepper-document.component';
+import { CookiesService } from 'src/services/app/cookie.service';
 
 @Component({
   selector: 'app-upload-files',
@@ -27,6 +29,8 @@ export class UploadFilesComponent implements OnInit {
   public UploadIngles: IDocument;
   public UploadPago: IDocument;
   public UploadRevalidacion: IDocument;
+  public UploadPhotos: IDocument;
+  public isEditable: boolean;
   constructor(
     private requestService: RequestService,
     public dialog: MatDialog,
@@ -42,9 +46,11 @@ export class UploadFilesComponent implements OnInit {
     this.UploadIngles = { type: eFILES.INGLES, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadPago = { type: eFILES.PAGO, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadRevalidacion = { type: eFILES.CERTIFICADO_R, status: eStatusRequest.NONE, file: null, isBase64: false };
+    this.UploadPhotos = { type: eFILES.PHOTOS, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.requestService.requestUpdate.subscribe(
       (result) => {
         this.Request = result.Request;
+        this.isEditable = result.IsEdit;
         this.onLoad(this.Request.documents);
       }
     );
@@ -52,42 +58,48 @@ export class UploadFilesComponent implements OnInit {
 
   onLoad(documents) {
     this.Documents = [];
-    documents.forEach(element => {
-      this.Documents.push({ type: element.type, dateRegistered: element.dateRegistered,
-        path: element.nameFile, status: element.status, isBase64: true, observation: element.observation });
-    });
+    if (typeof (documents) !== 'undefined') {
+      documents.forEach(element => {
+        this.Documents.push({ type: element.type, dateRegistered: element.dateRegistered, path: element.nameFile, status: element.status, isBase64: true, observation: element.observation });
+      });
 
-    const isActa = this.getDocument(eFILES.ACTA_NACIMIENTO);
-    this.UploadActa = typeof (isActa) === 'undefined' ? this.UploadActa : isActa;
+      const isActa = this.getDocument(eFILES.ACTA_NACIMIENTO);
+      this.UploadActa = typeof (isActa) === 'undefined' ? this.UploadActa : isActa;
 
-    const isCurp = this.getDocument(eFILES.CURP);
-    this.UploadCurp = typeof (isCurp) === 'undefined' ? this.UploadCurp : isCurp;
+      const isCurp = this.getDocument(eFILES.CURP);
+      this.UploadCurp = typeof (isCurp) === 'undefined' ? this.UploadCurp : isCurp;
 
-    const isCedula = this.getDocument(eFILES.CEDULA);
-    this.UploadCedula = typeof (isCedula) === 'undefined' ? this.UploadCedula : isCedula;
+      const isCedula = this.getDocument(eFILES.CEDULA);
+      this.UploadCedula = typeof (isCedula) === 'undefined' ? this.UploadCedula : isCedula;
 
-    const isCertBach = this.getDocument(eFILES.CERTIFICADO_B);
-    this.UploadCertificado = typeof (isCertBach) === 'undefined' ? this.UploadCertificado : isCertBach;
+      const isCertBach = this.getDocument(eFILES.CERTIFICADO_B);
+      this.UploadCertificado = typeof (isCertBach) === 'undefined' ? this.UploadCertificado : isCertBach;
 
-    const isLicenciatura = this.getDocument(eFILES.CERTIFICADO_L);
-    this.UploadLicenciatura = typeof (isLicenciatura) === 'undefined' ? this.UploadLicenciatura : isLicenciatura;
+      const isLicenciatura = this.getDocument(eFILES.CERTIFICADO_L);
+      this.UploadLicenciatura = typeof (isLicenciatura) === 'undefined' ? this.UploadLicenciatura : isLicenciatura;
 
-    const isRevalidacion = this.getDocument(eFILES.CERTIFICADO_R);
-    this.UploadRevalidacion = typeof (isRevalidacion) === 'undefined' ? this.UploadRevalidacion : isRevalidacion;
+      const isRevalidacion = this.getDocument(eFILES.CERTIFICADO_R);
+      this.UploadRevalidacion = typeof (isRevalidacion) === 'undefined' ? this.UploadRevalidacion : isRevalidacion;
 
-    const isIngles = this.getDocument(eFILES.INGLES);
-    this.UploadIngles = typeof (isIngles) === 'undefined' ? this.UploadIngles : isIngles;
+      const isIngles = this.getDocument(eFILES.INGLES);
+      this.UploadIngles = typeof (isIngles) === 'undefined' ? this.UploadIngles : isIngles;
 
-    const isServicio = this.getDocument(eFILES.SERVICIO);
-    this.UploadServicio = typeof (isServicio) === 'undefined' ? this.UploadServicio : isServicio;
+      const isServicio = this.getDocument(eFILES.SERVICIO);
+      this.UploadServicio = typeof (isServicio) === 'undefined' ? this.UploadServicio : isServicio;
 
-    const isPago = this.getDocument(eFILES.PAGO);
-    this.UploadPago = typeof (isPago) === 'undefined' ? this.UploadPago : isPago;
+      const isPago = this.getDocument(eFILES.PAGO);
+      this.UploadPago = typeof (isPago) === 'undefined' ? this.UploadPago : isPago;
 
+      const isPhotos = this.getDocument(eFILES.PHOTOS);
+      this.UploadPhotos = typeof (isPhotos) === 'undefined' ? this.UploadPhotos : isPhotos;
+    }
   }
 
   getDocument(fileType: eFILES): IDocument {
+    // if(typeof(this.Documents)!=='undefined' && this.Documents!==null)
     return this.Documents.find(e => e.type === fileType);
+    // else
+    //   return undefined;
   }
 
   onView(file) {
@@ -141,14 +153,14 @@ export class UploadFilesComponent implements OnInit {
         break;
       }
     }
-    console.log('ES BASE ', isBase64, 'pdf', pdf, 'type', typeof (pdf));
+    // console.log('ES BASE ', isBase64, 'pdf', pdf, 'type', typeof (pdf));
     if (!isBase64) {
       if (pdf !== null) {
-        this.openView(pdf, isBase64);
+        this.openView(pdf, isBase64, type);
       }
     } else {
       this.requestProvider.getResource(this.Request._id, type).subscribe(data => {
-        this.openView(data, isBase64);
+        this.openView(data, isBase64, type);
       }, error => {
         this.notificationServices.showNotification(eNotificationType.ERROR,
           'Titulación App', error);
@@ -157,11 +169,12 @@ export class UploadFilesComponent implements OnInit {
 
   }
 
-  openView(source: any, isBase64: boolean): void {
+  openView(source: any, isBase64: boolean, type: eFILES): void {
     this.dialog.open(ExtendViewerComponent, {
       data: {
         source: source,
-        isBase64: isBase64
+        isBase64: isBase64,
+        title: type
       },
       disableClose: true,
       hasBackdrop: true,
@@ -210,6 +223,10 @@ export class UploadFilesComponent implements OnInit {
         message = this.UploadRevalidacion.observation;
         break;
       }
+      case eFILES.PHOTOS: {
+        message = this.UploadPhotos.observation;
+        break;
+      }
     }
     Swal.fire({
       type: 'error',
@@ -228,7 +245,7 @@ export class UploadFilesComponent implements OnInit {
     frmData.append('FullName', this.Request.student.fullName);
     frmData.append('Career', this.Request.student.career);
     frmData.append('Document', type);
-
+    frmData.append('IsEdit', this.isEditable ? "true" : "false");
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
         frmData.append('file', this.UploadActa.file);
@@ -279,11 +296,15 @@ export class UploadFilesComponent implements OnInit {
 
     this.requestProvider.uploadFile(this.Request._id, frmData).subscribe(data => {
       const doc = this.getDocument(type);
-      doc.status = eStatusRequest.PROCESS;
-      document.status = eStatusRequest.PROCESS;
+      doc.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;
+      document.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;//eStatusRequest.PROCESS;
+      if (this.isEditable) {
+        this.onRemove(file);
+        this.notificationServices.showNotification(eNotificationType.SUCCESS, "Titulación App", "Documento cambiado");
+      }
     }, error => {
       this.notificationServices.showNotification(eNotificationType.ERROR,
-        'Titulación App', error);
+        "Titulación App", error);
     });
   }
   onRemove(file): void {
@@ -293,51 +314,140 @@ export class UploadFilesComponent implements OnInit {
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
         this.UploadActa.file = null;
+        this.UploadActa.isBase64 = this.isEditable ? true : this.UploadActa.isBase64;
         break;
       }
       case eFILES.CURP: {
         this.UploadCurp.file = null;
+        this.UploadCurp.isBase64 = this.isEditable ? true : this.UploadCurp.isBase64;
         break;
       }
       case eFILES.CERTIFICADO_B: {
         this.UploadCertificado.file = null;
+        this.UploadCertificado.isBase64 = this.isEditable ? true : this.UploadCertificado.isBase64;
         break;
       }
       case eFILES.CEDULA: {
         this.UploadCedula.file = null;
+        this.UploadCedula.isBase64 = this.isEditable ? true : this.UploadCedula.isBase64;
         break;
       }
       case eFILES.CERTIFICADO_L: {
         this.UploadLicenciatura.file = null;
+        this.UploadLicenciatura.isBase64 = this.isEditable ? true : this.UploadLicenciatura.isBase64;
         break;
       }
       case eFILES.SERVICIO: {
         this.UploadServicio.file = null;
+        this.UploadServicio.isBase64 = this.isEditable ? true : this.UploadServicio.isBase64;
         break;
       }
       case eFILES.INGLES: {
         this.UploadIngles.file = null;
+        this.UploadIngles.isBase64 = this.isEditable ? true : this.UploadIngles.isBase64;
         break;
       }
       case eFILES.PAGO: {
         this.UploadPago.file = null;
+        this.UploadPago.isBase64 = this.isEditable ? true : this.UploadPago.isBase64;
         break;
       }
       case eFILES.CERTIFICADO_R: {
         this.UploadRevalidacion.file = null;
+        this.UploadRevalidacion.isBase64 = this.isEditable ? true : this.UploadRevalidacion.isBase64;
         break;
       }
     }
   }
 
+  onUploadNew(file): void {
+    const dialogRef = this.dialog.open(StepperDocumentComponent, {
+      data: {
+        Documento: file
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '45em',
+      height: '550px'
+    });
+
+    dialogRef.afterClosed().subscribe((fileUpload: any) => {
+      if (typeof (fileUpload) !== 'undefined') {
+        const type = <eFILES><keyof typeof eFILES>file;
+        const archivo = this.getDocument(type);
+        if (typeof (archivo) === 'undefined') {
+          this.Documents.push({
+            type: type, dateRegistered: new Date(), path: '',
+            status: eStatusRequest.NONE, file: fileUpload.file, isBase64: false
+          });
+          console.log("Docume", this.Documents);
+        } else {
+          archivo.file = fileUpload.file;
+          archivo.isBase64 = false;
+        }
+
+        switch (type) {
+          case eFILES.ACTA_NACIMIENTO: {
+            this.UploadActa.file = fileUpload.file;
+            this.UploadActa.isBase64 = false;
+            break;
+          }
+          case eFILES.CURP: {
+            this.UploadCurp.file = fileUpload.file;
+            this.UploadCurp.isBase64 = false;
+            break;
+          }
+          case eFILES.CERTIFICADO_B: {
+            this.UploadCertificado.file = fileUpload.file;
+            this.UploadCertificado.isBase64 = false;
+            break;
+          }
+          case eFILES.CEDULA: {
+            this.UploadCedula.file = fileUpload.file;
+            this.UploadCedula.isBase64 = false;
+            break;
+          }
+          case eFILES.CERTIFICADO_L: {
+            this.UploadLicenciatura.file = fileUpload.file;
+            this.UploadLicenciatura.isBase64 = false;
+            break;
+          }
+          case eFILES.SERVICIO: {
+            this.UploadServicio.file = fileUpload.file;
+            this.UploadServicio.isBase64 = false;
+            break;
+          }
+          case eFILES.INGLES: {
+            this.UploadIngles.file = fileUpload.file;
+            this.UploadIngles.isBase64 = false;
+            break;
+          }
+          case eFILES.PAGO: {
+            this.UploadPago.file = fileUpload.file;
+            this.UploadPago.isBase64 = false;
+            break;
+          }
+          case eFILES.CERTIFICADO_R: {
+            this.UploadRevalidacion.file = fileUpload.file;
+            this.UploadRevalidacion.isBase64 = false;
+            break;
+          }
+        }
+      }
+    });
+
+  }
   onUpload(event, file): void {
     if (typeof (event.target.files) !== 'undefined' && event.target.files.length > 0) {
       const type = <eFILES><keyof typeof eFILES>file;
       const archivo = this.getDocument(type);
-      console.log('Srhico upo', archivo);
+      console.log("Srhico upo", archivo);
+      console.log("archivo type", type);
       if (typeof (archivo) === 'undefined') {
-        this.Documents.push({ type: type, dateRegistered: new Date(), path: '',
-          status: eStatusRequest.NONE, file: event.target.files[0], isBase64: false });
+        this.Documents.push({
+          type: type, dateRegistered: new Date(), path: '',
+          status: eStatusRequest.NONE, file: event.target.files[0], isBase64: false
+        });
       } else {
         archivo.file = event.target.files[0];
         archivo.isBase64 = false;
@@ -391,6 +501,106 @@ export class UploadFilesComponent implements OnInit {
         }
       }
     }
+  }
+
+  onOmit(file) {
+    const type = <eFILES><keyof typeof eFILES>file;
+    let data = { "Document": type, "Status": eStatusRequest.OMIT };
+    let document: any;
+    switch (type) {
+      case eFILES.ACTA_NACIMIENTO: {
+        document = this.UploadActa;
+        break;
+      }
+      case eFILES.CURP: {
+        document = this.UploadCurp;
+        break;
+      }
+      case eFILES.CERTIFICADO_B: {
+        document = this.UploadCertificado;
+        break;
+      }
+      case eFILES.CEDULA: {
+        document = this.UploadCedula;
+        break;
+      }
+      case eFILES.CERTIFICADO_L: {
+        document = this.UploadLicenciatura;
+        break;
+      }
+      case eFILES.SERVICIO: {
+        document = this.UploadServicio;
+        break;
+      }
+      case eFILES.INGLES: {
+        document = this.UploadIngles;
+        break;
+      }
+      case eFILES.PAGO: {
+        document = this.UploadPago;
+        break;
+      }
+      case eFILES.CERTIFICADO_R: {
+        document = this.UploadRevalidacion;
+        break;
+      }
+    }
+    this.requestProvider.omitFile(this.Request._id, data).subscribe(data => {
+      document.status = eStatusRequest.OMIT;
+    }, error => {
+      this.notificationServices.showNotification(eNotificationType.ERROR,
+        "Titulación App", error);
+    });
+  }
+
+  onReverse(file) {
+    const type = <eFILES><keyof typeof eFILES>file;
+    let data = { "Document": type, "Status": eStatusRequest.NONE };
+    let document: any;
+    switch (type) {
+      case eFILES.ACTA_NACIMIENTO: {
+        document = this.UploadActa;
+        break;
+      }
+      case eFILES.CURP: {
+        document = this.UploadCurp;
+        break;
+      }
+      case eFILES.CERTIFICADO_B: {
+        document = this.UploadCertificado;
+        break;
+      }
+      case eFILES.CEDULA: {
+        document = this.UploadCedula;
+        break;
+      }
+      case eFILES.CERTIFICADO_L: {
+        document = this.UploadLicenciatura;
+        break;
+      }
+      case eFILES.SERVICIO: {
+        document = this.UploadServicio;
+        break;
+      }
+      case eFILES.INGLES: {
+        document = this.UploadIngles;
+        break;
+      }
+      case eFILES.PAGO: {
+        document = this.UploadPago;
+        break;
+      }
+      case eFILES.CERTIFICADO_R: {
+        document = this.UploadRevalidacion;
+        break;
+      }
+    }
+    this.requestProvider.omitFile(this.Request._id, data).subscribe(data => {
+      document.status = eStatusRequest.NONE;
+    }, error => {
+      this.notificationServices.showNotification(eNotificationType.ERROR,
+        "Titulación App", error);
+    });
   }
 }
 

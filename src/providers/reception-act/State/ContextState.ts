@@ -7,10 +7,15 @@ import { RegisteredState } from './RegisteredState';
 import { SentState } from './SentState';
 import { ReleasedState } from './ReleasedState';
 import { DeliveredState } from './DeliveredState';
+import { ValidatedState } from './ValidatedState';
+import { AssignedState } from './AssignedState';
+import { RealizedState } from './RealizedState';
+import { GeneratedState } from './GeneratedState';
+import { TitledState } from './TitledState';
 
 export class ContextState {
     public state: iState;
-    constructor(phase: eRequest= eRequest.NONE, status: eStatusRequest= eStatusRequest.NONE) {
+    constructor(phase: eRequest = eRequest.NONE, status: eStatusRequest = eStatusRequest.NONE) {
         console.log('c pahe', phase);
         console.log('c status', status);
         switch (phase) {
@@ -39,12 +44,37 @@ export class ContextState {
                 this.state.status = status;
                 break;
             }
-            case eRequest.RELEASED:{
+            case eRequest.RELEASED: {
                 this.state = new ReleasedState();
                 this.state.status = status;
                 break;
-            }case eRequest.DELIVERED:{
+            } case eRequest.DELIVERED: {
                 this.state = new DeliveredState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.VALIDATED: {
+                this.state = new ValidatedState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.ASSIGNED: {
+                this.state = new AssignedState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.REALIZED: {
+                this.state = new RealizedState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.GENERATED: {
+                this.state = new GeneratedState();
+                this.state.status = status;
+                break;
+            }
+            case eRequest.TITLED: {
+                this.state = new TitledState();
                 this.state.status = status;
                 break;
             }

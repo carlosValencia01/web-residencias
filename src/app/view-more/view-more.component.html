@@ -1,0 +1,58 @@
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">{{Appointment.student[0]}}</h5>
+    <div class="row">
+      <div class="col-6 text-left">
+        <p><strong>Lugar: </strong> {{Appointment.place}}</p>
+      </div>
+      <div class="col-6 text-left">
+        <p><strong>Hora:</strong> {{_Date}}</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 text-center">
+        <p><strong>Jurado</strong></p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6 text-left">
+        <p><strong>Presidente</strong></p>
+      </div>
+      <div class="col-6 text-left">
+        <p>{{Appointment.jury[0]}}</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6 text-left">
+        <p><strong>Secretario</strong></p>
+      </div>
+      <div class="col-6 text-left">
+        <p>{{Appointment.jury[1]}}</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6 text-left">
+        <p><strong>Vocal</strong></p>
+      </div>
+      <div class="col-6 text-left">
+        <p>{{Appointment.jury[2]}}</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6 text-left">
+        <p><strong>Suplente</strong></p>
+      </div>
+      <div class="col-6 text-left">
+        <p>{{Appointment.jury[3]}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div mat-dialog-actions align="end">  
+    <button mat-button [mat-dialog-close] cdkFocusInitial>Cerrar</button>
+</div>

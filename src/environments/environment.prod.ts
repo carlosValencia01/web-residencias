@@ -8,5 +8,6 @@ export const environment = {
     storageBucket: '',
     messagingSenderId: '178833379222',
     appId: '1:178833379222:web:c6b59ef3d0579784'
-  }
+  },
+  filesURL:'https://api.cideti.com.mx/escolares/credenciales/drive/upload/file'
 };

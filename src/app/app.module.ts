@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MatFileUploadModule } from 'mat-file-upload';
+
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -19,6 +20,24 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSmartModalModule } from 'ngx-smart-modal';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { SidebarModule } from 'ng-sidebar';
+import { DropzoneModule } from 'ngx-dropzone-wrapper';
+import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
+import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+ 
+const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
+  // Change this to your upload POST address:
+  // url: 'http://localhost:3003/escolares/credenciales/drive/upload/file',
+  url: environment.filesURL,  
+  maxFilesize: 3,
+  acceptedFiles: 'application/pdf',  
+  maxFiles:1  
+};
+
+
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { ContextMenuModule } from 'ngx-contextmenu';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+
 // Firestore
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireStorageModule } from '@angular/fire/storage';
@@ -26,7 +45,6 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
 // Material
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {
   ErrorStateMatcher,
   MatButtonModule,
@@ -41,13 +59,14 @@ import {
   MatSnackBarModule,
   MatProgressSpinnerModule,
   MatSelectModule,
+  MatExpansionModule,
+  MatAutocompleteModule
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -59,7 +78,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 // App module
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
@@ -92,9 +111,30 @@ import { StudentPageComponent } from 'src/pages/credentials/student-page/student
 // Inscriptions module
 // Pages
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
+import { InscriptionsMainPageComponent } from 'src/pages/inscriptions/inscriptions-main-page/inscriptions-main-page.component';
+import { RegisterStudentPageComponent } from 'src/pages/inscriptions/register-student-page/register-student-page.component';
+import { WizardInscriptionPageComponent } from '../pages/inscriptions/wizard-inscription-page/wizard-inscription-page.component';
+import { ContractStudentPageComponent } from '../pages/inscriptions/contract-student-page/contract-student-page.component';
+import { ResumeStudentPageComponent } from '../pages/inscriptions/resume-student-page/resume-student-page.component';
+import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
+import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
+import { ProfileInscriptionPageComponent } from '../pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
+import { SecretaryInscriptionPageComponent } from '../pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+//services
+import { WizardService } from 'src/services/inscriptions/wizard.service';
+import { UploadFilesService } from 'src/services/inscriptions/upload-files.service';
+//modals
+import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component';
+import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
+import { ExpedientHistoryComponent } from 'src/modals/inscriptions/expedient-history/expedient-history.component';
+import { StudentInformationComponent } from '../modals/inscriptions/student-information/student-information.component';
+import { ReviewAnalysisComponent } from '../modals/inscriptions/review-analysis/review-analysis.component';
+import { SecretaryAssignmentComponent } from '../modals/inscriptions/secretary-assignment/secretary-assignment.component';
+import { ReviewCredentialsComponent } from '../modals/inscriptions/review-credentials/review-credentials.component';
 
+import { DocumentsHelpComponent } from 'src/modals/inscriptions/documents-help/documents-help.component';
 // Reception act module
 // Pages
 import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
@@ -117,9 +157,11 @@ import { EnglishComponent } from 'src/modals/reception-act/english/english.compo
 import { IntegrantsComponentComponent } from 'src/modals/reception-act/integrants-component/integrants-component.component';
 import { NewGradeComponent } from 'src/modals/reception-act/new-grade/new-grade.component';
 import { ObservationsComponentComponent } from 'src/modals/reception-act/observations-component/observations-component.component';
+import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/release-check.component';
 import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
+
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
 // Providers
@@ -174,8 +216,25 @@ import { DocumentProvider } from 'src/providers/shared/document.prov';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { PositionProvider } from 'src/providers/shared/position.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { CareerProvider } from 'src/providers/shared/career.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
+
+import { ScheduleComponent } from '../components/reception-act/schedule/schedule.component';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { CustomDateFormatter } from 'src/providers/reception-act/custom-date-formatter.provider';
+import { DiaryComponent } from '../pages/reception-act/diary/diary.component';
+import { RangePageComponent } from './range-page/range-page.component';
+import { RangeModalComponent } from './range-modal/range-modal.component';
+import { RangeProvider } from 'src/providers/reception-act/range.prov';
+import { NewEventComponent } from './new-event/new-event.component';
+import { ViewMoreComponent } from './view-more/view-more.component';
+import { StepperDocumentComponent } from './stepper-document/stepper-document.component';
+import { UploadDeliveredComponent } from './upload-delivered/upload-delivered.component';
+import { ViewAppointmentPageComponent } from './view-appointment-page/view-appointment-page.component';
+import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
+registerLocaleData(localeEs);
 
 @NgModule({
   declarations: [
@@ -200,7 +259,23 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Inscriptions module
     // Pages
     InscriptionsPageComponent,
+    InscriptionsMainPageComponent,
+    RegisterStudentPageComponent,
+    WizardInscriptionPageComponent,
+    ContractStudentPageComponent,
+    InscriptionsUploadFilesPageComponent,
+    ProfileInscriptionPageComponent,
+    SecretaryInscriptionPageComponent,
+    //Modals
+    NewPeriodComponent,
+    ReviewExpedientComponent,
+    ExpedientHistoryComponent,
+    StudentInformationComponent,
+    ReviewAnalysisComponent,
+    SecretaryAssignmentComponent,
+    ReviewCredentialsComponent,
 
+    DocumentsHelpComponent,
     // Reception act module
     // Pages
     DocumentReviewComponent,
@@ -226,7 +301,7 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
-
+    
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -261,7 +336,23 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     ConfirmDialogComponent,
     ExtendViewerComponent,
     LoadCsvDataComponent,
-],
+
+    DocumentReviewComponent,
+    ExpedienteComponent,
+    ReleaseCheckComponent,
+    ResumeStudentPageComponent,
+    ConfirmationStudentPageComponent,
+    ScheduleComponent,
+    DiaryComponent,
+    RangePageComponent,
+    RangeModalComponent,
+    NewEventComponent,
+    ViewMoreComponent,
+    StepperDocumentComponent,
+    UploadDeliveredComponent,
+    ViewAppointmentPageComponent,
+    UploadFileTitledComponent,
+  ],
   imports: [
     // Angular
     AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -287,8 +378,8 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     MatChipsModule,
     MatDatepickerModule,
     MatDialogModule,
+    MatFileUploadModule,
     MatExpansionModule,
-    MatFileUploadModule ,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -306,19 +397,31 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     MatStepperModule,
     MatTableModule,
     MatTabsModule,
-
+    MatProgressBarModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatAutocompleteModule,
+    
     // Ngx
     ImageCropperModule,
     NgxExtendedPdfViewerModule,
     NgxPaginationModule,
     NgxSmartModalModule.forRoot(),
+    DropzoneModule,
 
     // Others
     AngularFontAwesomeModule,
     AppRoutingModule,
     CustomFormsModule,
+    NgxMaterialTimepickerModule,
     NgbModule.forRoot(),
+    SidebarModule.forRoot(),    
     SidebarModule.forRoot(),
+    ContextMenuModule.forRoot(),    
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory
+    }),    
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -339,11 +442,15 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     // Inscriptions
     // Providers
     InscriptionsProvider,
+    //services
+    WizardService,
+    UploadFilesService,
 
     // Reception act module
     // Providers
     RequestProvider,
     sourceDataProvider,
+    RangeProvider,
     // Services
     RequestService,
 
@@ -364,6 +471,13 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     EmployeeProvider,
     PositionProvider,
     StudentProvider,
+    CareerProvider,
+    CustomDateFormatter,
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+    {
+      provide: DROPZONE_CONFIG,
+      useValue: DEFAULT_DROPZONE_CONFIG
+    },
     // Services
     ErrorMatcher,
   ],
@@ -381,6 +495,21 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
+    ReleaseCheckComponent,
+    RangeModalComponent,
+    StepperDocumentComponent,
+    UploadDeliveredComponent,
+    
+    //inscriptions
+    //Modals
+    NewPeriodComponent,
+    ReviewExpedientComponent,
+    ExpedientHistoryComponent,
+    StudentInformationComponent,
+    ReviewAnalysisComponent,
+    SecretaryAssignmentComponent,
+    ReviewCredentialsComponent,
+    DocumentsHelpComponent,
 
     // Electronic signature
     // Modals
@@ -392,6 +521,10 @@ import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
     ConfirmDialogComponent,
     ExtendViewerComponent,
     LoadCsvDataComponent,
+
+    DocumentReviewComponent,
+    NewEventComponent,
+    ViewMoreComponent
   ],
   bootstrap: [AppComponent]
 })
