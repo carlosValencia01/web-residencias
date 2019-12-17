@@ -39,7 +39,7 @@ export class EmployeeAdviserComponent implements OnInit {
       data => {
         this.departments = <IDepartment[]>data.departments;
         const indice = this.departments.findIndex((department) => {
-          return department.careers.findIndex(career => career === this.career) !== -1;
+          return department.careers.findIndex(career => career.fullName === this.career) !== -1;
         });
         this.getAllEmployees(indice);
 
