@@ -30,6 +30,22 @@
   margin: 10px 0px !important;
 }
 
-.departments-list::-webkit-scrollbar {
+.list::-webkit-scrollbar {
   display: none !important;
+}
+
+.careers-list {
+  max-height: 40vh;
+  overflow: hidden scroll;
+  margin: 10px 0px !important;
+}
+
+.assigned-career {
+  background-color: #008D42;
+  color: white;
+}
+
+.not-assigned-career {
+  background-color: #F58220;
+  color: white;
 }

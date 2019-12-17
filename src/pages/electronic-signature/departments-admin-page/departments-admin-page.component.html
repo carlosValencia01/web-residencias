@@ -11,7 +11,7 @@
                placeholder="Buscar departamento">
       </mat-form-field>
     </div>
-    <mat-selection-list class="departments-list">
+    <mat-selection-list class="departments-list list">
       <mat-list-item *ngFor="let department of departments" class="department-card">
         <mat-card>
           <mat-card-header>
@@ -47,7 +47,8 @@
           </mat-error>
         </mat-form-field>
         <mat-form-field class="col-12">
-          <input [formControl]="departmentForm.get('shortName')" matInput oninput="this.value = this.value.toUpperCase()"
+          <input [formControl]="departmentForm.get('shortName')" matInput
+                 oninput="this.value = this.value.toUpperCase()"
                  placeholder="Iniciales del departamento"
                  type="text">
           <mat-error *ngIf="!departmentForm.get('shortName').valid && departmentForm.get('shortName').touched"
@@ -57,6 +58,20 @@
             </span>
           </mat-error>
         </mat-form-field>
+        <mat-card class="m-2 p-2">
+          <mat-card-subtitle>Carreras</mat-card-subtitle>
+          <mat-card-content class="careers-list list">
+            <mat-chip-list>
+              <mat-chip (removed)="isCareerAssigned(career) ? deallocateCareer(career) : assignCareer(career)"
+                        *ngFor="let career of careers"
+                        [ngClass]="isCareerAssigned(career) ? 'assigned-career' : 'not-assigned-career'"
+                        [removable]="!isViewDetails">
+                {{ career.shortName }}
+                <mat-icon matChipRemove *ngIf="!isViewDetails">{{isCareerAssigned(career) ? 'cancel' : 'check'}}</mat-icon>
+              </mat-chip>
+            </mat-chip-list>
+          </mat-card-content>
+        </mat-card>
       </mat-card-content>
       <mat-card-actions *ngIf="!isViewDetails" align="end" style="padding:8px;margin:0px;">
         <button [disabled]="departmentForm.invalid" color="primary" mat-button type="submit">

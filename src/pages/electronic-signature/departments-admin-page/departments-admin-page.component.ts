@@ -3,11 +3,13 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import Swal from 'sweetalert2';
 
+import {CareerProvider} from 'src/providers/shared/career.prov';
 import {CookiesService} from 'src/services/app/cookie.service';
 import {DepartmentProvider} from 'src/providers/shared/department.prov';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
+import {ICareer} from 'src/entities/shared/career.model';
 import {IDepartment} from 'src/entities/shared/department.model';
 import {NotificationsServices} from 'src/services/app/notifications.service';
-import {eNotificationType} from '../../../enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-departments-admin-page',
@@ -17,16 +19,20 @@ import {eNotificationType} from '../../../enumerators/app/notificationType.enum'
 export class DepartmentsAdminPageComponent implements OnInit {
   public departmentForm: FormGroup;
   public departments: Array<IDepartment>;
+  public careers: Array<ICareer>;
   public titleCardForm: string;
   public searchText: string;
-  public showFormPanel: boolean;
-  public isViewDetails: boolean;
-  private isEditing: boolean;
+  public showFormPanel = false;
+  public isViewDetails = false;
+  private isEditing = false;
   private currentDepartment: IDepartment;
   private departmentsCopy: Array<IDepartment>;
+  private assignedCareers: Array<ICareer>;
+  private unassignedCareers: Array<ICareer>;
 
   constructor(
     private activateRoute: ActivatedRoute,
+    private careerProvider: CareerProvider,
     private cookiesService: CookiesService,
     private departmentProv: DepartmentProvider,
     private notification: NotificationsServices,
@@ -40,11 +46,14 @@ export class DepartmentsAdminPageComponent implements OnInit {
   ngOnInit() {
     this._initializeForm();
     this._getAllDepartments();
+    this._getAllCareers();
+    this._cleanCareersAssignment();
   }
 
   public newDepartment() {
     this.titleCardForm = 'Creando departamento';
     this.currentDepartment = null;
+    this._cleanCareersAssignment();
     this.departmentForm.enable();
     this.departmentForm.reset();
     this.showFormPanel = true;
@@ -61,6 +70,7 @@ export class DepartmentsAdminPageComponent implements OnInit {
   public viewDepartment(department: IDepartment) {
     this.titleCardForm = 'Detalles del departamento';
     this.currentDepartment = null;
+    this._careersAssignment(department);
     this._fillForm(department);
     this.departmentForm.markAsUntouched();
     this.departmentForm.disable();
@@ -72,6 +82,7 @@ export class DepartmentsAdminPageComponent implements OnInit {
   public editDepartment(department: IDepartment) {
     this.titleCardForm = 'Actualizando departamento';
     this.currentDepartment = department;
+    this._careersAssignment(department);
     this.departmentForm.enable();
     this._fillForm(department);
     this.showFormPanel = true;
@@ -116,6 +127,7 @@ export class DepartmentsAdminPageComponent implements OnInit {
     this.isEditing = false;
     this.isViewDetails = false;
     this.currentDepartment = null;
+    this._cleanCareersAssignment();
   }
 
   public saveDepartment() {
@@ -123,11 +135,12 @@ export class DepartmentsAdminPageComponent implements OnInit {
     if (this.isEditing) {
       this.currentDepartment.name = department.name;
       this.currentDepartment.shortName = department.shortName;
-      // this.currentDepartment.careers = ;
+      this.currentDepartment.careers = department.careers;
       this.departmentProv.updateDepartment(this.currentDepartment)
         .subscribe(_ => {
           this.notification.showNotification(eNotificationType.SUCCESS, 'Departamento modificado con éxito.', '');
           this._updateDepartment(this.currentDepartment);
+          this._cleanCareersAssignment();
         }, _ => {
           this.notification.showNotification(eNotificationType.ERROR, 'No se pudo actualizar el departamento.', 'Inténtelo de nuevo.');
         });
@@ -157,6 +170,22 @@ export class DepartmentsAdminPageComponent implements OnInit {
     }
   }
 
+  public isCareerAssigned(career: ICareer): boolean {
+    return this.assignedCareers.findIndex(_career => _career._id === career._id) !== -1;
+  }
+
+  public assignCareer(career: ICareer) {
+    this.assignedCareers.push(career);
+    const index = this.unassignedCareers.findIndex(_career => _career._id === career._id);
+    this.unassignedCareers.splice(index, 1);
+  }
+
+  public deallocateCareer(career: ICareer) {
+    this.unassignedCareers.push(career);
+    const index = this.assignedCareers.findIndex(_career => _career._id === career._id);
+    this.assignedCareers.splice(index, 1);
+  }
+
   private _initializeForm() {
     this.departmentForm = new FormGroup({
       'name': new FormControl(null, Validators.required),
@@ -167,7 +196,8 @@ export class DepartmentsAdminPageComponent implements OnInit {
   private _getFormData() {
     return {
       name: this.departmentForm.get('name').value,
-      shortName: this.departmentForm.get('shortName').value
+      shortName: this.departmentForm.get('shortName').value,
+      careers: this.assignedCareers
     };
   }
 
@@ -198,6 +228,7 @@ export class DepartmentsAdminPageComponent implements OnInit {
         this.departmentForm.reset();
         this.notification.showNotification(eNotificationType.SUCCESS, 'Departamento creado con éxito.', '');
         this._addDepartment(depto);
+        this._cleanCareersAssignment();
       }, _ => {
         this.notification.showNotification(eNotificationType.ERROR, 'No se pudo crear el departamento.', 'Inténtelo de nuevo.');
       });
@@ -224,5 +255,22 @@ export class DepartmentsAdminPageComponent implements OnInit {
     if (this.isEditing || this.isViewDetails) {
       this.closeFormPanel();
     }
+  }
+
+  private _getAllCareers() {
+    this.careerProvider.getAllCareers()
+      .subscribe(res => {
+        this.careers = res.careers;
+      });
+  }
+
+  private _cleanCareersAssignment() {
+    this.assignedCareers = [];
+    this.unassignedCareers = [];
+  }
+
+  private _careersAssignment(department: IDepartment) {
+    this.assignedCareers = department.careers;
+    this.unassignedCareers = this.careers.filter(career => !this.isCareerAssigned(career));
   }
 }
