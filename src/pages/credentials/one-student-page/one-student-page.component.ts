@@ -175,20 +175,81 @@ export class OneStudentPageComponent implements OnInit {
   }
 
   uploadFile() {
-    const id = this.currentStudent._id;
-    const fd = new FormData();
-    fd.append('image', this.croppedImage);
-
     this.loading = true;
-    this.studentProv.updatePhoto(id, fd).subscribe((res) => {
-      const data: any = res;
-      this.currentStudent = data.student;
-      this.imgForSend = false;
-      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Fotografía actualizada correctamente', '');
+    // console.log('upload');
+    const red = new FileReader;
+    
 
-    }, error => {
-      console.log(error);
-    }, () => this.loading = false);
+    this.studentProv.getFolderId(this.data._id).subscribe(
+      folder => {
+        // console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
+
+        if (folder.folder) {// folder exists
+          if (folder.folder.idFolderInDrive) {
+            let folderId  = folder.folder.idFolderInDrive;
+            // console.log(this.folderId,'folder student exists');
+            red.addEventListener('load', () => {
+              // console.log(red.result);
+              let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.' + this.selectedFile.type.substr(6, this.selectedFile.type.length - 1), bodyMedia: red.result.toString().split(',')[1], folderId: folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
+        
+              this.inscriptionProv.uploadFile2(file).subscribe(
+                resp => {
+                  if (resp.action == 'create file') {
+        
+                    const documentInfo = {
+        
+                      doc: {
+                        filename: resp.name,
+                        type: 'DRIVE',
+                        fileIdInDrive: resp.fileId
+                      },
+                      status: {
+                        name: 'EN PROCESO',
+                        active: true,
+                        message: 'Se subio foto de credencial por primera vez'
+                      }
+                    };
+                    this.studentProv.uploadDocumentDrive(this.data._id, documentInfo).subscribe(
+                      updated => {
+                        this.notificationServ.showNotification(eNotificationType.SUCCESS,
+                          'Exito', 'Foto cargada correctamente.');
+        
+                      },
+                      err => {
+                        console.log(err);
+        
+                      }, () => this.loading = false
+                    );
+                  } else {
+        
+                    const documentInfo = {
+                      filename: resp.filename,
+                      status: {
+                        name: 'EN PROCESO',
+                        active: true,
+                        message: 'Se actualizo foto de credencial'
+                      }
+                    };
+                    this.studentProv.updateDocumentStatus(this.data._id, documentInfo).subscribe(
+                      res => {
+                        this.notificationServ.showNotification(eNotificationType.SUCCESS,
+                          'Exito', 'Foto actualizada correctamente.');
+                      },
+                      err => console.log(err)
+                    );
+                  }
+                  this.loading = false;
+                },
+                err => {
+                  console.log(err); this.loading = false;
+                }
+              )
+            }, false);
+            red.readAsDataURL(this.croppedImage);
+          }
+        }
+      });
+    
   }
 
   // Zona de test :D *********************************************************************************************//#region

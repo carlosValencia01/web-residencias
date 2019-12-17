@@ -13,8 +13,8 @@ export const environment = {
     messagingSenderId: '452486540507',
     appId: '1:452486540507:web:214d62ad8c0e0147'
   },
-  filesURL:'http://localhost:3003/escolares/credenciales/drive/upload/file'
-  // filesURL:'http://104.248.94.77/escolares/credenciales/drive/upload/file'
+  // filesURL:'http://localhost:3003/escolares/credenciales/drive/upload/file'
+  filesURL:'http://104.248.94.77/escolares/credenciales/drive/upload/file'
 };
 
 /*

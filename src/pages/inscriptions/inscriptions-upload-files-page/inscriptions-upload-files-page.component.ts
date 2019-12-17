@@ -599,4 +599,24 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       });
   }
 
+  helpPhoto(){
+    Swal.fire({
+      html:
+        `
+        <p style="text-align: left;">La fotografía debe ser:</p>
+                  <ol style="text-align: left;">
+                    <li>Fondo blanco.</li>
+                    <li>De frente.</li>
+                    <li>Que se visualice claramente de los hombros hacia arriba.</li>
+                    <li>Hombres sin aretes.</li>
+                    <li>Evitar accesorios (Lentes oscuros, audífonos, gorros, sombreros, gorras,...).</li>
+                  </ol>
+                  <b>NOTA: Se revisará la fotografía antes de la impresión</b>
+        `,
+      allowOutsideClick: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => { });
+  }
+
 }
