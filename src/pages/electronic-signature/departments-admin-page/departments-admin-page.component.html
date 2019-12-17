@@ -63,7 +63,7 @@
           <mat-card-content class="careers-list list">
             <mat-chip-list>
               <mat-chip (removed)="isCareerAssigned(career) ? deallocateCareer(career) : assignCareer(career)"
-                        *ngFor="let career of careers"
+                        *ngFor="let career of (isViewDetails ? assignedCareers : careers)"
                         [ngClass]="isCareerAssigned(career) ? 'assigned-career' : 'not-assigned-career'"
                         [removable]="!isViewDetails">
                 {{ career.shortName }}
