@@ -209,13 +209,7 @@ export class EmployeePageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((position: IPosition) => {
       if (position) {
-        const pos = {
-          position: position,
-          activateDate: new Date()
-        };
-        this.positions.actives.push(pos);
-        this._refreshPositionsTable();
-        this.isChangedPositions = true;
+        this._addPosition(position);
       }
     });
   }
@@ -348,7 +342,14 @@ export class EmployeePageComponent implements OnInit {
     const data = {
       positions: this.employee.positions
     };
-    this._openDialog(PositionsHistoryComponent, 'PositionsHistoryModal', data);
+    const dialogRef = this._openDialog(PositionsHistoryComponent, 'PositionsHistoryModal', data);
+
+    dialogRef.afterClosed()
+      .subscribe(position => {
+        if (position) {
+          this._addPosition(position);
+        }
+      });
   }
 
   public onUploadPositions(event) {
@@ -569,6 +570,30 @@ export class EmployeePageComponent implements OnInit {
       hasBackdrop: true,
       width: '50em'
     });
+  }
+
+  private _addPosition(position: IPosition) {
+    if (this._isActivePosition(position)) {
+      Swal.fire(
+        'No se pudo reactivar el puesto',
+        `El puesto de ${position.name} ya está activo para este empleado`,
+        'warning'
+      );
+      return;
+    }
+    const pos = {
+      position: position,
+      activateDate: new Date()
+    };
+    this.positions.actives.push(pos);
+    this._refreshPositionsTable();
+    this.isChangedPositions = true;
+  }
+
+  private _isActivePosition(position: IPosition): boolean {
+    return this.positions.actives.findIndex(
+      item => item.position._id === position._id
+        || item.position.name.toUpperCase() === position.name.toUpperCase()) !== -1;
   }
 }
 

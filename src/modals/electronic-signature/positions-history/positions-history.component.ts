@@ -1,6 +1,8 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import * as moment from 'moment';
+
+import {IPosition} from 'src/entities/shared/position.model';
 
 moment.locale('es');
 
@@ -17,17 +19,23 @@ export class PositionsHistoryComponent implements OnInit {
   public displayedColumns: string[];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data: any
+    @Inject(MAT_DIALOG_DATA) private data: any,
+    private dialogRef: MatDialogRef<PositionsHistoryComponent>,
   ) {
     this.positions = data.positions.slice();
   }
 
   ngOnInit() {
-    this.displayedColumns = ['ascription', 'position', 'canSign', 'status', 'activateDate', 'deactivateDate'];
+    this.displayedColumns = ['ascription', 'position', 'canSign', 'status', 'activateDate', 'deactivateDate', 'actions'];
     const data = this.positions.map(pos => this._castPositionToRow(pos));
     this.dataSource = new MatTableDataSource(data);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+  }
+
+  public reallocatePosition(positionId: string) {
+    const position = this._getPositionById(positionId);
+    this.dialogRef.close(position);
   }
 
   private _castPositionToRow(data: any): IPositionsHistoryTable {
@@ -40,6 +48,10 @@ export class PositionsHistoryComponent implements OnInit {
       activateDate: data.activateDate ? moment(data.activateDate).format('LL') : '-----',
       deactivateDate: data.deactivateDate ? moment(data.deactivateDate).format('LL') : '-----'
     };
+  }
+
+  private _getPositionById(positionId: string): IPosition {
+    return this.positions.find(item => item.position._id === positionId).position;
   }
 }
 
