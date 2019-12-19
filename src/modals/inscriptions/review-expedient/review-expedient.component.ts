@@ -108,13 +108,17 @@ export class ReviewExpedientComponent implements OnInit {
         ;
         
         
+        this.payDoc = documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0];
         this.docto = this.docto ? documents.filter(docc => docc._id === this.docto._id)[0] : null;
+
+        if(this.docto == null){
+          this.cardClick('comprobante');
+        }
         this.pendings = 0;
         this.selectPendings = 0;
         this.curpDoc = documents.filter(docc => docc.filename.indexOf('CURP') !== -1)[0];
         this.nssDoc = documents.filter(docc => docc.filename.indexOf('NSS') !== -1)[0];
         this.imageDoc = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0];
-        this.payDoc = documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0];
         this.certificateDoc = documents.filter(docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0];
         this.actaDoc = documents.filter(docc => docc.filename.indexOf('ACTA') !== -1)[0];
         this.clinicDoc = documents.filter(docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
@@ -173,7 +177,7 @@ export class ReviewExpedientComponent implements OnInit {
           this.pendings = this.nssDoc.status === 'VALIDADO' || this.nssDoc.status === 'EN PROCESO' || this.nssDoc.status === 'RECHAZADO' ? ++this.pendings : this.pendings;
         }
 
-        console.log(this.pendings);
+        // console.log(this.pendings);
         
 
       }

@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row sticky" >
   <div class="col-10">
     <h1 mat-dialog-title >{{title}}</h1>    
   </div>
@@ -27,7 +27,7 @@
                           <!--Comprobante Pago-->
                           <mat-card *ngIf="payDoc.status !== 'ACEPTADO'" [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" [class.process]="payDoc.status == 'EN PROCESO'"
                           [class.reject]="payDoc.status == 'RECHAZADO'"
-                          [class.validate]="payDoc.status == 'VALIDADO'">
+                          [class.validate]="payDoc.status == 'VALIDADO'" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header (click)="cardClick('comprobante')"  style="cursor: pointer;">
                                 
                               <mat-card-title 
@@ -36,18 +36,18 @@
                               [class.validateText]="payDoc.status == 'VALIDADO'"
                               >Comprobante Pago</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content>
-                              <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                            <mat-card-content *ngIf="data.user === 'Administrador'">
+                              <div mat-card-avatar [class.check]="!viewdoc" > 
                                 <mat-checkbox [(ngModel)]="acceptDocuments[5].checkPay" (change)="payChange()"></mat-checkbox>
                             </div>
                             </mat-card-content>
                             
                           </mat-card>                          
-                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="payDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('comprobante')"  style="cursor: pointer;">
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="payDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('comprobante')"  style="cursor: pointer;" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header>
                               <mat-card-title class="acceptText">Comprobante Pago</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content 
+                            <mat-card-content  *ngIf="data.user === 'Administrador'" 
                               >
                              
                             </mat-card-content>
@@ -60,7 +60,7 @@
                           <mat-card *ngIf="certificateDoc.status !== 'ACEPTADO'"  [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"
                            [class.process]="certificateDoc.status == 'EN PROCESO'"
                            [class.reject]="certificateDoc.status == 'RECHAZADO'"
-                           [class.validate]="certificateDoc.status == 'VALIDADO'">
+                           [class.validate]="certificateDoc.status == 'VALIDADO'" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header (click)="cardClick('certificado')"  style="cursor: pointer;"
                             >
                                 
@@ -70,19 +70,19 @@
                               [class.validateText]="certificateDoc.status == 'VALIDADO'"
                               >Certificado Estudios</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content >    
-                              <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                            <mat-card-content *ngIf="data.user === 'Administrador'">    
+                              <div mat-card-avatar [class.check]="!viewdoc" > 
                                 <mat-checkbox [(ngModel)]="acceptDocuments[4].checkCertificate" (change)="certificateChange()"></mat-checkbox>
                               </div>                          
                               
                             </mat-card-content>
                             
                           </mat-card>
-                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="certificateDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('certificado')"  style="cursor: pointer;">
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="certificateDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('certificado')"  style="cursor: pointer;" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header>
                               <mat-card-title class="acceptText">Certificado Estudios</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content >                              
+                            <mat-card-content  *ngIf="data.user === 'Administrador'">                              
                             </mat-card-content>
                             
                           </mat-card>                          
@@ -92,7 +92,7 @@
                           <mat-card *ngIf="cartaDoc.status !== 'ACEPTADO'"  [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"
                            [class.process]="cartaDoc.status == 'EN PROCESO'"
                            [class.reject]="cartaDoc.status == 'RECHAZADO'"
-                           [class.validate]="cartaDoc.status == 'VALIDADO'">
+                           [class.validate]="cartaDoc.status == 'VALIDADO'" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header (click)="cardClick('carta')"  style="cursor: pointer;"
                             >
                                 
@@ -102,19 +102,19 @@
                               [class.validateText]="cartaDoc.status == 'VALIDADO'"
                               >Carta Compromiso</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content >    
-                              <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                            <mat-card-content *ngIf="data.user === 'Administrador'">    
+                              <div mat-card-avatar [class.check]="!viewdoc" > 
                                 <mat-checkbox [(ngModel)]="acceptDocuments[7].checkCarta" (change)="cartaChange()"></mat-checkbox>
                               </div>                          
                               
                             </mat-card-content>
                             
                           </mat-card>
-                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="cartaDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('carta')"  style="cursor: pointer;">
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="cartaDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('carta')"  style="cursor: pointer;" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header>
                               <mat-card-title class="acceptText">Carta Compromiso</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content >                              
+                            <mat-card-content  *ngIf="data.user === 'Administrador'">                              
                             </mat-card-content>
                             
                           </mat-card>                          
@@ -122,17 +122,17 @@
 
                         <div *ngIf="curpDoc"  [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
                           <!--Curp-->
-                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('curp')"  style="cursor: pointer;">
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('curp')"  style="cursor: pointer;" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header>
                               <mat-card-title class="acceptText">CURP</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content  >
+                            <mat-card-content   *ngIf="data.user === 'Administrador'">
                             </mat-card-content>
                            
                           </mat-card>
                           <mat-card *ngIf="curpDoc.status !== 'ACEPTADO'" [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  [class.validate]="curpDoc.status == 'VALIDADO'"
                           [class.reject]="curpDoc.status == 'RECHAZADO'"
-                          [class.process]="curpDoc.status == 'EN PROCESO'">
+                          [class.process]="curpDoc.status == 'EN PROCESO'" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header (click)="cardClick('curp')"  style="cursor: pointer;">
                                
                               <mat-card-title
@@ -141,8 +141,8 @@
                               [class.processText]="curpDoc.status == 'EN PROCESO'"
                               >CURP</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content >
-                              <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                            <mat-card-content  *ngIf="data.user === 'Administrador'">
+                              <div mat-card-avatar [class.check]="!viewdoc"> 
                                 <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCurp" (change)="curpChange()"></mat-checkbox>
                             </div>
                             </mat-card-content>
@@ -154,7 +154,7 @@
                           <!--Acta Nacimiento-->
                           <mat-card *ngIf="actaDoc.status !== 'ACEPTADO'" [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" [class.process]="actaDoc.status == 'EN PROCESO'"
                           [class.reject]="actaDoc.status == 'RECHAZADO'"
-                          [class.validate]="actaDoc.status == 'VALIDADO'">                            
+                          [class.validate]="actaDoc.status == 'VALIDADO'" [class.secre]="data.user !== 'Administrador'">                            
                             <mat-card-header (click)="cardClick('acta')" style="cursor: pointer;"  >
                                 
                               <mat-card-title 
@@ -163,18 +163,18 @@
                               [class.validateText]="actaDoc.status == 'VALIDADO'"
                               >Acta de Nacimiento</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content >
-                              <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                            <mat-card-content *ngIf="data.user === 'Administrador'">
+                              <div mat-card-avatar [class.check]="!viewdoc" > 
                                 <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActa" (change)="actaChange()"></mat-checkbox>
                             </div>
                             </mat-card-content>
                             
                           </mat-card>                          
-                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('acta')"  style="cursor: pointer;">
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('acta')"  style="cursor: pointer;" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header>
                               <mat-card-title class="acceptText">Acta de Nacimiento</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content   >                              
+                            <mat-card-content   *ngIf="data.user === 'Administrador'" >                              
                             </mat-card-content>
                             
                           </mat-card>
@@ -187,7 +187,7 @@
                           <!--Analisis Clinicos-->
                           <mat-card *ngIf="clinicDoc.status !== 'ACEPTADO'" [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  [class.validate]="clinicDoc.status == 'VALIDADO'"
                           [class.process]="clinicDoc.status == 'EN PROCESO'"
-                          [class.reject]="clinicDoc.status == 'RECHAZADO'">
+                          [class.reject]="clinicDoc.status == 'RECHAZADO'" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header (click)="cardClick('clinicos')"  style="cursor: pointer;">
                                
                               <mat-card-title 
@@ -196,18 +196,18 @@
                               [class.rejectText]="clinicDoc.status == 'RECHAZADO'"
                               >Análisis Clínicos</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content  >
-                              <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                            <mat-card-content *ngIf="data.user === 'Administrador'" >
+                              <div mat-card-avatar [class.check]="!viewdoc" > 
                                 <mat-checkbox [(ngModel)]="acceptDocuments[6].checkClinic" (change)="clinicChange()"></mat-checkbox>
                             </div>
                             </mat-card-content>
                             
                           </mat-card>
-                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="clinicDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('clinicos')"  style="cursor: pointer;">
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="clinicDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('clinicos')"  style="cursor: pointer;" [class.secre]="data.user !== 'Administrador'">
                             <mat-card-header>
                               <mat-card-title class="acceptText">Análisis Clínicos</mat-card-title>
                             </mat-card-header>
-                            <mat-card-content  >
+                            <mat-card-content   *ngIf="data.user === 'Administrador'">
                               
                             </mat-card-content>
                             
@@ -219,7 +219,7 @@
                             <!--FOTO-->
                             <mat-card *ngIf="imageDoc.status !== 'ACEPTADO'" [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  [class.process]="imageDoc.status == 'EN PROCESO'"
                             [class.reject]="imageDoc.status == 'RECHAZADO'"
-                            [class.validate]="imageDoc.status == 'VALIDADO'"
+                            [class.validate]="imageDoc.status == 'VALIDADO'" [class.secre]="data.user !== 'Administrador'"
                             >
                               <mat-card-header (click)="cardClick('foto')"  style="cursor: pointer;">
                                   
@@ -229,18 +229,18 @@
                                 [class.validateText]="imageDoc.status == 'VALIDADO'"
                                 >Foto</mat-card-title>
                               </mat-card-header>
-                              <mat-card-content >
-                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                              <mat-card-content *ngIf="data.user === 'Administrador'">
+                                <div mat-card-avatar [class.check]="!viewdoc" > 
                                   <mat-checkbox [(ngModel)]="acceptDocuments[3].checkPhoto" (change)="photoChange()"></mat-checkbox>
                               </div>
                               </mat-card-content>
                               
                             </mat-card>                           
-                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="imageDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('foto')"  style="cursor: pointer;">
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="imageDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('foto')"  style="cursor: pointer;" [class.secre]="data.user !== 'Administrador'">
                               <mat-card-header>
                                 <mat-card-title class="acceptText">Foto</mat-card-title>
                               </mat-card-header>
-                              <mat-card-content >                                
+                              <mat-card-content  *ngIf="data.user === 'Administrador'">                                
                               </mat-card-content>                              
                             </mat-card>
                           </div>
@@ -248,7 +248,7 @@
                             <!--Nss-->
                             <mat-card *ngIf="nssDoc.status !== 'ACEPTADO'" [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  [class.process]="nssDoc.status == 'EN PROCESO'"
                             [class.reject]="nssDoc.status == 'RECHAZADO'"
-                            [class.validate]="nssDoc.status == 'VALIDADO'">
+                            [class.validate]="nssDoc.status == 'VALIDADO'" [class.secre]="data.user !== 'Administrador'">
                               <mat-card-header (click)="cardClick('nss')"  style="cursor: pointer;">
                                                                   
                                 <mat-card-title 
@@ -262,20 +262,20 @@
                                 [class.validateText]="nssDoc.status == 'VALIDADO'"
                                 *ngIf="!viewdoc">Número de Seguro Social</mat-card-title>
                               </mat-card-header>
-                              <mat-card-content  >
-                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                              <mat-card-content   *ngIf="data.user === 'Administrador'">
+                                <div mat-card-avatar [class.check]="!viewdoc"> 
                                   <mat-checkbox [(ngModel)]="acceptDocuments[2].checkNss" (change)="nssChange()"></mat-checkbox>
                               </div>
                               </mat-card-content>
                               
                             </mat-card>
                             
-                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="nssDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('nss')"  style="cursor: pointer;">
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="nssDoc.status == 'ACEPTADO'" class="accept" (click)="cardClick('nss')"  style="cursor: pointer;" [class.secre]="data.user !== 'Administrador'">
                               <mat-card-header>
                                 <mat-card-title class="acceptText" *ngIf="viewdoc">NSS</mat-card-title>
                                   <mat-card-title class="acceptText" *ngIf="!viewdoc">Número de Seguro Social</mat-card-title>
                               </mat-card-header>
-                              <mat-card-content  >
+                              <mat-card-content   *ngIf="data.user === 'Administrador'">
                                
                               </mat-card-content>
                               
@@ -339,7 +339,7 @@
                       </div>
                       <hr/>
                       <div class="row text-center p-2" *ngIf="docto">
-                        <div class="col-12" *ngIf="data.user === 'Secretaria' && docto.status !== 'ACEPTADO' && docto.status !== 'VALIDADO'">
+                        <div class="col-12" *ngIf="data.user === 'Secretaria escolares' && docto.status !== 'ACEPTADO' && docto.status !== 'VALIDADO'">
                           <form [formGroup]="form" (ngSubmit)="changeStatus(form.value)" class="tp-form">
                             <mat-radio-group name="refused" [(ngModel)]="refused" formControlName="status" aria-label="Select an option">
                               <mat-radio-button  value="ACEPTADO" class="mr-2">Validar documento</mat-radio-button>

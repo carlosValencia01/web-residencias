@@ -507,11 +507,6 @@ export class RegisterStudentPageComponent implements OnInit {
                 if(student.folder.idFolderInDrive){
                   this.folderId = student.folder.idFolderInDrive;
                   // console.log(this.folderId,'folder student exists');                     
-                }
-                else{ //folder doesn't exists then create it
-                // console.log('222');
-                
-                  this.createFolder();
                 }         
               } else{
                 // console.log('333');
