@@ -41,6 +41,7 @@ export class ContractStudentPageComponent implements OnInit {
   public logoTecNM: any;
   public logoSep: any;
   public logoTecTepic: any;
+  public firmaDirector: any;
 
   constructor(
     private cookiesServ: CookiesService,
@@ -71,6 +72,9 @@ export class ContractStudentPageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
       this.logoTecTepic = res3;
     });
+    this.imageToBase64Serv.getBase64('assets/imgs/firmaDirector.png').then(res4 => {
+      this.firmaDirector = res4;
+    })
   }
 
   getIdStudent() {
@@ -162,6 +166,8 @@ export class ContractStudentPageComponent implements OnInit {
     doc.setFontSize(8);
     doc.setFontType('bold');
     doc.text(`${this.data.name.fullName}`, 125, 257);
+
+    doc.addImage(this.firmaDirector, 'jpg', 25, 220, 80, 43);
 
     doc.setFontSize(8);
     doc.setFontType('bold');

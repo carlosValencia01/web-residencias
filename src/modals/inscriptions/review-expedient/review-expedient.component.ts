@@ -215,6 +215,7 @@ export class ReviewExpedientComponent implements OnInit {
   }
 
   async changeStatus(action) {
+    var filename = '';
     this.refused = '';
     const msg = action.status === 'RECHAZADO' ? 'rechazar' : this.data.user === 'Secretaria' ? 'validar' : 'aceptar';
     let confirmdialog = await this.swalDialog(`¿ Está seguro de ${msg} el documento ?`, '', 'question');
@@ -233,8 +234,29 @@ export class ReviewExpedientComponent implements OnInit {
         res => {
           this.notificationsServices.showNotification(eNotificationType.SUCCESS,
             'Exito', 'Estatus actualizado correctamente.');
+            if(documentInfo.filename.includes('COMPROBANTE')){
+              filename = 'COMPROBANTE DE PAGO'
+            }
+            if(documentInfo.filename.includes('CERTIFICADO')){
+              filename = 'CERTIFICADO DE ESTUDIOS'
+            }
+            if(documentInfo.filename.includes('CURP')){
+              filename = 'CURP'
+            }
+            if(documentInfo.filename.includes('ACTA')){
+              filename = 'ACTA DE NACIMIENTO'
+            }
+            if(documentInfo.filename.includes('CLINICOS')){
+              filename = 'ANÁLISIS CLÍNICOS'
+            }
+            if(documentInfo.filename.includes('FOTO')){
+              filename = 'FOTO'
+            }
+            if(documentInfo.filename.includes('NSS')){
+              filename = 'NÚMERO DE SEGURO SOCIAL'
+            }
           if (action.status == "RECHAZADO") {
-            this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+documentInfo.filename+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://escolares.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
+            this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+filename+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://escolares.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
               res => {
                 this.notificationsServices.showNotification(0, 'Notificación enviada a:', this.data.student.controlNumber);
               },

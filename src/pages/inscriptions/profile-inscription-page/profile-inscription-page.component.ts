@@ -201,7 +201,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     await this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(
       data => {
         this.pub = data.file;
-        this.image = 'data:image/png;base64,' + this.pub;
+        this.image = this.pub ? 'data:image/png;base64,' + this.pub :  'assets/imgs/profileImgNotFound.jpg';
         this.pub = true;
         this.showImg=true;
       },
@@ -260,7 +260,12 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
 
         this.showImg=false;
-        this.findFoto();
+        if(this.docFoto[0]){
+          this.findFoto();
+        }else{
+          this.image = 'assets/imgs/profileImgNotFound.jpg';
+          this.showImg=true;
+        }
       }
     );    
 
