@@ -60,8 +60,9 @@
                     <span *ngIf="payDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
                     <span *ngIf="payDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
                     <span *ngIf="payDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="payDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <span *ngIf="!payDoc" class="badge badge-danger">SIN ENVIO</span>
+                  <span *ngIf="!payDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
 
               </div>
@@ -121,18 +122,21 @@
                     <span *ngIf="certificateDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
                     <span *ngIf="certificateDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
                     <span *ngIf="certificateDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="certificateDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <div *ngIf="ccDoc && !certificateDoc">
                     <span *ngIf="ccDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
                     <span *ngIf="ccDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
                     <span *ngIf="ccDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="ccDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <div *ngIf="ccDoc && certificateDoc">
-                    <span *ngIf="ccDoc.status === 'EN PROCESO' || certificateDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="ccDoc.status === 'VALIDADO' || certificateDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="ccDoc.status === 'ACEPTADO' || certificateDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="certificateDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="certificateDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="certificateDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="certificateDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <span *ngIf="!ccDoc && !certificateDoc" class="badge badge-danger">SIN ENVIO</span>                     
+                  <span *ngIf="!ccDoc && !certificateDoc" class="badge badge-warning">SIN ENVIO</span>                     
                 </div>
               </div>
             </div>
@@ -193,8 +197,9 @@
                     <span *ngIf="curpDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
                     <span *ngIf="curpDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
                     <span *ngIf="curpDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="curpDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <span *ngIf="!curpDoc" class="badge badge-danger">SIN ENVIO</span>
+                  <span *ngIf="!curpDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
             </div>
@@ -240,8 +245,9 @@
                     <span *ngIf="actaDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
                     <span *ngIf="actaDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
                     <span *ngIf="actaDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="actaDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <span *ngIf="!actaDoc" class="badge badge-danger">SIN ENVIO</span>
+                  <span *ngIf="!actaDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
             </div>
@@ -284,8 +290,9 @@
                     <span *ngIf="clinicDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
                     <span *ngIf="clinicDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
                     <span *ngIf="clinicDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="clinicDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <span *ngIf="!clinicDoc" class="badge badge-danger">SIN ENVIO</span>
+                  <span *ngIf="!clinicDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
             </div>
@@ -336,8 +343,9 @@
                     <span *ngIf="imageDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
                     <span *ngIf="imageDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
                     <span *ngIf="imageDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="imageDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <span *ngIf="!imageDoc" class="badge badge-danger">SIN ENVIO</span>
+                  <span *ngIf="!imageDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
             </div>
@@ -388,9 +396,10 @@
                   <div *ngIf="nssDoc">
                     <span *ngIf="nssDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
                     <span *ngIf="nssDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="nssDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="nssDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>                    
+                    <span *ngIf="nssDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <span *ngIf="!nssDoc" class="badge badge-danger">SIN ENVIO</span>
+                  <span *ngIf="!nssDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
               
@@ -413,7 +422,7 @@
     <div class="row justify-content-center mt-3">
       <div>
         <button type="submit" (click)="continue()" class="btn btn-success"
-          [disabled]="(payDoc === undefined && certificateDoc === undefined) || (payDoc === undefined && ccDoc === undefined) || certificateDoc === undefined && ccDoc === undefined">Continuar</button>
+          [disabled]="(!payDoc || !certificateDoc) && ( !payDoc || !ccDoc  )">Continuar</button>
       </div>
     </div>
   </div>

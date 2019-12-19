@@ -9,6 +9,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 import { ActivatedRoute, Router } from '@angular/router';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+
 @Component({
   selector: 'app-one-student-page',
   templateUrl: './one-student-page.component.html',
@@ -42,6 +43,10 @@ export class OneStudentPageComponent implements OnInit {
   imageDoc;
   data;
 
+  activePeriod;
+  folderId;
+  foldersByPeriod = [];
+
   constructor(
     private studentProv: StudentProvider,
     private imageToBase64Serv: ImageToBase64Service,
@@ -57,7 +62,46 @@ export class OneStudentPageComponent implements OnInit {
     }
     this.getBase64ForStaticImages();
     this.data = this.cookiesService.getData().user;
-    this.getDocuments();
+    
+    this.inscriptionProv.getActivePeriod().subscribe(
+      period=>{
+        if(period.period){
+          this.getDocuments();
+          this.activePeriod = period.period;                      
+          this.studentProv.getPeriodId(this.data._id.toString()).subscribe(
+            per=>{
+              // console.log(per.student.idPeriodInscription, 'idperrrrr');              
+              
+              if(!per.student.idPeriodInscription){
+                this.studentProv.updateStudent(this.data._id,{idPeriodInscription:this.activePeriod._id});
+              }
+            }
+          );
+          //first check folderId on Student model
+          this.studentProv.getFolderId(this.data._id).subscribe(
+            student=>{
+              if(student.folder){// folder exists
+                if(student.folder.idFolderInDrive){
+                  this.folderId = student.folder.idFolderInDrive;
+                  // console.log(this.folderId,'folder student exists');                     
+                }
+                else{ //folder doesn't exists then create it
+                // console.log('222');
+                
+                  this.createFolder();
+                }         
+              } else{
+                // console.log('333');
+               this.createFolder();}
+                
+            });
+        }
+        else{ // no hay periodo activo
+          // console.log('444');
+          
+        }    
+      }  
+    );
   }
 
   ngOnInit() {
@@ -180,17 +224,11 @@ export class OneStudentPageComponent implements OnInit {
     const red = new FileReader;
     
 
-    this.studentProv.getFolderId(this.data._id).subscribe(
-      folder => {
-        // console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
-
-        if (folder.folder) {// folder exists
-          if (folder.folder.idFolderInDrive) {
-            let folderId  = folder.folder.idFolderInDrive;
+   
             // console.log(this.folderId,'folder student exists');
             red.addEventListener('load', () => {
               // console.log(red.result);
-              let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.' + this.selectedFile.type.substr(6, this.selectedFile.type.length - 1), bodyMedia: red.result.toString().split(',')[1], folderId: folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
+              let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.' + this.selectedFile.type.substr(6, this.selectedFile.type.length - 1), bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
         
               this.inscriptionProv.uploadFile2(file).subscribe(
                 resp => {
@@ -246,9 +284,7 @@ export class OneStudentPageComponent implements OnInit {
               )
             }, false);
             red.readAsDataURL(this.croppedImage);
-          }
-        }
-      });
+         
     
   }
 
@@ -287,14 +323,89 @@ export class OneStudentPageComponent implements OnInit {
       docs=>{
         let documents = docs.documents;              
         this.imageDoc = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0];     
-        this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
-          succss=>{
-            this.showImg=true;
-            this.photoStudent = 'data:image/png;base64,' + succss.file;
-          },
-          err=>{this.photoStudent = 'assets/imgs/imgNotFound.png';}
-        )
+        console.log(
+          '2'
+        );
+        this.showImg=true;
+        if(this.imageDoc){
+
+          this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
+            succss=>{
+              this.showImg=true;
+              this.photoStudent = 'data:image/png;base64,' + succss.file;
+            },
+            err=>{this.photoStudent = 'assets/imgs/imgNotFound.png'; this.showImg=true;}
+          );
+        }else{
+          console.log('1');
+          
+          this.loading = false
+          this.photoStudent = 'assets/imgs/imgNotFound.png';
+          this.showImg=true;
+        }
       }
     );  
+  }
+
+  createFolder(){
+    let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
+  
+    this.inscriptionProv.getFoldersByPeriod(this.activePeriod._id,1).subscribe(
+      (folders)=>{
+        // console.log(folders,'folderss');
+        
+        this.foldersByPeriod=folders.folders;                                     
+        let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1);
+
+        // 1 check career folder
+        let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
+        let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
+
+        if(folderCareer.length===0){
+          // console.log('1');
+          
+          this.inscriptionProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive,1).subscribe(
+            career=>{
+              // console.log('2');
+              
+              // student folder doesn't exists then create new folder
+              this.inscriptionProv.createSubFolder(folderStudentName,this.activePeriod._id,career.folder.idFolderInDrive,1).subscribe(
+                studentF=>{
+                  this.folderId = studentF.folder.idFolderInDrive;                 
+                  // console.log('3');
+                  
+                  this.studentProv.updateStudent(this.data._id,{folderId:studentF.folder._id});
+                },
+                err=>{console.log(err);
+                }
+              );
+            },
+            err=>{console.log(err);
+            }
+          );
+        }else{
+            this.inscriptionProv.createSubFolder(folderStudentName,this.activePeriod._id,folderCareer[0].idFolderInDrive,1).subscribe(
+              studentF=>{
+                this.folderId = studentF.folder.idFolderInDrive;   
+                // console.log('3.1');
+                
+                this.studentProv.updateStudent(this.data._id,{folderId:studentF.folder._id}).subscribe(
+                  upd=>{
+                    
+                    
+                  },
+                  err=>{
+                  }
+                );
+                
+              },
+              err=>{console.log(err);
+              }
+            );         
+        }
+      },
+      err=>{console.log(err,'==============error');
+      }
+    );
   }
 }
