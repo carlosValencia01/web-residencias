@@ -175,8 +175,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     );
   }
   checkFolders() {
-    console.log(this._idStudent
-    );
+    
 
     this.studentProv.getFolderId(this._idStudent).subscribe(
       folder => {
@@ -611,7 +610,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
                     <li>Hombres sin aretes.</li>
                     <li>Evitar accesorios (Lentes oscuros, audífonos, gorros, sombreros, gorras,...).</li>
                   </ol>
-                  <b>NOTA: Se revisará la fotografía antes de la impresión</b>
+                  <b>NOTA: Se revisará la fotografía antes de la impresión de la credencial.</b>
         `,
       allowOutsideClick: true,
       confirmButtonColor: '#3085d6',
