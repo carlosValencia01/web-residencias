@@ -238,13 +238,13 @@ export class ConfirmationStudentPageComponent implements OnInit {
 
     var columns = ["No", "Documento", "Estatus"];
     var data = [
-      [1, "ACTA DE NACIMIENTO",""],
+      [1, "COMPROBANTE DE PAGO",""],
       [2, "CERTIFICADO DE ESTUDIOS",""],
-      [3, "ANÁLISIS CLÍNICOS",""],
-      [4, "COMPROBANTE DE PAGO",""],
-      [5, "CURP",""],
-      [6, "NÚMERO DE SEGURO SOCIAL",""],
-      [7, "FOTOGRAFÍA",""],
+      [3, "CURP",""],
+      [4, "ACTA DE NACIMIENTO",""],
+      [5, "ANÁLISIS CLÍNICOS",""],
+      [6, "FOTOGRAFÍA",""],
+      [7, "NÚMERO DE SEGURO SOCIAL",""],
       [8, "CARTA COMPROMISO",""] 
     ];
 
@@ -253,8 +253,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
       margin:{ top: 60 }
     });
 
-    // Acta
-    if(this.docActa != ''){
+    // docComprobante
+    if(this.docComprobante != ''){
       doc.setTextColor(0,0,0);
       doc.setFillColor(255, 245, 204);
       doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
@@ -270,7 +270,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 72.25);
     }
 
-    // Certificado
+    // docCertificado
     if(this.docCertificado != ''){
       doc.setTextColor(0,0,0);
       doc.setFillColor(255, 245, 204);
@@ -287,8 +287,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 79.85);
     }
 
-    // Analisis 
-    if(this.docAnalisis != ''){
+    // docCurp 
+    if(this.docCurp != ''){
       doc.setTextColor(0,0,0);
       doc.setFillColor(255, 245, 204);
       doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
@@ -304,8 +304,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 87.45);
     }
 
-    // Comprobante
-    if(this.docComprobante != ''){
+    // docActa
+    if(this.docActa != ''){
       doc.setTextColor(0,0,0);
       doc.setFillColor(255, 245, 204);
       doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
@@ -321,8 +321,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 95.05);
     }
 
-    // Curp
-    if(this.docCurp != ''){
+    // docAnalisis
+    if(this.docAnalisis != ''){
       doc.setTextColor(0,0,0);
       doc.setFillColor(255, 245, 204);   
       doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
@@ -338,8 +338,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 102.65);
     }
 
-    // Nss
-    if(this.docNss != ''){
+    // docFoto
+    if(this.docFoto != ''){
       doc.setTextColor(0,0,0);
       doc.setFillColor(255, 245, 204);
       doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
@@ -355,8 +355,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 110.25);
     }
 
-    // Foto
-    if(this.docFoto != ''){
+    // docNss
+    if(this.docNss != ''){
       doc.setTextColor(0,0,0);
       doc.setFillColor(255, 245, 204);
       doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
@@ -372,7 +372,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 117.85);
     }   
 
-    // Carta Compromiso
+    // docCompromiso
     if(this.docCompromiso != ''){
       doc.setTextColor(0,0,0);
       doc.setFillColor(255, 245, 204);

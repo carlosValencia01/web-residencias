@@ -168,19 +168,8 @@ export class ResumeStudentPageComponent implements OnInit {
     this.docFoto = await this.filterDocuments('FOTO');
     this.docCC = await this.filterDocuments('COMPROMISO')
 
-    /*Swal.fire({
-      type: 'success',
-      text: 'Datos Cargados',
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      timer: 5000
-    })
-    .then((result) => {
-        this.findFoto();
-    });*/
     if(this.docFoto[0]){
-
-      setTimeout(() => {this.findFoto()}, 3000);
+      this.findFoto();
     }else{
       this.image = 'assets/imgs/profileImgNotFound.jpg';
     }

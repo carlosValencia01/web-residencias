@@ -157,15 +157,14 @@ export class ContractStudentPageComponent implements OnInit {
   async generatePDF() {
     const currentDate = new Date();
     const img = new Image();
-    //img.src = 'https://i.ibb.co/pPkRJKb/Contrato-Estudiante.png';
-    img.src = 'https://i.ibb.co/mJ9q209/Contrato-Est.jpg';
+    img.src = 'https://i.ibb.co/yy0GrBq/Contrato-Estudiante-ITT.jpg';
     const doc = new jsPDF();
 
     doc.addImage(img, 'jpg', 0, 0, 200, 295);
 
     doc.setFontSize(8);
     doc.setFontType('bold');
-    doc.text(`${this.data.name.fullName}`, 125, 257);
+    doc.text(`${this.data.name.fullName}`, 132, 262);
 
     doc.addImage(this.firmaDirector, 'jpg', 25, 220, 80, 43);
 
