@@ -19,9 +19,11 @@
   </div>
   <div class="row text-center">
     <div class="col-md-4">
-      <mat-form-field appearance="outline" *ngIf="data.initialPeriod === 'true' || data.operation == 'edit'">
+      <mat-form-field appearance="outline" >
         <mat-label>Nombre del periodo</mat-label>
-        <select matNativeControl required formControlName="periodName" [errorStateMatcher]="matcher">
+        <select matNativeControl required formControlName="periodName" [errorStateMatcher]="matcher"
+        
+        >
           <option value="ENERO-JUNIO">
             ENERO-JUNIO
           </option>
@@ -32,6 +34,20 @@
         <mat-error>
             <span
             *ngIf="!formPeriod.get('periodName').valid && formPeriod.get('periodName').touched">Seleccione un periodo</span>
+        </mat-error>   
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Año</mat-label>
+        <select matNativeControl required formControlName="year" [errorStateMatcher]="matcher"
+        (ngModelChange) = "createYear(formPeriod.get('year').value)"
+        >
+          <option [value]="yeaar" *ngFor="let yeaar of yearsInput">
+            {{yeaar}}
+          </option>        
+        </select>     
+        <mat-error>
+            <span
+            *ngIf="!formPeriod.get('year').valid && formPeriod.get('year').touched">Seleccione un año</span>
         </mat-error>   
       </mat-form-field>
     </div>
@@ -97,7 +113,7 @@
           </mat-form-field>
           <mat-error>
               <span
-              *ngIf="!formPeriod.get('insPerEndDate').valid && formPeriod.get('insPerEndDate').touched">Seleccione una fecha valida</span>
+              *ngIf="!formPeriod.get('certificateDeliveryDate').valid && formPeriod.get('certificateDeliveryDate').touched">Seleccione una fecha valida</span>
           </mat-error> 
     </div>
     <div class="col-md-1"></div>
