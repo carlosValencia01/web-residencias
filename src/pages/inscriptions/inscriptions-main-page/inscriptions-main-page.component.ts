@@ -99,7 +99,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   
   private async addPeriod(period, currentYear){         
 
-    period.year = currentYear+'';
+    // period.year = currentYear+'';
     period.active = true;
 
     let confirmdialog = await this.swalDialog('¿Estás seguro de crear este Periodo ?',`El periodo (${period.periodName} ${period.year}) será activado.`,'question');
@@ -225,7 +225,7 @@ export class InscriptionsMainPageComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '60em',
-      height: '620px'
+      height: '720px'
     });
     let sub = linkModal.afterClosed().subscribe(
       period=>{         
@@ -247,7 +247,7 @@ export class InscriptionsMainPageComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '60em',
-      height: '620px'
+      height: '720px'
     });
     let sub = linkModal.afterClosed().subscribe(
       period=>{         

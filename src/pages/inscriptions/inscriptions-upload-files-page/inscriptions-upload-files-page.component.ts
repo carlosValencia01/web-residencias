@@ -176,7 +176,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   }
   checkFolders() {
     
-
+    
     this.studentProv.getFolderId(this._idStudent).subscribe(
       folder => {
         // console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
