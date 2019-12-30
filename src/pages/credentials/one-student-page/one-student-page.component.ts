@@ -47,6 +47,8 @@ export class OneStudentPageComponent implements OnInit {
   folderId;
   foldersByPeriod = [];
 
+  active: boolean;
+
   constructor(
     private studentProv: StudentProvider,
     private imageToBase64Serv: ImageToBase64Service,
@@ -60,6 +62,7 @@ export class OneStudentPageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+
     this.getBase64ForStaticImages();
     this.data = this.cookiesService.getData().user;
     
@@ -112,6 +115,11 @@ export class OneStudentPageComponent implements OnInit {
         this.showImg = false;
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0]));
         this.imgForSend = false;
+        this.studentProv.verifyStatus(this.currentStudent.controlNumber).subscribe(res => {
+          console.log(res);
+          this.active = res.status === 1 ? true : false;
+        });
+
         // this.getImageFromService(res.student[0]._id);
       }, error => {
         console.log(error);
