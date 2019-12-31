@@ -41,6 +41,7 @@ export class ContractStudentPageComponent implements OnInit {
   public logoTecNM: any;
   public logoSep: any;
   public logoTecTepic: any;
+  public firmaDirector: any;
 
   constructor(
     private cookiesServ: CookiesService,
@@ -71,6 +72,9 @@ export class ContractStudentPageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
       this.logoTecTepic = res3;
     });
+    this.imageToBase64Serv.getBase64('assets/imgs/firmaDirector.png').then(res4 => {
+      this.firmaDirector = res4;
+    })
   }
 
   getIdStudent() {
@@ -153,15 +157,16 @@ export class ContractStudentPageComponent implements OnInit {
   async generatePDF() {
     const currentDate = new Date();
     const img = new Image();
-    //img.src = 'https://i.ibb.co/pPkRJKb/Contrato-Estudiante.png';
-    img.src = 'https://i.ibb.co/mJ9q209/Contrato-Est.jpg';
+    img.src = 'https://i.ibb.co/yy0GrBq/Contrato-Estudiante-ITT.jpg';
     const doc = new jsPDF();
 
     doc.addImage(img, 'jpg', 0, 0, 200, 295);
 
     doc.setFontSize(8);
     doc.setFontType('bold');
-    doc.text(`${this.data.name.fullName}`, 125, 257);
+    doc.text(`${this.data.name.fullName}`, 132, 262);
+
+    doc.addImage(this.firmaDirector, 'jpg', 25, 220, 80, 43);
 
     doc.setFontSize(8);
     doc.setFontType('bold');

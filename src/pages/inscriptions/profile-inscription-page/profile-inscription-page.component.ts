@@ -45,6 +45,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
   docSolicitud;
   docContrato;
   docAcuse;
+  docCompromiso;
 
   // Datos Alumno
   nombre: String;
@@ -200,7 +201,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     await this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(
       data => {
         this.pub = data.file;
-        this.image = 'data:image/png;base64,' + this.pub;
+        this.image = this.pub ? 'data:image/png;base64,' + this.pub :  'assets/imgs/profileImgNotFound.jpg';
         this.pub = true;
         this.showImg=true;
       },
@@ -229,9 +230,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
        
         this.docAnalisis = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
 
-        this.docSolicitud = documents.filter( docc => docc.filename.indexOf('SOLICITUD') !== -1)[0];;
+        this.docSolicitud = documents.filter( docc => docc.filename.indexOf('SOLICITUD') !== -1)[0];
 
-        this.docContrato = documents.filter( docc => docc.filename.indexOf('CONTRATO') !== -1)[0];;
+        this.docContrato = documents.filter( docc => docc.filename.indexOf('CONTRATO') !== -1)[0];
+
+        this.docCompromiso = documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] : '';
 
         this.checkFolders();
 
@@ -253,9 +256,16 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
         if(this.docContrato) this.docContrato.status = this.docContrato ? this.docContrato.status.filter( st=> st.active===true)[0] : '';
 
+        if(this.docCompromiso)this.docCompromiso.status = this.docCompromiso ? this.docCompromiso.status.filter( st=> st.active===true)[0] : '';
+
 
         this.showImg=false;
-        this.findFoto();
+        if(this.docFoto){
+          this.findFoto();
+        }else{
+          this.image = 'assets/imgs/profileImgNotFound.jpg';
+          this.showImg=true;
+        }
       }
     );    
 
@@ -475,6 +485,30 @@ export class ProfileInscriptionPageComponent implements OnInit {
         this.generatePDFAcuse();
         break;
       }
+      case "Compromiso": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Carta Compromiso.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.docCompromiso.fileIdInDrive, this.docCompromiso.filename).subscribe(data => {
+          var pubCompromiso = data.file;
+          let buffCompromiso = new Buffer(pubCompromiso.data);
+          var pdfSrcCompromiso = buffCompromiso;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrcCompromiso,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            '', error);
+        });
+        break;
+      }
     }
   }
 
@@ -582,13 +616,14 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
     var columns = ["No", "Documento", "Estatus"];
     var data = [
-      [1, "ACTA DE NACIMIENTO",""],
+      [1, "COMPROBANTE DE PAGO",""],
       [2, "CERTIFICADO DE ESTUDIOS",""],
-      [3, "ANÁLISIS CLÍNICOS",""],
-      [4, "COMPROBANTE DE PAGO",""],
-      [5, "CURP",""],
-      [6, "NÚMERO DE SEGURO SOCIAL",""],
-      [7, "FOTOGRAFÍA",""] 
+      [3, "CURP",""],
+      [4, "ACTA DE NACIMIENTO",""],
+      [5, "ANÁLISIS CLÍNICOS",""],
+      [6, "FOTOGRAFÍA",""] ,
+      [7, "NÚMERO DE SEGURO SOCIAL",""],
+      [8, "CARTA COMPROMISO",""]
     ];
 
     doc.autoTable(columns,data,{ 
@@ -596,28 +631,28 @@ export class ProfileInscriptionPageComponent implements OnInit {
       margin:{ top: 60 }
     });
 
-    // Acta
-    if(this.docActa != ''){
-      if(this.docActa.status.name == 'EN PROCESO'){
+    // docComprobante
+    if(this.docComprobante != ''){
+      if(this.docComprobante.status.name == 'EN PROCESO'){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
       }
-      if(this.docActa.status.name == 'RECHAZADO'){
+      if(this.docComprobante.status.name == 'RECHAZADO'){
         doc.setTextColor(0,0,0);
         doc.setFillColor(251, 191, 193);
       }
-      if(this.docActa.status.name == 'VALIDADO'){
+      if(this.docComprobante.status.name == 'VALIDADO'){
         doc.setTextColor(0,0,0);
         doc.setFillColor(199, 247, 237);
       }
-      if(this.docActa.status.name == 'ACEPTADO'){
+      if(this.docComprobante.status.name == 'ACEPTADO'){
         doc.setFillColor(17, 32, 71);
         doc.setTextColor(255,255,255);
       }
       doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
       doc.setFont('Montserrat', 'Bold');
       doc.setFontSize(10);
-      doc.text(this.docActa.status.name, 161, 72.25);
+      doc.text(this.docComprobante.status.name, 161, 72.25);
     } else {
       doc.setFillColor(255, 255, 255);
       doc.setTextColor(0,0,0);
@@ -627,7 +662,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 72.25);
     }
 
-    // Certificado
+    // docCertificado
     if(this.docCertificado != ''){
       if(this.docCertificado.status.name == 'EN PROCESO'){
         doc.setTextColor(0,0,0);
@@ -658,69 +693,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 79.85);
     }
 
-    // Analisis 
-    if(this.docAnalisis != ''){
-      if(this.docAnalisis.status.name == 'EN PROCESO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);
-      }
-      if(this.docAnalisis.status.name == 'RECHAZADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
-      }
-      if(this.docAnalisis.status.name == 'VALIDADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docAnalisis.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docAnalisis.status.name, 161, 87.45);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 87.45);
-    }
-
-    // Comprobante
-    if(this.docComprobante != ''){
-      if(this.docComprobante.status.name == 'EN PROCESO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);
-      }
-      if(this.docComprobante.status.name == 'RECHAZADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
-      }
-      if(this.docComprobante.status.name == 'VALIDADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docComprobante.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docComprobante.status.name, 161, 95.05);  
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 95.05);
-    }
-
-    // Curp
+    // docCurp 
     if(this.docCurp != ''){
       if(this.docCurp.status.name == 'EN PROCESO'){
         doc.setTextColor(0,0,0);
@@ -738,10 +711,72 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFillColor(17, 32, 71);
         doc.setTextColor(255,255,255);
       }
+      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docCurp.status.name, 161, 87.45);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 87.45);
+    }
+
+    // docActa
+    if(this.docActa != ''){
+      if(this.docActa.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docActa.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docActa.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docActa.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docActa.status.name, 161, 95.05);  
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 95.05);
+    }
+
+    // docAnalisis
+    if(this.docAnalisis != ''){
+      if(this.docAnalisis.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docAnalisis.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docAnalisis.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docAnalisis.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
       doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
       doc.setFont('Montserrat', 'Bold');
       doc.setFontSize(10);
-      doc.text(this.docCurp.status.name, 161, 102.65);
+      doc.text(this.docAnalisis.status.name, 161, 102.65);
     } else {
       doc.setFillColor(255, 255, 255);
       doc.setTextColor(0,0,0);
@@ -751,38 +786,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       doc.text('NO ENVIADO', 161, 102.65);
     }
 
-    // Nss
-    if(this.docNss != ''){
-      if(this.docNss.status.name == 'EN PROCESO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);
-      }
-      if(this.docNss.status.name == 'RECHAZADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
-      }
-      if(this.docNss.status.name == 'VALIDADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docNss.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docNss.status.name, 161, 110.25);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 110.25);
-    }
-
-    // Foto
+    // docFoto
     if(this.docFoto != ''){
       if(this.docFoto.status.name == 'EN PROCESO'){
         doc.setTextColor(0,0,0);
@@ -800,10 +804,41 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFillColor(17, 32, 71);
         doc.setTextColor(255,255,255);
       }
+      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docFoto.status.name, 161, 110.25);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 110.25);
+    }
+
+    // docNss
+    if(this.docNss != ''){
+      if(this.docNss.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docNss.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docNss.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docNss.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
       doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
       doc.setFont('Montserrat', 'Bold');
       doc.setFontSize(10);
-      doc.text(this.docFoto.status.name, 161, 117.85);
+      doc.text(this.docNss.status.name, 161, 117.85);
     } else {
       doc.setFillColor(255, 255, 255);
       doc.setTextColor(0,0,0);
@@ -812,6 +847,37 @@ export class ProfileInscriptionPageComponent implements OnInit {
       doc.setFontSize(10);
       doc.text('NO ENVIADO', 161, 117.85);
     }   
+
+    // docCompromiso
+    if(this.docCompromiso != ''){
+      if(this.docCompromiso.status.name == 'EN PROCESO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+      }
+      if(this.docCompromiso.status.name == 'RECHAZADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(251, 191, 193);
+      }
+      if(this.docCompromiso.status.name == 'VALIDADO'){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(199, 247, 237);
+      }
+      if(this.docCompromiso.status.name == 'ACEPTADO'){
+        doc.setFillColor(17, 32, 71);
+        doc.setTextColor(255,255,255);
+      }
+      doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text(this.docCompromiso.status.name, 161, 125.45);
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.setTextColor(0,0,0);
+      doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+      doc.setFont('Montserrat', 'Bold');
+      doc.setFontSize(10);
+      doc.text('NO ENVIADO', 161, 125.45);
+    }
 
     this.loading = false; 
     window.open(doc.output('bloburl'), '_blank');
@@ -879,6 +945,12 @@ export class ProfileInscriptionPageComponent implements OnInit {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-NSS.pdf','mimeType': 'application/pdf', newF: this.docNss ? false :true, fileId:this.docNss ? this.docNss.fileIdInDrive :''},
       acceptedFiles:'application/pdf',        
+    };
+
+    this.config7 = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO.pdf', 'mimeType': 'application/pdf', newF: this.docCompromiso ? false :true, fileId:this.docCompromiso ? this.docCompromiso.fileIdInDrive :''},
+      acceptedFiles:'application/pdf',
     };
     
   }

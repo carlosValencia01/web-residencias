@@ -116,7 +116,7 @@ export class RegisterStudentPageComponent implements OnInit {
   validateForm() {
     this.registerForm = this.formBuilder.group({
       'fatherLastName': [this.apellidoPaterno, [Validators.required]],
-      'motherLastName': [this.apellidoMaterno, Validators.required],
+      'motherLastName': [this.apellidoMaterno],
       'firstName': [this.nombre, Validators.required],
       'controlNumber': [this.numeroControl, Validators.required],
       'birthPlace': [this.lugarNacimiento, Validators.required],
@@ -150,9 +150,12 @@ export class RegisterStudentPageComponent implements OnInit {
   async updateStudent(data, id) {
     
     await this.inscriptionsProv.updateStudent(data, id).subscribe(res => {
-
-      this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Solicitud ...', '');
-      this.generatePDF();
+      // Actualizar fullName
+      var newFullName = data.firstName+' '+data.fatherLastName+' '+data.motherLastName ;
+      this.inscriptionsProv.updateStudent({fullName:newFullName}, id).subscribe(res => {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Solicitud ...', '');
+        this.generatePDF();
+      });   
     }, err=>{});
   }
 
@@ -504,11 +507,6 @@ export class RegisterStudentPageComponent implements OnInit {
                 if(student.folder.idFolderInDrive){
                   this.folderId = student.folder.idFolderInDrive;
                   // console.log(this.folderId,'folder student exists');                     
-                }
-                else{ //folder doesn't exists then create it
-                // console.log('222');
-                
-                  this.createFolder();
                 }         
               } else{
                 // console.log('333');
@@ -527,25 +525,26 @@ export class RegisterStudentPageComponent implements OnInit {
   createFolder(){
     let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
   
-    this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id).subscribe(
+    this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id,1).subscribe(
       (folders)=>{
         // console.log(folders,'folderss');
         
         this.foldersByPeriod=folders.folders;                                     
-        let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1 );
+        let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1);
 
         // 1 check career folder
         let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
+        let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
 
         if(folderCareer.length===0){
           // console.log('1');
           
-          this.inscriptionsProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive).subscribe(
+          this.inscriptionsProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive,1).subscribe(
             career=>{
               // console.log('2');
               
               // student folder doesn't exists then create new folder
-              this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,career.folder.idFolderInDrive).subscribe(
+              this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,career.folder.idFolderInDrive,1).subscribe(
                 studentF=>{
                   this.folderId = studentF.folder.idFolderInDrive;                 
                   // console.log('3');
@@ -560,26 +559,27 @@ export class RegisterStudentPageComponent implements OnInit {
             }
           );
         }else{
-          // console.log('2.1');
-          
-          this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,folderCareer[0].idFolderInDrive).subscribe(
-            studentF=>{
-              this.folderId = studentF.folder.idFolderInDrive;   
-              // console.log('3.1');
-              
-              this.studentProv.updateStudent(this._idStudent,{folderId:studentF.folder._id}).subscribe(
-                upd=>{
-                  
-                  
-                },
-                err=>{
-                }
-              );
-              
-            },
-            err=>{console.log(err);
-            }
-          );
+          // console.log('2.1');                   
+
+            this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,folderCareer[0].idFolderInDrive,1).subscribe(
+              studentF=>{
+                this.folderId = studentF.folder.idFolderInDrive;   
+                // console.log('3.1');
+                
+                this.studentProv.updateStudent(this.data._id,{folderId:studentF.folder._id}).subscribe(
+                  upd=>{
+                    
+                    
+                  },
+                  err=>{
+                  }
+                );
+                
+              },
+              err=>{console.log(err);
+              }
+            );
+         
         }
       },
       err=>{console.log(err,'==============error');
@@ -631,51 +631,7 @@ export class RegisterStudentPageComponent implements OnInit {
     );
   }
 
-  checkFolders(){
-    let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1 );
-    //1 search career folder
-    let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
-    
-    let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
-    
-    if(folderCareer.length>0){
-      // console.log('existo');
-      
-      // folder exists
-      // 2 search folder by student
-      let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName);
-      if(folderStudent.length > 0){
-        // folder exists
-        this.folderId = folderStudent[0].idFolderInDrive;
-      }else{
-        // student folder doesn't exists then create new folder
-        this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,folderCareer[0].idFolderInDrive).subscribe(
-          studentF=>{
-            this.folderId = studentF.folder.idFolderInDrive;
-          },
-          err=>{console.log(err);
-          }
-        );
-      }
-    }else{
-      // career folder doesn't exist then create it
-      this.inscriptionsProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive).subscribe(
-        career=>{
-          
-          // student folder doesn't exists then create new folder
-          this.inscriptionsProv.createSubFolder(folderStudentName,this.activePeriod._id,career.folder.idFolderInDrive).subscribe(
-            studentF=>{
-              this.folderId = studentF.folder.idFolderInDrive;       
-            },
-            err=>{console.log(err);
-            }
-          );
-        },
-        err=>{console.log(err);
-        }
-      );
-    }
-  }
+
 
   changeEventEtnia(){
     if (this.etnia == 'No') {

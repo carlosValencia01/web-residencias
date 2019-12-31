@@ -49,6 +49,17 @@ img.imgProfile.mat-card-image{
     color: #ffffff;   
 }
 
+.cardDocumentsNoSend{
+    background: rgba(48, 47, 47, 0.2);
+    border: 1px solid #000000;
+    color: #000000;
+}
+
+.titleDocumentsNoSend{
+    color: #000000;
+    font-weight: bold;
+}
+
 .title {
     justify-content: center;
     text-align: center;
@@ -268,3 +279,15 @@ h6{
 }
 
 /* \\PDF LOAD ANIMATION */
+
+.mat-card-header .mat-card-title{
+	font-size: 9pt !important;
+}
+
+.mat-card-actions{
+	padding: 0px !important;
+}
+
+.col-sm-3{
+	padding-bottom: 5px !important;
+}

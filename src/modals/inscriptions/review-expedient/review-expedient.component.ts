@@ -28,6 +28,7 @@ export class ReviewExpedientComponent implements OnInit {
   actaDoc;
   clinicDoc;
   pdfSrc;
+  cartaDoc;
   image;
   viewdoc: boolean;
   prevCard;
@@ -46,7 +47,8 @@ export class ReviewExpedientComponent implements OnInit {
     { filename: '', checkPhoto: false, status: false, statusname: '' },
     { filename: '', checkCertificate: false, status: false, statusname: '' },
     { filename: '', checkPay: false, status: false, statusname: '' },
-    { filename: '', checkClinic: false, status: false, statusname: '' }
+    { filename: '', checkClinic: false, status: false, statusname: '' },
+    { filename: '', checkCarta: false, status: false, statusname: '' },
   ];
 
   checkAll = false;
@@ -104,22 +106,34 @@ export class ReviewExpedientComponent implements OnInit {
       docs => {
         let documents = docs.documents;
         ;
+        
+        
+        this.payDoc = documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0];
         this.docto = this.docto ? documents.filter(docc => docc._id === this.docto._id)[0] : null;
+
+        if(this.docto == null){
+          this.cardClick('comprobante');
+        }
         this.pendings = 0;
         this.selectPendings = 0;
         this.curpDoc = documents.filter(docc => docc.filename.indexOf('CURP') !== -1)[0];
         this.nssDoc = documents.filter(docc => docc.filename.indexOf('NSS') !== -1)[0];
         this.imageDoc = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0];
-        this.payDoc = documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0];
         this.certificateDoc = documents.filter(docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0];
         this.actaDoc = documents.filter(docc => docc.filename.indexOf('ACTA') !== -1)[0];
         this.clinicDoc = documents.filter(docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
-
+        this.cartaDoc = documents.filter(docc => docc.filename.indexOf('COMPROMISO') !== -1)[0];
         if (this.imageDoc) {
           this.imageDoc.status = this.imageDoc ? this.imageDoc.status.filter(st => st.active === true)[0].name : '';
           this.acceptDocuments[3].filename = this.imageDoc.filename;
           this.acceptDocuments[3].statusname = this.imageDoc.status;
           this.pendings = this.imageDoc.status === 'VALIDADO' || this.imageDoc.status === 'EN PROCESO' || this.imageDoc.status === 'RECHAZADO' ? ++this.pendings : this.pendings;
+        }
+        if (this.cartaDoc) {
+          this.cartaDoc.status = this.cartaDoc ? this.cartaDoc.status.filter(st => st.active === true)[0].name : '';
+          this.acceptDocuments[7].filename = this.cartaDoc.filename;
+          this.acceptDocuments[7].statusname = this.cartaDoc.status;
+          this.pendings = this.cartaDoc.status === 'VALIDADO' || this.cartaDoc.status === 'EN PROCESO' || this.cartaDoc.status === 'RECHAZADO' ? ++this.pendings : this.pendings;
         }
 
         if (this.curpDoc) {
@@ -163,7 +177,8 @@ export class ReviewExpedientComponent implements OnInit {
           this.pendings = this.nssDoc.status === 'VALIDADO' || this.nssDoc.status === 'EN PROCESO' || this.nssDoc.status === 'RECHAZADO' ? ++this.pendings : this.pendings;
         }
 
-        console.log(this.pendings);
+        // console.log(this.pendings);
+        
 
       }
     );
@@ -192,13 +207,16 @@ export class ReviewExpedientComponent implements OnInit {
           docname === 'certificado' ? this.certificateDoc :
             docname === 'foto' ? this.imageDoc :
               docname === 'comprobante' ? this.payDoc :
-                docname === 'clinicos' ? this.clinicDoc : false;
+                docname === 'clinicos' ? this.clinicDoc
+                :docname === 'carta' ? this.cartaDoc
+                : false;
 
     if (this.docto) {
       this.showDocument = false;
 
       this.typeDocShow = docname === 'foto' ? 'image' : 'pdf';
-      this.docDisplayName = this.docto.filename.split('-')[1].split('.')[0];
+      let name = this.docto.filename.split('-')[1].split('.')[0];
+      this.docDisplayName = name === 'NSS' ? 'NÚMERO DE SEGURO SOCIAL' : name === 'COMPROMISO' ? 'CARTA '+name : name ;
       this.loading = true;
       this.inscriptionsProv.getFile(this.docto.fileIdInDrive, this.docto.filename).subscribe(data => {
         var docdata = data.file;
@@ -215,6 +233,7 @@ export class ReviewExpedientComponent implements OnInit {
   }
 
   async changeStatus(action) {
+    var filename = '';
     this.refused = '';
     const msg = action.status === 'RECHAZADO' ? 'rechazar' : this.data.user === 'Secretaria' ? 'validar' : 'aceptar';
     let confirmdialog = await this.swalDialog(`¿ Está seguro de ${msg} el documento ?`, '', 'question');
@@ -233,8 +252,29 @@ export class ReviewExpedientComponent implements OnInit {
         res => {
           this.notificationsServices.showNotification(eNotificationType.SUCCESS,
             'Exito', 'Estatus actualizado correctamente.');
+            if(documentInfo.filename.includes('COMPROBANTE')){
+              filename = 'COMPROBANTE DE PAGO'
+            }
+            if(documentInfo.filename.includes('CERTIFICADO')){
+              filename = 'CERTIFICADO DE ESTUDIOS'
+            }
+            if(documentInfo.filename.includes('CURP')){
+              filename = 'CURP'
+            }
+            if(documentInfo.filename.includes('ACTA')){
+              filename = 'ACTA DE NACIMIENTO'
+            }
+            if(documentInfo.filename.includes('CLINICOS')){
+              filename = 'ANÁLISIS CLÍNICOS'
+            }
+            if(documentInfo.filename.includes('FOTO')){
+              filename = 'FOTO'
+            }
+            if(documentInfo.filename.includes('NSS')){
+              filename = 'NÚMERO DE SEGURO SOCIAL'
+            }
           if (action.status == "RECHAZADO") {
-            this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+documentInfo.filename+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://escolares.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
+            this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+filename+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://escolares.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
               res => {
                 this.notificationsServices.showNotification(0, 'Notificación enviada a:', this.data.student.controlNumber);
               },
@@ -276,7 +316,11 @@ export class ReviewExpedientComponent implements OnInit {
       this.acceptDocuments[5].checkPay = this.acceptDocuments[5].filename === '' || this.acceptDocuments[5].statusname === 'ACEPTADO' ? false : !this.acceptDocuments[5].checkPay;
       this.acceptDocuments[3].checkPhoto = this.acceptDocuments[3].filename === '' || this.acceptDocuments[3].statusname === 'ACEPTADO' ? false : !this.acceptDocuments[3].checkPhoto;
       this.acceptDocuments[6].checkClinic = this.acceptDocuments[6].filename === '' || this.acceptDocuments[6].statusname === 'ACEPTADO' ? false : !this.acceptDocuments[6].checkClinic;
+     
       this.acceptDocuments[2].checkNss = this.acceptDocuments[2].filename === '' || this.acceptDocuments[2].statusname === 'ACEPTADO' ? false : !this.acceptDocuments[2].checkNss;
+
+      this.acceptDocuments[7].checkCarta = this.acceptDocuments[7].filename === '' || this.acceptDocuments[7].statusname === 'ACEPTADO' ? false : !this.acceptDocuments[7].checkCarta;
+
       this.acceptDocuments[0].status = this.acceptDocuments[0].checkActa;
       this.acceptDocuments[1].status = this.acceptDocuments[1].checkCurp;
       this.acceptDocuments[2].status = this.acceptDocuments[2].checkNss;
@@ -284,6 +328,7 @@ export class ReviewExpedientComponent implements OnInit {
       this.acceptDocuments[4].status = this.acceptDocuments[4].checkCertificate;
       this.acceptDocuments[5].status = this.acceptDocuments[5].checkPay;
       this.acceptDocuments[6].status = this.acceptDocuments[6].checkClinic;
+      this.acceptDocuments[7].status = this.acceptDocuments[7].checkCarta;
 
     } else {
 
@@ -295,6 +340,7 @@ export class ReviewExpedientComponent implements OnInit {
       this.acceptDocuments[3].checkPhoto = this.acceptDocuments[3].filename === '' || this.acceptDocuments[3].statusname === 'ACEPTADO' ? false : true;
       this.acceptDocuments[6].checkClinic = this.acceptDocuments[6].filename === '' || this.acceptDocuments[6].statusname === 'ACEPTADO' ? false : true;
       this.acceptDocuments[2].checkNss = this.acceptDocuments[2].filename === '' || this.acceptDocuments[2].statusname === 'ACEPTADO' ? false : true;
+      this.acceptDocuments[7].checkCarta = this.acceptDocuments[7].filename === '' || this.acceptDocuments[7].statusname === 'ACEPTADO' ? false : true;
 
       this.acceptDocuments[0].status = this.acceptDocuments[0].checkActa;
       this.acceptDocuments[1].status = this.acceptDocuments[1].checkCurp;
@@ -303,6 +349,7 @@ export class ReviewExpedientComponent implements OnInit {
       this.acceptDocuments[4].status = this.acceptDocuments[4].checkCertificate;
       this.acceptDocuments[5].status = this.acceptDocuments[5].checkPay;
       this.acceptDocuments[6].status = this.acceptDocuments[6].checkClinic;
+      this.acceptDocuments[7].status = this.acceptDocuments[7].checkCarta;
     }
   }
   actaChange() {
@@ -345,9 +392,15 @@ export class ReviewExpedientComponent implements OnInit {
 
   }
 
+  cartaChange() {
+    this.selectPendings = this.acceptDocuments[7].checkCarta ? ++this.selectPendings : --this.selectPendings;
+    this.acceptDocuments[7].status = this.acceptDocuments[7].checkCarta;
+    this.checkAll = this.pendings === this.selectPendings;
+  }
+
   async acceptManyDocuments() {
 
-    console.log(this.acceptDocuments.filter(docs => docs.status === true));
+    
     let updateDocs = this.acceptDocuments.filter(docs => docs.status === true && docs.filename !== '' && docs.statusname !== 'ACEPTADO');
     console.log(updateDocs);
 
