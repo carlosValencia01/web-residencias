@@ -108,12 +108,6 @@ import {
 import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/one-student-page.component';
 import { StudentPageComponent } from 'src/pages/credentials/student-page/student-page.component';
 
-// Electronic signature
-// Pages
-import {ElectronicSignatureComponent} from 'src/pages/electronic-signature/electronic-signature/electronic-signature.component';
-// Provider
-import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
-
 // Inscriptions module
 // Pages
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
@@ -197,13 +191,17 @@ import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 
 // Electronic signature module
 // Pages
+import { DepartmentsAdminPageComponent } from 'src/pages/electronic-signature/departments-admin-page/departments-admin-page.component';
 import { DocumentsAdminPageComponent } from 'src/pages/electronic-signature/documents-admin-page/documents-admin-page.component';
 import { DocumentsAssignPageComponent } from 'src/pages/electronic-signature/documents-assign-page/documents-assign-page.component';
+import { ElectronicSignatureComponent } from 'src/pages/electronic-signature/electronic-signature/electronic-signature.component';
 import { EmployeePageComponent } from 'src/pages/electronic-signature/employee-page/employee-page.component';
 import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
 // Modals
 import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
 import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
+// Providers
+import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
 // Shared
 // Components
@@ -213,6 +211,7 @@ import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 import { LoadCsvDataComponent } from 'src/modals/shared/load-csv-data/load-csv-data.component';
 // Providers
+import { DepartmentProvider } from 'src/providers/shared/department.prov';
 import { DocumentProvider } from 'src/providers/shared/document.prov';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { PositionProvider } from 'src/providers/shared/position.prov';
@@ -256,10 +255,6 @@ registerLocaleData(localeEs);
     LoaderDataCredentialsPageComponent,
     OneStudentPageComponent,
     StudentPageComponent,
-
-    // Electronic signarure
-    // Pages
-    ElectronicSignatureComponent,
 
     // Inscriptions module
     // Pages
@@ -324,8 +319,10 @@ registerLocaleData(localeEs);
 
     // Electronic signature module
     // Pages
+    DepartmentsAdminPageComponent,
     DocumentsAdminPageComponent,
     DocumentsAssignPageComponent,
+    ElectronicSignatureComponent,
     EmployeePageComponent,
     PositionsAdminPageComponent,
     // Modals
@@ -442,10 +439,6 @@ registerLocaleData(localeEs);
     ImageToBase64Service,
     NotificationsServices,
 
-    // Electronic signature
-    // Providers
-    ESignatureProvider,
-
     // Inscriptions
     // Providers
     InscriptionsProvider,
@@ -467,8 +460,13 @@ registerLocaleData(localeEs);
     // Services
     FirebaseService,
 
+    // Electronic signature module
+    // Providers
+    ESignatureProvider,
+
     // Shared
     // Providers
+    DepartmentProvider,
     DocumentProvider,
     EmployeeProvider,
     PositionProvider,

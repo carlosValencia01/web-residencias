@@ -6,6 +6,7 @@ import {map, startWith} from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
 import {CookiesService} from 'src/services/app/cookie.service';
+import {DepartmentProvider} from 'src/providers/shared/department.prov';
 import {DocumentProvider} from 'src/providers/shared/document.prov';
 import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import {IDepartment} from 'src/entities/shared/department.model';
@@ -34,6 +35,7 @@ export class DocumentsAssignPageComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private cookiesService: CookiesService,
+    private departmentProv: DepartmentProvider,
     private documentProv: DocumentProvider,
     private notifications: NotificationsServices,
     private positionProv: PositionProvider,
@@ -60,20 +62,6 @@ export class DocumentsAssignPageComponent implements OnInit {
       );
   }
 
-  private _initializeForm() {
-    this.positionForm = new FormGroup({
-      'department': new FormControl(null, Validators.required),
-      'position': new FormControl(null, Validators.required)
-    });
-  }
-
-  private _getAllDepartments() {
-    this.positionProv.getAllDepartments()
-      .subscribe(res => {
-        this.departments = res.departments;
-      });
-  }
-
   public getPositions() {
     const departmentId = this._findDepartmentId(this.positionForm.get('department').value);
     if (departmentId) {
@@ -86,17 +74,6 @@ export class DocumentsAssignPageComponent implements OnInit {
     }
   }
 
-  private _filterAutocomplete(array: Array<any>, value: string): Array<any> {
-    const filterValue = (value || '').toLowerCase();
-    return (array && filterValue) ? array.filter(data => data.name.toLowerCase().includes(filterValue)) : null;
-  }
-
-  private _findDepartmentId(departmentName): string {
-    return departmentName
-      ? this.departments.filter(department => department.name.toLowerCase() === departmentName.toLowerCase())[0]._id
-      : null;
-  }
-
   public searchDocuments() {
     this.documentProv.getAllDocumentsOnly()
       .subscribe(res => {
@@ -105,19 +82,6 @@ export class DocumentsAssignPageComponent implements OnInit {
         this.documentsNotAssigns = this._getDocumentsNotAssigned(this.documents, this.documentsAssigns) || [];
         this.showDocumentsPanel = true;
       });
-  }
-
-  private _getPositionDocuments(positionName: string): Array<IDocument> {
-    this.currentPosition = positionName
-      ? this.positions.filter(position => position.name.toLowerCase() === positionName.toLowerCase())[0]
-      : null;
-    return this.currentPosition ? this.currentPosition.documents : null;
-  }
-
-  private _getDocumentsNotAssigned(allDocuments, documentsAssigned) {
-    const docsNotAssigned = new Set(allDocuments
-      .filter((doc: IDocument) => !JSON.stringify(documentsAssigned).includes(doc._id)));
-    return Array.from(docsNotAssigned);
   }
 
   public updateAssignDocuments() {
@@ -174,5 +138,43 @@ export class DocumentsAssignPageComponent implements OnInit {
     this.documentsAssigns = null;
     this.documentsNotAssigns = null;
     this.documents = null;
+  }
+
+  private _initializeForm() {
+    this.positionForm = new FormGroup({
+      'department': new FormControl(null, Validators.required),
+      'position': new FormControl(null, Validators.required)
+    });
+  }
+
+  private _getAllDepartments() {
+    this.departmentProv.getAllDepartments()
+      .subscribe(res => {
+        this.departments = res.departments;
+      });
+  }
+
+  private _filterAutocomplete(array: Array<any>, value: string): Array<any> {
+    const filterValue = (value || '').toLowerCase();
+    return (array && filterValue) ? array.filter(data => data.name.toLowerCase().includes(filterValue)) : null;
+  }
+
+  private _findDepartmentId(departmentName): string {
+    return departmentName
+      ? this.departments.filter(department => department.name.toLowerCase() === departmentName.toLowerCase())[0]._id
+      : null;
+  }
+
+  private _getPositionDocuments(positionName: string): Array<IDocument> {
+    this.currentPosition = positionName
+      ? this.positions.filter(position => position.name.toLowerCase() === positionName.toLowerCase())[0]
+      : null;
+    return this.currentPosition ? this.currentPosition.documents : null;
+  }
+
+  private _getDocumentsNotAssigned(allDocuments, documentsAssigned) {
+    const docsNotAssigned = new Set(allDocuments
+      .filter((doc: IDocument) => !JSON.stringify(documentsAssigned).includes(doc._id)));
+    return Array.from(docsNotAssigned);
   }
 }

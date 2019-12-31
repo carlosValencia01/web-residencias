@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Api } from 'src/providers/app/api.prov';
 
-
 @Injectable()
 export class CareerProvider {
     constructor(
-        public api: Api        
+        public api: Api,
     ) {
 
     }
@@ -25,7 +24,7 @@ export class CareerProvider {
         return this.api.put(`career/update/${id}`, data)
             .pipe(map(career => career.json()));
     }
-    
+
     newCareer(data) {
         return this.api.post(`career/create`, data)
             .pipe(map(career => career.json()));

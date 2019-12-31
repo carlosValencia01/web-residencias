@@ -5,6 +5,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs';
 import Swal from 'sweetalert2';
 
+import {DepartmentProvider} from 'src/providers/shared/department.prov';
 import {eOperation} from 'src/enumerators/reception-act/operation.enum';
 import {IDepartment} from 'src/entities/shared/department.model';
 import {IPosition} from 'src/entities/shared/position.model';
@@ -29,6 +30,7 @@ export class NewPositionComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private departmentProv: DepartmentProvider,
     private positionProv: PositionProvider,
     private dialogRef: MatDialogRef<NewPositionComponent>,
   ) {
@@ -67,7 +69,7 @@ export class NewPositionComponent implements OnInit {
   }
 
   private _getAllDepartments(): void {
-    this.positionProv.getAllDepartments()
+    this.departmentProv.getAllDepartments()
       .subscribe(res => {
         this.departments = res.departments;
       });
