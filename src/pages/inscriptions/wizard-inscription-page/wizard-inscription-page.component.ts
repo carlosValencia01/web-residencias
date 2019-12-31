@@ -52,7 +52,7 @@ export class WizardInscriptionPageComponent implements OnInit {
           let today = new Date();
 
           this.isOpen = today >= initDate ? today <= endDate ? 0 : 2 : 1;
-          console.log(this.isOpen);
+          // console.log(this.isOpen);
           
           this.getIdStudent();
           this.getStudentData(this._idStudent);
@@ -74,15 +74,19 @@ export class WizardInscriptionPageComponent implements OnInit {
       this.step = this.studentData.stepWizard;
       this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
       if(this.studentData.inscriptionStatus){
-        console.log("Existe Expediente Electrónico")
+        // console.log("Existe Expediente Electrónico",this.semesterStudent);
+        
         if(this.step == 6){
           //window.location.assign("/profileInscription");
           this.router.navigate(['/profileInscription']);
+        }else if(this.semesterStudent == 1){
+          this.validateStudent = true;
+          // console.log(this.validateStudent && this.isOkPeriod === 0 && this.isOpen === 0);
         }
       } else {
-        console.log("NO Existe Expediente Electrónico");
+        // console.log("NO Existe Expediente Electrónico");
         // Mostrar wizzard si el semestre es 1, de lo contrario mostrar advertencia.
-        console.log("Semestre ≠ 1");
+        // console.log("Semestre ≠ 1");
         if(this.semesterStudent == 1){
           this.validateStudent = true;
         } else{
