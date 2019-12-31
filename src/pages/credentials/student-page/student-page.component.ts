@@ -12,6 +12,7 @@ import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 
 @Component({
   selector: 'app-student-page',
@@ -59,6 +60,8 @@ export class StudentPageComponent implements OnInit {
   haveSubjects: boolean;
   selectedFile: File = null;
 
+  imageDoc;
+
   constructor(
     private studentProv: StudentProvider,
     private imageToBase64Serv: ImageToBase64Service,
@@ -70,6 +73,7 @@ export class StudentPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     private routeActive: ActivatedRoute,
+    private inscriptionProv : InscriptionsProvider
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
@@ -169,8 +173,10 @@ export class StudentPageComponent implements OnInit {
           this.showImg = false;
           this.currentStudent = JSON.parse(JSON.stringify(student));
           this.imgForSend = false;
-
-          this.getImageFromService(student._id);
+          // console.log(student);
+          this.getDocuments(student._id);
+          
+          // this.getImageFromService(student._id);
 
           this.formStudent.get('fullNameInput').setValue(student.fullName);
           this.formStudent.get('numberControlInput').setValue(student.controlNumber);
@@ -243,59 +249,50 @@ export class StudentPageComponent implements OnInit {
     if (student.nss) {
       this.loading = true;
       this.studentProv.verifyStatus(student.controlNumber)
-        .subscribe(res => {
+        .subscribe(async res => {
           this.haveSubjects = res.status === 1 ? true : false;
-          if (this.haveSubjects) {
-            if (student.filename) {
-              this.loading = true;
-              this.studentProv.getImageTest(student._id).subscribe(data => {
+          if (this.haveSubjects) {            
+            await this.getDocuments(student._id);            
+            
+            if (this.photoStudent !== '' && this.photoStudent !== 'assets/imgs/studentAvatar.png') {
+              const doc = new jsPDF({
+                unit: 'mm',
+                format: [251, 158], // Medidas correctas: [88.6, 56]
+                orientation: 'landscape'
+              });
+              
+              // cara frontal de la credencial
+              doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
+              doc.addImage(this.photoStudent, 'PNG', 3.6, 7.1, 25.8, 31);
 
-                const reader = new FileReader();
-                reader.addEventListener('load', () => {
-                  this.imageToBase64Serv.getBase64(reader.result).then(res3 => {
-                    this.imageProfileTest = res3;
-                    const doc = new jsPDF({
-                      unit: 'mm',
-                      format: [251, 158], // Medidas correctas: [88.6, 56]
-                      orientation: 'landscape'
-                    });
-                    // cara frontal de la credencial
-                    doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-                    doc.addImage(this.imageProfileTest, 'JPEG', 3.6, 7.1, 25.8, 31);
+              doc.setTextColor(255, 255, 255);
+              doc.setFontSize(7);
+              doc.setFont('helvetica');
+              doc.setFontType('bold');
+              doc.text(49, 30.75, doc.splitTextToSize(student.fullName, 35));
+              doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
+              doc.text(49, 46.5, doc.splitTextToSize(student.nss, 35));
 
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFontSize(7);
-                    doc.setFont('helvetica');
-                    doc.setFontType('bold');
-                    doc.text(49, 30.75, doc.splitTextToSize(student.fullName, 35));
-                    doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
-                    doc.text(49, 46.5, doc.splitTextToSize(student.nss, 35));
+              doc.addPage();
+              // // cara trasera de la credencial
+              doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
 
-                    doc.addPage();
-                    // // cara trasera de la credencial
-                    doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
+              // // foto del estudiante
 
-                    // // foto del estudiante
-
-                    // // Numero de control con codigo de barra
-                    doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46.8, 39.2, 33, 12);
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFontSize(8);
-                    doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
-                    window.open(doc.output('bloburl'), '_blank');
-                  });
-                }, false);
-                if (data) {
-                  reader.readAsDataURL(data);
-                }
-              }, error => {
-              }, () => this.loading = false);
+              // // Numero de control con codigo de barra
+              doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46.8, 39.2, 33, 12);
+              doc.setTextColor(0, 0, 0);
+              doc.setFontSize(8);
+              doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
+              // this.loading=false;
+              window.open(doc.output('bloburl'), '_blank');
             } else {
               this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
             }
           } else {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
           }
+
         }, error => {
           if (error.status === 401) {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
@@ -502,5 +499,44 @@ export class StudentPageComponent implements OnInit {
         this.loading = false;
       }
     }, () => this.loading = false);
+  }
+
+  async getDocuments(id){
+    this.photoStudent='';
+    this.imageDoc = null;
+    this.showImg=false;
+
+    // console.log('1')
+    await this.studentProv.getDriveDocuments(id).toPromise().then(
+      async docs=>{
+        let documents = docs.documents;     
+        if(documents){
+
+          this.imageDoc = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0];        
+          this.showImg=true;
+          if(this.imageDoc){
+            // console.log('2');
+            
+            await this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).toPromise().then(
+              succss=>{
+                this.showImg=true;
+                // console.log('3');
+                
+                this.photoStudent = 'data:image/png;base64,' + succss.file;
+              },
+              err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
+            );
+        }
+        }else{
+          // console.log('1');
+          
+          // this.loading = false
+          this.photoStudent = 'assets/imgs/studentAvatar.png';
+          this.showImg=true;
+        }
+      }
+    );
+    // console.log('4');
+    
   }
 }

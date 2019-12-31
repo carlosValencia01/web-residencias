@@ -213,7 +213,7 @@ export class OneStudentPageComponent implements OnInit {
     }, error => {
       console.log(error);
       if (error.status === 404) {
-        this.photoStudent = 'assets/imgs/imgNotFound.png';
+        this.photoStudent = 'assets/imgs/studentAvatar.png';
       }
     }, () => this.loading = false);
   }
@@ -312,7 +312,7 @@ export class OneStudentPageComponent implements OnInit {
     }, error => {
       console.log(error);
       if (error.status === 404) {
-        this.photoStudent = 'assets/imgs/imgNotFound.png';
+        this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
       }
     }, () => this.loading = false);
@@ -334,13 +334,13 @@ export class OneStudentPageComponent implements OnInit {
               this.showImg=true;
               this.photoStudent = 'data:image/png;base64,' + succss.file;
             },
-            err=>{this.photoStudent = 'assets/imgs/imgNotFound.png'; this.showImg=true;}
+            err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
           );
         }else{
           console.log('1');
           
           this.loading = false
-          this.photoStudent = 'assets/imgs/imgNotFound.png';
+          this.photoStudent = 'assets/imgs/studentAvatar.png';
           this.showImg=true;
         }
       }
@@ -359,7 +359,7 @@ export class OneStudentPageComponent implements OnInit {
 
         // 1 check career folder
         let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
-        let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
+        // let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
 
         if(folderCareer.length===0){
           // console.log('1');
