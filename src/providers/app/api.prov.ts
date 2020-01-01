@@ -6,8 +6,8 @@ import { CookiesService } from 'src/services/app/cookie.service';
 export class Api {
     // url = 'http://localhost:3004/escolares/credenciales';
     // url = 'http://localhost:3003/escolares/credenciales';
-    // url = 'https://api.cideti.com.mx/escolares/credenciales';
-    url = 'http://104.248.94.77/escolares/credenciales';
+    url = 'https://api.cideti.com.mx/escolares/credenciales';
+    // url = 'http://104.248.94.77/escolares/credenciales';
     urlE = 'http://localhost:3000/escolares/credenciales';
 
     headers: Headers = new Headers();
