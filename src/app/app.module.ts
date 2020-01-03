@@ -162,6 +162,7 @@ import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/posi
 // Modals
 import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
 import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
+import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
 
 // Shared
 // Components
@@ -176,7 +177,7 @@ import { PositionProvider } from 'src/providers/shared/position.prov';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
-import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
+import {CurrentPositionService} from 'src/services/shared/current-position.service';
 
 @NgModule({
   declarations: [
@@ -256,6 +257,7 @@ import { SelectPositionComponent } from 'src/modals/electronic-signature/select-
     // Modals
     NewPositionComponent,
     PositionsHistoryComponent,
+    SelectPositionComponent,
 
     // Shared
     // Components
@@ -263,7 +265,6 @@ import { SelectPositionComponent } from 'src/modals/electronic-signature/select-
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
-    SelectPositionComponent
 ],
   imports: [
     // Angular
@@ -367,6 +368,7 @@ import { SelectPositionComponent } from 'src/modals/electronic-signature/select-
     PositionProvider,
     StudentProvider,
     // Services
+    CurrentPositionService,
     ErrorMatcher,
   ],
   entryComponents: [
@@ -388,12 +390,12 @@ import { SelectPositionComponent } from 'src/modals/electronic-signature/select-
     // Modals
     NewPositionComponent,
     PositionsHistoryComponent,
+    SelectPositionComponent,
 
     // Shared
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
-    SelectPositionComponent
   ],
   bootstrap: [AppComponent]
 })

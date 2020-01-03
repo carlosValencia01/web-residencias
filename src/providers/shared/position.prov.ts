@@ -51,4 +51,9 @@ export class PositionProvider {
         return this.api.get(`position/getAvailablePositions/${employeeId}/${departmentId}`)
             .pipe(map(res => res.json()));
     }
+
+    getPositionById(positionId) {
+      return this.api.get(`position/getPosition/${positionId}`)
+        .pipe(map(res => res.json()));
+    }
 }
