@@ -17,8 +17,8 @@ export class ESignatureProvider {
       .pipe(map(data => data));
   }
 
-  hasESignature(rfc) {
-    return this.api.getE(`eSignature/has/${rfc}`)
+  hasESignature(rfc, positionId) {
+    return this.api.getE(`eSignature/has/${rfc}/${positionId}`)
       .pipe(map(res => res.json()));
   }
 }
