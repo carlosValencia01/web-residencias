@@ -354,7 +354,7 @@ export class InscriptionsMainPageComponent implements OnInit {
     );
   }
 
-  secretaryAssignment(period){
+  secretaryAssignment(period?){
     const linkModal = this.dialog.open(SecretaryAssignmentComponent, {
       data: {
         operation: 'create',

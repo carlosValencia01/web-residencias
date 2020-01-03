@@ -131,7 +131,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     })();
   }
 
-  setView(view: CalendarView) {
+  setView(view) {
     this.view = view;
   }
 

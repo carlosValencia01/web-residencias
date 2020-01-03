@@ -201,7 +201,7 @@ export class DiaryComponent implements OnInit {
     })();
   }
 
-  setView(view: CalendarView) {
+  setView(view) {
     this.view = view;
   }
 

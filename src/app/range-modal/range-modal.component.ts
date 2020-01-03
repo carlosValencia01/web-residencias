@@ -57,5 +57,9 @@ export class RangeModalComponent implements OnInit {
     };
     this.dialogRef.close(tmpRange);
   }
+
+  onClose() {
+    
+  }
 }
 

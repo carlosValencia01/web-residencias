@@ -21,7 +21,7 @@
     <div class="col-md-4">
       <mat-form-field appearance="outline" >
         <mat-label>Nombre del periodo</mat-label>
-        <select matNativeControl required formControlName="periodName" [errorStateMatcher]="matcher"
+        <select matNativeControl required formControlName="periodName"
         
         >
           <option value="ENERO-JUNIO">
@@ -38,7 +38,7 @@
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Año</mat-label>
-        <select matNativeControl required formControlName="year" [errorStateMatcher]="matcher"
+        <select matNativeControl required formControlName="year"
         (ngModelChange) = "createYear(formPeriod.get('year').value)"
         >
           <option [value]="yeaar" *ngFor="let yeaar of yearsInput">
@@ -53,7 +53,7 @@
     </div>
     <div class="col-md-4"> 
       <mat-form-field>
-        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker" placeholder="Fecha inicio" formControlName="initDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker" placeholder="Fecha inicio" formControlName="initDate">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
@@ -64,7 +64,7 @@
     </div>
     <div class="col-md-4">
       <mat-form-field>
-        <input [min]="formPeriod.get('initDate').valid ? formPeriod.get('initDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker2" placeholder="Fecha fin" formControlName="endDate" [errorStateMatcher]="matcher">
+        <input [min]="formPeriod.get('initDate').valid ? formPeriod.get('initDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker2" placeholder="Fecha fin" formControlName="endDate">
         <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
         <mat-datepicker #picker2></mat-datepicker>
       </mat-form-field>
@@ -84,7 +84,7 @@
     <div class="col-md-2"></div>
     <div class="col-md-3"> 
       <mat-form-field>
-        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker3" placeholder="Fecha inicio" formControlName="insPerInitDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker3" placeholder="Fecha inicio" formControlName="insPerInitDate">
         <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
         <mat-datepicker #picker3></mat-datepicker>
       </mat-form-field>
@@ -96,7 +96,7 @@
     </div>
     <div class="col-md-3">
       <mat-form-field>
-        <input [min]="formPeriod.get('insPerInitDate').valid ? formPeriod.get('insPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker4" placeholder="Fecha fin" formControlName="insPerEndDate" [errorStateMatcher]="matcher">
+        <input [min]="formPeriod.get('insPerInitDate').valid ? formPeriod.get('insPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker4" placeholder="Fecha fin" formControlName="insPerEndDate">
         <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
         <mat-datepicker #picker4></mat-datepicker>
       </mat-form-field>
@@ -107,7 +107,7 @@
     </div>
     <div class="col-md-3">
         <mat-form-field>
-            <input [min]="formPeriod.get('insPerInitDate').valid ? formPeriod.get('insPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker5" placeholder="Fecha entrega de certificado" formControlName="certificateDeliveryDate" [errorStateMatcher]="matcher">
+            <input [min]="formPeriod.get('insPerInitDate').valid ? formPeriod.get('insPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker5" placeholder="Fecha entrega de certificado" formControlName="certificateDeliveryDate">
             <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
             <mat-datepicker #picker5></mat-datepicker>
           </mat-form-field>
@@ -129,7 +129,7 @@
       <div class="col-md-3"></div>
     <div class="col-md-3"> 
       <mat-form-field>
-        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker6" placeholder="Fecha inicio" formControlName="arecPerInitDate" [errorStateMatcher]="matcher">
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker6" placeholder="Fecha inicio" formControlName="arecPerInitDate">
         <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
         <mat-datepicker #picker6></mat-datepicker>
       </mat-form-field>
@@ -141,7 +141,7 @@
     </div>
     <div class="col-md-3">
       <mat-form-field>
-        <input [min]="formPeriod.get('arecPerInitDate').valid ? formPeriod.get('arecPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker7" placeholder="Fecha fin" formControlName="arecPerEndDate" [errorStateMatcher]="matcher">
+        <input [min]="formPeriod.get('arecPerInitDate').valid ? formPeriod.get('arecPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker7" placeholder="Fecha fin" formControlName="arecPerEndDate">
         <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
         <mat-datepicker #picker7></mat-datepicker>
       </mat-form-field>
@@ -162,7 +162,7 @@
       <div class="col-md-3"></div>
     <div class="col-md-3"> 
       <mat-form-field>
-        <input type="number" min="0" max="24" matInput placeholder="Hora inicio" formControlName="arecInitShed" [errorStateMatcher]="matcher">
+        <input type="number" min="0" max="24" matInput placeholder="Hora inicio" formControlName="arecInitShed">
         
       </mat-form-field>
       <mat-error>
@@ -172,7 +172,7 @@
     </div>
     <div class="col-md-3">
       <mat-form-field>
-        <input type="number" [min]="formPeriod.get('arecInitShed').valid ? formPeriod.get('arecInitShed').value : 0" max="24" matInput placeholder="Hora fin" formControlName="arecEndShed" [errorStateMatcher]="matcher"> 
+        <input type="number" [min]="formPeriod.get('arecInitShed').valid ? formPeriod.get('arecInitShed').value : 0" max="24" matInput placeholder="Hora fin" formControlName="arecEndShed"> 
       </mat-form-field>
       <mat-error>
           <span
