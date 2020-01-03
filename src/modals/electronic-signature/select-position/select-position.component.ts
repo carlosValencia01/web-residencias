@@ -18,8 +18,8 @@ export class SelectPositionComponent implements OnInit {
   ngOnInit() {
   }
 
-  onNoClick(code): void {
-    this.dialogRef.close({code: code});
+  selectPosition(position): void {
+    this.dialogRef.close(position);
   }
 
 }
