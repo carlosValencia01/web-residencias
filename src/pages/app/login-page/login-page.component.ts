@@ -10,7 +10,10 @@ import {SelectPositionComponent} from 'src/modals/electronic-signature/select-po
 import { UserProvider } from 'src/providers/app/user.prov';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
+import {CurrentPositionService} from 'src/services/shared/current-position.service';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
@@ -27,6 +30,7 @@ export class LoginPageComponent implements OnInit {
   errorPasswordInput = false;
   showAlertDiv = false;
   messageAlertDiv = '';
+  datos;
 
   constructor(
     public formBuilder: FormBuilder,
@@ -35,13 +39,19 @@ export class LoginPageComponent implements OnInit {
     private cookiesServ: CookiesService,
     private notificationsServ: NotificationsServices,
     private router: Router,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private currentPositionService: CurrentPositionService
   ) {
     console.log('login');
    }
 
   ngOnInit() {
     this.initializeForm();
+    this.currentPositionService.changedPosition.subscribe(position => {
+      if (position) {
+        this.datos = position.name;
+      }
+    });
   }
 
   initializeForm() {
@@ -74,22 +84,36 @@ export class LoginPageComponent implements OnInit {
 
           this.userProv.sendTokenFromAPI(res.token);
 
+          if (res.role === 'ESTUDIANTE') {
+            this.loginIsSuccessful(res);
+          }
+
           let positions;
           positions = await this.getPositions(res.user.email);
 
-          const dialogRef = this.dialog.open(SelectPositionComponent, {
-            width: '280px',
-            data: {positions: positions},
-            backdropClass: 'backdropBackground'
-          });
+          if (positions.length > 1) {
+            const dialogRef = this.dialog.open(SelectPositionComponent, {
+              width: '25em',
+              data: {positions: positions},
+              hasBackdrop: true,
+              disableClose: true
+            });
 
-          dialogRef.afterClosed().subscribe(result => {
-            if (result.code === 'Ok') {
-              this.cookiesServ.saveData(res);
-              this.showAlertDiv = false;
-              this.loginSuccessful.emit();
-            }
-          });
+            dialogRef.afterClosed().subscribe(result => {
+              if (result) {
+                this.loginIsSuccessful(res, result);
+              }
+            });
+          } else if (positions.length > 0) {
+            this.loginIsSuccessful(res, positions[0]);
+          } else {
+            Swal.fire({
+              type: 'error',
+              title: 'Usuario sin puesto',
+              text: 'Para agregar puestos, acudir al departamento de recursos humanos',
+              showCloseButton: true,
+            });
+          }
         }, (error) => {
           console.log(error);
           const msg = JSON.parse(error._body);
@@ -99,15 +123,20 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
+  private loginIsSuccessful(res, position?) {
+    this.currentPositionService.setCurrentPosition(position);
+
+    res.user.position = position._id;
+    this.cookiesServ.saveData(res);
+    this.showAlertDiv = false;
+    this.loginSuccessful.emit();
+  }
+
   getPositions(email) {
     return new Promise(resolve => {
       this.employeeProv.getEmployee(email).subscribe(
         res => {
-          this.employeeProv.getEmployeesPositions(res.employee.rfc).subscribe(
-            data => {
-              resolve(data);
-            }
-          );
+          resolve(res.employee.positions);
         }
       );
     });

@@ -10,7 +10,7 @@
             <label style="color: #707070;" for="loginInputUser">
               <img style="height: 18px; width: 18px;" src="assets/imgs/profile.svg" alt=""> Usuario o Número de Control *
             </label>
-            <input (input)="errorUsernameInput = false" (keyup.enter)="login()" formControlName="usernameInput" 
+            <input (input)="errorUsernameInput = false" (keyup.enter)="login()" formControlName="usernameInput"
               [ngClass]="{'is-invalid': (formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorUsernameInput }"
               type="text" class="form-control" #loginInputUser aria-describedby="emailHelp" placeholder="Usuario o número de control">
             <div *ngIf="(formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorForm">
@@ -36,7 +36,7 @@
 
 
           <div *ngIf="showAlertDiv" style="margin-top: 8px;" class="alert alert-danger" role="alert">
-           {{messageAlertDiv}} 
+           {{messageAlertDiv}}
           </div>
 
           <div class="footer-form">
