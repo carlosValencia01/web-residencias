@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
-import {Router } from '@angular/router';
+import {Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-wizard-inscription-page',
@@ -20,12 +20,21 @@ export class WizardInscriptionPageComponent implements OnInit {
 
   step;
 
+  validateStudent: boolean;
+  semesterStudent;
+
   constructor( 
     private inscriptionsProv: InscriptionsProvider,
     private cookiesServ: CookiesService,
     private router: Router,
+    private routeActive: ActivatedRoute,
   ){
     this.init();
+
+    if (!this.cookiesServ.isAllowed(this.routeActive.snapshot.url[0].path)) {
+      this.router.navigate(['/']);
+    }
+    
   }
 
   ngOnInit() {
@@ -43,7 +52,7 @@ export class WizardInscriptionPageComponent implements OnInit {
           let today = new Date();
 
           this.isOpen = today >= initDate ? today <= endDate ? 0 : 2 : 1;
-          console.log(this.isOpen);
+          // console.log(this.isOpen);
           
           this.getIdStudent();
           this.getStudentData(this._idStudent);
@@ -63,10 +72,26 @@ export class WizardInscriptionPageComponent implements OnInit {
     this.inscriptionsProv.getStudent(id).subscribe(res => {
       this.studentData = res.student[0];
       this.step = this.studentData.stepWizard;
-      // console.log(this.step);
-      if(this.step == 6){
-        //window.location.assign("/profileInscription");
-        this.router.navigate(['/profileInscription']);
+      this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
+      if(this.studentData.inscriptionStatus){
+        // console.log("Existe Expediente Electrónico",this.semesterStudent);
+        
+        if(this.step == 6){
+          //window.location.assign("/profileInscription");
+          this.router.navigate(['/profileInscription']);
+        }else if(this.semesterStudent == 1){
+          this.validateStudent = true;
+          // console.log(this.validateStudent && this.isOkPeriod === 0 && this.isOpen === 0);
+        }
+      } else {
+        // console.log("NO Existe Expediente Electrónico");
+        // Mostrar wizzard si el semestre es 1, de lo contrario mostrar advertencia.
+        // console.log("Semestre ≠ 1");
+        if(this.semesterStudent == 1){
+          this.validateStudent = true;
+        } else{
+          this.validateStudent = false;
+        }
       }
     });
   }

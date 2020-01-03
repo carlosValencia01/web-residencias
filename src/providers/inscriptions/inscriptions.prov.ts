@@ -41,13 +41,13 @@ export class InscriptionsProvider {
         return this.api.get('inscription/getStudents/').pipe(map( res=>res.json()));
     }
 
-    createFolder(folderName : string, period : string){
-        return this.api.post(`drive/create/folder`,{folderName:folderName,period:period}).pipe(map( res=>res.json()));
+    createFolder(folderName : string, period : string, type: number){
+        return this.api.post(`drive/create/folder`,{folderName:folderName,period:period,type:type}).pipe(map( res=>res.json()));
     }
 
-    createSubFolder(folderName : string, period : string, folderParentId : string){
+    createSubFolder(folderName : string, period : string, folderParentId : string, type : number){
         
-        return this.api.post(`drive/create/subfolder`,{folderName:folderName,parentFolderId:folderParentId,period:period}).pipe(map( res=>res.json()));
+        return this.api.post(`drive/create/subfolder`,{folderName:folderName,parentFolderId:folderParentId,period:period,type:type}).pipe(map( res=>res.json()));
     }
     
     uploadFile(data){
@@ -58,8 +58,8 @@ export class InscriptionsProvider {
         return this.api.get('drive/get/folders/all').pipe(map( res=>res.json()));
     }
 
-    getFoldersByPeriod(period){
-        return this.api.get('drive/get/folders/period/'+period).pipe(map( res=>res.json()));
+    getFoldersByPeriod(period,type){
+        return this.api.get(`drive/get/folders/period/${period}/${type}`).pipe(map( res=>res.json()));
     }
 
     getFile(fileId,fileName){

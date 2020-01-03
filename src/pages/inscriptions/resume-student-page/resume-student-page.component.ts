@@ -32,6 +32,7 @@ export class ResumeStudentPageComponent implements OnInit {
   docCurp;
   docNss;
   docFoto;
+  docCC;
 
   // Datos Alumno
   nombre: String;
@@ -144,10 +145,11 @@ export class ResumeStudentPageComponent implements OnInit {
   }
 
   async findFoto() {
+
     await this.inscriptionsProv.getFile(this.docFoto[0].fileIdInDrive, this.docFoto[0].filename).subscribe(
       data => {
         this.pub = data.file;
-        this.image = 'data:image/png;base64,' + this.pub;
+        this.image = this.pub ? 'data:image/png;base64,' + this.pub :  'assets/imgs/profileImgNotFound.jpg';
         this.pub = true;
       },
       err => {
@@ -164,18 +166,13 @@ export class ResumeStudentPageComponent implements OnInit {
     this.docCurp = await this.filterDocuments('CURP');
     this.docNss = await this.filterDocuments('NSS');
     this.docFoto = await this.filterDocuments('FOTO');
+    this.docCC = await this.filterDocuments('COMPROMISO')
 
-    /*Swal.fire({
-      type: 'success',
-      text: 'Datos Cargados',
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      timer: 5000
-    })
-    .then((result) => {
-        this.findFoto();
-    });*/
-    setTimeout(() => {this.findFoto()}, 3000);
+    if(this.docFoto[0]){
+      this.findFoto();
+    }else{
+      this.image = 'assets/imgs/profileImgNotFound.jpg';
+    }
   }
 
   filterDocuments(filename) {
@@ -317,6 +314,30 @@ export class ResumeStudentPageComponent implements OnInit {
           this.dialog.open(ExtendViewerComponent, {
             data: {
               source: pdfSrcCurp,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+        break;
+      }
+      case "Compromiso": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Carta Compromiso.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.docCC[0].fileIdInDrive, this.docCC[0].filename).subscribe(data => {
+          var pubCC = data.file;
+          let buffCC = new Buffer(pubCC.data);
+          var pdfSrcCC = buffCC;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrcCC,
               isBase64: true
             },
             disableClose: true,

@@ -13,7 +13,7 @@ import { NgxTimepickerFieldComponent } from 'ngx-material-timepicker';
   styleUrls: ['./release-component.component.scss']
 })
 export class ReleaseComponentComponent implements OnInit {
-  private fileData: any;
+  public fileData: any;
   public frmConsejo: FormGroup;
   private userInformation: any;
   public isReject: boolean;

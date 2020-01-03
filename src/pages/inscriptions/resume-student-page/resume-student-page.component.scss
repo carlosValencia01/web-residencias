@@ -35,12 +35,27 @@ hr {
 }
 
 .cardDocuments{
-    background: rgb(209, 209, 253);
+    background: rgba(252, 213, 57, 0.2);
+    border: 1px solid #000000;
+}
+
+.cardDocumentsNoSend{
+    background: rgba(48, 47, 47, 0.2);
+    border: 1px solid #000000;
+    color: #000000;
 }
 
 .titleDocuments{
-    color: slateblue;
+    color: #c0a22b;   
     font-weight: bold;
+}
+
+.titleDocumentsNoSend{
+    color: #000000;
+    font-weight: bold;
+}
+.documentsHeader{
+    color:white;
 }
 
 #cardDoc{

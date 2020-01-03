@@ -38,13 +38,13 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3" *ngIf="docActa != ''">
-              <mat-card class="cardDocuments" (click)="onView('Acta')" style="cursor: pointer;"
+            <div class="col-3" *ngIf="docComprobante != ''">
+              <mat-card class="cardDocuments" (click)="onView('Comprobante')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
                   <mat-card-subtitle>
                     <p class="titleDocuments">
-                      Acta de Nacimiento
+                      Comprobante de Pago
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -55,6 +55,30 @@
                     </div>
                   </div>
                 </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docComprobante == ''">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Comprobante de Pago
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
               </mat-card>
             </div>
             <div class="col-3" *ngIf="docCertificado != ''">
@@ -74,15 +98,17 @@
                     </div>
                   </div>
                 </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docAnalisis != ''">
-              <mat-card class="cardDocuments" (click)="onView('Analisis')" style="cursor: pointer;"
-                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+            <div class="col-3" *ngIf="docCertificado == ''">
+              <mat-card class="cardDocumentsNoSend">
                 <mat-card-header>
                   <mat-card-subtitle>
-                    <p class="titleDocuments">
-                      Análisis Clínicos
+                    <p class="titleDocumentsNoSend">
+                      Certificado de Estudios
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -93,31 +119,11 @@
                     </div>
                   </div>
                 </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docComprobante != ''">
-              <mat-card class="cardDocuments" (click)="onView('Comprobante')" style="cursor: pointer;"
-                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
-                <mat-card-header>
-                  <mat-card-subtitle>
-                    <p class="titleDocuments">
-                      Comprobante de Pago
-                    </p>
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div>
-                    <div class="text-center">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="row">
             <div class="col-3" *ngIf="docCurp != ''">
               <mat-card class="cardDocuments" (click)="onView('CURP')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
@@ -135,6 +141,162 @@
                     </div>
                   </div>
                 </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docCurp == ''">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header class="documentHeader">
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      CURP
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docActa != ''">
+              <mat-card class="cardDocuments" (click)="onView('Acta')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header class="cardDocumentsHeader">
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Acta de Nacimiento
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docActa == ''">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header class="cardDocumentsHeader">
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Acta de Nacimiento
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3" *ngIf="docAnalisis != ''">
+              <mat-card class="cardDocuments" (click)="onView('Analisis')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Análisis Clínicos
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docAnalisis == ''">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Análisis Clínicos
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>            
+            <div class="col-3" *ngIf="docFoto != ''">
+              <mat-card class="cardDocuments">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Foto
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileImage.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docFoto == ''">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Foto
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileImage.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
               </mat-card>
             </div>
             <div class="col-3" *ngIf="docNss != ''">
@@ -154,6 +316,73 @@
                     </div>
                   </div>
                 </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docNss == ''">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      NSS
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docCC != ''">
+              <mat-card class="cardDocuments" (click)="onView('Compromiso')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Carta Compromiso
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docCC == ''">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Carta Compromiso
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
               </mat-card>
             </div>
           </div>

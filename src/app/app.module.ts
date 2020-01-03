@@ -122,6 +122,8 @@ import { ProfileInscriptionPageComponent } from '../pages/inscriptions/profile-i
 import { SecretaryInscriptionPageComponent } from '../pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+// Pipes
+import { FilterPipe as FilterPipeInscriptions } from 'src/pages/inscriptions/secretary-inscription-page/filter.pipe';
 //services
 import { WizardService } from 'src/services/inscriptions/wizard.service';
 import { UploadFilesService } from 'src/services/inscriptions/upload-files.service';
@@ -276,6 +278,8 @@ registerLocaleData(localeEs);
     ReviewAnalysisComponent,
     SecretaryAssignmentComponent,
     ReviewCredentialsComponent,
+    //Pipes
+    FilterPipeInscriptions,
 
     DocumentsHelpComponent,
     // Reception act module

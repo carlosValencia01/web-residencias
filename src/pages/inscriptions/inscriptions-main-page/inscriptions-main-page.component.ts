@@ -99,7 +99,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   
   private async addPeriod(period, currentYear){         
 
-    period.year = currentYear+'';
+    // period.year = currentYear+'';
     period.active = true;
 
     let confirmdialog = await this.swalDialog('¿Estás seguro de crear este Periodo ?',`El periodo (${period.periodName} ${period.year}) será activado.`,'question');
@@ -107,20 +107,93 @@ export class InscriptionsMainPageComponent implements OnInit {
     if(confirmdialog){
       this.inscriptionsProv.createPeriod(period).subscribe(async res => {        
         
-        this.inscriptionsProv.createFolder(period.periodName+' '+period.year,res.period._id).subscribe(
-          res=>{
-            this.notificationsServices.showNotification(eNotificationType.SUCCESS,
-              'Exito', 'Periodo creado correctamente.'); 
+        this.inscriptionsProv.getAllFolders().subscribe(
+          async fold=>{
+            const folders = fold.folders;
+            // console.log(folders);
             
-              this.refreshDataSource();
+            const rootFolder = folders.filter(folder => folder.name === 'Expedientes')[0];
+            if(rootFolder){              
+              
+              const inscriptionFolder = folders.filter(folder => folder.name === 'Expedientes nuevo ingreso')[0];
+              const receptionActFolder = folders.filter(folder => folder.name === 'Expedientes titulación')[0];              
+              
+              await this.createInscriptionFolder(rootFolder.idFolderInDrive,inscriptionFolder,period.year+' '+period.periodName,res.period._id);
+
+              await this.createReceptionActFolder(rootFolder.idFolderInDrive,receptionActFolder,period.year+' '+period.periodName,res.period._id);      
+
+              
+            }else{              
+              
+              this.inscriptionsProv.createFolder('Expedientes',res.period._id,0).subscribe(
+                async exp=>{                  
+                  await this.createInscriptionFolder(exp.folder.idFolderInDrive,null,period.year+' '+period.periodName,res.period._id);                  
+                  
+                  await this.createReceptionActFolder(exp.folder.idFolderInDrive,null,period.year+' '+period.periodName,res.period._id);                   
+                  
+                }
+              )
+            }
+                                   
+          }
+        );
+        this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+          'Periodo creado', `El periodo '${period.periodName} - ${period.year}' ha sido creado.`);          
+        this.refreshDataSource();
+      });
+    }
+  }
+
+  async createInscriptionFolder(rootF,insFolder,periodName,periodId){
+    
+    
+    if(insFolder){
+      await  this.inscriptionsProv.createSubFolder(periodName,periodId, insFolder.idFolderInDrive,1).subscribe(res=>{                       
+      },
+      err=>{
+      } 
+      );
+    }else{
+      await this.inscriptionsProv.createSubFolder('Expedientes nuevo ingreso',periodId,rootF,1).subscribe(
+        async res=>{          
+          
+          await  this.inscriptionsProv.createSubFolder(periodName,periodId, res.folder.idFolderInDrive,1).subscribe(ress=>{                       
           },
           err=>{
-            console.log(err);
-                 
-          }
-        );                       
+          } 
+          );;
+        },
+        err=>{
+          console.log(err);               
+        }
+      );
+    }
+  }
+  async createReceptionActFolder(rootF,recepFolder,periodName,periodId){
+    
+    console.log(recepFolder,periodName);
+    
+    if(recepFolder){
+      await  this.inscriptionsProv.createSubFolder(periodName,periodId, recepFolder.idFolderInDrive,2).subscribe(res=>{        
         
+      },
+      err=>{
       });
+    }else{
+      await this.inscriptionsProv.createSubFolder('Expedientes titulación',periodId,rootF,2).subscribe(
+        async res=>{
+          
+          
+          await  this.inscriptionsProv.createSubFolder(periodName,periodId, res.folder.idFolderInDrive,2).subscribe(ress=>{                       
+          },
+          err=>{
+          } 
+          );
+        },
+        err=>{
+          console.log(err);                 
+        }
+      );
     }
   }
 
@@ -152,7 +225,7 @@ export class InscriptionsMainPageComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '60em',
-      height: '620px'
+      height: '720px'
     });
     let sub = linkModal.afterClosed().subscribe(
       period=>{         
@@ -174,7 +247,7 @@ export class InscriptionsMainPageComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '60em',
-      height: '620px'
+      height: '720px'
     });
     let sub = linkModal.afterClosed().subscribe(
       period=>{         
@@ -281,7 +354,7 @@ export class InscriptionsMainPageComponent implements OnInit {
     );
   }
 
-  secretaryAssignment(period){
+  secretaryAssignment(period?){
     const linkModal = this.dialog.open(SecretaryAssignmentComponent, {
       data: {
         operation: 'create',

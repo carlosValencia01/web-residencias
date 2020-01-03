@@ -151,7 +151,10 @@ export class StudentInformationComponent implements OnInit {
 
   async updateStudent(data, id) {
     await this.inscriptionsProv.updateStudent(data, id).subscribe(res => {
-      //this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Datos Actualizados!');
+      // Actualizar fullName
+      var newFullName = data.firstName+' '+data.fatherLastName+' '+data.motherLastName ;
+      this.inscriptionsProv.updateStudent({fullName:newFullName}, id).subscribe(res => {
+      });   
     }, err=>{},
     ()=>{
       this.loading=false

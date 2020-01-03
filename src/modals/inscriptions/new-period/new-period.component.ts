@@ -2,6 +2,10 @@ import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
+
+const years = require('ye-ars');
+
+
 @Component({
   selector: 'app-new-period',
   templateUrl: './new-period.component.html',
@@ -11,8 +15,10 @@ export class NewPeriodComponent implements OnInit {
 
   title = 'Nuevo Periodo';
   formPeriod : FormGroup;
-  year = new Date();
-  minDate = new Date(this.year.getFullYear(),0,1);
+
+  yearsInput = years({count:10});
+    
+  minDate: Date;
   myFilter = (d: Date): boolean => {
     const day = d.getDay();
     // Prevent Saturday and Sunday from being selected.
@@ -29,6 +35,7 @@ export class NewPeriodComponent implements OnInit {
     if(this.data.operation == 'edit'){
             
       this.formPeriod = new FormGroup({
+        'year': new FormControl((this.data.period.year ? this.data.period.year : null),[Validators.required]),
         'periodName': new FormControl((this.data.period.periodName ? this.data.period.periodName : null),[Validators.required]),
         'initDate': new FormControl((this.data.period.initDate ? new Date(this.data.period.initDate) : null),[Validators.required]),
         'endDate': new FormControl((this.data.period.endDate ? new Date(this.data.period.endDate) : null),[Validators.required]),
@@ -40,9 +47,11 @@ export class NewPeriodComponent implements OnInit {
         'arecEndShed': new FormControl((this.data.period.arecEndShed ? parseInt(this.data.period.arecEndShed+'') : null),[Validators.required]),
         'certificateDeliveryDate': new FormControl((this.data.period.certificateDeliveryDate ? this.data.period.certificateDeliveryDate : null),[Validators.required]),
       });  
+      this.minDate = new Date(this.formPeriod.get('year').value);
 
-    }else if (this.data.initialPeriod == 'true' ){
+    }else {
       this.formPeriod = new FormGroup({   
+        'year': new FormControl(null,[Validators.required]),
         'periodName': new FormControl(null,[Validators.required]),     
         'initDate': new FormControl(null,[Validators.required]),
         'endDate': new FormControl(null,[Validators.required]),
@@ -54,19 +63,20 @@ export class NewPeriodComponent implements OnInit {
         'arecEndShed': new FormControl(null,[Validators.required]),
         'certificateDeliveryDate': new FormControl(null,[Validators.required]),
       });
-    }else{
-      this.formPeriod = new FormGroup({        
-        'initDate': new FormControl(null,[Validators.required]),
-        'endDate': new FormControl(null,[Validators.required]),
-        'insPerInitDate': new FormControl(null,[Validators.required]),
-        'insPerEndDate': new FormControl(null,[Validators.required]),
-        'arecPerInitDate': new FormControl(null,[Validators.required]),
-        'arecPerEndDate': new FormControl(null,[Validators.required]),
-        'arecInitShed': new FormControl(null,[Validators.required]),
-        'arecEndShed': new FormControl(null,[Validators.required]),
-        'certificateDeliveryDate': new FormControl(null,[Validators.required]),
-      });
     }
+    // else{
+    //   this.formPeriod = new FormGroup({        
+    //     'initDate': new FormControl(null,[Validators.required]),
+    //     'endDate': new FormControl(null,[Validators.required]),
+    //     'insPerInitDate': new FormControl(null,[Validators.required]),
+    //     'insPerEndDate': new FormControl(null,[Validators.required]),
+    //     'arecPerInitDate': new FormControl(null,[Validators.required]),
+    //     'arecPerEndDate': new FormControl(null,[Validators.required]),
+    //     'arecInitShed': new FormControl(null,[Validators.required]),
+    //     'arecEndShed': new FormControl(null,[Validators.required]),
+    //     'certificateDeliveryDate': new FormControl(null,[Validators.required]),
+    //   });
+    // }
   }
 
   onClose(){
@@ -78,9 +88,16 @@ export class NewPeriodComponent implements OnInit {
       period._id=this.data.period._id;
       this.dialogRef.close({action:'edit',period}); 
     }else{
-      period.periodName = this.data.initialPeriod === 'true' ? period.periodName : this.data.initialPeriod;          
+      period.periodName = period.periodName;
+      // this.data.initialPeriod === 'true' ? period.periodName : this.data.initialPeriod;          
       this.dialogRef.close({action:'submit',period});    
     }
+  }
+
+  createYear(year){
+    
+
+    this.minDate = year ? new Date(year) : new Date();
   }
 
 }

@@ -20,8 +20,17 @@
     </div>
   </div>
 
+  <div *ngIf="!validateStudent && isOkPeriod === 0 && isOpen === 0">
+    <div class="title">
+      <h2>¡Atención!</h2>
+    </div>
+    <div class="message">
+      <span>Este módulo permitirá crear un expediente electrónico y es exclusivo para los alumnos de nuevo ingreso.</span><br><br>
+    </div>
+  </div>
+
 <!-- <ng-template > -->
-  <div *ngIf="isOkPeriod === 0 && isOpen === 0">
+  <div *ngIf="isOkPeriod === 0 && isOpen === 0 && validateStudent">
 
     <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="step != 6">
       <mat-step editable='false'>

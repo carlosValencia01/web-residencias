@@ -78,6 +78,13 @@ export class RangePageComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
+  applyFilter(event) {
+
+  }
+
+  onUpload(event) {
+    
+  }
 }
 
 

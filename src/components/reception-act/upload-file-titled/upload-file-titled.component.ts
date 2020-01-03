@@ -231,6 +231,9 @@ export class UploadFileTitledComponent implements OnInit {
     });
   }
 
+  onUpload(event, type) {
+
+  }
 
 }
 interface IDocument {
