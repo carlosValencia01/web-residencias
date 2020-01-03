@@ -7,9 +7,14 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ProcessComponentComponent implements OnInit {
   @Input('Message') Message: String;
-  constructor() { }
+  @Input('Type') Type: String;
+  @Input('Title') Title: String;
+  public existTitle: boolean;
+  constructor() {
 
-  ngOnInit() {
   }
 
+  ngOnInit() {
+    this.existTitle = this.Title !== '';
+  }
 }

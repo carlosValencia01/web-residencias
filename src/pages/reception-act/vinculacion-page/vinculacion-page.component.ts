@@ -8,8 +8,8 @@ import { CookiesService } from 'src/services/app/cookie.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource, MatDialog, MatPaginator, MatSort } from '@angular/material';
 import { EnglishComponent } from 'src/modals/reception-act/english/english.component';
-import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
-
+// import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-vinculacion-page',
   templateUrl: './vinculacion-page.component.html',
@@ -183,28 +183,52 @@ export class VinculacionPageComponent implements OnInit {
   }
 
   onRowRemove(row: IStudent) {
-    const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: '¿Está seguro de remover dicho elemento?',
-      width: '30em',
-      disableClose: true,
-      hasBackdrop: true,
+    Swal.fire({
+      title: '¿Está seguro de remover dicho elemento?',
+      text: '¡No podrás revertir esto!',
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {
+      if (result.value) {
+        this.studentProvider.csvRemoveStudentEnglish(row._id).subscribe(
+          res => {
+            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante eliminado', '');
+            this.students.splice(this.students.indexOf(row), 1);
+            this.refresh();
+          }, error => {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema: ' + error.message, '');
+          }
+        );
+      }
     });
 
-    ref.afterClosed().subscribe(
-      result => {
-        if (result) {
-          this.studentProvider.csvRemoveStudentEnglish(row._id).subscribe(
-            res => {
-              this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante eliminado', '');
-              this.students.splice(this.students.indexOf(row), 1);
-              this.refresh();
-            }, error => {
-              this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema: ' + error.message, '');
-            }
-          );
-        }
-      }
-    );
+    // const ref = this.dialog.open(ConfirmDialogComponent, {
+    //   data: '¿Está seguro de remover dicho elemento?',
+    //   width: '30em',
+    //   disableClose: true,
+    //   hasBackdrop: true,
+    // });
+
+    // ref.afterClosed().subscribe(
+    //   result => {
+    //     if (result) {
+    //       this.studentProvider.csvRemoveStudentEnglish(row._id).subscribe(
+    //         res => {
+    //           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante eliminado', '');
+    //           this.students.splice(this.students.indexOf(row), 1);
+    //           this.refresh();
+    //         }, error => {
+    //           this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema: ' + error.message, '');
+    //         }
+    //       );
+    //     }
+    //   }
+    // );
 
   }
 }

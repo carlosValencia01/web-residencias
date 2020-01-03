@@ -8,9 +8,24 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 @import "~ngx-smart-modal/ngx-smart-modal";
-
+@import '~angular-calendar/css/angular-calendar.css';
 
 .mat-menu-item{
     
     display: inline !important;
+}
+
+dropzone > .dropzone.dz-wrapper .dz-message .dz-text{
+    padding: 8px 16px !important;
+    background: rgba(39, 51, 97, 0.8) !important;
+    color: white !important;
+    position: relative !important;
+    transform: none !important;
+    top: 0 !important;
+}
+dropzone > .dropzone.dz-wrapper .dz-message{
+    border-color: rgb(160, 199, 206) !important;
+}
+.dropzone.dz-drag-hover.dz-message{
+    border-color:rgb(55, 96, 230) !important ;
 }

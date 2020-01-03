@@ -1,0 +1,173 @@
+<div class="content-general">
+  <div class="card card-shadow">
+    <div class="card-header text-white bg-secondary">
+      <strong>IV. Resúmen</strong>
+    </div>
+    <div class="example-container" style="padding: 20px;">
+      <table>
+        <td style="width: 35%;" *ngIf="image">
+          <mat-card class="cardProfile">
+            <div style="text-align: center;" *ngIf="image">
+              <img mat-card-image [src]="image" class="imgProfile">
+            </div>
+          </mat-card>
+        </td>
+        <td colspan="3" style="vertical-align: top;">
+          <mat-card class="cardData">
+            <mat-card-header>
+              <h4>Datos Generales</h4>
+            </mat-card-header>
+            <mat-card-content>
+              <h6>Nombre: <span>{{nombre}}</span></h6>
+              <h6>Número de Contról: <span>{{numeroControl}}</span></h6>
+              <h6>Correo Electrónico: <span>{{correoElectronico}}</span></h6>
+              <h6>Teléfono: <span>{{telefono}}</span></h6>
+              <h6>Fecha de Nacimiento: <span>{{fechaNacimiento}}</span></h6>
+              <h6>Lugar de Nacimiento: <span>{{lugarNacimiento}}</span></h6>
+              <h6>Estado Civil: <span>{{estadoCivil}}</span></h6>
+              <h6>CURP: <span>{{curp}}</span></h6>
+              <h6>NSS (Número de Seguro Social): <span>{{nss}}</span></h6>
+            </mat-card-content>
+            <a (click)="showMoreInformation()" style="cursor: pointer;">Ver más ...</a>
+          </mat-card><br>
+        </td>
+      </table>
+      <div class="card mt-3">
+        <div class="card-header text-white bg-secondary">
+          <strong>Documentos</strong>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3" *ngIf="docActa != ''">
+              <mat-card class="cardDocuments" (click)="onView('Acta')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Acta de Nacimiento
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docCertificado != ''">
+              <mat-card class="cardDocuments" (click)="onView('Certificado')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Certificado de Estudios
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docAnalisis != ''">
+              <mat-card class="cardDocuments" (click)="onView('Analisis')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Análisis Clínicos
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docComprobante != ''">
+              <mat-card class="cardDocuments" (click)="onView('Comprobante')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Comprobante de Pago
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-3" *ngIf="docCurp != ''">
+              <mat-card class="cardDocuments" (click)="onView('CURP')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      CURP
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <div class="col-3" *ngIf="docNss != ''">
+              <mat-card class="cardDocuments" (click)="onView('NSS')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      NSS
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-3">
+        <div>
+          <button type="submit" (click)="continue()" class="btn btn-success">Continuar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
+</div>

@@ -1,0 +1,138 @@
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title></h1>
+  </div>
+  <div class="col-2">
+    <button mat-icon-button [mat-dialog-close] class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<div class="row">
+  <mat-horizontal-stepper #stepper [linear]="true">
+    <mat-step [completed]="SteepOneCompleted">
+      <ng-template matStepLabel>Tutorial</ng-template>
+      <div class="card">
+        <div class="row">
+          <div class="col-1"></div>
+          <div class="col-10 text-center">
+            <!-- <img src="../../assets/imgs/video.png" class="card-img-top" alt="..."> -->
+            <iframe width="420" height="236" src="https://www.youtube.com/embed/Nv2SODarups" frameborder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="col-1"></div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Descripción</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+            card'scontent.</p>
+        </div>
+        <div class="row">
+          <div class="col-6 text-left">
+          </div>
+          <div class="col-6 text-right">
+            <button type="button" style="background-color: white; border-radius: 8px;"
+              (click)="Next(0)"><small>Continuar
+              </small> <i class="fa fa-hand-o-right"></i></button>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [completed]="SteepTwoCompleted">
+      <ng-template matStepLabel>Observaciones</ng-template>
+      <div class="card">
+        <!-- <div *ngIf="!fileData" class="card-body text-dark pt-5">
+          <div class="row text-center">
+            <div class="col-4"></div>
+            <div class="col-4"><img alt="File" src="../../assets/imgs/ErrorIcon.png"
+                style="max-width: 100px; max-height: 100px;">
+              <p class="card-text">ARCHIVO NO ENCONTRADO</p>
+            </div>
+            <div class="col-4"></div>
+          </div>
+        </div> -->
+        <div *ngIf="fileData" class="row text-center">
+          <div class="col-2"></div>
+          <div class="col-8 ">
+            <ngx-extended-pdf-viewer [src]="fileData" backgroundColor="#ffffff" [height]="'50vh'"
+              [useBrowserLocale]="true">
+            </ngx-extended-pdf-viewer>
+            <!-- <img alt="File" src="../../assets/imgs/ErrorIcon.png" style="max-width: 100px; max-height: 100px;"> -->
+          </div>
+          <div class="col-2"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6 text-left">
+          <button type="button" style="background-color: white; border-radius: 8px;" (click)="Back(1)"><i
+              class="fa fa-hand-o-left"></i>
+            <small> Atrás</small>
+          </button>
+        </div>
+        <div class="col-6 text-right">
+          <button type="button" style="background-color: white; border-radius: 8px;" (click)="Next(1)"><small>Continuar
+            </small> <i class="fa fa-hand-o-right"></i></button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [completed]="SteepThreeCompleted">
+      <ng-template matStepLabel>Subir Documento</ng-template>
+      <div class="row text-center" *ngIf="fileUpload">
+        <div class="col-1"></div>
+        <div class="col-10">
+          <div class="row">
+            <div class="col-12">
+              <ngx-extended-pdf-viewer [src]='pdf' backgroundColor="#ffffff" [height]="'50vh'"
+                [useBrowserLocale]="true">
+              </ngx-extended-pdf-viewer>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
+              <button type="button" id="btnUpload" style="background-color: white; border-radius: 8px;"
+                (click)="fileUpload.click()"><small>Reemplazar archivo</small></button>
+            </div>
+          </div>
+        </div>
+        <div class="col-1"></div>
+      </div>
+
+      <div class="row" *ngIf="!fileUpload">
+        <div class="card-body text-center"
+          style="color: #0aa68d; background-color: rgba(13, 219, 185, 0.2); border-color: #0cc9aa; height: 100%;">
+          <div class="row" style="padding-top: 15%;">
+            <div class="col-4"></div>
+            <div class="col-4">
+              <img alt="File" src="../../assets/imgs/notfound.png"
+                style="max-width: 100px; max-height: 100px;">
+              <h6>ARCHIVO NO ENCONTRADO</h6>
+            </div>
+            <div class="col-4"></div>
+          </div>
+          <div class="row">
+            <div class="col-12" style="padding-top: 10%;">
+              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
+              <button type="button" id="btnUpload" style="background-color: white; border-radius: 8px;"
+                (click)="fileUpload.click()"><small>Elige un
+                  archivo de tú equipo</small></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6 text-left">
+          <button type="button" style="background-color: white; border-radius: 8px;" (click)="Back(2)"><i
+              class="fa fa-hand-o-left"></i>
+            <small> Atrás</small>
+          </button>
+        </div>
+        <div class="col-6 text-right">
+          <button type="button" style="background-color: white; border-radius: 8px;" (click)="Next(2)"><small>Finalizar
+            </small> <i class="fa fa-hand-o-right"></i></button>
+        </div>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>

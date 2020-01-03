@@ -42,7 +42,7 @@ export class LoginPageComponent implements OnInit {
     public dialog: MatDialog,
     private currentPositionService: CurrentPositionService
   ) {
-    console.log('login');
+    
    }
 
   ngOnInit() {
@@ -115,7 +115,7 @@ export class LoginPageComponent implements OnInit {
             });
           }
         }, (error) => {
-          console.log(error);
+          // console.log(error);
           const msg = JSON.parse(error._body);
           this.messageAlertDiv = msg.error;
           this.showAlertDiv = true;

@@ -77,10 +77,10 @@ export class RequestComponentComponent implements OnInit {
         'observations': new FormControl(null),
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
-        'dateProposed': new FormControl(null, Validators.required),
+        // 'dateProposed': new FormControl(null, Validators.required),
         'honorific': new FormControl(false, Validators.required)
       });
-      this.getRequest();
+    this.getRequest();
   }
 
   getRequest() {
@@ -89,9 +89,11 @@ export class RequestComponentComponent implements OnInit {
         this.loadRequest(res);
         this.operationMode = eOperation.EDIT;
         this.observations = this.request.observation;
-        const lastHistoryIndex = this.request.history.length - 1;
-        if (this.request.history[lastHistoryIndex].status === eStatusRequest.REJECT && this.request.observation) {
-          this.viewObservation = true;
+        if (typeof (this.request.history) !== 'undefined' && this.request.history.length > 0) {
+          const lastHistoryIndex = this.request.history.length - 1;
+          if (this.request.history[lastHistoryIndex].status === eStatusRequest.REJECT && this.request.observation) {
+            this.viewObservation = true;
+          }
         }
       } else {
         this.operationMode = eOperation.NEW;
@@ -129,7 +131,7 @@ export class RequestComponentComponent implements OnInit {
       'observations': this.request.observation,
       'project': this.request.projectName,
       'product': this.request.product,
-      'dateProposed': this.dateFormat.transform(this.request.proposedDate, 'yyyy-MM-dd'),
+      // 'dateProposed': this.dateFormat.transform(this.request.proposedDate, 'yyyy-MM-dd'),
       'honorific': this.request.honorificMention,
     });
     this.disabledControl();
@@ -149,7 +151,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmRequest.get('project').markAsUntouched();
     this.frmRequest.get('observations').markAsUntouched();
     this.frmRequest.get('noIntegrants').markAsUntouched();
-    this.frmRequest.get('dateProposed').markAsUntouched();
+    // this.frmRequest.get('dateProposed').markAsUntouched();
     this.frmRequest.get('honorific').markAsUntouched();
 
     if (this.isEdit) {
@@ -161,7 +163,7 @@ export class RequestComponentComponent implements OnInit {
       this.frmRequest.get('observations').enable();
       this.frmRequest.get('adviser').disable();
       this.frmRequest.get('noIntegrants').enable();
-      this.frmRequest.get('dateProposed').enable();
+      // this.frmRequest.get('dateProposed').enable();
       this.frmRequest.get('honorific').enable();
     } else {
       this.frmRequest.get('name').disable();
@@ -172,7 +174,7 @@ export class RequestComponentComponent implements OnInit {
       this.frmRequest.get('observations').disable();
       this.frmRequest.get('adviser').disable();
       this.frmRequest.get('noIntegrants').disable();
-      this.frmRequest.get('dateProposed').disable();
+      // this.frmRequest.get('dateProposed').disable();
       this.frmRequest.get('honorific').disable();
     }
   }
@@ -231,7 +233,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
     this.frmData.append('projectName', this.frmRequest.get('project').value);
     this.frmData.append('email', this.frmRequest.get('email').value);
-    this.frmData.append('proposedDate', this.frmRequest.get('dateProposed').value);
+    // this.frmData.append('proposedDate', this.frmRequest.get('dateProposed').value);
     this.frmData.append('status', 'Process');
     this.frmData.append('phase', 'Solicitado');
     this.frmData.append('telephone', this.frmRequest.get('telephone').value);

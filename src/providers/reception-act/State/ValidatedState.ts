@@ -5,7 +5,7 @@ import { ReleasedState } from './ReleasedState';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
 export class ValidatedState extends iState {
     router = 'oneStudentPage';
-    index = 4;
+    index = 6;
     phase: eRequest =  eRequest.VALIDATED;
 
     public next(context: ContextState): void {

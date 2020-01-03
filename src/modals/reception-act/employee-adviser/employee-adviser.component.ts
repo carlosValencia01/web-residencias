@@ -38,8 +38,8 @@ export class EmployeeAdviserComponent implements OnInit {
     this.employeProvider.getEmployeesByDepto().subscribe(
       data => {
         this.departments = <IDepartment[]>data.departments;
-        const indice = this.departments.findIndex((e) => {
-          return e.careers.findIndex(s => s === this.career) !== -1;
+        const indice = this.departments.findIndex((department) => {
+          return department.careers.findIndex(career => career.fullName === this.career) !== -1;
         });
         this.getAllEmployees(indice);
 
@@ -48,8 +48,7 @@ export class EmployeeAdviserComponent implements OnInit {
         this.type = 'Empleado Carrera';
         this.departmentInfo.name = (indice === -1 ? '' : this.departments[indice].name);
 
-        const boss = this.departments[indice].Employees.find(x => (x.position.includes('JEFE DE DEPARTAMENTO')
-          || x.position.includes('JEFE DE DEPTO')));
+        const boss = this.departments[indice].boss;
         this.departmentInfo.boss = (indice === -1 ? '' : boss.name.fullName);
         this.refresh();
       },
@@ -81,20 +80,20 @@ export class EmployeeAdviserComponent implements OnInit {
     this.allEmployees = [];
     this.onlyEmployees = [];
     if (index !== -1) {
-      this.departments[index].Employees.forEach(e => {
+      this.departments[index].Employees.forEach(employee => {
         const Adviser = {
-          name: this.gradeMax(e) + ' ' + e.name.firstName + ' ' + e.name.lastName,
-          position: e.area + ' ' + e.position,
+          name: this.gradeMax(employee) + ' ' + employee.name.firstName + ' ' + employee.name.lastName,
+          position: `${employee.positions[0].position.name} (${employee.positions[0].position.ascription.shortName})`,
           action: ''
         };
         this.onlyEmployees.push(Adviser);
       });
     }
-    this.departments.forEach(e => {
-      e.Employees.forEach(em => {
+    this.departments.forEach(department => {
+      department.Employees.forEach(employee => {
         const Adviser = {
-          name: this.gradeMax(em) + ' ' + em.name.firstName + ' ' + em.name.lastName,
-          position: e.name + ' ' + em.position,
+          name: this.gradeMax(employee) + ' ' + employee.name.firstName + ' ' + employee.name.lastName,
+          position: `${employee.positions[0].position.name} (${department.shortName})`,
           action: ''
         };
         this.allEmployees.push(Adviser);

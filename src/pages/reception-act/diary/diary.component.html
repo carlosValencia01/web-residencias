@@ -1,0 +1,219 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-home"></i>Home</li>
+    <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-calendar"></i>Agenda</li>
+  </ol>
+</nav>
+<div class="card border-dark">
+  <div class="card-body">
+
+    <!-- <div class="alert alert-light mt-3 text-center"> -->
+    <!-- <div class="form-check form-check-inline" style="color: #000000" *ngFor="let carrer of carrers">
+    <mat-slide-toggle [color]="'warn'">
+      <i class="{{carrer.icon}}"></i>
+      <span>{{carrer.abbreviation}}</span>
+    </mat-slide-toggle>
+  </div> -->
+    <!-- </div> -->
+    <div class="my-3 text-center">
+      <div class="btn-group" role="group">
+        <button type="button" *ngFor="let carrer of carrers"
+          [ngClass]="carrer.status? 'btn btn-dark btn-sm mt-1':'btn btn-outline-dark btn-sm mt-1'"
+          (click)="toggle(carrer)" data-toggle="tooltip" title="{{carrer.carrer}}">
+          <div class="{{carrer.class}}" style="float:right;"></div>
+          <div class="mt-2">
+            <!-- <i class="{{carrer.icon}}"></i> -->
+            <img alt="File" src="../../assets/imgs/careers/{{carrer.icon}}" style="width: 20px; height: 20px">
+            <div>
+              <small>{{carrer.abbreviation}}</small>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <div class="row text-center">
+      <div class="col-md-4">
+        <div class="btn-group" style="border: 1px;">
+          <div class="btn btn-light" mwlCalendarPreviousView [view]="view" [excludeDays]="excludeDays" [(viewDate)]="viewDate"
+            (viewDateChange)="closeOpenMonthViewDay()" data-toggle="tooltip" title="Anterior">
+            <i class="fa fa-chevron-left"></i>
+          </div>
+          <div class="btn btn-light" mwlCalendarToday (viewDateChange)="closeOpenMonthViewDay()" [(viewDate)]="viewDate"
+            data-toggle="tooltip" title="Hoy">
+            <i class="fa fa-calendar"></i>
+          </div>
+          <div class="btn btn-light" mwlCalendarNextView [view]="view" [excludeDays]="excludeDays" [(viewDate)]="viewDate"
+            (viewDateChange)="closeOpenMonthViewDay()" data-toggle="tooltip" title="Siguiente">
+            <i class="fa fa-chevron-right"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'es' | uppercase  }}</h3>
+      </div>
+      <div class="col-md-4">
+        <div class="btn-group">
+          <div class="btn btn-light btm-sm" (click)="setView('month')" [class.active]="view === 'month'">
+            <i class="fa fa-calendar"></i> Mes
+          </div>
+          <div class="btn btn-light btm-sm" (click)="setView('week')" [class.active]="view === 'week'">
+            <i class="fa fa-calendar"></i> Semana
+          </div>
+          <!-- Calendario vista dia -->
+          <!-- <div class="btn btn-light btm-sm" (click)="setView('day')" [class.active]="view === 'day'">
+            <i class="fa fa-calendar"></i> Día
+          </div> -->
+        </div>
+      </div>
+    </div>
+    <!-- [cellTemplate]="customCellTemplate" -->
+    <div [ngSwitch]="view" class="mt-3">
+      <mwl-calendar-month-view *ngSwitchCase="'month'" [viewDate]="viewDate" [events]="events"
+        (beforeViewRender)="beforeMonthViewRender($event)" [locale]="locale" [refresh]="refresh"
+        [excludeDays]="excludeDays"
+        [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)">
+      </mwl-calendar-month-view>
+      <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" 
+      [excludeDays]="excludeDays" [events]="events" [dayStartHour]="7"
+        [locale]="locale" [dayEndHour]="19" [refresh]="refresh" [headerTemplate]="weekHeaderTemplate"
+        [hourSegmentTemplate]="weekViewHourSegment" [eventTemplate]="customCellTemplate">
+      </mwl-calendar-week-view>
+      <!-- (eventClicked)="appointmentClicked($event.event)" -->
+      <!-- Vista Día -->
+      <!-- <mwl-calendar-day-view *ngSwitchCase="'day'" [viewDate]="viewDate" [events]="events" [dayStartHour]="7"
+        [locale]="locale" [dayEndHour]="19">
+      </mwl-calendar-day-view> -->
+    </div>
+
+    <context-menu #basicMenu style="background: grey; color:black">
+      <ng-template class="mt-1" contextMenuItem (execute)="viewEvent($event.item)">
+        <div style=" border-style: solid;
+          border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#c0a22b"
+            class="fa fa-eye"></i> Ver Más</div>
+      </ng-template>
+      <ng-template contextMenuItem (execute)="addEvent($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>
+          Agregar
+          Evento</div>
+      </ng-template>
+      <ng-template class="mt-1" contextMenuItem (execute)="cancelledEvent($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
+            class="fa fa-calendar-times-o"></i>
+          Cancelar Evento</div>
+      </ng-template>
+    </context-menu>
+
+    <context-menu #basicMenu_2 style="background: grey; color:black">
+      <ng-template class="mt-1" contextMenuItem (execute)="appointmentClicked($event.item)">
+        <div style=" border-style: solid;
+              border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#08a3bc"
+            class="fa fa-calendar-check-o"></i>
+          Confirmar Evento</div>
+      </ng-template>
+      <ng-template contextMenuItem (execute)="addEvent($event.item)">
+        <div style=" border-style: solid;
+          border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>
+          Agregar
+          Evento</div>
+      </ng-template>
+      <ng-template class="mt-1" contextMenuItem (execute)="rejectEvent($event.item)">
+        <div style=" border-style: solid;
+          border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
+            class="fa fa-ban"></i>
+          Rechazar Evento</div>
+      </ng-template>
+    </context-menu>
+
+    <ng-template #customCellTemplate let-weekEvent="weekEvent" let-tooltipPlacement="tooltipPlacement"
+      let-eventClicked="eventClicked" let-tooltipTemplate="tooltipTemplate"
+      let-tooltipAppendToBody="tooltipAppendToBody" let-tooltipDisabled="tooltipDisabled">
+
+      <div class="cal-event" [style.backgroundColor]="weekEvent.event.color?.secondary"
+        [style.borderColor]="weekEvent.event.color?.primary"
+        [mwlCalendarTooltip]="!tooltipDisabled ? (weekEvent.event.title | calendarEventTitle:'weekTooltip':weekEvent.event) : ''"
+        [tooltipPlacement]="tooltipPlacement" [tooltipEvent]="weekEvent.event" [tooltipTemplate]="tooltipTemplate"
+        [tooltipAppendToBody]="tooltipAppendToBody" (mwlClick)="eventClicked.emit()">
+        <div *ngIf="weekEvent.event.color.secondary==='#69f0ae'" [contextMenu]="basicMenu"
+          [contextMenuSubject]="weekEvent.event">
+          <div class="cal-cell-top text-right" style="color: #b64443;">
+            <small class="mr-1">{{weekEvent.event.title.split(' ')[1]}}</small>
+            <span>
+              <!-- <i class=" fa fa-calendar-check-o" style="color: #0cc9aa"></i> -->
+              <i class=" fa fa-calendar-check-o"></i>
+            </span>
+          </div>
+          <small>{{weekEvent.event.title.split(' ').slice(2).join(' ')}}</small>
+        </div>
+        <div *ngIf="weekEvent.event.color.secondary!=='#69f0ae'" [contextMenu]="basicMenu_2"
+          [contextMenuSubject]="weekEvent.event">
+          <div class="cal-cell-top text-right" style="color: #b64443;">
+            <small class="mr-1">{{weekEvent.event.title.split(' ')[1]}}</small>
+            <span>
+              <!-- <i class=" fa fa-calendar-check-o" style="color: #0cc9aa"></i> -->
+              <i class=" fa fa-hourglass"></i>
+              <!-- <img alt="File" src="../../../assets/imgs/careers/unicorn.png" style="width: 20px; height: 20px"> -->
+            </span>
+          </div>
+          <small>{{weekEvent.event.title.split(' ').slice(2).join(' ')}}</small>
+        </div>
+        <!-- <small style="margin: 5px">{{ day.events.length }}</small> -->
+        <!-- <mwl-calendar-event-actions [event]="weekEvent.event" [customTemplate]="eventActionsTemplate">
+        </mwl-calendar-event-actions>
+        &ngsp;
+        <mwl-calendar-event-title [event]="weekEvent.event" [customTemplate]="eventTitleTemplate" view="week">
+        </mwl-calendar-event-title> -->
+
+      </div>
+    </ng-template>
+
+
+    <!-- WeekView -->
+    <ng-template #weekHeaderTemplate let-days="days" let-locale="locale" let-dayHeaderClicked="dayHeaderClicked">
+      <div class="cal-day-headers">
+        <div class="cal-header" *ngFor="let day of days" [class.cal-past]="day.isPast" [class.cal-today]="day.isToday"
+          [class.cal-future]="day.isFuture" [class.cal-weekend]="day.isWeekend"
+          (click)="dayHeaderClicked.emit({day: day})" [contextMenu]="viewMenu" [contextMenuSubject]="day.date">
+          <b>{{ day.date | calendarDate:'weekViewColumnHeader':locale }}</b><br />
+          <span>{{ day.date | calendarDate:'weekViewColumnSubHeader':locale }}</span>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #weekViewHourSegment let-segment="segment" let-locale="locale" let-segmentHeight="segmentHeight"
+      let-isTimeLabel="isTimeLabel">
+      <div class="cal-hour-segment" [style.height.px]="segmentHeight" [class.cal-hour-start]="segment.isStart"
+        [class.cal-after-hour-start]="!segment.isStart" [ngClass]="segment.cssClass" [contextMenu]="viewMenu"
+        [contextMenuSubject]="segment.date">
+        <div class="cal-time" *ngIf="isTimeLabel">
+          {{ segment.date | calendarDate: 'weekViewHour':locale }}
+        </div>
+      </div>
+    </ng-template>
+
+    <context-menu #viewMenu>
+      <ng-template contextMenuItem (execute)="addNewEvent($event.item)">
+        <div style=" border-style: solid; border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>Agregar Evento</div>
+      </ng-template>
+    </context-menu>
+
+    <!--<context-menu #basicMenu>
+        <ng-template contextMenuItem (execute)="addEvent($event.item)">
+          Add event
+        </ng-template>
+      </context-menu> -->
+
+    <!-- <ng-template #customCellTemplate let-day="day" let-locale="locale">
+      <div class="cal-cell-top">
+        <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>    
+      </div>
+      <small style="margin: 5px">{{ day.events.length }} Titulacion(es)</small>
+    </ng-template> -->
+
+  </div>
+</div>

@@ -1,0 +1,181 @@
+
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title *ngIf="data.initialPeriod == 'true'">{{title}}</h1>
+    <h1 mat-dialog-title *ngIf="data.initialPeriod !== 'true'">{{title}}  {{data.initialPeriod}} {{data.year}}</h1>
+  </div>
+  <div class="col-2">
+    <button mat-icon-button (click)="onClose()" class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<form [formGroup]="formPeriod" (ngSubmit)="onFormSubmit(formPeriod.value)" class="tp-form">
+  <div class="row text-center">
+    <div class="col-12">
+      <h3>Datos del periodo general</h3>
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="col-md-4">
+      <mat-form-field appearance="outline" *ngIf="data.initialPeriod === 'true' || data.operation == 'edit'">
+        <mat-label>Nombre del periodo</mat-label>
+        <select matNativeControl required formControlName="periodName" [errorStateMatcher]="matcher">
+          <option value="ENERO-JUNIO">
+            ENERO-JUNIO
+          </option>
+          <option value="AGOSTO-DICIEMBRE">
+            AGOSTO-DICIEMBRE
+          </option>
+        </select>     
+        <mat-error>
+            <span
+            *ngIf="!formPeriod.get('periodName').valid && formPeriod.get('periodName').touched">Seleccione un periodo</span>
+        </mat-error>   
+      </mat-form-field>
+    </div>
+    <div class="col-md-4"> 
+      <mat-form-field>
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker" placeholder="Fecha inicio" formControlName="initDate" [errorStateMatcher]="matcher">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('initDate').valid && formPeriod.get('initDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+    </div>
+    <div class="col-md-4">
+      <mat-form-field>
+        <input [min]="formPeriod.get('initDate').valid ? formPeriod.get('initDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker2" placeholder="Fecha fin" formControlName="endDate" [errorStateMatcher]="matcher">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('endDate').valid && formPeriod.get('endDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+    </div>
+  </div>
+  <hr/>
+  <div class="row text-center">
+    <div class="col-12">
+      <h5>Periodo inscripciones</h5>
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="col-md-2"></div>
+    <div class="col-md-3"> 
+      <mat-form-field>
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker3" placeholder="Fecha inicio" formControlName="insPerInitDate" [errorStateMatcher]="matcher">
+        <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+        <mat-datepicker #picker3></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('insPerInitDate').valid && formPeriod.get('insPerInitDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+      
+    </div>
+    <div class="col-md-3">
+      <mat-form-field>
+        <input [min]=" formPeriod.get('insPerInitDate').valid ? formPeriod.get('insPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker4" placeholder="Fecha fin" formControlName="insPerEndDate" [errorStateMatcher]="matcher">
+        <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
+        <mat-datepicker #picker4></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('insPerEndDate').valid && formPeriod.get('insPerEndDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+    </div>
+    <div class="col-md-3">
+        <mat-form-field>
+            <input [min]="formPeriod.get('insPerInitDate').valid ? formPeriod.get('insPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker7" placeholder="Fecha entrega de certificado" formControlName="certificateDeliveryDate" [errorStateMatcher]="matcher">
+            <mat-datepicker-toggle matSuffix [for]="picker7"></mat-datepicker-toggle>
+            <mat-datepicker #picker7></mat-datepicker>
+          </mat-form-field>
+          <mat-error>
+              <span
+              *ngIf="!formPeriod.get('insPerEndDate').valid && formPeriod.get('insPerEndDate').touched">Seleccione una fecha valida</span>
+          </mat-error> 
+    </div>
+    <div class="col-md-1"></div>
+  </div>
+
+  <hr/>
+  <div class="row text-center">
+    <div class="col-12">
+      <h5>Datos del periodo acto recepcional</h5>
+    </div>
+  </div>
+  <div class="row text-center">
+      <div class="col-md-3"></div>
+    <div class="col-md-3"> 
+      <mat-form-field>
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker5" placeholder="Fecha inicio" formControlName="arecPerInitDate" [errorStateMatcher]="matcher">
+        <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
+        <mat-datepicker #picker5></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('arecPerInitDate').valid && formPeriod.get('arecPerInitDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+      
+    </div>
+    <div class="col-md-3">
+      <mat-form-field>
+        <input [min]="formPeriod.get('arecPerInitDate').valid ? formPeriod.get('arecPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker6" placeholder="Fecha fin" formControlName="arecPerEndDate" [errorStateMatcher]="matcher">
+        <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
+        <mat-datepicker #picker6></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('arecPerEndDate').valid && formPeriod.get('arecPerEndDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+  <hr/>
+  <div class="row text-center">
+    <div class="col-12">
+      <h5>Horario agenda acto recepcional</h5>
+    </div>
+  </div>
+  <div class="row text-center">
+      <div class="col-md-3"></div>
+    <div class="col-md-3"> 
+      <mat-form-field>
+        <input type="number" min="0" max="24" matInput placeholder="Hora inicio" formControlName="arecInitShed" [errorStateMatcher]="matcher">
+        
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('arecInitShed').valid && formPeriod.get('arecInitShed').touched">Hora en formato HH (24hrs)</span>
+      </mat-error> 
+    </div>
+    <div class="col-md-3">
+      <mat-form-field>
+        <input type="number" min="0" max="24" matInput placeholder="Hora fin" formControlName="arecEndShed" [errorStateMatcher]="matcher"> 
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('arecEndShed').valid && formPeriod.get('arecEndShed').touched">Hora en formato HH (24hrs</span>
+      </mat-error> 
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+  <hr/>
+  <div class="row text-center">
+      <div class="col-md-4"></div>
+    <div class="col-2"> 
+      <button *ngIf="data.operation !== 'edit'" mat-flat-button color="primary"  type="submit" [disabled]="!formPeriod.valid">Crear periodo</button>
+      <button *ngIf="data.operation === 'edit'" mat-flat-button color="primary"  type="submit" [disabled]="!formPeriod.valid">Actualizar periodo</button>
+    </div>
+    <div class="col-2">
+      <button mat-flat-button color="warn" type="button" (click)="onClose()" mat-dialog-close>Cancelar</button>
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+</form>
+

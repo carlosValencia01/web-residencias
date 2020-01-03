@@ -1,0 +1,581 @@
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title >{{title}}</h1>    
+  </div>
+  <div class="col-2">
+    <button mat-icon-button (click)="onClose()" class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<div class="content">
+  <div class="row text-center">
+    <div class="col-12">
+      <mat-tab-group>
+        <mat-tab label="Revisión de expediente {{data.student.fullName}}">
+            <div class="card mt-3" *ngIf="clinicDoc">
+                <div class="card-header text-white bg-secondary">
+                  <strong>Documentos</strong>
+                </div>
+                <div class="row text-center mt-2">
+                  <div [class.col-12]="!viewdoc" [class.col-2]="viewdoc">
+                    <div class="card-body">
+                      <div *ngIf="data.user === 'Administrador' && pendings>0" class="row text-center"> <div class="col-12"><mat-checkbox [(ngModel)]="checkAll" (change)="selectAll()" [checked]="pendings === selectPendings" [value]="pendings === selectPendings">Seleccionar todos</mat-checkbox></div></div>
+                      <div class="row">
+                        <div *ngIf="actaDoc "  [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                          <!--Acta Nacimiento-->
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'EN PROCESO'"  class="process">                            
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActaa" (change)="actaChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="processText">Acta de Nacimiento</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('acta')" style="cursor: pointer;"  ngbTooltip="Visualizar Acta"
+                              tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver
+                                 
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'RECHAZADO'"  class="reject">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActaa" (change)="actaChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="rejectText">Acta de Nacimiento</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content  (click)="cardClick('acta')" style="cursor: pointer;" ngbTooltip="Visualizar Acta"
+                              tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>                                                        
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'VALIDADO'" class="validate">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[0].checkActaa" (change)="actaChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="validateText">Acta de Nacimiento</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content  (click)="cardClick('acta')"  style="cursor: pointer;" ngbTooltip="Visualizar Acta"
+                              tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="actaDoc.status == 'ACEPTADO'" class="accept">
+                            <mat-card-header>
+                              <mat-card-title class="acceptText">Acta de Nacimiento</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content  (click)="cardClick('acta')"  style="cursor: pointer;" ngbTooltip="Visualizar Acta"
+                              tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                        </div>
+                        <div *ngIf="certificateDoc "  [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                          <!--Certificado Estudios-->
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="certificateDoc.status == 'EN PROCESO'" class="process">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[4].checkCertificate" (change)="certificateChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="processText">Certificado Estudios</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('certificado')"  style="cursor: pointer;"
+                              ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="certificateDoc.status == 'ACEPTADO'" class="accept">
+                            <mat-card-header>
+                              <mat-card-title class="acceptText">Certificado Estudios</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('certificado')"  style="cursor: pointer;"
+                              ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="certificateDoc.status == 'RECHAZADO'" class="reject">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[4].checkCertificate" (change)="certificateChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="rejectText">Certificado Estudios</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('certificado')"  style="cursor: pointer;"
+                              ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>                                                        
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="certificateDoc.status == 'VALIDADO'" class="validate">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[4].checkCertificate" (change)="certificateChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="validateText">Certificado Estudios</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('certificado')"  style="cursor: pointer;"
+                              ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                        </div>
+                        <div *ngIf="clinicDoc "  [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                          <!--Analisis Clinicos-->
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="clinicDoc.status == 'VALIDADO'" class="validate">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[6].checkClinic" (change)="clinicChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="validateText">Análisis Clínicos</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('clinicos')"  style="cursor: pointer;" ngbTooltip="Visualizar Análisis"
+                              tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="clinicDoc.status == 'ACEPTADO'" class="accept">
+                            <mat-card-header>
+                              <mat-card-title class="acceptText">Análisis Clínicos</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('clinicos')"  style="cursor: pointer;" ngbTooltip="Visualizar Análisis"
+                              tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="clinicDoc.status == 'RECHAZADO'" class="reject">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[6].checkClinic" (change)="clinicChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="rejectText">Análisis Clínicos</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content  (click)="cardClick('clinicos')" style="cursor: pointer;" ngbTooltip="Visualizar Análisis"
+                              tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>                                                       
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="clinicDoc.status == 'EN PROCESO'" class="process">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[6].checkClinic" (change)="clinicChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="processText">Análisis Clínicos</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('clinicos')"  style="cursor: pointer;" ngbTooltip="Visualizar Análisis"
+                              tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                        </div>
+                        <div  *ngIf="payDoc " [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                          <!--Comprobante Pago-->
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="payDoc.status == 'EN PROCESO'" class="process">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[5].checkPay" (change)="payChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="processText">Comprobante Pago</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('comprobante')"  style="cursor: pointer;"
+                              ngbTooltip="Visualizar Comprobante" tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="payDoc.status == 'RECHAZADO'" class="reject">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[5].checkPay" (change)="payChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="rejectText">Comprobante Pago</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('comprobante')"  style="cursor: pointer;"
+                              ngbTooltip="Visualizar Comprobante" tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>                                                        
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="payDoc.status == 'ACEPTADO'" class="accept">
+                            <mat-card-header>
+                              <mat-card-title class="acceptText">Comprobante Pago</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('comprobante')"  style="cursor: pointer;"
+                              ngbTooltip="Visualizar Comprobante" tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                          <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="payDoc.status == 'VALIDADO'" class="validate">
+                            <mat-card-header>
+                                <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                    <mat-checkbox [(ngModel)]="acceptDocuments[5].checkPay" (change)="payChange()"></mat-checkbox>
+                                </div>
+                              <mat-card-title class="validateText">Comprobante Pago</mat-card-title>
+                            </mat-card-header>
+                            <mat-card-content (click)="cardClick('comprobante')"  style="cursor: pointer;"
+                              ngbTooltip="Visualizar Comprobante" tooltipClass="my-custom-class">
+                              <div>
+                                <div class="text-center">Ver                                  
+                                </div>
+                              </div>
+                            </mat-card-content>
+                            
+                          </mat-card>
+                        </div>
+                      </div>
+                      <div class="row" [class.mt-1]="!viewdoc">
+                          <div *ngIf="curpDoc"  [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                            <!--Curp-->
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'ACEPTADO'" class="accept">
+                              <mat-card-header>
+                                <mat-card-title class="acceptText">CURP</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('curp')"  style="cursor: pointer;" ngbTooltip="Visualizar CURP"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                             
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'VALIDADO'" class="validate">
+                              <mat-card-header>
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCrup" (change)="curpChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="validateText">CURP</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('curp')"  style="cursor: pointer;" ngbTooltip="Visualizar CURP"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                             
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'RECHAZADO'" class="reject">
+                              <mat-card-header>
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCrup" (change)="curpChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="rejectText">CURP</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('curp')"  style="cursor: pointer;" ngbTooltip="Visualizar CURP"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>                           
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="curpDoc.status == 'EN PROCESO'" class="process">
+                              <mat-card-header>
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[1].checkCrup" (change)="curpChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="processText">CURP</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('curp')"  style="cursor: pointer;" ngbTooltip="Visualizar CURP"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                             
+                            </mat-card>
+                          </div>
+                          <div  *ngIf="nssDoc " [class.row]="viewdoc" [class.col-3]="!viewdoc"  [class.m-1]="viewdoc">
+                            <!--Nss-->
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="nssDoc.status == 'EN PROCESO'" class="process">
+                              <mat-card-header>
+                                
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[2].checkNss" (change)="nssChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="processText">NSS</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('nss')"  style="cursor: pointer;" ngbTooltip="Visualizar NSS"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                    
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                              
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="nssDoc.status == 'RECHAZADO'" class="reject">
+                              <mat-card-header>
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[2].checkNss" (change)="nssChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="rejectText">NSS</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('nss')"  style="cursor: pointer;" ngbTooltip="Visualizar NSS"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver
+                                  </div>
+                                </div>
+                              </mat-card-content>                                                 
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="nssDoc.status == 'VALIDADO'" class="validate">
+                              <mat-card-header>
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[2].checkNss" (change)="nssChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="validateText">NSS</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('nss')"  style="cursor: pointer;" ngbTooltip="Visualizar NSS"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                              
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc" *ngIf="nssDoc.status == 'ACEPTADO'" class="accept">
+                              <mat-card-header>
+                                <mat-card-title class="acceptText">NSS</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('nss')"  style="cursor: pointer;" ngbTooltip="Visualizar NSS"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                              
+                            </mat-card>
+                          </div>
+                          <div  *ngIf="imageDoc " [class.row]="viewdoc" [class.col-3]="!viewdoc" [class.m-1]="viewdoc">
+                            <!--FOTO-->
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="imageDoc.status == 'EN PROCESO'" class="process">
+                              <mat-card-header>
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[3].checkPhoto" (change)="photoChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="processText">Foto</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('foto')"  style="cursor: pointer;" ngbTooltip="Visualizar Foto"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                              
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="imageDoc.status == 'RECHAZADO'" class="reject">
+                              <mat-card-header>
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[3].checkPhoto" (change)="photoChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="rejectText">Foto</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('foto')"  style="cursor: pointer;" ngbTooltip="Visualizar Foto"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>                                                       
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="imageDoc.status == 'VALIDADO'" class="validate">
+                              <mat-card-header>
+                                  <div mat-card-avatar [class.check]="!viewdoc" *ngIf="data.user === 'Administrador'"> 
+                                      <mat-checkbox [(ngModel)]="acceptDocuments[3].checkPhoto" (change)="photoChange()"></mat-checkbox>
+                                  </div>
+                                <mat-card-title class="validateText">Foto</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('foto')"  style="cursor: pointer;" ngbTooltip="Visualizar Foto"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                              
+                            </mat-card>
+                            <mat-card [class.adjustcard]="viewdoc" [class.cardini]="!viewdoc"  *ngIf="imageDoc.status == 'ACEPTADO'" class="accept">
+                              <mat-card-header>
+                                <mat-card-title class="acceptText">Foto</mat-card-title>
+                              </mat-card-header>
+                              <mat-card-content (click)="cardClick('foto')"  style="cursor: pointer;" ngbTooltip="Visualizar Foto"
+                                tooltipClass="my-custom-class">
+                                <div>
+                                  <div class="text-center">Ver                                  
+                                  </div>
+                                </div>
+                              </mat-card-content>
+                              
+                            </mat-card>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="card-body" *ngIf="data.user === 'Administrador' && 
+                    (checkAll || acceptDocuments[0].checkActa || acceptDocuments[1].checkCurp || acceptDocuments[6].checkClinic || acceptDocuments[5].checkPay || acceptDocuments[3].checkPhoto || acceptDocuments[2].checkNss || acceptDocuments[4].checkCertificate)">
+                      <div class="row text-center">
+                        <div class="col-12">
+
+                          <button class="btn btn-success" type="button" *ngIf="!viewdoc" (click)="acceptManyDocuments()">Aceptar documento(s)</button>
+                          <button class="btn btn-success" type="button" *ngIf="viewdoc" (click)="acceptManyDocuments()">Aceptar docto(s)</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div  [class.col-10]="viewdoc" [class.noview]="!viewdoc" class="mt-2">
+                    <div class="content" [class.viewdoc]="viewdoc">
+                      <div class="row text-center viewdocheader">
+                        <div class="col-11">
+                          <div class="row text-center">
+                            <div class="col-6">
+                              <h4>
+                                <strong>{{docDisplayName}} </strong>
+                              </h4>
+                            </div>
+                            <div class="col-6">
+                                <mat-chip-list aria-label="Historial"> 
+                                  <mat-chip (click)="history()" color="warn"><strong>Ver historial del documento</strong></mat-chip>
+                                </mat-chip-list>                                  
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-1">
+                            <button mat-icon-button (click)="closeDoc()" class="float-right">
+                              <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                      </div>
+                      <div class="row text-center">
+                        <div class="col-12">
+                          <div *ngIf="showDocument == true && typeDocShow === 'pdf'">
+                            <ngx-extended-pdf-viewer [src]="pdfSrc" backgroundColor="#ffffff" [height]="'90vh'" [useBrowserLocale]="true">
+                              </ngx-extended-pdf-viewer>
+                          </div>
+                          <div *ngIf="showDocument == true && typeDocShow === 'image'">
+                              <img mat-card-image [src]="image" class="imgProfile">
+                          </div>
+
+                              <div *ngIf="showDocument == false">
+                                  <div class="cssload-thecube">
+                                    <div class="cssload-cube cssload-c1"></div>
+                                    <div class="cssload-cube cssload-c2"></div>
+                                    <div class="cssload-cube cssload-c4"></div>
+                                    <div class="cssload-cube cssload-c3"></div>
+                                  </div>
+                                </div>
+                        </div>
+                      </div>
+                      <hr/>
+                      <div class="row text-center p-2" *ngIf="docto">
+                        <div class="col-12" *ngIf="data.user === 'Secretaria' && docto.status !== 'ACEPTADO' && docto.status !== 'VALIDADO'">
+                          <form [formGroup]="form" (ngSubmit)="changeStatus(form.value)" class="tp-form">
+                            <mat-radio-group name="refused" [(ngModel)]="refused" formControlName="status" aria-label="Select an option">
+                              <mat-radio-button  value="ACEPTADO" class="mr-2">Validar documento</mat-radio-button>
+                              <mat-radio-button value="RECHAZADO" class="ml-2">Rechazar documento</mat-radio-button>
+                            </mat-radio-group>            
+                            <div *ngIf="refused === 'RECHAZADO'">
+                                <mat-form-field appearance="outline">
+                                  <mat-label>Especifique el motivo</mat-label>
+                                  <input matInput formControlName="observation" [errorStateMatcher]="matcher" maxlength="200">
+                                  <mat-error>
+                                    <span
+                                      *ngIf="!form.get('observation').valid && form.get('observation').touched">Especificar porque se rechaza.</span>
+                                  </mat-error>
+                                </mat-form-field>
+                            </div>                                               
+                            <button class="btn btn-primary ml-4" type="submit" [disabled]="refused === 'RECHAZADO' ? !form.get('status').valid || !form.get('observation').valid :  !form.get('status').valid">Guardar cambios</button>                          
+                          </form>
+                        </div>
+                        <div *ngIf="data.user === 'Administrador'">
+                            <div class="col-12" *ngIf="docto.status !== 'ACEPTADO'">
+                                <form [formGroup]="form" (ngSubmit)="changeStatus(form.value)" class="tp-form">
+                                  <mat-radio-group name="refused" [(ngModel)]="refused" formControlName="status" aria-label="Select an option">
+                                    <mat-radio-button  value="ACEPTADO" class="mr-2">Aceptar documento</mat-radio-button>
+                                    <mat-radio-button value="RECHAZADO" class="ml-2">Rechazar documento</mat-radio-button>
+                                  </mat-radio-group>            
+                                  <div *ngIf="refused === 'RECHAZADO'">
+                                      <mat-form-field appearance="outline">
+                                        <mat-label>Especifique el motivo</mat-label>
+                                        <input matInput formControlName="observation" [errorStateMatcher]="matcher" maxlength="200">
+                                        <mat-error>
+                                          <span
+                                            *ngIf="!form.get('observation').valid && form.get('observation').touched">Especificar porque se rechaza.</span>
+                                        </mat-error>
+                                      </mat-form-field>
+                                  </div>                                               
+                                  <button class="btn btn-primary ml-4" type="submit" [disabled]="refused === 'RECHAZADO' ? !form.get('status').valid || !form.get('observation').valid :  !form.get('status').valid">Guardar cambios</button>                          
+                                </form>
+                              </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        
+        </mat-tab>             
+      </mat-tab-group>      
+    </div>
+  </div>
+</div>
+<div class="center">
+    <app-loader [loading]="loading"></app-loader>
+</div>

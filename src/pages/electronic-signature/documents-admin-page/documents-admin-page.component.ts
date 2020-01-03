@@ -20,10 +20,10 @@ export class DocumentsAdminPageComponent implements OnInit {
   public titleCardForm: string;
   public searchText: string;
   public showFormPanel = false;
-  public isEditing = false;
   public isViewDetails = false;
   private documentsCopy: Array<IDocument>;
   private currentDocument: IDocument;
+  private isEditing = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -38,39 +38,18 @@ export class DocumentsAdminPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.initializeForm();
-    this.getAllDocuments();
+    this._initializeForm();
+    this._getAllDocuments();
   }
 
-  getAllDocuments() {
-    this.documentProv.getAllDocuments()
-      .subscribe(docs => {
-        this.documents = docs;
-        this.documentsCopy = this.documents;
-        if (this.searchText) {
-          this.searchDocuments();
-        }
-      });
-  }
-
-  searchDocuments() {
+  public searchDocuments() {
+    const search = (this.searchText || '').toLowerCase();
     this.documents = this.documentsCopy
-      .filter(doc => JSON.stringify(doc).includes(this.searchText));
+      .filter(doc => JSON.stringify(doc).toLowerCase().includes(search));
   }
 
-  initializeForm() {
-    this.documentForm = new FormGroup({
-      'strategicProcess': new FormControl(null, Validators.required),
-      'key': new FormControl(null, Validators.required),
-      'code': new FormControl(null, Validators.required),
-      'operativeProcess': new FormControl(null, Validators.required),
-      'procedure': new FormControl(null, Validators.required),
-      'name': new FormControl(null, Validators.required),
-    });
-  }
-
-  saveDocument() {
-    const document = this.getFormData();
+  public saveDocument() {
+    const document = this._getFormData();
     if (this.isEditing) {
       this.currentDocument.strategicProcess = document.strategicProcess;
       this.currentDocument.key = document.key;
@@ -83,6 +62,7 @@ export class DocumentsAdminPageComponent implements OnInit {
           if (updated.status === 200) {
             this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Documento modificado correctamente', '');
             this.documentForm.reset();
+            this._updateDocument(this.currentDocument);
             this.titleCardForm = 'Creando documento';
             this.currentDocument = null;
             this.isEditing = false;
@@ -97,6 +77,7 @@ export class DocumentsAdminPageComponent implements OnInit {
           if (created && !created.status) {
             this.documentForm.reset();
             this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Documento creado con éxito', '');
+            this._addDocument(created);
           } else {
             this.notificationsService.showNotification(eNotificationType.ERROR,
               created.error.includes('MongoError: E11000 duplicate key') ?
@@ -105,32 +86,9 @@ export class DocumentsAdminPageComponent implements OnInit {
           }
         });
     }
-    this.getAllDocuments();
   }
 
-  getFormData() {
-    return {
-      strategicProcess: this.documentForm.get('strategicProcess').value,
-      key: this.documentForm.get('key').value,
-      code: this.documentForm.get('code').value,
-      operativeProcess: this.documentForm.get('operativeProcess').value,
-      procedure: this.documentForm.get('procedure').value,
-      name: this.documentForm.get('name').value,
-    };
-  }
-
-  fillForm(document) {
-    this.documentForm.setValue({
-      'strategicProcess': document.strategicProcess,
-      'key': document.key,
-      'code': document.code,
-      'operativeProcess': document.operativeProcess,
-      'procedure': document.procedure,
-      'name': document.name,
-    });
-  }
-
-  newDocument() {
+  public newDocument() {
     this.titleCardForm = 'Creando documento';
     this.documentForm.enable();
     this.documentForm.reset();
@@ -140,28 +98,28 @@ export class DocumentsAdminPageComponent implements OnInit {
     this.isViewDetails = false;
   }
 
-  viewDocument(document) {
+  public viewDocument(document) {
     this.titleCardForm = 'Detalles del documento';
     this.documentForm.markAsUntouched();
     this.documentForm.disable();
     this.isViewDetails = true;
-    this.fillForm(document);
+    this._fillForm(document);
     this.showFormPanel = true;
     this.isEditing = false;
     this.currentDocument = null;
   }
 
-  editDocument(document) {
+  public editDocument(document) {
     this.titleCardForm = 'Actualizando documento';
     this.currentDocument = document;
     this.documentForm.enable();
-    this.fillForm(document);
+    this._fillForm(document);
     this.showFormPanel = true;
     this.isEditing = true;
     this.isViewDetails = false;
   }
 
-  removeDocument(document) {
+  public removeDocument(document) {
     Swal.fire({
       title: 'Ésta acción no se puede revertir',
       text: `El documento ${document.name} se borrará totalmente. ¿Desea borrarlo?`,
@@ -179,11 +137,11 @@ export class DocumentsAdminPageComponent implements OnInit {
           .subscribe(deleted => {
             if (deleted.status === 200) {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Documento borrado con éxito', '');
-              if (this.currentDocument._id === document._id) {
+              if (this.isEditing && this.currentDocument._id === document._id) {
                 this.isEditing = false;
                 this.titleCardForm = 'Creando documento';
               }
-              this.getAllDocuments();
+              this._removeDocument(document);
             } else {
               this.notificationsService.showNotification(eNotificationType.ERROR, 'Error al borrar documento', deleted.error);
             }
@@ -192,11 +150,79 @@ export class DocumentsAdminPageComponent implements OnInit {
     });
   }
 
-  closeFormPanel() {
+  public closeFormPanel() {
     this.documentForm.reset();
     this.currentDocument = null;
     this.showFormPanel = false;
     this.isEditing = false;
     this.isViewDetails = false;
+  }
+
+  private _getAllDocuments() {
+    this.documentProv.getAllDocuments()
+      .subscribe(docs => {
+        this.documents = docs;
+        this.documentsCopy = this.documents;
+        if (this.searchText) {
+          this.searchDocuments();
+        }
+      });
+  }
+
+  private _initializeForm() {
+    this.documentForm = new FormGroup({
+      'strategicProcess': new FormControl(null, Validators.required),
+      'key': new FormControl(null, Validators.required),
+      'code': new FormControl(null, Validators.required),
+      'operativeProcess': new FormControl(null, Validators.required),
+      'procedure': new FormControl(null, Validators.required),
+      'name': new FormControl(null, Validators.required),
+    });
+  }
+
+  private _getFormData() {
+    return {
+      strategicProcess: this.documentForm.get('strategicProcess').value,
+      key: this.documentForm.get('key').value,
+      code: this.documentForm.get('code').value,
+      operativeProcess: this.documentForm.get('operativeProcess').value,
+      procedure: this.documentForm.get('procedure').value,
+      name: this.documentForm.get('name').value,
+    };
+  }
+
+  private _fillForm(document) {
+    this.documentForm.setValue({
+      'strategicProcess': document.strategicProcess,
+      'key': document.key,
+      'code': document.code,
+      'operativeProcess': document.operativeProcess,
+      'procedure': document.procedure,
+      'name': document.name,
+    });
+  }
+
+  private _addDocument(document: IDocument) {
+    document.departments = [];
+    this.documentsCopy.push(document);
+    this.searchDocuments();
+  }
+
+  private _removeDocument(document: IDocument) {
+    const index = this.documentsCopy.findIndex(depto => depto._id === document._id);
+    this.documentsCopy.splice(index, 1);
+    this.searchDocuments();
+    if (this.isViewDetails) {
+      this.closeFormPanel();
+    }
+  }
+
+  private _updateDocument(document: IDocument) {
+    const index = this.documentsCopy.findIndex(depto => depto._id === document._id);
+    this.documentsCopy.splice(index, 1, document);
+    this.searchDocuments();
+    if (this.isEditing || this.isViewDetails) {
+      this.closeFormPanel();
+    }
   }
 }

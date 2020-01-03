@@ -1,0 +1,48 @@
+table{
+    table-layout: fixed;
+    width: 100%;
+}
+
+.imgProfile{
+    width: 70%;
+    text-align: center;
+    padding-top: 5px;
+}
+
+img.imgProfile.mat-card-image{
+    border-radius: 10px;
+}
+
+h6 {
+    font-weight: bold;
+}
+h6 span {
+    font-weight: normal;
+}
+
+hr {
+    border-style: solid;
+    border-width: 3px;
+}
+
+.cardProfile{
+    padding-right: 5px;
+    height: 350px;
+}
+
+.cardData{
+    width: 100%;
+}
+
+.cardDocuments{
+    background: rgb(209, 209, 253);
+}
+
+.titleDocuments{
+    color: slateblue;
+    font-weight: bold;
+}
+
+#cardDoc{
+    text-align: center;
+}

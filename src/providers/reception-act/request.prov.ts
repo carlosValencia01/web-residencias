@@ -37,11 +37,27 @@ export class RequestProvider {
         return this.api.post(`request/${_id}/file`, data, true).pipe(map(request => request.json()));
     }
 
+    omitFile(_id, data) {
+        return this.api.post(`request/${_id}/file/omit`, data).pipe(map(request => request.json()));
+    }
+
     getResource(id: string, resource: string): Observable<Blob> {
         return this.http.get(`${this.api.getURL()}/request/${id}/file/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
     }
 
-    updateFileStatus(_id, data){
+    updateFileStatus(_id, data) {
         return this.api.put(`request/${_id}/file`, data).pipe(map(request => request.json()));
+    }
+
+    getAvailableSpaces(data) {
+        return this.api.post(`request/schedule`, data).pipe(map(request => request.json()));
+    }
+
+    getDiary(data) {
+        return this.api.post(`request/diary`, data).pipe(map(request => request.json()));
+    }
+
+    StudentsToSchedule() {
+        return this.api.get(`request/students`).pipe(map(request => request.json()));
     }
 }

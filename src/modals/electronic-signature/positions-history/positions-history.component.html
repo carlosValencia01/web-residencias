@@ -35,6 +35,20 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header> Fecha de desactivación</th>
         <td *matCellDef="let row" mat-cell style="width:20%">{{row.deactivateDate}}</td>
       </ng-container>
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header></th>
+        <td *matCellDef="let row" mat-cell style="width:20%">
+          <button [matMenuTriggerFor]="actions" mat-icon-button>
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #actions>
+            <button (click)="reallocatePosition(row._id)" mat-menu-item>
+              <mat-icon>assignment_turned_in</mat-icon>
+              Reactivar puesto
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
       <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
       <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
     </table>

@@ -1,7 +1,9 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { CookiesService } from 'src/services/app/cookie.service';
-import { iRole } from 'src/entities/app/role.model';
 import { iPermission } from 'src/entities/app/permissions.model';
+import { iRole } from 'src/entities/app/role.model';
 
 @Component({
   selector: 'app-sidebar-content',
@@ -23,12 +25,13 @@ export class SidebarContentComponent implements OnInit {
 
   constructor(
     private cookiesServ: CookiesService,
+    private router: Router,
   ) {
     const fulturi = window.location.href;
     this.survey = fulturi.indexOf('survey') !== -1;
     if (!this.survey) {
       this.data = this.cookiesServ.getData().user;
-      console.log(this.data);
+      // console.log(this.data);
       this.status = this.data.status;
     }
   }
@@ -71,5 +74,10 @@ export class SidebarContentComponent implements OnInit {
 
   otro() {
     console.log('dadwa');
+  }
+
+  public goProfile() {
+    this.router.navigate(['/profileSettings']);
+    this.menuClicked.emit();
   }
 }

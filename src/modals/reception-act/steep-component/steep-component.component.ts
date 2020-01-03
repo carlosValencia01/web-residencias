@@ -86,9 +86,11 @@ export class SteepComponentComponent implements OnInit {
       case 1: {
         // this.stepperComponent.selectedIndex = 0;
         // this.SteepOneCompleted = false;
+        this.updateSteeps(0);
         break;
       }
       case 2: {
+        this.updateSteeps(1);
         // this.stepperComponent.selectedIndex = 1;
         // this.SteepTwoCompleted = false;
         break;

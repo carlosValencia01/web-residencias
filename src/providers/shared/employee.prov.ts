@@ -129,4 +129,14 @@ export class EmployeeProvider {
         map(res => res.json())
       );
     }
+
+    uploadCsvPositions(employeeId: string, data: Array<any>) {
+      return this.api.post(`employee/uploadCsvPositions/${employeeId}`, data)
+        .pipe(map(res => res.json()));
+    }
+
+    uploadCsvGrades(employeeId: string, data: Array<any>) {
+      return this.api.post(`employee/uploadCsvGrades/${employeeId}`, data)
+        .pipe(map(res => res.json()));
+    }
 }

@@ -68,6 +68,11 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="row justify-content-end m-1">
+        <input #uploadPositions (change)="onUploadPositions($event)" accept=".csv" style="display:none;" type="file">
+        <button (click)="uploadPositions.click()" aria-label="Subir puestos por .csv" class="m-1"
+                mat-icon-button mat-mini-fab ngbTooltip="Subir puestos">
+          <mat-icon>cloud_upload</mat-icon>
+        </button>
         <button (click)="discardPositionsChanges()" [disabled]="!isChangedPositions"
                 aria-label="Descartar cambios en los puestos" class="m-1"
                 color="warn" mat-icon-button mat-mini-fab ngbTooltip="Descartar cambios">
@@ -129,6 +134,11 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="row justify-content-end m-1">
+        <input #uploadGrades (change)="onUploadGrades($event)" accept=".csv" style="display:none;" type="file">
+        <button (click)="uploadGrades.click()" aria-label="Subir grados por .csv"
+                class="m-1" mat-icon-button mat-mini-fab ngbTooltip="Subir grados">
+          <mat-icon>cloud_upload</mat-icon>
+        </button>
         <button (click)="discardGradesChanges()" [disabled]="!isChangedGrades" aria-label="Descartar cambios en grados"
                 class="m-1" color="warn" mat-icon-button mat-mini-fab ngbTooltip="Descartar cambios">
           <mat-icon>restore</mat-icon>

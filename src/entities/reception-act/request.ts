@@ -29,10 +29,14 @@ export class uRequest {
     private montserratBold: any;
 
     constructor(public _request: iRequest, public _getImage: ImageToBase64Service) {
-        this.getImageToPdf();
+        this._getImageToPdf();
     }
 
-    getImageToPdf() {
+    public setRequest(request: iRequest) {
+        this._request = request;
+    }
+
+    private _getImageToPdf() {
         this._getImage.getBase64('assets/imgs/logo.jpg').then(logo => {
             this.tecNacLogo = logo;
         });
@@ -50,16 +54,17 @@ export class uRequest {
         });
 
         this._getImage.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
-          this.montserratNormal = base64.toString().split(',')[1];
+            this.montserratNormal = base64.toString().split(',')[1];
         });
 
         this._getImage.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
-          this.montserratBold = base64.toString().split(',')[1];
+            this.montserratBold = base64.toString().split(',')[1];
         });
     }
 
     protocolActRequest(): jsPDF {
         const doc = this.newDocumentTec();
+        const sentHistory = this._request.history.filter(x => x.phase === 'Capturado' && x.status === 'Accept').reverse()[0];
         console.log('Listas', doc.getFontList());
         doc.setTextColor(0, 0, 0);
         // Title
@@ -73,7 +78,8 @@ export class uRequest {
         doc.setFontSize(11);
         doc.text(doc.splitTextToSize('Lugar y fecha:', 60), 140, 55, { align: 'left' });
         doc.text(doc.splitTextToSize('Tepic, Nayarit', 60), 170, 55, { align: 'left' });
-        doc.text(doc.splitTextToSize(moment(new Date()).format('LL'), 60), 155, 60, { align: 'left' });
+        doc.text(doc.splitTextToSize(moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LL'), 60),
+            155, 60, { align: 'left' });
 
         // Saludos
         doc.setFont(this.FONT, 'Bold');
@@ -88,7 +94,7 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por medio del presente solicito autorización para iniciar trámite de registro del ' +
-          'proyecto de titulación integral:', 185), this.MARGIN.LEFT, 120, { align: 'left' });
+            'proyecto de titulación integral:', 185), this.MARGIN.LEFT, 120, { align: 'left' });
 
         this.addTable(doc, [
             ['Nombre: ', this._request.student.fullName],
@@ -100,7 +106,7 @@ export class uRequest {
         const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 60);
         doc.setFont(this.FONT, 'Normal');
         doc.text('En espera de la aceptación de esta solicitud, quedo a sus órdenes.', this.MARGIN.LEFT,
-          176 + nameProjectLines, { align: 'left' });
+            176 + nameProjectLines, { align: 'left' });
         doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', (this.WIDTH / 2), 213, { align: 'center' });
 
@@ -119,6 +125,8 @@ export class uRequest {
 
     projectRegistrationOffice(): jsPDF {
         const doc = this.newDocumentTec();
+        const registerHistory = this._request.history
+            .filter(x => x.phase === 'Verificado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         doc.setTextColor(0, 0, 0);
         // Title
         doc.setFont(this.FONT, 'Bold');
@@ -138,7 +146,8 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Normal');
         doc.text('Departamento de Sistemas Computacionales', this.MARGIN.LEFT, 83, { align: 'left' });
-        doc.text(`Lugar: Tepic, Nayarit y Fecha: ${moment(new Date()).format('LL')}`, this.MARGIN.LEFT, 88, { align: 'left' });
+        doc.text(`Lugar: Tepic, Nayarit y Fecha: ${moment(registerHistory ? registerHistory.achievementDate : new Date()).format('LL')}`,
+            this.MARGIN.LEFT, 88, { align: 'left' });
 
         this.addTable(doc, [
             ['Nombre del proyecto: ', this._request.projectName],
@@ -146,9 +155,11 @@ export class uRequest {
             ['Número de estudiantes ', this._request.noIntegrants]
         ], 93);
 
+        const aceptHistory = this._request.history
+            .filter(x => x.phase === 'Enviado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 50);
         const integrantsLines = 10 * (this._request.noIntegrants - 1);
-        const observationsLines = 5 * Math.ceil(this._request.observation.length / 60);
+        const observationsLines = 5 * Math.ceil(aceptHistory.observation.length / 60);
 
         doc.text('Datos del (de los) estudiante(s):', this.MARGIN.LEFT, 125 + nameProjectLines, { align: 'left' });
         const students: Array<Object> = [];
@@ -162,9 +173,9 @@ export class uRequest {
         this.addTable(doc, students, 127 + nameProjectLines);
 
         doc.rect(this.MARGIN.LEFT, 160 + integrantsLines + nameProjectLines, this.WIDTH
-          - (this.MARGIN.RIGHT + this.MARGIN.LEFT - 6), 7 + observationsLines);
+            - (this.MARGIN.RIGHT + this.MARGIN.LEFT - 6), 7 + observationsLines);
         doc.text('Observaciones: ', this.MARGIN.LEFT + 3, 164 + integrantsLines + nameProjectLines, { align: 'left' });
-        doc.text(doc.splitTextToSize(this._request.observation, 150), this.MARGIN.LEFT + 3,
+        doc.text(doc.splitTextToSize(aceptHistory.observation, 150), this.MARGIN.LEFT + 3,
           170 + integrantsLines + nameProjectLines, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
@@ -202,7 +213,7 @@ export class uRequest {
         doc.text('PRESENTE', this.MARGIN.LEFT, 100, { align: 'left' });
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por este medio informo que ha sido liberado el siguiente proyecto para la titulación:',
-          176), this.MARGIN.LEFT, 107, { align: 'left' });
+            176), this.MARGIN.LEFT, 107, { align: 'left' });
 
         this.addTable(doc, [
             ['Nombre del estudiante y/o egresado: ', this._request.student.fullName],
@@ -213,7 +224,7 @@ export class uRequest {
         ], 120);
 
         doc.text(doc.splitTextToSize('Agradezco de antemano su valioso apoyo en esta importante actividad para la ' +
-          'formación profesional de nuestros egresados', 176), this.MARGIN.LEFT, 174, { align: 'left' });
+            'formación profesional de nuestros egresados', 176), this.MARGIN.LEFT, 174, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', (this.WIDTH / 2), 190, { align: 'center' });
@@ -233,36 +244,153 @@ export class uRequest {
         const doc = this.newDocumentTec();
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Bold');
-        doc.setFontSize(14);
+        doc.setFontSize(11);
         doc.text(doc.splitTextToSize('CONSTANCIA DE NO INCONVENIENCIA PARA EL ACTO DE RECEPCIÓN PROFESIONAL', 150),
-          (this.WIDTH / 2), 65, { align: 'center' });
+            (this.WIDTH / 2), 65, { align: 'center' });
 
-        doc.setFontSize(12);
-
+        doc.setFontSize(10);
+        doc.setFont(this.FONT, 'Normal');
         const date = new Date();
         doc.text(`Tepic, Nayarit a ${moment(date).format('LL')}`, this.MARGIN.LEFT, 100, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
+        doc.setFontSize(11);
         doc.text('C. ' + this._request.student.fullName, (this.WIDTH / 2), 115, { align: 'center' });
 
         doc.setFont(this.FONT, 'Normal');
+        doc.setFontSize(10);
         doc.text(doc.splitTextToSize('Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. ' +
-          'Presentar su Acto de Recepción Profesional, ya que su expediente quedo integrado para tal efecto.', 176),
+          'Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', 176),
           this.MARGIN.LEFT, 130, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
-        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 147, { align: 'left' });
+        doc.setFontSize(11);
+        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
+        doc.text('ISRAEL ARJONA VIZCAÍNO', this.MARGIN.LEFT, 170, { align: 'left' }); // Cambiar de forma dinámica
+        doc.text('JEFE DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });
 
-
-        doc.text('KERVIN GARCIA CARLOS', this.MARGIN.LEFT, 197, { align: 'left' });
-        doc.text('JEFE DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 203, { align: 'left' });
-        doc.text('Sabiduría Tecnológic, Pasión de nuestro Espíritu', this.MARGIN.LEFT, 210, { align: 'left' });
-        doc.text('Clave del instituto 18DIT0002Z', this.MARGIN.LEFT, 217, { align: 'left' });
+        doc.setFontSize(11);
+        doc.text('"Sabiduría Tecnológica, Pasión de nuestro Espíritu" ®', this.MARGIN.LEFT, 186, { align: 'left' });
+        doc.text('Clave del instituto 18DIT0002Z', this.MARGIN.LEFT, 196, { align: 'left' });
 
         return doc;
     }
 
-    private newDocumentTec(): jsPDF {
+    public professionalEthicsOath(): jsPDF {
+      const doc = this.newDocumentTec(false, false);
+      const initialHeight = 35;
+      const lineHeight = 7;
+      doc.setTextColor(0, 0, 0);
+      doc.setFont(this.FONT, 'Bold');
+      doc.setFontSize(18);
+      this._drawUnderlineText(doc, 'JURAMENTO DE ÉTICA PROFESIONAL', initialHeight, 'center');
+      doc.setFontSize(14);
+      this._drawUnderlineText(doc, `YO: ${this._request.student.fullName}`, initialHeight + (lineHeight * 3), 'center');
+      this._drawUnderlineText(doc, `COMO: ${this._request.student.career}`, initialHeight + (lineHeight * 5), 'center');
+      doc.setFont(this.FONT, 'Normal');
+      doc.setFontSize(17);
+      doc.text(
+        // tslint:disable-next-line:max-line-length
+        `DEDICO MIS CONOCIMIENTOS PROFESIONALES AL PROGRESO Y MEJORAMIENTO DEL BIENESTAR HUMANO, ME COMPROMETO A DAR UN RENDIMIENTO MÁXIMO, A PARTICIPAR TAN SOLO EN EMPRESAS DIGNAS, A VIVIR Y TRABAJAR DE ACUERDO CON LAS LEYES PROPIAS DEL HOMBRE Y EL MÁS ELEVADO NIVEL DE CONDUCTA PROFESIONAL, A PREFERIR EL SERVICIO AL PROVECHO, EL HONOR Y LA CALIDAD PROFESIONAL A LA VENTAJA PERSONAL, EL BIEN PÚBLICO A TODA CONSIDERACIÓN, CON RESPETO Y HONRADEZ HAGO EL PRESENTE JURAMENTO.`,
+        this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 9),
+        {lineHeightFactor: 1.35, maxWidth: (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), align: 'justify'},
+        null, 'justify');
+      doc.setFontSize(14);
+      this._drawCenterTextWithLineUp(doc, 'FIRMA', initialHeight + (lineHeight * 26.5));
+      doc.text(moment(new Date()).format('LL').toUpperCase(), this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 31));
+      return doc;
+    }
+
+    public codeProfessionalEthics(): jsPDF {
+      const doc = this.newDocumentTec(false, false);
+      const initialHeight = 30;
+      const lineHeight = 7;
+      const startLine = this.MARGIN.LEFT + 10;
+      const endLine = this.MARGIN.RIGHT + 10;
+      const lineWidth = this.WIDTH - (startLine + endLine);
+      const rules = [
+        `I.- LAS NORMAS MÁS ELEVADAS DE INTEGRIDAD Y LIMPIA CONDUCTA DEBERÁN GUIARLOS EN TODAS SUS RELACIONES.`,
+        `II.- MANTENDRÁ EN TODO MOMENTO ANTE EL PÚBLICO LA DIGNIDAD DE LA PROFESIÓN EN GENERAL Y LA REPUTACIÓN DEL INSTITUTO.`,
+        `III.- DEBE EVITAR Y DESALENTAR DECLARACIONES SENSACIONALISTAS, EXAGERADAS Y SIN GARANTÍA.`,
+        // tslint:disable-next-line:max-line-length
+        `IV.- REHUSARÁ COMPROMETERSE, CUALQUIERAQUE SEA LA REMUNERACIÓN, EN TRABAJOS QUE CREAN NO SERÁN BENEFICIOSOS PARA SUS CLIENTES, A NO SER QUE ADVIERTAN PRIMERO A ESTOS SOBRE LA IMPROBABILIDAD DE ÉXITO DE LOS RESULTADOS.`,
+        // tslint:disable-next-line:max-line-length
+        `V.- MANTENDRÁ EL PRINCIPIO DE QUE LOS HONORARIOS IRRAZONABLEMENTE BAJOS POR LABORES PROFESIONALES, PROPENDEN A UN TRABAJO INFERIOR Y SIN GARANTÍA.`,
+        `VI.- RECHAZARÁ LA PRESTACIÓN DE SU NOMBRE A EMPRESAS EN ENTREDICHO.`,
+        // tslint:disable-next-line:max-line-length
+        `VII.- SERÁ CONSERVADOR EN TODOS SUS PRESUPUESTOS, INFORMES, TESTIMONIOS, ETC. PARTICULARMENTE EN LOS QUE SE RELACIONEN CON LA PROMOCION O IMPULSIÓN DE EMPRESAS.`,
+        `VIII.- NO ACEPTARÁ NINGÚN CARGO CONTRARIO A LA LEY O AL BIENESTAR PÚBLICO.`,
+        // tslint:disable-next-line:max-line-length
+        `IX.- CUANDO UN TITULO_DE_GRADO*, EMPRENDA TRABAJOS PARA OTROS, EN RELACIÓN CON LOS CUALES HAYA REALIZADO ASESORÍAS, MEJORAS O ACTIVIDADES EMPRESARIALES, SERÁ PREFERIBLE QUE CONSIGA UN ACUERDO QUE CONSIDERE DE SU PROPIEDAD.`,
+        // tslint:disable-next-line:max-line-length
+        `X.- UN TITULO_DE_GRADO*, NO PUEDE ACEPTAR HONORABLEMENTE REMUNERACIONES, COMPENSACIONES FINANCIERAS NI NADA SEMEJANTE MÁS QUE DE UNA SOLA DE LAS PARTES INTERESADAS, A NO SER QUE TENGA EL CONSENTIMIENTO DE TODAS LAS DEMÁS.`,
+        // tslint:disable-next-line:max-line-length
+        `XI.- UN TITULO_DE_GRADO* NO ACEPTARÁ COMPENSACIÓN DIRECTA NI INDIRECTA POR CUALQUIER, NI POR CONSULTA, NI OPERACIÓN DE PARTES QUE TRATEN CON SU CLIENTE O EMPRESARIO, SIN EL CONSENTIMIENTO O CONOCIMIENTO DE ÉSTE.`,
+        // tslint:disable-next-line:max-line-length
+        `XII.- CUANDO UN TITULO_DE_GRADO* SEA CONSULTADO PARA DECIDIR SOBRE EL USO DE PROCEDIMIENTOS EN LOS QUE TENGAN ALGÚN INTERÉS FINANCIERO DEBERÁ ESTABLECERSE CLARAMENTE SU SITUACIÓN EN LA MATERIA, ANTES DE COMPROMETERSE.`,
+        // tslint:disable-next-line:max-line-length
+        `XIII.- UN TITULO_DE_GRADO*, DEBE ESFORZARSE EN TODO MOMENTO PARA ACREDITAR TRABAJOS A QUIENES, TAN LEJOS COMO SU CONOCIMIENTO ALCANCE SEAN LOSO AUTORES REALES DE ELLOS.`,
+        // tslint:disable-next-line:max-line-length
+        `XIV.- NO ADMITIRÁ ANUNCIOS INDIGNOS, SENSACIONALES NI ENGAÑOS, ASÍ COMO EL USO DE NOMBRES O FOTOGRAFÍAS DE LOS INTEGRANTES DEL INSTITUTO COMO AYUDA DE TALES ANUNCIOS, Y LA UTILIZACIÓN DEL NOMBRE DE ÉSTE INSTITUTO EN RELACIÓN CON ELLOS NO SE TOLERARÁ.`
+      ];
+      doc.setTextColor(0, 0, 0);
+      doc.setFont(this.FONT, 'Normal');
+      doc.setFontSize(14);
+      doc.text('SECRETARÍA DE EDUCACIÓN PÚBLICA', this.WIDTH / 2, initialHeight, {align: 'center'});
+      doc.setFont(this.FONT, 'Bold');
+      doc.text('TECNOLÓGICO NACIONAL DE MÉXICO', this.WIDTH / 2, initialHeight + lineHeight, {align: 'center'});
+      doc.setFontSize(16);
+      this._drawUnderlineText(doc, 'CÓDIGO DE ÉTICA PROFESIONAL', initialHeight + (lineHeight * 4), 'center');
+      this._drawUnderlineText(doc, `${this._request.student.career}`, initialHeight + (lineHeight * 5), 'center');
+      doc.setFont(this.FONT, 'Normal');
+      doc.setFontSize(12);
+      doc.text('EL INSTITUTO CONFÍA EN QUE LAS REGLAS SIGUIENTES GUIARÁN LOS ACTOS DE SUS EGRESADOS:',
+        startLine, initialHeight + (lineHeight * 8), {maxWidth: lineWidth}, null, 'justify');
+      let totalLines = 9.5;
+      rules.slice(0, 14).forEach((rule, index, array) => {
+        const ruleData = rule.replace('TITULO_DE_GRADO*', this._request.student.career);
+        const linesRule = Math.ceil(ruleData.length / 60);
+        totalLines += 1.5;
+        let y = initialHeight + (lineHeight * totalLines);
+        if (this._changePage(this.HEIGHT - this.MARGIN.BOTTOM, y, y + (lineHeight * linesRule))) {
+          doc.addPage();
+          totalLines = 0;
+          y = initialHeight + (lineHeight * totalLines);
+        }
+        doc.text(ruleData, startLine, y, {lineHeightFactor: 1.35, maxWidth: lineWidth}, null, 'justify');
+        totalLines += linesRule;
+      });
+      return doc;
+    }
+
+    private _changePage(heightPage, startY, endY): boolean {
+      return (startY >= heightPage || endY >= heightPage);
+    }
+
+    private _drawCenterTextWithLineUp(doc, text, y) {
+      const textWidth = doc.getTextWidth(text);
+      doc.rect((this.WIDTH / 2) - (textWidth / 2 + 10), y, textWidth + 20, 0.5, 'F');
+      doc.text(text, (this.WIDTH / 2), y + 5, { align: 'center' });
+    }
+
+    private _drawUnderlineText(doc, text, y, textAlign) {
+      const lineWidth = doc.getTextWidth(text);
+      const align = textAlign.toLowerCase();
+      const lineStart = this._selectStartLineByAlign(align, lineWidth);
+      doc.text(text, align === 'center' ? lineStart + (lineWidth / 2) : lineStart, y, {align: align});
+      doc.rect(align === 'right' ? lineStart - lineWidth : lineStart, y + 1, lineWidth, 0.5, 'F');
+    }
+
+    private _selectStartLineByAlign(align, lineWidth): number {
+      switch (align.toLowerCase()) {
+        case 'left': return this.MARGIN.LEFT;
+        case 'center': return (this.WIDTH / 2) - (lineWidth / 2);
+        case 'right': return this.WIDTH - this.MARGIN.RIGHT;
+        case 'justify': return this.MARGIN.LEFT;
+      }
+    }
+
+    private newDocumentTec(header = true, footer = true): jsPDF {
         const doc = new jsPDF({
             unit: 'mm',
             format: 'letter'
@@ -273,8 +401,12 @@ export class uRequest {
         doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
         doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
         doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
-        this.addHeaderTec(doc);
-        this.addFooterTec(doc);
+        if (header) {
+          this.addHeaderTec(doc);
+        }
+        if (footer) {
+          this.addFooterTec(doc);
+        }
         return doc;
     }
 
@@ -299,7 +431,7 @@ export class uRequest {
         // document.setTextColor(183, 178, 178);
         document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2), 260, { align: 'center' });
         document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01. email: info@ittepic.edu.mx',
-          (this.WIDTH / 2), 265, { align: 'center' });
+            (this.WIDTH / 2), 265, { align: 'center' });
         document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
     }
 

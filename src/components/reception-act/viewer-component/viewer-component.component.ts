@@ -19,7 +19,13 @@ export class ViewerComponentComponent implements OnInit {
   @Input('RequestId') RequestId?: String;
   // tslint:disable-next-line: no-input-rename
   @Input('Phase') _Phase: eRequest;
+  // tslint:disable-next-line: no-input-rename
+  @Input('Title') _Title: String;
+  // tslint:disable-next-line: no-input-rename
+  @Input('Type') Type: String;
   public message: string;
+  public Title: String;
+  public existTitle: boolean;
   private oRequest: uRequest;
   private PHASE: eRequest;
 
@@ -35,18 +41,20 @@ export class ViewerComponentComponent implements OnInit {
 
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
-    this._RequestService.requestUpdate.subscribe(
-      (response: any) => {
-        this.oRequest = new uRequest(response.Request, this.imgService);
-        this.PHASE = <eRequest>response.Phase;
-        this.loadMessage(response.Phase);
-      }
-    );
-    if (typeof (this._Request) !== 'undefined') {
-      this.oRequest = new uRequest(this._Request, this.imgService);
-      this.PHASE = <eRequest>this._Phase;
-      this.loadMessage(<eRequest>this._Phase);
-    }
+    // this._RequestService.requestUpdate.subscribe(
+    //   (response: any) => {
+    //     this.oRequest = new uRequest(response.Request, this.imgService);
+    //     this.PHASE = <eRequest>response.Phase;
+    //     this.loadMessage(response.Phase);
+    //   }
+    // );
+    // if (typeof (this.oRequest) !== 'undefined') {
+    this.oRequest = new uRequest(this._Request, this.imgService);
+    this.PHASE = <eRequest>this._Phase;
+    this.loadMessage(<eRequest>this._Phase);
+    this.existTitle = this._Title !== '';
+    this.Title = this._Title;
+    // }
   }
 
   loadMessage(phase: eRequest): void {
@@ -64,7 +72,7 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.VALIDATED: {
-        this.message = 'Visualizar Petición';
+        this.message = 'Constancia de No Inconveniencia ';
         break;
       }
       case eRequest.RELEASED: {
@@ -79,11 +87,15 @@ export class ViewerComponentComponent implements OnInit {
         this.message = 'Registro de Proyecto';
         break;
       }
+      case eRequest.SENT: {
+        this.message = 'Hoja de Requisitos';
+        break;
+      }
       case eRequest.CAPTURED: {
         this.message = 'Descargar solicitud';
         break;
       }
-      default: {}
+      default: { }
     }
   }
 
@@ -100,6 +112,8 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.VALIDATED: {
+        this.oRequest.setRequest(this._Request);
+        window.open(this.oRequest.noInconvenience().output('bloburl'), '_blank');
         break;
       }
       case eRequest.RELEASED: {
@@ -114,11 +128,15 @@ export class ViewerComponentComponent implements OnInit {
         window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
         break;
       }
+      case eRequest.SENT: {
+        window.open('../../../assets/Requisitos.pdf', '_blank');
+        break;
+      }
       case eRequest.CAPTURED: {
         window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
         break;
       }
-      default: {}
+      default: { }
     }
   }
 }

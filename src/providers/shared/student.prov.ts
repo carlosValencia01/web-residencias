@@ -2,11 +2,18 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Api } from 'src/providers/app/api.prov';
 import { ResponseContentType } from '@angular/http';
-import { Observable } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
+import {tap} from 'rxjs/operators';
 @Injectable()
 export class StudentProvider {
+
+    private _refreshNeeded$ = new Subject<void>();
+
+    get refreshNeeded$() {
+        return this._refreshNeeded$;
+    }
+
     constructor(
         public api: Api,
         private http: HttpClient,
@@ -115,5 +122,34 @@ export class StudentProvider {
     getResource(id: string, resource: string): Observable<Blob> {
         return this.http.get(`${this.api.getURL()}/student/${resource.toLocaleLowerCase()}/${id}`, { responseType: 'blob' });
 
+    }
+
+    getDriveDocuments(studentId : string): Observable<any>  {
+        return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
+    }
+    getFolderId(studentId : String): Observable<any>  {
+        return this.api.get(`student/get/folderid/${studentId}`).pipe(map(res => res.json()));
+    }
+
+    uploadDocumentDrive(id,data): Observable<any> {
+        return this.api.put(`student/document/drive/${id}`, data).pipe(map(res => res.json())).pipe(
+            tap(() => {
+              this._refreshNeeded$.next();
+            })
+          );
+    }
+    
+    getDriveFolderId(studentId : string): Observable<any>  {
+        return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
+    }
+    getPeriodId(studentId : string): Observable<any>  {
+        return this.api.get(`student/get/periodinscription/${studentId}`).pipe(map(res => res.json()));
+    }
+    updateDocumentStatus(id,data): Observable<any> {
+        return this.api.put(`student/document/status/${id}`, data).pipe(map(res => res.json())).pipe(
+            tap(() => {
+                this._refreshNeeded$.next();
+            })
+            );
     }
 }
