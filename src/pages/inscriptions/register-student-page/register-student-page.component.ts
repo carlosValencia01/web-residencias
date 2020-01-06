@@ -9,6 +9,7 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { Router } from '@angular/router';
 import * as jsPDF from 'jspdf';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register-student-page',
@@ -92,13 +93,13 @@ export class RegisterStudentPageComponent implements OnInit {
 
   getFonts() {
     this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
-      this.montserratNormal = base64.toString().split(',')[1];
+        this.montserratNormal = base64.toString().split(',')[1];
     });
 
     this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
-      this.montserratBold = base64.toString().split(',')[1];
+        this.montserratBold = base64.toString().split(',')[1];
     });
-  }
+}
 
   ngOnInit() {
     // Convertir imágenes a base 64 para los reportes
@@ -131,11 +132,11 @@ export class RegisterStudentPageComponent implements OnInit {
       'cp': [this.cp, [Validators.pattern(this.eRCp), Validators.required]],
       'phone': [this.telefono, [Validators.pattern(this.eRTelefono), Validators.required]],
       'etnia': [this.etnia, Validators.required],
-      'typeEtnia': [this.tipoEtnia, Validators.required],
+      'typeEtnia': [this.tipoEtnia],
       'disability': [this.discapacidad, Validators.required],
-      'typeDisability': [this.tipoDiscapacidad, Validators.required],
+      'typeDisability': [this.tipoDiscapacidad],
       'originSchool': [this.escuelaProcedencia, Validators.required],
-      'otherSchool': [this.otraEscuela, Validators.required],
+      'otherSchool': [this.otraEscuela],
       'nameOriginSchool': [this.nombreEP, Validators.required],
       'averageOriginSchool': [this.promedioEP, Validators.required],
       'career': [this.carreraCursar, Validators.required],
@@ -145,19 +146,23 @@ export class RegisterStudentPageComponent implements OnInit {
   }
 
   async onFormSubmit(form: NgForm) {
-    this.loading = true;
-    await this.updateStudent(form, this._idStudent);
+    if(this.registerForm.valid){
+      this.loading=true;
+      await this.updateStudent(form, this._idStudent);
+    } else {
+      Swal.fire('¡Atención!', 'Llenar los campos faltantes.', 'info');
+    }
+    
   }
-
   async updateStudent(data, id) {
-
+    
     await this.inscriptionsProv.updateStudent(data, id).subscribe(res => {
       // Actualizar fullName
       var newFullName = data.firstName + ' ' + data.fatherLastName + ' ' + data.motherLastName;
       this.inscriptionsProv.updateStudent({ fullName: newFullName }, id).subscribe(res => {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Solicitud ...', '');
         this.generatePDF();
-      });
+      });   
     }, err => { });
   }
 
@@ -182,8 +187,57 @@ export class RegisterStudentPageComponent implements OnInit {
       this.apellidoMaterno = this.studentData.motherLastName ? this.studentData.motherLastName : '';
       this.nombre = this.studentData.firstName ? this.studentData.firstName : '';
       this.numeroControl = this.studentData.controlNumber ? this.studentData.controlNumber : '';
-      this.lugarNacimiento = this.studentData.birthPlace ? this.studentData.birthPlace : '';
-      this.estadoCivil = this.studentData.civilStatus ? this.studentData.civilStatus : '';
+      
+      //this.lugarNacimiento = this.studentData.birthPlace ? this.studentData.birthPlace : '';
+      switch(this.studentData.birthPlace){
+        case 1 : {this.lugarNacimiento = "Aguascalientes"; break;}
+        case 2 : {this.lugarNacimiento = "Baja California Norte"; break;}
+        case 3 : {this.lugarNacimiento = "Baja California Sur"; break;}
+        case 4 : {this.lugarNacimiento = "Campeche"; break;}
+        case 5 : {this.lugarNacimiento = "Coahuila"; break;}
+        case 6 : {this.lugarNacimiento = "Colima"; break;}
+        case 7 : {this.lugarNacimiento = "Chiapas"; break;}
+        case 8 : {this.lugarNacimiento = "Chihuahua"; break;}
+        case 9 : {this.lugarNacimiento = "Distrito Federal"; break;}
+        case 10 : {this.lugarNacimiento = "Durango"; break;}
+        case 11 : {this.lugarNacimiento = "Guanajuato"; break;}
+        case 12 : {this.lugarNacimiento = "Guerrero"; break;}
+        case 13 : {this.lugarNacimiento = "Hidalgo"; break;}
+        case 14 : {this.lugarNacimiento = "Jalisco"; break;}
+        case 15 : {this.lugarNacimiento = "Estado de México"; break;}
+        case 16 : {this.lugarNacimiento = "Michoacán"; break;}
+        case 17 : {this.lugarNacimiento = "Morelos"; break;}
+        case 18 : {this.lugarNacimiento = "Nayarit"; break;}
+        case 19 : {this.lugarNacimiento = "Nuevo León"; break;}
+        case 20 : {this.lugarNacimiento = "Oaxaca"; break;}
+        case 21 : {this.lugarNacimiento = "Puebla"; break;}
+        case 22 : {this.lugarNacimiento = "Querétaro"; break;}
+        case 23 : {this.lugarNacimiento = "Quintana Roo"; break;}
+        case 24 : {this.lugarNacimiento = "San Luis Potosí"; break;}
+        case 25 : {this.lugarNacimiento = "Sinaloa"; break;}
+        case 26 : {this.lugarNacimiento = "Sonora"; break;}
+        case 27 : {this.lugarNacimiento = "Tabasco"; break;}
+        case 28 : {this.lugarNacimiento = "Tamaulipas"; break;}
+        case 29 : {this.lugarNacimiento = "Tlaxcala"; break;}
+        case 30 : {this.lugarNacimiento = "Veracruz"; break;}
+        case 31 : {this.lugarNacimiento = "Yucatán"; break;}
+        case 32 : {this.lugarNacimiento = "Zacatecas"; break;}
+        case 33 : {this.lugarNacimiento = "Extranjero"; break;}
+        case 34 : {this.lugarNacimiento = "Extranjero"; break;}
+        default : {this.lugarNacimiento = "Nayarit"; break;}
+      }
+      
+      //this.estadoCivil = this.studentData.civilStatus ? this.studentData.civilStatus : 'Soltero(a)';
+      switch(this.studentData.civilStatus){
+        case "S" : {this.estadoCivil = "Soltero(a)"; break;}
+        case "C" : {this.estadoCivil = "Casado(a)"; break;}
+        case "D" : {this.estadoCivil = "Divorciado(a)"; break;}
+        case "V" : {this.estadoCivil = "Viudo(a)"; break;}
+        case "U" : {this.estadoCivil = "Unión Libre"; break;}
+        case "O" : {this.estadoCivil = "Otro"; break;}
+        default : {this.estadoCivil = "Soltero(a)"; break;}
+      }
+
       this.correoElectronico = this.studentData.email ? this.studentData.email : '';
       this.curp = this.studentData.curp ? this.studentData.curp : '';
       this.nss = this.studentData.nss ? this.studentData.nss : '';
@@ -191,28 +245,75 @@ export class RegisterStudentPageComponent implements OnInit {
       this.calle = this.studentData.street ? this.studentData.street : '';
       this.colonia = this.studentData.suburb ? this.studentData.suburb : '';
       this.ciudad = this.studentData.city ? this.studentData.city : '';
-      this.estado = this.studentData.state ? this.studentData.state : '';
+      
+      //this.estado = this.studentData.state ? this.studentData.state : '';
+      switch(this.studentData.state){
+        case 1 : {this.estado = "Aguascalientes"; break;}
+        case 2 : {this.estado = "Baja California Norte"; break;}
+        case 3 : {this.estado = "Baja California Sur"; break;}
+        case 4 : {this.estado = "Campeche"; break;}
+        case 5 : {this.estado = "Coahuila"; break;}
+        case 6 : {this.estado = "Colima"; break;}
+        case 7 : {this.estado = "Chiapas"; break;}
+        case 8 : {this.estado = "Chihuahua"; break;}
+        case 9 : {this.estado = "Distrito Federal"; break;}
+        case 10 : {this.estado = "Durango"; break;}
+        case 11 : {this.estado = "Guanajuato"; break;}
+        case 12 : {this.estado = "Guerrero"; break;}
+        case 13 : {this.estado = "Hidalgo"; break;}
+        case 14 : {this.estado = "Jalisco"; break;}
+        case 15 : {this.estado = "Estado de México"; break;}
+        case 16 : {this.estado = "Michoacán"; break;}
+        case 17 : {this.estado = "Morelos"; break;}
+        case 18 : {this.estado = "Nayarit"; break;}
+        case 19 : {this.estado = "Nuevo León"; break;}
+        case 20 : {this.estado = "Oaxaca"; break;}
+        case 21 : {this.estado = "Puebla"; break;}
+        case 22 : {this.estado = "Querétaro"; break;}
+        case 23 : {this.estado = "Quintana Roo"; break;}
+        case 24 : {this.estado = "San Luis Potosí"; break;}
+        case 25 : {this.estado = "Sinaloa"; break;}
+        case 26 : {this.estado = "Sonora"; break;}
+        case 27 : {this.estado = "Tabasco"; break;}
+        case 28 : {this.estado = "Tamaulipas"; break;}
+        case 29 : {this.estado = "Tlaxcala"; break;}
+        case 30 : {this.estado = "Veracruz"; break;}
+        case 31 : {this.estado = "Yucatán"; break;}
+        case 32 : {this.estado = "Zacatecas"; break;}
+        case 33 : {this.estado = "Extranjero"; break;}
+        case 34 : {this.estado = "Extranjero"; break;}
+        default : {this.estado = "Nayarit"; break;}
+      }
+
       this.cp = this.studentData.cp ? this.studentData.cp : '';
-      this.telefono = this.studentData.phone ? this.studentData.phone : '';
+
+      var numTelSinGuion = this.studentData.phone.replace(/-/g,'');
+      var numTelSinEspacios = numTelSinGuion.replace(/ /g,'');
+      if(numTelSinEspacios.length == 10){
+        this.telefono = numTelSinEspacios;
+      } else {
+        this.telefono = '';
+      }
+
       this.etnia = this.studentData.etnia ? this.studentData.etnia : 'No';
-      this.tipoEtnia = this.studentData.typeEtnia ? this.studentData.typeEtnia : ' ';
+      this.tipoEtnia = this.studentData.typeEtnia ? this.studentData.typeEtnia : '';
       this.discapacidad = this.studentData.disability ? this.studentData.disability : 'No';
-      this.tipoDiscapacidad = this.studentData.typeDisability ? this.studentData.typeDisability : ' ';
+      this.tipoDiscapacidad = this.studentData.typeDisability ? this.studentData.typeDisability : '';
       // Datos Académicos
-      this.escuelaProcedencia = this.studentData.originSchool ? this.studentData.originSchool : 'CBTIS';
-      this.otraEscuela = this.studentData.otherSchool ? this.studentData.otherSchool : ' ';
+      this.escuelaProcedencia = this.studentData.originSchool != 0 ? this.studentData.originSchool : 'CBTIS';
+      this.otraEscuela = this.studentData.otherSchool ? this.studentData.otherSchool : '';
       this.nombreEP = this.studentData.nameOriginSchool ? this.studentData.nameOriginSchool : '';
       this.promedioEP = this.studentData.averageOriginSchool ? this.studentData.averageOriginSchool : '';
       this.carreraCursar = this.studentData.career ? this.studentData.career : '';
 
       if (this.etnia == 'No') {
-        this.tipoEtnia = ' ';
+        this.tipoEtnia = '';
       }
       if (this.discapacidad == 'No') {
-        this.tipoDiscapacidad = ' ';
+        this.tipoDiscapacidad = '';
       }
       if (this.escuelaProcedencia != 'OTRO') {
-        this.otraEscuela = ' ';
+        this.otraEscuela = '';
       }
       this.obtenerFechaNacimiento(this.curp);
       this.loadStepWizard(this.stepWizard);
@@ -492,11 +593,11 @@ export class RegisterStudentPageComponent implements OnInit {
     this.inscriptionsProv.getActivePeriod().toPromise().then(
       period => {
         if (period.period) {
-          this.activePeriod = period.period;
+          this.activePeriod = period.period;                      
           this.studentProv.getPeriodId(this._idStudent.toString()).toPromise().then(
             per => {
               // console.log(per.student.idPeriodInscription, 'idperrrrr');              
-
+              
               if (!per.student.idPeriodInscription) {
                 this.studentProv.updateStudent(this._idStudent, { idPeriodInscription: this.activePeriod._id }).subscribe(
                   upd => {
@@ -506,7 +607,7 @@ export class RegisterStudentPageComponent implements OnInit {
                   }
                 );;
               }
-            }
+              }
           );
           //first check folderId on Student model
           this.studentProv.getFolderId(this._idStudent).toPromise().then(
@@ -530,9 +631,9 @@ export class RegisterStudentPageComponent implements OnInit {
         }
         else { // no hay periodo activo
           // console.log('444');
-          this.activePeriod = false;
-        }
-      }
+          this.activePeriod = false;  
+        }    
+      }  
     );
   }
 
@@ -617,16 +718,16 @@ export class RegisterStudentPageComponent implements OnInit {
       nameInDrive: this.data.email + '-SOLICITUD.pdf',
       bodyMedia: document,
       folderId: this.folderId,
-      newF: true,
+      newF: true, 
       fileId: ''
     };
-
+    
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-      async updated => {
+      async updated => {        
         const documentInfo2 = {
           doc: {
             filename: updated.name,
-            type: 'DRIVE',
+            type: 'DRIVE',          
             fileIdInDrive: updated.fileId
           },
           status: {
@@ -635,13 +736,13 @@ export class RegisterStudentPageComponent implements OnInit {
             message: 'Se envio por primera vez'
           }
         };
-
+        
         await this.studentProv.uploadDocumentDrive(this.data._id, documentInfo2).subscribe(
           updated => {
-            this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud enviada correctamente.');
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud enviada correctamente.'); 
             if (updated) {
-              this.continue();
-            }
+              this.continue();   
+            }   
           },
           err => {
             console.log(err);
@@ -654,36 +755,39 @@ export class RegisterStudentPageComponent implements OnInit {
     );
   }
 
-
-
-  changeEventEtnia() {
-    if (this.etnia == 'No') {
-      this.tipoEtnia = ' ';
-    }
+  changeEventEtnia(){
     if (this.etnia == 'Si') {
-      this.tipoEtnia = '';
+      this.registerForm.get('typeEtnia').setValidators(Validators.required);
+      this.registerForm.get('typeEtnia').setValue(' ');
     }
-    this.validateForm();
+    if (this.etnia == 'No') {
+      this.registerForm.get('typeEtnia').setValidators(null);
+      this.registerForm.get('typeEtnia').setValue('');
+    }
+    this.registerForm.get('typeEtnia').updateValueAndValidity();
   }
 
-  changeEventDiscapacidad() {
-    if (this.discapacidad == 'No') {
-      this.tipoDiscapacidad = ' ';
-    }
+  changeEventDiscapacidad(){
     if (this.discapacidad == 'Si') {
-      this.tipoDiscapacidad = '';
+      this.registerForm.get('typeDisability').setValidators(Validators.required);
+      this.registerForm.get('typeDisability').setValue('');
     }
-    this.validateForm();
+    if (this.discapacidad == 'No') {
+      this.registerForm.get('typeDisability').setValidators(null);
+      this.registerForm.get('typeDisability').setValue('');
+    }
+    this.registerForm.get('typeDisability').updateValueAndValidity();
   }
 
-  changeEventEProcedencia() {
-    if (this.escuelaProcedencia != 'OTRO') {
-      this.otraEscuela = ' ';
-    }
-    if (this.escuelaProcedencia == 'OTRO') {
-      this.otraEscuela = '';
-    }
-    this.validateForm();
+  changeEventEProcedencia(){
+      if (this.escuelaProcedencia == 'OTRO') {
+        this.registerForm.get('otherSchool').setValidators(Validators.required);
+        this.registerForm.get('otherSchool').setValue('');
+      } else {
+        this.registerForm.get('otherSchool').setValidators(null);
+        this.registerForm.get('otherSchool').setValue('');
+      }
+      this.registerForm.get('otherSchool').updateValueAndValidity();
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {

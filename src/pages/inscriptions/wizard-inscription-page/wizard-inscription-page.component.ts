@@ -82,6 +82,9 @@ export class WizardInscriptionPageComponent implements OnInit {
           //window.location.assign("/profileInscription");
           this.router.navigate(['/profileInscription']);
         }
+        if(this.step > 0 && this.step < 6){
+          this.validateStudent = true;
+        }
       } else {
         console.log("NO Existe Expediente Electrónico");
         // Mostrar wizzard si el semestre es 1, de lo contrario mostrar advertencia.
