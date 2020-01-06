@@ -31,3 +31,15 @@ td {
 button{
     border: solid 2px white;
 }
+
+.div-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.action{
+    width: 25; 
+    height: 25px;
+}

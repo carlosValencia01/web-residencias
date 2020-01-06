@@ -7,17 +7,19 @@
       <form [formGroup]="registerForm" (ngSubmit)="onFormSubmit(registerForm.value)" class="tp-form">
         <mat-accordion>
           <div style="text-align: center; overflow-x:auto;">
-            <mat-expansion-panel>
+            <mat-expansion-panel [expanded]="true">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <strong>DATOS GENERALES</strong>
                 </mat-panel-title>
+                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;">
+                  Completa tus datos generales
+                </mat-panel-description>
               </mat-expansion-panel-header>
-
               <table style="margin: 0 auto; width: 100%;">
                 <tr>
                   <td>
-                    <h6>Número de Contról: <span>{{numeroControl}}</span></h6>
+                    <h6>Número de Control: <span>{{numeroControl}}</span></h6>
                   </td>
                   <td>
                     <h6>Carrera a Cursar: <span>{{carreraCursar}}</span></h6>
@@ -132,6 +134,9 @@
                 <mat-panel-title>
                   <strong>DOMICILIO</strong>
                 </mat-panel-title>
+                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;">
+                  Completa tu domicilio
+                </mat-panel-description>
               </mat-expansion-panel-header>
               <hr>
               <table style="margin: 0 auto; width: 100%;">
@@ -293,6 +298,9 @@
                 <mat-panel-title>
                   <strong>DATOS ACADÉMICOS</strong> 
                 </mat-panel-title>
+                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;">
+                  Completa tus datos académicos
+                </mat-panel-description>
               </mat-expansion-panel-header>
               <table style="margin: 0 auto; width: 100%;">
                 <tr>
@@ -358,7 +366,7 @@
           </div>
           <div class="row justify-content-center mt-3">
             <div>
-              <button type="submit" class="btn btn-success">Continuar</button>
+              <button type="submit" [disabled]='!registerForm.valid' class="btn btn-success">Continuar</button>
             </div>
           </div>
         </mat-accordion>

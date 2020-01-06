@@ -48,6 +48,7 @@
     "jspdf": "~1.5.3",
     "jspdf-autotable": "^3.1.3",
     "mat-file-upload": "^1.0.0",
+    "material-design-icons": "^3.0.1",
     "moment": "^2.24.0",
     "ng-sidebar": "^8.0.0",
     "ng2-validation": "^4.2.0",
