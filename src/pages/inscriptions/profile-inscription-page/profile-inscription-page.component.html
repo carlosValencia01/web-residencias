@@ -17,12 +17,15 @@
 </ng-template>
 
 <div *ngIf="step != 6">
-  <div class="title">
-    <h2>¡ATENCIÓN!</h2>
-  </div>
-  <div class="message">
-    <span>Aún no se han subido los archivos necesarios al expediente para el perfil del alumno.</span><br><br>
-    <span>Acceda al siguiente enlace para hacerlo: </span> <a href="/wizardInscription">Subir archivos</a>
+  <div class="row justify-content-md-center">
+    <div class="col-12 col-lg-8">
+      <div class="title">
+        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+        <h2>¡ATENCIÓN!</h2><br>
+        <span>Aún no se han subido los archivos necesarios al expediente para el perfil del alumno.</span><br><br>
+        <span>Acceda al siguiente enlace para hacerlo: </span> <a href="/wizardInscription">Subir archivos</a>
+      </div>
+    </div>
   </div>
 </div>
 

@@ -66,21 +66,17 @@ img.imgProfile.mat-card-image{
     font-size: 18px;
     padding: 30px;
     font-weight: bold;
-    color: red;
+    color: black;
     background-color: white !important;
     margin: 30px 50px 10px 50px;
+    border-radius: 10px;
 }
 .title > h2 {
     margin: 0;
 }
-.message {
-    justify-content: center;
-    font-size: 18px;
-    padding: 30px;
-    font-weight: bold;
-    color: red;
-    background-color: white !important;
-    margin: 10px 50px 30px 50px;
+
+.title > span {
+    font-weight: lighter;
 }
 
   

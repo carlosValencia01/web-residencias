@@ -59,7 +59,10 @@ export class WizardInscriptionPageComponent implements OnInit {
         }else{
           this.isOkPeriod=2;
         }
+      }, err => {
+        this.isOkPeriod=2;
       }
+      
     );
   }
 
@@ -71,7 +74,7 @@ export class WizardInscriptionPageComponent implements OnInit {
   getStudentData(id) {
     this.inscriptionsProv.getStudent(id).subscribe(res => {
       this.studentData = res.student[0];
-      this.step = this.studentData.stepWizard;
+      this.step = this.studentData.stepWizard ? this.studentData.stepWizard : 0;
       this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
       if(this.studentData.inscriptionStatus){
         // console.log("Existe Expediente Electrónico",this.semesterStudent);
@@ -82,6 +85,9 @@ export class WizardInscriptionPageComponent implements OnInit {
         }else if(this.semesterStudent == 1){
           this.validateStudent = true;
           // console.log(this.validateStudent && this.isOkPeriod === 0 && this.isOpen === 0);
+        }
+        if(this.step > 0 && this.step < 6){
+          this.validateStudent = true;
         }
       } else {
         // console.log("NO Existe Expediente Electrónico");
