@@ -12,8 +12,13 @@
                 <mat-panel-title>
                   <strong>DATOS GENERALES</strong>
                 </mat-panel-title>
-                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;">
+                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;" 
+                *ngIf="!registerForm.get('fatherLastName').valid || !registerForm.get('firstName').valid || !registerForm.get('email').valid || !registerForm.get('birthPlace').valid || !registerForm.get('civilStatus').valid || !registerForm.get('curp').valid || !registerForm.get('nss').valid || !registerForm.get('typeEtnia').valid || !registerForm.get('typeDisability').valid">
                   Completa tus datos generales
+                </mat-panel-description>
+                <mat-panel-description style="color: green; font-style: oblique; font-size: 13px;" 
+                *ngIf="registerForm.get('fatherLastName').valid && registerForm.get('firstName').valid && registerForm.get('email').valid && registerForm.get('birthPlace').valid && registerForm.get('civilStatus').valid && registerForm.get('curp').valid && registerForm.get('nss').valid && registerForm.get('typeEtnia').valid && registerForm.get('typeDisability').valid">
+                  Datos generales completos
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <table style="margin: 0 auto; width: 100%;">
@@ -128,14 +133,72 @@
                   </td>
                 </tr>
               </table>
+              <hr>
+              <table style="margin: 0 auto; width: 100%;">
+                <tr>
+                  <td>
+                    <mat-form-field class="example-full-width" appearance="outline">
+                      <mat-label>¿Perteneces a alguna Etnia?</mat-label>
+                      <select matNativeControl required [(ngModel)]="etnia" formControlName="etnia"
+                        (change)="changeEventEtnia()">
+                        <option value="Si">Si</option>
+                        <option value="No">No</option>
+                      </select>
+                    </mat-form-field>
+                  </td>
+                  <td *ngIf="etnia == 'Si'">
+                    <mat-form-field class="example-full-width" appearance="outline">
+                      <mat-label>¿Cuál?</mat-label>
+                      <input required matInput formControlName="typeEtnia" [errorStateMatcher]="matcher" [(ngModel)]="tipoEtnia"
+                        oninput="this.value = this.value.toUpperCase()">
+                      <mat-error>
+                        <span
+                          *ngIf="!registerForm.get('typeEtnia').valid && registerForm.get('typeEtnia').touched">Ingrese
+                          su
+                          Etnia</span>
+                      </mat-error>
+                    </mat-form-field>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <mat-form-field class="example-full-width" appearance="outline">
+                      <mat-label>Tienes Alguna Discapacidad?</mat-label>
+                      <select matNativeControl required [(ngModel)]="discapacidad" formControlName="disability"
+                        (change)="changeEventDiscapacidad()">
+                        <option value="Si">Si</option>
+                        <option value="No">No</option>
+                      </select>
+                    </mat-form-field>
+                  </td>
+                  <td *ngIf="discapacidad == 'Si'">
+                    <mat-form-field class="example-full-width" appearance="outline">
+                      <mat-label>¿Cuál?</mat-label>
+                      <input required matInput formControlName="typeDisability" [errorStateMatcher]="matcher"
+                        [(ngModel)]="tipoDiscapacidad" oninput="this.value = this.value.toUpperCase()">
+                      <mat-error>
+                        <span
+                          *ngIf="!registerForm.get('typeDisability').valid && registerForm.get('typeDisability').touched">Ingrese
+                          su
+                          Discapacidad</span>
+                      </mat-error>
+                    </mat-form-field>
+                  </td>
+                </tr>
+              </table>
             </mat-expansion-panel>
             <mat-expansion-panel>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <strong>DOMICILIO</strong>
                 </mat-panel-title>
-                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;">
+                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;"
+                *ngIf="registerForm.get('street').invalid || registerForm.get('suburb').invalid || registerForm.get('city').invalid || registerForm.get('state').invalid || registerForm.get('cp').invalid || registerForm.get('phone').invalid">
                   Completa tu domicilio
+                </mat-panel-description>
+                <mat-panel-description style="color: green; font-style: oblique; font-size: 13px;"
+                *ngIf="!registerForm.get('street').invalid && !registerForm.get('suburb').invalid && !registerForm.get('city').invalid && !registerForm.get('state').invalid && !registerForm.get('cp').invalid && !registerForm.get('phone').invalid">
+                Domicilio completo
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <hr>
@@ -239,67 +302,19 @@
                   </td>
                 </tr>
               </table>
-              <hr>
-              <table style="margin: 0 auto; width: 100%;">
-                <tr>
-                  <td>
-                    <mat-form-field class="example-full-width" appearance="outline">
-                      <mat-label>¿Perteneces a alguna Etnia?</mat-label>
-                      <select matNativeControl required [(ngModel)]="etnia" formControlName="etnia"
-                        (change)="changeEventEtnia()">
-                        <option value="Si">Si</option>
-                        <option value="No">No</option>
-                      </select>
-                    </mat-form-field>
-                  </td>
-                  <td *ngIf="etnia == 'Si'">
-                    <mat-form-field class="example-full-width" appearance="outline">
-                      <mat-label>¿Cuál?</mat-label>
-                      <input required matInput formControlName="typeEtnia" [errorStateMatcher]="matcher" [(ngModel)]="tipoEtnia"
-                        oninput="this.value = this.value.toUpperCase()">
-                      <mat-error>
-                        <span
-                          *ngIf="!registerForm.get('typeEtnia').valid && registerForm.get('typeEtnia').touched">Ingrese
-                          su
-                          Etnia</span>
-                      </mat-error>
-                    </mat-form-field>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <mat-form-field class="example-full-width" appearance="outline">
-                      <mat-label>Tienes Alguna Discapacidad?</mat-label>
-                      <select matNativeControl required [(ngModel)]="discapacidad" formControlName="disability"
-                        (change)="changeEventDiscapacidad()">
-                        <option value="Si">Si</option>
-                        <option value="No">No</option>
-                      </select>
-                    </mat-form-field>
-                  </td>
-                  <td *ngIf="discapacidad == 'Si'">
-                    <mat-form-field class="example-full-width" appearance="outline">
-                      <mat-label>¿Cuál?</mat-label>
-                      <input required matInput formControlName="typeDisability" [errorStateMatcher]="matcher"
-                        [(ngModel)]="tipoDiscapacidad" oninput="this.value = this.value.toUpperCase()">
-                      <mat-error>
-                        <span
-                          *ngIf="!registerForm.get('typeDisability').valid && registerForm.get('typeDisability').touched">Ingrese
-                          su
-                          Discapacidad</span>
-                      </mat-error>
-                    </mat-form-field>
-                  </td>
-                </tr>
-              </table>
             </mat-expansion-panel>
             <mat-expansion-panel>
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <strong>DATOS ACADÉMICOS</strong> 
                 </mat-panel-title>
-                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;">
+                <mat-panel-description style="color: red; font-style: oblique; font-size: 13px;"
+                *ngIf="registerForm.get('originSchool').invalid || registerForm.get('otherSchool').invalid || registerForm.get('nameOriginSchool').invalid || registerForm.get('averageOriginSchool').invalid">
                   Completa tus datos académicos
+                </mat-panel-description>
+                <mat-panel-description style="color: green; font-style: oblique; font-size: 13px;"
+                *ngIf="!registerForm.get('originSchool').invalid && !registerForm.get('otherSchool').invalid && !registerForm.get('nameOriginSchool').invalid && !registerForm.get('averageOriginSchool').invalid">
+                  Datos académicos completos
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <table style="margin: 0 auto; width: 100%;">

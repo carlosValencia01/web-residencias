@@ -73,7 +73,7 @@ export class StudentPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     private routeActive: ActivatedRoute,
-    private inscriptionProv : InscriptionsProvider
+    private inscriptionProv: InscriptionsProvider
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
@@ -164,38 +164,20 @@ export class StudentPageComponent implements OnInit {
   }
 
   showFormValues(student) {
+    this.isNewStudent = false;
+    this.showImg = false;
+    this.currentStudent = JSON.parse(JSON.stringify(student));
+    this.imgForSend = false;
+    // console.log(student);
+    this.getDocuments(student._id);
 
-    this.studentProv.verifyStatus(student.controlNumber)
-      .subscribe(res => {
-        this.haveSubjects = res.status === 1 ? true : false;
-        if (this.haveSubjects) {
-          this.isNewStudent = false;
-          this.showImg = false;
-          this.currentStudent = JSON.parse(JSON.stringify(student));
-          this.imgForSend = false;
-          // console.log(student);
-          this.getDocuments(student._id);
-          
-          // this.getImageFromService(student._id);
+    // this.getImageFromService(student._id);
 
-          this.formStudent.get('fullNameInput').setValue(student.fullName);
-          this.formStudent.get('numberControlInput').setValue(student.controlNumber);
-          this.formStudent.get('nssInput').setValue(student.nss);
+    this.formStudent.get('fullNameInput').setValue(student.fullName);
+    this.formStudent.get('numberControlInput').setValue(student.controlNumber);
+    this.formStudent.get('nssInput').setValue(student.nss);
 
-          this.showForm = true;
-        } else {
-          this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-        }
-      }, error => {
-        if (error.status === 401) {
-          this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-        } else {
-          this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
-        }
-        this.loading = false;
-      }, () => this.loading = false);
-
-
+    this.showForm = true;
   }
 
   // Generacion de PDF *************************************************************************************//#endregion
@@ -251,16 +233,16 @@ export class StudentPageComponent implements OnInit {
       this.studentProv.verifyStatus(student.controlNumber)
         .subscribe(async res => {
           this.haveSubjects = res.status === 1 ? true : false;
-          if (this.haveSubjects) {            
-            await this.getDocuments(student._id);            
-            
+          if (this.haveSubjects) {
+            await this.getDocuments(student._id);
+
             if (this.photoStudent !== '' && this.photoStudent !== 'assets/imgs/studentAvatar.png') {
               const doc = new jsPDF({
                 unit: 'mm',
                 format: [251, 158], // Medidas correctas: [88.6, 56]
                 orientation: 'landscape'
               });
-              
+
               // cara frontal de la credencial
               doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
               doc.addImage(this.photoStudent, 'PNG', 3.6, 7.1, 25.8, 31);
@@ -501,42 +483,42 @@ export class StudentPageComponent implements OnInit {
     }, () => this.loading = false);
   }
 
-  async getDocuments(id){
-    this.photoStudent='';
+  async getDocuments(id) {
+    this.photoStudent = '';
     this.imageDoc = null;
-    this.showImg=false;
+    this.showImg = false;
 
     // console.log('1')
     await this.studentProv.getDriveDocuments(id).toPromise().then(
-      async docs=>{
-        let documents = docs.documents;     
-        if(documents){
+      async docs => {
+        let documents = docs.documents;
+        if (documents) {
 
-          this.imageDoc = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0];        
-          this.showImg=true;
-          if(this.imageDoc){
+          this.imageDoc = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0];
+          this.showImg = true;
+          if (this.imageDoc) {
             // console.log('2');
-            
-            await this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).toPromise().then(
-              succss=>{
-                this.showImg=true;
+
+            await this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive, this.imageDoc.filename).toPromise().then(
+              succss => {
+                this.showImg = true;
                 // console.log('3');
-                
+
                 this.photoStudent = 'data:image/png;base64,' + succss.file;
               },
-              err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
+              err => { this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg = true; }
             );
-        }
-        }else{
+          }
+        } else {
           // console.log('1');
-          
+
           // this.loading = false
           this.photoStudent = 'assets/imgs/studentAvatar.png';
-          this.showImg=true;
+          this.showImg = true;
         }
       }
     );
     // console.log('4');
-    
+
   }
 }
