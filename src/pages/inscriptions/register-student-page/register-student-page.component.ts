@@ -302,7 +302,7 @@ export class RegisterStudentPageComponent implements OnInit {
       // Datos Académicos
       this.escuelaProcedencia = this.studentData.originSchool != 0 ? this.studentData.originSchool : 'CBTIS';
       this.otraEscuela = this.studentData.otherSchool ? this.studentData.otherSchool : '';
-      this.nombreEP = this.studentData.nameOriginSchool ? this.studentData.nameOriginSchool : '';
+      this.nombreEP = this.studentData.nameOriginSchool != 'ACTUALIZA EL NOMBRE DE TU ESCUELA' ? this.studentData.nameOriginSchool : '';
       this.promedioEP = this.studentData.averageOriginSchool ? this.studentData.averageOriginSchool : '';
       this.carreraCursar = this.studentData.career ? this.studentData.career : '';
 
@@ -758,7 +758,7 @@ export class RegisterStudentPageComponent implements OnInit {
   changeEventEtnia(){
     if (this.etnia == 'Si') {
       this.registerForm.get('typeEtnia').setValidators(Validators.required);
-      this.registerForm.get('typeEtnia').setValue(' ');
+      this.registerForm.get('typeEtnia').setValue('');
     }
     if (this.etnia == 'No') {
       this.registerForm.get('typeEtnia').setValidators(null);
