@@ -31,6 +31,7 @@ export class LoginPageComponent implements OnInit {
   showAlertDiv = false;
   messageAlertDiv = '';
   datos;
+  user: any;
 
   constructor(
     public formBuilder: FormBuilder,
@@ -41,17 +42,10 @@ export class LoginPageComponent implements OnInit {
     private router: Router,
     public dialog: MatDialog,
     private currentPositionService: CurrentPositionService
-  ) {
-    
-   }
+  ) { }
 
   ngOnInit() {
     this.initializeForm();
-    this.currentPositionService.changedPosition.subscribe(position => {
-      if (position) {
-        this.datos = position.name;
-      }
-    });
   }
 
   initializeForm() {
@@ -84,8 +78,9 @@ export class LoginPageComponent implements OnInit {
 
           this.userProv.sendTokenFromAPI(res.token);
 
-          if (res.role === 'ESTUDIANTE') {
+          if (res.user.rol.name.toUpperCase() === 'ESTUDIANTE') {
             this.loginIsSuccessful(res);
+            return;
           }
 
           let positions;
@@ -124,9 +119,10 @@ export class LoginPageComponent implements OnInit {
   }
 
   private loginIsSuccessful(res, position?) {
-    this.currentPositionService.setCurrentPosition(position);
-
-    res.user.position = position._id;
+    if (position) {
+      this.currentPositionService.setCurrentPosition(position);
+      res.user.position = position._id;
+    }
     this.cookiesServ.saveData(res);
     this.showAlertDiv = false;
     this.loginSuccessful.emit();
