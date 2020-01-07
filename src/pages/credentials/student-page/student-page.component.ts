@@ -494,8 +494,11 @@ export class StudentPageComponent implements OnInit {
         let documents = docs.documents;
         if (documents) {
 
-          this.imageDoc = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0];
+          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1)[0];
           this.showImg = true;
+          //console.log(this.imageDoc);
+          //console.log(this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length));
+          
           if (this.imageDoc) {
             // console.log('2');
 
@@ -503,8 +506,8 @@ export class StudentPageComponent implements OnInit {
               succss => {
                 this.showImg = true;
                 // console.log('3');
-
-                this.photoStudent = 'data:image/png;base64,' + succss.file;
+                const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
+                this.photoStudent = `data:image/${extension};base64, ${succss.file}`;
               },
               err => { this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg = true; }
             );
