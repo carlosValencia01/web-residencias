@@ -330,7 +330,7 @@ export class OneStudentPageComponent implements OnInit {
     this.studentProv.getDriveDocuments(this.data._id).subscribe(
       docs=>{
         let documents = docs.documents;              
-        this.imageDoc = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0];     
+        this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1)[0];
         console.log(
           '2'
         );
@@ -340,7 +340,8 @@ export class OneStudentPageComponent implements OnInit {
           this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
             succss=>{
               this.showImg=true;
-              this.photoStudent = 'data:image/png;base64,' + succss.file;
+              const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
+              this.photoStudent = `data:image/${extension};base64, ${succss.file}`;
             },
             err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
           );
