@@ -137,5 +137,8 @@ export class LoginPageComponent implements OnInit {
       );
     });
   }
+  viewVideo(){
+    window.open('https://drive.google.com/file/d/1QlVOPP6_wy89Ld7sJsDKFNNH6gMn3V-B/view?usp=sharing');
+  }
 
 }

@@ -507,7 +507,7 @@ export class StudentPageComponent implements OnInit {
                 this.showImg = true;
                 // console.log('3');
                 const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
-                this.photoStudent = `data:image/${extension};base64, ${succss.file}`;
+                this.photoStudent = "data:image/"+extension+";base64,"+succss.file;
               },
               err => { this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg = true; }
             );
