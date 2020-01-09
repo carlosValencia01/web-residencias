@@ -36,7 +36,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Primer Apellido</mat-label>
-                      <input required matInput formControlName="fatherLastName" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="fatherLastName" [(ngModel)]="apellidoPaterno" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span
@@ -48,7 +48,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Segundo Apellido</mat-label>
-                      <input matInput formControlName="motherLastName" [errorStateMatcher]="matcher"
+                      <input matInput formControlName="motherLastName" [(ngModel)]="apellidoMaterno" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span
@@ -60,7 +60,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Nombre(s)</mat-label>
-                      <input required matInput formControlName="firstName" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="firstName" [(ngModel)]="nombre" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span
@@ -86,7 +86,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Lugar de Nacimiento</mat-label>
-                      <input required matInput formControlName="birthPlace" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="birthPlace" [(ngModel)]="lugarNacimiento" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span
@@ -113,7 +113,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>CURP</mat-label>
-                      <input required matInput formControlName="curp" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="curp" [(ngModel)]="curp" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span *ngIf="!registerForm.get('curp').valid && registerForm.get('curp').touched">Ingrese CURP
@@ -124,12 +124,17 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>NSS (Número de Seguro Social)</mat-label>
-                      <input required matInput formControlName="nss" [errorStateMatcher]="matcher">
+                      <input required matInput formControlName="nss" [(ngModel)]="nss" [errorStateMatcher]="matcher">
                       <mat-error>
                         <span *ngIf="!registerForm.get('nss').valid && registerForm.get('nss').touched">Ingrese NSS
                           Válido</span>
                       </mat-error>
                     </mat-form-field>
+                  </td>
+                  <td>
+                      <div class="col-1" ngbTooltip="Consultar NSS" style="cursor:pointer;">
+                        <mat-icon (click)="getNSS()" class="help">help</mat-icon>
+                      </div>
                   </td>
                 </tr>
               </table>
@@ -149,7 +154,7 @@
                   <td *ngIf="etnia == 'Si'">
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>¿Cuál?</mat-label>
-                      <input required matInput formControlName="typeEtnia" [errorStateMatcher]="matcher" [(ngModel)]="tipoEtnia"
+                      <input required matInput formControlName="typeEtnia" [(ngModel)]="tipoEtnia" [errorStateMatcher]="matcher" [(ngModel)]="tipoEtnia"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span
@@ -174,7 +179,7 @@
                   <td *ngIf="discapacidad == 'Si'">
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>¿Cuál?</mat-label>
-                      <input required matInput formControlName="typeDisability" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="typeDisability" [(ngModel)]="tipoDiscapacidad" [errorStateMatcher]="matcher"
                         [(ngModel)]="tipoDiscapacidad" oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span
@@ -207,7 +212,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Calle</mat-label>
-                      <input required matInput formControlName="street" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="street" [(ngModel)]="calle" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span *ngIf="!registerForm.get('street').valid && registerForm.get('street').touched">Ingrese su
@@ -218,7 +223,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Colonia</mat-label>
-                      <input required matInput formControlName="suburb" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="suburb" [(ngModel)]="colonia" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span *ngIf="!registerForm.get('suburb').valid && registerForm.get('suburb').touched">Ingrese su
@@ -229,7 +234,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Ciudad</mat-label>
-                      <input required matInput formControlName="city" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="city" [(ngModel)]="ciudad" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span *ngIf="!registerForm.get('city').valid && registerForm.get('city').touched">Ingrese su
@@ -282,7 +287,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Código Postal</mat-label>
-                      <input required matInput formControlName="cp" [errorStateMatcher]="matcher">
+                      <input required matInput formControlName="cp" [(ngModel)]="cp" [errorStateMatcher]="matcher">
                       <mat-error>
                         <span *ngIf="!registerForm.get('cp').valid && registerForm.get('cp').touched">Ingrese Código
                           Postal Válido</span>
@@ -292,7 +297,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Teléfono Ej. 3111234567</mat-label>
-                      <input required matInput formControlName="phone" [errorStateMatcher]="matcher">
+                      <input required matInput formControlName="phone" [(ngModel)]="telefono" [errorStateMatcher]="matcher">
                       <mat-error>
                         <span *ngIf="!registerForm.get('phone').valid && registerForm.get('phone').touched">Ingrese
                           Número
@@ -339,7 +344,7 @@
                   <td *ngIf="escuelaProcedencia == 'OTRO'">
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Especifique</mat-label>
-                      <input required matInput formControlName="otherSchool" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="otherSchool" [(ngModel)]="otraEscuela" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span
@@ -353,7 +358,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Nombre de la Escuela</mat-label>
-                      <input required matInput formControlName="nameOriginSchool" [errorStateMatcher]="matcher"
+                      <input required matInput formControlName="nameOriginSchool" [(ngModel)]="nombreEP" [errorStateMatcher]="matcher"
                         oninput="this.value = this.value.toUpperCase()">
                       <mat-error>
                         <span
@@ -366,7 +371,7 @@
                   <td>
                     <mat-form-field class="example-full-width" appearance="outline">
                       <mat-label>Promedio</mat-label>
-                      <input required matInput formControlName="averageOriginSchool" [errorStateMatcher]="matcher">
+                      <input required matInput formControlName="averageOriginSchool" [(ngModel)]="promedioEP" [errorStateMatcher]="matcher">
                       <mat-error>
                         <span
                           *ngIf="!registerForm.get('averageOriginSchool').valid && registerForm.get('averageOriginSchool').touched">Ingrese

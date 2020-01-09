@@ -617,5 +617,4 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       confirmButtonText: 'Aceptar'
     }).then((result) => { });
   }
-
 }
