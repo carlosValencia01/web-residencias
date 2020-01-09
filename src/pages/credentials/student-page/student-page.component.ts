@@ -148,12 +148,12 @@ export class StudentPageComponent implements OnInit {
     };
 
     this.studentProv.newStudent(data).subscribe(res => {
-      if (this.imgForSend) {
-        this.uploadFile(this.currentStudent._id, false);
-      } else {
-        this.showForm = true;
-        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno agregado correctamente', '');
-      }
+      // if (this.imgForSend) {
+      //   this.uploadFile(this.currentStudent._id, false);
+      // } else {
+      //   this.showForm = true;
+      // }
+      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno agregado correctamente', '');
       const student: any = res;
 
       this.currentStudent = student;
@@ -351,15 +351,15 @@ export class StudentPageComponent implements OnInit {
 
       this.loading = true;
       this.studentProv.updateStudent(this.currentStudent._id, this.currentStudent).subscribe(res => {
-        if (this.imgForSend) {
-          this.uploadFile(this.currentStudent._id, false);
-        } else {
-          this.showForm = true;
-          if (this.search) {
-            this.searchStudent(true);
-          }
-          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno actualizado correctamente', '');
-        }
+        // if (this.imgForSend) {
+        //   this.uploadFile(this.currentStudent._id, false);
+        // } else {
+        //   this.showForm = true;
+        //   if (this.search) {
+        //     this.searchStudent(true);
+        //   }
+        // }
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno actualizado correctamente', '');
       }, error => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
       }, () => this.loading = false);
@@ -398,9 +398,7 @@ export class StudentPageComponent implements OnInit {
         this.photoStudent = this.croppedImageBase64;
         this.imgForSend = true;
 
-        const showForm = this.isNewStudent;
-
-        this.uploadFile(this.currentStudent._id, showForm);
+        this.uploadFile();
         event.target.value = '';
       }, (reason) => {
         event.target.value = '';
@@ -409,6 +407,7 @@ export class StudentPageComponent implements OnInit {
       });
     }
   }
+  
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
@@ -432,24 +431,74 @@ export class StudentPageComponent implements OnInit {
     });
   }
 
-  uploadFile(id, showForm) {
-    const fd = new FormData();
-    fd.append('image', this.croppedImage);
+  async uploadFile() {      
     this.loading = true;
-    this.studentProv.updatePhoto(id, fd).subscribe(res => {
-      const student: any = res;
-      this.currentStudent = student.student;
-
-      this.imgForSend = false;
-      this.showForm = showForm;
-      if (this.search) {
-        this.searchStudent(true);
-      }
-      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Fotografía actualizada correctamente', '');
-      this.haveImage = true;
-    }, error => {
-      this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
-    }, () => this.loading = false);
+    var folderId = await this.getFolderId(this.currentStudent._id);    
+    
+    // console.log('upload');
+    const red = new FileReader;
+       
+            // console.log(this.folderId,'folder student exists');
+            red.addEventListener('load', () => {
+              // console.log(red.result);
+              let file = { mimeType: this.selectedFile.type, nameInDrive: this.currentStudent.controlNumber + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
+        
+              this.inscriptionProv.uploadFile2(file).subscribe(
+                resp => {
+                  if (resp.action == 'create file') {
+        
+                    const documentInfo = {
+        
+                      doc: {
+                        filename: resp.name,
+                        type: 'DRIVE',
+                        fileIdInDrive: resp.fileId
+                      },
+                      status: {
+                        name: 'EN PROCESO',
+                        active: true,
+                        message: 'Se subio foto de credencial por primera vez'
+                      }
+                    };
+                    this.studentProv.uploadDocumentDrive(this.currentStudent._id, documentInfo).subscribe(
+                      updated => {
+                        this.notificationServ.showNotification(eNotificationType.SUCCESS,
+                          'Exito', 'Foto cargada correctamente.');
+        
+                      },
+                      err => {
+                        console.log(err);
+        
+                      }, () => this.loading = false
+                    );
+                  } else {
+        
+                    const documentInfo = {
+                      filename: resp.filename,
+                      status: {
+                        name: 'EN PROCESO',
+                        active: true,
+                        message: 'Se actualizo foto de credencial'
+                      }
+                    };
+                    this.studentProv.updateDocumentStatus(this.currentStudent._id, documentInfo).subscribe(
+                      res => {
+                        this.notificationServ.showNotification(eNotificationType.SUCCESS,
+                          'Exito', 'Foto actualizada correctamente.');
+                      },
+                      err => console.log(err)
+                    );
+                  }
+                  this.loading = false;
+                },
+                err => {
+                  console.log(err); this.loading = false;
+                }
+              )
+            }, false);
+            red.readAsDataURL(this.croppedImage);
+         
+    
   }
 
   // Zona de test *********************************************************************************************//#region
@@ -494,7 +543,7 @@ export class StudentPageComponent implements OnInit {
         let documents = docs.documents;
         if (documents) {
 
-          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1)[0];
+          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];
           this.showImg = true;
           //console.log(this.imageDoc);
           //console.log(this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length));
@@ -523,5 +572,105 @@ export class StudentPageComponent implements OnInit {
     );
     // console.log('4');
 
+  }
+
+  async getFolderId(id){  
+    
+    var folderId='';
+    await this.inscriptionProv.getActivePeriod().toPromise().then(
+     async period=>{
+        if(period.period){          
+        
+          this.studentProv.getPeriodId(id).toPromise().then(
+            per=>{
+              // console.log(per.student.idPeriodInscription, 'idperrrrr');              
+              if(!per.student.idPeriodInscription){
+                this.studentProv.updateStudent(id,{idPeriodInscription:period.period._id});
+              }
+            }
+          );
+          //first check folderId on Student model
+         await this.studentProv.getFolderId(id).toPromise().then(
+           async student=>{
+              if(student.folder){// folder exists
+                if(student.folder.idFolderInDrive){
+                  folderId = student.folder.idFolderInDrive;
+                  // console.log(this.folderId,'folder student exists');                     
+                }                       
+              } else{
+                // console.log('333');
+             folderId = await  this.createFolder(period.period);}
+                
+            });
+        }
+        else{ // no hay periodo activo
+          // console.log('444');
+          
+        }    
+      }  
+    );
+    return folderId;
+  }
+  async createFolder(period){
+    let folderStudentName = this.currentStudent.controlNumber +' - '+ this.currentStudent.fullName;
+    var foldersByPeriod,folderId;
+    await this.inscriptionProv.getFoldersByPeriod(period._id,1).toPromise().then(
+      async (folders)=>{
+        // console.log(folders,'folderss');
+        
+        foldersByPeriod=folders.folders;                                     
+        let folderPeriod = foldersByPeriod.filter( folder=> folder.name.indexOf(period.periodName) !==-1);
+
+        // 1 check career folder
+        let folderCareer = foldersByPeriod.filter( folder=> folder.name === this.currentStudent.career);
+        // let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
+
+        if(folderCareer.length===0){
+          // console.log('1');
+          
+         await this.inscriptionProv.createSubFolder(this.currentStudent.career,period._id,folderPeriod[0].idFolderInDrive,1).toPromise().then(
+           async career=>{
+              // console.log('2');
+              
+              // student folder doesn't exists then create new folder
+             await this.inscriptionProv.createSubFolder(folderStudentName,period._id,career.folder.idFolderInDrive,1).toPromise().then(
+                studentF=>{
+                  folderId = studentF.folder.idFolderInDrive;                 
+                  // console.log('3');
+                  
+                  this.studentProv.updateStudent(this.currentStudent._id,{folderId:studentF.folder._id}).toPromise().then(res=>{},err=>{});
+                },
+                err=>{
+                }
+              );
+            },
+            err=>{
+            }
+          );
+        }else{
+           await this.inscriptionProv.createSubFolder(folderStudentName,period._id,folderCareer[0].idFolderInDrive,1).toPromise().then(
+              studentF=>{
+                folderId = studentF.folder.idFolderInDrive;   
+                // console.log('3.1');
+                
+                this.studentProv.updateStudent(this.currentStudent._id,{folderId:studentF.folder._id}).toPromise().then(
+                  upd=>{
+                    
+                    
+                  },
+                  err=>{
+                  }
+                );
+                
+              },
+              err=>{
+              }
+            );         
+        }
+      },
+      err=>{
+      }
+    );
+    return folderId;
   }
 }

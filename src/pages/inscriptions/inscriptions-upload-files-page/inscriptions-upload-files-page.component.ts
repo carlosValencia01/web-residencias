@@ -403,7 +403,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     const red = new FileReader;
     red.addEventListener('load', () => {
       // console.log(red.result);
-      let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.' + this.selectedFile.type.substr(6, this.selectedFile.type.length - 1), bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
+      let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg' , bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
 
       this.inscriptionsProv.uploadFile2(file).subscribe(
         resp => {
