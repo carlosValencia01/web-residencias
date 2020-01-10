@@ -23,6 +23,7 @@ import * as JsBarcode from 'jsbarcode';
 export class SecretaryInscriptionPageComponent implements OnInit {
   students;
   listStudents;
+  listStudentsLogged;
   periods = [];
   loading = false;
 
@@ -35,6 +36,15 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   credentialStudents;
   frontBase64: any;
   backBase64: any;
+
+  // Imagenes para Reportes
+  public logoTecNM: any;
+  public logoSep: any;
+  public logoTecTepic: any;
+
+  //Font Montserrat
+  montserratNormal: any;
+  montserratBold: any;
 
 
   // filter nc,nombre
@@ -75,14 +85,34 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+    this.getFonts();
     this.getStudents();
     this.getPeriods();
     this.getBase64ForStaticImages();
 
   }
 
+  getFonts() {
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
+        this.montserratNormal = base64.toString().split(',')[1];
+    });
+
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
+        this.montserratBold = base64.toString().split(',')[1];
+    });
+}
+
   ngOnInit() {
-    
+    // Convertir imágenes a base 64 para los reportes
+    this.imageToBase64Serv.getBase64('assets/imgs/logoTecNM.png').then(res1 => {
+      this.logoTecNM = res1;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
+      this.logoSep = res2;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
+      this.logoTecTepic = res3;
+    });
   }
 
   getStudents(){
@@ -91,14 +121,20 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
       // Ordenar Alumnos por Apellidos
       this.students.sort(function (a, b) {
-        return a.fullName.localeCompare(b.fullName);
+        return a.fatherLastName.localeCompare(b.fatherLastName);
       });
-
       this.listStudents = this.students;
+      console.log(this.listStudents);
       this.listCovers = this.listStudents;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
       
       //console.log(this.listStudents);
+    });
+    this.inscriptionsProv.getStudentsLogged().subscribe(res => {
+      this.listStudentsLogged = res.students;
+      this.listStudentsLogged.sort(function (a, b) {
+        return a.fatherLastName.localeCompare(b.fatherLastName);
+      });
     });
   }
 
@@ -561,6 +597,18 @@ export class SecretaryInscriptionPageComponent implements OnInit {
                 doc.addPage();
                 doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
 
+                // Agregar años a la credencial
+                const year = new Date();
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(4);
+                doc.setFont('helvetica');
+                doc.setFontType('bold');
+                doc.text(9.5, 41.3,year.getFullYear()+'');
+                doc.text(16.5, 41.3,(year.getFullYear()+1)+'');
+                doc.text(23.5, 41.3,(year.getFullYear()+2)+'');
+                doc.text(30.5, 41.3,(year.getFullYear()+3)+'');
+                doc.text(37.5, 41.3,(year.getFullYear()+4)+'');
+
                 // Numero de control con codigo de barra
                 doc.addImage(this.textToBase64Barcode(this.credentialStudents[i].controlNumber ? this.credentialStudents[i].controlNumber : ''), 'PNG', 46.8, 39.2, 33, 12);
                 doc.setTextColor(0, 0, 0);
@@ -626,7 +674,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.frontBase64 = res1;
     });
 
-    this.imageToBase64Serv.getBase64('assets/imgs/back2.jpg').then(res2 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/back3.jpg').then(res2 => {
       this.backBase64 = res2;
     });
   }
@@ -680,4 +728,252 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     });
   }
 
+  updateSolicitud(student){
+    var day = student.curp.substring(8, 10);
+    var month = student.curp.substring(6, 8);
+    var year = student.curp.substring(4, 6);
+    var fechaNacimiento = day + "/" + month + "/" + year;
+
+    const doc = new jsPDF();
+
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+    // Header
+    var pageHeight = doc.internal.pageSize.height;
+    var pageWidth = doc.internal.pageSize.width;
+
+    doc.addImage(this.logoSep, 'PNG', 5, 5, 74, 15); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth - 47, 2, 39, 17); // Logo TecNM
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(15);
+    doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(13);
+    doc.text("Solicitud de Inscripción", pageWidth / 2, 37, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(13);
+    doc.text("Código: ITT-POE-01-02      Revisión: 0", pageWidth / 2, 42, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(13);
+    doc.text("Referencia a la Norma ISO 9001-2015:    8.2.2, 8.2.3, 8.2.1, 8.5.2", pageWidth / 2, 47, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(15);
+    doc.text("SOLICITUD DE INSCRIPCIÓN", pageWidth / 2, 60, 'center');
+
+    // Cuadro 1
+    doc.setDrawColor(0);
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 65, 190, 10, 'f');
+
+    doc.setDrawColor(0);
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 75, 190, 45, 'f');
+
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text(15, 72, 'Datos Generales');
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Nombre: ', 15, 80);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.fatherLastName + ' ' + student.motherLastName + ' ' + student.firstName, 70, 80);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Lugar de nacimiento: ', 15, 85);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.birthPlace, 70, 85);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Fecha de nacimiento: ', 15, 90);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(fechaNacimiento, 70, 90);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Estado Civil: ', 15, 95);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.civilStatus, 70, 95);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Correo Electrónico: ', 15, 100);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.email, 70, 100);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('CURP: ', 15, 105);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.curp, 70, 105);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('NSS: ', 15, 110);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.nss, 70, 110);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Número de control: ', 15, 115);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.controlNumber, 70, 115);
+
+    // Cuadro 2
+    doc.setDrawColor(0);
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 125, 190, 10, 'f');
+
+    doc.setDrawColor(0);
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 135, 190, 35, 'f');
+
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text(15, 132, 'Dirección');
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Calle: ', 15, 140);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.street, 70, 140);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Colonia: ', 15, 145);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.suburb, 70, 145);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Ciudad: ', 15, 150);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.city, 70, 150);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Estado: ', 15, 155);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.state, 70, 155);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Código Postal: ', 15, 160);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.cp + '', 70, 160);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Teléfono: ', 15, 165);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.phone + '', 70, 165);
+
+    // Cuadro 3
+    doc.setDrawColor(0);
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 175, 190, 10, 'f');
+
+    doc.setDrawColor(0);
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 185, 190, 25, 'f');
+
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text(15, 182, 'Datos académicos');
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Escuela de procedencia: ', 15, 190);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(9);
+    doc.text(student.originSchool + ': ' + student.nameOriginSchool, 70, 190);
+
+    doc.setFontSize(12);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Otra: ', 15, 195);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.otherSchool, 70, 195);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Promedio: ', 15, 200);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.averageOriginSchool + '', 70, 200);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Carrera a cursar: ', 15, 205);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.career, 70, 205);
+
+    // Cuadro 4
+    doc.setDrawColor(0);
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 215, 190, 10, 'f');
+
+    doc.setDrawColor(0);
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 225, 190, 25, 'f');
+
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text(15, 222, 'Datos extras');
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('¿Perteneces a alguna Etnia? ', 15, 230);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.etnia, 85, 230);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('¿Cuál?', 15, 235);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.typeEtnia, 85, 235);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('¿Tienes alguna discapacidad? ', 15, 240);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.disability, 85, 240);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('¿Cuál?', 15, 245);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.typeDisability, 85, 245);
+
+    doc.line((pageWidth / 2)-35, 270, (pageWidth / 2)+35, 270);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Firma del Estudiante", pageWidth / 2, 280, 'center');
+
+    let document = doc.output('arraybuffer');
+    let binary = this.bufferToBase64(document);
+
+    console.log(binary);
+    window.open(doc.output('bloburl'), '_blank');
+
+    //this.updateDocument(binary);
+  }
+
+  bufferToBase64(buffer) {
+    return btoa(new Uint8Array(buffer).reduce((data, byte) => {
+      return data + String.fromCharCode(byte);
+    }, ''));
+  }
+
+  updateDocument(document){
+
+  }
+
+  
 }

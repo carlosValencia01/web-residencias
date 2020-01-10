@@ -494,7 +494,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
       const currentDate = new Date();
       const img = new Image();
-      img.src = 'src/assets/imgs/CartaCompromiso.png';
+      img.src = 'assets/imgs/CartaCompromiso.png';
       const doc = new jsPDF();
 
       doc.addImage(img, 'jpg', 0, 0, 200, 295);

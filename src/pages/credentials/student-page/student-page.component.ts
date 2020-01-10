@@ -187,7 +187,7 @@ export class StudentPageComponent implements OnInit {
       this.frontBase64 = res1;
     });
 
-    this.imageToBase64Serv.getBase64('assets/imgs/back2.jpg').then(res2 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/back3.jpg').then(res2 => {
       this.backBase64 = res2;
     });
   }
@@ -227,14 +227,37 @@ export class StudentPageComponent implements OnInit {
   }
 
   generatePDF(student) { // 'p', 'mm', [68,20]
-
+  let userRol = this.cookiesService.getData().user.rol.name;
+  
     if (student.nss) {
       this.loading = true;
       this.studentProv.verifyStatus(student.controlNumber)
         .subscribe(async res => {
-          this.haveSubjects = res.status === 1 ? true : false;
+          
+          this.haveSubjects = res.status === 1 ?  true : userRol == 'Administrador' ? true : false;
           if (this.haveSubjects) {
-            await this.getDocuments(student._id);
+            this.printCredential(student);
+          } else {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
+          }
+
+        }, error => {
+          
+          if (error.status === 401 && userRol !== 'Administrador') {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
+          } if(userRol == 'Administrador'){
+            this.printCredential(student);
+          } else {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
+          }
+        }, () => this.loading = false);
+    } else {
+      this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
+    }
+  }
+
+  async printCredential(student){
+    await this.getDocuments(student._id);
 
             if (this.photoStudent !== '' && this.photoStudent !== 'assets/imgs/studentAvatar.png') {
               const doc = new jsPDF({
@@ -255,11 +278,21 @@ export class StudentPageComponent implements OnInit {
               doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
               doc.text(49, 46.5, doc.splitTextToSize(student.nss, 35));
 
+              // cara trasera de la credencial
               doc.addPage();
-              // // cara trasera de la credencial
               doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
 
-              // // foto del estudiante
+              // Agregar años a la credencial
+              const year = new Date();
+              doc.setTextColor(255, 255, 255);
+              doc.setFontSize(4);
+              doc.setFont('helvetica');
+              doc.setFontType('bold');
+              doc.text(9.5, 41.3,year.getFullYear()+'');
+              doc.text(16.5, 41.3,(year.getFullYear()+1)+'');
+              doc.text(23.5, 41.3,(year.getFullYear()+2)+'');
+              doc.text(30.5, 41.3,(year.getFullYear()+3)+'');
+              doc.text(37.5, 41.3,(year.getFullYear()+4)+'');
 
               // // Numero de control con codigo de barra
               doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46.8, 39.2, 33, 12);
@@ -267,25 +300,11 @@ export class StudentPageComponent implements OnInit {
               doc.setFontSize(8);
               doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
               // this.loading=false;
+              this.loading = false;
               window.open(doc.output('bloburl'), '_blank');
             } else {
               this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
             }
-          } else {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-          }
-
-        }, error => {
-          if (error.status === 401) {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-          } else {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
-          }
-          this.loading = false;
-        }, () => this.loading = false);
-    } else {
-      this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
-    }
   }
 
   // Busqueda de estudiantes *************************************************************************************//#endregion
