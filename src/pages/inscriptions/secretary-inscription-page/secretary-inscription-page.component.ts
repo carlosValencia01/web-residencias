@@ -1,17 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { MatDialog } from '@angular/material';
 import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
 import { StudentInformationComponent } from 'src/modals/inscriptions/student-information/student-information.component';
 import { ReviewAnalysisComponent } from 'src/modals/inscriptions/review-analysis/review-analysis.component';
 import { ReviewCredentialsComponent } from 'src/modals/inscriptions/review-credentials/review-credentials.component';
 import TableToExcel from '@linways/table-to-excel';
+import Swal from 'sweetalert2';
+import { Router, ActivatedRoute } from '@angular/router';
+
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import Swal from 'sweetalert2';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { StudentProvider } from 'src/providers/shared/student.prov';
+
 const jsPDF = require('jspdf');
 import * as JsBarcode from 'jsbarcode';
 
@@ -79,6 +82,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
     private router: Router,
+    private studentProv: StudentProvider
   ) { 
     this.rolName = this.cookiesService.getData().user.rol.name;
     //console.log(this.rolName);
@@ -384,9 +388,12 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   filterDocuments(document,student){
+    
+  
+    
     switch (document) {
       case "Acta": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('ACTA') !== -1)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ?docc.filename.indexOf('ACTA') !== -1 : undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -395,7 +402,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Certificado": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CERTIFICADO') !== -1 : undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -404,7 +411,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Analisis": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('CLINICOS') !== -1)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CLINICOS') !== -1 : undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -413,7 +420,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Comprobante": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('COMPROBANTE') !== -1 : undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -422,7 +429,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Curp": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('CURP') !== -1)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CURP') !== -1 : undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -431,7 +438,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Nss": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('NSS') !== -1)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('NSS') !== -1 : undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -440,13 +447,17 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Foto": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('FOTO') !== -1 : undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
         else{
           return "SIN ENVÍO";
         }
+      }
+      default:{
+        console.log('nada');
+        
       }
     }
   }
@@ -729,6 +740,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   updateSolicitud(student){
+    // console.log(student,'solicitud');
+    this.loading = true;
     var day = student.curp.substring(8, 10);
     var month = student.curp.substring(6, 8);
     var year = student.curp.substring(4, 6);
@@ -959,10 +972,10 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     let document = doc.output('arraybuffer');
     let binary = this.bufferToBase64(document);
 
-    console.log(binary);
-    window.open(doc.output('bloburl'), '_blank');
+    this.updateDocument(binary,student);
+    // console.log(binary);
+    // window.open(doc.output('bloburl'), '_blank');
 
-    //this.updateDocument(binary);
   }
 
   bufferToBase64(buffer) {
@@ -971,8 +984,66 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     }, ''));
   }
 
-  updateDocument(document){
+  async updateDocument(document, student){
+    
+    const fileId = student.documents[0].fileIdInDrive;
+    const folderId = await this.getFolderId(student._id);
+    const documentInfo = {
+      mimeType: "application/pdf",
+      nameInDrive: student.controlNumber + '-SOLICITUD.pdf',
+      bodyMedia: document,
+      folderId: folderId,
+      newF: false, 
+      fileId: fileId
+    };
+    console.log(documentInfo);
+    
+    
+    this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
+      async updated => {     
+        console.log(updated);
+           
+        const documentInfo2 = {
+          doc: {
+            filename: updated.filename,
+            type: 'DRIVE',          
+            fileIdInDrive: updated.fileId
+          },
+          status: {
+            name: 'EN PROCESO',
+            active: true,
+            message: 'Se envio por primera vez'
+          }
+        };
+        
+        await this.studentProv.uploadDocumentDrive(student._id, documentInfo2).subscribe(
+          updated => {
+            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');    
+             this.loading = false;
+          },
+          err => {
+            console.log(err);
+          }, () => this.loading = false
+        );
+      },
+      err => {
+        this.loading = false;
+        console.log(err);
+      }
+    );
+  }
 
+  async getFolderId(id){
+    let folderId;
+   await this.studentProv.getFolderId(id).toPromise().then(
+      folder => {        
+        if (folder.folder) {// folder exists
+          if (folder.folder.idFolderInDrive) {
+            folderId = folder.folder.idFolderInDrive;                        
+          }
+        }
+      });
+    return folderId;
   }
 
   

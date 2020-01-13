@@ -164,7 +164,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         if (this.imageDoc) {
           this.inscriptionsProv.getFile(this.imageDoc.fileIdInDrive, this.imageDoc.filename).subscribe(
             succss => {
-              this.photoStudent = 'data:image/png;base64,' + succss.file;
+              this.photoStudent = 'data:image/jpg;base64,' + succss.file;
             },
             err => { this.photoStudent = 'assets/imgs/imgNotFound.png'; }
           )
