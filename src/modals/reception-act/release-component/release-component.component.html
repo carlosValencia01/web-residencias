@@ -118,12 +118,43 @@
                             </div>
                         </div>
                     </div>
-
-                    <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
+                    <div class="form-group row">
+                        <label for="substitute" class="col-sm-4 col-form-label col-form-label-sm mb-3">Duración</label>
+                        <div class="col-sm-8">
+                            <div class="input-group input-group-sm mb-3">
+                                <input type="number" class="form-control" id="duration" formControlName="duration"
+                                    placeholder="Duración"
+                                    [ngClass]="(!frmConsejo.get('duration').valid && frmConsejo.get('duration').touched)?'form-control is-invalid':'form-control'">
+                                <div class="invalid-feedback"
+                                    *ngIf="!frmConsejo.get('duration').valid && frmConsejo.get('duration').touched">
+                                    <span *ngIf="frmConsejo.get('duration').errors['required']">
+                                        ¡Campo obligatorio!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
                         style="display: none">
                     <button type="button" class="btn btn-outline-primary btn-sm btn-block" (click)="fileUpload.click()">
                         Cargar archivo de liberación
-                    </button>
+                    </button> -->
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-success btn-sm btn-block" [disabled]="!activeReleased"
+                                (click)="releaseGenerate()">
+                                Generar archivo de liberación
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
+                                style="display: none">
+                            <button type="button" class="btn btn-outline-primary btn-sm btn-block"
+                                (click)="fileUpload.click()">
+                                Cargar archivo de liberación
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

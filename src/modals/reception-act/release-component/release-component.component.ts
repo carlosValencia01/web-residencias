@@ -6,6 +6,12 @@ import { CookiesService } from 'src/services/app/cookie.service';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { NgxTimepickerFieldComponent } from 'ngx-material-timepicker';
+import { eFILES } from 'src/enumerators/reception-act/document.enum';
+import { RequestProvider } from 'src/providers/reception-act/request.prov';
+import { iRequest } from 'src/entities/reception-act/request.model';
+import { uRequest } from 'src/entities/reception-act/request';
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+
 
 @Component({
   selector: 'app-release-component',
@@ -17,17 +23,22 @@ export class ReleaseComponentComponent implements OnInit {
   public frmConsejo: FormGroup;
   private userInformation: any;
   public isReject: boolean;
-  public information: { jury: Array<string>, observation: string, minutes: number };
+  public information: { jury: Array<{ name: string, title: string, cedula: string }>, observation: string, minutes: number, id: string, folder: string, duration: number, request: iRequest };
+  public folderId;
+  private juryInfo: Array<{ name: string, title: string, cedula: string }>;
+  private oRequest: uRequest;
+  public activeReleased: boolean = false;
   @ViewChild('time') Time: NgxTimepickerFieldComponent;
   private studentCareer: string;
-
   constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
     private notifications: NotificationsServices, public dialog: MatDialog,
     private cookiesService: CookiesService,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
+    private _RequestProvider: RequestProvider,
+    public _ImageToBase64Service: ImageToBase64Service,
+    @Inject(MAT_DIALOG_DATA) public data: any) {    
     this.information = data;
+    console.log("INORMATION", this.information);
     this.isReject = typeof (this.information.observation) !== 'undefined';
-    console.log("Information", this.information);
     this.userInformation = this.cookiesService.getData().user;
     this.studentCareer = this.data.studentCareer;
   }
@@ -37,20 +48,30 @@ export class ReleaseComponentComponent implements OnInit {
       'president': new FormControl(null, Validators.required),
       'secretary': new FormControl(null, Validators.required),
       'vocal': new FormControl(null, Validators.required),
-      'substitute': new FormControl(null, Validators.required)
+      'substitute': new FormControl(null, Validators.required),
+      'duration': new FormControl('60', Validators.required)
     });
 
     if (this.isReject) {
+      this.juryInfo = this.information.jury;
       this.frmConsejo.setValue({
-        'president': this.information.jury[0],
-        'secretary': this.information.jury[1],
-        'vocal': this.information.jury[2],
-        'substitute': this.information.jury[3]
+        'president': this.juryInfo[0].name,
+        'secretary': this.juryInfo[1].name,
+        'vocal': this.juryInfo[2].name,
+        'substitute': this.juryInfo[3].name,
+        'duration': this.information.duration
       });
       const hour = this.information.minutes / 60;
       const minutes = this.information.minutes % 60;
       this.Time.writeValue(hour + ":" + minutes);
+      this.activeReleased = true;
     } else {
+      this.juryInfo = [
+        { name: '', title: '', cedula: '' },
+        { name: '', title: '', cedula: '' },
+        { name: '', title: '', cedula: '' },
+        { name: '', title: '', cedula: '' }
+      ]
       this.Time.writeValue("7:00");
     }
   }
@@ -63,7 +84,7 @@ export class ReleaseComponentComponent implements OnInit {
     this.frmConsejo.get(button).setErrors(null);
     const ref = this.dialog.open(EmployeeAdviserComponent, {
       data: {
-        carrer: this.studentCareer
+        carrer: this.userInformation.career
       },
       disableClose: true,
       hasBackdrop: true,
@@ -71,36 +92,40 @@ export class ReleaseComponentComponent implements OnInit {
     });
 
     ref.afterClosed().subscribe((result) => {
-      switch (button) {
-        case "president": {
-          this.frmConsejo.patchValue({
-            'president': typeof (result) !== 'undefined'
-              ? result.Employee : ""
-          });
-          break;
-        }
-        case "secretary": {
+      console.log("RESULT", result);
+      if (typeof (result) != "undefined") {
+        switch (button) {
+          case "president": {
+            this.frmConsejo.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : "" });
+            this.juryInfo[0].name = result.ExtraInfo.name;
+            this.juryInfo[0].title = result.ExtraInfo.title;
+            this.juryInfo[0].cedula = result.ExtraInfo.cedula;
+            break;
+          }
+          case "secretary": {
 
-          this.frmConsejo.patchValue({
-            'secretary': typeof (result) !== 'undefined'
-              ? result.Employee : ""
-          });
-          break;
+            this.frmConsejo.patchValue({ 'secretary': typeof (result) !== 'undefined' ? result.Employee : "" });
+            this.juryInfo[1].name = result.ExtraInfo.name;
+            this.juryInfo[1].title = result.ExtraInfo.title;
+            this.juryInfo[1].cedula = result.ExtraInfo.cedula;
+            break;
+          }
+          case "vocal": {
+            this.frmConsejo.patchValue({ 'vocal': typeof (result) !== 'undefined' ? result.Employee : "" });
+            this.juryInfo[2].name = result.ExtraInfo.name;
+            this.juryInfo[2].title = result.ExtraInfo.title;
+            this.juryInfo[2].cedula = result.ExtraInfo.cedula;
+            break;
+          }
+          case "substitute": {
+            this.frmConsejo.patchValue({ 'substitute': typeof (result) !== 'undefined' ? result.Employee : "" });
+            this.juryInfo[3].name = result.ExtraInfo.name;
+            this.juryInfo[3].title = result.ExtraInfo.title;
+            this.juryInfo[3].cedula = result.ExtraInfo.cedula;
+            break;
+          }
         }
-        case "vocal": {
-          this.frmConsejo.patchValue({
-            'vocal': typeof (result) !== 'undefined'
-              ? result.Employee : ""
-          });
-          break;
-        }
-        case "substitute": {
-          this.frmConsejo.patchValue({
-            'substitute': typeof (result) !== 'undefined'
-              ? result.Employee : ""
-          });
-          break;
-        }
+        this.activeReleased = this.juryInfo.length === 4;
       }
     });
     // const time: number = Number(this.Time.hour * 60) + Number(this.Time.minute);
@@ -108,9 +133,23 @@ export class ReleaseComponentComponent implements OnInit {
   }
 
   onUpload(event): void {
+    console.log("event",event);
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
-        this.fileData = event.target.files[0];
+        console.log("entro");
+        // this.fileData = event.target.files[0];
+        let frmData = new FormData();
+        frmData.append('file', event.target.files[0]);
+        frmData.append('folderId', this.information.folder);
+        frmData.append('Document', eFILES.RELEASED);
+        frmData.append('IsEdit', 'true');
+        this._RequestProvider.uploadFile(this.information.id, frmData).subscribe(data => {
+          this.fileData = event.target.files[0];
+        }, error => {
+          this.notifications.showNotification(eNotificationType.ERROR,
+            "Titulación App", error);
+        });
+
       } else {
         this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App',
           'Error, su archivo debe ser de tipo PDF');
@@ -125,17 +164,33 @@ export class ReleaseComponentComponent implements OnInit {
         {
           file: this.fileData,
           proposedHour: time,
-          jury: [
-            this.frmConsejo.get("president").value,
-            this.frmConsejo.get("secretary").value,
-            this.frmConsejo.get("vocal").value,
-            this.frmConsejo.get("substitute").value
-          ]
+          jury: this.juryInfo,
+          duration: this.frmConsejo.get('duration').value
         });
     }
     else {
       this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App',
         'Error, archivo no cargado');
     }
+  }
+
+  async releaseGenerate() {
+    this.information.request.jury = this.juryInfo;
+    this.information.request.proposedDate = new Date();
+    this.information.request.proposedHour = Number(this.Time.hour * 60) + Number(this.Time.minute);
+    console.log("eee");
+    this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service);
+    await this.delay(1000);
+    console.log("bien");
+    window.open(this.oRequest.projectReleaseNew().output('bloburl'), '_blank');
+    // async () => {
+    //   await this.delay(400);
+    //   console.log("entro");
+    //   window.open(this.oRequest.projectReleaseNew().output('bloburl'), '_blank');
+    // }
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

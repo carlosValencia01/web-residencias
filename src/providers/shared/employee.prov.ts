@@ -124,6 +124,12 @@ export class EmployeeProvider {
         .pipe(map(res => res.json()));
     }
 
+    getEmployeesPositions(rfc) {
+      return this.api.get(`employee/positions/${rfc}`).pipe(
+        map(res => res.json())
+      );
+    }
+
     uploadCsvPositions(employeeId: string, data: Array<any>) {
       return this.api.post(`employee/uploadCsvPositions/${employeeId}`, data)
         .pipe(map(res => res.json()));
@@ -132,5 +138,10 @@ export class EmployeeProvider {
     uploadCsvGrades(employeeId: string, data: Array<any>) {
       return this.api.post(`employee/uploadCsvGrades/${employeeId}`, data)
         .pipe(map(res => res.json()));
+    }
+
+    canReallocateBossOrDirectorPosition(positionId: string) {
+        return this.api.get(`employee/reallocate/${positionId}`)
+            .pipe(map(res => res.json()));
     }
 }

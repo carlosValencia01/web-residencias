@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { eOperation } from 'src/enumerators/reception-act/operation.enum';
-import { RangeModalComponent } from '../range-modal/range-modal.component';
+import { RangeModalComponent } from '../../../modals/reception-act/range-modal/range-modal.component';
 import { IRange } from 'src/entities/reception-act/range.model';
 
 @Component({

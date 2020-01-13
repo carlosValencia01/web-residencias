@@ -1,51 +1,79 @@
-<div *ngIf="!isOkTitulation; else requestForm">
-  <div class="title">
-    <h2>¡Aviso, acto recepcional!</h2>
-  </div>
-  <div class="message">
-    <span>Aún no cumples con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
-    <span>Los requisitos son:</span>
-    <div class="row" style="justify-content:center;">
-      <mat-card [ngClass]="isApprovedEnglish ? 'requirement-card card-green': 'requirement-card card-red'">
-        <mat-card-header>
-          <mat-card-subtitle>INGLÉS</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <img mat-card-image style="width:70px;margin:5px;"
-            [src]="isApprovedEnglish ? 'src/assets/imgs/approved.png' : 'src/assets/imgs/notApproved.png'">
-        </mat-card-content>
-        <mat-card-footer>
-          <div *ngIf="isApprovedEnglish; else notApprovedEnglish">
-            <p>Ya cuentas con el inglés liberado</p>
+<div *ngIf="!isActive">
+  <div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+      <div class="card" style=" border: 3px solid #dc5251;color: #b64443;">
+        <div class="row no-gutters">
+          <div class="col-4">
+            <div class="card-body text-center">
+              <img alt="File" src="../../../assets/imgs/sorry.png" style="width: 80px; height: 80px;">
+            </div>
           </div>
-          <ng-template #notApprovedEnglish>
-            <p>Nota: Aún no tienes el inglés liberado,
-              favor de asistir al departamento de vinculación</p>
-          </ng-template>
-        </mat-card-footer>
-      </mat-card>
-      <mat-card [ngClass]="isGraduate ? 'requirement-card card-green' : 'requirement-card card-red'">
-        <mat-card-header>
-          <mat-card-subtitle>EGRESADO</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <img mat-card-image style="width:70px;margin:5px;"
-            [src]="isGraduate ? 'src/assets/imgs/approved.png' : 'src/assets/imgs/notApproved.png'">
-        </mat-card-content>
-        <mat-card-footer>
-          <div *ngIf="isGraduate; else notGraduate">
-            <p>Ya cuentas con el estatus de egresado</p>
+          <div class="col-8">
+            <div class="card-body">
+              <h4 class="card-title text-center display-1">404</h4>
+              <div class="text-center">
+                <p class="card-text">ACTO RECEPCIONAL CERRADO</p>
+              </div>
+            </div>
           </div>
-          <ng-template #notGraduate>
-            <p>Nota: Aún no tienes estatus de egresado,
-              favor de asistir al departamento de servicios escolares</p>
-          </ng-template>
-        </mat-card-footer>
-      </mat-card>
-    </div><br>
-    <span>Si ya cuenta con los requisitos anteriores, es necesario esperar a que sea liberado en el sistema.</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-4"></div>
   </div>
 </div>
+<div *ngIf="isActive">
+  <div *ngIf="!isOkTitulation; else requestForm">
+    <div class="title">
+      <h2>¡Aviso, acto recepcional!</h2>
+    </div>
+    <div class="message">
+      <span>Aún no cumples con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
+      <span>Los requisitos son:</span>
+      <div class="row" style="justify-content:center;">
+        <mat-card [ngClass]="isApprovedEnglish ? 'requirement-card card-green': 'requirement-card card-red'">
+          <mat-card-header>
+            <mat-card-subtitle>INGLÉS</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <img mat-card-image style="width:70px;margin:5px;"
+              [src]="isApprovedEnglish ? 'src/assets/imgs/approved.png' : 'src/assets/imgs/notApproved.png'">
+          </mat-card-content>
+          <mat-card-footer>
+            <div *ngIf="isApprovedEnglish; else notApprovedEnglish">
+              <p>Ya cuentas con el inglés liberado</p>
+            </div>
+            <ng-template #notApprovedEnglish>
+              <p>Nota: Aún no tienes el inglés liberado,
+                favor de asistir al departamento de vinculación</p>
+            </ng-template>
+          </mat-card-footer>
+        </mat-card>
+        <mat-card [ngClass]="isGraduate ? 'requirement-card card-green' : 'requirement-card card-red'">
+          <mat-card-header>
+            <mat-card-subtitle>EGRESADO</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <img mat-card-image style="width:70px;margin:5px;"
+              [src]="isGraduate ? 'src/assets/imgs/approved.png' : 'src/assets/imgs/notApproved.png'">
+          </mat-card-content>
+          <mat-card-footer>
+            <div *ngIf="isGraduate; else notGraduate">
+              <p>Ya cuentas con el estatus de egresado</p>
+            </div>
+            <ng-template #notGraduate>
+              <p>Nota: Aún no tienes estatus de egresado,
+                favor de asistir al departamento de servicios escolares</p>
+            </ng-template>
+          </mat-card-footer>
+        </mat-card>
+      </div><br>
+      <span>Si ya cuenta con los requisitos anteriores, es necesario esperar a que sea liberado en el sistema.</span>
+    </div>
+  </div>
+</div>
+
 
 <ng-template #requestForm>
   <mat-vertical-stepper [linear]="true" #stepper>
@@ -381,6 +409,14 @@
       <div *ngIf="!SteepTenCompleted">
         <div [ngSwitch]="StatusComponent">
           <div class="row" *ngSwitchCase="'None'">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-process-component [Message]="ProcessGeneratedMessage" [Type]="'Process'" [Title]="''">
+              </app-process-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+          <div class="row" *ngSwitchCase="'Printed'">
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
             <div class="col-10 col-sm-8 col-md-6 col-lg-6">
               <app-process-component [Message]="ProcessGeneratedMessage" [Type]="'Process'" [Title]="''">

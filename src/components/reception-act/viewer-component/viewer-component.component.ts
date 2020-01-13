@@ -116,8 +116,8 @@ export class ViewerComponentComponent implements OnInit {
         window.open(this.oRequest.noInconvenience().output('bloburl'), '_blank');
         break;
       }
-      case eRequest.RELEASED: {
-        window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.RELEASED}/${this._Request._id}`, '_blank');
+      case eRequest.RELEASED: {        
+        window.open(`${this.requestProvider.getApiURL()}/request/${this._Request._id}/file/${eFILES.RELEASED}`, '_blank');
         break;
       }
       case eRequest.REGISTERED: {

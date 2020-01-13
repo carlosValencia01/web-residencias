@@ -25,7 +25,8 @@ import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/re
 import Swal from 'sweetalert2';
 import { eCAREER } from 'src/enumerators/shared/career.enum';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
-import { UploadDeliveredComponent } from 'src/app/upload-delivered/upload-delivered.component';
+import { UploadDeliveredComponent } from 'src/modals/reception-act/upload-delivered/upload-delivered.component';
+import { StudentProvider } from 'src/providers/shared/student.prov';
 
 @Component({
   selector: 'app-progress-page',
@@ -58,6 +59,7 @@ export class ProgressPageComponent implements OnInit {
     private router: Router,
     private activeRoute: ActivatedRoute,
     private imgService: ImageToBase64Service,
+    private _StudentProvider: StudentProvider,
     public _RequestService: RequestService,
   ) {
     this.careers = [];
@@ -251,6 +253,10 @@ export class ProgressPageComponent implements OnInit {
         value = 'Finalizado';
         break;
       }
+      case 'Printed': {
+        value = 'Impreso';
+        break;
+      }
       default:
         // value = 'Ninguno'; //17/11
         value = 'Pendiente';
@@ -308,10 +314,12 @@ export class ProgressPageComponent implements OnInit {
     });
   }
 
-  releasedRequest(Identificador): void {
+
+  async releasedRequest(Identificador) {
     let lJury: Array<string> = [];
     let lObservation: string;
     let lMinutes: number = 420;
+    let lDuration: number = 60;
     const tmpRequest = this.getRequestById(Identificador);
     if (tmpRequest.status === 'Rechazado') {
       lJury = tmpRequest.jury;
@@ -322,46 +330,61 @@ export class ProgressPageComponent implements OnInit {
           return bDate.getTime() - aDate.getTime();
         }
       );
-      console.log("Liberado", value);
-      console.log("Liberado", value[0]);
       lObservation = value[0].observation;
       lMinutes = tmpRequest.proposedHour;
+      lDuration = tmpRequest.duration;
     }
 
-    const ref = this.dialog.open(ReleaseComponentComponent, {
-      data: {
-        jury: lJury,
-        observation: lObservation,
-        minutes: lMinutes,
-        studentCareer: tmpRequest.career
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '60em'
+    let folder = await new Promise(resolve => {
+      this._StudentProvider.getFolderId(tmpRequest.studentId).subscribe(
+        student => {
+          console.log("student", student);
+          if (student.folder) {// folder exists
+            if (student.folder.idFolderInDrive) {
+              resolve(student.folder.idFolderInDrive);
+            }
+            else {
+              this.notifications.showNotification(eNotificationType.ERROR, "Titulacion App", "El folder del estudiante ha desaparecido");
+              resolve('');
+            }
+          } else {
+            this.notifications.showNotification(eNotificationType.ERROR, "Titulacion App", "El folder del estudiante ha desaparecido");
+            resolve('');
+          }
+        });
     });
 
-    ref.afterClosed().subscribe(result => {
-      if (typeof (result) !== 'undefined') {
-        let frmData = new FormData();
-        frmData.append('file', result.file);
-        frmData.append('ControlNumber', tmpRequest.student.controlNumber);
-        frmData.append('FullName', tmpRequest.student.fullName);
-        frmData.append('Career', tmpRequest.student.career);
-        frmData.append('Document', eFILES.RELEASED);
-        frmData.append('President', result.jury[0]);
-        frmData.append('Secretary', result.jury[1]);
-        frmData.append('Vocal', result.jury[2]);
-        frmData.append('Substitute', result.jury[3]);
-        frmData.append('proposedHour', result.proposedHour);
-        frmData.append('Doer', this.cookiesService.getData().user.name.fullName);
-        console.log("proposed", result.proposedHour);
-        this.requestProvider.releasedRequest(Identificador, frmData).subscribe(data => {
-          this.loadRequest();
-        }, error => {
-          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-        });
-      }
-    });
+    if (folder !== '') {
+      const ref = this.dialog.open(ReleaseComponentComponent, {
+        data: {
+          jury: lJury,
+          observation: lObservation,
+          minutes: lMinutes,
+          id: Identificador,
+          folder: folder,
+          duration: lDuration,
+          request: tmpRequest
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '60em'
+      });
+
+      ref.afterClosed().subscribe(result => {
+        if (typeof (result) !== 'undefined') {
+          this.requestProvider.releasedRequest(Identificador, {
+            proposedHour: result.proposedHour,
+            duration: result.duration,
+            Doer: this.cookiesService.getData().user.name.fullName,
+            jury: result.jury
+          }).subscribe(data => {
+            this.loadRequest();
+          }, error => {
+            this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+          });
+        }
+      });
+    }
   }
 
   approve(Identificador): void {
@@ -430,9 +453,17 @@ export class ProgressPageComponent implements OnInit {
           observation: '',
           operation: eOperation// eStatusRequest.PROCESS
         };
+
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
+          if (eOperation === eStatusRequest.PROCESS) {
+            const _request: iRequest = this.getRequestById(Identificador);
+            const oRequest: uRequest = new uRequest(_request, this.imgService);
+            setTimeout(() => {
+              window.open(oRequest.testReport().output('bloburl'), '_blank');
+            }, 500);
+          }
           this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App',
-            (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : 'Acta de Examen Entregada'));
+            (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : (eOperation === eStatusRequest.PRINTED) ? 'Acta de Examen Impresa' : 'Acta de Examen Entregada'));
           this.loadRequest();
         }, error => {
           let tmpJson = JSON.parse(error._body);
@@ -562,6 +593,7 @@ export class ProgressPageComponent implements OnInit {
   checkReleased(_id: string) {
     const Request = this.getRequestById(_id);
     this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
+      console.log("DATA", data);
       const dialogRef = this.dialog.open(ReleaseCheckComponent, {
         data: data,
         disableClose: true,
@@ -665,6 +697,13 @@ export class ProgressPageComponent implements OnInit {
       hasBackdrop: true,
       width: '45em',
     });
+  }
+
+  juryNotification(_id: string): void {
+    let oRequest = new uRequest(this.getRequestById(_id), this.imgService);
+    setTimeout(() => {
+      window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
+    }, 500);
   }
 }
 

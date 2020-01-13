@@ -6,6 +6,7 @@ import { IEmployee } from 'src/entities/shared/employee.model';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { IGrade } from 'src/entities/reception-act/grade.model';
 
 @Component({
   selector: 'app-employee-adviser',
@@ -36,20 +37,22 @@ export class EmployeeAdviserComponent implements OnInit {
 
   ngOnInit() {
     this.employeProvider.getEmployeesByDepto().subscribe(
-      data => {
-        this.departments = <IDepartment[]>data.departments;
+      data => {        
+        this.departments = <IDepartment[]>data.departments;        
         const indice = this.departments.findIndex((department) => {
           return department.careers.findIndex(career => career.fullName === this.career) !== -1;
         });
         this.getAllEmployees(indice);
 
-        this.onlyEmployees = indice === -1 ? this.allEmployees : this.onlyEmployees.slice(0) ;
+        this.onlyEmployees = indice === -1 ? this.allEmployees : this.onlyEmployees.slice(0);
         this.employees = <IAdviserTable[]>this.onlyEmployees.slice(0);
         this.type = 'Empleado Carrera';
         this.departmentInfo.name = (indice === -1 ? '' : this.departments[indice].name);
 
-        const boss = this.departments[indice].boss;
-        this.departmentInfo.boss = (indice === -1 ? '' : boss.name.fullName);
+        // const boss = this.departments[indice].boss;
+        // this.departmentInfo.boss = (indice === -1 ? '' : boss.name.fullName);
+        this.departmentInfo.boss = (indice === -1 ? '' : this.departments[indice].boss.name.fullName);
+
         this.refresh();
       },
       error => {
@@ -76,29 +79,65 @@ export class EmployeeAdviserComponent implements OnInit {
     }
   }
 
-  getAllEmployees(index: number): void {
+  getAllEmployees(index: number): void {    
     this.allEmployees = [];
     this.onlyEmployees = [];
     if (index !== -1) {
       this.departments[index].Employees.forEach(employee => {
+        const gradeInfo = this.gradeInfoMax(employee);
         const Adviser = {
           name: this.gradeMax(employee) + ' ' + employee.name.firstName + ' ' + employee.name.lastName,
           position: `${employee.positions[0].position.name} (${employee.positions[0].position.ascription.shortName})`,
-          action: ''
+          action: '',
+          ExtraInfo: {
+            title: typeof (gradeInfo) !== 'undefined' ? gradeInfo.title : '',
+            abbreviation: typeof (gradeInfo) !== 'undefined' ? gradeInfo.abbreviation : '',
+            cedula: typeof (gradeInfo) !== 'undefined' ? gradeInfo.cedula : '',
+            name: employee.name.firstName + ' ' + employee.name.lastName
+          }
         };
         this.onlyEmployees.push(Adviser);
       });
     }
     this.departments.forEach(department => {
       department.Employees.forEach(employee => {
+        const gradeInfo = this.gradeInfoMax(employee);
         const Adviser = {
           name: this.gradeMax(employee) + ' ' + employee.name.firstName + ' ' + employee.name.lastName,
           position: `${employee.positions[0].position.name} (${department.shortName})`,
-          action: ''
+          action: '',
+          ExtraInfo: {
+            title: typeof (gradeInfo) !== 'undefined' ? gradeInfo.title : '',
+            abbreviation: typeof (gradeInfo) !== 'undefined' ? gradeInfo.abbreviation : '',
+            cedula: typeof (gradeInfo) !== 'undefined' ? gradeInfo.cedula : '',
+            name: employee.name.firstName + ' ' + employee.name.lastName
+          }
         };
         this.allEmployees.push(Adviser);
       });
     });
+  }
+
+  gradeInfoMax(employee: IEmployee): IGrade {    
+    if (typeof (employee.grade) === 'undefined' || employee.grade.length === 0) {
+      return undefined;
+    }
+    let isGrade = employee.grade.find(x => x.level === 'DOCTORADO');
+
+    if (typeof (isGrade) !== 'undefined') {
+      return isGrade;
+    }
+
+    isGrade = employee.grade.find(x => x.level === 'MAESTRÍA');
+    if (typeof (isGrade) !== 'undefined') {
+      return isGrade;
+    }
+
+    isGrade = employee.grade.find(x => x.level === 'LICENCIATURA');
+    if (typeof (isGrade) !== 'undefined') {
+      return isGrade;
+    }
+    return undefined;
   }
 
   gradeMax(employee: IEmployee): String {
@@ -123,8 +162,8 @@ export class EmployeeAdviserComponent implements OnInit {
     return '';
   }
 
-  selected(item): void {
-    this.dialogRef.close({ Employee: item.name, Depto: this.departmentInfo });
+  selected(item): void {    
+    this.dialogRef.close({ Employee: item.name, Depto: this.departmentInfo, ExtraInfo: item.ExtraInfo });
   }
 }
 

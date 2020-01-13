@@ -164,7 +164,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
         if (this.imageDoc) {
           this.inscriptionsProv.getFile(this.imageDoc.fileIdInDrive, this.imageDoc.filename).subscribe(
             succss => {
-              this.photoStudent = 'data:image/png;base64,' + succss.file;
+              this.photoStudent = 'data:image/jpg;base64,' + succss.file;
             },
             err => { this.photoStudent = 'assets/imgs/imgNotFound.png'; }
           )
@@ -403,7 +403,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     const red = new FileReader;
     red.addEventListener('load', () => {
       // console.log(red.result);
-      let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.' + this.selectedFile.type.substr(6, this.selectedFile.type.length - 1), bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
+      let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg' , bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
 
       this.inscriptionsProv.uploadFile2(file).subscribe(
         resp => {
@@ -494,7 +494,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
       const currentDate = new Date();
       const img = new Image();
-      img.src = 'src/assets/imgs/CartaCompromiso.png';
+      img.src = 'assets/imgs/CartaCompromiso.png';
       const doc = new jsPDF();
 
       doc.addImage(img, 'jpg', 0, 0, 200, 295);
@@ -617,5 +617,4 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       confirmButtonText: 'Aceptar'
     }).then((result) => { });
   }
-
 }

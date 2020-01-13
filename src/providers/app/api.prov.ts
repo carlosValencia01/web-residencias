@@ -74,17 +74,17 @@ export class Api {
     }
 
     getE(endpoint: string, params?: any) {
-      const options = new RequestOptions({ headers: this.headersE });
+        const options = new RequestOptions({ headers: this.headersE });
 
-      if (params) {
-        const p = new URLSearchParams();
-        // tslint:disable-next-line:forin
-        for (const k in params) {
-          p.set(k, params[k]);
+        if (params) {
+            const p = new URLSearchParams();
+            // tslint:disable-next-line:forin
+            for (const k in params) {
+                p.set(k, params[k]);
+            }
+            options.search = !options.search && p || options.search;
         }
-        options.search = !options.search && p || options.search;
-      }
-      return this.http.get(this.urlE + '/' + endpoint, options);
+        return this.http.get(this.urlE + '/' + endpoint, options);
     }
 
     post(endpoint: string, body: any, isUpload = false) {
