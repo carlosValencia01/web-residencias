@@ -73,6 +73,11 @@
             border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#c0a22b"
             class="fa fa-eye"></i> Ver Más</div>
       </ng-template>
+      <ng-template class="mt-1" contextMenuItem (execute)="genTrades($event.item)">
+        <div style=" border-style: solid;
+            border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#08a3bc"
+            class="fa fa-print"></i> Oficios</div>
+      </ng-template>
     </context-menu>
 
     <ng-template #customCellTemplate let-weekEvent="weekEvent" let-tooltipPlacement="tooltipPlacement"

@@ -19,6 +19,14 @@ export class CookiesService {
         return JSON.parse( this.cookieService.get('session') );
     }
 
+    saveFolder(folder) {
+        this.cookieService.set('folder', folder);
+    }
+
+    getFolder(){
+        return this.cookieService.get('folder');
+    }
+
     deleteCookie() {
         this.cookieService.delete('session');
     }

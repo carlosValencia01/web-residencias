@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
@@ -18,6 +18,8 @@ import { MatDialog } from '@angular/material';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { DropzoneConfigInterface, DropzoneComponent } from 'ngx-dropzone-wrapper';
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 
 @Component({
   selector: 'app-request-component',
@@ -25,10 +27,12 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
   styleUrls: ['./request-component.component.scss']
 })
 export class RequestComponentComponent implements OnInit {
+  //CONSTANTES
   // tslint:disable-next-line: no-input-rename
   @Input('request') _request: iRequest;
   // tslint:disable-next-line: no-output-rename
   @Output('onSubmit') btnSubmitRequest = new EventEmitter<boolean>();
+  private MAX_SIZE_FILE: number = 3145728;
   public frmRequest: FormGroup;
   private fileData: any;
   private frmData: any;
@@ -43,8 +47,15 @@ export class RequestComponentComponent implements OnInit {
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
   public isEdit = false;
+  private URL: string;
   private oRequest: uRequest;
-
+  // public dropZone: DropzoneConfigInterface;
+  public folderId: String;
+  public activePeriod;
+  public foldersByPeriod = [];
+  public dzConfing: DropzoneConfigInterface;
+  // @ViewChild('dropZone') drop: any;
+  @ViewChild(DropzoneComponent) _dropZone?: DropzoneComponent;
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -55,20 +66,24 @@ export class RequestComponentComponent implements OnInit {
     private routeActive: ActivatedRoute,
     public dialog: MatDialog,
     private imgService: ImageToBase64Service,
+    private _InscriptionsProvider: InscriptionsProvider,
   ) {
     this.userInformation = this.cookiesService.getData().user;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.typeCareer = <keyof typeof eCAREER>this.userInformation.career;
+    this.getFolderId();
+    this.URL = `http://localhost:3000/escolares/credenciales/request/create/${this.userInformation._id}`;
   }
 
   ngOnInit() {
     this.oRequest = new uRequest(this._request, this.imgService);
+    console.log("Information", this.userInformation);
     this.frmRequest = new FormGroup(
       {
-        'name': new FormControl(this.userInformation.name.firstName, Validators.required),
-        'lastname': new FormControl(this.userInformation.name.lastName, Validators.required),
+        'name': new FormControl(this.firstName(this.userInformation.name.fullName), Validators.required),
+        'lastname': new FormControl(this.lastName(this.userInformation.name.fullName), Validators.required),
         'telephone': new FormControl(null, [Validators.required,
         Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
@@ -77,15 +92,41 @@ export class RequestComponentComponent implements OnInit {
         'observations': new FormControl(null),
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
-        // 'dateProposed': new FormControl(null, Validators.required),
         'honorific': new FormControl(false, Validators.required)
       });
     this.getRequest();
   }
 
+  private firstName(fullName: string): string {
+    const name: String[] = fullName.split(/\s+/);
+    const longitud = name.length;
+    let firstName: string = "";
+    if (longitud > 2) {
+      for (let i = 0; i < longitud - 2; i++)
+        firstName += name[i] + " ";
+    }
+    else
+      firstName = "Sin Capturar ";
+    return firstName.substr(0, firstName.length - 1);
+  }
+
+  private lastName(fullName: string): string {
+    const name: String[] = fullName.split(/\s+/).reverse();
+    const longitud = name.length;
+    let lastName: string = "";
+    if (longitud > 2) {
+      for (let i = 0; i < 2; i++)
+        lastName += name[i] + " ";
+    }
+    else
+      lastName = "Sin Capturar ";
+    return lastName.substr(0, lastName.length - 1);
+  }
   getRequest() {
     this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {
-      if (typeof (res) !== 'undefined' && res.request.length > 0) {
+      if (typeof (res) !== 'undefined' && res.request.length > 0
+        && (res.request[0].phase === 'Capturado' && res.request[0].phase !== 'None')
+      ) {
         this.loadRequest(res);
         this.operationMode = eOperation.EDIT;
         this.observations = this.request.observation;
@@ -97,6 +138,7 @@ export class RequestComponentComponent implements OnInit {
         }
       } else {
         this.operationMode = eOperation.NEW;
+        console.log("opera", this.operationMode);
       }
     }, error => {
       this.operationMode = eOperation.NEW;
@@ -119,6 +161,8 @@ export class RequestComponentComponent implements OnInit {
     this.request.student = request.request[0].studentId;
     this.request.studentId = this.request.student._id;
     this.integrants = this.request.integrants;
+    this.deptoInfo = request.request[0].department;
+
     this.assignName();
 
     this.frmRequest.setValue({
@@ -131,7 +175,6 @@ export class RequestComponentComponent implements OnInit {
       'observations': this.request.observation,
       'project': this.request.projectName,
       'product': this.request.product,
-      // 'dateProposed': this.dateFormat.transform(this.request.proposedDate, 'yyyy-MM-dd'),
       'honorific': this.request.honorificMention,
     });
     this.disabledControl();
@@ -151,7 +194,6 @@ export class RequestComponentComponent implements OnInit {
     this.frmRequest.get('project').markAsUntouched();
     this.frmRequest.get('observations').markAsUntouched();
     this.frmRequest.get('noIntegrants').markAsUntouched();
-    // this.frmRequest.get('dateProposed').markAsUntouched();
     this.frmRequest.get('honorific').markAsUntouched();
 
     if (this.isEdit) {
@@ -163,7 +205,6 @@ export class RequestComponentComponent implements OnInit {
       this.frmRequest.get('observations').enable();
       this.frmRequest.get('adviser').disable();
       this.frmRequest.get('noIntegrants').enable();
-      // this.frmRequest.get('dateProposed').enable();
       this.frmRequest.get('honorific').enable();
     } else {
       this.frmRequest.get('name').disable();
@@ -174,18 +215,23 @@ export class RequestComponentComponent implements OnInit {
       this.frmRequest.get('observations').disable();
       this.frmRequest.get('adviser').disable();
       this.frmRequest.get('noIntegrants').disable();
-      // this.frmRequest.get('dateProposed').disable();
       this.frmRequest.get('honorific').disable();
     }
   }
 
   onUpload(event): void {
+    this.isLoadFile = false;
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
-        this.fileData = event.target.files[0];
-        this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App',
-          'Archivo ' + this.fileData.name + ' cargado correctamente');
-        this.isLoadFile = true;
+        if (event.target.files[0].size > this.MAX_SIZE_FILE) {
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App',
+            'Error, su archivo debe ser inferior a 3MB');
+        } else {
+          this.fileData = event.target.files[0];
+          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+            'Archivo ' + this.fileData.name + ' cargado correctamente');
+          this.isLoadFile = true;
+        }
       } else {
         this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App',
           'Error, su archivo debe ser de tipo PDF');
@@ -195,9 +241,7 @@ export class RequestComponentComponent implements OnInit {
 
   onToggle(): void {
     this.isToggle = !this.isToggle;
-    this.frmRequest.patchValue(
-      { 'honorific': this.isToggle }
-    );
+    this.frmRequest.patchValue({ 'honorific': this.isToggle });
   }
 
   onSave(): void {
@@ -224,6 +268,7 @@ export class RequestComponentComponent implements OnInit {
     // Data FormData
     this.frmData = new FormData();
     this.frmData.append('file', this.fileData);
+    this.frmData.append('folderId', this.folderId);
     this.frmData.append('ControlNumber', this.userInformation.email);
     this.frmData.append('FullName', this.userInformation.name.fullName);
     this.frmData.append('Career', this.typeCareer);
@@ -233,34 +278,37 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
     this.frmData.append('projectName', this.frmRequest.get('project').value);
     this.frmData.append('email', this.frmRequest.get('email').value);
-    // this.frmData.append('proposedDate', this.frmRequest.get('dateProposed').value);
     this.frmData.append('status', 'Process');
     this.frmData.append('phase', 'Solicitado');
     this.frmData.append('telephone', this.frmRequest.get('telephone').value);
     this.frmData.append('honorificMention', this.frmRequest.get('honorific').value);
     this.frmData.append('lastModified', this.frmRequest.get('project').value);
     this.frmData.append('product', this.frmRequest.get('product').value);
-
+    this.frmData.append('department', this.deptoInfo.name);
+    this.frmData.append('boss', this.deptoInfo.boss);
     switch (this.operationMode) {
       case eOperation.NEW: {
-        this.frmData.append('department', this.deptoInfo.name);
-        this.frmData.append('boss', this.deptoInfo.boss);
+        // this.frmData.append('department', this.deptoInfo.name);
+        // this.frmData.append('boss', this.deptoInfo.boss);
         this.studentProvider.request(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Guardada Correctamente');
             this.btnSubmitRequest.emit(true);
           }, error => {
+            console.log("error2", error);
             this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
             this.btnSubmitRequest.emit(false);
           });
         }, error => {
+          console.log("error", error);
           this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
           this.btnSubmitRequest.emit(false);
         });
         break;
       }
-
       case eOperation.EDIT: {
+        const value = this.request.documents.find(x => x.nameFile === eFILES.PROYECTO);
+        this.frmData.append('fileId', value.driveId);
         this.studentProvider.updateRequest(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Editada Correctamente');
@@ -319,6 +367,7 @@ export class RequestComponentComponent implements OnInit {
       if (result) {
         this.frmRequest.patchValue({ 'adviser': result.Employee });
         this.deptoInfo = result.Depto;
+        console.log("depto", this.deptoInfo);
       }
     });
   }
@@ -352,6 +401,126 @@ export class RequestComponentComponent implements OnInit {
   }
 
   generateRequestPDF() {
+    console.log("config", this.dzConfing);
     window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
+  }
+
+
+  getFolderId() {
+    let _idStudent = this.userInformation._id;
+    this._InscriptionsProvider.getActivePeriod().subscribe(
+      period => {
+        console.log("periodo", period);
+        if (period.period) {
+          this.activePeriod = period.period;
+          console.log("ActivePeriod", this.activePeriod);
+          this.studentProvider.getPeriodId(_idStudent.toString()).subscribe(
+            per => {
+              console.log("per", per);
+              if (!per.student.idPeriodInscription) {
+                this.studentProvider.updateStudent(_idStudent, { idPeriodInscription: this.activePeriod._id });
+              }
+            }
+          );
+          //first check folderId on Student model
+          this.studentProvider.getFolderId(_idStudent).subscribe(
+            student => {
+              if (student.folder) {// folder exists
+                if (student.folder.idFolderInDrive) {
+                  this.folderId = student.folder.idFolderInDrive;                  
+                }
+                else { //folder doesn't exists then create it                  
+                  this.createFolder();
+                }
+              } else {
+                this.createFolder();
+              }
+            });
+        }
+      }
+    );
+  }
+
+  createFolder() {
+    const _idStudent = this.userInformation._id;
+    let folderStudentName = this.userInformation.email + ' - ' + this.userInformation.name.fullName;
+    console.log("Periodo", this.activePeriod._id,"--", folderStudentName);
+    this._InscriptionsProvider.getFoldersByPeriod(this.activePeriod._id, 2).subscribe(
+      (folders) => {
+         console.log(folders,'folderss');
+
+        this.foldersByPeriod = folders.folders;
+        let folderPeriod = this.foldersByPeriod.filter(folder => folder.name.indexOf(this.activePeriod.periodName) !== -1);
+
+        // 1 check career folder
+        let folderCareer = this.foldersByPeriod.filter(folder => folder.name === this.userInformation.career);
+
+        if (folderCareer.length === 0) {
+          // console.log('1');
+
+          this._InscriptionsProvider.createSubFolder(this.userInformation.career, this.activePeriod._id, folderPeriod[0].idFolderInDrive, 2).subscribe(
+            career => {
+              // console.log('2');
+
+              // student folder doesn't exists then create new folder
+              this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, career.folder.idFolderInDrive, 2).subscribe(
+                studentF => {
+                  this.folderId = studentF.folder.idFolderInDrive;
+                  this.dzConfing =
+                  {
+                    url: this.URL,
+                    clickable: true, maxFiles: 2,
+                    params: { 'Documento': 'PROYECTO', folderId: this.folderId },
+                    accept: (file, done) => { done(); },
+                    acceptedFiles: 'application/pdf',
+                  }
+                  // console.log('3');                  
+                  this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id });
+                },
+                err => {
+                  console.log(err);
+                }
+              );
+            },
+            err => {
+              console.log(err);
+            }
+          );
+        } else {
+          this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, folderCareer[0].idFolderInDrive, 2).subscribe(
+            studentF => {
+              this.folderId = studentF.folder.idFolderInDrive;
+              this.dzConfing =
+              {
+                url: this.URL,
+                clickable: true, maxFiles: 2,
+                params: { 'Documento': 'PROYECTO', folderId: this.folderId },
+                accept: (file, done) => { done(); },
+                acceptedFiles: 'application/pdf',
+              }
+              // console.log('3.1');
+              this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id }).subscribe(
+                upd => { },
+                err => { }
+              );
+            },
+            err => { console.log(err); }
+          );
+        }
+      },
+      err => {
+        console.log(err, '==============error');
+      }
+    );
+  }
+
+  public onErrorCommon(args: any) {
+    this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', 'Archivo no cargado correctamente');
+    this._dropZone.directiveRef.reset();
+  }
+  public onUploadSuccess(args: any): void {
+    this.isLoadFile = true;
+    this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Archivo cargado correctamente');
+    this._dropZone.directiveRef.reset();
   }
 }

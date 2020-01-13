@@ -334,12 +334,12 @@
                                         </button>
                                         <div [ngSwitch]="row.phase">
                                             <div *ngSwitchCase="'Enviado'">
-                                              <button  mat-menu-item
-                                                  *ngIf="role==='coordinación de titulación'"
-                                                  (click)="checkRequest(row._id)">
-                                                  <mat-icon>assignment_turned_in</mat-icon>
-                                                  Revisar
-                                              </button>
+                                                <button mat-menu-item
+                                                    *ngIf="role==='coordinación de titulación' || role==='administrador'"
+                                                    (click)="checkRequest(row._id)">
+                                                    <mat-icon>assignment_turned_in</mat-icon>
+                                                    Revisar
+                                                </button>
                                             </div>
                                             <div *ngSwitchCase="'Verificado'">
                                                 <button mat-menu-item
@@ -407,6 +407,12 @@
                                                     <mat-icon>gavel</mat-icon>
                                                     Aprobar
                                                 </button>
+                                                <button
+                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador')"
+                                                    mat-menu-item (click)="juryNotification(row._id)">
+                                                    <mat-icon>contact_mail</mat-icon>
+                                                    Generar Notificación
+                                                </button>
                                             </div>
                                             <div *ngSwitchCase="'Generado'">
                                                 <button
@@ -416,7 +422,13 @@
                                                     Generar Acta
                                                 </button>
                                                 <button
-                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status!=='Pendiente'"
+                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Impreso'"
+                                                    mat-menu-item (click)="generated(row._id,'Printed')">
+                                                    <mat-icon>print</mat-icon>
+                                                    Imprimir Acta
+                                                </button>
+                                                <button
+                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Aceptado'"
                                                     mat-menu-item (click)="generated(row._id,'Accept')">
                                                     <mat-icon>done_all</mat-icon>
                                                     Entregar Acta

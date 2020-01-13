@@ -186,7 +186,8 @@ export class RequestModalComponent implements OnInit {
   }
 
   getProjectCover() {
-    window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.PROYECTO}/${this.request._id}`, '_blank');
+    // window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.PROYECTO}/${this.request._id}`, '_blank');
+    window.open(`${this.requestProvider.getApiURL()}/request/${this.request._id}/file/${eFILES.PROYECTO}`, '_blank');
   }
 
   getRequestPDF() {

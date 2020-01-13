@@ -6,7 +6,7 @@ import { CookiesService } from 'src/services/app/cookie.service';
 export class Api {
     // url = 'http://localhost:3004/escolares/credenciales';
     // url = 'http://localhost:3003/escolares/credenciales';
-    url = 'https://api.cideti.com.mx/escolares/credenciales';
+    url = 'http://localhost:3000/escolares/credenciales';// 'https://api.cideti.com.mx/escolares/credenciales';
     // url = 'http://104.248.94.77/escolares/credenciales';
     urlE = 'http://localhost:3000/escolares/credenciales';
 
@@ -74,17 +74,17 @@ export class Api {
     }
 
     getE(endpoint: string, params?: any) {
-      const options = new RequestOptions({ headers: this.headersE });
+        const options = new RequestOptions({ headers: this.headersE });
 
-      if (params) {
-        const p = new URLSearchParams();
-        // tslint:disable-next-line:forin
-        for (const k in params) {
-          p.set(k, params[k]);
+        if (params) {
+            const p = new URLSearchParams();
+            // tslint:disable-next-line:forin
+            for (const k in params) {
+                p.set(k, params[k]);
+            }
+            options.search = !options.search && p || options.search;
         }
-        options.search = !options.search && p || options.search;
-      }
-      return this.http.get(this.urlE + '/' + endpoint, options);
+        return this.http.get(this.urlE + '/' + endpoint, options);
     }
 
     post(endpoint: string, body: any, isUpload = false) {

@@ -4,15 +4,16 @@ import { CalendarView, CalendarEvent, CalendarMonthViewBeforeRenderEvent } from 
 import { Subject } from 'rxjs';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
-import { RequestService } from 'src/services/reception-act/request.service';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { isSameMonth, isSameDay } from 'date-fns';
 import { MatDialog } from '@angular/material';
 import * as moment from 'moment';
-import { ViewMoreComponent } from '../view-more/view-more.component';
+import { ViewMoreComponent } from '../../../modals/reception-act/view-more/view-more.component';
 import { eRole } from 'src/enumerators/app/role.enum';
+import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 moment.locale('es');
 @Component({
   selector: 'app-view-appointment-page',
@@ -33,15 +34,22 @@ export class ViewAppointmentPageComponent implements OnInit {
   locale: string = 'es';
   role: string;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices,
-    private _CookiesService: CookiesService, private _sourceDataProvider: sourceDataProvider, public dialog: MatDialog) {
-    this.role = 
-    //'Secretaria Académica';
-     'Jefe Académico';
+    private _sourceDataProvider: sourceDataProvider, public dialog: MatDialog, public _InscriptionsProvider: InscriptionsProvider) {
+    this.role =
+      //'Secretaria Académica';
+      'Jefe Académico';
     // this._CookiesService.getData().user.rol.name;
   }
 
   ngOnInit() {
-    this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
+    this._InscriptionsProvider.getActivePeriod().subscribe(
+      periodo => {
+        if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
+          this.maxDate = new Date(periodo.period.arecPerEndDate);
+          this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
+        }
+      });
+
     this.carrers = this._sourceDataProvider.getCareerAbbreviation();
     switch (this.role) {
       case eRole.SECRETARYACEDMIC: {
@@ -49,7 +57,8 @@ export class ViewAppointmentPageComponent implements OnInit {
         break;
       }
       case eRole.CHIEFACADEMIC: {
-        this.filterDepto('IBQA');
+        // this.filterDepto('IBQA');
+        this.filterDepto('ISIC');
         break;
       }
       default: {
@@ -147,6 +156,18 @@ export class ViewAppointmentPageComponent implements OnInit {
   viewEvent($event): void {
     const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
     const dialogRef = this.dialog.open(ViewMoreComponent, {
+      data: {
+        Appointment: tmpAppointment
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '45em'
+    });
+  }
+
+  genTrades($event): void {
+    const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+    const dialogRef = this.dialog.open(ActNotificacionComponent, {
       data: {
         Appointment: tmpAppointment
       },

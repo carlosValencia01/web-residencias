@@ -23,14 +23,14 @@ import { SidebarModule } from 'ng-sidebar';
 import { DropzoneModule } from 'ngx-dropzone-wrapper';
 import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
- 
+
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
   // url: 'http://localhost:3003/escolares/credenciales/drive/upload/file',
-  url: environment.filesURL,  
+  url: environment.filesURL,
   maxFilesize: 3,
-  acceptedFiles: 'application/pdf',  
-  maxFiles:1  
+  acceptedFiles: 'application/pdf',
+  maxFiles: 1
 };
 
 
@@ -78,7 +78,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 // App module
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
@@ -227,15 +227,16 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { CustomDateFormatter } from 'src/providers/reception-act/custom-date-formatter.provider';
 import { DiaryComponent } from '../pages/reception-act/diary/diary.component';
-import { RangePageComponent } from './range-page/range-page.component';
-import { RangeModalComponent } from './range-modal/range-modal.component';
+import { RangePageComponent } from '../pages/reception-act/range-page/range-page.component';
+import { RangeModalComponent } from '../modals/reception-act/range-modal/range-modal.component';
 import { RangeProvider } from 'src/providers/reception-act/range.prov';
-import { NewEventComponent } from './new-event/new-event.component';
-import { ViewMoreComponent } from './view-more/view-more.component';
-import { StepperDocumentComponent } from './stepper-document/stepper-document.component';
-import { UploadDeliveredComponent } from './upload-delivered/upload-delivered.component';
-import { ViewAppointmentPageComponent } from './view-appointment-page/view-appointment-page.component';
+import { NewEventComponent } from '../modals/reception-act/new-event/new-event.component';
+import { ViewMoreComponent } from '../modals/reception-act/view-more/view-more.component';
+import { StepperDocumentComponent } from '../modals/reception-act/stepper-document/stepper-document.component';
+import { UploadDeliveredComponent } from '../modals/reception-act/upload-delivered/upload-delivered.component';
+import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appointment-page/view-appointment-page.component';
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
+import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -305,7 +306,7 @@ registerLocaleData(localeEs);
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
-    
+
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -356,6 +357,7 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ViewAppointmentPageComponent,
     UploadFileTitledComponent,
+    ActNotificacionComponent,
   ],
   imports: [
     // Angular
@@ -405,7 +407,7 @@ registerLocaleData(localeEs);
     MatExpansionModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
-    
+
     // Ngx
     ImageCropperModule,
     NgxExtendedPdfViewerModule,
@@ -419,13 +421,13 @@ registerLocaleData(localeEs);
     CustomFormsModule,
     NgxMaterialTimepickerModule,
     NgbModule.forRoot(),
-    SidebarModule.forRoot(),    
     SidebarModule.forRoot(),
-    ContextMenuModule.forRoot(),    
+    SidebarModule.forRoot(),
+    ContextMenuModule.forRoot(),
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory
-    }),    
+    }),
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -503,7 +505,7 @@ registerLocaleData(localeEs);
     RangeModalComponent,
     StepperDocumentComponent,
     UploadDeliveredComponent,
-    
+    ActNotificacionComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,

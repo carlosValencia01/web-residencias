@@ -15,9 +15,9 @@ import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMo
 import * as moment from 'moment';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { MatDialog } from '@angular/material';
-import { NewEventComponent } from 'src/app/new-event/new-event.component';
+import { NewEventComponent } from 'src/modals/reception-act/new-event/new-event.component';
 import { eOperation } from 'src/enumerators/reception-act/operation.enum';
-import { ViewMoreComponent } from 'src/app/view-more/view-more.component';
+import { ViewMoreComponent } from 'src/modals/reception-act/view-more/view-more.component';
 import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
 moment.locale('es');
 @Component({
@@ -55,7 +55,7 @@ export class DiaryComponent implements OnInit {
       this.viewDate = new Date(tmpFecha);
       this.view = CalendarView.Week;
       localStorage.removeItem('Appointment');
-    } 
+    }
     // else {
     //   this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1);
     // }
@@ -110,7 +110,7 @@ export class DiaryComponent implements OnInit {
               if (typeof (AppointmentCareer) !== 'undefined') {
                 // console.log("Carrera", AppointmentCareer._id[0], "Appointment", { id: -1, student: Student, proposedDate: onlyDate, proposedHour: j });
                 // AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--" });
-                AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '' });
+                AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '', duration: 60 });
               }
               // _id: string[], values: [{ id: number, student: string[], proposedDate: Date, proposedHour: number }]
               // Carrera.push(c.carrer);
@@ -160,10 +160,9 @@ export class DiaryComponent implements OnInit {
   loadAppointment(): void {
     this.events = [];
     this.carrers.forEach(career => {
-      console.log("Carr", career);
       if (career.status) {
         // console.log("Carrera", career);
-        let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] };
+        let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
         tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
         if (typeof (tmp) != 'undefined') {
           tmp.values.forEach(element => {
@@ -174,7 +173,7 @@ export class DiaryComponent implements OnInit {
             tmpStart.setHours(0, 0, 0, 0);
             tmpEnd.setHours(0, 0, 0, 0);
             tmpStart.setMinutes(element.proposedHour);
-            tmpEnd.setMinutes(element.proposedHour + 60);
+            tmpEnd.setMinutes(element.proposedHour + element.duration);
             // let tmpStart = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);
             // let tmpEnd = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);            
 
@@ -225,7 +224,7 @@ export class DiaryComponent implements OnInit {
       width: '45em'
     });
 
-    dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string } }) => {
+    dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string, duration: number } }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
       //Para no llamar a la bd
       // console.log("Rsponse", response);
@@ -269,7 +268,8 @@ export class DiaryComponent implements OnInit {
           proposedDate: Date,
           proposedHour: number,
           jury: string[],
-          place: string
+          place: string,
+          duration: number
         }
       }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
@@ -610,4 +610,4 @@ export class DiaryComponent implements OnInit {
 }
 interface iAppointmentGroup { _id: string[], values: [iAppointment] }
 interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }
-interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string }
+interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, duration: number }

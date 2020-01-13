@@ -12,6 +12,7 @@ export interface iRequest {
     applicationDateLocal?: string;
     projectName?: string;
     product?: string;
+    duration?: number;
     proposedHour?: number;
     proposedDate?: Date;
     email?: string;
@@ -30,7 +31,7 @@ export interface iRequest {
     lastModifiedLocal?: string;
     doer?: string;
     observation?: string;
-    jury?: Array<string>;
+    jury?: Array<any>;
     history?: [
         {
             phase: string,
@@ -47,7 +48,8 @@ export interface iRequest {
             dateRegister: Date,
             nameFile: string,
             status: string,
-            observation: string
+            observation: string,
+            driveId?: string
         }
     ];
 }

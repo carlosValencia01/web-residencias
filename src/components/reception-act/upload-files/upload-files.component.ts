@@ -9,7 +9,7 @@ import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import Swal from 'sweetalert2';
-import { StepperDocumentComponent } from 'src/app/stepper-document/stepper-document.component';
+import { StepperDocumentComponent } from 'src/modals/reception-act/stepper-document/stepper-document.component';
 import { CookiesService } from 'src/services/app/cookie.service';
 
 @Component({
@@ -35,6 +35,7 @@ export class UploadFilesComponent implements OnInit {
     private requestService: RequestService,
     public dialog: MatDialog,
     public requestProvider: RequestProvider,
+    private _CookiesService: CookiesService,
     public notificationServices: NotificationsServices) { }
   ngOnInit() {
     this.UploadActa = { type: eFILES.ACTA_NACIMIENTO, status: eStatusRequest.NONE, file: null, isBase64: false };
@@ -241,9 +242,7 @@ export class UploadFilesComponent implements OnInit {
     let document: any;
 
     const frmData = new FormData();
-    frmData.append('ControlNumber', this.Request.student.controlNumber);
-    frmData.append('FullName', this.Request.student.fullName);
-    frmData.append('Career', this.Request.student.career);
+    frmData.append('folderId', this._CookiesService.getFolder());
     frmData.append('Document', type);
     frmData.append('IsEdit', this.isEditable ? "true" : "false");
     switch (type) {

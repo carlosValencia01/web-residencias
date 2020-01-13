@@ -47,9 +47,9 @@ import { SurveyFindPageComponent } from 'src/pages/graduation/survey-find-page/s
 import { SurveyQuestionsPageComponent } from 'src/pages/graduation/survey-questions-page/survey-questions-page.component';
 import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/survey-list-page.component';
 import { DiaryComponent } from './pages/reception-act/diary/diary.component';
-import { RangePageComponent } from './app/range-page/range-page.component';
-import { StepperDocumentComponent } from './app/stepper-document/stepper-document.component';
-import { ViewAppointmentPageComponent } from './app/view-appointment-page/view-appointment-page.component';
+import { RangePageComponent } from './pages/reception-act/range-page/range-page.component';
+import { StepperDocumentComponent } from './modals/reception-act/stepper-document/stepper-document.component';
+import { ViewAppointmentPageComponent } from './pages/reception-act/view-appointment-page/view-appointment-page.component';
 
 // Electronic signature
 import { DepartmentsAdminPageComponent } from 'src/pages/electronic-signature/departments-admin-page/departments-admin-page.component';
