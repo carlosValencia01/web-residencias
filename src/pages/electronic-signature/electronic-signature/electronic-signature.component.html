@@ -28,8 +28,8 @@
           </mat-error>
         </mat-form-field>
       </mat-card-content>
-      <mat-card-actions>
-        <button mat-flat-button color="primary" type="submit" [disabled]="formGroupPsw.invalid  || !isMatchPasswords">Guardar</button>
+      <mat-card-actions align="end">
+        <button mat-flat-button color="primary" type="submit" [disabled]="formGroupPsw.invalid  || !isMatchPasswords || eSignatureStatus !== ''">Generar</button>
       </mat-card-actions>
     </form>
   </mat-card>
@@ -44,7 +44,7 @@
     <br *ngIf="eSignatureStatus !== ''">
     <mat-label *ngIf="eSignatureStatus !== ''">Sujeto a invalidación por cambio de puesto.</mat-label>
     <mat-label *ngIf="eSignatureStatus === ''">Aún no tiene una firma electrónica.</mat-label>
-    <mat-card-actions>
+    <mat-card-actions align="end">
       <button mat-flat-button style="margin-top: 50px;" color="primary" [disabled]="eSignatureStatus === ''" (click)="onSubmit1()">Descargar</button>
     </mat-card-actions>
   </mat-card>

@@ -202,6 +202,7 @@ import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/posi
 // Modals
 import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
 import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
+import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
 // Providers
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
@@ -221,6 +222,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CareerProvider } from 'src/providers/shared/career.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
+import {CurrentPositionService} from 'src/services/shared/current-position.service';
 
 import { ScheduleComponent } from '../components/reception-act/schedule/schedule.component';
 import { registerLocaleData } from '@angular/common';
@@ -333,6 +335,7 @@ registerLocaleData(localeEs);
     // Modals
     NewPositionComponent,
     PositionsHistoryComponent,
+    SelectPositionComponent,
 
     // Shared
     // Components
@@ -485,6 +488,7 @@ registerLocaleData(localeEs);
       useValue: DEFAULT_DROPZONE_CONFIG
     },
     // Services
+    CurrentPositionService,
     ErrorMatcher,
   ],
   entryComponents: [
@@ -521,6 +525,7 @@ registerLocaleData(localeEs);
     // Modals
     NewPositionComponent,
     PositionsHistoryComponent,
+    SelectPositionComponent,
 
     // Shared
     // Modals

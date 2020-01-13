@@ -6,7 +6,7 @@
 
 @import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import "~material-design-icons/iconfont/material-icons.css";
 @import "~ngx-smart-modal/ngx-smart-modal";
 @import '~angular-calendar/css/angular-calendar.css';
 
@@ -29,9 +29,10 @@ dropzone > .dropzone.dz-wrapper .dz-message{
 .dropzone.dz-drag-hover.dz-message{
     border-color:rgb(55, 96, 230) !important ;
 }
-.mat-card-header-text{
+
+/*.mat-card-header-text{
     text-align: center !important;
 }
 .mat-card-header{
     justify-content: center;
-}
+}*/
