@@ -11,12 +11,8 @@
 <div class="content noScroll">
   <div class="row text-center">
     <div class="col-12">
-      
-            <div class="card mt-3">
-                <div class="card-header text-white bg-secondary">
-                  <strong>Documentos</strong>
-                </div>
-                <div class="row text-center mt-2">
+            <div class="card mt-3">                
+                <div class="row text-center">
                   <div [class.col-12]="!viewdoc" [class.col-2]="viewdoc">
                     <div class="card-body">
                       <div *ngIf="data.user === 'Administrador' && pendings>0" class="row text-center"> <div class="col-12"><mat-checkbox [(ngModel)]="checkAll" (change)="selectAll()" [checked]="pendings === selectPendings" [value]="pendings === selectPendings">Seleccionar todos</mat-checkbox></div></div>
@@ -297,16 +293,49 @@
                     <div class="content" [class.viewdoc]="viewdoc">
                       <div class="row text-center viewdocheader">
                         <div class="col-11">
-                          <div class="row text-center">
-                            <div class="col-6">
+                          <div class="row text-left">
+                            <div class="col-3">
                               <h4>
                                 <strong>{{docDisplayName}} </strong>
                               </h4>
                             </div>
-                            <div class="col-6">
+                            <div class="col-3">
                                 <mat-chip-list aria-label="Historial"> 
                                   <mat-chip (click)="history()" color="warn"><strong>Ver historial del documento</strong></mat-chip>
                                 </mat-chip-list>                                  
+                            </div>
+                            <div class="col-6">
+                              <div class="row" *ngIf="docto">
+                                <div class="col-12" *ngIf="data.user === 'Secretaria escolares' && docto.status !== 'ACEPTADO' && docto.status !== 'VALIDADO'">
+                                  <div class="row text-center">
+                                    <div class="col-6">
+                                      <div (click)="changeStatus('VALIDADO')" class="btn-rounded btn-rounded-success">
+                                        <mat-icon>done</mat-icon> Validar
+                                      </div>
+                                    </div>
+                                    <div class="col-6">                                    
+                                      <div (click)="changeStatus('RECHAZADO')" class="btn-rounded btn-rounded-danger">
+                                        <mat-icon>close</mat-icon> Rechazar
+                                      </div>                                 
+                                    </div>
+                                  </div>
+                                </div>
+                                <div *ngIf="data.user === 'Administrador'">                                  
+                                    <div class="col-12" *ngIf="docto.status !== 'ACEPTADO'">
+                                      div class="row text-center">
+                                      <div class="col-6">
+                                        <div (click)="changeStatus('ACEPTADO')" class="btn-rounded btn-rounded-success">
+                                          <mat-icon>done</mat-icon> Aceptar
+                                        </div>
+                                      </div>
+                                      <div class="col-6">                                    
+                                        <div (click)="changeStatus('RECHAZADO')" class="btn-rounded btn-rounded-danger">
+                                          <mat-icon>close</mat-icon> Rechazar
+                                        </div>                                 
+                                      </div>
+                                    </div>                                                                      
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -339,49 +368,7 @@
                       
                       
                     </div>
-                  </div>
-                  <div class="row bottom" *ngIf="docto">
-                    <div class="col-12" *ngIf="data.user === 'Secretaria escolares' && docto.status !== 'ACEPTADO' && docto.status !== 'VALIDADO'">
-                      <form [formGroup]="form" (ngSubmit)="changeStatus(form.value)" class="tp-form">
-                        <mat-radio-group name="refused" [(ngModel)]="refused" formControlName="status" aria-label="Select an option">
-                          <mat-radio-button  value="ACEPTADO" class="mr-2">Validar documento</mat-radio-button>
-                          <mat-radio-button value="RECHAZADO" class="ml-2">Rechazar documento</mat-radio-button>
-                        </mat-radio-group>            
-                        <div *ngIf="refused === 'RECHAZADO'">
-                            <mat-form-field appearance="outline">
-                              <mat-label>Especifique el motivo</mat-label>
-                              <input matInput formControlName="observation" [errorStateMatcher]="matcher" maxlength="200">
-                              <mat-error>
-                                <span
-                                  *ngIf="!form.get('observation').valid && form.get('observation').touched">Especificar porque se rechaza.</span>
-                              </mat-error>
-                            </mat-form-field>
-                        </div>                                               
-                        <button class="btn btn-primary ml-4" type="submit" [disabled]="refused === 'RECHAZADO' ? !form.get('status').valid || !form.get('observation').valid :  !form.get('status').valid">Guardar cambios</button>                          
-                      </form>
-                    </div>
-                    <div *ngIf="data.user === 'Administrador'">
-                        <div class="col-12" *ngIf="docto.status !== 'ACEPTADO'">
-                            <form [formGroup]="form" (ngSubmit)="changeStatus(form.value)" class="tp-form">
-                              <mat-radio-group name="refused" [(ngModel)]="refused" formControlName="status" aria-label="Select an option">
-                                <mat-radio-button  value="ACEPTADO" class="mr-2">Aceptar documento</mat-radio-button>
-                                <mat-radio-button value="RECHAZADO" class="ml-2">Rechazar documento</mat-radio-button>
-                              </mat-radio-group>            
-                              <div *ngIf="refused === 'RECHAZADO'">
-                                  <mat-form-field appearance="outline">
-                                    <mat-label>Especifique el motivo</mat-label>
-                                    <input matInput formControlName="observation" [errorStateMatcher]="matcher" maxlength="200">
-                                    <mat-error>
-                                      <span
-                                        *ngIf="!form.get('observation').valid && form.get('observation').touched">Especificar porque se rechaza.</span>
-                                    </mat-error>
-                                  </mat-form-field>
-                              </div>                                               
-                              <button class="btn btn-primary ml-4" type="submit" [disabled]="refused === 'RECHAZADO' ? !form.get('status').valid || !form.get('observation').valid :  !form.get('status').valid">Guardar cambios</button>                          
-                            </form>
-                          </div>
-                    </div>
-                  </div>
+                  </div>                  
                 </div>
               </div> 
     </div>
