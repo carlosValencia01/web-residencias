@@ -283,11 +283,7 @@ export class ReviewExpedientComponent implements OnInit {
               }
             );
           }
-          this.studentProv.getDocumentsUpload(this.data.student._id).subscribe(res => {
-            console.log(res.documents);
-          });
 
-          //
           this.studentProv.getDocumentsUpload(this.data.student._id).subscribe(res => {
             var comprobante = res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
             var acta = res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
