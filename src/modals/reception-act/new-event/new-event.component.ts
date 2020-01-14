@@ -45,11 +45,11 @@ export class NewEventComponent implements OnInit {
     //   tmpDate = new Date(data.event.start);
     //   this.event = { appointment: tmpDate, minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()), abbreviation: data.event.title.split(' ')[1] };
     // }
-    console.log("operation", data.operation);
+    // console.log("operation", data.operation);
     const tmpDate = data.operation === eOperation.NEW ? data.date : new Date(data.event.start);
     // console.log("operation",tmpDate);
     this.event = { appointment: tmpDate, minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()), abbreviation: data.operation === eOperation.NEW ? '' : data.event.title.split(' ')[1] };
-    console.log("evento", this.event);
+    // console.log("evento", this.event);
     this.displayedColumns = ['controlNumber', 'fullName', 'career', 'select']
     this.title = "NUEVO EVENTO A LAS " + moment(tmpDate).format('LT');
     // this.onRefresh();
@@ -59,6 +59,7 @@ export class NewEventComponent implements OnInit {
     this.frmNewEvent = new FormGroup({
       'place': new FormControl(null, Validators.required),
       'student': new FormControl(null, Validators.required),
+      'duration': new FormControl('60', Validators.required)
     });
     this.onSearch();
   }
@@ -81,7 +82,6 @@ export class NewEventComponent implements OnInit {
     // if (this.search.trim() !== '') {
     // this._StudentProvider.searchStudents(this.search).subscribe(res => {
     this._RequestProvider.StudentsToSchedule().subscribe(res => {
-      console.log("RES", res);
       const tmpData: Array<any> = res.Students;
       this.dataStudent = [];
       if (tmpData.length != 0) {
@@ -90,7 +90,6 @@ export class NewEventComponent implements OnInit {
           this.dataStudent.push({ _id: e.Student[0]._id, fullName: e.Student[0].fullName, career: e.Student[0].career, controlNumber: e.Student[0].controlNumber, select: '', request: e._id })
         });
       }
-      console.log("TMP", tmpData);
       this.onRefresh();
     }, err => {
       this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulación App", err);
@@ -165,25 +164,24 @@ export class NewEventComponent implements OnInit {
       appointment: appointment.appointment,
       minutes: appointment.minutes,
       place: this.frmNewEvent.get('place').value,
-      doer: this._CookiesService.getData().user.name.fullName
+      doer: this._CookiesService.getData().user.name.fullName,
+      duration: this.frmNewEvent.get('duration').value
     };
-    console.log("DATA ADD", data);
     this._RequestProvider.updateRequest(request, data).subscribe(data => {
-      console.log("values_neevent", data);
+      // console.log("values_neevent", data);
       if (typeof (data) !== 'undefined') {
-        console.log("values", data);
-        console.log("values", data.jury);
         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento Asignado');
         this.dialogRef.close({
           career: this.selectRow.career,
           value: {
-            id: this.selectRow._id,
+            id: data.request._id,
             student: [this.selectRow.fullName],
             phase: "Realizado",
             proposedDate: this.event.appointment,
             proposedHour: this.event.minutes,
             jury: data.request.jury,
-            place: data.request.place
+            place: data.request.place,
+            duration: data.request.duration
           }
         });
       }

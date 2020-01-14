@@ -230,9 +230,8 @@ export class DiaryComponent implements OnInit {
       // console.log("Rsponse", response);
       if (typeof (response) !== 'undefined') {
         const index = this.Appointments.findIndex(x => x._id[0] === response.career);
-        // console.log("Index", index);
+        console.log("Index", response.value);
         if (index != -1) {
-          // console.log("ENTRO");
           this.Appointments[index].values.push(response.value);
         } else {
           // const tmpAppointment: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] } = { _id: [response.career], values: [response.value] }
@@ -388,8 +387,11 @@ export class DiaryComponent implements OnInit {
   }
 
   confirmDenial($event: any, operation: eStatusRequest): void {
+    console.log("%", $event);
     let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
+    console.log("aapoint", AppointmentCareer);
     const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
+    console.log("aapoint", tmpAppointment);
     if (typeof (tmpAppointment) !== 'undefined') {
       const msnCancel = "¿Está seguro de cancelar este espacio?";
       const msnReject = "¿Está seguro de rechazar este espacio?"
@@ -410,20 +412,23 @@ export class DiaryComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe((response: { confirm: boolean, motivo: string }) => {
-        if (response.confirm) {
-          const data = {
-            operation: operation,
-            observation: response.motivo,
-            doer: this._CookiesService.getData().user.name.fullName
-          };
-          this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
-            this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
-            AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
-            this.loadAppointment();
-          }, error => {
-            let tmpJson = JSON.parse(error._body);
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
-          });
+        if (typeof (response) !== 'undefined') {
+          if (response.confirm) {
+            const data = {
+              operation: operation,
+              observation: response.motivo,
+              doer: this._CookiesService.getData().user.name.fullName
+            };
+            console.log("APPOINTMENT_id", tmpAppointment.id);
+            this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
+              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
+              AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
+              this.loadAppointment();
+            }, error => {
+              let tmpJson = JSON.parse(error._body);
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+            });
+          }
         }
       });
     } else {
@@ -591,6 +596,9 @@ export class DiaryComponent implements OnInit {
         }
       });
     }
+
+  }
+  eventClicked($event) {
 
   }
 
