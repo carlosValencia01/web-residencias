@@ -248,8 +248,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     });
     let sub = linkModal.afterClosed().subscribe(
       information=>{         
-        console.log(information);
+        //console.log(information);
         this.getStudents();
+        this.eventFilterStatus();       
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -268,7 +269,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       height: '800px'
     });
     let sub = linkModal.afterClosed().subscribe(
-      expedient=>{         
+      expedient=>{
+        this.getStudents();  
+        this.eventFilterStatus();       
         // console.log(expedient);
         
       },
@@ -370,8 +373,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           });
           let sub = linkModal.afterClosed().subscribe(
             analysis=>{         
-              console.log(analysis);
+              //console.log(analysis);
               this.getStudents();
+              this.eventFilterStatus();       
             },
             err=>console.log(err), ()=> sub.unsubscribe()
           );
@@ -393,7 +397,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     
     switch (document) {
       case "Acta": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename ?docc.filename.indexOf('ACTA') !== -1 : undefined)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ?docc.filename.indexOf('ACTA') !== -1 && docc.status.length>0: undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -402,7 +406,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Certificado": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CERTIFICADO') !== -1 : undefined)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CERTIFICADO') !== -1 && docc.status.length>0: undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -411,7 +415,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Analisis": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CLINICOS') !== -1 : undefined)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CLINICOS') !== -1 && docc.status.length>0: undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -420,7 +424,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Comprobante": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('COMPROBANTE') !== -1 : undefined)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('COMPROBANTE') !== -1 && docc.status.length>0: undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -429,7 +433,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Curp": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CURP') !== -1 : undefined)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('CURP') !== -1 && docc.status.length>0: undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -438,7 +442,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Nss": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('NSS') !== -1 : undefined)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('NSS') !== -1 && docc.status.length>0: undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
@@ -447,7 +451,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       case "Foto": {
-        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('FOTO') !== -1 : undefined)[0]:'';
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('FOTO') !== -1 && docc.status.length>0: undefined)[0]:'';
         if(doc != undefined){
           return doc.status[doc.status.length-1].name;
         }
