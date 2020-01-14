@@ -152,4 +152,8 @@ export class StudentProvider {
             })
             );
     }
+
+    getDocumentsUpload(_id : string): Observable<any>{
+        return this.api.get(`student/get/documents/status/${_id}`).pipe(map( res=>res.json()));
+    }
 }
