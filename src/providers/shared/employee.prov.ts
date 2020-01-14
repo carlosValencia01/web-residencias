@@ -139,4 +139,9 @@ export class EmployeeProvider {
       return this.api.post(`employee/uploadCsvGrades/${employeeId}`, data)
         .pipe(map(res => res.json()));
     }
+
+    canReallocateBossOrDirectorPosition(positionId: string) {
+        return this.api.get(`employee/reallocate/${positionId}`)
+            .pipe(map(res => res.json()));
+    }
 }

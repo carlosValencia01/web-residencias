@@ -2,7 +2,10 @@ import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import * as moment from 'moment';
 
+import {EmployeeProvider} from 'src/providers/shared/employee.prov';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import {IPosition} from 'src/entities/shared/position.model';
+import {NotificationsServices} from 'src/services/app/notifications.service';
 
 moment.locale('es');
 
@@ -21,6 +24,8 @@ export class PositionsHistoryComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: any,
     private dialogRef: MatDialogRef<PositionsHistoryComponent>,
+    private employeeProv: EmployeeProvider,
+    private notifications: NotificationsServices,
   ) {
     this.positions = data.positions.slice();
   }
@@ -35,7 +40,17 @@ export class PositionsHistoryComponent implements OnInit {
 
   public reallocatePosition(positionId: string) {
     const position = this._getPositionById(positionId);
-    this.dialogRef.close(position);
+    if (position.name.toUpperCase() === 'JEFE DE DEPARTAMENTO' || position.name.toUpperCase() === 'DIRECTOR') {
+      this.employeeProv.canReallocateBossOrDirectorPosition(positionId).
+      subscribe(_ => {
+        this.dialogRef.close(position);
+      }, err => {
+        const message = JSON.parse(err._body).message;
+        this.notifications.showNotification(eNotificationType.INFORMATION, 'El puesto no se puede reactivar', message);
+      });
+    } else {
+      this.dialogRef.close(position);
+    }
   }
 
   private _castPositionToRow(data: any): IPositionsHistoryTable {
