@@ -52,10 +52,8 @@ export class RequestComponentComponent implements OnInit {
   // public dropZone: DropzoneConfigInterface;
   public folderId: String;
   public activePeriod;
-  public foldersByPeriod = [];
-  public dzConfing: DropzoneConfigInterface;
-  // @ViewChild('dropZone') drop: any;
-  @ViewChild(DropzoneComponent) _dropZone?: DropzoneComponent;
+  public foldersByPeriod = [];  
+  // @ViewChild('dropZone') drop: any;  
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -73,8 +71,7 @@ export class RequestComponentComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.typeCareer = <keyof typeof eCAREER>this.userInformation.career;
-    this.getFolderId();
-    this.URL = `http://localhost:3000/escolares/credenciales/request/create/${this.userInformation._id}`;
+    this.getFolderId();    
   }
 
   ngOnInit() {
@@ -400,8 +397,7 @@ export class RequestComponentComponent implements OnInit {
     });
   }
 
-  generateRequestPDF() {
-    console.log("config", this.dzConfing);
+  generateRequestPDF() {    
     window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
   }
 
@@ -465,16 +461,7 @@ export class RequestComponentComponent implements OnInit {
               // student folder doesn't exists then create new folder
               this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, career.folder.idFolderInDrive, 2).subscribe(
                 studentF => {
-                  this.folderId = studentF.folder.idFolderInDrive;
-                  this.dzConfing =
-                  {
-                    url: this.URL,
-                    clickable: true, maxFiles: 2,
-                    params: { 'Documento': 'PROYECTO', folderId: this.folderId },
-                    accept: (file, done) => { done(); },
-                    acceptedFiles: 'application/pdf',
-                  }
-                  // console.log('3');                  
+                  this.folderId = studentF.folder.idFolderInDrive;                 
                   this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id });
                 },
                 err => {
@@ -489,16 +476,7 @@ export class RequestComponentComponent implements OnInit {
         } else {
           this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, folderCareer[0].idFolderInDrive, 2).subscribe(
             studentF => {
-              this.folderId = studentF.folder.idFolderInDrive;
-              this.dzConfing =
-              {
-                url: this.URL,
-                clickable: true, maxFiles: 2,
-                params: { 'Documento': 'PROYECTO', folderId: this.folderId },
-                accept: (file, done) => { done(); },
-                acceptedFiles: 'application/pdf',
-              }
-              // console.log('3.1');
+              this.folderId = studentF.folder.idFolderInDrive;                            
               this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id }).subscribe(
                 upd => { },
                 err => { }
@@ -512,15 +490,5 @@ export class RequestComponentComponent implements OnInit {
         console.log(err, '==============error');
       }
     );
-  }
-
-  public onErrorCommon(args: any) {
-    this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', 'Archivo no cargado correctamente');
-    this._dropZone.directiveRef.reset();
-  }
-  public onUploadSuccess(args: any): void {
-    this.isLoadFile = true;
-    this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Archivo cargado correctamente');
-    this._dropZone.directiveRef.reset();
-  }
+  } 
 }
