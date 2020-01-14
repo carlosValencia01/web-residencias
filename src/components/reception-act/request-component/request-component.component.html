@@ -198,16 +198,12 @@
               <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
               <button [disabled]="!isEdit" type="button" class="btn btn-outline-success btn-block"
                 (click)="fileUpload.click()">Cargar Portada
-              </button>
-              <!-- <dropzone id="dzConfing" [config]="dzConfing" [message]="'Haga click o arrastre el archivo para subirlo'"
-                (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone> -->
+              </button>          
             </div>
           </div>
           <div *ngSwitchDefault>
             <label class="form-col-form-label" for="project">Portada del Proyecto</label>
-            <div class="form-group form-actions">
-              <!-- <dropzone id="dzConfing" [config]="dzConfing" [message]="'Haga click o arrastre el archivo para subirlo'"
-                (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone> -->
+            <div class="form-group form-actions">              
               <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
               <button type="button"
                 [class]="fileData ? 'btn btn-outline-success btn-block' : 'btn btn-outline-danger btn-block'"
