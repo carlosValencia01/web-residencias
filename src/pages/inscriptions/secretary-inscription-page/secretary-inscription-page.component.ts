@@ -128,7 +128,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         return a.fatherLastName.localeCompare(b.fatherLastName);
       });
       this.listStudents = this.students;
-      console.log(this.listStudents);
+      //console.log(this.listStudents);
       this.listCovers = this.listStudents;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
       
@@ -685,7 +685,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   //GENERAR PDF
   getBase64ForStaticImages() {
-    this.imageToBase64Serv.getBase64('assets/imgs/front.jpg').then(res1 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/front45A.jpg').then(res1 => {
       this.frontBase64 = res1;
     });
 
@@ -1050,5 +1050,85 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     return folderId;
   }
 
+  async generateCredential(student){
+    var docFoto = student.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? student.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+    if(docFoto != ''){
+      if(docFoto.status[docFoto.status.length-1].name == "ACEPTADO" || docFoto.status[docFoto.status.length-1].name == "VALIDADO"){
+        if(student.printCredential != true){
+          this.loading = true;
+          const doc = new jsPDF({
+            unit: 'mm',
+            format: [251, 158], // Medidas correctas: [88.6, 56]
+            orientation: 'landscape'
+          });
+           // cara frontal de la credencial
+           doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
+                  
+           //FOTOGRAFIA DEL ALUMNO
+           var foto = await this.findFoto(docFoto);
+           //console.log(foto);
+           doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
+
+           doc.setTextColor(255, 255, 255);
+           doc.setFontSize(7);
+           doc.setFont('helvetica');
+           doc.setFontType('bold');
+           doc.text(49, 30.75, doc.splitTextToSize(student.fullName ? student.fullName : '', 35));
+           doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career ? student.career : ''), 35));
+           doc.text(49, 46.5, doc.splitTextToSize(student.nss ? student.nss : '', 35));
+
+           // cara trasera de la credencial
+           doc.addPage();
+           doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
+
+           // Agregar años a la credencial
+           const year = new Date();
+           doc.setTextColor(255, 255, 255);
+           doc.setFontSize(4);
+           doc.setFont('helvetica');
+           doc.setFontType('bold');
+           doc.text(9.5, 41.3,year.getFullYear()+'');
+           doc.text(16.5, 41.3,(year.getFullYear()+1)+'');
+           doc.text(23.5, 41.3,(year.getFullYear()+2)+'');
+           doc.text(30.5, 41.3,(year.getFullYear()+3)+'');
+           doc.text(37.5, 41.3,(year.getFullYear()+4)+'');
+
+           // Numero de control con codigo de barra
+           doc.addImage(this.textToBase64Barcode(student.controlNumber ? student.controlNumber : ''), 'PNG', 46.8, 39.2, 33, 12);
+           doc.setTextColor(0, 0, 0);
+           doc.setFontSize(8);
+           doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber ? student.controlNumber : '', 35));
+           this.loading = false;
+           var credentials = doc.output('arraybuffer');
+           // Abrir Modal para visualizar credenciales
+           const linkModal = this.dialog.open(ReviewCredentialsComponent, {
+             data: {
+               operation: 'view',
+               credentials:credentials,
+               students:student
+             },
+             disableClose: true,
+             hasBackdrop: true,
+             width: '90em',
+             height: '800px'
+           });
+           let sub = linkModal.afterClosed().subscribe(
+             credentials=>{         
+               console.log(credentials);
+               this.getStudents();
+               this.eventFilterStatus();
+             },
+             err=>console.log(err), ()=> sub.unsubscribe()
+           );
+        } else {
+          this.notificationService.showNotification(eNotificationType.INFORMATION, 'Credencial ya fue impresa', '');
+        }
+      } else{
+        this.notificationService.showNotification(eNotificationType.INFORMATION, 'Foto no aceptada', '');
+      }
+    } else {
+      this.notificationService.showNotification(eNotificationType.INFORMATION, 'No tiene foto', '');
+    }
+  }
   
 }

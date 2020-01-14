@@ -12,6 +12,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 export class ReviewCredentialsComponent implements OnInit {
 
   title = 'CREDENCIALES A IMPRIMIR';
+  textButton = 'Cambiar Estatus de Credenciales';
   pdfSrc;
   loading: boolean;
   showDocument = false;
@@ -22,7 +23,10 @@ export class ReviewCredentialsComponent implements OnInit {
     private inscriptionsProv: InscriptionsProvider,
     private notificationService: NotificationsServices,
   ) {
-    console.log(data);
+    if(this.data.students.length == undefined){
+      this.title = 'CREDENCIAL DE: '+this.data.students.fullName+' - '+this.data.students.controlNumber
+      this.textButton = 'Cambiar Estatus de Credencial';
+    }
     this.showCredentials(this.data.credentials);
   }
 
@@ -41,15 +45,22 @@ export class ReviewCredentialsComponent implements OnInit {
   }
 
   changeStatusCredentials() {
-    //console.log(this.data.students);
-    for (var i = 0; i < this.data.students.length; i++) {
+    if(this.data.students.length == undefined){
       this.loading = true;
-      this.updateStudent(this.data.students[i]._id);
-      if(i == this.data.students.length-1){
-        this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
-        this.loading = false;
-        this.onClose();
-      }
+      this.updateStudent(this.data.students._id);
+      this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
+      this.loading = false;
+      this.onClose();
+    } else {
+        for (var i = 0; i < this.data.students.length; i++) {
+          this.loading = true;
+          this.updateStudent(this.data.students[i]._id);
+          if(i == this.data.students.length-1){
+            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
+            this.loading = false;
+            this.onClose();
+          }
+        }
     }
   }
 
