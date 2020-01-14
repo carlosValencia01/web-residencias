@@ -13,6 +13,7 @@ import {eOperation} from 'src/enumerators/reception-act/operation.enum';
 import {IEmployee} from 'src/entities/shared/employee.model';
 import {LoadCsvDataComponent} from 'src/modals/shared/load-csv-data/load-csv-data.component';
 import {NotificationsServices} from 'src/services/app/notifications.service';
+import {UploadEmployeesCsvComponent} from 'src/modals/electronic-signature/upload-employees-csv/upload-employees-csv.component';
 
 @Component({
   selector: 'app-grade-page',
@@ -61,7 +62,7 @@ export class GradePageComponent implements OnInit {
       rfc: employee.rfc,
       fullName: employee.name.fullName,
       grades: employee.grade ? employee.grade.length : 0,
-      positions: employee.positions ? employee.positions.length : 0,
+      positions: employee.positions ? employee.positions.filter(item => item.status === 'ACTIVE').length : 0,
       employee: employee,
       action: '',
     };
@@ -112,7 +113,7 @@ export class GradePageComponent implements OnInit {
       });
   }
 
-  public addNewGradeEmployee() {
+  public addNewEmployee() {
     const ref = this.dialog.open(EmployeeGradeComponent, {
       id: 'EmployeeModal',
       data: {
@@ -138,75 +139,75 @@ export class GradePageComponent implements OnInit {
     });
   }
 
-  public onUpload(event) {
-    const notification = this.notificationServ;
-    const provider = this.employeeProvider;
-    const arrayData: any[] = [];
-    if (event.target.files && event.target.files[0]) {
-      Papa.parse(event.target.files[0], {
-        complete: async results => {
-          if (results.data.length > 0) {
-            const elements = results.data;
-            await this._asyncForEach(elements, async (element, index) => {
-              if (index > 0) {
-                const employeeIndex = arrayData.findIndex(x => x.rfc === element[0]);
-                if (employeeIndex !== -1) {
-                  const {value: updateEmployee} = await Swal.fire({
-                    title: 'Empleado duplicado',
-                    text: `El empleado con RFC ${element[0]}, está duplicado. ¿Desea actualizar o descartar los nuevos datos?`,
-                    type: 'question',
-                    allowOutsideClick: false,
-                    showCancelButton: true,
-                    confirmButtonColor: 'blue',
-                    cancelButtonColor: 'red',
-                    confirmButtonText: 'Actualizar',
-                    cancelButtonText: 'Descartar',
-                    focusConfirm: true
-                  });
-                  if (updateEmployee) {
-                    arrayData.splice(employeeIndex, 1);
-                    arrayData.push(this._buildPreviousStructure(element));
-                  }
-                } else {
-                  if (elements[index].length >= 6) {
-                    arrayData.push(this._buildPreviousStructure(element));
-                  }
-                }
-              }
-            });
-            const _displayedColumns = ['rfc', 'curp', 'firstName', 'lastName', 'gender', 'birthDate'];
-            const _displayedColumnsName = ['RFC', 'CURP', 'Nombres', 'Apellidos', 'Género', 'Fecha de nacimiento'];
-            const dialogRef = this.dialog.open(LoadCsvDataComponent, {
-              id: 'LoadEmployeeCsvData',
-              data: {
-                config: {
-                  title: 'Empleados cargados',
-                  displayedColumns: _displayedColumns,
-                  displayedColumnsName: _displayedColumnsName
-                },
-                componentData: arrayData
-              },
-              disableClose: true,
-              hasBackdrop: true,
-              width: '65em',
-            });
-            dialogRef.afterClosed()
-              .subscribe(_employees => {
-                if (_employees && _employees.length) {
-                  const _arrayEmployees = _employees.map(this._buildEmployeeStructure);
-                  provider.csvEmployeGrade(_arrayEmployees).subscribe(_ => {
-                    notification.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
-                    this.refreshEmployees();
-                  }, _ => {
-                    notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
-                  });
-                }
-              });
-          }
-        }
-      });
-    }
-  }
+  // public onUpload(event) {
+  //   const notification = this.notificationServ;
+  //   const provider = this.employeeProvider;
+  //   const arrayData: any[] = [];
+  //   if (event.target.files && event.target.files[0]) {
+  //     Papa.parse(event.target.files[0], {
+  //       complete: async results => {
+  //         if (results.data.length > 0) {
+  //           const elements = results.data;
+  //           await this._asyncForEach(elements, async (element, index) => {
+  //             if (index > 0) {
+  //               const employeeIndex = arrayData.findIndex(x => x.rfc === element[0]);
+  //               if (employeeIndex !== -1) {
+  //                 const {value: updateEmployee} = await Swal.fire({
+  //                   title: 'Empleado duplicado',
+  //                   text: `El empleado con RFC ${element[0]}, está duplicado. ¿Desea actualizar o descartar los nuevos datos?`,
+  //                   type: 'question',
+  //                   allowOutsideClick: false,
+  //                   showCancelButton: true,
+  //                   confirmButtonColor: 'blue',
+  //                   cancelButtonColor: 'red',
+  //                   confirmButtonText: 'Actualizar',
+  //                   cancelButtonText: 'Descartar',
+  //                   focusConfirm: true
+  //                 });
+  //                 if (updateEmployee) {
+  //                   arrayData.splice(employeeIndex, 1);
+  //                   arrayData.push(this._buildPreviousStructure(element));
+  //                 }
+  //               } else {
+  //                 if (elements[index].length >= 6) {
+  //                   arrayData.push(this._buildPreviousStructure(element));
+  //                 }
+  //               }
+  //             }
+  //           });
+  //           const _displayedColumns = ['rfc', 'curp', 'firstName', 'lastName', 'gender', 'birthDate'];
+  //           const _displayedColumnsName = ['RFC', 'CURP', 'Nombres', 'Apellidos', 'Género', 'Fecha de nacimiento'];
+  //           const dialogRef = this.dialog.open(LoadCsvDataComponent, {
+  //             id: 'LoadEmployeeCsvData',
+  //             data: {
+  //               config: {
+  //                 title: 'Empleados cargados',
+  //                 displayedColumns: _displayedColumns,
+  //                 displayedColumnsName: _displayedColumnsName
+  //               },
+  //               componentData: arrayData
+  //             },
+  //             disableClose: true,
+  //             hasBackdrop: true,
+  //             width: '65em',
+  //           });
+  //           dialogRef.afterClosed()
+  //             .subscribe(_employees => {
+  //               if (_employees && _employees.length) {
+  //                 const _arrayEmployees = _employees.map(this._buildEmployeeStructure);
+  //                 provider.csvEmployeGrade(_arrayEmployees).subscribe(_ => {
+  //                   notification.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
+  //                   this.refreshEmployees();
+  //                 }, _ => {
+  //                   notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
+  //                 });
+  //               }
+  //             });
+  //         }
+  //       }
+  //     });
+  //   }
+  // }
 
   public applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -219,36 +220,26 @@ export class GradePageComponent implements OnInit {
     this.getEmployees();
   }
 
-  private _buildPreviousStructure(data: Array<any>): any {
-    return {
-      rfc: data[0],
-      curp: data[1],
-      firstName: data[2],
-      lastName: data[3],
-      gender: data[4],
-      birthDate: new Date(data[5])
-    };
+  public uploadEmployeesCsv() {
+    const ref = this.dialog.open(UploadEmployeesCsvComponent, {
+      id: 'UploadEmployeesModal',
+      disableClose: true,
+      hasBackdrop: true,
+      width: '70em',
+    });
+
+    ref.afterClosed().subscribe((employees) => {
+      if (employees && employees.length) {
+        this.employeeProvider.csvEmployeGrade(employees).subscribe(_ => {
+          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
+          this.refreshEmployees();
+        }, _ => {
+          this.notificationServ.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
+        });
+      }
+    });
   }
 
-  private _buildEmployeeStructure(data: any): IEmployee {
-    return {
-      rfc: data.rfc,
-      curp: data.curp,
-      name: {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        fullName: data.firstName.concat(' ', data.lastName)
-      },
-      gender: data.gender,
-      birthDate: data.birthDate
-    };
-  }
-
-  private async _asyncForEach(array, callback) {
-    for (let index = 0; index < array.length; index++) {
-      await callback(array[index], index, array);
-    }
-  }
 }
 
 interface IGradeTable {

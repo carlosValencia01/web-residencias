@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><i class="fa fa-home"></i>Home</li>
-    <li aria-current="page" class="breadcrumb-item active"><i class="fa fa-university"></i>Grados</li>
+    <li class="breadcrumb-item"><i class="fa fa-home"></i> Home</li>
+    <li aria-current="page" class="breadcrumb-item active"><i class="fa fa-users"></i> Empleados</li>
   </ol>
 </nav>
 
@@ -9,18 +9,18 @@
   <div class="col-sm-12 col-md-9">
     <mat-form-field appearance="outline">
       <mat-label>Búsqueda</mat-label>
-      <input (keyup)="applyFilter($event.target.value)" matInput placeholder="Buscar empleado">
+      <input oninput="this.value=this.value.toUpperCase()" (keyup)="applyFilter($event.target.value)" matInput
+        placeholder="Buscar empleado">
     </mat-form-field>
   </div>
   <div class="col-sm-12 col-md-3">
     <div class="form-group">
       <div class="text-center">
-        <input #fileUpload (change)="onUpload($event)" accept=".csv" style="display: none" type="file">
-        <button (click)="fileUpload.click()" class="m-1" color="primary" mat-mini-fab
-                ngbTooltip="Cargar empleados de archivo .csv">
+        <button (click)="uploadEmployeesCsv()" class="m-1" color="primary" mat-mini-fab
+          ngbTooltip="Cargar empleados desde archivo .csv">
           <mat-icon>group_add</mat-icon>
         </button>
-        <button (click)="addNewGradeEmployee()" class="m-1" color="primary" mat-mini-fab ngbTooltip="Nuevo empleado">
+        <button (click)="addNewEmployee()" class="m-1" color="primary" mat-mini-fab ngbTooltip="Nuevo empleado">
           <mat-icon>person_add</mat-icon>
         </button>
         <button (click)="refreshEmployees()" class="m-1" color="primary" mat-mini-fab ngbTooltip="Actualizar tabla">
@@ -30,8 +30,8 @@
     </div>
   </div>
 </div>
-<div class="mat-elevation-z8">
-  <table [dataSource]="dataSource" mat-table matSort>
+<div class="mat-elevation-z8 col-12">
+  <table [dataSource]="dataSource" mat-table matSort class="col-12">
     <ng-container matColumnDef="fullName">
       <th *matHeaderCellDef mat-header-cell mat-sort-header>Nombre</th>
       <td *matCellDef="let row" mat-cell> {{row.fullName}} </td>
@@ -45,7 +45,7 @@
       <td *matCellDef="let row" mat-cell> {{row.grades}} </td>
     </ng-container>
     <ng-container matColumnDef="positions">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>Puestos</th>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>Puestos activos</th>
       <td *matCellDef="let row" mat-cell> {{row.positions}} </td>
     </ng-container>
     <ng-container matColumnDef="action">
