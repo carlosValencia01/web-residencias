@@ -35,7 +35,7 @@ export class ReleaseComponentComponent implements OnInit {
     private cookiesService: CookiesService,
     private _RequestProvider: RequestProvider,
     public _ImageToBase64Service: ImageToBase64Service,
-    @Inject(MAT_DIALOG_DATA) public data: any) {    
+    @Inject(MAT_DIALOG_DATA) public data: any) {
     this.information = data;
     console.log("INORMATION", this.information);
     this.isReject = typeof (this.information.observation) !== 'undefined';
@@ -45,7 +45,7 @@ export class ReleaseComponentComponent implements OnInit {
 
   ngOnInit() {
     this.frmConsejo = new FormGroup({
-      'president': new FormControl(null, Validators.required),
+      'president': new FormControl(this.information.request.adviser, Validators.required),
       'secretary': new FormControl(null, Validators.required),
       'vocal': new FormControl(null, Validators.required),
       'substitute': new FormControl(null, Validators.required),
@@ -92,40 +92,46 @@ export class ReleaseComponentComponent implements OnInit {
     });
 
     ref.afterClosed().subscribe((result) => {
-      console.log("RESULT", result);
-      if (typeof (result) != "undefined") {
-        switch (button) {
-          case "president": {
-            this.frmConsejo.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : "" });
-            this.juryInfo[0].name = result.ExtraInfo.name;
-            this.juryInfo[0].title = result.ExtraInfo.title;
-            this.juryInfo[0].cedula = result.ExtraInfo.cedula;
-            break;
-          }
-          case "secretary": {
 
-            this.frmConsejo.patchValue({ 'secretary': typeof (result) !== 'undefined' ? result.Employee : "" });
-            this.juryInfo[1].name = result.ExtraInfo.name;
-            this.juryInfo[1].title = result.ExtraInfo.title;
-            this.juryInfo[1].cedula = result.ExtraInfo.cedula;
-            break;
-          }
-          case "vocal": {
-            this.frmConsejo.patchValue({ 'vocal': typeof (result) !== 'undefined' ? result.Employee : "" });
-            this.juryInfo[2].name = result.ExtraInfo.name;
-            this.juryInfo[2].title = result.ExtraInfo.title;
-            this.juryInfo[2].cedula = result.ExtraInfo.cedula;
-            break;
-          }
-          case "substitute": {
-            this.frmConsejo.patchValue({ 'substitute': typeof (result) !== 'undefined' ? result.Employee : "" });
-            this.juryInfo[3].name = result.ExtraInfo.name;
-            this.juryInfo[3].title = result.ExtraInfo.title;
-            this.juryInfo[3].cedula = result.ExtraInfo.cedula;
-            break;
+      if (typeof (result) != "undefined") {
+        if (this.juryInfo.findIndex(x => x.name === result.ExtraInfo.name) !== -1) {
+          this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", "Empleado ya asignado");
+        } else {
+          switch (button) {
+            case "president": {
+              this.frmConsejo.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : "" });
+              this.juryInfo[0].name = result.ExtraInfo.name;
+              this.juryInfo[0].title = result.ExtraInfo.title;
+              this.juryInfo[0].cedula = result.ExtraInfo.cedula;
+              break;
+            }
+            case "secretary": {
+
+              this.frmConsejo.patchValue({ 'secretary': typeof (result) !== 'undefined' ? result.Employee : "" });
+              this.juryInfo[1].name = result.ExtraInfo.name;
+              this.juryInfo[1].title = result.ExtraInfo.title;
+              this.juryInfo[1].cedula = result.ExtraInfo.cedula;
+              break;
+            }
+            case "vocal": {
+              this.frmConsejo.patchValue({ 'vocal': typeof (result) !== 'undefined' ? result.Employee : "" });
+              this.juryInfo[2].name = result.ExtraInfo.name;
+              this.juryInfo[2].title = result.ExtraInfo.title;
+              this.juryInfo[2].cedula = result.ExtraInfo.cedula;
+              break;
+            }
+            case "substitute": {
+              this.frmConsejo.patchValue({ 'substitute': typeof (result) !== 'undefined' ? result.Employee : "" });
+              this.juryInfo[3].name = result.ExtraInfo.name;
+              this.juryInfo[3].title = result.ExtraInfo.title;
+              this.juryInfo[3].cedula = result.ExtraInfo.cedula;
+              break;
+            }
           }
         }
-        this.activeReleased = this.juryInfo.length === 4;
+        const isCompleted = this.juryInfo.reduce((value, current) => { return current.name.length > 0 && value; }, true);
+        console.log("compleado", isCompleted);
+        this.activeReleased = isCompleted;//this.juryInfo.length === 4;
       }
     });
     // const time: number = Number(this.Time.hour * 60) + Number(this.Time.minute);
@@ -133,7 +139,7 @@ export class ReleaseComponentComponent implements OnInit {
   }
 
   onUpload(event): void {
-    console.log("event",event);
+    console.log("event", event);
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
         console.log("entro");

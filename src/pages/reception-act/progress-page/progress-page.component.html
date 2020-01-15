@@ -12,18 +12,18 @@
                 <div class="row m-1">
                     <div class="col-6">
                         <div class="card" style="border-color: #0cc9aa; background-color: rgba(13, 219, 185, 0.2);">
-                            <div class="card-body text-center">
-                                <h6>Carreras</h6>
+                            <div class="card-body">
+                                <!-- <h6>Carreras</h6> -->
                                 <div class="row">
-                                    <div class="col-3" data-toggle="tooltip" title="Todos">
+                                    <div class="col-4" data-toggle="tooltip" title="Todos">
                                         <mat-slide-toggle [(ngModel)]="isAll"
                                             (change)="changed({event:$event, value:'ALL'})">
                                             <img alt="File" src="../../assets/imgs/careers/all.png"
                                                 style="width: 20px; height: 20px">
-                                            <small> ALL</small>
+                                            <small> TODAS</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip" title="Arquitectura">
+                                    <div class="col-4" data-toggle="tooltip" title="Arquitectura">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'ARQUITECTURA'})">
                                             <img alt="File" src="../../assets/imgs/careers/arq.png"
@@ -31,7 +31,7 @@
                                             <small> ARQU</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip" title="Ingeniería Bioquímica">
+                                    <div class="col-4" data-toggle="tooltip" title="Ingeniería Bioquímica">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_QUIMICA'})">
                                             <img alt="File" src="../../assets/imgs/careers/ibq.png"
@@ -39,7 +39,9 @@
                                             <small> IBQA</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip" title="INGENIERÍA CIVIL">
+                                </div>
+                                <div class="row">
+                                    <div class="col-4" data-toggle="tooltip" title="INGENIERÍA CIVIL">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_CIVIL'})">
                                             <img alt="File" src="../../assets/imgs/careers/ic.png"
@@ -47,9 +49,7 @@
                                             <small> ICIV</small>
                                         </mat-slide-toggle>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-3" data-toggle="tooltip" title="Ingeniería Eléctrica">
+                                    <div class="col-4" data-toggle="tooltip" title="Ingeniería Eléctrica">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_ELECTRICA'})">
                                             <img alt="File" src="../../assets/imgs/careers/ie.png"
@@ -57,7 +57,7 @@
                                             <small> IELE</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip" title="Ingeniería En Gestión Empresarial">
+                                    <div class="col-4" data-toggle="tooltip" title="Ingeniería En Gestión Empresarial">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_EN_GESTION_EMPRESARIAL'})">
                                             <img alt="File" src="../../assets/imgs/careers/ige.png"
@@ -65,7 +65,9 @@
                                             <small> IGEM</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip" title="Ingeniería Industrial">
+                                </div>
+                                <div class="row">
+                                    <div class="col-4" data-toggle="tooltip" title="Ingeniería Industrial">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_INDUSTRIAL'})">
                                             <img alt="File" src="../../assets/imgs/careers/ii.png"
@@ -73,7 +75,7 @@
                                             <small> IIND</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip" title="Ingeniería Mecatrónica">
+                                    <div class="col-4" data-toggle="tooltip" title="Ingeniería Mecatrónica">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_MECATRONICA'})">
                                             <img alt="File" src="../../assets/imgs/careers/imc.png"
@@ -81,9 +83,7 @@
                                             <small> IMCT</small>
                                         </mat-slide-toggle>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-3" data-toggle="tooltip" title="Ingeniería Química">
+                                    <div class="col-4" data-toggle="tooltip" title="Ingeniería Química">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_QUIMICA'})">
                                             <img alt="File" src="../../assets/imgs/careers/iq.png"
@@ -91,7 +91,9 @@
                                             <small> IQUI</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip" title="Licenciatura En Administración">
+                                </div>
+                                <div class="row">
+                                    <div class="col-4" data-toggle="tooltip" title="Licenciatura En Administración">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'LICENCIATURA_EN_ADMINISTRACION'})">
                                             <img alt="File" src="../../assets/imgs/careers/la.png"
@@ -99,7 +101,7 @@
                                             <small> LADM</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip"
+                                    <div class="col-4" data-toggle="tooltip"
                                         title="Ingeniería En Sistemas Computacionales">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_EN_SISTEMAS_COMPUTACIONALES'})">
@@ -108,7 +110,7 @@
                                             <small> ISIC</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-3" data-toggle="tooltip"
+                                    <div class="col-4" data-toggle="tooltip"
                                         title="Ingeniería En Tecnologías De La Información">
                                         <mat-slide-toggle [ngModel]="isAll"
                                             (change)="changed({event:$event, value:'INGENIERIA_EN_TECNOLOGIAS_DE_LA_INFORMACION_Y_COMUNICACIONES'})">
@@ -118,83 +120,105 @@
                                         </mat-slide-toggle>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-
-                                </div> -->
                             </div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="card" style="border-color: #0cc9aa; background-color: rgba(13, 219, 185, 0.2);">
-                            <div class="card-body text-center">
-                                <h6>Solicitudes</h6>
+                            <div class="card-body">
+                                <!-- <h6>Solicitudes</h6> -->
                                 <div class="row">
+                                    <div class="col-4" data-toggle="tooltip" title="Todas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'ALL'})">
+                                            <img alt="File" src="../../assets/imgs/careers/all.png"
+                                                style="width: 20px; height: 20px">
+                                            <small> TODAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
                                     <div class="col-4" data-toggle="tooltip" title="Enviadas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'SENT'})">
                                             <img alt="File" src="../../assets/imgs/request/send.png">
                                             <small> 2 ENVIADAS</small>
                                         </mat-slide-toggle>
                                     </div>
                                     <div class="col-4" data-toggle="tooltip" title="Verificadas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'VERIFIED'})">
                                             <img alt="File" src="../../assets/imgs/request/verified.png">
                                             <small> 3 VERIFICADAS</small>
                                         </mat-slide-toggle>
                                     </div>
+                                </div>
+
+                                <div class="row">
                                     <div class="col-4" data-toggle="tooltip" title="Registradas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'REGISTERED'})">
                                             <img alt="File" src="../../assets/imgs/request/registered.png">
                                             <small> 4 REGISTRADAS</small>
                                         </mat-slide-toggle>
                                     </div>
-                                </div>
-                                <div class="row">
-
                                     <div class="col-4" data-toggle="tooltip" title="Liberadas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'RELEASED'})">
                                             <img alt="File" src="../../assets/imgs/request/released.png">
                                             <small> 5 LIBERADAS</small>
                                         </mat-slide-toggle>
                                     </div>
                                     <div class="col-4" data-toggle="tooltip" title="Entregadas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'DELIVERED'})">
                                             <img alt="File" src="../../assets/imgs/request/delivered.png">
                                             <small> 6 ENTREGADAS</small>
                                         </mat-slide-toggle>
                                     </div>
+
+                                </div>
+                                <div class="row">
                                     <div class="col-4" data-toggle="tooltip" title="Validadas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'VALIDATED'})">
                                             <img alt="File" src="../../assets/imgs/request/validated.png">
                                             <small> 7 VALIDADAS</small>
                                         </mat-slide-toggle>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-4" data-toggle="tooltip" title="Asignadas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'ASSIGNED'})">
                                             <img alt="File" src="../../assets/imgs/request/assigned.png">
                                             <small> 8 ASIGNADAS</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-4" data-toggle="tooltip" title="Realizadas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                    <div class="col-4" data-toggle="tooltip" title="Titulado">
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'REALIZED'})">
                                             <img alt="File" src="../../assets/imgs/request/realized.png">
-                                            <small> 9 REALIZADAS</small>
+                                            <small> 9 TITULADO</small>
                                         </mat-slide-toggle>
                                     </div>
-                                    <div class="col-4" data-toggle="tooltip" title="Generadas">
-                                        <mat-slide-toggle [ngModel]="!reset"
+                                </div>
+                                <div class="row">
+                                    <div class="col-4" data-toggle="tooltip" title="Acta Generada">
+                                        <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'GENERATED'})">
                                             <img alt="File" src="../../assets/imgs/request/generated.png">
-                                            <small> 10 GENERADAS</small>
+                                            <small> 10 ACTA GENERADA</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-4" data-toggle="tooltip" title="Asignadas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'CEDULA'})">
+                                            <img alt="File" src="../../assets/imgs/request/assigned.png">
+                                            <small>11 Entrega de Cédula</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-4" data-toggle="tooltip" title="Titulado">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'TITLED'})">
+                                            <img alt="File" src="../../assets/imgs/request/realized.png">
+                                            <small> 12 Entrega de Título</small>
                                         </mat-slide-toggle>
                                     </div>
                                 </div>
@@ -218,8 +242,8 @@
                     </div>
                     <div class="col-6">
                         <!-- <mat-form-field>
-                                    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
-                                </mat-form-field> -->
+                            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
+                        </mat-form-field> -->
                         <div class="input-group input-group-sm mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Filtro</span>
@@ -425,13 +449,13 @@
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Impreso'"
                                                     mat-menu-item (click)="generated(row._id,'Printed')">
                                                     <mat-icon>print</mat-icon>
-                                                    Imprimir Acta
+                                                    Acta para entrega
                                                 </button>
                                                 <button
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Aceptado'"
                                                     mat-menu-item (click)="generated(row._id,'Accept')">
                                                     <mat-icon>done_all</mat-icon>
-                                                    Entregar Acta
+                                                    Acta Entregada
                                                 </button>
                                             </div>
                                             <div *ngSwitchCase="'Titulado'">
@@ -439,7 +463,7 @@
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Pendiente'"
                                                     mat-menu-item (click)="titled(row._id,'Process')">
                                                     <mat-icon>notification_important</mat-icon>
-                                                    Notificar
+                                                    Notificar para entrega de titulo
                                                 </button>
                                                 <button
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
@@ -451,7 +475,7 @@
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Aceptado'"
                                                     mat-menu-item (click)="titled(row._id,'Finalized')">
                                                     <mat-icon>school</mat-icon>
-                                                    Finalizar
+                                                    Título Entregado
                                                 </button>
                                             </div>
                                             <!-- <button *ngSwitchDefault mat-menu-item (click)="openRequestForm(row._id)">

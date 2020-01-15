@@ -43,7 +43,9 @@ export class ProgressPageComponent implements OnInit {
   dataSource: MatTableDataSource<iRequestSource>;
   careers: Array<string>;
   allCarrers: Array<string>;
+  allRequest: Array<string>;
   isAll: boolean;
+  _isAll: boolean;
   reset: boolean;
   phases: Array<string>;
   search: string;
@@ -66,6 +68,7 @@ export class ProgressPageComponent implements OnInit {
     this.phases = [];
     this.allCarrers = ['ARQUITECTURA', 'INGENIERÍA CIVIL', 'INGENIERÍA ELÉCTRICA', 'INGENIERÍA INDUSTRIAL',
       'INGENIERÍA EN SISTEMAS COMPUTACIONALES', 'INGENIERÍA BIOQUÍMICA', 'INGENIERÍA QUÍMICA', 'LICENCIATURA EN ADMINISTRACIÓN', 'INGENIERÍA EN GESTIÓN EMPRESARIAL', 'INGENIERÍA MECATRÓNICA', 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES'];
+    this.allRequest = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado', 'Realizado', 'Generado', 'Finalized',];
     if (!this.cookiesService.isAllowed(this.activeRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -90,7 +93,6 @@ export class ProgressPageComponent implements OnInit {
 
   loadRequest(isInit: boolean = false): void {
     let filter = '';
-    console.log("dd", this.role);
     // switch (this.cookiesService.getData().user.rol.name) {
     switch (this.role) {
       case eRole.CHIEFACADEMIC.toLowerCase(): {
@@ -123,22 +125,27 @@ export class ProgressPageComponent implements OnInit {
       res => {
         this.request = [];
         res.request.forEach(element => {
-          const tmp: iRequest = <iRequest>element;
+          let tmp: iRequest = new Object();//<iRequest>element;          
           tmp._id = element._id;
-          tmp.status = this.convertStatus(tmp.status);
+          tmp.status = this.convertStatus(element.status);
           tmp.controlNumber = element.studentId.controlNumber;
+          tmp.phase = element.phase;
           tmp.career = element.studentId.career;
           tmp.fullName = element.studentId.fullName;
           tmp.student = element.studentId;
           tmp.studentId = element.studentId._id;
-          tmp.applicationDateLocal = new Date(tmp.applicationDate).toLocaleDateString();
-          tmp.lastModifiedLocal = new Date(tmp.lastModified).toLocaleDateString();
+          tmp.jury = element.jury;
+          tmp.adviser = element.adviser;
+          tmp.history = element.history;
+          tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
+          tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
           this.request.push(tmp);
         });
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
           this.isAll = true;
+          this._isAll = true;
         }
         this.reset = true;
         this.requestFilter = this.filter(this.careers, this.phases).slice(0);
@@ -155,6 +162,16 @@ export class ProgressPageComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
+  filterCedula(request: Array<iRequest>, isCedula: boolean): Array<iRequest> {
+    return this.request.filter(function (element) {
+      if (isCedula) {
+        return element.status !== 'Finalized';
+      }
+      else {
+        return element.status === 'Finalized'
+      }
+    });
+  }
   filter(carrers: string[], phases: string[]): Array<iRequest> {
     return this.request.filter(function (element) {
       if (phases.length === 0) {
@@ -193,17 +210,32 @@ export class ProgressPageComponent implements OnInit {
   }
 
   changedPhase(event) {
-    const key = <eRequest><keyof typeof eRequest>event.value;
-    const value = eRequest[key];
-    const checked = event.event.checked;
-    const index = this.phases.findIndex(x => x === value);
-    if (index !== -1 && !checked) {
-      this.phases.splice(index, 1);
+    if (event.value === 'ALL') {
+      this._isAll = event.event.checked;
+      this.phases = this._isAll ? this.allRequest.slice(0) : [];
+      this.requestFilter = this.filter(this.careers, this.phases).slice(0);
+    } else {
+      const key = <eRequest><keyof typeof eRequest>event.value;
+      let value = eRequest[key];
+      const isCedula = eRequest[key] === eRequest.CEDULA;
+      const checked = event.event.checked;
+
+      // if (value === eRequest.CEDULA) {
+      //   value = eRequest.TITLED;
+      // }
+
+      const index = this.phases.findIndex(x => x === value);
+      // console.log("INDICE", index, "value", value, "chec", checked);
+      if (index !== -1 && !checked) {
+        this.phases.splice(index, 1);
+      }
+      if (index == -1 && checked) {
+        this.phases.push(value);
+      }
+      let tmpRequest = this.requestFilter = this.filter(this.careers, this.phases).slice(0);
+      // console.log("rquest", tmpRequest);
+      this.requestFilter = tmpRequest;//(value === eRequest.TITLED) ? this.filterCedula(tmpRequest, isCedula) : tmpRequest;
     }
-    if (index == -1 && checked) {
-      this.phases.push(value);
-    }
-    this.requestFilter = this.filter(this.careers, this.phases).slice(0);
     this.refresh();
   }
   changed(event) {
@@ -367,7 +399,7 @@ export class ProgressPageComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '60em'
+        width: '60em'        
       });
 
       ref.afterClosed().subscribe(result => {
@@ -680,10 +712,11 @@ export class ProgressPageComponent implements OnInit {
   }
 
   applyFilter(filterValue: string) {
+    console.log("Filtro", filterValue.trim().toUpperCase());
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+    // if (this.dataSource.paginator) {
+    //   this.dataSource.paginator.firstPage();
+    // }
   }
 
   viewHistory(_id: string): void {

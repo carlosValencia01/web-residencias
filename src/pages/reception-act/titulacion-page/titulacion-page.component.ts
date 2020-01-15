@@ -73,7 +73,7 @@ export class TitulacionPageComponent implements OnInit {
   RejectRealizedMessage: String = 'ACTO RECEPCIONAL REPROBADO';
   ProcessGeneratedMessage: String = 'EN ESPERA DEL ACTA DE EXAMEN';
   AcceptGeneratedMessage: String = 'ACTA DE EXAMEN GENERADA';
-  AcceptGeneratedMessageSubtitle: String = 'FAVOR DE PASAR A RECOGER SUS DOCUMENTOS';
+  AcceptGeneratedMessageSubtitle: String = 'FAVOR DE PASAR A RECOGER TU DOCUMENTO';
   CompletedGeneratedMessage: String = 'ACTA DE EXAMEN ENTREGADA';
   ProcessTitledMessage: String = 'EN ESPERA DE NOTIFICACIÓN PARA RECEPCIÓN DEL TÍTULO';
   CompletedTitledMessage: String = 'TÍTULO PROFESIONAL';

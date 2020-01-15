@@ -10,6 +10,7 @@ export enum eRequest {
     ASSIGNED = 'Asignado',
     REALIZED = 'Realizado',  // 64bc7c
     GENERATED = 'Generado',     // 2e7d32
+    CEDULA = 'Cedula',
     TITLED = 'Titulado',
     REQUIREMENT = 'Requerimientos'
     // 'Verificado',
