@@ -619,7 +619,9 @@ export class uRequest {
 
     private letterCapital(text: string): string {
         text = text.toLowerCase();
-        return text.split(/\s+/).map((value) => { return value.replace(/^./, value[0].toUpperCase()) }).join(' ');
+        if(text.trim().length>0)  
+            return text.split(/\s+/).map((value) => { return value.replace(/^./, value[0].toUpperCase()) }).join(' ');
+        return "";
     }
 
     //Alinea un texto a la derecha

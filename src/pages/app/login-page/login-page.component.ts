@@ -77,8 +77,8 @@ export class LoginPageComponent implements OnInit {
           // Aqui emitiremos la señal, de que todo esta correcto y se cambiara la pagina.
 
           this.userProv.sendTokenFromAPI(res.token);
-
-          if (res.user.rol.name.toUpperCase() === 'ESTUDIANTE') {
+          console.log("RES", res.user.rol.name);
+          if (res.user.rol.name.toUpperCase() === 'ESTUDIANTE' || res.user.rol.name.toUpperCase()==='ADMINISTRADOR') {
             this.loginIsSuccessful(res);
             return;
           }

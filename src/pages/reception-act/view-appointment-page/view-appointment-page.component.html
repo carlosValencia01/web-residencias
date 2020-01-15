@@ -88,7 +88,7 @@
         [style.borderColor]="weekEvent.event.color?.primary"
         [mwlCalendarTooltip]="!tooltipDisabled ? (weekEvent.event.title | calendarEventTitle:'weekTooltip':weekEvent.event) : ''"
         [tooltipPlacement]="tooltipPlacement" [tooltipEvent]="weekEvent.event" [tooltipTemplate]="tooltipTemplate"
-        [tooltipAppendToBody]="tooltipAppendToBody" (mwlClick)="eventClicked.emit()">
+        [tooltipAppendToBody]="tooltipAppendToBody" (mwlClick)="eventClicked.emit(weekEvent.event)">
         <div *ngIf="weekEvent.event.color.secondary==='#69f0ae'" [contextMenu]="viewMoreContext"
           [contextMenuSubject]="weekEvent.event">
           <div class="cal-cell-top text-right" style="color: #b64443;">
