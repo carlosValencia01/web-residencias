@@ -83,23 +83,25 @@
     <ng-template #customCellTemplate let-weekEvent="weekEvent" let-tooltipPlacement="tooltipPlacement"
       let-eventClicked="eventClicked" let-tooltipTemplate="tooltipTemplate"
       let-tooltipAppendToBody="tooltipAppendToBody" let-tooltipDisabled="tooltipDisabled">
-
-      <div class="cal-event" [style.backgroundColor]="weekEvent.event.color?.secondary"
+      <!-- [style.backgroundColor]="weekEvent.event.color.secondary==='#69f0ae'?'#0000AA':'#00AA00'" -->
+      <div class="cal-event" [style.backgroundColor]="weekEvent.event.color.secondary"
         [style.borderColor]="weekEvent.event.color?.primary"
         [mwlCalendarTooltip]="!tooltipDisabled ? (weekEvent.event.title | calendarEventTitle:'weekTooltip':weekEvent.event) : ''"
         [tooltipPlacement]="tooltipPlacement" [tooltipEvent]="weekEvent.event" [tooltipTemplate]="tooltipTemplate"
         [tooltipAppendToBody]="tooltipAppendToBody" (mwlClick)="eventClicked.emit(weekEvent.event)">
-        <div *ngIf="weekEvent.event.color.secondary==='#69f0ae'" [contextMenu]="viewMoreContext"
-          [contextMenuSubject]="weekEvent.event">
+        <div *ngIf="weekEvent.event.color.secondary==='#69f0ae'|| weekEvent.event.color.secondary==='#e5bab9'"
+          [contextMenu]="viewMoreContext" [contextMenuSubject]="weekEvent.event">
           <div class="cal-cell-top text-right" style="color: #b64443;">
-            <small class="mr-1">{{weekEvent.event.title.split(' ')[1]}}</small>
+            <small class="mr-1">
+              {{weekEvent.event.title.split(' ')[1]}}
+            </small>
             <span>
               <i class="fa fa-calendar-check-o"></i>
             </span>
           </div>
           <small>{{weekEvent.event.title.split(' ').slice(2).join(' ')}}</small>
         </div>
-        <div *ngIf="weekEvent.event.color.secondary!=='#69f0ae'">
+        <div *ngIf="weekEvent.event.color.secondary!=='#69f0ae' && weekEvent.event.color.secondary!=='#e5bab9'">
           <div class="cal-cell-top text-right" style="color: #b64443;">
             <small class="mr-1">{{weekEvent.event.title.split(' ')[1]}}</small>
             <span>

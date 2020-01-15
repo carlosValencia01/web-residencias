@@ -22,6 +22,7 @@ moment.locale('es');
 })
 export class ViewAppointmentPageComponent implements OnInit {
   carrers: iCarrera[];
+  allCarrers: iCarrera[];
   activeDayIsOpen: boolean = true;
   maxDate: Date = new Date(2019, 11, 15);
   viewDate = new Date();
@@ -51,6 +52,7 @@ export class ViewAppointmentPageComponent implements OnInit {
       });
 
     this.carrers = this._sourceDataProvider.getCareerAbbreviation();
+    this.allCarrers = this.carrers.slice(0);
     switch (this.role) {
       case eRole.SECRETARYACEDMIC: {
         this.filterDepto('ISIC');
@@ -98,6 +100,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
         this.Appointments = data.Diary;
+        console.log("APPOINTMENTS", this.Appointments);
         this.loadAppointment();
         this.refresh.next();
       }
@@ -108,23 +111,35 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
   loadAppointment(): void {
     this.events = [];
-    this.carrers.forEach(career => {
-      if (career.status) {
-        let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] };
-        tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
-        if (typeof (tmp) != 'undefined') {
-          tmp.values.forEach(element => {
-            const vFecha = element.proposedDate.toString().split('T')[0].split('-');
-            let tmpStart = new Date(element.proposedDate);
-            let tmpEnd = new Date(element.proposedDate);
-            tmpStart.setHours(0, 0, 0, 0);
-            tmpEnd.setHours(0, 0, 0, 0);
-            tmpStart.setMinutes(element.proposedHour);
-            tmpEnd.setMinutes(element.proposedHour + 60);
-            let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];
+    this.allCarrers.forEach(career => {
+      // if (career.status) {
+      let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
+      // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
+      tmp = this.Appointments.find(x => x._id[0] === career.carrer);
+      if (typeof (tmp) != 'undefined') {
+        tmp.values.forEach(element => {
+          const vFecha = element.proposedDate.toString().split('T')[0].split('-');
+          let tmpStart = new Date(element.proposedDate);
+          let tmpEnd = new Date(element.proposedDate);
+          tmpStart.setHours(0, 0, 0, 0);
+          tmpEnd.setHours(0, 0, 0, 0);
+          tmpStart.setMinutes(element.proposedHour);
+          tmpEnd.setMinutes(element.proposedHour + element.duration);
+          let title = "";
+          let index = this.carrers.findIndex(x => x.carrer === career.carrer);
+          if (index != -1 && this.carrers[index].status) {
+            title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
-          });
-        }
+          }
+          else {
+            console.log("CITA", element);
+            title = element.phase == 'Asignado' ? " Evento Solicitado" : " Evento Reservado";
+            this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? { primary: '#b64443', secondary: '#dcdcdc' } : { primary: '#b64443', secondary: '#e5bab9' }) });
+          }
+          // let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];          
+        });
+        console.log("EVENT", this.events);
+        // }
       }
     });
     this.refresh.next();
@@ -228,4 +243,4 @@ export class ViewAppointmentPageComponent implements OnInit {
 }
 interface iAppointmentGroup { _id: string[], values: [iAppointment] }
 interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }
-interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string }
+interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, duration: number }
