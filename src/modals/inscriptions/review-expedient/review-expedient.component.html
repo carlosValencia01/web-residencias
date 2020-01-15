@@ -321,8 +321,7 @@
                                   </div>
                                 </div>
                                 <div *ngIf="data.user === 'Administrador'">                                  
-                                    <div class="col-12" *ngIf="docto.status !== 'ACEPTADO'">
-                                      div class="row text-center">
+                                    <div class="col-12" *ngIf="docto.status !== 'ACEPTADO'">                                      
                                       <div class="col-6">
                                         <div (click)="changeStatus('ACEPTADO')" class="btn-rounded btn-rounded-success">
                                           <mat-icon>done</mat-icon> Aceptar
