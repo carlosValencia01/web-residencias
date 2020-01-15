@@ -35,8 +35,7 @@ export class ReviewExpedientComponent implements OnInit {
   showDocument = false;
   typeDocShow: string;
   docDisplayName: string;
-  docto;
-  form: FormGroup;
+  docto;  
   refused;
   loading = false;
 
@@ -73,11 +72,7 @@ export class ReviewExpedientComponent implements OnInit {
     this.getDocuments();
   }
 
-  ngOnInit() {
-    this.form = new FormGroup({
-      'status': new FormControl(null, [Validators.required]),
-      'observation': new FormControl(null, [Validators.required]),
-    });
+  ngOnInit() {    
   }
 
   onClose() {
@@ -100,7 +95,23 @@ export class ReviewExpedientComponent implements OnInit {
       else return false;
     });
   }
-
+  swalDialogInput(title,msg) {
+    return Swal.fire({
+      title: title,    
+      text: msg,  
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar',
+      input: 'text'      
+    }).then((result) => {
+      // console.log(result);
+      
+      return result.value ?  result.value !== '' ? result.value : false : false;
+    });
+  }
   getDocuments() {
     this.studentProv.getDriveDocuments(this.data.student._id).subscribe(
       docs => {
@@ -184,7 +195,8 @@ export class ReviewExpedientComponent implements OnInit {
     );
   }
 
-  cardClick(card) {
+  cardClick(card) {    
+    // this.form.get('observation').setValue('');
     if (card === this.prevCard) {
       this.viewdoc = !this.viewdoc;
     } else {
@@ -235,17 +247,21 @@ export class ReviewExpedientComponent implements OnInit {
   async changeStatus(action) {
     var filename = '';
     this.refused = '';
-    const msg = action.status === 'RECHAZADO' ? 'rechazar' : this.data.user === 'Secretaria' ? 'validar' : 'aceptar';
-    let confirmdialog = await this.swalDialog(`¿ Está seguro de ${msg} el documento ?`, '', 'question');
-
+    const msg = action === 'RECHAZADO' ? 'rechazar' : this.data.user === 'Secretaria escolares' ? 'validar' : 'aceptar';
+    let confirmdialog = false;
+    if(action === 'ACEPTADO' || action === 'VALIDADO'){
+      confirmdialog = await this.swalDialog(`¿ Está seguro de ${msg} el documento ?`, '', 'question');
+    } else {
+      confirmdialog = await this.swalDialogInput('RECHAZAR '+this.docDisplayName,'Especifique el motivo');
+    }
     if (confirmdialog) {
       const documentInfo = {
         filename: this.docto.filename,
         status: {
-          name: this.data.user === 'Secretaria' ? action.status === 'ACEPTADO' ? 'VALIDADO' : 'RECHAZADO' : action.status,
+          name: action,
           active: true,
-          message: action.status === 'RECHAZADO' ? 'Documento rechazado' : this.data.user === 'Secretaria' ? 'Documento validado' : 'Documento aceptado',
-          observation: action.status === 'RECHAZADO' ? action.observation : ''
+          message: action === 'RECHAZADO' ? 'Documento rechazado' : this.data.user === 'Secretaria escolares' ? 'Documento validado' : 'Documento aceptado',
+          observation: action === 'RECHAZADO' ? confirmdialog : ''
         }
       };
       this.studentProv.updateDocumentStatus(this.data.student._id, documentInfo).subscribe(
@@ -273,7 +289,7 @@ export class ReviewExpedientComponent implements OnInit {
             if(documentInfo.filename.includes('NSS')){
               filename = 'NÚMERO DE SEGURO SOCIAL'
             }
-          if (action.status == "RECHAZADO") {
+          if (action == "RECHAZADO") {
             this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+filename+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://escolares.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
               res => {
                 this.notificationsServices.showNotification(0, 'Notificación enviada a:', this.data.student.controlNumber);
