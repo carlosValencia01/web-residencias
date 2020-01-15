@@ -148,12 +148,12 @@ export class StudentPageComponent implements OnInit {
     };
 
     this.studentProv.newStudent(data).subscribe(res => {
-      if (this.imgForSend) {
-        this.uploadFile(this.currentStudent._id, false);
-      } else {
-        this.showForm = true;
-        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno agregado correctamente', '');
-      }
+      // if (this.imgForSend) {
+      //   this.uploadFile(this.currentStudent._id, false);
+      // } else {
+      //   this.showForm = true;
+      // }
+      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno agregado correctamente', '');
       const student: any = res;
 
       this.currentStudent = student;
@@ -187,7 +187,7 @@ export class StudentPageComponent implements OnInit {
       this.frontBase64 = res1;
     });
 
-    this.imageToBase64Serv.getBase64('assets/imgs/back2.jpg').then(res2 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/back3.jpg').then(res2 => {
       this.backBase64 = res2;
     });
   }
@@ -227,14 +227,37 @@ export class StudentPageComponent implements OnInit {
   }
 
   generatePDF(student) { // 'p', 'mm', [68,20]
-
+  let userRol = this.cookiesService.getData().user.rol.name;
+  
     if (student.nss) {
       this.loading = true;
       this.studentProv.verifyStatus(student.controlNumber)
         .subscribe(async res => {
-          this.haveSubjects = res.status === 1 ? true : false;
+          
+          this.haveSubjects = res.status === 1 ?  true : userRol == 'Administrador' ? true : false;
           if (this.haveSubjects) {
-            await this.getDocuments(student._id);
+            this.printCredential(student);
+          } else {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
+          }
+
+        }, error => {
+          
+          if (error.status === 401 && userRol !== 'Administrador') {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
+          } if(userRol == 'Administrador'){
+            this.printCredential(student);
+          } else {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
+          }
+        }, () => this.loading = false);
+    } else {
+      this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
+    }
+  }
+
+  async printCredential(student){
+    await this.getDocuments(student._id);
 
             if (this.photoStudent !== '' && this.photoStudent !== 'assets/imgs/studentAvatar.png') {
               const doc = new jsPDF({
@@ -255,11 +278,21 @@ export class StudentPageComponent implements OnInit {
               doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career), 35));
               doc.text(49, 46.5, doc.splitTextToSize(student.nss, 35));
 
+              // cara trasera de la credencial
               doc.addPage();
-              // // cara trasera de la credencial
               doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
 
-              // // foto del estudiante
+              // Agregar años a la credencial
+              const year = new Date();
+              doc.setTextColor(255, 255, 255);
+              doc.setFontSize(4);
+              doc.setFont('helvetica');
+              doc.setFontType('bold');
+              doc.text(9.5, 41.3,year.getFullYear()+'');
+              doc.text(16.5, 41.3,(year.getFullYear()+1)+'');
+              doc.text(23.5, 41.3,(year.getFullYear()+2)+'');
+              doc.text(30.5, 41.3,(year.getFullYear()+3)+'');
+              doc.text(37.5, 41.3,(year.getFullYear()+4)+'');
 
               // // Numero de control con codigo de barra
               doc.addImage(this.textToBase64Barcode(student.controlNumber), 'PNG', 46.8, 39.2, 33, 12);
@@ -267,25 +300,11 @@ export class StudentPageComponent implements OnInit {
               doc.setFontSize(8);
               doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
               // this.loading=false;
+              this.loading = false;
               window.open(doc.output('bloburl'), '_blank');
             } else {
               this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
             }
-          } else {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-          }
-
-        }, error => {
-          if (error.status === 401) {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-          } else {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
-          }
-          this.loading = false;
-        }, () => this.loading = false);
-    } else {
-      this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
-    }
   }
 
   // Busqueda de estudiantes *************************************************************************************//#endregion
@@ -351,15 +370,15 @@ export class StudentPageComponent implements OnInit {
 
       this.loading = true;
       this.studentProv.updateStudent(this.currentStudent._id, this.currentStudent).subscribe(res => {
-        if (this.imgForSend) {
-          this.uploadFile(this.currentStudent._id, false);
-        } else {
-          this.showForm = true;
-          if (this.search) {
-            this.searchStudent(true);
-          }
-          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno actualizado correctamente', '');
-        }
+        // if (this.imgForSend) {
+        //   this.uploadFile(this.currentStudent._id, false);
+        // } else {
+        //   this.showForm = true;
+        //   if (this.search) {
+        //     this.searchStudent(true);
+        //   }
+        // }
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno actualizado correctamente', '');
       }, error => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
       }, () => this.loading = false);
@@ -398,9 +417,7 @@ export class StudentPageComponent implements OnInit {
         this.photoStudent = this.croppedImageBase64;
         this.imgForSend = true;
 
-        const showForm = this.isNewStudent;
-
-        this.uploadFile(this.currentStudent._id, showForm);
+        this.uploadFile();
         event.target.value = '';
       }, (reason) => {
         event.target.value = '';
@@ -409,6 +426,7 @@ export class StudentPageComponent implements OnInit {
       });
     }
   }
+  
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
@@ -432,24 +450,74 @@ export class StudentPageComponent implements OnInit {
     });
   }
 
-  uploadFile(id, showForm) {
-    const fd = new FormData();
-    fd.append('image', this.croppedImage);
+  async uploadFile() {      
     this.loading = true;
-    this.studentProv.updatePhoto(id, fd).subscribe(res => {
-      const student: any = res;
-      this.currentStudent = student.student;
-
-      this.imgForSend = false;
-      this.showForm = showForm;
-      if (this.search) {
-        this.searchStudent(true);
-      }
-      this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Fotografía actualizada correctamente', '');
-      this.haveImage = true;
-    }, error => {
-      this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
-    }, () => this.loading = false);
+    var folderId = await this.getFolderId(this.currentStudent._id);    
+    
+    // console.log('upload');
+    const red = new FileReader;
+       
+            // console.log(this.folderId,'folder student exists');
+            red.addEventListener('load', () => {
+              // console.log(red.result);
+              let file = { mimeType: this.selectedFile.type, nameInDrive: this.currentStudent.controlNumber + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
+        
+              this.inscriptionProv.uploadFile2(file).subscribe(
+                resp => {
+                  if (resp.action == 'create file') {
+        
+                    const documentInfo = {
+        
+                      doc: {
+                        filename: resp.name,
+                        type: 'DRIVE',
+                        fileIdInDrive: resp.fileId
+                      },
+                      status: {
+                        name: 'EN PROCESO',
+                        active: true,
+                        message: 'Se subio foto de credencial por primera vez'
+                      }
+                    };
+                    this.studentProv.uploadDocumentDrive(this.currentStudent._id, documentInfo).subscribe(
+                      updated => {
+                        this.notificationServ.showNotification(eNotificationType.SUCCESS,
+                          'Exito', 'Foto cargada correctamente.');
+        
+                      },
+                      err => {
+                        console.log(err);
+        
+                      }, () => this.loading = false
+                    );
+                  } else {
+        
+                    const documentInfo = {
+                      filename: resp.filename,
+                      status: {
+                        name: 'EN PROCESO',
+                        active: true,
+                        message: 'Se actualizo foto de credencial'
+                      }
+                    };
+                    this.studentProv.updateDocumentStatus(this.currentStudent._id, documentInfo).subscribe(
+                      res => {
+                        this.notificationServ.showNotification(eNotificationType.SUCCESS,
+                          'Exito', 'Foto actualizada correctamente.');
+                      },
+                      err => console.log(err)
+                    );
+                  }
+                  this.loading = false;
+                },
+                err => {
+                  console.log(err); this.loading = false;
+                }
+              )
+            }, false);
+            red.readAsDataURL(this.croppedImage);
+         
+    
   }
 
   // Zona de test *********************************************************************************************//#region
@@ -494,7 +562,7 @@ export class StudentPageComponent implements OnInit {
         let documents = docs.documents;
         if (documents) {
 
-          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1)[0];
+          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];
           this.showImg = true;
           //console.log(this.imageDoc);
           //console.log(this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length));
@@ -507,7 +575,7 @@ export class StudentPageComponent implements OnInit {
                 this.showImg = true;
                 // console.log('3');
                 const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
-                this.photoStudent = `data:image/${extension};base64, ${succss.file}`;
+                this.photoStudent = "data:image/"+extension+";base64,"+succss.file;
               },
               err => { this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg = true; }
             );
@@ -523,5 +591,105 @@ export class StudentPageComponent implements OnInit {
     );
     // console.log('4');
 
+  }
+
+  async getFolderId(id){  
+    
+    var folderId='';
+    await this.inscriptionProv.getActivePeriod().toPromise().then(
+     async period=>{
+        if(period.period){          
+        
+          this.studentProv.getPeriodId(id).toPromise().then(
+            per=>{
+              // console.log(per.student.idPeriodInscription, 'idperrrrr');              
+              if(!per.student.idPeriodInscription){
+                this.studentProv.updateStudent(id,{idPeriodInscription:period.period._id});
+              }
+            }
+          );
+          //first check folderId on Student model
+         await this.studentProv.getFolderId(id).toPromise().then(
+           async student=>{
+              if(student.folder){// folder exists
+                if(student.folder.idFolderInDrive){
+                  folderId = student.folder.idFolderInDrive;
+                  // console.log(this.folderId,'folder student exists');                     
+                }                       
+              } else{
+                // console.log('333');
+             folderId = await  this.createFolder(period.period);}
+                
+            });
+        }
+        else{ // no hay periodo activo
+          // console.log('444');
+          
+        }    
+      }  
+    );
+    return folderId;
+  }
+  async createFolder(period){
+    let folderStudentName = this.currentStudent.controlNumber +' - '+ this.currentStudent.fullName;
+    var foldersByPeriod,folderId;
+    await this.inscriptionProv.getFoldersByPeriod(period._id,1).toPromise().then(
+      async (folders)=>{
+        // console.log(folders,'folderss');
+        
+        foldersByPeriod=folders.folders;                                     
+        let folderPeriod = foldersByPeriod.filter( folder=> folder.name.indexOf(period.periodName) !==-1);
+
+        // 1 check career folder
+        let folderCareer = foldersByPeriod.filter( folder=> folder.name === this.currentStudent.career);
+        // let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
+
+        if(folderCareer.length===0){
+          // console.log('1');
+          
+         await this.inscriptionProv.createSubFolder(this.currentStudent.career,period._id,folderPeriod[0].idFolderInDrive,1).toPromise().then(
+           async career=>{
+              // console.log('2');
+              
+              // student folder doesn't exists then create new folder
+             await this.inscriptionProv.createSubFolder(folderStudentName,period._id,career.folder.idFolderInDrive,1).toPromise().then(
+                studentF=>{
+                  folderId = studentF.folder.idFolderInDrive;                 
+                  // console.log('3');
+                  
+                  this.studentProv.updateStudent(this.currentStudent._id,{folderId:studentF.folder._id}).toPromise().then(res=>{},err=>{});
+                },
+                err=>{
+                }
+              );
+            },
+            err=>{
+            }
+          );
+        }else{
+           await this.inscriptionProv.createSubFolder(folderStudentName,period._id,folderCareer[0].idFolderInDrive,1).toPromise().then(
+              studentF=>{
+                folderId = studentF.folder.idFolderInDrive;   
+                // console.log('3.1');
+                
+                this.studentProv.updateStudent(this.currentStudent._id,{folderId:studentF.folder._id}).toPromise().then(
+                  upd=>{
+                    
+                    
+                  },
+                  err=>{
+                  }
+                );
+                
+              },
+              err=>{
+              }
+            );         
+        }
+      },
+      err=>{
+      }
+    );
+    return folderId;
   }
 }

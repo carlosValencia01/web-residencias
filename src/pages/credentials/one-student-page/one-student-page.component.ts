@@ -87,11 +87,6 @@ export class OneStudentPageComponent implements OnInit {
                 if(student.folder.idFolderInDrive){
                   this.folderId = student.folder.idFolderInDrive;
                   // console.log(this.folderId,'folder student exists');                     
-                }
-                else{ //folder doesn't exists then create it
-                // console.log('222');
-                
-                  this.createFolder();
                 }         
               } else{
                 // console.log('333');
@@ -116,9 +111,9 @@ export class OneStudentPageComponent implements OnInit {
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0]));
         this.imgForSend = false;
         this.studentProv.verifyStatus(this.currentStudent.controlNumber).subscribe(res => {
-          console.log(res);
-          this.active = res.status === 1 ? true : false;
-        });
+          // console.log(res);
+          this.active =  res.status === 1 ? true : false;
+        }, err=>{this.active=false;});
 
         // this.getImageFromService(res.student[0]._id);
       }, error => {
@@ -236,7 +231,7 @@ export class OneStudentPageComponent implements OnInit {
             // console.log(this.folderId,'folder student exists');
             red.addEventListener('load', () => {
               // console.log(red.result);
-              let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.' + this.selectedFile.type.substr(6, this.selectedFile.type.length - 1), bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
+              let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
         
               this.inscriptionProv.uploadFile2(file).subscribe(
                 resp => {
@@ -330,10 +325,7 @@ export class OneStudentPageComponent implements OnInit {
     this.studentProv.getDriveDocuments(this.data._id).subscribe(
       docs=>{
         let documents = docs.documents;              
-        this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1)[0];
-        console.log(
-          '2'
-        );
+        this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];        
         this.showImg=true;
         if(this.imageDoc){
 
@@ -341,12 +333,12 @@ export class OneStudentPageComponent implements OnInit {
             succss=>{
               this.showImg=true;
               const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
-              this.photoStudent = `data:image/${extension};base64, ${succss.file}`;
+              this.photoStudent = "data:image/"+extension+";base64,"+succss.file;
             },
             err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
           );
         }else{
-          console.log('1');
+          // console.log('1');
           
           this.loading = false
           this.photoStudent = 'assets/imgs/studentAvatar.png';

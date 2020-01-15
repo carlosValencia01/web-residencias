@@ -572,6 +572,11 @@ export class RegisterStudentPageComponent implements OnInit {
     doc.setFont('Montserrat', 'Normal');
     doc.text(this.tipoDiscapacidad, 85, 245);
 
+    doc.line((pageWidth / 2)-35, 270, (pageWidth / 2)+35, 270);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Firma del Estudiante", pageWidth / 2, 280, 'center');
+
     let document = doc.output('arraybuffer');
     let binary = this.bufferToBase64(document);
 
@@ -798,6 +803,10 @@ export class RegisterStudentPageComponent implements OnInit {
         this.markFormGroupTouched(control);
       }
     });
+  }
+  getNSS(){
+      window.open('https://www.gob.mx/afiliatealimss', '_blank');
+
   }
 
 

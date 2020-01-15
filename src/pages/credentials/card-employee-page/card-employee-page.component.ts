@@ -129,7 +129,7 @@ export class CardEmployeePageComponent implements OnInit {
       this.frontBase64 = res1;
     });
 
-    this.imageToBase64Serv.getBase64('assets/imgs/employeeBack2.jpg').then(res2 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/employeeBack3.jpg').then(res2 => {
       this.backBase64 = res2;
     });
   }
@@ -165,12 +165,25 @@ export class CardEmployeePageComponent implements OnInit {
             // // cara trasera de la credencial
             doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
 
+            // Agregar años a la credencial
+            const year = new Date();
+            doc.setTextColor(37, 54, 102);
+            doc.setFontSize(9);
+            doc.setFont('helvetica');
+            doc.setFontType('bold');
+            doc.text(2.7, 51.3,year.getFullYear()+'');
+            doc.text(12.7, 51.3,(year.getFullYear()+1)+'');
+            doc.text(22.7, 51.3,(year.getFullYear()+2)+'');
+            doc.text(32.7, 51.3,(year.getFullYear()+3)+'');
+            doc.text(42.7, 51.3,(year.getFullYear()+4)+'');
+
             // // foto del estudiante
 
             // // Numero de control con codigo de barra
             // doc.setTextColor(255, 255, 255);
             // doc.setFontSize(8);
             // doc.text(52, 45.5, doc.splitTextToSize('RFC: ' + employee.rfc, 35));
+            this.loading = false;
             window.open(doc.output('bloburl'), '_blank');
           });
         }, false);
@@ -179,7 +192,7 @@ export class CardEmployeePageComponent implements OnInit {
         }
       }, error => {
         console.log(error);
-      }, () => this.loading = false);
+      },);
     } else {
       this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
     }

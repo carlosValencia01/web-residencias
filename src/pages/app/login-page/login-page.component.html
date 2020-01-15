@@ -41,14 +41,31 @@
 
           <div class="footer-form">
 
-
-            <button (click)="login()"  type="button" class="btn btn-login">Ingresar</button>
+            <div class="row">
+              <div class="col align-self-center">
+                <button (click)="login()"  type="button" class="btn btn-login">Ingresar</button>
+              </div>
+              
+            </div>
+         
+            
 
             <!-- <button mat-button [matMenuTriggerFor]="menu" >Menu</button>
             <mat-menu #menu="matMenu">
               <button mat-menu-item>Item 1</button>
               <button mat-menu-item>Item 2</button>
             </mat-menu> -->
+          </div>
+          <div class="row text-right">
+            <div class="col-8"></div>
+            <div class="col-4 align-self-end">
+              <div (click)="viewVideo()" style="cursor: pointer; color: red; " class="text-center">
+                <mat-icon>ondemand_video</mat-icon>      
+                <p>
+                  Tutorial Nuevo Ingreso              
+                </p>        
+              </div>
+            </div>
           </div>
         </form>
       </div>
