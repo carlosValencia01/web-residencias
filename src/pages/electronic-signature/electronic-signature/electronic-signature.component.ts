@@ -92,7 +92,7 @@ export class ElectronicSignatureComponent implements OnInit {
   }
 
   onSubmit1() {
-    this.eSignatureProvider.getDocument().subscribe(data => {
+    this.eSignatureProvider.getDocument(this.employee.employee._id, this.currentPosition._id).subscribe(data => {
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(data.text(), `${this.fileName}.itt`);
       } else {
