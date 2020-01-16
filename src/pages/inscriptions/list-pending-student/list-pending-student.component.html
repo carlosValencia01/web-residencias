@@ -1,0 +1,286 @@
+<div class="card-body">
+  <div style="overflow-x:auto; padding-top: 20px;">
+    <div class="row">
+      <div class="col-6" *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+        <div class="form-group">
+          <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno..."
+            (keyup)="eventFilterStatus(searchText)" autocomplete="off">
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-group">
+          <select [(ngModel)]="searchCarreer" class="form-control" (change)="eventFilterStatus()">
+            <option value=''>Todas las carreras</option>
+            <option value='INGENIERÍA BIOQUÍMICA'>Ingeniería Bioquímica</option>
+            <option value='INGENIERÍA EN GESTIÓN EMPRESARIAL'>Ingeniería en Gestión Empresarial</option>
+            <option value='INGENIERÍA CIVIL'>Ingeniería Civil</option>
+            <option value='ARQUITECTURA'>Arquitectura</option>
+            <option value='INGENIERÍA QUÍMICA'>Ingeniería Química</option>
+            <option value='INGENIERÍA MECATRÓNICA'>Ingeniería Mecatrónica</option>
+            <option value='INGENIERÍA ELÉCTRICA'>Ingeniería Eléctrica</option>
+            <option value='LICENCIATURA EN ADMINISTRACIÓN'>Licenciatura en Administración</option>
+            <option value='INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIÓN'>Ingeniería en Tecnologías
+              de
+              la Información y Comunicación</option>
+            <option value='INGENIERÍA EN SISTEMAS COMPUTACIONALES'>Ingeniaría en Sistemas Computacionales
+            </option>
+            <option value='INGENIERÍA INDUSTRIAL'>Ingeniaría Industrial</option>
+            <option value='MAESTRÍA EN CIENCIAS EN ALIMENTOS'>Maestría en Ciencias en Alimentos</option>
+            <option value='DOCTORADO EN CIENCIAS EN ALIMENTOS'>Doctorado en Ciencias en Alimentos</option>
+          </select>
+        </div>
+      </div>
+      <div class="col-2" *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+        <table class="table table-bordered">
+          <tr>
+            <td id="checkC">
+              <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Captura"
+                tooltipClass="my-custom-class">
+                <input [(ngModel)]="searchEC" type="checkbox" class="custom-control-input" id="defaultInline2"
+                  value="En Captura" (change)="eventFilterStatus()">
+                <label class="custom-control-label" for="defaultInline2">C</label>
+              </div>
+            </td>
+            <td id="checkE">
+              <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Enviado"
+                tooltipClass="my-custom-class">
+                <input [(ngModel)]="searchE" type="checkbox" class="custom-control-input" id="defaultInline3"
+                  value="Enviado" (change)="eventFilterStatus()">
+                <label class="custom-control-label" for="defaultInline3">E</label>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <table class="table table-striped table-bordered table-hover" id="my-table">
+      <thead>
+        <tr>
+          <th>Número de Control</th>
+          <th>Nombre del Alumno</th>
+          <th>Carrera</th>
+          <th *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">Avance</th>
+          <th *ngIf="rolName == 'Médico'">Dictaminado</th>
+          <th *ngIf="rolName == 'Médico'">Advertencia</th>
+          <th *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">Estatus</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let item of listStudentsPending | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText} | filter: {observationsAnalysis:searchDictamen} | filter: {warningAnalysis:searchAdvertencia} | paginate: {id:'pagP', itemsPerPage: pageSizeP, currentPage: pageP };">
+          <td>{{item.controlNumber}}</td>
+          <td>{{item.fullName}}</td>
+          <td>{{item.career}}</td>
+          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+            {{item.documentsReviewNumber}}/{{item.totalDocumentsNumber}}</td>
+          <td *ngIf="rolName == 'Médico' && item.observationsAnalysis">Si</td>
+          <td *ngIf="rolName == 'Médico' && !item.observationsAnalysis">No</td>
+          <td *ngIf="rolName == 'Médico' && item.warningAnalysis">Si</td>
+          <td *ngIf="rolName == 'Médico' && !item.warningAnalysis">No</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'En Captura' && rolName == 'Administrador' || item.inscriptionStatus == 'En Captura' && rolName == 'Secretaria escolares'"
+            class="Captura">{{item.inscriptionStatus}}</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'Enviado' && rolName == 'Administrador' || item.inscriptionStatus == 'Enviado' && rolName == 'Secretaria escolares'"
+            class="Enviado">{{item.inscriptionStatus}}</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'En Proceso' && rolName == 'Administrador' || item.inscriptionStatus == 'En Proceso' && rolName == 'Secretaria escolares'"
+            class="Proceso">{{item.inscriptionStatus}}</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'Verificado' && rolName == 'Administrador' || item.inscriptionStatus == 'Verificado' && rolName == 'Secretaria escolares'"
+            class="Verificado">{{item.inscriptionStatus}}</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'Aceptado' && rolName == 'Administrador' || item.inscriptionStatus == 'Aceptado' && rolName == 'Secretaria escolares'"
+            class="Aceptado">{{item.inscriptionStatus}}</td>
+          <td>
+            <div class="div-actions">
+        <tr *ngIf="item.inscriptionStatus != 'En Captura'">
+          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+            <div class="div-img" ngbTooltip="Información General" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/observations.svg" class="action" (click)="updateGI(item)">
+            </div>
+          </td>
+          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+            <div class="div-img" ngbTooltip="Documentos a Dictaminar" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/folder.svg" class="action" (click)="viewExpedient(item)">
+            </div>
+          </td>
+          <td *ngIf="rolName == 'Administrador'">
+            <div class="div-img" ngbTooltip="Actualizar Solicitud" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/import.svg" class="action" (click)="updateSolicitud(item)">
+            </div>
+          </td>
+          <td
+            *ngIf="rolName == 'Administrador' && (item.totalDocumentsNumber-item.documentsReviewNumber) == 0 && item.inscriptionStatus == 'Enviado'|| rolName == 'Secretaria escolares' && (item.totalDocumentsNumber-item.documentsReviewNumber) == 0 && item.inscriptionStatus == 'Enviado'">
+            <div class="div-img" ngbTooltip="Actualizar Estatus Expediente" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/refresh.svg" class="action" (click)="updateExpedientStatus(item)">
+            </div>
+          </td>
+        </tr>
+  </div>
+  </td>
+  </tr>
+  </tbody>
+  <tfoot align="right" *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+    <td colspan="6">
+      <div class="div-actionsFoot">
+        <tr>
+          <td>
+            <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
+            </div>
+          </td>
+        </tr>
+      </div>
+    </td>
+  </tfoot>
+  </table>
+  <div class='div-pagination'>
+    <pagination-controls id="pagP" directionLinks="true" (pageChange)="pageChanged($event)" responsive="true"
+      previousLabel="Anterior" nextLabel="Siguiente">
+    </pagination-controls>
+  </div>
+
+
+
+  <!-- Tabla reporte alumnos Excel-->
+  <table class="table table-striped table-bordered table-hover" id="tableReportExcel"
+    data-cols-width="9,21,46,66,15,30,30,30,30,30,15,15,15">
+    <thead>
+      <tr>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control
+        </th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno
+        </th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Estatus</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF"></th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Acta de Nacimiento
+        </th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Certificado de
+          Estudios
+        </th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Análisis Clínicos
+        </th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Comprobante de Pago
+        </th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Curp</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nss</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Foto</th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let item of listStudentsPending | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText}; let indice=index">
+        <td data-f-sz="12" data-t="n">{{indice+1}}</td>
+        <td data-f-sz="12" data-t="n">{{item.controlNumber}}</td>
+        <td data-f-sz="12" data-t="s">{{item.fullName}}</td>
+        <td data-f-sz="12" data-t="s">{{item.career}}</td>
+        <td data-f-sz="12" data-fill-color="FCD539" data-f-color="000000"
+          *ngIf="item.inscriptionStatus == 'En Captura' " class="Captura">{{item.inscriptionStatus}}</td>
+        <td data-f-sz="12" data-fill-color="39CEFC" data-f-color="000000"
+          *ngIf="item.inscriptionStatus == 'Enviado' " class="Enviado">{{item.inscriptionStatus}}</td>
+        <td data-f-sz="12" data-fill-color="F08C1B" data-f-color="000000"
+          *ngIf="item.inscriptionStatus == 'En Proceso' " class="Proceso">{{item.inscriptionStatus}}</td>
+        <td data-f-sz="12" data-fill-color="00FF80" data-f-color="000000"
+          *ngIf="item.inscriptionStatus == 'Verificado' " class="Verificado">{{item.inscriptionStatus}}</td>
+        <td data-f-sz="12" data-fill-color="142B58" data-f-color="ffffff"
+          *ngIf="item.inscriptionStatus == 'Aceptado' " class="Aceptado">{{item.inscriptionStatus}}</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="112043" data-f-color="FFFFFF" data-a-h="center">
+          DOCUMENTOS
+        </td>
+        <!--ACTA-->
+        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+          *ngIf="filterDocuments('Acta',item) == 'EN PROCESO'">En Proceso</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+          *ngIf="filterDocuments('Acta',item) == 'RECHAZADO'">Rechazado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+          *ngIf="filterDocuments('Acta',item) == 'VALIDADO'">Validado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+          *ngIf="filterDocuments('Acta',item) == 'ACEPTADO'">Aceptado</td>
+        <td data-f-sz="12" data-t="s"
+          *ngIf="filterDocuments('Acta',item) != 'EN PROCESO' && filterDocuments('Acta',item) != 'RECHAZADO' && filterDocuments('Acta',item) != 'VALIDADO' && filterDocuments('Acta',item) != 'ACEPTADO'">
+          Sin Envío</td>
+        <!--CERTIFICADO-->
+        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+          *ngIf="filterDocuments('Certificado',item) == 'EN PROCESO'">En Proceso</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+          *ngIf="filterDocuments('Certificado',item) == 'RECHAZADO'">Rechazado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+          *ngIf="filterDocuments('Certificado',item) == 'VALIDADO'">Validado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+          *ngIf="filterDocuments('Certificado',item) == 'ACEPTADO'">Aceptado</td>
+        <td data-f-sz="12" data-t="s"
+          *ngIf="filterDocuments('Certificado',item) != 'EN PROCESO' && filterDocuments('Certificado',item) != 'RECHAZADO' && filterDocuments('Certificado',item) != 'VALIDADO' && filterDocuments('Certificado',item) != 'ACEPTADO'">
+          Sin Envío</td>
+        <!--ANALISIS-->
+        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+          *ngIf="filterDocuments('Analisis',item) == 'EN PROCESO'">En Proceso</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+          *ngIf="filterDocuments('Analisis',item) == 'RECHAZADO'">Rechazado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+          *ngIf="filterDocuments('Analisis',item) == 'VALIDADO'">Validado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+          *ngIf="filterDocuments('Analisis',item) == 'ACEPTADO'">Aceptado</td>
+        <td data-f-sz="12" data-t="s"
+          *ngIf="filterDocuments('Analisis',item) != 'EN PROCESO' && filterDocuments('Analisis',item) != 'RECHAZADO' && filterDocuments('Analisis',item) != 'VALIDADO' && filterDocuments('Analisis',item) != 'ACEPTADO'">
+          Sin Envío</td>
+        <!--COMRPOBANTE-->
+        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+          *ngIf="filterDocuments('Comprobante',item) == 'EN PROCESO'">En Proceso</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+          *ngIf="filterDocuments('Comprobante',item) == 'RECHAZADO'">Rechazado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+          *ngIf="filterDocuments('Comprobante',item) == 'VALIDADO'">Validado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+          *ngIf="filterDocuments('Comprobante',item) == 'ACEPTADO'">Aceptado</td>
+        <td data-f-sz="12" data-t="s"
+          *ngIf="filterDocuments('Comprobante',item) != 'EN PROCESO' && filterDocuments('Comprobante',item) != 'RECHAZADO' && filterDocuments('Comprobante',item) != 'VALIDADO' && filterDocuments('Comprobante',item) != 'ACEPTADO'">
+          Sin Envío</td>
+        <!--CURP-->
+        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+          *ngIf="filterDocuments('Curp',item) == 'EN PROCESO'">En Proceso</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+          *ngIf="filterDocuments('Curp',item) == 'RECHAZADO'">Rechazado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+          *ngIf="filterDocuments('Curp',item) == 'VALIDADO'">Validado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+          *ngIf="filterDocuments('Curp',item) == 'ACEPTADO'">Aceptado</td>
+        <td data-f-sz="12" data-t="s"
+          *ngIf="filterDocuments('Curp',item) != 'EN PROCESO' && filterDocuments('Curp',item) != 'RECHAZADO' && filterDocuments('Curp',item) != 'VALIDADO' && filterDocuments('Curp',item) != 'ACEPTADO'">
+          Sin Envío</td>
+        <!--NSS-->
+        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+          *ngIf="filterDocuments('Nss',item) == 'EN PROCESO'">En Proceso</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+          *ngIf="filterDocuments('Nss',item) == 'RECHAZADO'">Rechazado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+          *ngIf="filterDocuments('Nss',item) == 'VALIDADO'">Validado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+          *ngIf="filterDocuments('Nss',item) == 'ACEPTADO'">Aceptado</td>
+        <td data-f-sz="12" data-t="s"
+          *ngIf="filterDocuments('Nss',item) != 'EN PROCESO' && filterDocuments('Nss',item) != 'RECHAZADO' && filterDocuments('Nss',item) != 'VALIDADO' && filterDocuments('Nss',item) != 'ACEPTADO'">
+          Sin Envío</td>
+        <!--FOTO-->
+        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+          *ngIf="filterDocuments('Foto',item) == 'EN PROCESO'">En Proceso</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+          *ngIf="filterDocuments('Foto',item) == 'RECHAZADO'">Rechazado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+          *ngIf="filterDocuments('Foto',item) == 'VALIDADO'">Validado</td>
+        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+          *ngIf="filterDocuments('Foto',item) == 'ACEPTADO'">Aceptado</td>
+        <td data-f-sz="12" data-t="s"
+          *ngIf="filterDocuments('Foto',item) != 'EN PROCESO' && filterDocuments('Foto',item) != 'RECHAZADO' && filterDocuments('Foto',item) != 'VALIDADO' && filterDocuments('Foto',item) != 'ACEPTADO'">
+          Sin Envío</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
+</div>

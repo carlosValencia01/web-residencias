@@ -13,32 +13,19 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
-import {ViewChild} from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material';
-import { ListPendingStudentComponent } from '../list-pending-student/list-pending-student.component'
-import { ListProcessStudentComponent } from '../list-process-student/list-process-student.component';
-import { ListAceptStudentComponent } from '../list-acept-student/list-acept-student.component'
 const jsPDF = require('jspdf');
 import * as JsBarcode from 'jsbarcode';
 
 @Component({
-  selector: 'app-secretary-inscription-page',
-  templateUrl: './secretary-inscription-page.component.html',
-  styleUrls: ['./secretary-inscription-page.component.scss']
+  selector: 'app-list-acept-student',
+  templateUrl: './list-acept-student.component.html',
+  styleUrls: ['./list-acept-student.component.scss']
 })
-export class SecretaryInscriptionPageComponent implements OnInit {
-  @ViewChild(ListPendingStudentComponent) private pendingStudent: ListPendingStudentComponent;
-  @ViewChild(ListProcessStudentComponent) private processStudent: ListProcessStudentComponent;
-  @ViewChild(ListAceptStudentComponent) private aceptStudent: ListAceptStudentComponent;
+export class ListAceptStudentComponent implements OnInit {
+
 
   students;
-  listStudents;
-  listStudentsLogged;
-  cantListStudentsPendant = 0;
-  cantListStudentsProcess = 0;
-  cantListStudentsAcept = 0;
-  cantListStudents = 0;
-  cantListStudentsLogged = 0;
+  listStudentsAcept;
   periods = [];
   loading = false;
 
@@ -82,14 +69,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   public A = '';
 
   //Paginator Students
-  page = 1;
-  pag;
-  pageSize = 10;
-
-  //Paginatos Students Logged
-  pageL = 1;
-  pagL;
-  pageSizeL = 10;
+  pageV = 1;
+  pagV;
+  pageSizeV = 10;
 
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
@@ -99,7 +81,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
     private router: Router,
-    private studentProv: StudentProvider,
+    private studentProv: StudentProvider
   ) { 
     this.rolName = this.cookiesService.getData().user.rol.name;
     //console.log(this.rolName);
@@ -137,79 +119,23 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   getStudents(){
-    this.inscriptionsProv.getStudents().subscribe(res => {
+    this.inscriptionsProv.getStudentsAcept().subscribe(res => {
       this.students = res.students;
 
       // Ordenar Alumnos por Apellidos
       this.students.sort(function (a, b) {
         return a.fatherLastName.localeCompare(b.fatherLastName);
       });
-      this.listStudents = this.students;
-      this.cantListStudents = this.listStudents.length;
-      //console.log(this.listStudents);
-      this.listCovers = this.listStudents;
+      this.listStudentsAcept = this.students;
+      this.listCovers = this.listStudentsAcept;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
       
-      //console.log(this.listStudents);
-    });
-    this.inscriptionsProv.getStudentsLogged().subscribe(res => {
-      this.listStudentsLogged = res.students;
-      this.cantListStudentsLogged = this.listStudentsLogged.length;
-      this.listStudentsLogged.sort(function (a, b) {
-        return a.fatherLastName.localeCompare(b.fatherLastName);
-      });
-    });
-
-    // Cantidad Alumnos En Proceso
-    this.inscriptionsProv.getStudentsProcess().subscribe(res => {
-      this.cantListStudentsProcess = res.students.length;
-    });
-
-    // Cantidad Alumnos Pendientes
-    this.inscriptionsProv.getStudentsPendant().subscribe(res => {
-      this.cantListStudentsPendant = res.students.length;
-    });
-
-    // Cantidad Alumnos Aceptados
-    this.inscriptionsProv.getStudentsAcept().subscribe(res => {
-      this.cantListStudentsAcept = res.students.length;
     });
     
   }
 
-  countStudents(){
-    // Cantidad Alumnos Total
-    this.inscriptionsProv.getStudents().subscribe(res => {
-      this.cantListStudents = res.students.length;
-    });
-
-    // Cantidad Alumnos En Proceso
-    this.inscriptionsProv.getStudentsProcess().subscribe(res => {
-      this.cantListStudentsProcess = res.students.length;
-    });
-
-    // Cantidad Alumnos Pendientes
-    this.inscriptionsProv.getStudentsPendant().subscribe(res => {
-      this.cantListStudentsPendant = res.students.length;
-    });
-
-    // Cantidad Alumnos Aceptados
-    this.inscriptionsProv.getStudentsAcept().subscribe(res => {
-      this.cantListStudentsAcept = res.students.length;
-    });
-
-    // Cantidad Alumnos Logueados
-    this.inscriptionsProv.getStudentsLogged().subscribe(res => {
-      this.cantListStudentsLogged = res.students.length;
-    });
-  }
-
   pageChanged(ev) {
-    this.page = ev;
-  }
-
-  pageChangedL(ev) {
-    this.pageL = ev;
+    this.pageV = ev;
   }
 
   // Obetener Valor del checkbox de Estatus
@@ -240,7 +166,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.A = '~';
     }
 
-    this.listStudents = this.filterItems(
+    this.listStudentsAcept = this.filterItems(
       this.searchCarreer,
       this.EC,
       this.E,
@@ -249,9 +175,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.A
     );
 
-    if (Object.keys(this.listStudents).length === 0) {
+    if (Object.keys(this.listStudentsAcept).length === 0) {
       if (!this.searchEC && !this.searchE && !this.searchEP && !this.searchV && !this.searchA) {
-        this.listStudents = this.students;
+        this.listStudentsAcept = this.students;
       }
     }
 
@@ -360,7 +286,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   // Generar Carátulas
   generateCovers() {
-    console.log(this.listCovers.length);
     if(this.listCovers.length != 0){
       this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO CARÁTULAS', '');
       this.loading = true;
@@ -502,9 +427,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   filterDocuments(document,student){
-    
-  
-    
     switch (document) {
       case "Acta": {
         var doc = student.documents ? student.documents.filter(docc => docc.filename ?docc.filename.indexOf('ACTA') !== -1 && docc.status.length>0: undefined)[0]:'';
@@ -855,254 +777,241 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   updateSolicitud(student){
     // console.log(student,'solicitud');
-    Swal.fire({
-      title: 'Actualizar Solicitud',
-      text: 'Para ' + student.controlNumber,
-      type: 'question',
-      showCancelButton: true,
-      allowOutsideClick: false,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Cancelar',
-      confirmButtonText: 'Confirmar'
-    }).then((result) => {
-      if (result.value) {
-        this.loading = true;
-        var day = student.curp.substring(8, 10);
-        var month = student.curp.substring(6, 8);
-        var year = student.curp.substring(4, 6);
-        var fechaNacimiento = day + "/" + month + "/" + year;
-    
-        const doc = new jsPDF();
-    
-        // @ts-ignore
-        doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
-        // @ts-ignore
-        doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
-        doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
-        doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
-    
-        // Header
-        var pageHeight = doc.internal.pageSize.height;
-        var pageWidth = doc.internal.pageSize.width;
-    
-        doc.addImage(this.logoSep, 'PNG', 5, 5, 74, 15); // Logo SEP
-        doc.addImage(this.logoTecNM, 'PNG', pageWidth - 47, 2, 39, 17); // Logo TecNM
-    
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Bold');
-        doc.setFontSize(15);
-        doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
-    
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Normal');
-        doc.setFontSize(13);
-        doc.text("Solicitud de Inscripción", pageWidth / 2, 37, 'center');
-    
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Normal');
-        doc.setFontSize(13);
-        doc.text("Código: ITT-POE-01-02      Revisión: 0", pageWidth / 2, 42, 'center');
-    
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Normal');
-        doc.setFontSize(13);
-        doc.text("Referencia a la Norma ISO 9001-2015:    8.2.2, 8.2.3, 8.2.1, 8.5.2", pageWidth / 2, 47, 'center');
-    
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Bold');
-        doc.setFontSize(15);
-        doc.text("SOLICITUD DE INSCRIPCIÓN", pageWidth / 2, 60, 'center');
-    
-        // Cuadro 1
-        doc.setDrawColor(0);
-        doc.setFillColor(0, 0, 0);
-        doc.rect(10, 65, 190, 10, 'f');
-    
-        doc.setDrawColor(0);
-        doc.setFillColor(230, 230, 230);
-        doc.rect(10, 75, 190, 45, 'f');
-    
-        doc.setFontSize(18);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text(15, 72, 'Datos Generales');
-    
-        doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Nombre: ', 15, 80);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.fatherLastName + ' ' + student.motherLastName + ' ' + student.firstName, 70, 80);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Lugar de nacimiento: ', 15, 85);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.birthPlace, 70, 85);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Fecha de nacimiento: ', 15, 90);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(fechaNacimiento, 70, 90);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Estado Civil: ', 15, 95);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.civilStatus, 70, 95);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Correo Electrónico: ', 15, 100);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.email, 70, 100);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('CURP: ', 15, 105);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.curp, 70, 105);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('NSS: ', 15, 110);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.nss, 70, 110);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Número de control: ', 15, 115);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.controlNumber, 70, 115);
-    
-        // Cuadro 2
-        doc.setDrawColor(0);
-        doc.setFillColor(0, 0, 0);
-        doc.rect(10, 125, 190, 10, 'f');
-    
-        doc.setDrawColor(0);
-        doc.setFillColor(230, 230, 230);
-        doc.rect(10, 135, 190, 35, 'f');
-    
-        doc.setFontSize(18);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text(15, 132, 'Dirección');
-    
-        doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Calle: ', 15, 140);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.street, 70, 140);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Colonia: ', 15, 145);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.suburb, 70, 145);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Ciudad: ', 15, 150);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.city, 70, 150);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Estado: ', 15, 155);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.state, 70, 155);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Código Postal: ', 15, 160);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.cp + '', 70, 160);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Teléfono: ', 15, 165);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.phone + '', 70, 165);
-    
-        // Cuadro 3
-        doc.setDrawColor(0);
-        doc.setFillColor(0, 0, 0);
-        doc.rect(10, 175, 190, 10, 'f');
-    
-        doc.setDrawColor(0);
-        doc.setFillColor(230, 230, 230);
-        doc.rect(10, 185, 190, 25, 'f');
-    
-        doc.setFontSize(18);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text(15, 182, 'Datos académicos');
-    
-        doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Escuela de procedencia: ', 15, 190);
-        doc.setFont('Montserrat', 'Normal');
-        doc.setFontSize(9);
-        doc.text(student.originSchool + ': ' + student.nameOriginSchool, 70, 190);
-    
-        doc.setFontSize(12);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Otra: ', 15, 195);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.otherSchool, 70, 195);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Promedio: ', 15, 200);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.averageOriginSchool + '', 70, 200);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('Carrera a cursar: ', 15, 205);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.career, 70, 205);
-    
-        // Cuadro 4
-        doc.setDrawColor(0);
-        doc.setFillColor(0, 0, 0);
-        doc.rect(10, 215, 190, 10, 'f');
-    
-        doc.setDrawColor(0);
-        doc.setFillColor(230, 230, 230);
-        doc.rect(10, 225, 190, 25, 'f');
-    
-        doc.setFontSize(18);
-        doc.setTextColor(255, 255, 255);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text(15, 222, 'Datos extras');
-    
-        doc.setFontSize(12);
-        doc.setTextColor(0, 0, 0);
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('¿Perteneces a alguna Etnia? ', 15, 230);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.etnia, 85, 230);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('¿Cuál?', 15, 235);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.typeEtnia, 85, 235);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('¿Tienes alguna discapacidad? ', 15, 240);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.disability, 85, 240);
-    
-        doc.setFont('Montserrat', 'Bold');
-        doc.text('¿Cuál?', 15, 245);
-        doc.setFont('Montserrat', 'Normal');
-        doc.text(student.typeDisability, 85, 245);
-    
-        doc.line((pageWidth / 2)-35, 270, (pageWidth / 2)+35, 270);
-        doc.setFont('Montserrat', 'Bold');
-        doc.setFontSize(10);
-        doc.text("Firma del Estudiante", pageWidth / 2, 280, 'center');
-    
-        let document = doc.output('arraybuffer');
-        let binary = this.bufferToBase64(document);
-    
-        this.updateDocument(binary,student);
-        // console.log(binary);
-        // window.open(doc.output('bloburl'), '_blank'); 
-      }
-    });
+    this.loading = true;
+    var day = student.curp.substring(8, 10);
+    var month = student.curp.substring(6, 8);
+    var year = student.curp.substring(4, 6);
+    var fechaNacimiento = day + "/" + month + "/" + year;
+
+    const doc = new jsPDF();
+
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+    // Header
+    var pageHeight = doc.internal.pageSize.height;
+    var pageWidth = doc.internal.pageSize.width;
+
+    doc.addImage(this.logoSep, 'PNG', 5, 5, 74, 15); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth - 47, 2, 39, 17); // Logo TecNM
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(15);
+    doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(13);
+    doc.text("Solicitud de Inscripción", pageWidth / 2, 37, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(13);
+    doc.text("Código: ITT-POE-01-02      Revisión: 0", pageWidth / 2, 42, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(13);
+    doc.text("Referencia a la Norma ISO 9001-2015:    8.2.2, 8.2.3, 8.2.1, 8.5.2", pageWidth / 2, 47, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(15);
+    doc.text("SOLICITUD DE INSCRIPCIÓN", pageWidth / 2, 60, 'center');
+
+    // Cuadro 1
+    doc.setDrawColor(0);
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 65, 190, 10, 'f');
+
+    doc.setDrawColor(0);
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 75, 190, 45, 'f');
+
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text(15, 72, 'Datos Generales');
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Nombre: ', 15, 80);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.fatherLastName + ' ' + student.motherLastName + ' ' + student.firstName, 70, 80);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Lugar de nacimiento: ', 15, 85);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.birthPlace, 70, 85);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Fecha de nacimiento: ', 15, 90);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(fechaNacimiento, 70, 90);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Estado Civil: ', 15, 95);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.civilStatus, 70, 95);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Correo Electrónico: ', 15, 100);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.email, 70, 100);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('CURP: ', 15, 105);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.curp, 70, 105);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('NSS: ', 15, 110);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.nss, 70, 110);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Número de control: ', 15, 115);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.controlNumber, 70, 115);
+
+    // Cuadro 2
+    doc.setDrawColor(0);
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 125, 190, 10, 'f');
+
+    doc.setDrawColor(0);
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 135, 190, 35, 'f');
+
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text(15, 132, 'Dirección');
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Calle: ', 15, 140);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.street, 70, 140);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Colonia: ', 15, 145);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.suburb, 70, 145);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Ciudad: ', 15, 150);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.city, 70, 150);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Estado: ', 15, 155);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.state, 70, 155);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Código Postal: ', 15, 160);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.cp + '', 70, 160);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Teléfono: ', 15, 165);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.phone + '', 70, 165);
+
+    // Cuadro 3
+    doc.setDrawColor(0);
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 175, 190, 10, 'f');
+
+    doc.setDrawColor(0);
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 185, 190, 25, 'f');
+
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text(15, 182, 'Datos académicos');
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Escuela de procedencia: ', 15, 190);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(9);
+    doc.text(student.originSchool + ': ' + student.nameOriginSchool, 70, 190);
+
+    doc.setFontSize(12);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Otra: ', 15, 195);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.otherSchool, 70, 195);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Promedio: ', 15, 200);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.averageOriginSchool + '', 70, 200);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('Carrera a cursar: ', 15, 205);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.career, 70, 205);
+
+    // Cuadro 4
+    doc.setDrawColor(0);
+    doc.setFillColor(0, 0, 0);
+    doc.rect(10, 215, 190, 10, 'f');
+
+    doc.setDrawColor(0);
+    doc.setFillColor(230, 230, 230);
+    doc.rect(10, 225, 190, 25, 'f');
+
+    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text(15, 222, 'Datos extras');
+
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('¿Perteneces a alguna Etnia? ', 15, 230);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.etnia, 85, 230);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('¿Cuál?', 15, 235);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.typeEtnia, 85, 235);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('¿Tienes alguna discapacidad? ', 15, 240);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.disability, 85, 240);
+
+    doc.setFont('Montserrat', 'Bold');
+    doc.text('¿Cuál?', 15, 245);
+    doc.setFont('Montserrat', 'Normal');
+    doc.text(student.typeDisability, 85, 245);
+
+    doc.line((pageWidth / 2)-35, 270, (pageWidth / 2)+35, 270);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(10);
+    doc.text("Firma del Estudiante", pageWidth / 2, 280, 'center');
+
+    let document = doc.output('arraybuffer');
+    let binary = this.bufferToBase64(document);
+
+    this.updateDocument(binary,student);
+    // console.log(binary);
+    // window.open(doc.output('bloburl'), '_blank');
+
   }
 
   bufferToBase64(buffer) {
@@ -1256,96 +1165,59 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   updateExpedientStatus(student){
     //console.log(student);
-    Swal.fire({
-      title: 'Actualizar Estatus de Expediente',
-      text: 'Para ' + student.controlNumber,
-      type: 'question',
-      showCancelButton: true,
-      allowOutsideClick: false,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Cancelar',
-      confirmButtonText: 'Confirmar'
-    }).then((result) => {
-      if (result.value) {
-        this.studentProv.getDocumentsUpload(student._id).subscribe(res => {
-          var comprobante = res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
-          var acta = res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
-          var curp = res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] : '';
-          var nss = res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] : '';
-          var compromiso = res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] : '';
-          var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
-          var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
-          var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-          
-          if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
-            // Cambiar estatus a ACEPTADO
-            this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
-            }); 
-            this.getStudents();
-            this.eventFilterStatus();  
-            return;
-          } 
-          if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
-            // Cambiar estatus a VALIDADO
-            this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
-            });   
-            this.getStudents();
-            this.eventFilterStatus();
-            return;
-          }
-    
-          var allDiferentProcess = true;
-          var allValidateOrAcept = true;
-    
-          for(var i = 0; i < res.documents.length; i++){
-            if(res.documents[i].statusName == "EN PROCESO"){
-              allDiferentProcess = false;
-            }
-            if(res.documents[i].statusName == "VALIDADO" || res.documents[i] == "ACEPTADO"){
-              allValidateOrAcept = true;
-            } else {
-              allValidateOrAcept = false;
-            }
-          }
-    
-          if(allDiferentProcess){
-            if(!allValidateOrAcept){
-              // Cambiar estatus a EN PROCESO
-              this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},student._id).subscribe(res => {
-              });
-              this.getStudents();
-              this.eventFilterStatus();   
-              return;
-            }
-            // No cambiar estatus
-          }
-        });
+    this.studentProv.getDocumentsUpload(student._id).subscribe(res => {
+      var comprobante = res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
+      var acta = res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
+      var curp = res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] : '';
+      var nss = res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] : '';
+      var compromiso = res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] : '';
+      var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
+      var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
+      var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+      
+      if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
+        // Cambiar estatus a ACEPTADO
+        this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
+        }); 
+        this.getStudents();
+        this.eventFilterStatus();  
+        return;
+      } 
+      if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
+        // Cambiar estatus a VALIDADO
+        this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
+        });   
+        this.getStudents();
+        this.eventFilterStatus();
+        return;
+      }
+
+      var allDiferentProcess = true;
+      var allValidateOrAcept = true;
+
+      for(var i = 0; i < res.documents.length; i++){
+        if(res.documents[i].statusName == "EN PROCESO"){
+          allDiferentProcess = false;
+        }
+        if(res.documents[i].statusName == "VALIDADO" || res.documents[i] == "ACEPTADO"){
+          allValidateOrAcept = true;
+        } else {
+          allValidateOrAcept = false;
+        }
+      }
+
+      if(allDiferentProcess){
+        if(!allValidateOrAcept){
+          // Cambiar estatus a EN PROCESO
+          this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},student._id).subscribe(res => {
+          });
+          this.getStudents();
+          this.eventFilterStatus();   
+          return;
+        }
+        // No cambiar estatus
       }
     });
   }
 
-  onTabChanged(event: MatTabChangeEvent){
-    if(event.index == 0){
-      this.pendingStudent.getStudents();
-      this.countStudents();
-    }
-    if(event.index == 1){
-      this.processStudent.getStudents();
-      this.countStudents();
-    }
-    if(event.index == 2){
-      this.aceptStudent.getStudents();
-      this.countStudents();
-    }
-    if(event.index == 3){
-      this.getStudents();
-      this.countStudents();
-    }
-    if(event.index == 4){
-      this.getStudents();
-      this.countStudents();
-    }
-  }
-  
 }
