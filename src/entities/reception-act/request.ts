@@ -315,12 +315,10 @@ export class uRequest {
         this._drawUnderlineText(doc, `COMO: ${this._request.student.career}`, initialHeight + (lineHeight * 5), 'center');
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(17);
-        doc.text(
-            // tslint:disable-next-line:max-line-length
-            `DEDICO MIS CONOCIMIENTOS PROFESIONALES AL PROGRESO Y MEJORAMIENTO DEL BIENESTAR HUMANO, ME COMPROMETO A DAR UN RENDIMIENTO MÁXIMO, A PARTICIPAR TAN SOLO EN EMPRESAS DIGNAS, A VIVIR Y TRABAJAR DE ACUERDO CON LAS LEYES PROPIAS DEL HOMBRE Y EL MÁS ELEVADO NIVEL DE CONDUCTA PROFESIONAL, A PREFERIR EL SERVICIO AL PROVECHO, EL HONOR Y LA CALIDAD PROFESIONAL A LA VENTAJA PERSONAL, EL BIEN PÚBLICO A TODA CONSIDERACIÓN, CON RESPETO Y HONRADEZ HAGO EL PRESENTE JURAMENTO.`,
-            this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 9),
-            { lineHeightFactor: 1.35, maxWidth: (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), align: 'justify' },
-            null, 'justify');
+        // tslint:disable-next-line:max-line-length
+        this.justityText(doc, `DEDICO MIS CONOCIMIENTOS PROFESIONALES AL PROGRESO Y MEJORAMIENTO DEL BIENESTAR HUMANO, ME COMPROMETO A DAR UN RENDIMIENTO MÁXIMO, A PARTICIPAR TAN SOLO EN EMPRESAS DIGNAS, A VIVIR Y TRABAJAR DE ACUERDO CON LAS LEYES PROPIAS DEL HOMBRE Y EL MÁS ELEVADO NIVEL DE CONDUCTA PROFESIONAL, A PREFERIR EL SERVICIO AL PROVECHO, EL HONOR Y LA CALIDAD PROFESIONAL A LA VENTAJA PERSONAL, EL BIEN PÚBLICO A TODA CONSIDERACIÓN, CON RESPETO Y HONRADEZ HAGO EL PRESENTE JURAMENTO.`,
+            {x: this.MARGIN.LEFT + 15, y: initialHeight + (lineHeight * 9)},
+            (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), 7);
         doc.setFontSize(14);
         this._drawCenterTextWithLineUp(doc, 'FIRMA', initialHeight + (lineHeight * 26.5));
         doc.text(moment(new Date()).format('LL').toUpperCase(), this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 31));
@@ -383,7 +381,7 @@ export class uRequest {
                 totalLines = 0;
                 y = initialHeight + (lineHeight * totalLines);
             }
-            doc.text(ruleData, startLine, y, { lineHeightFactor: 1.35, maxWidth: lineWidth }, null, 'justify');
+            this.justityText(doc, ruleData, { x: startLine, y: y }, lineWidth, 7);
             totalLines += linesRule;
         });
         return doc;

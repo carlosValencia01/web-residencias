@@ -746,7 +746,9 @@ export class ProgressPageComponent implements OnInit {
     let oRequest = new uRequest(this.getRequestById(_id), this.imgService);
     setTimeout(() => {
       window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
-    }, 500);
+      window.open(oRequest.professionalEthicsOath().output('bloburl'), '_blank');
+      window.open(oRequest.codeProfessionalEthics().output('bloburl'), '_blank');
+    }, 1000);
   }
 }
 
