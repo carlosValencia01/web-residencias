@@ -125,6 +125,7 @@ export class ProgressPageComponent implements OnInit {
       res => {
         this.request = [];
         res.request.forEach(element => {
+          console.log("Eelemento reques", element);
           let tmp: iRequest = new Object();//<iRequest>element;          
           tmp._id = element._id;
           tmp.status = this.convertStatus(element.status);
@@ -134,9 +135,18 @@ export class ProgressPageComponent implements OnInit {
           tmp.fullName = element.studentId.fullName;
           tmp.student = element.studentId;
           tmp.studentId = element.studentId._id;
-          tmp.jury = element.jury;
+          tmp.jury = element.jury;          
           tmp.adviser = element.adviser;
           tmp.history = element.history;
+          tmp.honorificMention=element.honorificMention;
+          tmp.observation=element.observation;
+          tmp.noIntegrants=element.noIntegrants;
+          tmp.projectName=element.projectName;
+          tmp.telephone=element.telephone;
+          tmp.integrants=element.integrants;
+          tmp.email=element.email;
+          tmp.product=element.product;
+          tmp.department=element.department;
           tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
           tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
           this.request.push(tmp);
