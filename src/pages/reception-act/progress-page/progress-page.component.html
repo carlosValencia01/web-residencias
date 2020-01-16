@@ -432,10 +432,10 @@
                                                     Aprobar
                                                 </button>
                                                 <button
-                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador')"
+                                                    *ngIf="(role==='coordinación de titulación'  || role==='administrador')"
                                                     mat-menu-item (click)="juryNotification(row._id)">
                                                     <mat-icon>contact_mail</mat-icon>
-                                                    Generar Notificación
+                                                    Generar Documentacion
                                                 </button>
                                             </div>
                                             <div *ngSwitchCase="'Generado'">
