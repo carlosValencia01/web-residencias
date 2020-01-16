@@ -27,6 +27,7 @@ import { eCAREER } from 'src/enumerators/shared/career.enum';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
 import { UploadDeliveredComponent } from 'src/modals/reception-act/upload-delivered/upload-delivered.component';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { CurrentPositionService } from 'src/services/shared/current-position.service';
 
 @Component({
   selector: 'app-progress-page',
@@ -50,6 +51,7 @@ export class ProgressPageComponent implements OnInit {
   phases: Array<string>;
   search: string;
   role: string;
+  _carrers: Array<string>
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -63,6 +65,7 @@ export class ProgressPageComponent implements OnInit {
     private imgService: ImageToBase64Service,
     private _StudentProvider: StudentProvider,
     public _RequestService: RequestService,
+    private currentPositionService: CurrentPositionService
   ) {
     this.careers = [];
     this.phases = [];
@@ -135,22 +138,37 @@ export class ProgressPageComponent implements OnInit {
           tmp.fullName = element.studentId.fullName;
           tmp.student = element.studentId;
           tmp.studentId = element.studentId._id;
-          tmp.jury = element.jury;          
+          tmp.jury = element.jury;
           tmp.adviser = element.adviser;
           tmp.history = element.history;
-          tmp.honorificMention=element.honorificMention;
-          tmp.observation=element.observation;
-          tmp.noIntegrants=element.noIntegrants;
-          tmp.projectName=element.projectName;
-          tmp.telephone=element.telephone;
-          tmp.integrants=element.integrants;
-          tmp.email=element.email;
-          tmp.product=element.product;
-          tmp.department=element.department;
+          tmp.honorificMention = element.honorificMention;
+          tmp.observation = element.observation;
+          tmp.noIntegrants = element.noIntegrants;
+          tmp.projectName = element.projectName;
+          tmp.telephone = element.telephone;
+          tmp.integrants = element.integrants;
+          tmp.email = element.email;
+          tmp.product = element.product;
+          tmp.place = element.place;
+          tmp.department = element.department;
           tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
           tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
           this.request.push(tmp);
         });
+
+        // console.log("REQUEST", this.request);
+        // if (this.role === 'Jefe académico'.toLocaleLowerCase() || this.role === 'Secretaria académica'.toLocaleLowerCase()) {
+        //   let tmpRequest: iRequest[] = [];
+        //   this.request.forEach(x => {
+        //     let index = this._carrers.findIndex(y => y === x.career);
+        //     if (index !== -1) {
+        //       tmpRequest.push(x);
+        //     }
+        //   });
+        //   this.request = tmpRequest;
+        //   console.log("Solicutu", this.request);
+        // }
+
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
@@ -172,16 +190,16 @@ export class ProgressPageComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  filterCedula(request: Array<iRequest>, isCedula: boolean): Array<iRequest> {
-    return this.request.filter(function (element) {
-      if (isCedula) {
-        return element.status !== 'Finalized';
-      }
-      else {
-        return element.status === 'Finalized'
-      }
-    });
-  }
+  // filterCedula(request: Array<iRequest>, isCedula: boolean): Array<iRequest> {
+  //   return this.request.filter(function (element) {
+  //     if (isCedula) {
+  //       return element.status !== 'Finalized';
+  //     }
+  //     else {
+  //       return element.status === 'Finalized'
+  //     }
+  //   });
+  // }
   filter(carrers: string[], phases: string[]): Array<iRequest> {
     return this.request.filter(function (element) {
       if (phases.length === 0) {
@@ -409,7 +427,7 @@ export class ProgressPageComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '60em'        
+        width: '60em'
       });
 
       ref.afterClosed().subscribe(result => {

@@ -14,6 +14,7 @@ import { ViewMoreComponent } from '../../../modals/reception-act/view-more/view-
 import { eRole } from 'src/enumerators/app/role.enum';
 import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { CurrentPositionService } from 'src/services/shared/current-position.service';
 moment.locale('es');
 @Component({
   selector: 'app-view-appointment-page',
@@ -35,14 +36,18 @@ export class ViewAppointmentPageComponent implements OnInit {
   locale: string = 'es';
   role: string;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices,
-    private _sourceDataProvider: sourceDataProvider, public dialog: MatDialog, public _InscriptionsProvider: InscriptionsProvider) {
-    this.role =
-      //'Secretaria Académica';
-      'Jefe Académico';
+    private _sourceDataProvider: sourceDataProvider, public dialog: MatDialog, public _InscriptionsProvider: InscriptionsProvider,
+    private currentPositionService: CurrentPositionService) {
+    this.carrers = [];
+    // this.role =
+    //   //'Secretaria Académica';
+    //   // 'Jefe Académico';
     // this._CookiesService.getData().user.rol.name;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    let currentPosition: any = await this.currentPositionService.getCurrentPosition();    
+    let tmpCarrers = currentPosition.ascription.careers;
     this._InscriptionsProvider.getActivePeriod().subscribe(
       periodo => {
         if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
@@ -51,26 +56,32 @@ export class ViewAppointmentPageComponent implements OnInit {
         }
       });
 
-    this.carrers = this._sourceDataProvider.getCareerAbbreviation();
-    this.allCarrers = this.carrers.slice(0);
-    switch (this.role) {
-      case eRole.SECRETARYACEDMIC: {
-        this.filterDepto('ISIC');
-        break;
-      }
-      case eRole.CHIEFACADEMIC: {
-        // this.filterDepto('IBQA');
-        this.filterDepto('ISIC');
-        break;
-      }
-      default: {
-        this.carrers.push({
-          carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
-          color: { primary: '#57c7d4', secondary: '#ace3ea' }
-        });
-        break;
-      }
-    }
+    //this._sourceDataProvider.getCareerAbbreviation();
+    this.allCarrers = this._sourceDataProvider.getCareerAbbreviation();// this.carrers.slice(0);
+    this.allCarrers.forEach(element => {
+      let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
+      if (i !== -1)
+        this.carrers.push(element);
+    });
+
+    // switch (this.role) {
+    //   case eRole.SECRETARYACEDMIC: {
+    //     this.filterDepto('ISIC');
+    //     break;
+    //   }
+    //   case eRole.CHIEFACADEMIC: {
+    //     // this.filterDepto('IBQA');
+    //     this.filterDepto('ISIC');
+    //     break;
+    //   }
+    //   default: {
+    //     this.carrers.push({
+    //       carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
+    //       color: { primary: '#57c7d4', secondary: '#ace3ea' }
+    //     });
+    //     break;
+    //   }
+    // }
   }
 
   filterDepto(depto: string): void {

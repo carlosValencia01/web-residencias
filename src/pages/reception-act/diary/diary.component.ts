@@ -76,7 +76,7 @@ export class DiaryComponent implements OnInit {
       year: year
     }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
-        console.log("Appoint", data.Diary);
+        console.log("Appoint diary", data.Diary);
         this.Appointments = data.Diary;
         this.Ranges = data.Ranges;
         // this.generateAppointment(month, year);
