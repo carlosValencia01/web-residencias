@@ -32,25 +32,25 @@
                   <tr>
                     <td>
                       <mat-form-field class="example-full-width" appearance="outline">
-                        <mat-label>Apellido Paterno</mat-label>
+                        <mat-label>Primer Apellido</mat-label>
                         <input matInput formControlName="fatherLastName" [errorStateMatcher]="matcher"
                           oninput="this.value = this.value.toUpperCase()">
                         <mat-error>
                           <span
                             *ngIf="!registerForm.get('fatherLastName').valid && registerForm.get('fatherLastName').touched">Ingrese
-                            Apellido Paterno</span>
+                            Primer Apellido</span>
                         </mat-error>
                       </mat-form-field>
                     </td>
                     <td>
                       <mat-form-field class="example-full-width" appearance="outline">
-                        <mat-label>Apellido Materno</mat-label>
+                        <mat-label>Segundo Apellido</mat-label>
                         <input matInput formControlName="motherLastName" [errorStateMatcher]="matcher"
                           oninput="this.value = this.value.toUpperCase()">
                         <mat-error>
                           <span
                             *ngIf="!registerForm.get('motherLastName').valid && registerForm.get('motherLastName').touched">Ingrese
-                            Apellido Materno</span>
+                            Segundo Apellido</span>
                         </mat-error>
                       </mat-form-field>
                     </td>
