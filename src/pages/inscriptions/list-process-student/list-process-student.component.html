@@ -4,7 +4,7 @@
       <div class="col-4" *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
         <div class="form-group">
           <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno..."
-            (keyup)="eventFilterStatus(searchText)" autocomplete="off">
+            (keyup)="eventFilterStatus(searchText)" autocomplete="off" name="busca2">
         </div>
       </div>
       <div class="col-3">
@@ -30,6 +30,15 @@
           </select>
         </div>
       </div>
+      <div class="col-3">
+        <div class="form-group">
+          <select [(ngModel)]="searchChanges" class="form-control" (change)="eventFilterStatus()">
+            <option value=''>Todos</option>
+            <option value='true'>Con cambios</option>
+            <option value='false'>Sin cambios</option>
+          </select>
+        </div>
+      </div>
     </div>
     <table class="table table-striped table-bordered table-hover" id="my-table">
       <thead>
@@ -46,7 +55,7 @@
       </thead>
       <tbody>
         <tr
-          *ngFor="let item of listStudentsProcess | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText} | filter: {observationsAnalysis:searchDictamen} | filter: {warningAnalysis:searchAdvertencia} | paginate: {id: 'pag2', itemsPerPage: pageSize2, currentPage: page2 };">
+          *ngFor="let item of listStudentsProcess | filter:{documentsModified:searchChanges} | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText} | filter: {observationsAnalysis:searchDictamen} | filter: {warningAnalysis:searchAdvertencia} | paginate: {id: 'pag2', itemsPerPage: pageSize2, currentPage: page2 };">
           <td>{{item.controlNumber}}</td>
           <td>{{item.fullName}}</td>
           <td>{{item.career}}</td>
@@ -136,7 +145,7 @@
     </thead>
     <tbody>
       <tr
-        *ngFor="let item of listStudentsProcess | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText}; let indice=index">
+        *ngFor="let item of listStudentsProcess | filter:{documentsModified:searchChanges} | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText}; let indice=index">
         <td data-f-sz="12" data-t="n">{{indice+1}}</td>
         <td data-f-sz="12" data-t="n">{{item.controlNumber}}</td>
         <td data-f-sz="12" data-t="s">{{item.fullName}}</td>
