@@ -65,6 +65,8 @@ export class ListProcessStudentComponent implements OnInit {
   public V = '';
   public A = '';
 
+  public searchChanges='';
+
   //Paginator
   page2 = 1;
   pag2;
@@ -170,7 +172,8 @@ export class ListProcessStudentComponent implements OnInit {
       this.V,
       this.A
     );
-
+      console.log(this.listStudentsProcess);
+      
     if (Object.keys(this.listStudentsProcess).length === 0) {
       if (!this.searchEC && !this.searchE && !this.searchEP && !this.searchV && !this.searchA) {
         this.listStudentsProcess = this.students;
@@ -193,14 +196,17 @@ export class ListProcessStudentComponent implements OnInit {
 
    // FILTRADO POR CARRERA O ESTATUS
    filterItems(carreer, EC, E, EP, V, A) {
+    //  console.log(changes,'changes');
+     
     return this.students.filter(function (student) {
-      //console.log(student);
+      //console.log(student);      
+      
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
         student.inscriptionStatus.toLowerCase().indexOf(EC.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(E.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(EP.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(V.toLowerCase()) > -1 ||
-        student.inscriptionStatus.toLowerCase().indexOf(A.toLowerCase()) > -1);
+        student.inscriptionStatus.toLowerCase().indexOf(A.toLowerCase()) > -1) 
     });
   }
 
