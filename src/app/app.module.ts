@@ -60,7 +60,8 @@ import {
   MatProgressSpinnerModule,
   MatSelectModule,
   MatExpansionModule,
-  MatAutocompleteModule
+  MatAutocompleteModule,
+  MatBadgeModule
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -120,6 +121,9 @@ import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirma
 import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
 import { ProfileInscriptionPageComponent } from '../pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
 import { SecretaryInscriptionPageComponent } from '../pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
+import { ListProcessStudentComponent } from '../pages/inscriptions/list-process-student/list-process-student.component';
+import { ListPendingStudentComponent } from '../pages/inscriptions/list-pending-student/list-pending-student.component';
+import { ListAceptStudentComponent } from '../pages/inscriptions/list-acept-student/list-acept-student.component';
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 // Pipes
@@ -271,6 +275,9 @@ registerLocaleData(localeEs);
     InscriptionsUploadFilesPageComponent,
     ProfileInscriptionPageComponent,
     SecretaryInscriptionPageComponent,
+    ListProcessStudentComponent,
+    ListPendingStudentComponent,
+    ListAceptStudentComponent,
     //Modals
     NewPeriodComponent,
     ReviewExpedientComponent,
@@ -410,6 +417,7 @@ registerLocaleData(localeEs);
     MatExpansionModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
+    MatBadgeModule,
 
     // Ngx
     ImageCropperModule,

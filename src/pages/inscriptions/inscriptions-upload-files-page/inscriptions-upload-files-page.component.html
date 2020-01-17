@@ -1,18 +1,31 @@
-<ng-template #content let-c="close('Save click')" let-d="dismiss('Cross click')" let-modal>
+<ng-template
+  #content
+  let-c="close('Save click')"
+  let-d="dismiss('Cross click')"
+  let-modal
+>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Seleccione el área de la foto</h4>
-    <button type="button" class="close" aria-label="Close" (click)="d">
+    <h4 class="modal-title" id="modal-basic-title">
+      Seleccione el área de la foto
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="(d)">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="2.5 / 3"
-      format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
-      (loadImageFailed)="loadImageFailed()"></image-cropper>
+    <image-cropper
+      [imageChangedEvent]="imageChangedEvent"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="2.5 / 3"
+      format="png"
+      (imageCropped)="imageCropped($event)"
+      (imageLoaded)="imageLoaded()"
+      (loadImageFailed)="loadImageFailed()"
+    ></image-cropper>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-login" (click)="c">Aceptar</button>
-    <button type="button" class="btn btn-link" (click)="d">Cancelar</button>
+    <button type="button" class="btn btn-login" (click)="(c)">Aceptar</button>
+    <button type="button" class="btn btn-link" (click)="(d)">Cancelar</button>
   </div>
 </ng-template>
 
@@ -23,28 +36,35 @@
     </div>
     <div class="example-container" style="padding: 20px;">
       <!--Fila 1: CURP y Acta de nacimiento-->
-      <div class='row'>
+      <div class="row">
         <!--Columna 2: COPIA DEL COMPROBANTE-->
-        <div class='col-sm-6 col-md-4 col-lg-3'>
-          <div class='card cd'>
-            <div [class.cheaderrequired]="!payDoc" [class.cheaderok]="payDoc"
-              [class.isDisabled]="payDoc !== undefined ? true : false" class='card-header'>
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card cd">
+            <div
+              [class.cheaderrequired]="!payDoc"
+              [class.cheaderok]="payDoc"
+              [class.isDisabled]="payDoc !== undefined ? true : false"
+              class="card-header"
+            >
               <div class="row">
-
                 <div class="col-12">
-                  <div class="row text-center" (click)="collapse('collapsePAGO',payDoc !== undefined ? true : false)">
-
+                  <div
+                    class="row text-center"
+                    (click)="
+                      collapse(
+                        'collapsePAGO',
+                        payDoc !== undefined ? true : false
+                      )
+                    "
+                  >
                     <div class="col-12">
-
                       <p>
-
                         <b>
                           <span class="text-warning"> * </span>
                           COMPROBANTE DE PAGO
                         </b>
                       </p>
                     </div>
-
                   </div>
                 </div>
 
@@ -57,180 +77,340 @@
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="payDoc">
-                    <span *ngIf="payDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="payDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="payDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="payDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="payDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="payDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="payDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="payDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
-                  <span *ngIf="!payDoc" class="badge badge-warning">SIN ENVIO</span>
+                  <span *ngIf="!payDoc" class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
                 </div>
-
               </div>
             </div>
 
-            <div class='card-body c-body' id="collapsePAGO" style="max-height: 235px; padding: 10px;">
-              <div>
-                <dropzone id="dz3" [config]="config3" [message]="'Subir'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
+            <div
+              class="card-body c-body"
+              id="collapsePAGO"
+              style="max-height: 235px; padding: 10px;"
+            >
+              <div >
+                <dropzone
+                  id="dz3"
+                  [config]="config3"
+                  [message]="'Subir'"
+                  (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"
+                ></dropzone>
               </div>
 
               <div class="row text-center">
                 <div class="col-12">
-                  <div ngbTooltip="Ayuda" 
+                  <div ngbTooltip="Ayuda">
+                    <mat-icon
+                      class="help"
+                      (click)="
+                        help(
+                          'LA COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN',
+                          'assets/pdf/help_comprobante.pdf'
+                        )
+                      "
+                      >help</mat-icon
                     >
-                    <mat-icon class="help" (click)="help('LA COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN','assets/pdf/help_comprobante.pdf')">help</mat-icon>
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
         <!--Columna 1: CERTIFICADO-->
-        <div class='col-sm-6 col-md-4 col-lg-3'>
-
-          <div class='card cd'>
-            <div class="card-header c-header" [class.cheaderrequired]="!certificateDoc"
-              [class.cheaderok]="certificateDoc" [class.isDisabled]="certificateDoc !== undefined ? true : false">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card cd">
+            <div
+              class="card-header c-header"
+              [class.cheaderrequired]="!certificateDoc && !ccDoc"
+              [class.cheaderok]="certificateDoc || ccDoc"
+              [class.isDisabled]="certificateDoc !== undefined ? true : false"
+            >
               <div class="row">
-                
                 <div class="col-12">
-                  <div class="row" (click)="collapse('collapseCERT',certificateDoc !== undefined ? true : false)">
+                  <div
+                    class="row"
+                    (click)="
+                      collapse(
+                        'collapseCERT',
+                        certificateDoc !== undefined ? true : false
+                      )
+                    "
+                  >
                     <div class="col-12">
                       <p>
                         <b>
-                        <span class="text-warning"> * </span>
-                        CERTIFICADO DE BACHILLERATO
+                          <span class="text-warning"> * </span>
+                          CERTIFICADO DE BACHILLERATO
                         </b>
                       </p>
                     </div>
-                    
                   </div>
-                  
                 </div>
-                
-                <!--
-                <p (click)="collapse('collapseCERT',certificateDoc !== undefined ? true : false)">
-                  Nota.- Alumnos egresados de Instituciones Privadas y de la Universidad Autónoma de Nayarit, deben
-                  legalizar su certificado en la Dirección de Profesiones de la SEMSSICyT. 
-                </p>
-              -->
               </div>
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="certificateDoc && !ccDoc">
-                    <span *ngIf="certificateDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="certificateDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="certificateDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="certificateDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="certificateDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="certificateDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="certificateDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="certificateDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
                   <div *ngIf="ccDoc && !certificateDoc">
-                    <span *ngIf="ccDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="ccDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="ccDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="ccDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="ccDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="ccDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="ccDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="ccDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
                   <div *ngIf="ccDoc && certificateDoc">
-                    <span *ngIf="certificateDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="certificateDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="certificateDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="certificateDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="certificateDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="certificateDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="certificateDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="certificateDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
-                  <span *ngIf="!ccDoc && !certificateDoc" class="badge badge-warning">SIN ENVIO</span>                     
+                  <span
+                    *ngIf="!ccDoc && !certificateDoc"
+                    class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
                 </div>
               </div>
             </div>
-            <div class='card-body c-body' id="collapseCERT">
-              <div class="row text-center">
-                <div class="col-6">
-                  <dropzone id="dz0" [config]="config" [message]="'Subir (certificado)'" (error)="onErrorCommon($event)"
-                    (success)="onUploadSuccess($event)"></dropzone>
+            <div class="card-body c-body" id="collapseCERT">
+              <div class="row text-center" *ngIf="!certificateDoc && !ccDoc">
+                <div class="col-12">
+                  <mat-slide-toggle
+                    (change)="hasCertificate($event)"
+                    color="primary"
+                    >Tengo certificado</mat-slide-toggle
+                  >
                 </div>
-                <div class="col-6">
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="hasCert && !ccDoc || certificateDoc"
+              >
+                <div class="col-12">
+                  <dropzone
+                    id="dz0"
+                    [config]="config"
+                    [message]="'Subir (certificado)'"
+                    (error)="onErrorCommon($event)"
+                    (success)="onUploadSuccess($event)"
+                  ></dropzone>
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="!hasCert && !certificateDoc || ccDoc"
+              >
+                <div class="col-12">
                   <div class="row text-center">
                     <div class="col-12">
-                      <dropzone id="dz7" [config]="config7" [message]="'Subir (carta)'" (error)="onErrorCommon($event)"
-                        (success)="onUploadSuccess($event)"></dropzone>
+                      <dropzone
+                        id="dz7"
+                        [config]="config7"
+                        [message]="'Subir (carta)'"
+                        (error)="onErrorCommon($event)"
+                        (success)="onUploadSuccess($event)"
+                      ></dropzone>
                     </div>
                   </div>
                   <div class="row text-center">
                     <div class="col-12 download">
-                      <a ngbTooltip="Descargar carta compromiso" tooltipClass="my-custom-class"
-                        (click)="downloadCommitmentLetter()" style="color: red;">Descargar</a>
+                      <a
+                        ngbTooltip="Descargar carta compromiso"
+                        tooltipClass="my-custom-class"
+                        (click)="downloadCommitmentLetter()"
+                        style="color: red;"
+                        >Descargar</a
+                      >
                     </div>
                   </div>
-
                 </div>
               </div>
               <div class="row text-center">
-                <div class="col-12" ngbTooltip="Ayuda"
+                <div class="col-12" ngbTooltip="Ayuda">
+                  <mat-icon
+                    class="help"
+                    (click)="
+                      help(
+                        'EL CERTIFICADO DE BACHILLERATO O EQUIVALENTE',
+                        'assets/pdf/help_certificado.pdf'
+                      )
+                    "
+                    >help</mat-icon
                   >
-                  <mat-icon class="help" (click)="help('EL CERTIFICADO DE BACHILLERATO O EQUIVALENTE','assets/pdf/help_certificado.pdf')">help</mat-icon>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
         <!--Columna 1: CURP-->
-        <div class='col-sm-6 col-md-4 col-lg-3'>
-          <div class='card cd'>
-            <div [class.isDisabled]="curpDoc !== undefined ? true : false" class='card-header c-header' (click)="collapse('collapseCURP',curpDoc !== undefined ? true : false)">
-              <div class="row text-center">                
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card cd">
+            <div
+              [class.isDisabled]="curpDoc !== undefined ? true : false"
+              class="card-header c-header"
+              (click)="
+                collapse('collapseCURP', curpDoc !== undefined ? true : false)
+              "
+            >
+              <div class="row text-center">
                 <div class="col-12">
-                  <div >     
-                      <p>
-                        <b>CURP
-                        </b>
-                      </p>                                    
+                  <div>
+                    <p>
+                      <b>CURP </b>
+                    </p>
                   </div>
                 </div>
                 <!--
                 <p (click)="collapse('collapseCURP',curpDoc !== undefined ? true : false)">
                   Descarga tu CURP de la página : https//www.gob.mx/curp.
                 </p>
-              -->
-              </div>
+              --></div>
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="curpDoc">
-                    <span *ngIf="curpDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="curpDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="curpDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="curpDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="curpDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="curpDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="curpDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="curpDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
-                  <span *ngIf="!curpDoc" class="badge badge-warning">SIN ENVIO</span>
+                  <span *ngIf="!curpDoc" class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
                 </div>
               </div>
             </div>
             <div>
-              <div class='card-body c-body' id="collapseCURP"> 
+              <div class="card-body c-body" id="collapseCURP">
                 <div class="row">
                   <div class="col-12">
-                    <dropzone id="dz2" [config]="config2" [message]="'Subir'" (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
+                    <dropzone
+                      id="dz2"
+                      [config]="config2"
+                      [message]="'Subir'"
+                      (error)="onErrorCommon($event)"
+                      (success)="onUploadSuccess($event)"
+                    ></dropzone>
                   </div>
-                </div>              
-                  <div class="row text-center">
-                    <div class="col-12" ngbTooltip="Ayuda" >
-                      <mat-icon class="help" (click)="help('LA CURP','assets/pdf/help_curp.pdf')">help</mat-icon>
-                    </div>
+                </div>
+                <div class="row text-center">
+                  <div class="col-12" ngbTooltip="Ayuda">
+                    <mat-icon
+                      class="help"
+                      (click)="help('LA CURP', 'assets/pdf/help_curp.pdf')"
+                      >help</mat-icon
+                    >
                   </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <!--Columna 2: ACTA DE NACIMIENTO-->
-        <div class='col-sm-6 col-md-4 col-lg-3'>
-          <div class='card cd'>
-            <div [class.isDisabled]="actaDoc !== undefined ? true : false" class='card-header c-header' (click)="collapse('collapseACTA',actaDoc !== undefined ? true : false)">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card cd">
+            <div
+              [class.isDisabled]="actaDoc !== undefined ? true : false"
+              class="card-header c-header"
+              (click)="
+                collapse('collapseACTA', actaDoc !== undefined ? true : false)
+              "
+            >
               <div class="row text-center">
-                
                 <div class="col-12">
-                  <div >
-                      <p>
-                        <b>ACTA DE NACIMIENTO
-                        </b>
-                      </p>                  
+                  <div>
+                    <p>
+                      <b>ACTA DE NACIMIENTO </b>
+                    </p>
                   </div>
                 </div>
                 <!--
@@ -242,40 +422,72 @@
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="actaDoc">
-                    <span *ngIf="actaDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="actaDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="actaDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="actaDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="actaDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="actaDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="actaDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="actaDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
-                  <span *ngIf="!actaDoc" class="badge badge-warning">SIN ENVIO</span>
+                  <span *ngIf="!actaDoc" class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
                 </div>
               </div>
             </div>
-            <div class='card-body c-body' id="collapseACTA">
-              <dropzone id="dz1" [config]="config1" [message]="'Subir'" (error)="onErrorCommon($event)"
-                (success)="onUploadSuccess($event)"></dropzone>
-                <div class="row text-center">
-                  <div class="col-12" ngbTooltip="Ayuda"
+            <div class="card-body c-body" id="collapseACTA">
+              <dropzone
+                id="dz1"
+                [config]="config1"
+                [message]="'Subir'"
+                (error)="onErrorCommon($event)"
+                (success)="onUploadSuccess($event)"
+              ></dropzone>
+              <div class="row text-center">
+                <div class="col-12" ngbTooltip="Ayuda">
+                  <mat-icon
+                    class="help"
+                    (click)="
+                      help('EL ACTA DE NACIMIENTO', 'assets/pdf/help_acta.pdf')
+                    "
+                    >help</mat-icon
                   >
-                  <mat-icon class="help" (click)="help('EL ACTA DE NACIMIENTO','assets/pdf/help_acta.pdf')">help</mat-icon>
                 </div>
-                </div>
+              </div>
             </div>
           </div>
         </div>
         <!--Columna 1: CURP-->
-        <div class='col-sm-6 col-md-4 col-lg-3'>
-          <div class='card cd'>
-            <div [class.isDisabled]="clinicDoc !== undefined ? true : false" class='card-header c-header' (click)="collapse('collapseCLINICOS',clinicDoc !== undefined ? true : false)">
-
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card cd">
+            <div
+              [class.isDisabled]="clinicDoc !== undefined ? true : false"
+              class="card-header c-header"
+              (click)="
+                collapse(
+                  'collapseCLINICOS',
+                  clinicDoc !== undefined ? true : false
+                )
+              "
+            >
               <div class="row text-center">
-                
                 <div class="col-12">
-                  <div >                   
-                      <p><b>ANÁLISIS CLÍNICOS
-
-                        </b></p>
-                    
+                  <div>
+                    <p><b>ANÁLISIS CLÍNICOS </b></p>
                   </div>
                 </div>
                 <!--
@@ -287,40 +499,76 @@
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="clinicDoc">
-                    <span *ngIf="clinicDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="clinicDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="clinicDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="clinicDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="clinicDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="clinicDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="clinicDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="clinicDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
-                  <span *ngIf="!clinicDoc" class="badge badge-warning">SIN ENVIO</span>
+                  <span *ngIf="!clinicDoc" class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
                 </div>
               </div>
             </div>
-            <div class='card-body c-body' id="collapseCLINICOS">              
-              <dropzone id="dz4" [config]="config4" [message]="'Subir'" (error)="onErrorCommon($event)"
-                (success)="onUploadSuccess($event)"></dropzone>
-                <div class="row text-center">
-                  <div class="col-12" ngbTooltip="Ayuda"
+            <div class="card-body c-body" id="collapseCLINICOS">
+              <dropzone
+                id="dz4"
+                [config]="config4"
+                [message]="'Subir'"
+                (error)="onErrorCommon($event)"
+                (success)="onUploadSuccess($event)"
+              ></dropzone>
+              <div class="row text-center">
+                <div class="col-12" ngbTooltip="Ayuda">
+                  <mat-icon
+                    class="help"
+                    (click)="
+                      help(
+                        'LOS RESULTADOS DE ANÁLISIS CLÍNICOS',
+                        'assets/pdf/help_clinicos.pdf'
+                      )
+                    "
+                    >help</mat-icon
                   >
-                  <mat-icon class="help" (click)="help('LOS RESULTADOS DE ANÁLISIS CLÍNICOS','assets/pdf/help_clinicos.pdf')">help</mat-icon>
                 </div>
-                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <!--Columna 1: FOTO-->
-        <div class='col-sm-6 col-md-4 col-lg-3'>
-          <div class='card cd'>
-            <div [class.isDisabled]="imageDoc !== undefined ? true : false" class='card-header c-header' (click)="collapse('collapseFOTO',imageDoc !== undefined ? true : false)">
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card cd">
+            <div
+              [class.isDisabled]="imageDoc !== undefined ? true : false"
+              class="card-header c-header"
+              (click)="
+                collapse('collapseFOTO', imageDoc !== undefined ? true : false)
+              "
+            >
               <div class="row">
                 <!-- <div class="col-2" ngbTooltip="Ayuda" (click)="help('LA FOTO','foto')"><mat-icon>info</mat-icon></div> -->
                 <div class="col-12">
-                  <div >   
-                      <p>
-                        <b>FOTO
-                        </b>
-                      </p>                             
+                  <div>
+                    <p>
+                      <b>FOTO </b>
+                    </p>
                   </div>
                 </div>
                 <!--
@@ -340,80 +588,136 @@
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="imageDoc">
-                    <span *ngIf="imageDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="imageDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="imageDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="imageDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="imageDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="imageDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="imageDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="imageDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
-                  <span *ngIf="!imageDoc" class="badge badge-warning">SIN ENVIO</span>
+                  <span *ngIf="!imageDoc" class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
                 </div>
               </div>
             </div>
-            <div class='card-body c-body' id="collapseFOTO">
+            <div class="card-body c-body" id="collapseFOTO">
               <!-- <label><b>Nombre del archivo: </b>{{dropzoneFileNamePhoto}}</label>
                 <dropzone id="dz5" [config]="config5" [message]="'Subir'"
                   (success)="onUploadSuccess($event)" (error)="onError($event)"></dropzone> -->
-              <img class="profile-icon" [src]="photoStudent">
-              <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton"
-                accept="image/png,image/jpg,image/jpeg" style="display: none;">
-              <div (click)="showSelectFileDialog()" class="tag">Buscar imagen</div>
+              <img class="profile-icon" [src]="photoStudent" />
+              <input
+                type="file"
+                (change)="fileChangeEvent($event, content)"
+                id="fileButton"
+                accept="image/png,image/jpg,image/jpeg"
+                style="display: none;"
+              />
+              <div (click)="showSelectFileDialog()" class="tag">
+                Buscar imagen
+              </div>
 
               <div class="row text-center">
-                <div class="col-12" ngbTooltip="Ayuda"
-                >
-                <mat-icon class="help" (click)="helpPhoto()">help</mat-icon>
-              </div>
+                <div class="col-12" ngbTooltip="Ayuda">
+                  <mat-icon class="help" (click)="helpPhoto()">help</mat-icon>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <!-- NSS -->
-        <div class='col-sm-6 col-md-4 col-lg-3'>
-          <div class='card cd'>
-            <div [class.isDisabled]="nssDoc !== undefined ? true : false" class='card-header c-header' (click)="collapse('collapseNSS',nssDoc !== undefined ? true : false)">
-
+        <div class="col-sm-6 col-md-4 col-lg-3">
+          <div class="card cd">
+            <div
+              [class.isDisabled]="nssDoc !== undefined ? true : false"
+              class="card-header c-header"
+              (click)="
+                collapse('collapseNSS', nssDoc !== undefined ? true : false)
+              "
+            >
               <div class="row">
-                
                 <div class="col-12">
-                  <div>                  
-                      <p>
-                        <b>CONSTANCIA DE VIGENCIA DE DERECHOS IMSS
-
-                        </b>
-                      </p>
-                   
+                  <div>
+                    <p>
+                      <b>CONSTANCIA DE VIGENCIA DE DERECHOS IMSS </b>
+                    </p>
                   </div>
                 </div>
                 <!--
                 <p (click)="collapse('collapseNSS',nssDoc !== undefined ? true : false)">
                   Descarga tu número de seguro social en la página oficial del https://www.gob.mx/afiliatealimss.
                 </p>
-              -->
-              </div>
+              --></div>
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="nssDoc">
-                    <span *ngIf="nssDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="nssDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="nssDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>                    
-                    <span *ngIf="nssDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span
+                      *ngIf="nssDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="nssDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="nssDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="nssDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
                   </div>
-                  <span *ngIf="!nssDoc" class="badge badge-warning">SIN ENVIO</span>
+                  <span *ngIf="!nssDoc" class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
                 </div>
               </div>
-              
             </div>
-            <div class='card-body c-body' id="collapseNSS">
-              <label><b>Nombre del archivo: </b>{{dropzoneFileNameNSS}}</label>
-              <dropzone id="dz6" [config]="config6" [message]="'Subir'" (error)="onErrorCommon($event)"
-                (success)="onUploadSuccess($event)"></dropzone>
-                <div class="row text-center">
-                  <div class="col-12" ngbTooltip="Ayuda"
+            <div class="card-body c-body" id="collapseNSS">
+              <label
+                ><b>Nombre del archivo: </b>{{ dropzoneFileNameNSS }}</label
+              >
+              <dropzone
+                id="dz6"
+                [config]="config6"
+                [message]="'Subir'"
+                (error)="onErrorCommon($event)"
+                (success)="onUploadSuccess($event)"
+              ></dropzone>
+              <div class="row text-center">
+                <div class="col-12" ngbTooltip="Ayuda">
+                  <mat-icon
+                    (click)="
+                      help(
+                        'EL NÚMERO DE SEGURO SOCIAL',
+                        'assets/pdf/help_nss.pdf'
+                      )
+                    "
+                    class="help"
+                    >help</mat-icon
                   >
-                  <mat-icon (click)="help('EL NÚMERO DE SEGURO SOCIAL','assets/pdf/help_nss.pdf')" class="help">help</mat-icon>
                 </div>
-                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -421,8 +725,14 @@
     </div>
     <div class="row justify-content-center mt-3">
       <div>
-        <button type="submit" (click)="continue()" class="btn btn-success"
-          [disabled]="(!payDoc || !certificateDoc) && ( !payDoc || !ccDoc  )">Continuar</button>
+        <button
+          type="submit"
+          (click)="continue()"
+          class="btn btn-success"
+          [disabled]="(!payDoc || !certificateDoc) && (!payDoc || !ccDoc)"
+        >
+          Continuar
+        </button>
       </div>
     </div>
   </div>
