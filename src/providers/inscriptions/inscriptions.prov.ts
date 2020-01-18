@@ -45,6 +45,18 @@ export class InscriptionsProvider {
         return this.api.get('inscription/getStudentsLogged/').pipe(map( res=>res.json()));
     }
 
+    getStudentsProcess(){
+        return this.api.get('inscription/getStudentsProcess/').pipe(map( res=>res.json()));
+    }
+
+    getStudentsPendant(){
+        return this.api.get('inscription/getStudentsPendant/').pipe(map( res=>res.json()));
+    }
+
+    getStudentsAcept(){
+        return this.api.get('inscription/getStudentsAcept/').pipe(map( res=>res.json()));
+    }
+
     createFolder(folderName : string, period : string, type: number){
         return this.api.post(`drive/create/folder`,{folderName:folderName,period:period,type:type}).pipe(map( res=>res.json()));
     }

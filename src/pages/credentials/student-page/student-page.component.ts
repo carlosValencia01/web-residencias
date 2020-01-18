@@ -183,7 +183,7 @@ export class StudentPageComponent implements OnInit {
   // Generacion de PDF *************************************************************************************//#endregion
 
   getBase64ForStaticImages() {
-    this.imageToBase64Serv.getBase64('assets/imgs/front.jpg').then(res1 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/front45A.jpg').then(res1 => {
       this.frontBase64 = res1;
     });
 

@@ -616,11 +616,7 @@ export class RegisterStudentPageComponent implements OnInit {
           );
           //first check folderId on Student model
           this.studentProv.getFolderId(this._idStudent).toPromise().then(
-            student => {
-              console.log('student');
-
-              console.log(student);
-              console.log('student');
+            student => {              
 
               if (student.folder) {// folder exists
                 if (student.folder.idFolderInDrive) {

@@ -95,7 +95,7 @@
     border-radius: 6px;
 	box-shadow: -1px 1px 10px rgba(0,0,0,0.2);
 	overflow-y: scroll;
-	height: 539px;
+	height: 650px;
 }
 
 .viewdocheader{
@@ -103,7 +103,7 @@
     margin-left: 0;
     width: 100%;
     color: white;
-    height: 60px;
+    height: 80px;
 	padding: 10px;
 	z-index: 90;
 	position: -webkit-sticky;
@@ -161,8 +161,37 @@ hr{
 	overflow-x: hidden !important;
 }
 
-.bottom{
-	margin-left: 30%;
+
+.refused{
+	width: 150px;	
+	height: 45px;
+	align-content: center;
+	align-items: center;
+	margin-top: -1em;
+}
+
+.btn-rounded{
+	cursor: pointer;
+	color: white;
+	padding: 5px;
+	border-radius: 100px;
+	transition: all 0.3s;
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+}
+.btn-rounded-success{
+	background-color: rgba(8,182,48,1);
+	
+}
+.btn-rounded-danger{
+	background-color: rgba(255,0,0,1);
+}
+.btn-rounded-success:hover{
+	background-color: rgba(8,182,48,0.8);	
+}
+.btn-rounded-danger:hover{
+	background-color: rgba(255,0,0,0.8);	
 }
 
 /* DOC LOAD ANIMATION */

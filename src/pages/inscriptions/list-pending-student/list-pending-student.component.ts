@@ -13,43 +13,24 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
-import {ViewChild} from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material';
-import { ListPendingStudentComponent } from '../list-pending-student/list-pending-student.component'
-import { ListProcessStudentComponent } from '../list-process-student/list-process-student.component';
-import { ListAceptStudentComponent } from '../list-acept-student/list-acept-student.component'
 const jsPDF = require('jspdf');
 import * as JsBarcode from 'jsbarcode';
 
 @Component({
-  selector: 'app-secretary-inscription-page',
-  templateUrl: './secretary-inscription-page.component.html',
-  styleUrls: ['./secretary-inscription-page.component.scss']
+  selector: 'app-list-pending-student',
+  templateUrl: './list-pending-student.component.html',
+  styleUrls: ['./list-pending-student.component.scss']
 })
-export class SecretaryInscriptionPageComponent implements OnInit {
-  @ViewChild(ListPendingStudentComponent) private pendingStudent: ListPendingStudentComponent;
-  @ViewChild(ListProcessStudentComponent) private processStudent: ListProcessStudentComponent;
-  @ViewChild(ListAceptStudentComponent) private aceptStudent: ListAceptStudentComponent;
-
+export class ListPendingStudentComponent implements OnInit {
   students;
-  listStudents;
-  listStudentsLogged;
-  cantListStudentsPendant = 0;
-  cantListStudentsProcess = 0;
-  cantListStudentsAcept = 0;
-  cantListStudents = 0;
-  cantListStudentsLogged = 0;
+  listStudentsPending;
   periods = [];
-  activPeriod;
   loading = false;
-
-  listCovers;
 
   rolName;
 
   docAnalisis;
 
-  credentialStudents;
   frontBase64: any;
   backBase64: any;
 
@@ -57,7 +38,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   public logoTecNM: any;
   public logoSep: any;
   public logoTecTepic: any;
-  public caratulaExpediente: any;
 
   //Font Montserrat
   montserratNormal: any;
@@ -84,14 +64,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   public A = '';
 
   //Paginator Students
-  page = 1;
-  pag;
-  pageSize = 10;
-
-  //Paginatos Students Logged
-  pageL = 1;
-  pagL;
-  pageSizeL = 10;
+  pageP = 1;
+  pagP;
+  pageSizeP = 10;
 
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
@@ -101,7 +76,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
     private router: Router,
-    private studentProv: StudentProvider,
+    private studentProv: StudentProvider
   ) { 
     this.rolName = this.cookiesService.getData().user.rol.name;
     //console.log(this.rolName);
@@ -111,8 +86,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.getFonts();
     this.getStudents();
     this.getPeriods();
-    this.getActivePeriod();
     this.getBase64ForStaticImages();
+
   }
 
   getFonts() {
@@ -136,85 +111,23 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
       this.logoTecTepic = res3;
     });
-    this.imageToBase64Serv.getBase64('assets/imgs/CaratulaExpediente.png').then(res4 => {
-      this.caratulaExpediente = res4;
-    });
   }
 
   getStudents(){
-    this.inscriptionsProv.getStudents().subscribe(res => {
+    this.inscriptionsProv.getStudentsPendant().subscribe(res => {
       this.students = res.students;
 
       // Ordenar Alumnos por Apellidos
       this.students.sort(function (a, b) {
         return a.fatherLastName.localeCompare(b.fatherLastName);
       });
-      this.listStudents = this.students;
-      this.cantListStudents = this.listStudents.length;
-      //console.log(this.listStudents);
-      this.listCovers = this.listStudents;
-      this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
-      
-      //console.log(this.listStudents);
-    });
-    this.inscriptionsProv.getStudentsLogged().subscribe(res => {
-      this.listStudentsLogged = res.students;
-      this.cantListStudentsLogged = this.listStudentsLogged.length;
-      this.listStudentsLogged.sort(function (a, b) {
-        return a.fatherLastName.localeCompare(b.fatherLastName);
-      });
-    });
-
-    // Cantidad Alumnos En Proceso
-    this.inscriptionsProv.getStudentsProcess().subscribe(res => {
-      this.cantListStudentsProcess = res.students.length;
-    });
-
-    // Cantidad Alumnos Pendientes
-    this.inscriptionsProv.getStudentsPendant().subscribe(res => {
-      this.cantListStudentsPendant = res.students.length;
-    });
-
-    // Cantidad Alumnos Aceptados
-    this.inscriptionsProv.getStudentsAcept().subscribe(res => {
-      this.cantListStudentsAcept = res.students.length;
-    });
-    
-  }
-
-  countStudents(){
-    // Cantidad Alumnos Total
-    this.inscriptionsProv.getStudents().subscribe(res => {
-      this.cantListStudents = res.students.length;
-    });
-
-    // Cantidad Alumnos En Proceso
-    this.inscriptionsProv.getStudentsProcess().subscribe(res => {
-      this.cantListStudentsProcess = res.students.length;
-    });
-
-    // Cantidad Alumnos Pendientes
-    this.inscriptionsProv.getStudentsPendant().subscribe(res => {
-      this.cantListStudentsPendant = res.students.length;
-    });
-
-    // Cantidad Alumnos Aceptados
-    this.inscriptionsProv.getStudentsAcept().subscribe(res => {
-      this.cantListStudentsAcept = res.students.length;
-    });
-
-    // Cantidad Alumnos Logueados
-    this.inscriptionsProv.getStudentsLogged().subscribe(res => {
-      this.cantListStudentsLogged = res.students.length;
+      this.listStudentsPending = this.students;
+      //console.log(this.listStudents);      
     });
   }
 
   pageChanged(ev) {
-    this.page = ev;
-  }
-
-  pageChangedL(ev) {
-    this.pageL = ev;
+    this.pageP = ev;
   }
 
   // Obetener Valor del checkbox de Estatus
@@ -245,7 +158,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.A = '~';
     }
 
-    this.listStudents = this.filterItems(
+    this.listStudentsPending = this.filterItems(
       this.searchCarreer,
       this.EC,
       this.E,
@@ -254,16 +167,11 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.A
     );
 
-    if (Object.keys(this.listStudents).length === 0) {
+    if (Object.keys(this.listStudentsPending).length === 0) {
       if (!this.searchEC && !this.searchE && !this.searchEP && !this.searchV && !this.searchA) {
-        this.listStudents = this.students;
+        this.listStudentsPending = this.students;
       }
     }
-
-    this.listCovers = this.filterItemsCovers(this.searchCarreer,this.searchText);
-    //console.log(this.listCovers);
-
-    this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
 
   }
 
@@ -302,13 +210,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         //console.log(this.periods); 
         this.periods.reverse();                        
         sub.unsubscribe();
-      });
-  }
-
-  getActivePeriod(){
-    let sub = this.inscriptionsProv.getActivePeriod()
-      .subscribe(period => {       
-        this.activPeriod = period.period.year;     
       });
   }
 
@@ -368,109 +269,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       }
     });
     this.loading = false;
-  }
-
-  // Generar Carátulas
-  generateCovers() {
-    console.log(this.listCovers.length);
-    if(this.listCovers.length != 0){
-      this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO CARÁTULAS', '');
-      this.loading = true;
-      const doc = new jsPDF();
-      var pageWidth = doc.internal.pageSize.width;
-      for(let i = 0; i < this.listCovers.length; i++){
-        doc.addImage(this.caratulaExpediente, 'jpg',6, 0, 200, 295);
-        doc.setFontSize(10);
-        doc.setFontType('bold');
-        doc.text('TECNM/02Z/SE/02S.03/'+this.listCovers[i].controlNumber+'/'+this.activPeriod,(pageWidth / 2)+30, 112,'center');
-
-        doc.setFontSize(19);
-        doc.setFontType('bold');
-        doc.text(this.listCovers[i].fatherLastName+' '+this.listCovers[i].motherLastName+' '+this.listCovers[i].firstName, pageWidth / 2, 167,'center');
-        if(i != (this.listCovers.length)-1){
-          doc.addPage();
-        }
-      }
-      this.loading = false;
-      window.open(doc.output('bloburl'), '_blank');
-    }
-        
-  }
-
-  // Generar Pestañas
-  generateLabels() {
-    this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO PESTAÑAS', '');
-    this.loading = true;
-    
-    const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
-    const pageWidth = doc.internal.pageSize.width;
-    const pageHeight = doc.internal.pageSize.height;
-    for(let i = 0; i < this.listCovers.length; i++){
-      doc.setFontSize(10);
-      doc.setFontType('bold');
-      //Identificador
-      doc.text('TECNM/02Z/SE/02S.03/'+this.listCovers[i].controlNumber+'/'+this.activPeriod,2.5,(pageHeight/2)+1.5);
-
-      doc.setFontSize(9.5);
-      doc.setFontType('bold');
-      //Nombre
-      doc.text(this.listCovers[i].fatherLastName+' '+this.listCovers[i].motherLastName+' '+this.listCovers[i].firstName,70,(pageHeight/2)+1.5);
-
-      doc.setFontSize(10);
-      doc.setFontType('bold');
-      //Carrera
-      switch(this.listCovers[i].career){
-        case "ARQUITECTURA":
-          doc.text('ARQ',pageWidth-15,(pageHeight/2)+1.5);
-          break;
-        case "INGENIERÍA CIVIL":
-          doc.text('IC',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "INGENIERÍA BIOQUÍMICA":
-          doc.text('IBQ',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "INGENIERÍA EN GESTIÓN EMPRESARIAL":
-          doc.text('IGE',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "INGENIERÍA QUIMICA":
-          doc.text('IQ',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "INGENIERÍA MECATRÓNICA":
-          doc.text('IM',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "INGENIERÍA ELÉCTRICA":
-          doc.text('IE',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES":
-          doc.text('ITICS',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "INGENIERÍA EN SISTEMAS COMPUTACIONALES":
-          doc.text('ISC',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "INGENIERÍA INDUSTRIAL":
-          doc.text('II',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "LICENCIATURA EN ADMINISTRACIÓN":
-          doc.text('LA',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "MAESTRÍA EN CIENCIAS DE LOS ALIMENTOS":
-          doc.text('MCA',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        case "DOCTORADO EN CIENCIAS DE LOS ALIMENTOS":
-          doc.text('DCA',pageWidth-15,(pageHeight/2)+1.5)
-          break;
-        default:
-          doc.text('CAR',pageWidth-15,(pageHeight/2)+1.5)
-          break; 
-      }
-      //doc.text('CAR',56.6,2.5);
-
-      if(i != (this.listCovers.length)-1){
-        doc.addPage();
-      }
-    }
-    this.loading = false;
-    window.open(doc.output('bloburl'), '_blank');
   }
 
   viewAnalysis(student){
@@ -688,118 +486,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     });
   }
 
-  async generateCredentials(){
-    var numCredentials = 0;
-    var tempStudents = [];
-    if(this.credentialStudents.length != 0){
-      this.loading = true;
-      const doc = new jsPDF({
-        unit: 'mm',
-        format: [251, 158], // Medidas correctas: [88.6, 56]
-        orientation: 'landscape'
-      });
-
-      for(var i = 0; i < this.credentialStudents.length; i++){
-        if(this.credentialStudents[i].documents != ''){
-          var docFoto = this.credentialStudents[i].documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? this.credentialStudents[i].documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-          if(docFoto != ''){
-            // VERIFICAR SI LA FOTO ESTÁ EN ESTATUS ACEPTADO
-            if(docFoto.status[docFoto.status.length-1].name == "ACEPTADO" || docFoto.status[docFoto.status.length-1].name == "VALIDADO"){
-              // VERIFICAR SI LA CREDENCIAL AUN NO ESTÁ IMPRESA
-              if(this.credentialStudents[i].printCredential != true){
-                tempStudents.push(this.credentialStudents[i]);
-                numCredentials ++;
-                // cara frontal de la credencial
-                doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-                  
-                //FOTOGRAFIA DEL ALUMNO
-                var foto = await this.findFoto(docFoto);
-                //console.log(foto);
-                doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
-
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(7);
-                doc.setFont('helvetica');
-                doc.setFontType('bold');
-                doc.text(49, 30.75, doc.splitTextToSize(this.credentialStudents[i].fullName ? this.credentialStudents[i].fullName : '', 35));
-                doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(this.credentialStudents[i].career ? this.credentialStudents[i].career : ''), 35));
-                doc.text(49, 46.5, doc.splitTextToSize(this.credentialStudents[i].nss ? this.credentialStudents[i].nss : '', 35));
-
-                // cara trasera de la credencial
-                doc.addPage();
-                doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
-
-                // Agregar años a la credencial
-                const year = new Date();
-                doc.setTextColor(255, 255, 255);
-                doc.setFontSize(4);
-                doc.setFont('helvetica');
-                doc.setFontType('bold');
-                doc.text(9.5, 41.3,year.getFullYear()+'');
-                doc.text(16.5, 41.3,(year.getFullYear()+1)+'');
-                doc.text(23.5, 41.3,(year.getFullYear()+2)+'');
-                doc.text(30.5, 41.3,(year.getFullYear()+3)+'');
-                doc.text(37.5, 41.3,(year.getFullYear()+4)+'');
-
-                // Numero de control con codigo de barra
-                doc.addImage(this.textToBase64Barcode(this.credentialStudents[i].controlNumber ? this.credentialStudents[i].controlNumber : ''), 'PNG', 46.8, 39.2, 33, 12);
-                doc.setTextColor(0, 0, 0);
-                doc.setFontSize(8);
-                doc.text(57, 53.5, doc.splitTextToSize(this.credentialStudents[i].controlNumber ? this.credentialStudents[i].controlNumber : '', 35));
-
-                //OTRA CREDENCIAL
-                if(i != (this.credentialStudents.length)-1){
-                  doc.addPage();
-                }
-              } else {
-                console.log(this.credentialStudents[i].controlNumber+' - Credencial ya fue impresa.');
-              }
-            } else {
-              console.log(this.credentialStudents[i].controlNumber+' - Foto no aceptada.');
-            }
-          } else { 
-            console.log(this.credentialStudents[i].controlNumber+' - No tiene foto.');
-          }
-        } else {
-          console.log(this.credentialStudents[i].controlNumber+' - No tiene expediente.');
-        }
-      }
-      var pageCount = doc.internal.getNumberOfPages();
-      if(pageCount%2 != 0){
-        doc.deletePage(pageCount);
-      }
-      this.loading = false;
-      if(numCredentials != 0){
-        var credentials = doc.output('arraybuffer');
-        // Abrir Modal para visualizar credenciales
-        const linkModal = this.dialog.open(ReviewCredentialsComponent, {
-          data: {
-            operation: 'view',
-            credentials:credentials,
-            students:tempStudents
-          },
-          disableClose: true,
-          hasBackdrop: true,
-          width: '90em',
-          height: '800px'
-        });
-        let sub = linkModal.afterClosed().subscribe(
-          credentials=>{         
-            console.log(credentials);
-            this.getStudents();
-          },
-          err=>console.log(err), ()=> sub.unsubscribe()
-        );
-
-        //window.open(doc.output('bloburl'), '_blank');
-      } else {
-        this.notificationService.showNotification(eNotificationType.INFORMATION, 'No Hay Credenciales Para Imprimir', '');
-      }
-    } else {
-      this.notificationService.showNotification(eNotificationType.INFORMATION, 'No Hay Credenciales Para Imprimir', '');
-    }
-  }
-
   //GENERAR PDF
   getBase64ForStaticImages() {
     this.imageToBase64Serv.getBase64('assets/imgs/front45A.jpg').then(res1 => {
@@ -861,7 +547,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   updateSolicitud(student){
-    // console.log(student,'solicitud');
     Swal.fire({
       title: 'Actualizar Solicitud',
       text: 'Para ' + student.controlNumber,
@@ -1107,7 +792,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     
         this.updateDocument(binary,student);
         // console.log(binary);
-        // window.open(doc.output('bloburl'), '_blank'); 
+        // window.open(doc.output('bloburl'), '_blank');    
       }
     });
   }
@@ -1180,89 +865,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     return folderId;
   }
 
-  async generateCredential(student){
-    var docFoto = student.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? student.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-    if(docFoto != ''){
-      if(docFoto.status[docFoto.status.length-1].name == "ACEPTADO" || docFoto.status[docFoto.status.length-1].name == "VALIDADO"){
-        if(student.printCredential != true){
-          this.loading = true;
-          const doc = new jsPDF({
-            unit: 'mm',
-            format: [251, 158], // Medidas correctas: [88.6, 56]
-            orientation: 'landscape'
-          });
-           // cara frontal de la credencial
-           doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-                  
-           //FOTOGRAFIA DEL ALUMNO
-           var foto = await this.findFoto(docFoto);
-           //console.log(foto);
-           doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
-
-           doc.setTextColor(255, 255, 255);
-           doc.setFontSize(7);
-           doc.setFont('helvetica');
-           doc.setFontType('bold');
-           doc.text(49, 30.75, doc.splitTextToSize(student.fullName ? student.fullName : '', 35));
-           doc.text(49, 38.6, doc.splitTextToSize(this.reduceCareerString(student.career ? student.career : ''), 35));
-           doc.text(49, 46.5, doc.splitTextToSize(student.nss ? student.nss : '', 35));
-
-           // cara trasera de la credencial
-           doc.addPage();
-           doc.addImage(this.backBase64, 'PNG', 0, 0, 88.6, 56);
-
-           // Agregar años a la credencial
-           const year = new Date();
-           doc.setTextColor(255, 255, 255);
-           doc.setFontSize(4);
-           doc.setFont('helvetica');
-           doc.setFontType('bold');
-           doc.text(9.5, 41.3,year.getFullYear()+'');
-           doc.text(16.5, 41.3,(year.getFullYear()+1)+'');
-           doc.text(23.5, 41.3,(year.getFullYear()+2)+'');
-           doc.text(30.5, 41.3,(year.getFullYear()+3)+'');
-           doc.text(37.5, 41.3,(year.getFullYear()+4)+'');
-
-           // Numero de control con codigo de barra
-           doc.addImage(this.textToBase64Barcode(student.controlNumber ? student.controlNumber : ''), 'PNG', 46.8, 39.2, 33, 12);
-           doc.setTextColor(0, 0, 0);
-           doc.setFontSize(8);
-           doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber ? student.controlNumber : '', 35));
-           this.loading = false;
-           var credentials = doc.output('arraybuffer');
-           // Abrir Modal para visualizar credenciales
-           const linkModal = this.dialog.open(ReviewCredentialsComponent, {
-             data: {
-               operation: 'view',
-               credentials:credentials,
-               students:student
-             },
-             disableClose: true,
-             hasBackdrop: true,
-             width: '90em',
-             height: '800px'
-           });
-           let sub = linkModal.afterClosed().subscribe(
-             credentials=>{         
-               console.log(credentials);
-               this.getStudents();
-               this.eventFilterStatus();
-             },
-             err=>console.log(err), ()=> sub.unsubscribe()
-           );
-        } else {
-          this.notificationService.showNotification(eNotificationType.INFORMATION, 'Credencial ya fue impresa', '');
-        }
-      } else{
-        this.notificationService.showNotification(eNotificationType.INFORMATION, 'Foto no aceptada', '');
-      }
-    } else {
-      this.notificationService.showNotification(eNotificationType.INFORMATION, 'No tiene foto', '');
-    }
-  }
-
   updateExpedientStatus(student){
-    //console.log(student);
     Swal.fire({
       title: 'Actualizar Estatus de Expediente',
       text: 'Para ' + student.controlNumber,
@@ -1332,27 +935,4 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     });
   }
 
-  onTabChanged(event: MatTabChangeEvent){
-    if(event.index == 0){
-      this.pendingStudent.getStudents();
-      this.countStudents();
-    }
-    if(event.index == 1){
-      this.processStudent.getStudents();
-      this.countStudents();
-    }
-    if(event.index == 2){
-      this.aceptStudent.getStudents();
-      this.countStudents();
-    }
-    if(event.index == 3){
-      this.getStudents();
-      this.countStudents();
-    }
-    if(event.index == 4){
-      this.getStudents();
-      this.countStudents();
-    }
-  }
-  
 }

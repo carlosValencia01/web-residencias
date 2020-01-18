@@ -41,6 +41,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   pub;
   image;
   ccDoc;
+  hasCert : boolean;
 
   selectedFile: File = null;
   imageChangedEvent: any = '';
@@ -616,5 +617,11 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Aceptar'
     }).then((result) => { });
+  }
+
+  hasCertificate(ev){    
+    this.hasCert = ev.checked;
+    console.log(this.hasCert);
+    
   }
 }

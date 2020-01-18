@@ -125,7 +125,7 @@ export class CardEmployeePageComponent implements OnInit {
 
   // Generacion de PDF *************************************************************************************//#endregion
   private getBase64ForStaticImages() {
-    this.imageToBase64Serv.getBase64('assets/imgs/employeeFront1.jpg').then(res1 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/employeeFront145A.jpg').then(res1 => {
       this.frontBase64 = res1;
     });
 
