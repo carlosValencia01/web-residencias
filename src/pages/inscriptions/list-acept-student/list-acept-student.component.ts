@@ -135,7 +135,7 @@ export class ListAceptStudentComponent implements OnInit {
       this.listStudentsAcept = this.students;
       this.listCovers = this.listStudentsAcept;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
-      
+      this.eventFilterStatus();       
     });
     
   }
@@ -255,7 +255,6 @@ export class ListAceptStudentComponent implements OnInit {
       information=>{         
         //console.log(information);
         this.getStudents();
-        this.eventFilterStatus();       
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -276,7 +275,6 @@ export class ListAceptStudentComponent implements OnInit {
     let sub = linkModal.afterClosed().subscribe(
       expedient=>{
         this.getStudents();  
-        this.eventFilterStatus();       
         // console.log(expedient);
         
       },
@@ -418,7 +416,6 @@ export class ListAceptStudentComponent implements OnInit {
             analysis=>{         
               //console.log(analysis);
               this.getStudents();
-              this.eventFilterStatus();       
             },
             err=>console.log(err), ()=> sub.unsubscribe()
           );
@@ -1156,7 +1153,6 @@ export class ListAceptStudentComponent implements OnInit {
              credentials=>{         
                console.log(credentials);
                this.getStudents();
-               this.eventFilterStatus();
              },
              err=>console.log(err), ()=> sub.unsubscribe()
            );
@@ -1188,7 +1184,6 @@ export class ListAceptStudentComponent implements OnInit {
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
         }); 
         this.getStudents();
-        this.eventFilterStatus();  
         return;
       } 
       if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
@@ -1196,7 +1191,6 @@ export class ListAceptStudentComponent implements OnInit {
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
         });   
         this.getStudents();
-        this.eventFilterStatus();
         return;
       }
 
@@ -1220,7 +1214,6 @@ export class ListAceptStudentComponent implements OnInit {
           this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},student._id).subscribe(res => {
           });
           this.getStudents();
-          this.eventFilterStatus();   
           return;
         }
         // No cambiar estatus

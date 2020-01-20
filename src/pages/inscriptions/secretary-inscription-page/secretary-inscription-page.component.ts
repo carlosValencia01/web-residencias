@@ -154,7 +154,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       //console.log(this.listStudents);
       this.listCovers = this.listStudents;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
-      
+      this.eventFilterStatus();       
+
       //console.log(this.listStudents);
     });
     this.inscriptionsProv.getStudentsLogged().subscribe(res => {
@@ -328,7 +329,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       information=>{         
         //console.log(information);
         this.getStudents();
-        this.eventFilterStatus();       
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -349,7 +349,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     let sub = linkModal.afterClosed().subscribe(
       expedient=>{
         this.getStudents();  
-        this.eventFilterStatus();       
         // console.log(expedient);
         
       },
@@ -492,7 +491,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             analysis=>{         
               //console.log(analysis);
               this.getStudents();
-              this.eventFilterStatus();       
             },
             err=>console.log(err), ()=> sub.unsubscribe()
           );
@@ -1246,7 +1244,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
              credentials=>{         
                console.log(credentials);
                this.getStudents();
-               this.eventFilterStatus();
              },
              err=>console.log(err), ()=> sub.unsubscribe()
            );
@@ -1290,7 +1287,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
             }); 
             this.getStudents();
-            this.eventFilterStatus();  
             return;
           } 
           if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
@@ -1298,7 +1294,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
             });   
             this.getStudents();
-            this.eventFilterStatus();
             return;
           }
     
@@ -1322,7 +1317,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
               this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},student._id).subscribe(res => {
               });
               this.getStudents();
-              this.eventFilterStatus();   
               return;
             }
             // No cambiar estatus
