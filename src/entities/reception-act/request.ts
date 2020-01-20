@@ -7,7 +7,7 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 moment.locale('es');
 
 export class uRequest {
-    private ENCABEZADO = "2020, Año de Leona Vicario, Benemérica Madre de la Patria";
+    private ENCABEZADO = "2020, Año de Leona Vicario, Benemérita Madre de la Patria";
     private FONT_SIZE: {
         BODY: 9,
         BOLD: 10,
@@ -92,10 +92,8 @@ export class uRequest {
         // Fecha
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(11);
-        doc.text(doc.splitTextToSize('Lugar y fecha:', 60), 140, 55, { align: 'left' });
-        doc.text(doc.splitTextToSize('Tepic, Nayarit', 60), 170, 55, { align: 'left' });
-        doc.text(doc.splitTextToSize(moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LL'), 60),
-            155, 60, { align: 'left' });
+        doc.text(doc.splitTextToSize(`Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LL')}`, 80),
+            this.WIDTH - this.MARGIN.RIGHT, 55, { align: 'right' });
 
         // Saludos
         doc.setFont(this.FONT, 'Bold');
@@ -282,13 +280,8 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(10);
-        // doc.text(doc.splitTextToSize('Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. ' +
-        //     'Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', 176),
-        //     this.MARGIN.LEFT, 130, { align: 'left' });
-
+        // tslint:disable-next-line: max-line-length
         this.justityText(doc, 'Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', { x: this.MARGIN.LEFT, y: 130 }, 180);
-        // this.justityText(doc, 'Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda', { x: this.MARGIN.LEFT, y: 176 }, 180);
-        // this.justityText(doc, 'Ud.Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', { x: this.MARGIN.LEFT, y: 180 }, 180);
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(11);
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
@@ -416,6 +409,7 @@ export class uRequest {
             ['e) Producto:', this._request.product]
         ], 100, this.MARGIN.LEFT, 8, true);
 
+        // tslint:disable-next-line: max-line-length
         doc.text("Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional de nuestros egresados.", this.MARGIN.LEFT, 144);
         doc.setFontSize(9);
         doc.setFont(this.FONT, 'Bold');
@@ -465,6 +459,7 @@ export class uRequest {
         let appointment: Date = new Date(this._request.proposedDate);
         appointment.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0)
         doc.setFontSize(9);
+        // tslint:disable-next-line: max-line-length
         doc.text(`NOTA: Se le solicita que la fecha del acto sea programado en el horario de las ${moment(appointment).format('HH:mm')} hrs.`, this.MARGIN.LEFT, heightRect + 182);
         return doc;
     }
@@ -485,20 +480,22 @@ export class uRequest {
         doc.text('INTEGRANTES DEL JURADO', (this.WIDTH / 2), 85, { align: 'center' });
         doc.setFont(this.FONT, 'Normal');
         doc.text('PRESIDENTE', this.MARGIN.LEFT, 95);
-        this.addJury(doc, this._request.jury[0], 95); //100,105,110
+        this.addJury(doc, this._request.jury[0], 95); // 100,105,110
         doc.text('SECRETARIO', this.MARGIN.LEFT, 110);
-        this.addJury(doc, this._request.jury[1], 110); //115,120,125
+        this.addJury(doc, this._request.jury[1], 110); // 115,120,125
         doc.text('VOCAL', this.MARGIN.LEFT, 125);
-        this.addJury(doc, this._request.jury[2], 125); //130,135,140
+        this.addJury(doc, this._request.jury[2], 125); // 130,135,140
         doc.text('VOCAL SUPLENTE', this.MARGIN.LEFT, 140);
-        this.addJury(doc, this._request.jury[3], 140); //145,150,155        
+        this.addJury(doc, this._request.jury[3], 140); // 145,150,155
 
+        // tslint:disable-next-line: max-line-length
         let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI (TITULACION INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO. El cual se realizará el día @FECHA , a las @HORA Hrs. En la Sala @LUGAR de este Instituto.`;
 
         contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())}`);
         contenido = contenido.replace('@NUMERO', `${this.addArroba(this._request.student.controlNumber.toUpperCase())}`);
         contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())}`);
         contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())}`);
+        // tslint:disable-next-line: max-line-length
         contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)}`);
         contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))}`);
         contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())}`);
@@ -526,11 +523,13 @@ export class uRequest {
         doc.text(`C. ${employee.toUpperCase()}`, this.MARGIN.LEFT, 90);
         doc.text(`CATEDRÁTICO DE ESTE INSTITUTO`, this.MARGIN.LEFT, 95);
         doc.text(`P R E S E N T E`, this.MARGIN.LEFT, 100);
+        // tslint:disable-next-line: max-line-length
         let contenido = `En atención a lo marcado por el Artículo 22o. del Reglamento de Examen Profesional, me permito notificarle que ha sido designado (a) @PUESTO del Jurado del Acto de Recepción Profesional del (la) Pasante C. @ESTUDIANTE, egresado (a) de la Carrera de @CARRERA, por la Opción XI, TITULACIÓN INTEGRAL (INFORME TÉCNICO DE RESIDENCIA PROFESIONAL) con el proyecto @PROYECTO, quien presentará el Acto de Recepción Profesional el día @FECHA del presente año, a las @HORA hrs. en la Sala @LUGAR de este Instituto.`;
         contenido = contenido.replace('@PUESTO', `${this.addArroba(position.toUpperCase())}`);
         contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())}`);
         contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())}`);
         contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())}`);
+        // tslint:disable-next-line: max-line-length
         contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)}`);
         contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))}`);
         contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())}`);
@@ -552,30 +551,37 @@ export class uRequest {
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(8);
         let tmpDate = new Date();
+        // tslint:disable-next-line: max-line-length
         let content = 'El (la) suscrito (a) Director (a) del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a la carrera de @CARRERA No.2 Autorizado el día @AUTORIZACION, por la Dirección de Asuntos Escolares y Apoyo a Estudiantes del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a le letra dice:';
         content = content.replace('@CARRERA', this.letterCapital(this._request.student.career));
         content = content.replace('@AUTORIZACION', moment(tmpDate).format('LL'));
         content = content.replace('@NUMERO', '180');
         this.justityText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
         doc.ellipse(28, 90, 20, 30);
+        // tslint:disable-next-line: max-line-length
         content = 'De acuerdo con el instructivo vigente de Titulación, que no tiene como requisito la sustentación del Examen Profesional para Efecto de obtención de Título, en las opciones VIII, IX y Titulación Integral, el Jurado HACE CONSTAR: que al (la) C. @ESTUDIANTE con número de control @CONTROL egresado(a) del Instituto Tecnológico de Tepic, Clave 18DIT0002Z, que cursó la carrera de: @CARRERA.';
         content = content.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())}`);
         content = content.replace('@CONTROL', `${this.addArroba(this._request.student.controlNumber)}`);
         content = content.replace('@CARRERA', `${this.addArroba(this.letterCapital(this._request.student.career))}`);
         this.justityText(doc, content, { x: this.MARGIN.LEFT + 32, y: 86 }, 138, 4);
+        // tslint:disable-next-line: max-line-length
         this.justityText(doc, 'Cumplió satisfactoriamente con lo estipulado en la opción: @Titulación@ @Integral.@', { x: this.MARGIN.LEFT + 32, y: 106 }, 138, 4);
 
+        // tslint:disable-next-line: max-line-length
         content = 'El presidente (a) del jurado le hizo saber a el (la) el resultado obtenido, el Código de Ética Profesional y le tomó la Protesta de Ley, una vez escrita, leída la firmaron las personas que en el acto protocolario intervinieron, para los efectos legales a que haya lugar, se asienta la presente en la ciudad de Tepic Nayarit el @dia@ @HOY';
+        // tslint:disable-next-line: max-line-length
         content = content.replace('@HOY', `@${String(tmpDate.getDate())}@ @del@ @mes@ @${this.letterCapital(moment(tmpDate).format('MMMM'))}@ @del@ @Año@ @${tmpDate.getFullYear()}@`);
         this.justityText(doc, content, { x: this.MARGIN.LEFT + 32, y: 116 }, 138, 4);
 
         doc.setFont(this.FONT, 'Normal');
         doc.text('Rubrican', this.MARGIN.LEFT + 32, 138, { align: 'left' });
 
+        // tslint:disable-next-line: max-line-length
         this.justityText(doc, `@Presidente(a):@ ${this.letterCapital(this._request.jury[0].name)}`, { x: this.MARGIN.LEFT + 32, y: 142 }, 180);
         doc.text(this.letterCapital(this._request.jury[0].title), this.MARGIN.LEFT + 32, 146, { align: 'left' });
         doc.text(`No.Ced.Prof. : ${this._request.jury[0].cedula}`, this.MARGIN.LEFT + 32, 150, { align: 'left' });
 
+        // tslint:disable-next-line: max-line-length
         this.justityText(doc, `@Secretario(a):@ ${this.letterCapital(this._request.jury[1].name)}`, { x: this.MARGIN.LEFT + 32, y: 155 }, 180);
         doc.text(this.letterCapital(this._request.jury[1].title), this.MARGIN.LEFT + 32, 159, { align: 'left' });
         doc.text(`No.Ced.Prof. : ${this._request.jury[1].cedula}`, this.MARGIN.LEFT + 32, 163, { align: 'left' });
@@ -584,6 +590,7 @@ export class uRequest {
         doc.text(this.letterCapital(this._request.jury[2].title), this.MARGIN.LEFT + 32, 172, { align: 'left' });
         doc.text(`No.Ced.Prof. : ${this._request.jury[2].cedula}`, this.MARGIN.LEFT + 32, 176, { align: 'left' });
 
+        // tslint:disable-next-line: max-line-length
         doc.text(`Se extiende esta certificación a los ${tmpDate.getDate()} del mes ${this.letterCapital(moment(tmpDate).format('MMMM'))} del Año ${tmpDate.getFullYear()}`, this.MARGIN.LEFT + 32, 184, { align: 'left' });
 
         let servicios = 'M.C. Israel Arjona Vizcaíno';
@@ -609,33 +616,32 @@ export class uRequest {
         doc.setFont(this.FONT, 'Normal');
         doc.text(`No.de Cedula Profesional: ${jury.cedula}`, this.MARGIN.LEFT + 35, positionY + 10);
     }
-    //A una cadena de texto, le añade @ a cada palabra tanto al inicio y al final
-    //Esto es para indicar que se le agregará texto en negritas
+    // A una cadena de texto, le añade @ a cada palabra tanto al inicio y al final
+    // Esto es para indicar que se le agregará texto en negritas
     private addArroba(Text: string): string {
         return Text.split(' ').map(word => { return '@' + word + '@'; }).join(' ');
     }
 
     private letterCapital(text: string): string {
         text = text.toLowerCase();
-        if(text.trim().length>0)  
+        if (text.trim().length>0)
             return text.split(/\s+/).map((value) => { return value.replace(/^./, value[0].toUpperCase()) }).join(' ');
-        return "";
+        return '';
     }
 
-    //Alinea un texto a la derecha
+    // Alinea un texto a la derecha
     private addTextRight(doc: jsPDF, text: string, positionY: number) {
-        //Obtengo el texto tal cual        
+        // Obtengo el texto tal cual
         let tmpCount = doc.getTextWidth(text.split('@').join(''));
         let tmpPositionX = this.WIDTH - (this.MARGIN.RIGHT + tmpCount);
         let words: Array<string> = text.split(/\s+/);
-        const space = (tmpCount - this.summation(doc, words)) / (words.length - 1);        
+        const space = (tmpCount - this.summation(doc, words)) / (words.length - 1);
         words.forEach(current => {
             let tmpWord = current;
             if (/^@[^\s]+@$/.test(current.replace(',', '').replace('.', ''))) {
                 doc.setFont(this.FONT, 'Bold');
                 tmpWord = tmpWord.split('@').join('');
-            }
-            else {
+            } else {
                 doc.setFont(this.FONT, 'Normal');
             }
             doc.text(tmpWord, tmpPositionX, positionY);
@@ -643,61 +649,60 @@ export class uRequest {
         })
         // doc.text(text, this.WIDTH - (this.MARGIN.RIGHT + tmpCount), positionY);
     }
-    //Justifica un texto
+    // Justifica un texto
     private justityText(Doc: jsPDF, Text: string, Point: { x: number, y: number }, Size: number, lineBreak: number = 5) {
-        //Texto sin @ (Negritas) para conocer más adelante las filas en las que será dividido
+        // Texto sin @ (Negritas) para conocer más adelante las filas en las que será dividido
         const tmpText: string = Text.split('@').join('');
-        //Texto original
-        const aText: Array<string> = Text.split(/\s+/);        
-        //Indice global que indicará la palabra a dibujar
+        // Texto original
+        const aText: Array<string> = Text.split(/\s+/);
+        // Indice global que indicará la palabra a dibujar
         let iWord: number = 0;
-        //Filas en las cuales se dividirá el texto        
-        const rows: Array<string> = Doc.splitTextToSize(tmpText, Size);        
+        // Filas en las cuales se dividirá el texto
+        const rows: Array<string> = Doc.splitTextToSize(tmpText, Size);
         const lastRow = rows.length - 1;
         rows.forEach((row, index) => {
-            //Cantidad de palabras que tiene la fila
-            let longitud = row.split(/\s+/).length;            
-            //Sumatoria del tamaño total de la frase
+            // Cantidad de palabras que tiene la fila
+            let longitud = row.split(/\s+/).length;
+            // Sumatoria del tamaño total de la frase
             const summation: number = this.summation(Doc, aText.slice(iWord, iWord + longitud));
-            //Espacio que se pondrá entre cada palabra            
+            // Espacio que se pondrá entre cada palabra
             let space: number = index === lastRow ? 1.5 : (Size - summation) / (longitud - 1);
-            //Posicion X,Y para poner la palabra            
+            // Posicion X,Y para poner la palabra
             let tmpIncX = Point.x;
             let tmpIncY = Point.y + (index * lineBreak);
-            while (longitud > 0) {                
-                //Se obtiene la palabra del texto original a escribiri
-                let tmpWord = aText[iWord];                
-                //Verifico si la palabra es negrita
+            while (longitud > 0) {
+                // Se obtiene la palabra del texto original a escribiri
+                let tmpWord = aText[iWord];
+                // Verifico si la palabra es negrita
                 if (/^@[^\s]+@$/.test(tmpWord.replace(',', '').replace('.', ''))) {
                     Doc.setFont(this.FONT, 'Bold');
-                    //Limpio la palabra de @
+                    // Limpio la palabra de @
                     tmpWord = tmpWord.split('@').join('');
-                }
-                else {
+                } else {
                     Doc.setFont(this.FONT, 'Normal');
                 }
-                //Impresión de la palabra
+                // Impresión de la palabra
                 Doc.text(tmpWord, tmpIncX, tmpIncY);
-                //Nueva posición
+                // Nueva posición
                 tmpIncX += Doc.getTextWidth(tmpWord) + space;
-                //Se prosigue con la otra palabra
+                // Se prosigue con la otra palabra
                 longitud--;
-                //Se incrementa el indice global
+                // Se incrementa el indice global
                 iWord++;
             }
-        })
+        });
     }
-    //Retorna la longitud del texto a añadir
+    // Retorna la longitud del texto a añadir
     private summation(Doc: jsPDF, Words: Array<string>): number {
         let lSummation: number = 0;
         Words.forEach((current) => {
-            //La palabra es negrita (Esta entre @  (@Hola@))            
+            // La palabra es negrita (Esta entre @  (@Hola@))
             if (/^@[^\s]+@$/.test(current.replace(',', '').replace('.', ''))) {
-                //Cambio el tipo de fuente a negrita para obtener el tamaño real de la palabra
+                // Cambio el tipo de fuente a negrita para obtener el tamaño real de la palabra
                 Doc.setFont(this.FONT, 'Bold');
                 lSummation += Doc.getTextWidth(current.split('@').join(''));
             } else {
-                //Cambio el tipo de fuente a normal para obtener el tamaño real
+                // Cambio el tipo de fuente a normal para obtener el tamaño real
                 Doc.setFont(this.FONT, 'Normal');
                 lSummation += Doc.getTextWidth(current);
             }
@@ -788,12 +793,14 @@ export class uRequest {
         document.text(text, (this.WIDTH / 2), startY + 5, { align: 'center' });
     }
 
+    // @ts-ignore
     private addTable(document: jsPDF, data: Array<Object>, startY: number, startX: number = this.MARGIN.LEFT, Size: number = 11, isBold: boolean = false) {
         // @ts-ignore
         document.autoTable({
             theme: 'grid',
             startY: startY,
             margin: { left: startX },
+            // @ts-ignore
             bodyStyles: { textColor: [0, 0, 0], lineColor: [0, 0, 0], font: this.FONT, fontStyle: (isBold ? 'Bold' : 'Normal'), fontSize: Size },
             body: data
         });

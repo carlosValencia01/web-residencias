@@ -34,7 +34,7 @@ export class RequestComponentComponent implements OnInit {
   @Output('onSubmit') btnSubmitRequest = new EventEmitter<boolean>();
   private MAX_SIZE_FILE: number = 3145728;
   public frmRequest: FormGroup;
-  private fileData: any;
+  public fileData: any;
   private frmData: any;
   private isLoadFile: boolean;
   private userInformation: any;
@@ -52,8 +52,9 @@ export class RequestComponentComponent implements OnInit {
   // public dropZone: DropzoneConfigInterface;
   public folderId: String;
   public activePeriod;
-  public foldersByPeriod = [];  
-  // @ViewChild('dropZone') drop: any;  
+  public foldersByPeriod = [];
+  private adviserInfo: { name: string, title: string, cedula: string };
+  // @ViewChild('dropZone') drop: any;
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -71,7 +72,7 @@ export class RequestComponentComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.typeCareer = <keyof typeof eCAREER>this.userInformation.career;
-    this.getFolderId();    
+    this.getFolderId();
   }
 
   ngOnInit() {
@@ -79,8 +80,8 @@ export class RequestComponentComponent implements OnInit {
     console.log("Information", this.userInformation);
     this.frmRequest = new FormGroup(
       {
-        'name': new FormControl(this.firstName(this.userInformation.name.fullName), Validators.required),
-        'lastname': new FormControl(this.lastName(this.userInformation.name.fullName), Validators.required),
+        'name': new FormControl({ value: this.firstName(this.userInformation.name.fullName), disabled: true }, Validators.required),
+        'lastname': new FormControl({ value: this.lastName(this.userInformation.name.fullName), disabled: true }, Validators.required),
         'telephone': new FormControl(null, [Validators.required,
         Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
@@ -89,7 +90,8 @@ export class RequestComponentComponent implements OnInit {
         'observations': new FormControl(null),
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
-        'honorific': new FormControl(false, Validators.required)
+        'honorific': new FormControl(false, Validators.required),
+        'titulationOption': new FormControl({ value: 'XI - TITULACIÓN INTEGRAL', disabled: true}, Validators.required)
       });
     this.getRequest();
   }
@@ -119,6 +121,7 @@ export class RequestComponentComponent implements OnInit {
       lastName = "Sin Capturar ";
     return lastName.substr(0, lastName.length - 1);
   }
+
   getRequest() {
     this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {
       if (typeof (res) !== 'undefined' && res.request.length > 0
@@ -167,12 +170,13 @@ export class RequestComponentComponent implements OnInit {
       'lastname': this.request.student.lastName,
       'telephone': this.request.telephone,
       'email': this.request.email.toLowerCase(),
-      'adviser': this.request.adviser,
+      'adviser': this.request.adviser.name,
       'noIntegrants': this.request.noIntegrants,
       'observations': this.request.observation,
       'project': this.request.projectName,
       'product': this.request.product,
       'honorific': this.request.honorificMention,
+      'titulationOption': this.request.titulationOption,
     });
     this.disabledControl();
     this.isToggle = this.request.honorificMention;
@@ -192,10 +196,9 @@ export class RequestComponentComponent implements OnInit {
     this.frmRequest.get('observations').markAsUntouched();
     this.frmRequest.get('noIntegrants').markAsUntouched();
     this.frmRequest.get('honorific').markAsUntouched();
+    this.frmRequest.get('titulationOption').markAsUntouched();
 
     if (this.isEdit) {
-      this.frmRequest.get('name').enable();
-      this.frmRequest.get('lastname').enable();
       this.frmRequest.get('telephone').enable();
       this.frmRequest.get('email').enable();
       this.frmRequest.get('project').enable();
@@ -213,6 +216,7 @@ export class RequestComponentComponent implements OnInit {
       this.frmRequest.get('adviser').disable();
       this.frmRequest.get('noIntegrants').disable();
       this.frmRequest.get('honorific').disable();
+      this.frmRequest.get('titulationOption').disable();
     }
   }
 
@@ -254,7 +258,8 @@ export class RequestComponentComponent implements OnInit {
       errorExists = true;
     }
 
-    if (typeof (this.frmRequest.get('adviser').value) === 'undefined' || !this.frmRequest.get('adviser').value) {
+    if (typeof (this.frmRequest.get('adviser').value) === 'undefined' || !this.frmRequest.get('adviser').value || !this.adviserInfo) {
+      this.notificationsServ.showNotification(eNotificationType.ERROR, '', 'No se ha seleccionado asesor');
       this.frmRequest.get('adviser').setErrors({ required: true });
       this.frmRequest.get('adviser').markAsTouched();
       errorExists = true;
@@ -271,7 +276,9 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('Career', this.typeCareer);
     this.frmData.append('Document', eFILES.PROYECTO);
     // Data
-    this.frmData.append('adviser', this.frmRequest.get('adviser').value);
+    this.frmData.append('adviserName', this.adviserInfo.name);
+    this.frmData.append('adviserTitle', this.adviserInfo.title);
+    this.frmData.append('adviserCedula', this.adviserInfo.cedula);
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
     this.frmData.append('projectName', this.frmRequest.get('project').value);
     this.frmData.append('email', this.frmRequest.get('email').value);
@@ -283,6 +290,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('product', this.frmRequest.get('product').value);
     this.frmData.append('department', this.deptoInfo.name);
     this.frmData.append('boss', this.deptoInfo.boss);
+    this.frmData.append('titulationOption', this.frmRequest.get('titulationOption').value);
     switch (this.operationMode) {
       case eOperation.NEW: {
         // this.frmData.append('department', this.deptoInfo.name);
@@ -362,8 +370,9 @@ export class RequestComponentComponent implements OnInit {
 
     ref.afterClosed().subscribe((result) => {
       if (result) {
-        this.frmRequest.patchValue({ 'adviser': result.Employee });
+        this.frmRequest.patchValue({ 'adviser': result.Employee.trim() });
         this.deptoInfo = result.Depto;
+        this.adviserInfo = result.ExtraInfo;
         console.log("depto", this.deptoInfo);
       }
     });
@@ -397,7 +406,7 @@ export class RequestComponentComponent implements OnInit {
     });
   }
 
-  generateRequestPDF() {    
+  generateRequestPDF() {
     window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
   }
 
@@ -490,5 +499,5 @@ export class RequestComponentComponent implements OnInit {
         console.log(err, '==============error');
       }
     );
-  } 
+  }
 }
