@@ -139,6 +139,8 @@ export class ProgressPageComponent implements OnInit {
           tmp.student = element.studentId;
           tmp.studentId = element.studentId._id;
           tmp.jury = element.jury;
+          tmp.duration = element.duration;
+          tmp.proposedHour = element.proposedHour;
           tmp.adviser = element.adviser;
           tmp.history = element.history;
           tmp.honorificMention = element.honorificMention;
@@ -156,19 +158,6 @@ export class ProgressPageComponent implements OnInit {
           this.request.push(tmp);
         });
 
-        // console.log("REQUEST", this.request);
-        // if (this.role === 'Jefe académico'.toLocaleLowerCase() || this.role === 'Secretaria académica'.toLocaleLowerCase()) {
-        //   let tmpRequest: iRequest[] = [];
-        //   this.request.forEach(x => {
-        //     let index = this._carrers.findIndex(y => y === x.career);
-        //     if (index !== -1) {
-        //       tmpRequest.push(x);
-        //     }
-        //   });
-        //   this.request = tmpRequest;
-        //   console.log("Solicutu", this.request);
-        // }
-
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
@@ -184,7 +173,7 @@ export class ProgressPageComponent implements OnInit {
       });
   }
 
-  refresh(): void {
+  async refresh() {
     this.dataSource = new MatTableDataSource(this.requestFilter);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -380,9 +369,10 @@ export class ProgressPageComponent implements OnInit {
     let lObservation: string;
     let lMinutes: number = 420;
     let lDuration: number = 60;
+
     const tmpRequest = this.getRequestById(Identificador);
-    if (tmpRequest.status === 'Rechazado') {
-      lJury = tmpRequest.jury;
+
+    if (tmpRequest.status === 'Rechazado' || tmpRequest.jury.length > 0) {
       const value = tmpRequest.history.filter(x => x.phase === 'Liberado').slice(0).sort(
         function (a, b) {
           const bDate: Date = new Date(b.achievementDate);
@@ -390,7 +380,8 @@ export class ProgressPageComponent implements OnInit {
           return bDate.getTime() - aDate.getTime();
         }
       );
-      lObservation = value[0].observation;
+      lJury = tmpRequest.jury;
+      lObservation = tmpRequest.status === 'Rechazado' ? value[0].observation : "";
       lMinutes = tmpRequest.proposedHour;
       lDuration = tmpRequest.duration;
     }
@@ -435,6 +426,7 @@ export class ProgressPageComponent implements OnInit {
           this.requestProvider.releasedRequest(Identificador, {
             proposedHour: result.proposedHour,
             duration: result.duration,
+            upload: result.upload,
             Doer: this.cookiesService.getData().user.name.fullName,
             jury: result.jury
           }).subscribe(data => {
@@ -655,10 +647,10 @@ export class ProgressPageComponent implements OnInit {
     this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
       console.log("DATA", data);
       const dialogRef = this.dialog.open(ReleaseCheckComponent, {
-        data: data,
+        data: { file: data, jury: Request.jury },
         disableClose: true,
         hasBackdrop: true,
-        width: '50em'
+        width: '65em'
       });
 
       dialogRef.afterClosed().subscribe(result => {
