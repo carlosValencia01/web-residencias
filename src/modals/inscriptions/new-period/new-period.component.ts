@@ -43,8 +43,8 @@ export class NewPeriodComponent implements OnInit {
         'insPerEndDate': new FormControl((this.data.period.insPerEndDate ? new Date(this.data.period.insPerEndDate) : null),[Validators.required]),
         'arecPerInitDate': new FormControl((this.data.period.arecPerInitDate ? new Date(this.data.period.arecPerInitDate) : null),[Validators.required]),
         'arecPerEndDate': new FormControl((this.data.period.arecPerEndDate ? new Date(this.data.period.arecPerEndDate) : null),[Validators.required]),
-        'arecInitShed': new FormControl((this.data.period.arecInitShed ? parseInt( this.data.period.arecInitShed+'') : null),[Validators.required]),
-        'arecEndShed': new FormControl((this.data.period.arecEndShed ? parseInt(this.data.period.arecEndShed+'') : null),[Validators.required]),
+        'arecInitShed': new FormControl((this.data.period.arecInitShed ? parseInt( this.data.period.arecInitShed+'') : null),[Validators.required, Validators.min(1), Validators.max(24)]),
+        'arecEndShed': new FormControl((this.data.period.arecEndShed ? parseInt(this.data.period.arecEndShed+'') : null),[Validators.required, Validators.min(1), Validators.max(24)]),
         'certificateDeliveryDate': new FormControl((this.data.period.certificateDeliveryDate ? this.data.period.certificateDeliveryDate : null),[Validators.required]),
       });  
       this.minDate = new Date(this.formPeriod.get('year').value);

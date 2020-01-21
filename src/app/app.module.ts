@@ -194,6 +194,8 @@ import { FilterPipe } from 'src/pages/graduation/list-graduates-page/filter.pipe
 import { FirebaseService } from 'src/services/graduation/firebase.service';
 // Providers
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
+// Modals
+import { NewEventComponent as NewGraduationEventComponent } from 'src/modals/graduation/new-event/new-event.component' ;
 
 // Electronic signature module
 // Pages
@@ -329,6 +331,8 @@ registerLocaleData(localeEs);
     SurveyRegisterPageComponent,
     // Pipes
     FilterPipe,
+    // Modals
+    NewGraduationEventComponent,
 
     // Electronic signature module
     // Pages
@@ -532,6 +536,10 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
+    
+    // Graduation
+    // Modals
+    NewGraduationEventComponent,
 
     // Shared
     // Modals
