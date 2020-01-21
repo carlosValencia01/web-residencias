@@ -53,6 +53,7 @@ export class ListGraduatesPageComponent implements OnInit {
   public logoTecNM: any;
   public logoSep: any;
   public logoTecTepic: any;
+  public firmaDirector: any;
 
   // Variable donde se almacenan todos los alumnos
   public alumnos = [];
@@ -91,6 +92,8 @@ export class ListGraduatesPageComponent implements OnInit {
   montserratNormal: any;
   montserratBold: any;
 
+  dateGraduation;
+
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
@@ -110,7 +113,11 @@ export class ListGraduatesPageComponent implements OnInit {
     }
     this.collection = this.router.url.split('/')[2];
     const sub = this.firestoreService.getEvent(this.collection).subscribe(
-      ev => { sub.unsubscribe(); this.status = ev.payload.get('estatus'); }
+      ev => { 
+        sub.unsubscribe(); 
+        this.status = ev.payload.get('estatus'); 
+        this.dateGraduation = ev.payload.get('date');
+     }
     );
 
     this.firestoreService.getBestAverages(this.collection).subscribe(
@@ -177,6 +184,9 @@ export class ListGraduatesPageComponent implements OnInit {
     });
     this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
       this.logoTecTepic = res3;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/firmaDirector.png').then(res4 => {
+      this.firmaDirector = res4;
     });
   }
 
@@ -1481,7 +1491,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(14);
-    doc.text("Por haber concluido íntegramente la especialidad de:", pageWidth / 2, 140, 'center');
+    doc.text("Por haber concluído íntegramente la especialidad de:", pageWidth / 2, 140, 'center');
     
     //Especialidad
     doc.setTextColor(0, 0, 0);
@@ -1503,7 +1513,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(13);
-    doc.text("Tepic, Nayarit., "+new Date().toLocaleDateString("es-MX", dateOptions), pageWidth / 2, 220, 'center');
+    doc.text("Tepic, Nayarit., "+new Date(this.dateGraduation.seconds*1000).toLocaleDateString("es-MX", dateOptions), pageWidth / 2, 220, 'center');
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
@@ -1511,6 +1521,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.text("LIC. MANUEL ANGEL URIBE VÁZQUEZ", pageWidth / 2, 240, 'center');
     doc.text("DIRECTOR", pageWidth / 2, 247, 'center');
 
+    doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2)-50, 197, 100, 53.75);
     this.loading = false;
     window.open(doc.output('bloburl'), '_blank');
   }
@@ -1540,7 +1551,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text("Por haber concluido íntegramente la especialidad de:", pageWidth / 2, 140, 'center');
+        doc.text("Por haber concluído íntegramente la especialidad de:", pageWidth / 2, 140, 'center');
         
         //Especialidad
         doc.setTextColor(0, 0, 0);
@@ -1562,13 +1573,14 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
-        doc.text("Tepic, Nayarit., "+new Date().toLocaleDateString("es-MX", dateOptions), pageWidth / 2, 220, 'center');
+        doc.text("Tepic, Nayarit., "+new Date(this.dateGraduation.seconds*1000).toLocaleDateString("es-MX", dateOptions), pageWidth / 2, 220, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
         doc.text("LIC. MANUEL ANGEL URIBE VÁZQUEZ", pageWidth / 2, 240, 'center');
         doc.text("DIRECTOR", pageWidth / 2, 247, 'center');
+        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2)-50, 197, 100, 53.75);
         if (i < this.alumnosConstancia.length - 1) {
           doc.addPage();
         }
