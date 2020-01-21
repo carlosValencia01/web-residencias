@@ -20,10 +20,13 @@ require('jspdf-autotable');
 })
 export class ListGraduatesPageComponent implements OnInit {
   public searchText: string;
+  public searchTextDocumentation: string;
 
   // Variables para filtrar alumnos y generar reporte
   public searchSurvey = '';
   public searchCarreer = '';
+  public searchCarreerDocumentation = '';
+  public searchStatusDocumentation = '';
 
   public searchSRC = false;
   public searchSPC = false;
@@ -39,6 +42,13 @@ export class ListGraduatesPageComponent implements OnInit {
 
   public showTotal = true;
 
+  public totalEgresados;
+  public certificadosPendientes;
+  public certificadosImpresos;
+  public certificadosListos;
+  public certificadosEntregados;
+
+
   // Imagenes para Reportes
   public logoTecNM: any;
   public logoSep: any;
@@ -51,9 +61,10 @@ export class ListGraduatesPageComponent implements OnInit {
   public alumnosReport = []; // Variable donde se almacenan los alumnos para el reporte
   public totalAlumnos; // Obtener total de alumnos con filtros de estatus y carrera
   public totalAlumnosFilter; // Obtener total de alumnos con filto de busqueda de alumno
-
+  public alumnosReportDocumentation;
   // Variable para almacenar los alumnos verificados e imprimir papeletas
   public alumnosBallotPaper = [];
+  public alumnosConstancia = [];
 
 
   public role: string;
@@ -61,6 +72,11 @@ export class ListGraduatesPageComponent implements OnInit {
   page = 1;
   pag;
   pageSize = 10;
+
+  page2 = 1;
+  pag2;
+  pageSize2 = 10;
+
   collection = null;
   public status = 0;
 
@@ -68,6 +84,12 @@ export class ListGraduatesPageComponent implements OnInit {
   studentIn = [];
   studentOut = [];
   careersPosition = [];
+
+  loading = false;
+
+  //Font Montserrat
+  montserratNormal: any;
+  montserratBold: any;
 
   constructor(
     private firestoreService: FirebaseService,
@@ -79,6 +101,7 @@ export class ListGraduatesPageComponent implements OnInit {
     private imageToBase64Serv: ImageToBase64Service,
     private routeActive: ActivatedRoute,
   ) {
+    this.getFonts();
     const rol = this.cookiesService.getData().user.role;
 
     if (rol !== 0 && rol !== 5 && rol !== 6 &&
@@ -157,6 +180,16 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
+  getFonts() {
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
+        this.montserratNormal = base64.toString().split(',')[1];
+    });
+
+    this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
+        this.montserratBold = base64.toString().split(',')[1];
+    });
+  }
+
   readEmail() {
     this.firestoreService.getGraduates(this.collection).subscribe(async (alumnosSnapshot) => {
       this.alumnos = alumnosSnapshot.map((alumno) => {
@@ -173,7 +206,9 @@ export class ListGraduatesPageComponent implements OnInit {
           observations: alumno.payload.doc.get('observations'),
           survey: alumno.payload.doc.get('survey'),
           bestAverage: alumno.payload.doc.get('mejorPromedio') ? alumno.payload.doc.get('mejorPromedio') : false,
-          average: alumno.payload.doc.get('promedio') ? alumno.payload.doc.get('promedio') : 0
+          average: alumno.payload.doc.get('promedio') ? alumno.payload.doc.get('promedio') : 0,
+          documentationStatus: alumno.payload.doc.get('documentationStatus') ? alumno.payload.doc.get('documentationStatus') : ' ',
+          specialty: alumno.payload.doc.get('especialidad') ? alumno.payload.doc.get('especialidad') : '<<Especialidad>>',
         };
       });
 
@@ -185,6 +220,15 @@ export class ListGraduatesPageComponent implements OnInit {
       this.alumnosReport = this.alumnos;
       this.totalAlumnos = this.alumnosReport.length;
       this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, '');
+      this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation,'');
+      this.alumnosReportDocumentation = this.alumnos;
+      
+      // Contar total de alumnos
+      this.totalEgresados = this.alumnos.length;
+      this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
+      this.certificadosListos = this.filterCountItemsStatus('Listo').length;
+      this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
+      this.certificadosPendientes = [this.totalEgresados-(this.certificadosImpresos+this.certificadosEntregados+this.certificadosListos)];
     });
   }
 
@@ -546,6 +590,10 @@ export class ListGraduatesPageComponent implements OnInit {
     this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, '');
   }
 
+  eventFilterReportDocumentation(){
+    this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation, '');
+  }
+
   // FILTRADO POR CARRERA O ESTATUS
   filterItems(carreer, sR, sP, sV, sA, sM) {
     return this.alumnos.filter(function (alumno) {
@@ -568,6 +616,12 @@ export class ListGraduatesPageComponent implements OnInit {
     return this.alumnos.filter(function (alumno) {
       return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 &&
         alumno.status.toLowerCase().indexOf(status.toLowerCase()) > -1;
+    });
+  }
+
+  filterCountItemsStatus(status) {
+    return this.alumnos.filter(function (alumno) {
+      return alumno.documentationStatus.toLowerCase().indexOf(status.toLowerCase()) > -1;
     });
   }
 
@@ -962,6 +1016,10 @@ export class ListGraduatesPageComponent implements OnInit {
 
   pageChanged(ev) {
     this.page = ev;
+  }
+
+  pageChanged2(ev) {
+    this.page2 = ev;
   }
 
   eventFilter(item) {
@@ -1364,4 +1422,162 @@ export class ListGraduatesPageComponent implements OnInit {
     });
     console.log(alumnosVerificados);
   }
+
+  changeStatusDocumentation(student,status){
+    console.log(student);
+    switch (status){
+      case "Fotos y Recibo":
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+        break;
+      case "Impreso":
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+        break;
+      case "Listo":
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+        break;
+      case "Entregado":
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+        break;
+      case "Regresar":
+        switch (student.documentationStatus){
+          case "Fotos y Recibo":
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:' '}, this.collection);
+            break;
+          case "Impreso":
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Fotos y Recibo'}, this.collection);
+            break;
+          case "Listo":
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Impreso'}, this.collection);
+            break;
+          case "Entregado":
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Listo'}, this.collection);
+            break;
+        }
+    }
+  }
+
+  generateConstancy(student){
+    this.loading = true;
+    let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+
+    var doc = new jsPDF();
+    
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    
+    //Nombre
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(18);
+    doc.text(student.name, pageWidth / 2, 120, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(14);
+    doc.text("Por haber concluido íntegramente la especialidad de:", pageWidth / 2, 140, 'center');
+    
+    //Especialidad
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(16);
+    doc.text(student.specialty, pageWidth / 2, 160, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(14);
+    doc.text("En la carrera de: ", pageWidth / 2, 180, 'center');
+
+    //Carrera
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(16);
+    doc.text(student.carreerComplete, pageWidth / 2, 200, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Normal');
+    doc.setFontSize(13);
+    doc.text("Tepic, Nayarit., "+new Date().toLocaleDateString("es-MX", dateOptions), pageWidth / 2, 220, 'center');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('Montserrat', 'Bold');
+    doc.setFontSize(16);
+    doc.text("LIC. MANUEL ANGEL URIBE VÁZQUEZ", pageWidth / 2, 240, 'center');
+    doc.text("DIRECTOR", pageWidth / 2, 247, 'center');
+
+    this.loading = false;
+    window.open(doc.output('bloburl'), '_blank');
+  }
+
+  generateConstancys(){
+    if (this.alumnosConstancia.length !== 0) {
+      this.loading = true;
+      var doc = new jsPDF();
+      let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+      doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+      doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+      
+      for(var i = 0; i < this.alumnosConstancia.length; i++){
+        //Nombre
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(18);
+        doc.text(this.alumnosConstancia[i].name, pageWidth / 2, 120, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(14);
+        doc.text("Por haber concluido íntegramente la especialidad de:", pageWidth / 2, 140, 'center');
+        
+        //Especialidad
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text(this.alumnosConstancia[i].specialty, pageWidth / 2, 160, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(14);
+        doc.text("En la carrera de: ", pageWidth / 2, 180, 'center');
+
+        //Carrera
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text(this.alumnosConstancia[i].carreerComplete, pageWidth / 2, 200, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(13);
+        doc.text("Tepic, Nayarit., "+new Date().toLocaleDateString("es-MX", dateOptions), pageWidth / 2, 220, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text("LIC. MANUEL ANGEL URIBE VÁZQUEZ", pageWidth / 2, 240, 'center');
+        doc.text("DIRECTOR", pageWidth / 2, 247, 'center');
+        if (i < this.alumnosConstancia.length - 1) {
+          doc.addPage();
+        }
+      }
+      this.loading = false;
+      window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+    } else {
+      this.notificationsServices.showNotification(1, 'Atención', 'No hay alumnos de esta carrera.');
+    }
+  }
 }
+
