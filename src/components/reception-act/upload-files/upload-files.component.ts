@@ -242,7 +242,7 @@ export class UploadFilesComponent implements OnInit {
     let document: any;
 
     const frmData = new FormData();
-    frmData.append('folderId', this._CookiesService.getFolder());
+    frmData.append('folderId', this.isEditable ? this.Request.folder : this._CookiesService.getFolder());
     frmData.append('Document', type);
     frmData.append('IsEdit', this.isEditable ? "true" : "false");
     switch (type) {

@@ -32,6 +32,7 @@ export interface iRequest {
     doer?: string;
     observation?: string;
     jury?: Array<any>;
+    folder?: string;
     history?: [
         {
             phase: string,
