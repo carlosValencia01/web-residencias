@@ -40,6 +40,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   cantListStudents = 0;
   cantListStudentsLogged = 0;
   periods = [];
+  activPeriod;
   loading = false;
 
   listCovers;
@@ -56,6 +57,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   public logoTecNM: any;
   public logoSep: any;
   public logoTecTepic: any;
+  public caratulaExpediente: any;
 
   //Font Montserrat
   montserratNormal: any;
@@ -109,8 +111,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.getFonts();
     this.getStudents();
     this.getPeriods();
+    this.getActivePeriod();
     this.getBase64ForStaticImages();
-
   }
 
   getFonts() {
@@ -134,6 +136,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
       this.logoTecTepic = res3;
     });
+    this.imageToBase64Serv.getBase64('assets/imgs/CaratulaExpediente.png').then(res4 => {
+      this.caratulaExpediente = res4;
+    });
   }
 
   getStudents(){
@@ -149,7 +154,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       //console.log(this.listStudents);
       this.listCovers = this.listStudents;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
-      
+      this.eventFilterStatus();       
+
       //console.log(this.listStudents);
     });
     this.inscriptionsProv.getStudentsLogged().subscribe(res => {
@@ -300,6 +306,13 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       });
   }
 
+  getActivePeriod(){
+    let sub = this.inscriptionsProv.getActivePeriod()
+      .subscribe(period => {       
+        this.activPeriod = period.period.year;     
+      });
+  }
+
   updateGI(student){
     //console.log(student);
     const linkModal = this.dialog.open(StudentInformationComponent, {
@@ -316,7 +329,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       information=>{         
         //console.log(information);
         this.getStudents();
-        this.eventFilterStatus();       
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -337,7 +349,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     let sub = linkModal.afterClosed().subscribe(
       expedient=>{
         this.getStudents();  
-        this.eventFilterStatus();       
         // console.log(expedient);
         
       },
@@ -364,21 +375,17 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     if(this.listCovers.length != 0){
       this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO CARÁTULAS', '');
       this.loading = true;
-      const img = new Image();
       const doc = new jsPDF();
-      var año = '';
       var pageWidth = doc.internal.pageSize.width;
       for(let i = 0; i < this.listCovers.length; i++){
-        img.src = 'https://i.ibb.co/3N7hbHY/Caratula-Expediente.png';
-        doc.addImage(img, 'jpg',6, 0, 200, 295);
-        año = this.listCovers[i].dateAcceptedTerms ? this.listCovers[i].dateAcceptedTerms.substring(0,4):'';
+        doc.addImage(this.caratulaExpediente, 'jpg',6, 0, 200, 295);
         doc.setFontSize(10);
         doc.setFontType('bold');
-        doc.text('TECNM/02Z/SE/02S.03/'+this.listCovers[i].controlNumber+'/'+año,(pageWidth / 2)+30, 112,'center');
+        doc.text('TECNM/02Z/SE/02S.03/'+this.listCovers[i].controlNumber+'/'+this.activPeriod,(pageWidth / 2)+30, 112,'center');
 
         doc.setFontSize(19);
         doc.setFontType('bold');
-        doc.text(this.listCovers[i].fullName, pageWidth / 2, 167,'center');
+        doc.text(this.listCovers[i].fatherLastName+' '+this.listCovers[i].motherLastName+' '+this.listCovers[i].firstName, pageWidth / 2, 167,'center');
         if(i != (this.listCovers.length)-1){
           doc.addPage();
         }
@@ -394,66 +401,65 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO PESTAÑAS', '');
     this.loading = true;
     
-    const doc = new jsPDF('l', 'mm', [12, 170]);;
-    var pageWidth = doc.internal.pageSize.width;
-    var año = '';
+    const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
     for(let i = 0; i < this.listCovers.length; i++){
-      año = this.listCovers[i].dateAcceptedTerms ? this.listCovers[i].dateAcceptedTerms.substring(0,4):'';
-      doc.setFontSize(4);
+      doc.setFontSize(10);
       doc.setFontType('bold');
       //Identificador
-      doc.text('TECNM/02Z/SE/02S.03/'+this.listCovers[i].controlNumber+'/'+año,.5,2.5);
+      doc.text('TECNM/02Z/SE/02S.03/'+this.listCovers[i].controlNumber+'/'+this.activPeriod,2.5,(pageHeight/2)+1.5);
 
-      doc.setFontSize(3.5);
+      doc.setFontSize(9.5);
       doc.setFontType('bold');
       //Nombre
-      doc.text(this.listCovers[i].fullName,26.4,2.5);
+      doc.text(this.listCovers[i].fatherLastName+' '+this.listCovers[i].motherLastName+' '+this.listCovers[i].firstName,70,(pageHeight/2)+1.5);
 
-      doc.setFontSize(4);
+      doc.setFontSize(10);
       doc.setFontType('bold');
       //Carrera
       switch(this.listCovers[i].career){
         case "ARQUITECTURA":
-          doc.text('ARQ',56.6,2.5);
+          doc.text('ARQ',pageWidth-15,(pageHeight/2)+1.5);
           break;
         case "INGENIERÍA CIVIL":
-          doc.text('IC',56.6,2.5);
+          doc.text('IC',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA BIOQUÍMICA":
-          doc.text('IBQ',56.6,2.5);
+          doc.text('IBQ',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA EN GESTIÓN EMPRESARIAL":
-          doc.text('IGE',56.6,2.5);
+          doc.text('IGE',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA QUIMICA":
-          doc.text('IQ',56.6,2.5);
+          doc.text('IQ',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA MECATRÓNICA":
-          doc.text('IM',56.6,2.5);
+          doc.text('IM',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA ELÉCTRICA":
-          doc.text('IE',56.6,2.5);
+          doc.text('IE',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES":
-          doc.text('ITICS',56.3,2.5);
+          doc.text('ITICS',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA EN SISTEMAS COMPUTACIONALES":
-          doc.text('ISC',56.6,2.5);
+          doc.text('ISC',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA INDUSTRIAL":
-          doc.text('II',56.6,2.5);
+          doc.text('II',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "LICENCIATURA EN ADMINISTRACIÓN":
-          doc.text('LA',56.6,2.5);
+          doc.text('LA',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "MAESTRÍA EN CIENCIAS DE LOS ALIMENTOS":
-          doc.text('MCA',56.6,2.5);
+          doc.text('MCA',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "DOCTORADO EN CIENCIAS DE LOS ALIMENTOS":
-          doc.text('DCA',56.6,2.5);
+          doc.text('DCA',pageWidth-15,(pageHeight/2)+1.5)
           break;
         default:
-          doc.text('CAR',56.6,2.5);
+          doc.text('CAR',pageWidth-15,(pageHeight/2)+1.5)
           break; 
       }
       //doc.text('CAR',56.6,2.5);
@@ -485,7 +491,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             analysis=>{         
               //console.log(analysis);
               this.getStudents();
-              this.eventFilterStatus();       
             },
             err=>console.log(err), ()=> sub.unsubscribe()
           );
@@ -1239,7 +1244,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
              credentials=>{         
                console.log(credentials);
                this.getStudents();
-               this.eventFilterStatus();
              },
              err=>console.log(err), ()=> sub.unsubscribe()
            );
@@ -1283,7 +1287,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
             }); 
             this.getStudents();
-            this.eventFilterStatus();  
             return;
           } 
           if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
@@ -1291,7 +1294,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
             });   
             this.getStudents();
-            this.eventFilterStatus();
             return;
           }
     
@@ -1315,7 +1317,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
               this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},student._id).subscribe(res => {
               });
               this.getStudents();
-              this.eventFilterStatus();   
               return;
             }
             // No cambiar estatus

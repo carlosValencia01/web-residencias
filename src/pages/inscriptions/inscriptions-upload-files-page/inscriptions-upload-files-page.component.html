@@ -252,13 +252,13 @@
                   <mat-slide-toggle
                     (change)="hasCertificate($event)"
                     color="primary"
-                    >Tengo certificado</mat-slide-toggle
+                    >No tengo certificado</mat-slide-toggle
                   >
                 </div>
               </div>
               <div
                 class="row text-center"
-                *ngIf="hasCert && !ccDoc || certificateDoc"
+                *ngIf="!hasCert && !ccDoc || certificateDoc"
               >
                 <div class="col-12">
                   <dropzone
@@ -272,7 +272,7 @@
               </div>
               <div
                 class="row text-center"
-                *ngIf="!hasCert && !certificateDoc || ccDoc"
+                *ngIf="hasCert && !certificateDoc || ccDoc"
               >
                 <div class="col-12">
                   <div class="row text-center">
