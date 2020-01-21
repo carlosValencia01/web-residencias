@@ -3,8 +3,11 @@ import { FirebaseService } from 'src/services/graduation/firebase.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
+import { Subscription } from 'rxjs';
 import * as years from 'ye-ars';
 import Swal from 'sweetalert2';
+import { NewEventComponent } from 'src/modals/graduation/new-event/new-event.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-graduation-events-page',
@@ -24,19 +27,20 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
   };
   newYears = [];
   eventYear = '';
-
+  eventsSub : Subscription;
   constructor(
     private firestoreService: FirebaseService,
     private router: Router,
     private notificationsServices: NotificationsServices,
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
+    public dialog: MatDialog,
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
 
-      this.firestoreService.getAllEvents().subscribe(
+     this.eventsSub = this.firestoreService.getAllEvents().subscribe(
         ev => {
           this.events = ev.map( data => ({id: data.payload.doc.id, status: data.payload.doc.get('estatus')}) );
           this.year = this.today.getFullYear() + '';
@@ -48,7 +52,7 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // Called once, before the instance is destroyed.
     // Add 'implements OnDestroy' to the class.
-    console.log('events');
+    this.eventsSub.unsubscribe();
   }
 
   ngOnInit() {
@@ -81,22 +85,41 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
   }
 
   createEvent() {
-    console.log('create');
-    this.periodo = '';
-    this.eventYear = '';
-    const evento = document.getElementById('evento').classList.toggle('inactivo');
+    const linkModal = this.dialog.open(NewEventComponent, {
+      data: {
+        operation: 'create'        
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '50em',
+      height: '430px'
+    });
+    linkModal.afterClosed().subscribe(
+      event=>{         
+        if(event.action === 'submit'){         
+          this.saveEvent(event);
+        }
+        // else this.refreshDataSource();
+      },
+      err=>console.log(err)
+    );
   }
 
-  async saveEvent() {
-    if (this.periodo !== '' && this.eventYear !== '') {
-     this.periodo = this.periodo + this.eventYear;
-     this.firestoreService.createEvent(this.periodo, 2).then(
-      async created => {
-        await this.notificationsServices.showNotification(1, 'EVENTO CREADO CON PERIODO:', this.periodo);
-        this.createEvent();
-       }
-     );
-    }
+  async saveEvent(event) {
+    const newEvent = {
+      estatus:2,
+      totalTickets:event.event.totalTickets,
+      studentTickets:event.event.studentTickets,
+      date:event.event.date,
+      name:event.event.periodName + event.event.year
+    };
+        
+    this.firestoreService.createEvent(newEvent.name, newEvent).then(
+     async created => {
+       await this.notificationsServices.showNotification(0, 'EVENTO CREADO', '');
+       this.createEvent();
+      }
+    );   
   }
 
   checkEvent(event) {
