@@ -20,6 +20,7 @@ import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { DropzoneConfigInterface, DropzoneComponent } from 'ngx-dropzone-wrapper';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-request-component',
@@ -128,7 +129,7 @@ export class RequestComponentComponent implements OnInit {
         && (res.request[0].phase === 'Capturado' && res.request[0].phase !== 'None')
       ) {
         this.loadRequest(res);
-        this.operationMode = eOperation.EDIT;
+        this.operationMode = this.request.verificationStatus ? eOperation.EDIT : eOperation.VERIFICATION;
         this.observations = this.request.observation;
         if (typeof (this.request.history) !== 'undefined' && this.request.history.length > 0) {
           const lastHistoryIndex = this.request.history.length - 1;
@@ -162,6 +163,7 @@ export class RequestComponentComponent implements OnInit {
     this.request.studentId = this.request.student._id;
     this.integrants = this.request.integrants;
     this.deptoInfo = request.request[0].department;
+    this.adviserInfo = request.request[0].adviser;
 
     this.assignName();
 
@@ -184,6 +186,9 @@ export class RequestComponentComponent implements OnInit {
 
   Edit(): void {
     this.isEdit = !this.isEdit;
+    if (this.operationMode === eOperation.VERIFICATION) {
+      this.operationMode = eOperation.EDIT;
+    }
     this.disabledControl();
   }
 
@@ -410,7 +415,6 @@ export class RequestComponentComponent implements OnInit {
     window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
   }
 
-
   getFolderId() {
     let _idStudent = this.userInformation._id;
     this._InscriptionsProvider.getActivePeriod().subscribe(
@@ -499,5 +503,69 @@ export class RequestComponentComponent implements OnInit {
         console.log(err, '==============error');
       }
     );
+  }
+
+  public verifyEmail() {
+    Swal.fire({
+      title: 'Verificación de correo',
+      text: 'Ingrese el código de verificación que llegó a su correo',
+      type: 'warning',
+      input: 'text',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      confirmButtonColor: 'blue',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Verificar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: true,
+      preConfirm: (code) => {
+        if (code) {
+          return code;
+        } else {
+          Swal.showValidationMessage('El campo es requerido');
+        }
+      },
+    }).then((result) => {
+      if (result.value) {
+        this.requestProvider.verifyCode(this.request._id, result.value)
+          .subscribe(res => {
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Verificación de correo', res.message);
+            this.operationMode = eOperation.EDIT;
+            this.request.verificationStatus = true;
+          }, err => {
+            const message = JSON.parse(err._body).error;
+            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Verificación de correo', message);
+          });
+      }
+    });
+  }
+
+  public cancelEdit() {
+    this.isEdit = false;
+    if (this.request.verificationStatus) {
+      this.operationMode = eOperation.EDIT;
+    } else {
+      this.operationMode = eOperation.VERIFICATION;
+    }
+    this.disabledControl();
+    this._resetValues(this.request);
+  }
+
+  private _resetValues(request: iRequest) {
+    this.frmRequest.setValue({
+      'name': request.student.name,
+      'lastname': request.student.lastName,
+      'telephone': request.telephone,
+      'email': request.email.toLowerCase(),
+      'adviser': request.adviser.name,
+      'noIntegrants': request.noIntegrants,
+      'observations': request.observation,
+      'project': request.projectName,
+      'product': request.product,
+      'honorific': request.honorificMention,
+      'titulationOption': request.titulationOption,
+    });
+    this.adviserInfo = request.adviser;
+    this.isToggle = this.request.honorificMention;
   }
 }

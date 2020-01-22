@@ -64,4 +64,9 @@ export class RequestProvider {
     StudentsToSchedule() {
         return this.api.get(`request/students`).pipe(map(request => request.json()));
     }
+
+    verifyCode(requestId, code) {
+        return this.api.get(`request/verify/${requestId}/${code}`)
+            .pipe(map(res => res.json()));
+    }
 }

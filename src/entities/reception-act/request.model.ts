@@ -19,7 +19,7 @@ export interface iRequest {
     actDate?: Date;
     honorificMention?: boolean;
     adviserId?: string;
-    adviser?: { name: { type: String }, title: { type: String }, cedula: { type: String } };
+    adviser?: { name: string, title: string, cedula: string };
     place?: string;
     noIntegrants?: number;
     integrants?: Array<iIntegrant>;
@@ -53,4 +53,5 @@ export interface iRequest {
         }
     ];
     titulationOption?: string;
+    verificationStatus?: boolean;
 }
