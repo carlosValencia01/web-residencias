@@ -1049,7 +1049,7 @@
           </mat-card-actions>
         </mat-card>
       </div>
-      <div class="col-3" *ngIf="UploadPhotos.status==='Reject'">
+      <div class="col-3" *ngIf="UploadPhotos && UploadPhotos.status==='Reject'">
         <mat-card [ngClass]="{
             'process':UploadPhotos.status==='Process',
             'accept':UploadPhotos.status==='Accept',
@@ -1089,10 +1089,77 @@
             </div>
           </mat-card-content>
           <mat-card-actions align="end">
-            <div *ngIf="UploadPhotos.status==='Reject'">
+            <div *ngIf="UploadPhotos && UploadPhotos.status==='Reject'">
               <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('FOTOS')" data-toggle="tooltip"
                 data-placement="top" title="Ver observación">message
               </mat-icon>
+            </div>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+      <div class="col-3"
+        *ngIf="Request && ((Request.phase==='Generado' && Request.status==='Printed') || Request.phase==='Titulado')">
+        <mat-card [ngClass]="{
+            'process':UploadActaExamen.status==='Process',
+            'accept':UploadActaExamen.status==='Accept',
+            'reject':UploadActaExamen.status==='Reject',
+            'none':UploadActaExamen.status=== 'None',
+            'omit':UploadActaExamen.status=== 'Omit'
+          }">
+          <mat-card-header>
+            <mat-card-subtitle>
+              <p
+                [ngClass]="{'processText':UploadActaExamen.status==='Process', 'acceptText':UploadActaExamen.status==='Accept', 'rejectText':UploadActaExamen.status==='Reject','noneText':UploadActaExamen.status=== 'None','omitText':UploadActaExamen.status=== 'Omit'}">
+                Acta Examen
+              </p>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <input type="file" accept="application/pdf" (change)="onUpload($event,'ACTA_EXAMEN')" style="display: none">
+            <div [ngSwitch]="UploadActaExamen.status">
+              <div *ngSwitchCase="'Accept'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Aceptado</p>
+              </div>
+              <div *ngSwitchCase="'Omit'" class="text-center">
+                <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                <p class="card-text">Archivo Omitido</p>
+              </div>
+              <div *ngSwitchCase="'Process'" class="text-center">
+                <!-- <mat-spinner style="margin: 0 auto;" [diameter]="50"></mat-spinner> -->
+                <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                <p class="card-text">En revisión</p>
+              </div>
+              <div *ngSwitchDefault>
+                <div class="text-center">
+                  <div *ngIf="!UploadActaExamen.file">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Archivo no cargado</p>
+                  </div>
+                  <div *ngIf="UploadActaExamen.file">
+                    <img alt="File" src="../../assets/imgs/fileUpload.png" style="width: 50px; height: 50px">
+                    <p class="card-text">{{UploadActaExamen.file.name}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <div *ngIf="isEditable">
+              <div *ngIf="UploadActaExamen.file">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('ACTA_EXAMEN')" data-toggle="tooltip"
+                  data-placement="top" title="Enviar documento">email</mat-icon>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('ACTA_EXAMEN')" data-toggle="tooltip"
+                  data-placement="top" title="Cancelar">close</mat-icon>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_EXAMEN')" data-toggle="tooltip"
+                  data-placement="top" title="Ver documento">visibility</mat-icon>
+              </div>
+              <div *ngIf="!UploadActaExamen.file">
+                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('ACTA_EXAMEN')" data-toggle="tooltip"
+                  data-placement="top" title="Subir documento">attach_file</mat-icon>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_EXAMEN')" data-toggle="tooltip"
+                  data-placement="top" title="Ver documento">visibility</mat-icon>
+              </div>
             </div>
           </mat-card-actions>
         </mat-card>
