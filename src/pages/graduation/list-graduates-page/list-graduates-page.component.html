@@ -8,6 +8,20 @@
             <div class="card-body">
                <div style="overflow-x:auto; padding-top: 20px;">
                   <div class="row">
+                     <div class="col-sm-3">
+                        <mat-card class = "cardEgresados"><b>Total Egresados:</b><br>{{totalEgresados}}</mat-card>
+                     </div>
+                     <div class="col-sm-3">
+                        <mat-card class = "cardCListos"><b>Total Verificados:</b><br>{{totalVerificados}}</mat-card>
+                     </div>
+                     <div class="col-sm-3">
+                        <mat-card class = "cardCPendientes"><b>Boletos Totales:</b><br>{{boletosTotales}}</mat-card>
+                     </div>
+                     <div class="col-sm-3">
+                        <mat-card class = "cardRestantes"><b>Boletos Restantes:</b><br>{{boletosRestantes}}</mat-card>
+                     </div>
+                   </div><br>
+                  <div class="row">
                      <div class="col-2">
                         <div class="form-group">
                            <input [(ngModel)]="searchText" type="text" class="form-control"
@@ -17,7 +31,7 @@
                      <div class="col-2">
                         <div class="form-group">
                            <select [(ngModel)]="searchSurvey" class="form-control" (focusout)="getSurvey()">
-                              <option value=''>Todas las Encuestas</option>
+                              <option value=''>Encuestas</option>
                               <option value='true'>Contestadas</option>
                               <option value='false'>No Contestadas</option>
                            </select>
@@ -97,7 +111,7 @@
                            <th>Número de Control</th>
                            <th>Nombre del Alumno</th>
                            <th>Carrera</th>
-                           <th>Email</th>
+                           <th>Boletos</th>
                            <th>Estatus</th>
                            <th *ngIf="role === 'administration' || role === 'comunication'">Acciones</th>
                         </tr>
@@ -122,7 +136,27 @@
                               {{item.name}}</td>
                            <td (click)="observationsModal(item)" *ngIf="!item.degree">{{item.name}}</td>
                            <td (click)="observationsModal(item)">{{item.carreer}}</td>
-                           <td (click)="observationsModal(item)">{{item.email}}</td>
+                           <td>
+                              <div class="div-actions">
+                                 <tr>
+                                    <td>
+                                       <div class="div-img" ngbTooltip="Quitar" tooltipClass="my-custom-class">
+                                          <img src="../../assets/icons/menos.svg" class="action"
+                                             (click)="delTicket(item)">
+                                       </div>
+                                    </td>
+                                    <td>
+                                       {{item.numInvitados}}
+                                    </td>
+                                    <td>
+                                       <div class="div-img" ngbTooltip="Agregar" tooltipClass="my-custom-class">
+                                          <img src="../../assets/icons/mas.svg" class="action"
+                                             (click)="addTicket(item)">
+                                       </div>
+                                    </td>
+                                 </tr>
+                              </div>
+                           </td>
                            <td class="{{item.status}}">{{item.status}}</td>
                            <td *ngIf="role === 'administration' || role === 'comunication'">
                               <div class="div-actions" id="{{item.status}}">
@@ -434,19 +468,19 @@
          <div style="overflow-x:auto; padding-top: 20px;">
             <div class="row">
                <div class="col-sm-4">
-                  <mat-card  style="background: rgb(17,32,67); color: white;"><b>Total Egresados:</b> {{totalEgresados}}</mat-card>
+                  <mat-card class = "cardEgresados"><b>Total Egresados:</b><br>{{totalEgresados}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card style="background: orange; color: white;"><b>Certificados Pendientes:</b> {{certificadosPendientes}}</mat-card>
+                  <mat-card class = "cardCPendientes"><b>Certificados Pendientes:</b><br>{{certificadosPendientes}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card  style="background: rgb(71, 178, 218); color: white;"><b>Certificados Impresos:</b> {{certificadosImpresos}}</mat-card>
+                  <mat-card class = "cardCImpresos"><b>Certificados Impresos:</b><br>{{certificadosImpresos}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card  style="background: green; color: white;"><b>Certificados Listos:</b> {{certificadosListos}}</mat-card>
+                  <mat-card class = "cardCListos"><b>Certificados Listos:</b><br>{{certificadosListos}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card><b>Certificados Entregados:</b> {{certificadosEntregados}}</mat-card>
+                  <mat-card style="text-align: center;"><b>Certificados Entregados:</b><br>{{certificadosEntregados}}</mat-card>
                </div>
              </div><br>
             <div class="row">
@@ -479,7 +513,7 @@
                <div class="col-3">
                   <div class="form-group">
                      <select [(ngModel)]="searchStatusDocumentation" class="form-control">
-                        <option value=''>Estatus</option>
+                        <option value=''>Todos los estatus</option>
                         <option value='Fotos y Recibo'>Fotos y Recibo</option>
                         <option value='Impreso'>Impreso</option>
                         <option value='Listo'>Listo</option>

@@ -8,7 +8,7 @@ import { ExporterService } from 'src/services/graduation/exporter.service';
 import Swal from 'sweetalert2';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import TableToExcel from '@linways/table-to-excel';
-
+import * as firebase from 'firebase/app';
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -47,6 +47,12 @@ export class ListGraduatesPageComponent implements OnInit {
   public certificadosImpresos;
   public certificadosListos;
   public certificadosEntregados;
+
+  public totalVerificados;
+  public boletosTotales;
+  public boletosRestantes;
+  public boletosRegistrados;
+  public boletosXAlumno;
 
 
   // Imagenes para Reportes
@@ -117,6 +123,8 @@ export class ListGraduatesPageComponent implements OnInit {
         sub.unsubscribe(); 
         this.status = ev.payload.get('estatus'); 
         this.dateGraduation = ev.payload.get('date');
+        this.boletosTotales = ev.payload.get('totalTickets');
+        this.boletosXAlumno = ev.payload.get('studentTickets');
      }
     );
 
@@ -135,7 +143,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
             this.studentOut = this.studentsBestAverage.filter((student: any) =>
               student.data.estatus === 'Registrado' || student.data.estatus === 'Pagado' || student.data.estatus === 'Verificado');
-            console.log(this.studentOut);
+            //console.log(this.studentOut);
           },
           err => console.log(err)
         );
@@ -219,9 +227,11 @@ export class ListGraduatesPageComponent implements OnInit {
           average: alumno.payload.doc.get('promedio') ? alumno.payload.doc.get('promedio') : 0,
           documentationStatus: alumno.payload.doc.get('documentationStatus') ? alumno.payload.doc.get('documentationStatus') : ' ',
           specialty: alumno.payload.doc.get('especialidad') ? alumno.payload.doc.get('especialidad') : '<<Especialidad>>',
+          numInvitados: alumno.payload.doc.get('numInvitados') ? alumno.payload.doc.get('numInvitados') : 0,
+          invitados: alumno.payload.doc.get('invitados') ? alumno.payload.doc.get('invitados') : [{}],
         };
       });
-
+      this.getTicketsRegistered();
       // Ordenar Alumnos por Apellidos
       this.alumnos.sort(function (a, b) {
         return a.nameLastName.localeCompare(b.nameLastName);
@@ -232,14 +242,24 @@ export class ListGraduatesPageComponent implements OnInit {
       this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, '');
       this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation,'');
       this.alumnosReportDocumentation = this.alumnos;
-      
+      this.eventFilterReport();
       // Contar total de alumnos
       this.totalEgresados = this.alumnos.length;
       this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
       this.certificadosListos = this.filterCountItemsStatus('Listo').length;
       this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
       this.certificadosPendientes = [this.totalEgresados-(this.certificadosImpresos+this.certificadosEntregados+this.certificadosListos)];
+
+      this.totalVerificados = this.filterCountItemsVerified().length;
+      this.boletosRestantes = (this.boletosTotales-this.boletosRegistrados);
     });
+  }
+
+  getTicketsRegistered(){
+    this.boletosRegistrados = 0;
+    for(var i = 0 ; i < this.alumnos.length; i++){
+      this.boletosRegistrados = (this.boletosRegistrados+this.alumnos[i].numInvitados);
+    }
   }
 
   // Cambias estatus a Pagado
@@ -333,7 +353,13 @@ export class ListGraduatesPageComponent implements OnInit {
     this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
       this.eventFilterReport();
       this.notificationsServices.showNotification(0, 'Verificación registrada para:', item.nc);
-      this.sendSurveyGraduate(item);
+      const invitados = [];
+      for(var i = 0; i < this.boletosXAlumno; i++){
+        invitados.push({['invitado'+(i+1)]:'verificado'})
+      }
+      this.firestoreService.updateFieldGraduate(item.id, { numInvitados:this.boletosXAlumno,invitados},this.collection);
+
+      //this.sendSurveyGraduate(item);
     }, (error) => {
       console.log(error);
     });
@@ -576,7 +602,6 @@ export class ListGraduatesPageComponent implements OnInit {
     ).length;
 
     const cantidadCarrera = this.filterItemsCarreer(this.searchCarreer).length;
-    console.log(this.alumnosReport);
 
     if (cantidadStatus === 0) {
       if (this.searchSRC || this.searchSPC || this.searchSVC || this.searchSAC || this.searchSMC) {
@@ -632,6 +657,12 @@ export class ListGraduatesPageComponent implements OnInit {
   filterCountItemsStatus(status) {
     return this.alumnos.filter(function (alumno) {
       return alumno.documentationStatus.toLowerCase().indexOf(status.toLowerCase()) > -1;
+    });
+  }
+
+  filterCountItemsVerified() {
+    return this.alumnos.filter(function (alumno) {
+      return alumno.status.toLowerCase().indexOf(('Verificado').toLocaleLowerCase()) > -1 || alumno.status.toLowerCase().indexOf(('Asistió').toLocaleLowerCase()) > -1 || alumno.status.toLowerCase().indexOf(('Mencionado').toLocaleLowerCase()) > -1;
     });
   }
 
@@ -1434,7 +1465,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   changeStatusDocumentation(student,status){
-    console.log(student);
+    //console.log(student);
     switch (status){
       case "Fotos y Recibo":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
@@ -1588,8 +1619,28 @@ export class ListGraduatesPageComponent implements OnInit {
       this.loading = false;
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
-      this.notificationsServices.showNotification(1, 'Atención', 'No hay alumnos de esta carrera.');
+      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
     }
   }
+
+  addTicket(item){
+    this.firestoreService.updateFieldGraduate(item.id, { numInvitados:(item.numInvitados+1),invitados: firebase.firestore.FieldValue.arrayUnion({['invitado'+(item.numInvitados+1)]:'verificado'})},this.collection);
+  }
+
+  delTicket(item){
+    if(item.numInvitados == 0){
+      this.notificationsServices.showNotification(2, 'Atención', 'El número de boletos no debe ser menor a 0.');
+    } else {
+      const invitados = item.invitados;
+      invitados.pop();
+      this.firestoreService.updateFieldGraduate(item.id, { numInvitados:(item.numInvitados-1),invitados},this.collection);
+    }
+  }
+
+  assignTicketsStudent(){
+    console.log(this.boletosXAlumno);
+  }
+
+
 }
 
