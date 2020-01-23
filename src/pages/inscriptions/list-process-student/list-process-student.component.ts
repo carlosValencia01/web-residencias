@@ -128,7 +128,8 @@ export class ListProcessStudentComponent implements OnInit {
 
       this.listStudentsProcess = this.students;
       this.listCovers = this.listStudentsProcess;
-      this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);      
+      this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);   
+      this.eventFilterStatus();          
     });
   }
 
@@ -243,7 +244,6 @@ export class ListProcessStudentComponent implements OnInit {
     let sub = linkModal.afterClosed().subscribe(
       information=>{         
         this.getStudents();
-        this.eventFilterStatus();  
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -264,7 +264,6 @@ export class ListProcessStudentComponent implements OnInit {
     let sub = linkModal.afterClosed().subscribe(
       expedient=>{
         this.getStudents();  
-        this.eventFilterStatus();       
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -762,7 +761,6 @@ export class ListProcessStudentComponent implements OnInit {
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
         }); 
         this.getStudents();
-        this.eventFilterStatus();  
         return;
       } 
       if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
@@ -770,7 +768,6 @@ export class ListProcessStudentComponent implements OnInit {
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
         });   
         this.getStudents();
-        this.eventFilterStatus();
         return;
       }
 
@@ -794,7 +791,6 @@ export class ListProcessStudentComponent implements OnInit {
           this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},student._id).subscribe(res => {
           });
           this.getStudents();
-          this.eventFilterStatus();   
           return;
         }
         // No cambiar estatus
