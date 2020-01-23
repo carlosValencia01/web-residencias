@@ -1,4 +1,5 @@
 <div class="row">
+
   <div class="col-10">
     <h1 mat-dialog-title>Liberación</h1>
   </div>
@@ -8,11 +9,28 @@
     </button>
   </div>
 </div>
+<div class="row">
+  <div class="col-6 text-left">
+    <p><strong>Presidente:</strong> {{jury[0].name}}</p>
+    <p><strong>Vocal:</strong> {{jury[2].name}}</p>
+  </div>
+  <div class="col-6 text-left">
+    <p><strong>Secretario:</strong> {{jury[1].name}}</p>
+    <p><strong>Suplente:</strong> {{jury[3].name}}</p>
+  </div>
+</div>
 <div mat-dialog-content>
   <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'60vh'" [useBrowserLocale]="true">
   </ngx-extended-pdf-viewer>
 </div>
-<div mat-dialog-actions align="end">
+<div class="row mt-3 text-right">
+  <div class="col-8"></div>
+  <div class="col-4">
+    <button class="btn btn-outline-success mx-3" (click)="onSave()">Aceptar</button>
+    <button class="btn btn-outline-danger" [mat-dialog-close]="false" cdkFocusInitial>Rechazar</button>
+  </div>
+</div>
+<!-- <div mat-dialog-actions align="end">
   <button mat-stroked-button (click)="onSave()">Aceptar</button>
   <button mat-stroked-button [mat-dialog-close]="false" cdkFocusInitial>Rechazar</button>
-</div>
+</div> -->

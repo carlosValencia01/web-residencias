@@ -30,6 +30,7 @@ export class UploadFilesComponent implements OnInit {
   public UploadPago: IDocument;
   public UploadRevalidacion: IDocument;
   public UploadPhotos: IDocument;
+  public UploadActaExamen: IDocument;
   public isEditable: boolean;
   constructor(
     private requestService: RequestService,
@@ -48,10 +49,12 @@ export class UploadFilesComponent implements OnInit {
     this.UploadPago = { type: eFILES.PAGO, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadRevalidacion = { type: eFILES.CERTIFICADO_R, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadPhotos = { type: eFILES.PHOTOS, status: eStatusRequest.NONE, file: null, isBase64: false };
+    this.UploadActaExamen = { type: eFILES.ACTA_EXAMEN, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.requestService.requestUpdate.subscribe(
       (result) => {
         this.Request = result.Request;
         this.isEditable = result.IsEdit;
+        console.log("REQUEST UPLOAD", this.Request);
         this.onLoad(this.Request.documents);
       }
     );
@@ -93,6 +96,9 @@ export class UploadFilesComponent implements OnInit {
 
       const isPhotos = this.getDocument(eFILES.PHOTOS);
       this.UploadPhotos = typeof (isPhotos) === 'undefined' ? this.UploadPhotos : isPhotos;
+
+      const isActaExamen = this.getDocument(eFILES.ACTA_EXAMEN);
+      this.UploadActaExamen = typeof (isActaExamen) === 'undefined' ? this.UploadActaExamen : isActaExamen;
     }
   }
 
@@ -151,6 +157,11 @@ export class UploadFilesComponent implements OnInit {
       case eFILES.CERTIFICADO_R: {
         pdf = this.UploadRevalidacion.file;
         isBase64 = this.UploadRevalidacion.isBase64;
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        pdf = this.UploadActaExamen.file;
+        isBase64 = this.UploadActaExamen.isBase64;
         break;
       }
     }
@@ -242,7 +253,7 @@ export class UploadFilesComponent implements OnInit {
     let document: any;
 
     const frmData = new FormData();
-    frmData.append('folderId', this._CookiesService.getFolder());
+    frmData.append('folderId', this.isEditable ? this.Request.folder : this._CookiesService.getFolder());
     frmData.append('Document', type);
     frmData.append('IsEdit', this.isEditable ? "true" : "false");
     switch (type) {
@@ -289,6 +300,11 @@ export class UploadFilesComponent implements OnInit {
       case eFILES.CERTIFICADO_R: {
         frmData.append('file', this.UploadRevalidacion.file);
         document = this.UploadRevalidacion;
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        frmData.append('file', this.UploadActaExamen.file);
+        document = this.UploadActaExamen;
         break;
       }
     }
@@ -354,6 +370,11 @@ export class UploadFilesComponent implements OnInit {
       case eFILES.CERTIFICADO_R: {
         this.UploadRevalidacion.file = null;
         this.UploadRevalidacion.isBase64 = this.isEditable ? true : this.UploadRevalidacion.isBase64;
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        this.UploadActaExamen.file = null;
+        this.UploadActaExamen.isBase64 = this.isEditable ? true : this.UploadActaExamen.isBase64;
         break;
       }
     }
@@ -429,6 +450,11 @@ export class UploadFilesComponent implements OnInit {
           case eFILES.CERTIFICADO_R: {
             this.UploadRevalidacion.file = fileUpload.file;
             this.UploadRevalidacion.isBase64 = false;
+            break;
+          }
+          case eFILES.ACTA_EXAMEN: {
+            this.UploadActaExamen.file = fileUpload.file;
+            this.UploadActaExamen.isBase64 = false;
             break;
           }
         }

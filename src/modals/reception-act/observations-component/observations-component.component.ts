@@ -1,7 +1,7 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { iRequest } from 'src/entities/reception-act/request.model';
 import { iObservation } from 'src/entities/reception-act/observations.model';
-import { MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 
 @Component({
   selector: 'app-observations-component',
@@ -14,6 +14,8 @@ export class ObservationsComponentComponent implements OnInit {
   private request: iRequest;
   private observations: iObservation[] = [];
   public dataSource: MatTableDataSource<IObservationTable>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   public displayedColumns: string[];
 
   constructor(
@@ -29,11 +31,14 @@ export class ObservationsComponentComponent implements OnInit {
       e.achievementDateString = date.toLocaleDateString();
     });
 
-    this.dataSource = new MatTableDataSource(this.observations);
-  }
+
+  } 
 
   ngOnInit() {
     this.displayedColumns = ['phase', 'status', 'observation', 'achievementDateString', 'doer'];
+    this.dataSource = new MatTableDataSource(this.observations);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;    
   }
 
   convertStatus(status: string): string {

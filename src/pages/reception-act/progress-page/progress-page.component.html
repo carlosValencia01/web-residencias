@@ -9,7 +9,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body col-12">
-                <div class="row m-1">
+                <div *ngIf="role!=='jefe académico' && role!=='secretaria académica'" class="row m-1">
                     <div class="col-6">
                         <div class="card" style="border-color: #0cc9aa; background-color: rgba(13, 219, 185, 0.2);">
                             <div class="card-body">
@@ -226,7 +226,104 @@
                         </div>
                     </div>
                 </div>
-
+                <div *ngIf="role==='jefe académico' || role==='secretaria académica'" class="row m-1">
+                    <div class="col-12">
+                        <div class="card" style="border-color: #0cc9aa; background-color: rgba(13, 219, 185, 0.2);">
+                            <div class="card-body">
+                                <!-- <h6>Solicitudes</h6> -->
+                                <div class="row">
+                                    <div class="col-2" data-toggle="tooltip" title="Todas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'ALL'})">
+                                            <img alt="File" src="../../assets/imgs/careers/all.png"
+                                                style="width: 20px; height: 20px">
+                                            <small> TODAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Enviadas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'SENT'})">
+                                            <img alt="File" src="../../assets/imgs/request/send.png">
+                                            <small> 2 ENVIADAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Verificadas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'VERIFIED'})">
+                                            <img alt="File" src="../../assets/imgs/request/verified.png">
+                                            <small> 3 VERIFICADAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Registradas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'REGISTERED'})">
+                                            <img alt="File" src="../../assets/imgs/request/registered.png">
+                                            <small> 4 REGISTRADAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Liberadas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'RELEASED'})">
+                                            <img alt="File" src="../../assets/imgs/request/released.png">
+                                            <small> 5 LIBERADAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Entregadas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'DELIVERED'})">
+                                            <img alt="File" src="../../assets/imgs/request/delivered.png">
+                                            <small> 6 ENTREGADAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2" data-toggle="tooltip" title="Validadas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'VALIDATED'})">
+                                            <img alt="File" src="../../assets/imgs/request/validated.png">
+                                            <small> 7 VALIDADAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Asignadas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'ASSIGNED'})">
+                                            <img alt="File" src="../../assets/imgs/request/assigned.png">
+                                            <small> 8 ASIGNADAS</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Titulado">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'REALIZED'})">
+                                            <img alt="File" src="../../assets/imgs/request/realized.png">
+                                            <small> 9 TITULADO</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Acta Generada">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'GENERATED'})">
+                                            <img alt="File" src="../../assets/imgs/request/generated.png">
+                                            <small> 10 ACTA GENERADA</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Asignadas">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'CEDULA'})">
+                                            <img alt="File" src="../../assets/imgs/request/assigned.png">
+                                            <small>11 ENTREGA DE CÉDULA</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                    <div class="col-2" data-toggle="tooltip" title="Titulado">
+                                        <mat-slide-toggle [ngModel]="_isAll"
+                                            (change)="changedPhase({event:$event, value:'TITLED'})">
+                                            <img alt="File" src="../../assets/imgs/request/realized.png">
+                                            <small> 12 ENTREGA DE TÍTULO</small>
+                                        </mat-slide-toggle>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row mx-1">
                     <div class="col-6">
                         <div class="input-group input-group-sm mb-3">
@@ -490,7 +587,7 @@
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
-                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                        <mat-paginator [pageSizeOptions]="[5, 10, 15,20]"></mat-paginator>
                     </div>
                 </div>
             </div>

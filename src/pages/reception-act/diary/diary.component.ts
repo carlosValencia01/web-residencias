@@ -185,7 +185,7 @@ export class DiaryComponent implements OnInit {
           });
         }
       }
-      console.log("event", this.events);
+      // console.log("event", this.events);
     });
     this.refresh.next();
   }
