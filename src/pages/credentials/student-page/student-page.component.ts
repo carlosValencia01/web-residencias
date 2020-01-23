@@ -13,6 +13,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { CareerProvider } from 'src/providers/shared/career.prov';
 
 @Component({
   selector: 'app-student-page',
@@ -38,9 +39,13 @@ export class StudentPageComponent implements OnInit {
   currentStudent = {
     nss: '',
     fullName: '',
-    career: '',
+    careerId: '',
     _id: '',
-    controlNumber: ''
+    career:'',
+    controlNumber: '',
+    firstName:'',
+    fatherLastName:'',
+    motherLastName:''
   };
   formStudent: FormGroup;
   errorForm = false;
@@ -62,6 +67,7 @@ export class StudentPageComponent implements OnInit {
 
   imageDoc;
 
+  careers=[];
   constructor(
     private studentProv: StudentProvider,
     private imageToBase64Serv: ImageToBase64Service,
@@ -73,7 +79,8 @@ export class StudentPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     private routeActive: ActivatedRoute,
-    private inscriptionProv: InscriptionsProvider
+    private inscriptionProv: InscriptionsProvider,
+    private careerProv: CareerProvider
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
@@ -96,20 +103,33 @@ export class StudentPageComponent implements OnInit {
     this.currentStudent = {
       nss: '',
       fullName: '',
-      career: 'default',
+      career:'',
+      careerId: '',
       _id: '1',
-      controlNumber: ''
+      controlNumber: '',
+      firstName:'',
+      fatherLastName:'',
+      motherLastName:''
+      
     };
   }
 
   ngOnInit() {
     this.initializeForm();
+    this.careerProv.getAllCareers().subscribe(
+      (careers)=>{
+        this.careers =careers.careers;
+      }
+    )
   }
 
   // Formulario *************************************************************************************//#endregion
   initializeForm() {
     this.formStudent = this.formBuilder.group({
-      'fullNameInput': ['', [Validators.required]],
+      // 'fullNameInput': ['', [Validators.required]],
+      'fatherFirstNameInput': ['', [Validators.required]],
+      'motherFirstNameInput': ['', [Validators.required]],
+      'firstNameInput': ['', [Validators.required]],
       'numberControlInput': ['', [Validators.required]],
       'nssInput': ['', [Validators.required]]
     });
@@ -142,8 +162,8 @@ export class StudentPageComponent implements OnInit {
 
     const data = {
       controlNumber: this.formStudent.get('numberControlInput').value,
-      fullName: this.formStudent.get('fullNameInput').value.toUpperCase(),
-      career: this.currentStudent.career,
+      fullName: this.formStudent.get('firstNameInput').value.toUpperCase()+' ' +this.formStudent.get('fatherFirstNameInput').value.toUpperCase() + ' '+ this.formStudent.get('motherFirstNameInput').value.toUpperCase(),
+      careerId: this.currentStudent.careerId,
       nss: this.formStudent.get('nssInput').value
     };
 
@@ -173,7 +193,10 @@ export class StudentPageComponent implements OnInit {
 
     // this.getImageFromService(student._id);
 
-    this.formStudent.get('fullNameInput').setValue(student.fullName);
+    // this.formStudent.get('fullNameInput').setValue(student.fullName);
+    this.formStudent.get('fatherFirstNameInput').setValue(student.fatherLastName);
+    this.formStudent.get('motherFirstNameInput').setValue(student.motherLastName);
+    this.formStudent.get('firstNameInput').setValue(student.firstName);
     this.formStudent.get('numberControlInput').setValue(student.controlNumber);
     this.formStudent.get('nssInput').setValue(student.nss);
 
@@ -353,7 +376,7 @@ export class StudentPageComponent implements OnInit {
       });
       invalid = true;
     }
-    if (this.currentStudent.career === 'default') {
+    if (this.currentStudent.careerId === 'default') {
       this.errorInputsTag.errorStudentCareer = true;
       invalid = true;
     }
@@ -364,11 +387,13 @@ export class StudentPageComponent implements OnInit {
   updateStudentData() {
     this.isNewStudent = false;
     if (!this.formValidation()) {
-      this.currentStudent.fullName = this.formStudent.get('fullNameInput').value.toUpperCase();
+      this.currentStudent.fullName = this.formStudent.get('firstNameInput').value.toUpperCase()+' ' +this.formStudent.get('fatherFirstNameInput').value.toUpperCase() + ' '+ this.formStudent.get('motherFirstNameInput').value.toUpperCase();
       this.currentStudent.controlNumber = this.formStudent.get('numberControlInput').value;
-      this.currentStudent.career = this.currentStudent.career;
+      this.currentStudent.careerId = this.currentStudent.careerId;
       this.currentStudent.nss = this.formStudent.get('nssInput').value;
-
+      this.currentStudent.firstName = this.formStudent.get('firstNameInput').value.toUpperCase();
+      this.currentStudent.fatherLastName = this.formStudent.get('fatherFirstNameInput').value.toUpperCase();
+      this.currentStudent.motherLastName = this.formStudent.get('motherFirstNameInput').value.toUpperCase();
       this.loading = true;
       this.studentProv.updateStudent(this.currentStudent._id, this.currentStudent).subscribe(res => {
         // if (this.imgForSend) {
@@ -482,6 +507,7 @@ export class StudentPageComponent implements OnInit {
                     };
                     this.studentProv.uploadDocumentDrive(this.currentStudent._id, documentInfo).subscribe(
                       updated => {
+                        this.haveImage = true;                        
                         this.notificationServ.showNotification(eNotificationType.SUCCESS,
                           'Exito', 'Foto cargada correctamente.');
         
@@ -570,7 +596,7 @@ export class StudentPageComponent implements OnInit {
           
           if (this.imageDoc) {
             // console.log('2');
-
+            this.haveImage = true;
             await this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive, this.imageDoc.filename).toPromise().then(
               succss => {
                 this.showImg = true;
