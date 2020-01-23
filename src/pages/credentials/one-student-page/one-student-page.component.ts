@@ -110,10 +110,11 @@ export class OneStudentPageComponent implements OnInit {
         this.showImg = false;
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0]));
         this.imgForSend = false;
-        this.studentProv.verifyStatus(this.currentStudent.controlNumber).subscribe(res => {
-          // console.log(res);
-          this.active =  res.status === 1 ? true : false;
-        }, err=>{this.active=false;});
+        this.active = true;
+        // this.studentProv.verifyStatus(this.currentStudent.controlNumber).subscribe(res => {
+        //   // console.log(res);
+        //   this.active =  res.status === 1 ? true : false;
+        // }, err=>{this.active=false;});
 
         // this.getImageFromService(res.student[0]._id);
       }, error => {
