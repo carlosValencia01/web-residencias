@@ -55,7 +55,9 @@ export class RequestComponentComponent implements OnInit {
   public activePeriod;
   public foldersByPeriod = [];
   private adviserInfo: { name: string, title: string, cedula: string };
+  public isSentVerificationCode: Boolean;
   // @ViewChild('dropZone') drop: any;
+
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -182,6 +184,7 @@ export class RequestComponentComponent implements OnInit {
     });
     this.disabledControl();
     this.isToggle = this.request.honorificMention;
+    this.isSentVerificationCode = this._request.sentVerificationCode;
   }
 
   Edit(): void {
@@ -298,32 +301,55 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('titulationOption', this.frmRequest.get('titulationOption').value);
     switch (this.operationMode) {
       case eOperation.NEW: {
-        // this.frmData.append('department', this.deptoInfo.name);
-        // this.frmData.append('boss', this.deptoInfo.boss);
         this.studentProvider.request(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(_ => {
-            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Guardada Correctamente');
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud guardada correctamente');
             this.btnSubmitRequest.emit(true);
           }, error => {
-            console.log("error2", error);
-            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+            console.log('error2', error);
+            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar integrantes');
             this.btnSubmitRequest.emit(false);
           });
+          if (data.code && data.code !== 200) {
+            this.notificationsServ
+              .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+          } else {
+            this.notificationsServ
+              .showNotification(eNotificationType.INFORMATION,
+                'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
+          }
         }, error => {
-          console.log("error", error);
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+          console.log('error', error);
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar solicitud');
           this.btnSubmitRequest.emit(false);
         });
         break;
       }
       case eOperation.EDIT: {
         const value = this.request.documents.find(x => x.nameFile === eFILES.PROYECTO);
+        let isEmailChanged = false;
         this.frmData.append('fileId', value.driveId);
+        if (this._request.email !== this.frmData.get('email')) {
+          this.frmData.append('verificationCode', '000000');
+          this.frmData.append('verificationStatus', 'false');
+          this.frmData.append('sentVerificationCode', 'false');
+          isEmailChanged = true;
+        }
         this.studentProvider.updateRequest(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Editada Correctamente');
             this.isEdit = false;
             this.viewObservation = false;
+            if (isEmailChanged) {
+              if (data.code && data.code !== 200) {
+                this.notificationsServ
+                  .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+              } else {
+                this.notificationsServ
+                  .showNotification(eNotificationType.INFORMATION,
+                    'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
+              }
+            }
             this.getRequest();
             this.btnSubmitRequest.emit(true);
           }, error => {
@@ -549,6 +575,20 @@ export class RequestComponentComponent implements OnInit {
     }
     this.disabledControl();
     this._resetValues(this.request);
+  }
+
+  public sendVerificationCode() {
+    this.requestProvider.sendVerificationCode(this._request._id)
+      .subscribe(_ => {
+        this.notificationsServ
+          .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Correo envíado con éxito');
+          this.isSentVerificationCode = true;
+          this._request.sentVerificationCode = true;
+      }, err => {
+        const message = JSON.parse(err._body).error;
+        this.notificationsServ
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
+      });
   }
 
   private _resetValues(request: iRequest) {

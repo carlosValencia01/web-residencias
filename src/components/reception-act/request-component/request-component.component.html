@@ -180,8 +180,10 @@
         <button type="reset" class="btn btn-outline-danger">Reiniciar</button>
       </div>
       <div *ngSwitchCase="5">
-        <button type="button" (click)="verifyEmail()" class="btn btn-outline-primary"
+        <button *ngIf="isSentVerificationCode" type="button" (click)="verifyEmail()" class="btn btn-outline-primary"
           style="margin-right: 0.3em">Verificar correo</button>
+        <button *ngIf="!isSentVerificationCode" type="button" (click)="sendVerificationCode()" class="btn btn-outline-secondary"
+          style="margin-right: 0.3em">Envíar código</button>
         <button type="button" class="btn btn-outline-success" style="margin-right: 0.3em"
           (click)="Edit()">Editar</button>
       </div>

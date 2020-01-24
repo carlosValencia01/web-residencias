@@ -69,4 +69,9 @@ export class RequestProvider {
         return this.api.get(`request/verify/${requestId}/${code}`)
             .pipe(map(res => res.json()));
     }
+
+    sendVerificationCode(_requestId) {
+        return this.api.get(`request/sendCode/${_requestId}`)
+            .pipe(map(res => res.json()));
+    }
 }
