@@ -159,21 +159,19 @@ export class uRequest {
 
         // Saludos
         doc.setFont(this.FONT, 'Bold');
-        // doc.text(doc.splitTextToSize(jefe, 150), this.MARGIN.LEFT, 62, { align: 'left' });
-        // doc.text(doc.splitTextToSize('Jefe(a) de la División de Estudios Profesionales', 150), this.MARGIN.LEFT, 67, { align: 'left' });
-        doc.text("LIC. LAURA ELENA CASILLAS CASTAÑEDA", this.MARGIN.LEFT, 62);
+        doc.text('LIC. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 62);
         doc.text('Jefe(a) de la División de Estudios Profesionales', this.MARGIN.LEFT, 67, { align: 'left' });
         doc.text('P R E S E N T E', this.MARGIN.LEFT, 72, { align: 'left' });
 
         doc.setFont(this.FONT, 'Normal');
-        // doc.text('Departamento de Sistemas Computacionales', this.MARGIN.LEFT, 83, { align: 'left' });
         doc.text(this._request.department.name, this.MARGIN.LEFT, 83, { align: 'left' });
-        doc.text(`Lugar: Tepic, Nayarit y Fecha: ${moment(registerHistory ? registerHistory.achievementDate : new Date()).format('LL')}`,
-            this.MARGIN.LEFT, 88, { align: 'left' });
+        doc.text(`Lugar: Tepic, Nayarit y Fecha: ${
+                moment(registerHistory ? (registerHistory.achievementDate || new Date()) : new Date()).format('LL')
+            }`, this.MARGIN.LEFT, 88, { align: 'left' });
 
         this.addTable(doc, [
             ['Nombre del proyecto: ', this._request.projectName],
-            ['Nombre(s) del (de los) asesores(es): ', this._request.adviser],
+            ['Nombre(s) del (de los) asesores(es): ', this._request.adviser.name],
             ['Número de estudiantes ', this._request.noIntegrants]
         ], 93);
 
@@ -181,7 +179,7 @@ export class uRequest {
             .filter(x => x.phase === 'Enviado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 50);
         const integrantsLines = 10 * (this._request.noIntegrants - 1);
-        const observationsLines = 5 * Math.ceil(aceptHistory.observation.length / 60);
+        const observationsLines = 5 * Math.ceil((aceptHistory ? (aceptHistory.observation || '') : '').length / 60);
 
         doc.text('Datos del (de los) estudiante(s):', this.MARGIN.LEFT, 125 + nameProjectLines, { align: 'left' });
         const students: Array<Object> = [];
@@ -197,7 +195,7 @@ export class uRequest {
         doc.rect(this.MARGIN.LEFT, 160 + integrantsLines + nameProjectLines, this.WIDTH
             - (this.MARGIN.RIGHT + this.MARGIN.LEFT - 6), 7 + observationsLines);
         doc.text('Observaciones: ', this.MARGIN.LEFT + 3, 164 + integrantsLines + nameProjectLines, { align: 'left' });
-        doc.text(doc.splitTextToSize(aceptHistory.observation, 150), this.MARGIN.LEFT + 3,
+        doc.text(doc.splitTextToSize(aceptHistory ? (aceptHistory.observation || '') : '', 150), this.MARGIN.LEFT + 3,
             170 + integrantsLines + nameProjectLines, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
