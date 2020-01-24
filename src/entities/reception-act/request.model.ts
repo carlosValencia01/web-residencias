@@ -56,4 +56,5 @@ export interface iRequest {
     titulationOption?: string;
     verificationStatus?: boolean;
     sentVerificationCode?: boolean;
+    grade?: string;
 }

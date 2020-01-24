@@ -472,7 +472,7 @@
                                             </div>
                                             <div *ngSwitchCase="'Registrado'">
                                                 <button mat-menu-item
-                                                    *ngIf="role==='secretaria académica' || role==='administrador'"
+                                                    *ngIf="role==='secretaria académica' || role==='jefe académico' || role==='administrador'"
                                                     (click)="releasedRequest(row._id)">
                                                     <mat-icon>lock_open</mat-icon>
                                                     Liberacion

@@ -120,6 +120,7 @@ export class uRequest {
             ['Carrera: ', this._request.student.career],
             ['No. de control: ', this._request.student.controlNumber],
             ['Nombre del proyecto: ', this._request.projectName],
+            ['Opción titulación:', this._request.titulationOption],
             ['Producto: ', this._request.product]
         ], 130);
         const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 60);
@@ -295,8 +296,15 @@ export class uRequest {
         return doc;
     }
 
-    public professionalEthicsOath(): jsPDF {
+    public professionalEthicsAndCode(): jsPDF {
         const doc = this.newDocumentTec(false, false);
+        this.professionalEthicsOath(doc);
+        doc.addPage();
+        this.codeProfessionalEthics(doc);
+        return doc;
+    }
+
+    public professionalEthicsOath(doc: jsPDF) {
         const initialHeight = 35;
         const lineHeight = 7;
         doc.setTextColor(0, 0, 0);
@@ -305,7 +313,7 @@ export class uRequest {
         this._drawUnderlineText(doc, 'JURAMENTO DE ÉTICA PROFESIONAL', initialHeight, 'center');
         doc.setFontSize(14);
         this._drawUnderlineText(doc, `YO: ${this._request.student.fullName}`, initialHeight + (lineHeight * 3), 'center');
-        this._drawUnderlineText(doc, `COMO: ${this._request.student.career}`, initialHeight + (lineHeight * 5), 'center');
+        this._drawUnderlineText(doc, `COMO: ${this._request.grade}`, initialHeight + (lineHeight * 5), 'center');
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(17);
         // tslint:disable-next-line:max-line-length
@@ -314,12 +322,10 @@ export class uRequest {
             (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), 7);
         doc.setFontSize(14);
         this._drawCenterTextWithLineUp(doc, 'FIRMA', initialHeight + (lineHeight * 26.5));
-        doc.text(moment(new Date()).format('LL').toUpperCase(), this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 31));
-        return doc;
+        doc.text(moment(this._request.proposedDate).format('LL').toUpperCase(), this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 31));
     }
 
-    public codeProfessionalEthics(): jsPDF {
-        const doc = this.newDocumentTec(false, false);
+    public codeProfessionalEthics(doc: jsPDF) {
         const initialHeight = 30;
         const lineHeight = 7;
         const startLine = this.MARGIN.LEFT + 10;
@@ -330,12 +336,12 @@ export class uRequest {
             `II.- MANTENDRÁ EN TODO MOMENTO ANTE EL PÚBLICO LA DIGNIDAD DE LA PROFESIÓN EN GENERAL Y LA REPUTACIÓN DEL INSTITUTO.`,
             `III.- DEBE EVITAR Y DESALENTAR DECLARACIONES SENSACIONALISTAS, EXAGERADAS Y SIN GARANTÍA.`,
             // tslint:disable-next-line:max-line-length
-            `IV.- REHUSARÁ COMPROMETERSE, CUALQUIERAQUE SEA LA REMUNERACIÓN, EN TRABAJOS QUE CREAN NO SERÁN BENEFICIOSOS PARA SUS CLIENTES, A NO SER QUE ADVIERTAN PRIMERO A ESTOS SOBRE LA IMPROBABILIDAD DE ÉXITO DE LOS RESULTADOS.`,
+            `IV.- REHUSARÁ COMPROMETERSE, CUALQUIERA QUE SEA LA REMUNERACIÓN, EN TRABAJOS QUE CREAN NO SERÁN BENEFICIOSOS PARA SUS CLIENTES, A NO SER QUE ADVIERTAN PRIMERO A ESTOS SOBRE LA IMPROBABILIDAD DE ÉXITO DE LOS RESULTADOS.`,
             // tslint:disable-next-line:max-line-length
             `V.- MANTENDRÁ EL PRINCIPIO DE QUE LOS HONORARIOS IRRAZONABLEMENTE BAJOS POR LABORES PROFESIONALES, PROPENDEN A UN TRABAJO INFERIOR Y SIN GARANTÍA.`,
             `VI.- RECHAZARÁ LA PRESTACIÓN DE SU NOMBRE A EMPRESAS EN ENTREDICHO.`,
             // tslint:disable-next-line:max-line-length
-            `VII.- SERÁ CONSERVADOR EN TODOS SUS PRESUPUESTOS, INFORMES, TESTIMONIOS, ETC. PARTICULARMENTE EN LOS QUE SE RELACIONEN CON LA PROMOCION O IMPULSIÓN DE EMPRESAS.`,
+            `VII.- SERÁ CONSERVADOR EN TODOS SUS PRESUPUESTOS, INFORMES, TESTIMONIOS, ETC. PARTICULARMENTE EN LOS QUE SE RELACIONEN CON LA PROMOCIÓN O IMPULSIÓN DE EMPRESAS.`,
             `VIII.- NO ACEPTARÁ NINGÚN CARGO CONTRARIO A LA LEY O AL BIENESTAR PÚBLICO.`,
             // tslint:disable-next-line:max-line-length
             `IX.- CUANDO UN TITULO_DE_GRADO*, EMPRENDA TRABAJOS PARA OTROS, EN RELACIÓN CON LOS CUALES HAYA REALIZADO ASESORÍAS, MEJORAS O ACTIVIDADES EMPRESARIALES, SERÁ PREFERIBLE QUE CONSIGA UN ACUERDO QUE CONSIDERE DE SU PROPIEDAD.`,
@@ -346,7 +352,7 @@ export class uRequest {
             // tslint:disable-next-line:max-line-length
             `XII.- CUANDO UN TITULO_DE_GRADO* SEA CONSULTADO PARA DECIDIR SOBRE EL USO DE PROCEDIMIENTOS EN LOS QUE TENGAN ALGÚN INTERÉS FINANCIERO DEBERÁ ESTABLECERSE CLARAMENTE SU SITUACIÓN EN LA MATERIA, ANTES DE COMPROMETERSE.`,
             // tslint:disable-next-line:max-line-length
-            `XIII.- UN TITULO_DE_GRADO*, DEBE ESFORZARSE EN TODO MOMENTO PARA ACREDITAR TRABAJOS A QUIENES, TAN LEJOS COMO SU CONOCIMIENTO ALCANCE SEAN LOSO AUTORES REALES DE ELLOS.`,
+            `XIII.- UN TITULO_DE_GRADO*, DEBE ESFORZARSE EN TODO MOMENTO PARA ACREDITAR TRABAJOS A QUIENES, TAN LEJOS COMO SU CONOCIMIENTO ALCANCE SEAN LOS AUTORES REALES DE ELLOS.`,
             // tslint:disable-next-line:max-line-length
             `XIV.- NO ADMITIRÁ ANUNCIOS INDIGNOS, SENSACIONALES NI ENGAÑOS, ASÍ COMO EL USO DE NOMBRES O FOTOGRAFÍAS DE LOS INTEGRANTES DEL INSTITUTO COMO AYUDA DE TALES ANUNCIOS, Y LA UTILIZACIÓN DEL NOMBRE DE ÉSTE INSTITUTO EN RELACIÓN CON ELLOS NO SE TOLERARÁ.`
         ];
@@ -358,14 +364,14 @@ export class uRequest {
         doc.text('TECNOLÓGICO NACIONAL DE MÉXICO', this.WIDTH / 2, initialHeight + lineHeight, { align: 'center' });
         doc.setFontSize(16);
         this._drawUnderlineText(doc, 'CÓDIGO DE ÉTICA PROFESIONAL', initialHeight + (lineHeight * 4), 'center');
-        this._drawUnderlineText(doc, `${this._request.student.career}`, initialHeight + (lineHeight * 5), 'center');
+        this._drawUnderlineText(doc, `${this._request.grade}`, initialHeight + (lineHeight * 5), 'center');
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(12);
         doc.text('EL INSTITUTO CONFÍA EN QUE LAS REGLAS SIGUIENTES GUIARÁN LOS ACTOS DE SUS EGRESADOS:',
             startLine, initialHeight + (lineHeight * 8), { maxWidth: lineWidth }, null, 'justify');
         let totalLines = 9.5;
         rules.slice(0, 14).forEach((rule, index, array) => {
-            const ruleData = rule.replace('TITULO_DE_GRADO*', this._request.student.career);
+            const ruleData = rule.replace('TITULO_DE_GRADO*', this._request.grade);
             const linesRule = Math.ceil(ruleData.length / 60);
             totalLines += 1.5;
             let y = initialHeight + (lineHeight * totalLines);
@@ -377,7 +383,6 @@ export class uRequest {
             this.justityText(doc, ruleData, { x: startLine, y: y }, lineWidth, 7);
             totalLines += linesRule;
         });
-        return doc;
     }
 
     public projectReleaseNew(): jsPDF {
@@ -541,6 +546,7 @@ export class uRequest {
         doc.text('JEFA DEL DEPARTAMENTO DE SISTEMAS COMPUTACIONALES', this.MARGIN.LEFT, 230);
         return doc;
     }
+
     public testReport(): jsPDF {
         const doc = this.newDocumentTec();
         doc.setTextColor(0, 0, 0);
@@ -646,7 +652,7 @@ export class uRequest {
             }
             doc.text(tmpWord, tmpPositionX, positionY);
             tmpPositionX += doc.getTextWidth(tmpWord) + space;
-        })
+        });
         // doc.text(text, this.WIDTH - (this.MARGIN.RIGHT + tmpCount), positionY);
     }
     // Justifica un texto
@@ -709,9 +715,6 @@ export class uRequest {
         });
         return lSummation;
     }
-
-
-
 
     private _changePage(heightPage, startY, endY): boolean {
         return (startY >= heightPage || endY >= heightPage);
