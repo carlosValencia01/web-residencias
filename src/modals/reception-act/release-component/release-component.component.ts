@@ -40,7 +40,9 @@ export class ReleaseComponentComponent implements OnInit {
     this.information = data;
     this.isReject = typeof (this.information.observation) !== 'undefined' && this.information.observation.length > 0;
     this.userInformation = this.cookiesService.getData().user;
-    this.studentCareer = this.data.studentCareer;
+    console.log("Data", this.information);
+    this.studentCareer = this.information.request.career;
+    console.log("Data", this.studentCareer);
   }
 
   ngOnInit() {
@@ -78,15 +80,25 @@ export class ReleaseComponentComponent implements OnInit {
     }
   }
 
+  obtenerCarreras(): Array<string> {
+    let tmpArray: Array<string> = [];
+    if (typeof (this.cookiesService.getPosition()) !== 'undefined') {
+      this.cookiesService.getPosition().ascription.careers.forEach(e => {
+        tmpArray.push(e.fullName);
+      });
+    }
+    return tmpArray;
+  }
   selectEmployee(button): void {
     if (this.frmConsejo.disabled) {
       return;
     }
     this.frmConsejo.get(button).markAsUntouched();
     this.frmConsejo.get(button).setErrors(null);
+    console.log("USER INFORMA", this.userInformation);
     const ref = this.dialog.open(EmployeeAdviserComponent, {
       data: {
-        carrer: this.userInformation.career
+        carrer: this.studentCareer
       },
       disableClose: true,
       hasBackdrop: true,

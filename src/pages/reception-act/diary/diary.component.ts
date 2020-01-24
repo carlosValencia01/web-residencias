@@ -110,7 +110,7 @@ export class DiaryComponent implements OnInit {
               if (typeof (AppointmentCareer) !== 'undefined') {
                 // console.log("Carrera", AppointmentCareer._id[0], "Appointment", { id: -1, student: Student, proposedDate: onlyDate, proposedHour: j });
                 // AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--" });
-                AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '', duration: 60 });
+                AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '', duration: 60, option: '', product: '' });
               }
               // _id: string[], values: [{ id: number, student: string[], proposedDate: Date, proposedHour: number }]
               // Carrera.push(c.carrer);
@@ -224,7 +224,7 @@ export class DiaryComponent implements OnInit {
       width: '45em'
     });
 
-    dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string, duration: number } }) => {
+    dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string, duration: number, option: string, product: string } }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
       //Para no llamar a la bd
       // console.log("Rsponse", response);
@@ -268,7 +268,9 @@ export class DiaryComponent implements OnInit {
           proposedHour: number,
           jury: string[],
           place: string,
-          duration: number
+          duration: number,
+          option: string,
+          product: string
         }
       }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
@@ -302,7 +304,7 @@ export class DiaryComponent implements OnInit {
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '45em'
+      width: '50em'
     });
   }
   cancelledEvent($event): void {
@@ -618,4 +620,4 @@ export class DiaryComponent implements OnInit {
 }
 interface iAppointmentGroup { _id: string[], values: [iAppointment] }
 interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }
-interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, duration: number }
+interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, duration: number, option: string, product: string }

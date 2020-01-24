@@ -186,7 +186,7 @@ export class UploadFilesComponent implements OnInit {
       data: {
         source: source,
         isBase64: isBase64,
-        title: type
+        title: this.documentTitle(type)
       },
       disableClose: true,
       hasBackdrop: true,
@@ -195,6 +195,87 @@ export class UploadFilesComponent implements OnInit {
     });
   }
 
+  documentTitle(type: eFILES): string {
+    let name: string;
+    switch (type) {
+      case eFILES.PROYECTO: {
+        name = "PORTADA DE PROYECTO";
+        break;
+      }
+      case eFILES.SOLICITUD: {
+        name = "SOLICITUD DE PROYECTO";
+        break;
+      }
+      case eFILES.REGISTRO: {
+        name = "REGISTRO DE PROYECTO";
+        break;
+      }
+      case eFILES.RELEASED: {
+        name = "CONSTANCIA DE LIBERACION";
+        break;
+      }
+      case eFILES.INCONVENIENCE: {
+        name = "CONSTANCIA DE NO INCONVENIENCIA"
+        break;
+      }
+      case eFILES.ACTA_NACIMIENTO: {
+        name = "ACTA DE NACIMIENTO";
+        break;
+      }
+      case eFILES.CURP: {
+        name = "CURPO";
+        break;
+      }
+      case eFILES.CERTIFICADO_B: {
+        name = "CERTIFICADO DE BACHILLERATO";
+        break;
+      }
+      case eFILES.CEDULA: {
+        name = "CÉDULA TÉCNICA";
+        break;
+      }
+      case eFILES.CERTIFICADO_L: {
+        name = "CERTIFICADO PROFESIONAL";
+        break;
+      }
+      case eFILES.SERVICIO: {
+        name = "CONSTANCIA DE SERVICIO SOCIAL";
+        break;
+      }
+      case eFILES.INGLES: {
+        name = "CONSTANCIA DE SEGUNDA LENGUA";
+        break;
+      }
+      case eFILES.PAGO: {
+        name = "COMPROBANTE DE PAGO";
+        break;
+      }
+      case eFILES.CERTIFICADO_R: {
+        name = "CERTIFICADO DE REVALIDACIÓN";
+        break;
+      }
+      case eFILES.PHOTOS: {
+        name = "FOTOGRAFÍAS";
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        name = "ACTA DE EXAMEN";
+        break;
+      }
+      case eFILES.INE: {
+        name = "CREDENCIAL DE ELECTOR";
+        break;
+      }
+      case eFILES.CED_PROFESIONAL: {
+        name = "CÉDULA PROFESIONAL";
+        break;
+      }
+      default: {
+        name = "DESCONOCIDO";
+      }
+    }
+    return name;
+  }
   onMessage(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let message = '';

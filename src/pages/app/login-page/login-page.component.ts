@@ -78,7 +78,7 @@ export class LoginPageComponent implements OnInit {
 
           this.userProv.sendTokenFromAPI(res.token);
           console.log("RES", res.user.rol.name);
-          if (res.user.rol.name.toUpperCase() === 'ESTUDIANTE' || res.user.rol.name.toUpperCase()==='ADMINISTRADOR') {
+          if (res.user.rol.name.toUpperCase() === 'ESTUDIANTE') {
             this.loginIsSuccessful(res);
             return;
           }
@@ -120,6 +120,7 @@ export class LoginPageComponent implements OnInit {
 
   private loginIsSuccessful(res, position?) {
     if (position) {
+      this.cookiesServ.savePosition(position);
       this.currentPositionService.setCurrentPosition(position);
       res.user.position = position._id;
     }

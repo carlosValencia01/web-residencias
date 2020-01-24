@@ -80,7 +80,7 @@ export class ProgressPageComponent implements OnInit {
     console.log("CARRERAS", this._carrers);
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.loadRequest(true);
     this.displayedColumns = ['controlNumber', 'fullName', 'career', 'phase', 'status', 'applicationDateLocal', 'lastModifiedLocal', 'action'];
     this.statusOptions = [
@@ -96,7 +96,12 @@ export class ProgressPageComponent implements OnInit {
     ];
   }
 
+  reload(): void {
+    this.loadRequest(false);
+  }
+
   loadRequest(isInit: boolean = false): void {
+    console.log("k");
     let filter = '';
     // switch (this.cookiesService.getData().user.rol.name) {
     switch (this.role) {
@@ -185,7 +190,8 @@ export class ProgressPageComponent implements OnInit {
     return tmp;
   }
 
-  async refresh() {
+  refresh() {
+    console.log("Requesfilter", this.requestFilter);
     this.dataSource = new MatTableDataSource(this.requestFilter);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -434,6 +440,7 @@ export class ProgressPageComponent implements OnInit {
       });
 
       ref.afterClosed().subscribe(result => {
+        console.log("RESULT comida", result);
         if (typeof (result) !== 'undefined') {
           this.requestProvider.releasedRequest(Identificador, {
             proposedHour: result.proposedHour,
@@ -768,8 +775,8 @@ export class ProgressPageComponent implements OnInit {
     let oRequest = new uRequest(this.getRequestById(_id), this._ImageToBase64Service);
     setTimeout(() => {
       window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
-      window.open(oRequest.professionalEthicsOath().output('bloburl'), '_blank');
-      window.open(oRequest.codeProfessionalEthics().output('bloburl'), '_blank');
+      // window.open(oRequest.professionalEthicsOath().output('bloburl'), '_blank');
+      window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
     }, 1000);
   }
 }

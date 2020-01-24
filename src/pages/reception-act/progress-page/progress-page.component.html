@@ -5,9 +5,19 @@
     </ol>
 </nav>
 
+
 <div class="row">
     <div class="col-12">
         <div class="card">
+            <div class="row">
+                <div class="col-10"></div>
+                <div class="col-2" style="clear: both;">
+                    <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
+                        (click)="reload()" data-toggle="tooltip" title="Actualizar">
+                        <mat-icon>cached</mat-icon>
+                    </button>
+                </div>
+            </div>
             <div class="card-body col-12">
                 <div *ngIf="role!=='jefe académico' && role!=='secretaria académica'" class="row m-1">
                     <div class="col-6">
@@ -211,14 +221,14 @@
                                         <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'CEDULA'})">
                                             <img alt="File" src="../../assets/imgs/request/assigned.png">
-                                            <small>11 Entrega de Cédula</small>
+                                            <small>11 ENTREGA DE CÉDULA</small>
                                         </mat-slide-toggle>
                                     </div>
                                     <div class="col-4" data-toggle="tooltip" title="Titulado">
                                         <mat-slide-toggle [ngModel]="_isAll"
                                             (change)="changedPhase({event:$event, value:'TITLED'})">
                                             <img alt="File" src="../../assets/imgs/request/realized.png">
-                                            <small> 12 Entrega de Título</small>
+                                            <small> 12 ENTREGA DE TÍTULO</small>
                                         </mat-slide-toggle>
                                     </div>
                                 </div>

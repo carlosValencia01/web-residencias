@@ -110,8 +110,9 @@ export class ViewAppointmentPageComponent implements OnInit {
       month: month,
       year: year
     }).subscribe(data => {
-      if (typeof (data.Diary) !== "undefined") {
+      if (typeof (data.Diary) !== "undefined") {        
         this.Appointments = data.Diary;
+        console.log("AAAPOINT", data);
         this.loadAppointment();
         this.refresh.next();
       }
