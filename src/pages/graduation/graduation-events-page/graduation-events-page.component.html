@@ -2,8 +2,11 @@
   <div class="card card-shadow">     
      <div class="card-body">
         <div class="row align-items-center  mb-4" *ngIf="role === 'administration'">
-           <div class="col-12 text-center">
+           <div class="col-6 text-center">
             <button mat-flat-button color="primary" (click)="createEvent()">CREAR EVENTO</button>
+           </div>
+           <div class="col-6 text-center">
+            <button mat-flat-button color="primary" (click)="saveStudents()">Guardar alumnos en evento</button>
            </div>
            
         </div>
@@ -55,6 +58,18 @@
                               <div class="div-img" ngbTooltip="Cambiar estatus" tooltipClass="my-custom-class" >
                               
                                  <img src="../../assets/icons/refresh.svg" class="action-icon" (click)="changeEventStatus(event)">                                 
+                              </div>
+                           </td>                     
+                           <td *ngIf="role === 'administration' && event.status == 1">
+                              <div class="div-img" ngbTooltip="Actualizar evento" tooltipClass="my-custom-class"  class="icons" (click)="updateEvent(event)">                              
+                                 <mat-icon>update</mat-icon>
+                                 <!-- <img src="../../assets/icons/refresh.svg" class="action-icon" (click)="changeEventStatus(event)">            -->
+                              </div>
+                           </td>                     
+                           <td *ngIf="role === 'administration' && event.status == 1">
+                              <div class="div-img" ngbTooltip="Información del evento" tooltipClass="my-custom-class" class="icons"  (click)="infoEvent(event)">                              
+                                 <mat-icon>info</mat-icon>
+                                 <!-- <img src="../../assets/icons/refresh.svg" class="action-icon" (click)="changeEventStatus(event)">            -->
                               </div>
                            </td>                     
                      </tr>

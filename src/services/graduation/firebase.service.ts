@@ -44,6 +44,11 @@ export class FirebaseService {
     return this.db.collection('eventosG').doc(name).set(data);
   }
 
+  // actualza evento
+  public updateEvent(name: string, data) {
+    return this.db.collection('eventosG').doc(name).set(data);
+  }
+
   // obtiene evento activo === estatus = 1
   // espera === estatus = 2
   // inactivo === estatus = 3
@@ -157,5 +162,8 @@ export class FirebaseService {
       .pipe( map( (alumno ) => alumno.map( alumno => {return {_id: alumno.payload.doc.id, data: alumno.payload.doc.data()}; }))).pipe( map(
       alumno => alumno.filter( (al: any) => al.data.mejorPromedio === true
     )));
+  }
+  public asignEvent(collection, nc)  {
+    return this.db.collection('alumnoPeriodo').add({collection,nc});
   }
 }
