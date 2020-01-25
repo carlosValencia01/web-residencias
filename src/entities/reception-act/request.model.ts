@@ -12,13 +12,14 @@ export interface iRequest {
     applicationDateLocal?: string;
     projectName?: string;
     product?: string;
+    duration?: number;
     proposedHour?: number;
     proposedDate?: Date;
     email?: string;
     actDate?: Date;
     honorificMention?: boolean;
     adviserId?: string;
-    adviser?: string;
+    adviser?: { name: string, title: string, cedula: string };
     place?: string;
     noIntegrants?: number;
     integrants?: Array<iIntegrant>;
@@ -30,7 +31,8 @@ export interface iRequest {
     lastModifiedLocal?: string;
     doer?: string;
     observation?: string;
-    jury?: Array<string>;
+    jury?: Array<any>;
+    folder?: string;
     history?: [
         {
             phase: string,
@@ -47,7 +49,12 @@ export interface iRequest {
             dateRegister: Date,
             nameFile: string,
             status: string,
-            observation: string
+            observation: string,
+            driveId?: string
         }
     ];
+    titulationOption?: string;
+    verificationStatus?: boolean;
+    sentVerificationCode?: boolean;
+    grade?: string;
 }

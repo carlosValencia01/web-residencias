@@ -4,15 +4,17 @@ import { CalendarView, CalendarEvent, CalendarMonthViewBeforeRenderEvent } from 
 import { Subject } from 'rxjs';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
-import { RequestService } from 'src/services/reception-act/request.service';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { isSameMonth, isSameDay } from 'date-fns';
 import { MatDialog } from '@angular/material';
 import * as moment from 'moment';
-import { ViewMoreComponent } from '../view-more/view-more.component';
+import { ViewMoreComponent } from '../../../modals/reception-act/view-more/view-more.component';
 import { eRole } from 'src/enumerators/app/role.enum';
+import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { CurrentPositionService } from 'src/services/shared/current-position.service';
 moment.locale('es');
 @Component({
   selector: 'app-view-appointment-page',
@@ -21,6 +23,7 @@ moment.locale('es');
 })
 export class ViewAppointmentPageComponent implements OnInit {
   carrers: iCarrera[];
+  allCarrers: iCarrera[];
   activeDayIsOpen: boolean = true;
   maxDate: Date = new Date(2019, 11, 15);
   viewDate = new Date();
@@ -33,33 +36,53 @@ export class ViewAppointmentPageComponent implements OnInit {
   locale: string = 'es';
   role: string;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices,
-    private _CookiesService: CookiesService, private _sourceDataProvider: sourceDataProvider, public dialog: MatDialog) {
-    this.role = 
-    //'Secretaria Académica';
-     'Jefe Académico';
+    private _sourceDataProvider: sourceDataProvider, public _InscriptionsProvider: InscriptionsProvider,
+    public dialog: MatDialog, private _CookiesService: CookiesService) {
+    this.carrers = [];
+    // this.role =
+    //   //'Secretaria Académica';
+    //   // 'Jefe Académico';
     // this._CookiesService.getData().user.rol.name;
   }
 
-  ngOnInit() {
-    this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
-    this.carrers = this._sourceDataProvider.getCareerAbbreviation();
-    switch (this.role) {
-      case eRole.SECRETARYACEDMIC: {
-        this.filterDepto('ISIC');
-        break;
-      }
-      case eRole.CHIEFACADEMIC: {
-        this.filterDepto('IBQA');
-        break;
-      }
-      default: {
-        this.carrers.push({
-          carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
-          color: { primary: '#57c7d4', secondary: '#ace3ea' }
-        });
-        break;
-      }
-    }
+  async ngOnInit() {
+    // let currentPosition: any = await this.currentPositionService.getCurrentPosition();    
+    // let tmpCarrers = currentPosition.ascription.careers;
+    let tmpCarrers = this._CookiesService.getPosition().ascription.careers;
+    this._InscriptionsProvider.getActivePeriod().subscribe(
+      periodo => {
+        if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
+          this.maxDate = new Date(periodo.period.arecPerEndDate);
+          this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
+        }
+      });
+
+    //this._sourceDataProvider.getCareerAbbreviation();
+    this.allCarrers = this._sourceDataProvider.getCareerAbbreviation();// this.carrers.slice(0);
+    this.allCarrers.forEach(element => {
+      let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
+      if (i !== -1)
+        this.carrers.push(element);
+    });
+
+    // switch (this.role) {
+    //   case eRole.SECRETARYACEDMIC: {
+    //     this.filterDepto('ISIC');
+    //     break;
+    //   }
+    //   case eRole.CHIEFACADEMIC: {
+    //     // this.filterDepto('IBQA');
+    //     this.filterDepto('ISIC');
+    //     break;
+    //   }
+    //   default: {
+    //     this.carrers.push({
+    //       carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
+    //       color: { primary: '#57c7d4', secondary: '#ace3ea' }
+    //     });
+    //     break;
+    //   }
+    // }
   }
 
   filterDepto(depto: string): void {
@@ -87,8 +110,9 @@ export class ViewAppointmentPageComponent implements OnInit {
       month: month,
       year: year
     }).subscribe(data => {
-      if (typeof (data.Diary) !== "undefined") {
+      if (typeof (data.Diary) !== "undefined") {        
         this.Appointments = data.Diary;
+        console.log("AAAPOINT", data);
         this.loadAppointment();
         this.refresh.next();
       }
@@ -99,23 +123,35 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
   loadAppointment(): void {
     this.events = [];
-    this.carrers.forEach(career => {
-      if (career.status) {
-        let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] };
-        tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
-        if (typeof (tmp) != 'undefined') {
-          tmp.values.forEach(element => {
-            const vFecha = element.proposedDate.toString().split('T')[0].split('-');
-            let tmpStart = new Date(element.proposedDate);
-            let tmpEnd = new Date(element.proposedDate);
-            tmpStart.setHours(0, 0, 0, 0);
-            tmpEnd.setHours(0, 0, 0, 0);
-            tmpStart.setMinutes(element.proposedHour);
-            tmpEnd.setMinutes(element.proposedHour + 60);
-            let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];
+    this.allCarrers.forEach(career => {
+      // if (career.status) {
+      let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
+      // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
+      tmp = this.Appointments.find(x => x._id[0] === career.carrer);
+      if (typeof (tmp) != 'undefined') {
+        tmp.values.forEach(element => {
+          const vFecha = element.proposedDate.toString().split('T')[0].split('-');
+          let tmpStart = new Date(element.proposedDate);
+          let tmpEnd = new Date(element.proposedDate);
+          tmpStart.setHours(0, 0, 0, 0);
+          tmpEnd.setHours(0, 0, 0, 0);
+          tmpStart.setMinutes(element.proposedHour);
+          tmpEnd.setMinutes(element.proposedHour + element.duration);
+          let title = "";
+          let index = this.carrers.findIndex(x => x.carrer === career.carrer);
+          if (index != -1 && this.carrers[index].status) {
+            title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
-          });
-        }
+          }
+          else {
+            console.log("CITA", element);
+            title = element.phase == 'Asignado' ? " Evento Solicitado" : " Evento Reservado";
+            this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? { primary: '#b64443', secondary: '#dcdcdc' } : { primary: '#b64443', secondary: '#e5bab9' }) });
+          }
+          // let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];          
+        });
+        console.log("EVENT", this.events);
+        // }
       }
     });
     this.refresh.next();
@@ -147,6 +183,18 @@ export class ViewAppointmentPageComponent implements OnInit {
   viewEvent($event): void {
     const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
     const dialogRef = this.dialog.open(ViewMoreComponent, {
+      data: {
+        Appointment: tmpAppointment
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '45em'
+    });
+  }
+
+  genTrades($event): void {
+    const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+    const dialogRef = this.dialog.open(ActNotificacionComponent, {
       data: {
         Appointment: tmpAppointment
       },
@@ -207,4 +255,4 @@ export class ViewAppointmentPageComponent implements OnInit {
 }
 interface iAppointmentGroup { _id: string[], values: [iAppointment] }
 interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }
-interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string }
+interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, duration: number }

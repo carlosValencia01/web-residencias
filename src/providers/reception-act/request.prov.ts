@@ -30,7 +30,8 @@ export class RequestProvider {
     }
 
     releasedRequest(_id, data) {
-        return this.api.put(`request/${_id}/released`, data, true).pipe(map(request => request.json()));
+        // return this.api.put(`request/${_id}/released`, data, true).pipe(map(request => request.json()));
+        return this.api.put(`request/${_id}/released`, data).pipe(map(request => request.json()));
     }
 
     uploadFile(_id, data) {
@@ -41,6 +42,9 @@ export class RequestProvider {
         return this.api.post(`request/${_id}/file/omit`, data).pipe(map(request => request.json()));
     }
 
+    // getResource(id: string, resource: string): Observable<Blob> {
+    //     return this.http.get(`${this.api.getURL()}/request/${id}/file/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
+    // }
     getResource(id: string, resource: string): Observable<Blob> {
         return this.http.get(`${this.api.getURL()}/request/${id}/file/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
     }
@@ -59,5 +63,15 @@ export class RequestProvider {
 
     StudentsToSchedule() {
         return this.api.get(`request/students`).pipe(map(request => request.json()));
+    }
+
+    verifyCode(requestId, code) {
+        return this.api.get(`request/verify/${requestId}/${code}`)
+            .pipe(map(res => res.json()));
+    }
+
+    sendVerificationCode(_requestId) {
+        return this.api.get(`request/sendCode/${_requestId}`)
+            .pipe(map(res => res.json()));
     }
 }

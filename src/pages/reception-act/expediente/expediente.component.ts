@@ -15,6 +15,7 @@ import * as moment from 'moment';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
+import { StudentProvider } from 'src/providers/shared/student.prov';
 moment.locale('es');
 
 @Component({
@@ -47,15 +48,17 @@ export class ExpedienteComponent implements OnInit {
   public existTitledDate: boolean;
   public titledDate: string;
   public titledHour: string;
-  public registeredDate: string
+  public registeredDate: string;
+  public folderId: string;
   constructor(
     public requestProvider: RequestProvider,
-    private notificationService: NotificationsServices,
+    private _NotificationsServices: NotificationsServices,
     private activatedRoute: ActivatedRoute,
     public dialog: MatDialog,
     public imgSrv: ImageToBase64Service,
     public _RequestService: RequestService,
-    private _CookiesService: CookiesService
+    private _CookiesService: CookiesService,
+    private _StudentProvider: StudentProvider
   ) {
     this.role = this._CookiesService.getData().user.rol.name;
     this.changeDocument = false;
@@ -64,10 +67,9 @@ export class ExpedienteComponent implements OnInit {
         this.requestProvider.getRequestById(params.id).subscribe(
           data => {
             this.Request = data.request[0];
-            console.log("REQUEST EXP", this.Request);
             this.registeredDate = moment(new Date(this.Request.applicationDate)).format('LL')
             this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
-            this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length===4;
+            this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
             let tmpDate: Date;
             if (this.existTitledDate) {
               tmpDate = new Date(this.Request.proposedDate);
@@ -76,10 +78,18 @@ export class ExpedienteComponent implements OnInit {
             }
             this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
             this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
-            console.log("eee",(<eRequest><keyof typeof eRequest>this.Request.phase),"dd",(<eStatusRequest><keyof typeof eStatusRequest>this.Request.phase))
+            // console.log("eee",(<eRequest><keyof typeof eRequest>this.Request.phase),"dd",(<eStatusRequest><keyof typeof eStatusRequest>this.Request.phase))
             this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
 
             this.Request.student = data.request[0].studentId;
+            this._StudentProvider.getFolderId(this.Request.student._id).subscribe(
+              student => {
+                if (student.folder && student.folder.idFolderInDrive) {
+                  this.folderId = student.folder.idFolderInDrive;
+                } else {
+                  this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+                }
+              });
             this._Request = new uRequest(this.Request, imgSrv);
             this.onLoad(this.Request.documents);
             (async () => {
@@ -87,21 +97,26 @@ export class ExpedienteComponent implements OnInit {
             })();
           },
           error => {
-            this.notificationService.showNotification(eNotificationType.ERROR,
+            this._NotificationsServices.showNotification(eNotificationType.ERROR,
               'Titulación App', error);
-          }
-        );
-      }
-    );
+          });
+      });
   }
 
   ngOnInit() {
   }
 
   changed(): void {
-    if (!this.changeDocument)
-      this._RequestService.AddRequest(this.Request, <eRequest><keyof typeof eRequest>this.Request.phase, true);
-    this.changeDocument = !this.changeDocument;
+    if (typeof (this.folderId) !== 'undefined' || this.folderId === '') {
+      if (!this.changeDocument) {
+        this.Request.folder = this.folderId;
+        this._RequestService.AddRequest(this.Request, <eRequest><keyof typeof eRequest>this.Request.phase, true);
+      }
+      this.changeDocument = !this.changeDocument;
+    } else {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulación App", "Folder del estudiante no encontrado");
+    }
+
     // if (this.changeDocument) {
     //   this._RequestService.AddRequest(this.Request, <eRequest><keyof typeof eRequest>this.Request.phase);
     // }
@@ -157,7 +172,7 @@ export class ExpedienteComponent implements OnInit {
         data: {
           source: pdf,
           isBase64: true,
-          title: type
+          title: this.documentTitle(type)
         },
         disableClose: true,
         hasBackdrop: true,
@@ -165,6 +180,88 @@ export class ExpedienteComponent implements OnInit {
         height: '600px'
       });
     }
+  }
+
+  documentTitle(type: eFILES): string {
+    let name: string;
+    switch (type) {
+      case eFILES.PROYECTO: {
+        name = "PORTADA DE PROYECTO";
+        break;
+      }
+      case eFILES.SOLICITUD: {
+        name = "SOLICITUD DE PROYECTO";
+        break;
+      }
+      case eFILES.REGISTRO: {
+        name = "REGISTRO DE PROYECTO";
+        break;
+      }
+      case eFILES.RELEASED: {
+        name = "CONSTANCIA DE LIBERACION";
+        break;
+      }
+      case eFILES.INCONVENIENCE: {
+        name = "CONSTANCIA DE NO INCONVENIENCIA"
+        break;
+      }
+      case eFILES.ACTA_NACIMIENTO: {
+        name = "ACTA DE NACIMIENTO";
+        break;
+      }
+      case eFILES.CURP: {
+        name = "CURPO";
+        break;
+      }
+      case eFILES.CERTIFICADO_B: {
+        name = "CERTIFICADO DE BACHILLERATO";
+        break;
+      }
+      case eFILES.CEDULA: {
+        name = "CÉDULA TÉCNICA";
+        break;
+      }
+      case eFILES.CERTIFICADO_L: {
+        name = "CERTIFICADO PROFESIONAL";
+        break;
+      }
+      case eFILES.SERVICIO: {
+        name = "CONSTANCIA DE SERVICIO SOCIAL";
+        break;
+      }
+      case eFILES.INGLES: {
+        name = "CONSTANCIA DE SEGUNDA LENGUA";
+        break;
+      }
+      case eFILES.PAGO: {
+        name = "COMPROBANTE DE PAGO";
+        break;
+      }
+      case eFILES.CERTIFICADO_R: {
+        name = "CERTIFICADO DE REVALIDACIÓN";
+        break;
+      }
+      case eFILES.PHOTOS: {
+        name = "FOTOGRAFÍAS";
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        name = "ACTA DE EXAMEN";
+        break;
+      }
+      case eFILES.INE: {
+        name = "CREDENCIAL DE ELECTOR";
+        break;
+      }
+      case eFILES.CED_PROFESIONAL: {
+        name = "CÉDULA PROFESIONAL";
+        break;
+      }
+      default: {
+        name = "DESCONOCIDO";
+      }
+    }
+    return name;
   }
 
   onView(file): void {
@@ -226,7 +323,7 @@ export class ExpedienteComponent implements OnInit {
           height: '600px'
         });
       }, error => {
-        this.notificationService.showNotification(eNotificationType.ERROR,
+        this._NotificationsServices.showNotification(eNotificationType.ERROR,
           'Titulación App', error);
       });
     }

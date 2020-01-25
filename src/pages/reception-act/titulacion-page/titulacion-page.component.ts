@@ -18,6 +18,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import * as moment from 'moment';
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 moment.locale('es');
 
 @Component({
@@ -52,6 +53,7 @@ export class TitulacionPageComponent implements OnInit {
   public isGraduate: boolean;
   public isApprovedEnglish: boolean;
   public titrationHour: string;
+  public isActive: boolean = true;
   // Mensajes
   ProcessSentMessage: String = 'En espera de que tú solicitud sea aceptada';
   CompletedSentMessage: String = 'TÚ SOLICITUD HA SIDO ACEPTADA'; //'Tú solicitud ha sido aceptada';
@@ -71,7 +73,7 @@ export class TitulacionPageComponent implements OnInit {
   RejectRealizedMessage: String = 'ACTO RECEPCIONAL REPROBADO';
   ProcessGeneratedMessage: String = 'EN ESPERA DEL ACTA DE EXAMEN';
   AcceptGeneratedMessage: String = 'ACTA DE EXAMEN GENERADA';
-  AcceptGeneratedMessageSubtitle: String = 'FAVOR DE PASAR A RECOGER SUS DOCUMENTOS';
+  AcceptGeneratedMessageSubtitle: String = 'FAVOR DE PASAR A RECOGER TU DOCUMENTO';
   CompletedGeneratedMessage: String = 'ACTA DE EXAMEN ENTREGADA';
   ProcessTitledMessage: String = 'EN ESPERA DE NOTIFICACIÓN PARA RECEPCIÓN DEL TÍTULO';
   CompletedTitledMessage: String = 'TÍTULO PROFESIONAL';
@@ -86,19 +88,20 @@ export class TitulacionPageComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private cookiesService: CookiesService,
     private imgService: ImageToBase64Service,
-    private router: Router,
-    private routeActive: ActivatedRoute,
+    // private router: Router,
+    // private routeActive: ActivatedRoute,
     private srvNotifications: NotificationsServices,
     private requestService: RequestService,
-    private requestProvider: RequestProvider
+    public _InscriptionsProvider: InscriptionsProvider
+    // ,private requestProvider: RequestProvider
   ) {
     const user = this.cookiesService.getData().user;
     this.isApprovedEnglish = user.english;
     this.isGraduate = user.graduate;
     this.isOkTitulation = true; //user.english && user.graduate;
-    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
-      this.router.navigate(['/']);
-    }
+    // if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
+    //   this.router.navigate(['/']);
+    // }
   }
 
   ngOnInit() {
@@ -110,8 +113,33 @@ export class TitulacionPageComponent implements OnInit {
 
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
-    // Obtengo el indice de mi estado y le indico que me posicione en ese Step
-    this.loadRequest();
+    this._InscriptionsProvider.getActivePeriod().subscribe(
+      periodo => {
+        if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
+          this.loadRequest();
+          this.isActive = true;
+        } else {
+          this.isActive = false;
+        }        
+      }, error => {
+        this.isActive = false;        
+      });
+  }
+
+  getFolderId(): void {
+    this.studentProv.getFolderId(this.cookiesService.getData().user._id).subscribe(
+      student => {
+        if (student.folder) {// folder exists
+          if (student.folder.idFolderInDrive) {
+            this.cookiesService.saveFolder(student.folder.idFolderInDrive);
+          }
+          else {
+            this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+          }
+        } else {
+          this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+        }
+      });
   }
 
   loadRequest() {
@@ -122,6 +150,7 @@ export class TitulacionPageComponent implements OnInit {
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
           this.oRequest = new uRequest(this.Request, this.imgService);
+          this.getFolderId();
         } else {
           this.Request = {
             phase: eRequest.NONE,
@@ -145,9 +174,8 @@ export class TitulacionPageComponent implements OnInit {
       this.loadRequest();
     }
   }
-  
+
   SelectItem(): void {
-    console.log("REQUEST", this.Request);
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
     this.requestService.AddRequest(this.Request, phase);

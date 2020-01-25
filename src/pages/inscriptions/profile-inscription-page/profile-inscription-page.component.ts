@@ -11,6 +11,7 @@ import {NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import Swal from 'sweetalert2';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { DocumentsHelpComponent } from 'src/modals/inscriptions/documents-help/documents-help.component';
 
 declare var jsPDF: any;
 
@@ -1146,5 +1147,38 @@ export class ProfileInscriptionPageComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Aceptar'
     }).then((result) => {});
+  }
+
+  help(documentName: string, path: string) {
+    const linkModal = this.dialog.open(DocumentsHelpComponent, {
+      data: {
+        document: documentName,
+        pdf: path
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '70em',
+      height: '90vh'
+    });
+  }
+
+  helpPhoto(){
+    Swal.fire({
+      html:
+        `
+        <p style="text-align: left;">La fotografía debe ser:</p>
+                  <ol style="text-align: left;">
+                    <li>Fondo blanco.</li>
+                    <li>De frente.</li>
+                    <li>Que se visualice claramente de los hombros hacia arriba.</li>
+                    <li>Hombres sin aretes.</li>
+                    <li>Evitar accesorios (Lentes oscuros, audífonos, gorros, sombreros, gorras,...).</li>
+                  </ol>
+                  <b>NOTA: Se revisará la fotografía antes de la impresión de la credencial.</b>
+        `,
+      allowOutsideClick: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => { });
   }
 }

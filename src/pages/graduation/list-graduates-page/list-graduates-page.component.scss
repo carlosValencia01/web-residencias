@@ -192,3 +192,39 @@ td {
     background: rgb(7, 7, 133);
     color: white;
 }
+
+.cardEgresados{
+    text-align: center;
+    border-left-width: 5px;
+    border-left-style: solid;
+    border-left-color: rgb(17,32,67);
+}
+
+.cardCPendientes{
+    text-align: center;
+    border-left-width: 5px;
+    border-left-style: solid;
+    border-left-color: #ff7100;
+}
+
+.cardCImpresos{
+    text-align: center;
+    border-left-width: 5px;
+    border-left-style: solid;
+    border-left-color: rgb(71, 178, 218);
+}
+
+.cardCListos{
+    text-align: center;
+    border-left-width: 5px;
+    border-left-style: solid;
+    border-left-color: green;
+}
+
+.cardRestantes{
+    text-align: center;
+    border-left-width: 5px;
+    border-left-style: solid;
+    border-left-color: rgb(202,0,10);
+    ;
+}

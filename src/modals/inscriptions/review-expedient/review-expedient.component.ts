@@ -35,8 +35,7 @@ export class ReviewExpedientComponent implements OnInit {
   showDocument = false;
   typeDocShow: string;
   docDisplayName: string;
-  docto;
-  form: FormGroup;
+  docto;  
   refused;
   loading = false;
 
@@ -73,11 +72,7 @@ export class ReviewExpedientComponent implements OnInit {
     this.getDocuments();
   }
 
-  ngOnInit() {
-    this.form = new FormGroup({
-      'status': new FormControl(null, [Validators.required]),
-      'observation': new FormControl(null, [Validators.required]),
-    });
+  ngOnInit() {    
   }
 
   onClose() {
@@ -100,7 +95,23 @@ export class ReviewExpedientComponent implements OnInit {
       else return false;
     });
   }
-
+  swalDialogInput(title,msg) {
+    return Swal.fire({
+      title: title,    
+      text: msg,  
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar',
+      input: 'text'      
+    }).then((result) => {
+      // console.log(result);
+      
+      return result.value ?  result.value !== '' ? result.value : false : false;
+    });
+  }
   getDocuments() {
     this.studentProv.getDriveDocuments(this.data.student._id).subscribe(
       docs => {
@@ -108,7 +119,7 @@ export class ReviewExpedientComponent implements OnInit {
         ;
         
         
-        this.payDoc = documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0];
+        this.payDoc = documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1 && docc.status.length>0)[0];
         this.docto = this.docto ? documents.filter(docc => docc._id === this.docto._id)[0] : null;
 
         if(this.docto == null){
@@ -116,13 +127,13 @@ export class ReviewExpedientComponent implements OnInit {
         }
         this.pendings = 0;
         this.selectPendings = 0;
-        this.curpDoc = documents.filter(docc => docc.filename.indexOf('CURP') !== -1)[0];
-        this.nssDoc = documents.filter(docc => docc.filename.indexOf('NSS') !== -1)[0];
-        this.imageDoc = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0];
-        this.certificateDoc = documents.filter(docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0];
-        this.actaDoc = documents.filter(docc => docc.filename.indexOf('ACTA') !== -1)[0];
-        this.clinicDoc = documents.filter(docc => docc.filename.indexOf('CLINICOS') !== -1)[0];
-        this.cartaDoc = documents.filter(docc => docc.filename.indexOf('COMPROMISO') !== -1)[0];
+        this.curpDoc = documents.filter(docc => docc.filename.indexOf('CURP') !== -1 && docc.status.length>0)[0];
+        this.nssDoc = documents.filter(docc => docc.filename.indexOf('NSS') !== -1 && docc.status.length>0)[0];
+        this.imageDoc = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1 && docc.status.length>0)[0];
+        this.certificateDoc = documents.filter(docc => docc.filename.indexOf('CERTIFICADO') !== -1 && docc.status.length>0)[0];
+        this.actaDoc = documents.filter(docc => docc.filename.indexOf('ACTA') !== -1 && docc.status.length>0)[0];
+        this.clinicDoc = documents.filter(docc => docc.filename.indexOf('CLINICOS') !== -1 && docc.status.length>0)[0];
+        this.cartaDoc = documents.filter(docc => docc.filename.indexOf('COMPROMISO') !== -1 && docc.status.length>0)[0];
         if (this.imageDoc) {
           this.imageDoc.status = this.imageDoc ? this.imageDoc.status.filter(st => st.active === true)[0].name : '';
           this.acceptDocuments[3].filename = this.imageDoc.filename;
@@ -184,7 +195,8 @@ export class ReviewExpedientComponent implements OnInit {
     );
   }
 
-  cardClick(card) {
+  cardClick(card) {    
+    // this.form.get('observation').setValue('');
     if (card === this.prevCard) {
       this.viewdoc = !this.viewdoc;
     } else {
@@ -235,17 +247,21 @@ export class ReviewExpedientComponent implements OnInit {
   async changeStatus(action) {
     var filename = '';
     this.refused = '';
-    const msg = action.status === 'RECHAZADO' ? 'rechazar' : this.data.user === 'Secretaria' ? 'validar' : 'aceptar';
-    let confirmdialog = await this.swalDialog(`¿ Está seguro de ${msg} el documento ?`, '', 'question');
-
+    const msg = action === 'RECHAZADO' ? 'rechazar' : this.data.user === 'Secretaria escolares' ? 'validar' : 'aceptar';
+    let confirmdialog = false;
+    if(action === 'ACEPTADO' || action === 'VALIDADO'){
+      confirmdialog = await this.swalDialog(`¿ Está seguro de ${msg} el documento ?`, '', 'question');
+    } else {
+      confirmdialog = await this.swalDialogInput('RECHAZAR '+this.docDisplayName,'Especifique el motivo');
+    }
     if (confirmdialog) {
       const documentInfo = {
         filename: this.docto.filename,
         status: {
-          name: this.data.user === 'Secretaria' ? action.status === 'ACEPTADO' ? 'VALIDADO' : 'RECHAZADO' : action.status,
+          name: action,
           active: true,
-          message: action.status === 'RECHAZADO' ? 'Documento rechazado' : this.data.user === 'Secretaria' ? 'Documento validado' : 'Documento aceptado',
-          observation: action.status === 'RECHAZADO' ? action.observation : ''
+          message: action === 'RECHAZADO' ? 'Documento rechazado' : this.data.user === 'Secretaria escolares' ? 'Documento validado' : 'Documento aceptado',
+          observation: action === 'RECHAZADO' ? confirmdialog : ''
         }
       };
       this.studentProv.updateDocumentStatus(this.data.student._id, documentInfo).subscribe(
@@ -273,7 +289,7 @@ export class ReviewExpedientComponent implements OnInit {
             if(documentInfo.filename.includes('NSS')){
               filename = 'NÚMERO DE SEGURO SOCIAL'
             }
-          if (action.status == "RECHAZADO") {
+          if (action == "RECHAZADO") {
             this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+filename+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://escolares.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
               res => {
                 this.notificationsServices.showNotification(0, 'Notificación enviada a:', this.data.student.controlNumber);
@@ -283,10 +299,62 @@ export class ReviewExpedientComponent implements OnInit {
               }
             );
           }
+          this.changeExpedientStatus();
         },
         err => console.log(err)
       );
     }
+  }
+
+  changeExpedientStatus(){
+    this.studentProv.getDocumentsUpload(this.data.student._id).subscribe(res => {
+      var comprobante = res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
+      var acta = res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
+      var curp = res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] : '';
+      var nss = res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] : '';
+      var compromiso = res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] : '';
+      var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
+      var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
+      var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+      
+      console.log(this.data.student);
+      if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
+        // Cambiar estatus a ACEPTADO
+        this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => {
+        });   
+        return;
+      } 
+      if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
+        // Cambiar estatus a VALIDADO
+        this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => {
+        });   
+        return;
+      }
+
+      var allDiferentProcess = true;
+      var allValidateOrAcept = true;
+
+      for(var i = 0; i < res.documents.length; i++){
+        if(res.documents[i].statusName == "EN PROCESO"){
+          allDiferentProcess = false;
+        }
+        if(res.documents[i].statusName == "VALIDADO" || res.documents[i] == "ACEPTADO"){
+          allValidateOrAcept = true;
+        } else {
+          allValidateOrAcept = false;
+        }
+      }
+
+      if(allDiferentProcess){
+        if(!allValidateOrAcept){
+          // Cambiar estatus a EN PROCESO
+          this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},this.data.student._id).subscribe(res => {
+          });   
+          return;
+        }
+        // No cambiar estatus
+      }
+    });
   }
 
   history() {
@@ -422,6 +490,7 @@ export class ReviewExpedientComponent implements OnInit {
           res => {
             this.notificationsServices.showNotification(eNotificationType.SUCCESS,
               'Exito', 'Estatus actualizado correctamente.');
+              this.changeExpedientStatus();
           },
           err => console.log(err)
         );

@@ -1,0 +1,103 @@
+<div class="row">
+  <div class="col-10">
+    <h1 mat-dialog-title >{{title}}</h1>
+  </div>
+  <div class="col-2">
+    <button mat-icon-button (click)="onClose()" class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<form [formGroup]="form" (ngSubmit)="onFormSubmit(form.value)" class="tp-form">
+  <div class="row text-center">
+    <div class="col-12">
+      <h3>Datos del evento</h3>
+    </div>
+  </div>
+  <div class="row text-center mb-4">
+    <div class="col-md-2"></div>
+    <div class="col-md-4">
+      <mat-form-field appearance="outline" >
+        <mat-label>Periodo</mat-label>
+        <select matNativeControl required formControlName="periodName"        
+        >
+          <option value="enejun">
+            ENERO-JUNIO
+          </option>
+          <option value="agodic">
+            AGOSTO-DICIEMBRE
+          </option>
+        </select>     
+        <mat-error>
+            <span
+            *ngIf="!form.get('periodName').valid && form.get('periodName').touched">Seleccione un periodo</span>
+        </mat-error>   
+      </mat-form-field>      
+    </div>
+    <div class="col-md-4"> 
+      <mat-form-field appearance="outline">
+        <mat-label>Año</mat-label>
+        <select matNativeControl required formControlName="year"
+        (ngModelChange) = "createYear(form.get('year').value)"
+        >
+          <option [value]="yeaar" *ngFor="let yeaar of yearsInput">
+            {{yeaar}}
+          </option>        
+        </select>     
+        <mat-error>
+            <span
+            *ngIf="!form.get('year').valid && form.get('year').touched">Seleccione un año</span>
+        </mat-error>   
+      </mat-form-field>      
+    </div>    
+    <div class="col-md-2"></div>
+  </div>
+  <div class="row text-center">
+    <div class="col-12">     
+    </div>
+  </div>
+  <div class="row text-center mt-4">    
+    <div class="col-md-4"> 
+      <mat-form-field>
+        <input [min]="minDate" matInput [matDatepicker]="picker" placeholder="Fecha del evento" formControlName="date" >
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!form.get('date').valid && form.get('date').touched">Seleccione una fecha valida</span>
+      </mat-error>      
+    </div>
+    <div class="col-md-4">
+      <mat-form-field>
+        <input matInput placeholder="Total de boletos" formControlName="totalTickets" type="number" step="1" min="0">
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!form.get('totalTickets').valid && form.get('totalTickets').touched">Seleccione un numero valido</span>
+      </mat-error> 
+    </div>
+    <div class="col-md-4">
+        <mat-form-field>
+          <input matInput placeholder="Boletos por estudiante" formControlName="studentTickets" type="number" step="1" min="0" [max]="form.get('totalTickets').valid ? form.get('totalTickets').value : 5">
+          </mat-form-field>
+          <mat-error>
+              <span
+              *ngIf="!form.get('studentTickets').valid && form.get('studentTickets').touched">Seleccione una fecha valida</span>
+          </mat-error> 
+    </div>    
+  </div>
+  <hr/>
+  
+  <div class="row text-center">
+      <div class="col-md-4"></div>
+    <div class="col-md-2"> 
+      <button *ngIf="data.operation !== 'edit'" mat-flat-button color="primary"  type="submit" [disabled]="!form.valid">Crear evento</button>
+      <!-- <button *ngIf="data.operation === 'edit'" mat-flat-button color="primary"  type="submit" [disabled]="!form.valid">Actualizar periodo</button> -->
+    </div>
+    <div class="col-md-2">
+      <button mat-flat-button color="warn" type="button" (click)="onClose()" mat-dialog-close>Cancelar</button>
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+</form>

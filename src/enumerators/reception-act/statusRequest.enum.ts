@@ -8,6 +8,7 @@ export enum eStatusRequest {
     OMIT = 'Omit',
     WAIT = 'Wait',
     ASSIGN = 'Assign',
-    CANCELLED='Cancelled',
-    FINALIZED='Finalized'
+    CANCELLED = 'Cancelled',
+    PRINTED = 'Printed',
+    FINALIZED = 'Finalized'
 }

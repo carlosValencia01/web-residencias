@@ -31,7 +31,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: environment.filesURL,
   maxFilesize: 3,
   acceptedFiles: 'application/pdf',
-  maxFiles:1
+  maxFiles: 1
 };
 
 
@@ -61,7 +61,8 @@ import {
   MatProgressSpinnerModule,
   MatSelectModule,
   MatExpansionModule,
-  MatAutocompleteModule
+  MatAutocompleteModule,
+  MatBadgeModule
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -79,7 +80,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 // App module
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
@@ -121,6 +122,9 @@ import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirma
 import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
 import { ProfileInscriptionPageComponent } from '../pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
 import { SecretaryInscriptionPageComponent } from '../pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
+import { ListProcessStudentComponent } from '../pages/inscriptions/list-process-student/list-process-student.component';
+import { ListPendingStudentComponent } from '../pages/inscriptions/list-pending-student/list-pending-student.component';
+import { ListAceptStudentComponent } from '../pages/inscriptions/list-acept-student/list-acept-student.component';
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 // Pipes
@@ -191,6 +195,8 @@ import { FilterPipe } from 'src/pages/graduation/list-graduates-page/filter.pipe
 import { FirebaseService } from 'src/services/graduation/firebase.service';
 // Providers
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
+// Modals
+import { NewEventComponent as NewGraduationEventComponent } from 'src/modals/graduation/new-event/new-event.component' ;
 
 // Electronic signature module
 // Pages
@@ -230,15 +236,16 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { CustomDateFormatter } from 'src/providers/reception-act/custom-date-formatter.provider';
 import { DiaryComponent } from '../pages/reception-act/diary/diary.component';
-import { RangePageComponent } from './range-page/range-page.component';
-import { RangeModalComponent } from './range-modal/range-modal.component';
+import { RangePageComponent } from '../pages/reception-act/range-page/range-page.component';
+import { RangeModalComponent } from '../modals/reception-act/range-modal/range-modal.component';
 import { RangeProvider } from 'src/providers/reception-act/range.prov';
-import { NewEventComponent } from './new-event/new-event.component';
-import { ViewMoreComponent } from './view-more/view-more.component';
-import { StepperDocumentComponent } from './stepper-document/stepper-document.component';
-import { UploadDeliveredComponent } from './upload-delivered/upload-delivered.component';
-import { ViewAppointmentPageComponent } from './view-appointment-page/view-appointment-page.component';
+import { NewEventComponent } from '../modals/reception-act/new-event/new-event.component';
+import { ViewMoreComponent } from '../modals/reception-act/view-more/view-more.component';
+import { StepperDocumentComponent } from '../modals/reception-act/stepper-document/stepper-document.component';
+import { UploadDeliveredComponent } from '../modals/reception-act/upload-delivered/upload-delivered.component';
+import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appointment-page/view-appointment-page.component';
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
+import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -271,6 +278,9 @@ registerLocaleData(localeEs);
     InscriptionsUploadFilesPageComponent,
     ProfileInscriptionPageComponent,
     SecretaryInscriptionPageComponent,
+    ListProcessStudentComponent,
+    ListPendingStudentComponent,
+    ListAceptStudentComponent,
     //Modals
     NewPeriodComponent,
     ReviewExpedientComponent,
@@ -323,6 +333,8 @@ registerLocaleData(localeEs);
     SurveyRegisterPageComponent,
     // Pipes
     FilterPipe,
+    // Modals
+    NewGraduationEventComponent,
 
     // Electronic signature module
     // Pages
@@ -360,6 +372,7 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ViewAppointmentPageComponent,
     UploadFileTitledComponent,
+    ActNotificacionComponent,
   ],
   imports: [
     // Angular
@@ -409,6 +422,7 @@ registerLocaleData(localeEs);
     MatExpansionModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
+    MatBadgeModule,
 
     // Ngx
     ImageCropperModule,
@@ -509,7 +523,7 @@ registerLocaleData(localeEs);
     RangeModalComponent,
     StepperDocumentComponent,
     UploadDeliveredComponent,
-
+    ActNotificacionComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,
@@ -526,6 +540,10 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
+    
+    // Graduation
+    // Modals
+    NewGraduationEventComponent,
 
     // Shared
     // Modals
