@@ -83,8 +83,8 @@ export class RequestComponentComponent implements OnInit {
     console.log("Information", this.userInformation);
     this.frmRequest = new FormGroup(
       {
-        'name': new FormControl({ value: this.firstName(this.userInformation.name.fullName), disabled: true }, Validators.required),
-        'lastname': new FormControl({ value: this.lastName(this.userInformation.name.fullName), disabled: true }, Validators.required),
+        'name': new FormControl({ value: this.userInformation.name.firstName, disabled: true }, Validators.required),
+        'lastname': new FormControl({ value: this.userInformation.name.lastName, disabled: true }, Validators.required),
         'telephone': new FormControl(null, [Validators.required,
         Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
@@ -166,8 +166,10 @@ export class RequestComponentComponent implements OnInit {
     this.integrants = this.request.integrants;
     this.deptoInfo = request.request[0].department;
     this.adviserInfo = request.request[0].adviser;
+    this.request.student.name = this.userInformation.name.firstName;
+    this.request.student.lastName = this.userInformation.name.lastName;
 
-    this.assignName();
+    // this.assignName();
 
     this.frmRequest.setValue({
       'name': this.request.student.name,
