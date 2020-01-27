@@ -40,6 +40,10 @@
       <th *matHeaderCellDef mat-header-cell mat-sort-header>RFC</th>
       <td *matCellDef="let row" mat-cell> {{row.rfc}} </td>
     </ng-container>
+    <ng-container matColumnDef="email">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
+      <td *matCellDef="let row" mat-cell> {{row.email}} </td>
+    </ng-container>
     <ng-container matColumnDef="grades">
       <th *matHeaderCellDef mat-header-cell mat-sort-header>Grados</th>
       <td *matCellDef="let row" mat-cell> {{row.grades}} </td>
