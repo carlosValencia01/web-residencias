@@ -88,8 +88,8 @@ export class TitulacionPageComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private cookiesService: CookiesService,
     private imgService: ImageToBase64Service,
-    // private router: Router,
-    // private routeActive: ActivatedRoute,
+    private router: Router,
+    private routeActive: ActivatedRoute,
     private srvNotifications: NotificationsServices,
     private requestService: RequestService,
     public _InscriptionsProvider: InscriptionsProvider
@@ -99,9 +99,9 @@ export class TitulacionPageComponent implements OnInit {
     this.isApprovedEnglish = user.english;
     this.isGraduate = user.graduate;
     this.isOkTitulation = user.english && user.graduate;
-    // if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
-    //   this.router.navigate(['/']);
-    // }
+    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
+      this.router.navigate(['/']);
+    }
   }
 
   ngOnInit() {
