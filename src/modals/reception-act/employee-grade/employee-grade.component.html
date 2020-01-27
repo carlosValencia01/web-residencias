@@ -63,6 +63,30 @@
       </mat-form-field>
     </div>
     <div class="row">
+      <mat-form-field class="col-sm-12 col-md-6">
+        <input matInput formControlName="email" placeholder="Correo electrónico" type="email" required>
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('email').valid && frmNewEmployeeGrade.get('email').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('email').errors['required']">
+            ¡Ingrese un correo!
+          </span>
+          <span *ngIf="frmNewEmployeeGrade.get('email').errors['email']">
+            ¡Ingrese un correo válido!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-md-6">
+        <input [matDatepicker]="birthDatePicker" formControlName="birthDate" matInput placeholder="Fecha de nacimiento"
+               readonly required>
+        <mat-datepicker-toggle [for]="birthDatePicker" matSuffix></mat-datepicker-toggle>
+        <mat-datepicker #birthDatePicker></mat-datepicker>
+        <mat-error *ngIf="!frmNewEmployeeGrade.get('birthDate').valid && frmNewEmployeeGrade.get('birthDate').touched">
+          <span *ngIf="frmNewEmployeeGrade.get('birthDate').errors['required']">
+            ¡Fecha de nacimiento obligatoria!
+          </span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="row">
       <mat-radio-group aria-label="Selecciona el género" class="col-sm-12 col-md-6 vertical-radio-group"
                        formControlName="gender">
         <mat-label>Género:</mat-label>
@@ -75,17 +99,6 @@
           </span>
         </mat-error>
       </mat-radio-group>
-      <mat-form-field class="col-sm-12 col-md-6">
-        <input [matDatepicker]="birthDatePicker" formControlName="birthDate" matInput placeholder="Fecha de nacimiento"
-               readonly required>
-        <mat-datepicker-toggle [for]="birthDatePicker" matSuffix></mat-datepicker-toggle>
-        <mat-datepicker #birthDatePicker></mat-datepicker>
-        <mat-error *ngIf="!frmNewEmployeeGrade.get('birthDate').valid && frmNewEmployeeGrade.get('birthDate').touched">
-          <span *ngIf="frmNewEmployeeGrade.get('birthDate').errors['required']">
-            ¡Fecha de nacimiento obligatoria!
-          </span>
-        </mat-error>
-      </mat-form-field>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
