@@ -98,7 +98,7 @@ export class TitulacionPageComponent implements OnInit {
     const user = this.cookiesService.getData().user;
     this.isApprovedEnglish = user.english;
     this.isGraduate = user.graduate;
-    this.isOkTitulation = true; //user.english && user.graduate;
+    this.isOkTitulation = user.english && user.graduate;
     // if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
     //   this.router.navigate(['/']);
     // }
