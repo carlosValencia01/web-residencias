@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+import TableToExcel from '@linways/table-to-excel';
+
 import { FirebaseService } from 'src/services/graduation/firebase.service';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { ExporterService } from 'src/services/graduation/exporter.service';
-import Swal from 'sweetalert2';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
-import TableToExcel from '@linways/table-to-excel';
+import { StudentProvider } from 'src/providers/shared/student.prov';
 import * as firebase from 'firebase/app';
+
+
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -99,16 +102,16 @@ export class ListGraduatesPageComponent implements OnInit {
   montserratBold: any;
 
   dateGraduation;
+  
 
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
     private graduationProv: GraduationProvider,
     private cookiesService: CookiesService,
-    private router: Router,
-    private excelService: ExporterService,
+    private router: Router,    
     private imageToBase64Serv: ImageToBase64Service,
-    private routeActive: ActivatedRoute,
+    private studentProv: StudentProvider
   ) {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
@@ -155,6 +158,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   ngOnInit() {
+    
     switch (this.cookiesService.getData().user.role) {
       case 0:
         this.role = 'administration';
@@ -248,7 +252,8 @@ export class ListGraduatesPageComponent implements OnInit {
       this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
       this.certificadosListos = this.filterCountItemsStatus('Listo').length;
       this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
-      this.certificadosPendientes = [this.totalEgresados-(this.certificadosImpresos+this.certificadosEntregados+this.certificadosListos)];
+      this.certificadosPendientes = this.filterCountItemsStatus('Fotos y Recibo').length;
+      // this.certificadosPendientes = [this.totalEgresados-(this.certificadosImpresos+this.certificadosEntregados+this.certificadosListos)];
 
       this.totalVerificados = this.filterCountItemsVerified().length;
       this.boletosRestantes = (this.boletosTotales-this.boletosRegistrados);
@@ -1304,30 +1309,47 @@ export class ListGraduatesPageComponent implements OnInit {
     //console.log(student);
     switch (status){
       case "Fotos y Recibo":
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);        
+        
+        this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
+        
         break;
       case "Impreso":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+
+        // this.sendNotification('Certificado', 'Tus certificado ha sido impreso',student.nc);
         break;
       case "Listo":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+
+        this.sendNotification('Certificado', 'Tu certificado ya esta listo',student.nc);
         break;
       case "Entregado":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+
+        this.sendNotification('Certificado', 'Tu certificado fue entregado',student.nc);
         break;
       case "Regresar":
         switch (student.documentationStatus){
           case "Fotos y Recibo":
             this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:' '}, this.collection);
+
+            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case "Impreso":
             this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Fotos y Recibo'}, this.collection);
+
+            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case "Listo":
             this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Impreso'}, this.collection);
+
+            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case "Entregado":
             this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Listo'}, this.collection);
+
+            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
         }
     }
@@ -1477,6 +1499,72 @@ export class ListGraduatesPageComponent implements OnInit {
     console.log(this.boletosXAlumno);
   }
 
+  sendNotification(title: string, body: string, nc: string){
+    const subTok = this.firestoreService.getStudentToken(nc).subscribe(
+      (token)=>{
+        subTok.unsubscribe();
+        // console.log(token);
+        
+        const infoToken = token[0];
+        const notification = {
+          "titulo":title,
+          "descripcion": body,
+          "fecha": new Date()
+        };
+        
+        if(infoToken){
+          // student device exist              
+          if(infoToken.token){
+            // student has token device 
+            // send notification        
+            console.log(infoToken.token);
+                                    
+            this.firestoreService.sendNotification(infoToken.id,notification).then(
+              (sended)=>{
+                this.studentProv.sendNotification({title,body,token:infoToken.token}).subscribe(
+                  (send)=>{
+                    console.log(send, 'Enviado');
+                    
+                  }
+                );
+              }
+            );
+          }else{
+            // only save notification in firebase                
+            this.firestoreService.sendNotification(infoToken.id,notification).then(
+              (sended)=>{
+                console.log('Enviado');
+                
+              }
+            );
+          }
+          this.firestoreService.updateDeviceStudent(infoToken.id,{pendientes:(infoToken.pendientes+1)}).then(
+            (updated)=>{}
+          );
+        }else{
+          // create register for notifications
+          //only save notification in firebase
+          this.firestoreService.createDeviceToken(nc).then(
+            (created)=>{
+              const subST = this.firestoreService.getStudentToken(nc).subscribe(
+                (token)=>{
+                  subST.unsubscribe();                      
+                  this.firestoreService.sendNotification(infoToken.id,notification).then(
+                    (sended)=>{
+                      console.log('Enviado');
+                      this.firestoreService.updateDeviceStudent(infoToken.id,{pendientes:(infoToken.pendientes+1)}).then(
+                        (updated)=>{}
+                      );
+                    }
+                  );                  
+                }
+              );
+            }
+          );
+        }
+      }
+    );
+  }
 
 }
 
