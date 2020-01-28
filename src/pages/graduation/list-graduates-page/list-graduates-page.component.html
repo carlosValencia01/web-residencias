@@ -9,16 +9,16 @@
                <div style="overflow-x:auto; padding-top: 20px;">
                   <div class="row">
                      <div class="col-sm-3">
-                        <mat-card class = "cardEgresados"><b>Total Egresados:</b><br>{{totalEgresados}}</mat-card>
+                        <mat-card class = "cardEgresados"><b>Total Egresados</b><br>{{totalEgresados}}</mat-card>
                      </div>
                      <div class="col-sm-3">
-                        <mat-card class = "cardCListos"><b>Total Verificados:</b><br>{{totalVerificados}}</mat-card>
+                        <mat-card class = "cardCListos"><b>Total Verificados</b><br>{{totalVerificados}}</mat-card>
                      </div>
                      <div class="col-sm-3">
-                        <mat-card class = "cardCPendientes"><b>Boletos Totales:</b><br>{{boletosTotales}}</mat-card>
+                        <mat-card class = "cardCPendientes"><b>Boletos Totales</b><br>{{boletosTotales}}</mat-card>
                      </div>
                      <div class="col-sm-3">
-                        <mat-card class = "cardRestantes"><b>Boletos Restantes:</b><br>{{boletosRestantes}}</mat-card>
+                        <mat-card class = "cardRestantes"><b>Boletos Restantes</b><br>{{boletosRestantes}}</mat-card>
                      </div>
                    </div><br>
                   <div class="row">
@@ -137,7 +137,7 @@
                            <td (click)="observationsModal(item)" *ngIf="!item.degree">{{item.name}}</td>
                            <td (click)="observationsModal(item)">{{item.carreer}}</td>
                            <td>
-                              <div class="div-actions">
+                              <div *ngIf="item.status == 'Verificado'" class="div-actions">
                                  <tr>
                                     <td>
                                        <div class="div-img" ngbTooltip="Quitar" tooltipClass="my-custom-class">
@@ -157,7 +157,22 @@
                                  </tr>
                               </div>
                            </td>
-                           <td class="{{item.status}}">{{item.status}}</td>
+                           <!--<td class="{{item.status}}">{{item.status}}</td>-->
+                              <td *ngIf="item.status == 'Registrado'" style="text-align: center;">
+                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(71,178,218); color: white; width: 90px;">{{item.status}}</span>
+                              </td>
+                              <td *ngIf="item.status == 'Pagado'" style="text-align: center;">
+                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(250,157,0); color: white; width: 90px;">{{item.status}}</span>
+                              </td>
+                              <td *ngIf="item.status == 'Verificado'" style="text-align: center;">
+                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(202,0,10); color: white; width: 90px;">{{item.status}}</span>
+                              </td>
+                              <td *ngIf="item.status == 'Asistió'" style="text-align: center;">
+                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(26,111,0); color: white; width: 90px;">{{item.status}}</span>
+                              </td>
+                              <td *ngIf="item.status == 'Mencionado'" style="text-align: center;">
+                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(0,0,116); color: white; width: 90px;">{{item.status}}</span>
+                              </td>
                            <td *ngIf="role === 'administration' || role === 'comunication'">
                               <div class="div-actions" id="{{item.status}}">
                         <tr *ngIf="item.email && status == '1'">
@@ -468,19 +483,19 @@
          <div style="overflow-x:auto; padding-top: 20px;">
             <div class="row">
                <div class="col-sm-4">
-                  <mat-card class = "cardEgresados"><b>Total Egresados:</b><br>{{totalEgresados}}</mat-card>
+                  <mat-card class = "cardEgresados"><b>Total Egresados</b><br>{{totalEgresados}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card class = "cardCPendientes"><b>Certificados Pendientes:</b><br>{{certificadosPendientes}}</mat-card>
+                  <mat-card class = "cardCPendientes"><b>Pendientes</b><br>{{certificadosPendientes}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card class = "cardCImpresos"><b>Certificados Impresos:</b><br>{{certificadosImpresos}}</mat-card>
+                  <mat-card class = "cardCImpresos"><b>Impresos</b><br>{{certificadosImpresos}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card class = "cardCListos"><b>Certificados Listos:</b><br>{{certificadosListos}}</mat-card>
+                  <mat-card class = "cardCListos"><b>Listos</b><br>{{certificadosListos}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card style="text-align: center;"><b>Certificados Entregados:</b><br>{{certificadosEntregados}}</mat-card>
+                  <mat-card style="text-align: center;"><b>Entregados</b><br>{{certificadosEntregados}}</mat-card>
                </div>
              </div><br>
             <div class="row">

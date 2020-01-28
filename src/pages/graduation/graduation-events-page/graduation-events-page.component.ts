@@ -8,6 +8,7 @@ import * as years from 'ye-ars';
 import Swal from 'sweetalert2';
 import { NewEventComponent } from 'src/modals/graduation/new-event/new-event.component';
 import { MatDialog } from '@angular/material';
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-graduation-events-page',
@@ -42,7 +43,18 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
 
      this.eventsSub = this.firestoreService.getAllEvents().subscribe(
         ev => {
-          this.events = ev.map( data => ({id: data.payload.doc.id, status: data.payload.doc.get('estatus')}) );
+          this.events = ev.map( data => (
+            {
+              id: data.payload.doc.id, 
+              status: data.payload.doc.get('estatus'),
+              date: data.payload.doc.get('date'),
+              limitDate: data.payload.doc.get('limitDate'),
+              hour: data.payload.doc.get('hour'),              
+              directorName: data.payload.doc.get('directorName'),              
+              directorMessage: data.payload.doc.get('directorMessage'),              
+              totalTickets: data.payload.doc.get('totalTickets'),              
+              studentTickets: data.payload.doc.get('studentTickets'),              
+            }) );
           this.year = this.today.getFullYear() + '';
         }
       );
@@ -92,11 +104,11 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       disableClose: true,
       hasBackdrop: true,
       width: '50em',
-      height: '430px'
+      height: '750px'
     });
     linkModal.afterClosed().subscribe(
       event=>{         
-        if(event.action === 'submit'){         
+        if(event.action === 'create'){         
           this.saveEvent(event);
         }
         // else this.refreshDataSource();
@@ -108,16 +120,19 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
   async saveEvent(event) {
     const newEvent = {
       estatus:2,
-      totalTickets:event.event.totalTickets,
-      studentTickets:event.event.studentTickets,
-      date:event.event.date,
-      name:event.event.periodName + event.event.year
+      totalTickets: event.event.totalTickets,
+      studentTickets: event.event.studentTickets,
+      date: event.event.date,
+      name: event.event.periodName + event.event.year,
+      limitDate: event.event.limitDate ,
+      hour: event.event.hour ,
+      directorMessage: event.event.directorMessage,
+      directorName: event.event.directorName
     };
         
     this.firestoreService.createEvent(newEvent.name, newEvent).then(
      async created => {
-       await this.notificationsServices.showNotification(0, 'EVENTO CREADO', '');
-       this.createEvent();
+       await this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'EVENTO CREADO', '');       
       }
     );   
   }
@@ -127,7 +142,7 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       res => {
         sub.unsubscribe();
         if (res.length === 0) {
-          this.notificationsServices.showNotification(2, 'No se encontraron alumnos, por favor primero importe los datos', '');
+          this.notificationsServices.showNotification(eNotificationType.ERROR, 'No se encontraron alumnos, por favor primero importe los datos', '');
 
         } else {
           this.router.navigate(['/listGraduates', event.id]);
@@ -165,7 +180,7 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
                 this.firestoreService.setStatusEvent(3, oldEvent).then(
                   updated => {
                     this.firestoreService.setStatusEvent(1, ev.id).then(
-                      up => this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`, '')
+                      up => this.notificationsServices.showNotification(eNotificationType.SUCCESS, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`, '')
                     );
                   }
                 );
@@ -174,7 +189,7 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
            } else {
              if (i === 1) {
               this.firestoreService.setStatusEvent(1, ev.id).then(
-                up => this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`, '')
+                up => this.notificationsServices.showNotification(eNotificationType.SUCCESS, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`, '')
               );
              }
            }
@@ -195,10 +210,93 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
         if (result.value) {
           // Finalizar de evento activo
           this.firestoreService.setStatusEvent(3, ev.id).then(
-            up => this.notificationsServices.showNotification(1, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`, '')
+            up => this.notificationsServices.showNotification(eNotificationType.SUCCESS, `ESTATUS DEL PERIODO ${ev.id.toUpperCase()} ACTUALIZADO`, '')
           );
         }
       });
     }
   }
+
+  updateEvent(event){
+
+    const linkModal = this.dialog.open(NewEventComponent, {
+      data: {
+        operation: 'edit',
+        event     
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '50em',
+      height: '750px'
+    });
+    linkModal.afterClosed().subscribe(
+      event=>{         
+        if(event.action === 'edit'){         
+          this.updateEv(event);
+        }
+        // else this.refreshDataSource();
+      },
+      err=>console.log(err)
+    ); 
+    
+  }
+  infoEvent(event){    
+    let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    Swal.fire({
+      html:
+        `<h4>Detalles del evento</h4>
+          <p style="text-align='left'">
+            <h6><b>Fecha del evento:</b> ${new Date(event.date.toDate()).toLocaleDateString("es-MX", dateOptions)}</h6>
+            <h6><b>Fecha limite de entrega de comprobante de pago:</b> <br/>${new Date(event.limitDate.toDate()).toLocaleDateString("es-MX", dateOptions)}</h6>        
+            <br>
+          </p>          
+          <p style="text-align='left'">
+            <h6><b>Boletos totales:</b> ${event.totalTickets}</h6>
+            <h6><b>Boletos por estudiante:</b> ${event.studentTickets}</h6>        
+            <h6><b>Hora de llegada:</b> ${event.hour}</h6>            
+            <br>
+          </p>
+        `,
+      allowOutsideClick: true,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Regresar'
+    }).then((result) => { });
+  }
+
+  async updateEv(event){
+    const newEvent = {
+      estatus:1,
+      totalTickets: event.event.totalTickets,
+      studentTickets: event.event.studentTickets,
+      date: event.event.date,
+      name: event.event.id,
+      limitDate: event.event.limitDate ,
+      hour: event.event.hour ,
+      directorMessage: event.event.directorMessage,
+      directorName: event.event.directorName
+    };
+        
+    this.firestoreService.updateEvent(newEvent.name, newEvent).then(
+     async created => {
+       await this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'EVENTO ACTUALIZADO', '');       
+      }
+    ); 
+  }
+
+  saveStudents(){
+    const s = this.firestoreService.getGraduates('agodic2019').subscribe(
+      students=>{
+        s.unsubscribe();
+        const studentsMap = students.map(st=> ({nc:st.payload.doc.get('nc'),}));
+        console.log(studentsMap);
+        studentsMap.forEach(elem=>{
+          this.firestoreService.asignEvent('agodic2019',elem.nc).then(
+            sd=>{console.log(elem.nc);
+            }
+          );
+        });
+      }
+    )
+  }
+  
 }

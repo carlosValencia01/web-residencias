@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+import TableToExcel from '@linways/table-to-excel';
+
 import { FirebaseService } from 'src/services/graduation/firebase.service';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { ExporterService } from 'src/services/graduation/exporter.service';
-import Swal from 'sweetalert2';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
-import TableToExcel from '@linways/table-to-excel';
+import { StudentProvider } from 'src/providers/shared/student.prov';
 import * as firebase from 'firebase/app';
+
+
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -99,16 +102,16 @@ export class ListGraduatesPageComponent implements OnInit {
   montserratBold: any;
 
   dateGraduation;
+  
 
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
     private graduationProv: GraduationProvider,
     private cookiesService: CookiesService,
-    private router: Router,
-    private excelService: ExporterService,
+    private router: Router,    
     private imageToBase64Serv: ImageToBase64Service,
-    private routeActive: ActivatedRoute,
+    private studentProv: StudentProvider
   ) {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
@@ -155,6 +158,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   ngOnInit() {
+    
     switch (this.cookiesService.getData().user.role) {
       case 0:
         this.role = 'administration';
@@ -248,7 +252,8 @@ export class ListGraduatesPageComponent implements OnInit {
       this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
       this.certificadosListos = this.filterCountItemsStatus('Listo').length;
       this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
-      this.certificadosPendientes = [this.totalEgresados-(this.certificadosImpresos+this.certificadosEntregados+this.certificadosListos)];
+      this.certificadosPendientes = this.filterCountItemsStatus('Fotos y Recibo').length;
+      // this.certificadosPendientes = [this.totalEgresados-(this.certificadosImpresos+this.certificadosEntregados+this.certificadosListos)];
 
       this.totalVerificados = this.filterCountItemsVerified().length;
       this.boletosRestantes = (this.boletosTotales-this.boletosRegistrados);
@@ -264,105 +269,39 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Pagado
   paidEvent(item) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      degree: item.degree ? item.degree : false,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0,
-      estatus: 'Pagado'
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Pagado'},this.collection).then(() =>{
       this.eventFilterReport();
       this.notificationsServices.showNotification(0, 'Pago confirmado para:', item.nc);
-    }, (error) => {
-      console.log(error);
     });
   }
 
   // Cambias estatus a Registrado
   removePaidEvent(item) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      degree: item.degree ? item.degree : false,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0,
-      estatus: 'Registrado'
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Registrado'},this.collection).then(() =>{
       this.eventFilterReport();
       this.notificationsServices.showNotification(0, 'Pago removido para:', item.nc);
-    }, (error) => {
-      console.log(error);
     });
   }
 
   // Cambias estatus a Asistió
   asistenceEvent(item) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      degree: item.degree ? item.degree : false,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0,
-      estatus: 'Asistió'
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Asistió'},this.collection).then(() =>{
       this.eventFilterReport();
       this.notificationsServices.showNotification(0, 'Asistencia registrada para:', item.nc);
-    }, (error) => {
-      console.log(error);
     });
   }
 
   // Cambias estatus a Verificado
   verifyEvent(item) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      degree: item.degree ? item.degree : false,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0,
-      estatus: 'Verificado'
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
-      this.eventFilterReport();
-      this.notificationsServices.showNotification(0, 'Verificación registrada para:', item.nc);
       const invitados = [];
       for(var i = 0; i < this.boletosXAlumno; i++){
         invitados.push({['invitado'+(i+1)]:'verificado'})
       }
-      this.firestoreService.updateFieldGraduate(item.id, { numInvitados:this.boletosXAlumno,invitados},this.collection);
-
+      this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Verificado',numInvitados:this.boletosXAlumno,invitados},this.collection).then(() =>{
+        this.eventFilterReport();
+        this.notificationsServices.showNotification(0, 'Verificación registrada para:', item.nc);
+      });
       //this.sendSurveyGraduate(item);
-    }, (error) => {
-      console.log(error);
-    });
   }
 
   // Enviar encuesta al verificar alumno desde la web
@@ -935,21 +874,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Asignar titulo
   degreeEvent(item) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      estatus: item.status,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      degree: true,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{degree: true},this.collection).then(() =>{
       this.eventFilterReport();
       Swal.fire('Título Asignado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -959,21 +884,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Remover titulo
   degreeRemoveEvent(item) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      estatus: item.status,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      degree: false,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{degree: false},this.collection).then(() =>{
       this.eventFilterReport();
       Swal.fire('Título Removido', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -1033,21 +944,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Guardar observaciones
   saveObservations(item, newObservations) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      degree: item.degree ? item.degree : false,
-      observations: newObservations,
-      survey: item.survey ? item.survey : false,
-      estatus: item.status,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{observations: newObservations},this.collection).then(() =>{
       this.eventFilterReport();
       Swal.fire('Observaciones Guardadas', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -1106,21 +1003,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   asignBestAverage(item, average) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      degree: item.degree ? item.degree : false,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      estatus: item.status,
-      mejorPromedio: true,
-      promedio: average
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{mejorPromedio: true,promedio: average},this.collection).then(() =>{
       this.eventFilterReport();
       Swal.fire('Promedio Asignado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -1263,21 +1146,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   returnAsistenceEvent(item) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      degree: item.degree ? item.degree : false,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0,
-      estatus: 'Asistió'
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Asistió'},this.collection).then(() =>{
       this.eventFilterReport();
     }, (error) => {
       console.log(error);
@@ -1336,21 +1205,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   saveEmail(item, newEmail) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: newEmail,
-      degree: item.degree ? item.degree : false,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      estatus: item.status,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{correo: newEmail},this.collection).then(() =>{
       this.eventFilterReport();
       Swal.fire('Correo Actualizado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -1378,21 +1233,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   returnVerifiedEvent(item) {
-    const itemUpdate = {
-      nc: item.nc,
-      nombre: item.name,
-      nombreApellidos: item.nameLastName,
-      carrera: item.carreer,
-      carreraCompleta: item.carreerComplete,
-      correo: item.email,
-      degree: item.degree ? item.degree : false,
-      observations: item.observations ? item.observations : '',
-      survey: item.survey ? item.survey : false,
-      mejorPromedio: item.bestAverage ? item.bestAverage : false,
-      promedio: item.average ? item.average : 0,
-      estatus: 'Verificado'
-    };
-    this.firestoreService.updateGraduate(item.id, itemUpdate, this.collection).then(() => {
+    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Verificado'},this.collection).then(() =>{
       this.eventFilterReport();
     }, (error) => {
       console.log(error);
@@ -1468,30 +1309,47 @@ export class ListGraduatesPageComponent implements OnInit {
     //console.log(student);
     switch (status){
       case "Fotos y Recibo":
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);        
+        
+        this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
+        
         break;
       case "Impreso":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+
+        // this.sendNotification('Certificado', 'Tus certificado ha sido impreso',student.nc);
         break;
       case "Listo":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+
+        this.sendNotification('Certificado', 'Tu certificado ya esta listo',student.nc);
         break;
       case "Entregado":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+
+        this.sendNotification('Certificado', 'Tu certificado fue entregado',student.nc);
         break;
       case "Regresar":
         switch (student.documentationStatus){
           case "Fotos y Recibo":
             this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:' '}, this.collection);
+
+            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case "Impreso":
             this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Fotos y Recibo'}, this.collection);
+
+            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case "Listo":
             this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Impreso'}, this.collection);
+
+            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case "Entregado":
             this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Listo'}, this.collection);
+
+            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
         }
     }
@@ -1641,6 +1499,72 @@ export class ListGraduatesPageComponent implements OnInit {
     console.log(this.boletosXAlumno);
   }
 
+  sendNotification(title: string, body: string, nc: string){
+    const subTok = this.firestoreService.getStudentToken(nc).subscribe(
+      (token)=>{
+        subTok.unsubscribe();
+        // console.log(token);
+        
+        const infoToken = token[0];
+        const notification = {
+          "titulo":title,
+          "descripcion": body,
+          "fecha": new Date()
+        };
+        
+        if(infoToken){
+          // student device exist              
+          if(infoToken.token){
+            // student has token device 
+            // send notification        
+            console.log(infoToken.token);
+                                    
+            this.firestoreService.sendNotification(infoToken.id,notification).then(
+              (sended)=>{
+                this.studentProv.sendNotification({title,body,token:infoToken.token}).subscribe(
+                  (send)=>{
+                    console.log(send, 'Enviado');
+                    
+                  }
+                );
+              }
+            );
+          }else{
+            // only save notification in firebase                
+            this.firestoreService.sendNotification(infoToken.id,notification).then(
+              (sended)=>{
+                console.log('Enviado');
+                
+              }
+            );
+          }
+          this.firestoreService.updateDeviceStudent(infoToken.id,{pendientes:(infoToken.pendientes+1)}).then(
+            (updated)=>{}
+          );
+        }else{
+          // create register for notifications
+          //only save notification in firebase
+          this.firestoreService.createDeviceToken(nc).then(
+            (created)=>{
+              const subST = this.firestoreService.getStudentToken(nc).subscribe(
+                (token)=>{
+                  subST.unsubscribe();                      
+                  this.firestoreService.sendNotification(infoToken.id,notification).then(
+                    (sended)=>{
+                      console.log('Enviado');
+                      this.firestoreService.updateDeviceStudent(infoToken.id,{pendientes:(infoToken.pendientes+1)}).then(
+                        (updated)=>{}
+                      );
+                    }
+                  );                  
+                }
+              );
+            }
+          );
+        }
+      }
+    );
+  }
 
 }
 

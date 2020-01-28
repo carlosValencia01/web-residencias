@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
-
+import * as firebase from 'firebase/app';
 @Injectable({
   providedIn: 'root'
 })
@@ -41,6 +41,11 @@ export class FirebaseService {
 
   // crear evento
   public createEvent(name: string, data) {
+    return this.db.collection('eventosG').doc(name).set(data);
+  }
+
+  // actualza evento
+  public updateEvent(name: string, data) {
     return this.db.collection('eventosG').doc(name).set(data);
   }
 
@@ -157,5 +162,28 @@ export class FirebaseService {
       .pipe( map( (alumno ) => alumno.map( alumno => {return {_id: alumno.payload.doc.id, data: alumno.payload.doc.data()}; }))).pipe( map(
       alumno => alumno.filter( (al: any) => al.data.mejorPromedio === true
     )));
+  }
+  public asignEvent(collection, nc)  {
+    return this.db.collection('alumnoPeriodo').add({collection,nc});
+  }
+
+  // obtiene el registro del dispositivo del alumno
+  public getStudentToken( nc: string) {
+    return this.db.collection('alumnoDispositivo', ref=> ref.where('nc','==',nc+'')).snapshotChanges()
+      .pipe( map( (alumno ) => alumno.map( alumno => {return {id: alumno.payload.doc.id, token: alumno.payload.doc.get('token'),pendientes:alumno.payload.doc.get('pendientes')}; })));
+  }
+
+  public sendNotification( id: string, data){        
+    return this.db.collection('alumnoDispositivo').doc(id).update({
+      notificaciones: firebase.firestore.FieldValue.arrayUnion(data)          
+    });    
+  }
+
+  public createDeviceToken(nc: string){
+    return this.db.collection('alumnoDispositivo').add({token:[],nc,notificaciones:[],pendientes:0});
+  }
+
+  public updateDeviceStudent( id: string, data){
+    return this.db.collection('alumnoDispositivo').doc(id).update(data);
   }
 }
