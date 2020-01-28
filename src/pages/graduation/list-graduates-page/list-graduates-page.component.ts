@@ -32,13 +32,11 @@ export class ListGraduatesPageComponent implements OnInit {
   public searchStatusDocumentation = '';
 
   public searchSRC = false;
-  public searchSPC = false;
   public searchSVC = false;
   public searchSAC = false;
   public searchSMC = false;
 
   public searchSR = '';
-  public searchSP = '';
   public searchSV = '';
   public searchSA = '';
   public searchSM = '';
@@ -115,8 +113,7 @@ export class ListGraduatesPageComponent implements OnInit {
   ) {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
-
-    if (rol !== 0 && rol !== 5 && rol !== 6 &&
+    if (rol !== 0 && rol !== 1 && rol !== 5 && rol !== 6 &&
       rol !== 9) {
       this.router.navigate(['/']);
     }
@@ -267,14 +264,6 @@ export class ListGraduatesPageComponent implements OnInit {
     }
   }
 
-  // Cambias estatus a Pagado
-  paidEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Pagado'},this.collection).then(() =>{
-      this.eventFilterReport();
-      this.notificationsServices.showNotification(0, 'Pago confirmado para:', item.nc);
-    });
-  }
-
   // Cambias estatus a Registrado
   removePaidEvent(item) {
     this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Registrado'},this.collection).then(() =>{
@@ -314,25 +303,6 @@ export class ListGraduatesPageComponent implements OnInit {
         this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:', item.nc);
       }
     );
-  }
-
-  // Confirmar pago
-  confirmPaidEvent(item) {
-    Swal.fire({
-      title: 'Confirmar Pago',
-      text: 'Para ' + item.name,
-      type: 'question',
-      showCancelButton: true,
-      allowOutsideClick: false,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Cancelar',
-      confirmButtonText: 'Confirmar'
-    }).then((result) => {
-      if (result.value) {
-        this.paidEvent(item);
-      }
-    });
   }
 
   // Confirmar verificar alumno
@@ -502,11 +472,6 @@ export class ListGraduatesPageComponent implements OnInit {
     } else {
       this.searchSR = '~';
     }
-    if (this.searchSPC) {
-      this.searchSP = 'Pagado';
-    } else {
-      this.searchSP = '~';
-    }
     if (this.searchSVC) {
       this.searchSV = 'Verificado';
     } else {
@@ -525,7 +490,6 @@ export class ListGraduatesPageComponent implements OnInit {
     this.alumnosReport = this.filterItems(
       this.searchCarreer,
       this.searchSR,
-      this.searchSP,
       this.searchSV,
       this.searchSA,
       this.searchSM
@@ -534,7 +498,6 @@ export class ListGraduatesPageComponent implements OnInit {
     const cantidadStatus = this.filterItems(
       this.searchCarreer,
       this.searchSR,
-      this.searchSP,
       this.searchSV,
       this.searchSA,
       this.searchSM
@@ -543,13 +506,13 @@ export class ListGraduatesPageComponent implements OnInit {
     const cantidadCarrera = this.filterItemsCarreer(this.searchCarreer).length;
 
     if (cantidadStatus === 0) {
-      if (this.searchSRC || this.searchSPC || this.searchSVC || this.searchSAC || this.searchSMC) {
+      if (this.searchSRC || this.searchSVC || this.searchSAC || this.searchSMC) {
         this.totalAlumnos = 0;
       } else {
         this.totalAlumnos = cantidadCarrera;
       }
     } else {
-      if (this.searchSRC || this.searchSPC || this.searchSVC || this.searchSAC || this.searchSMC) {
+      if (this.searchSRC || this.searchSVC || this.searchSAC || this.searchSMC) {
         this.totalAlumnos = cantidadStatus;
       } else {
         this.totalAlumnos = cantidadCarrera;
@@ -557,7 +520,7 @@ export class ListGraduatesPageComponent implements OnInit {
     }
 
     if (Object.keys(this.alumnosReport).length === 0) {
-      if (!this.searchSRC && !this.searchSPC && !this.searchSVC && !this.searchSAC && !this.searchSMC) {
+      if (!this.searchSRC && !this.searchSVC && !this.searchSAC && !this.searchSMC) {
         this.alumnosReport = this.alumnos;
       }
     }
@@ -569,11 +532,10 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   // FILTRADO POR CARRERA O ESTATUS
-  filterItems(carreer, sR, sP, sV, sA, sM) {
+  filterItems(carreer, sR, sV, sA, sM) {
     return this.alumnos.filter(function (alumno) {
       return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
         alumno.status.toLowerCase().indexOf(sR.toLowerCase()) > -1 ||
-        alumno.status.toLowerCase().indexOf(sP.toLowerCase()) > -1 ||
         alumno.status.toLowerCase().indexOf(sV.toLowerCase()) > -1 ||
         alumno.status.toLowerCase().indexOf(sA.toLowerCase()) > -1 ||
         alumno.status.toLowerCase().indexOf(sM.toLowerCase()) > -1);
@@ -1470,6 +1432,12 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.text("LIC. MANUEL ANGEL URIBE VÁZQUEZ", pageWidth / 2, 240, 'center');
         doc.text("DIRECTOR", pageWidth / 2, 247, 'center');
         doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2)-50, 197, 100, 53.75);
+
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(9);
+        doc.text((i+1)+'',10,pageHeight-10, 'center');
         if (i < this.alumnosConstancia.length - 1) {
           doc.addPage();
         }
@@ -1482,7 +1450,11 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   addTicket(item){
-    this.firestoreService.updateFieldGraduate(item.id, { numInvitados:(item.numInvitados+1),invitados: firebase.firestore.FieldValue.arrayUnion({['invitado'+(item.numInvitados+1)]:'verificado'})},this.collection);
+    if(this.boletosRestantes > 0){
+      this.firestoreService.updateFieldGraduate(item.id, { numInvitados:(item.numInvitados+1),invitados: firebase.firestore.FieldValue.arrayUnion({['invitado'+(item.numInvitados+1)]:'verificado'})},this.collection);
+    } else{
+      this.notificationsServices.showNotification(2, 'Atención', 'Se Terminaron los Boletos.');
+    }
   }
 
   delTicket(item){
