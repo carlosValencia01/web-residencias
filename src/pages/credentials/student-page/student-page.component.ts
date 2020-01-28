@@ -387,6 +387,8 @@ export class StudentPageComponent implements OnInit {
   updateStudentData() {
     this.isNewStudent = false;
     if (!this.formValidation()) {
+      console.log(this.currentStudent.career);
+      
       this.currentStudent.fullName = this.formStudent.get('firstNameInput').value.toUpperCase()+' ' +this.formStudent.get('fatherFirstNameInput').value.toUpperCase() + ' '+ this.formStudent.get('motherFirstNameInput').value.toUpperCase();
       this.currentStudent.controlNumber = this.formStudent.get('numberControlInput').value;
       this.currentStudent.careerId = this.currentStudent.careerId;

@@ -76,7 +76,9 @@ export class OneStudentPageComponent implements OnInit {
               // console.log(per.student.idPeriodInscription, 'idperrrrr');              
               
               if(!per.student.idPeriodInscription){
-                this.studentProv.updateStudent(this.data._id,{idPeriodInscription:this.activePeriod._id});
+                this.studentProv.updateStudent(this.data._id,{idPeriodInscription:this.activePeriod._id}).subscribe(
+                  f=>{}
+                );
               }
             }
           );
@@ -351,13 +353,17 @@ export class OneStudentPageComponent implements OnInit {
 
   createFolder(){
     let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
+  // console.log(folderStudentName);
+  // console.log(this.data.name);
   
     this.inscriptionProv.getFoldersByPeriod(this.activePeriod._id,1).subscribe(
       (folders)=>{
         // console.log(folders,'folderss');
         
-        this.foldersByPeriod=folders.folders;                                     
-        let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1);
+        this.foldersByPeriod=folders.folders;     
+        // console.log(this.foldersByPeriod);
+                                        
+        let folderPeriod = this.foldersByPeriod.filter( folder=> folder ? folder.name.indexOf(this.activePeriod.periodName) !==-1 : false);
 
         // 1 check career folder
         let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
@@ -376,7 +382,7 @@ export class OneStudentPageComponent implements OnInit {
                   this.folderId = studentF.folder.idFolderInDrive;                 
                   // console.log('3');
                   
-                  this.studentProv.updateStudent(this.data._id,{folderId:studentF.folder._id});
+                  this.studentProv.updateStudent(this.data._id,{folderId:studentF.folder._id}).subscribe(carpeta=>{});
                 },
                 err=>{console.log(err);
                 }
