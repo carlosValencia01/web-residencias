@@ -180,8 +180,11 @@ export class NewEventComponent implements OnInit {
             proposedDate: this.event.appointment,
             proposedHour: this.event.minutes,
             jury: data.request.jury,
+            project: data.request.projectName,
             place: data.request.place,
-            duration: data.request.duration
+            duration: data.request.duration,
+            option: 'XI - TITULACIÓN INTEGRAL',
+            product: 'MEMORIA DE RESIDENCIA PROFESIONAL'
           }
         });
       }

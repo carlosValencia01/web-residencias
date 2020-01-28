@@ -106,13 +106,19 @@ export class ViewAppointmentPageComponent implements OnInit {
 
   diary(month: number, year: number): void {
     this.Appointments = [];
+    let minDate = new Date(this.viewDate.getTime());
+    let maxDate = new Date(this.viewDate.getTime());
+    minDate.setDate(minDate.getDate() - minDate.getDay());
+    maxDate.setDate(maxDate.getDate() + (6 - maxDate.getDay()));
     this._RequestProvider.getDiary({
       month: month,
-      year: year
+      year: year,
+      isWeek: this.view === CalendarView.Week,
+      min: minDate,
+      max: maxDate
     }).subscribe(data => {
-      if (typeof (data.Diary) !== "undefined") {        
-        this.Appointments = data.Diary;
-        console.log("AAAPOINT", data);
+      if (typeof (data.Diary) !== "undefined") {
+        this.Appointments = data.Diary;         
         this.loadAppointment();
         this.refresh.next();
       }

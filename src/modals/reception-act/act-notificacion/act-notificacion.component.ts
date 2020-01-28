@@ -7,6 +7,7 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { IStudent } from 'src/entities/shared/student.model';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
+import { CookiesService } from 'src/services/app/cookie.service';
 
 @Component({
   selector: 'app-act-notificacion',
@@ -24,6 +25,7 @@ export class ActNotificacionComponent implements OnInit {
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
     public dialogRef: MatDialogRef<ActNotificacionComponent>,
+    public _CookiesService: CookiesService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.jury = "Presidente";
@@ -33,7 +35,7 @@ export class ActNotificacionComponent implements OnInit {
         this._Request = request.request[0];
         this._Request.student = <IStudent>request.request[0].studentId;
         this._Request.studentId = this._Request.student._id;
-        this.oRequest = new uRequest(request.request[0], _ImageToBase64Service);
+        this.oRequest = new uRequest(request.request[0], _ImageToBase64Service, this._CookiesService);
       },
       error => {
         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Solicitud no encontrada');
@@ -45,7 +47,7 @@ export class ActNotificacionComponent implements OnInit {
   ngOnInit() {
   }
 
-  Generar(): void {    
+  Generar(): void {
     this.existError = this.oficio.trim().length === 0;
     if (!this.existError) {
       switch (this.jury) {

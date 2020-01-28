@@ -101,7 +101,7 @@ export class RequestModalComponent implements OnInit {
       'honorific': this.request.honorificMention,
     });
     this.isToggle = this.request.honorificMention;
-    this.oRequest = new uRequest(this.request, this.imgService);
+    this.oRequest = new uRequest(this.request, this.imgService,this.cookiesService);
   }
 
   accept(): void {

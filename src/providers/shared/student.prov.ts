@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Api } from 'src/providers/app/api.prov';
 import { ResponseContentType } from '@angular/http';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import {tap} from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 @Injectable()
 export class StudentProvider {
 
@@ -35,9 +35,13 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-    getStudentByControlNumber(controlnumber) {
-        console.log(controlnumber);
-        return this.api.post(`student/login`, controlnumber)
+    getStudentByControlNumber(controlNumber) {
+        return this.api.post(`student/login`, { controlNumber: controlNumber })
+            .pipe(map(student => student.json()));
+    }
+
+    getByControlNumber(controlNumber) {
+        return this.api.post('student/search/numero', { controlNumber: controlNumber })
             .pipe(map(student => student.json()));
     }
 
@@ -107,7 +111,7 @@ export class StudentProvider {
     request(id, data) {
         return this.api.post(`request/create/${id}`, data, true).pipe(map(res => res.json()));
     }
-
+  
     updateRequest(id, data) {
         return this.api.put(`request/${id}`, data, true).pipe(map(res => res.json()));
     }
@@ -124,36 +128,36 @@ export class StudentProvider {
 
     }
 
-    getDriveDocuments(studentId : string): Observable<any>  {
+    getDriveDocuments(studentId: string): Observable<any> {
         return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
     }
-    getFolderId(studentId : String): Observable<any>  {
+    getFolderId(studentId: String): Observable<any> {
         return this.api.get(`student/get/folderid/${studentId}`).pipe(map(res => res.json()));
     }
 
-    uploadDocumentDrive(id,data): Observable<any> {
+    uploadDocumentDrive(id, data): Observable<any> {
         return this.api.put(`student/document/drive/${id}`, data).pipe(map(res => res.json())).pipe(
             tap(() => {
-              this._refreshNeeded$.next();
+                this._refreshNeeded$.next();
             })
-          );
+        );
     }
-    
-    getDriveFolderId(studentId : string): Observable<any>  {
+
+    getDriveFolderId(studentId: string): Observable<any> {
         return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
     }
-    getPeriodId(studentId : string): Observable<any>  {
+    getPeriodId(studentId: string): Observable<any> {
         return this.api.get(`student/get/periodinscription/${studentId}`).pipe(map(res => res.json()));
     }
-    updateDocumentStatus(id,data): Observable<any> {
+    updateDocumentStatus(id, data): Observable<any> {
         return this.api.put(`student/document/status/${id}`, data).pipe(map(res => res.json())).pipe(
             tap(() => {
                 this._refreshNeeded$.next();
             })
-            );
+        );
     }
 
-    getDocumentsUpload(_id : string): Observable<any>{
-        return this.api.get(`student/get/documents/status/${_id}`).pipe(map( res=>res.json()));
+    getDocumentsUpload(_id: string): Observable<any> {
+        return this.api.get(`student/get/documents/status/${_id}`).pipe(map(res => res.json()));
     }
 }

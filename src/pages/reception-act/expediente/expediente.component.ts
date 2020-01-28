@@ -90,7 +90,7 @@ export class ExpedienteComponent implements OnInit {
                   this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
                 }
               });
-            this._Request = new uRequest(this.Request, imgSrv);
+            this._Request = new uRequest(this.Request, imgSrv,this._CookiesService);
             this.onLoad(this.Request.documents);
             (async () => {
               await this.delay(150);

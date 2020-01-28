@@ -47,7 +47,7 @@ export class ReleaseComponentComponent implements OnInit {
 
   ngOnInit() {
     this.frmConsejo = new FormGroup({
-      'president': new FormControl(this.information.request.adviser, Validators.required),
+      'president': new FormControl(this.information.request.adviser.name, Validators.required),
       'secretary': new FormControl(null, Validators.required),
       'vocal': new FormControl(null, Validators.required),
       'substitute': new FormControl(null, Validators.required),
@@ -71,11 +71,12 @@ export class ReleaseComponentComponent implements OnInit {
       this.enableUpload = !this.isReject;
     } else {
       this.juryInfo = [
-        { name: '', title: '', cedula: '' },
+        { name: this.information.request.adviser.name, title: this.information.request.adviser.title, cedula: this.information.request.adviser.cedula },
         { name: '', title: '', cedula: '' },
         { name: '', title: '', cedula: '' },
         { name: '', title: '', cedula: '' }
-      ]
+      ];
+      console.log("ELSE", this.juryInfo);
       this.Time.writeValue("7:00");
     }
   }
@@ -102,7 +103,7 @@ export class ReleaseComponentComponent implements OnInit {
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '45em'
+      width: '50em'
     });
 
     ref.afterClosed().subscribe((result) => {
@@ -198,7 +199,7 @@ export class ReleaseComponentComponent implements OnInit {
     this.information.request.jury = this.juryInfo;
     this.information.request.proposedDate = new Date();
     this.information.request.proposedHour = Number(this.Time.hour * 60) + Number(this.Time.minute);
-    this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service);
+    this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
     await this.delay(1000);
     window.open(this.oRequest.projectReleaseNew().output('bloburl'), '_blank');
     this.enableUpload = true;

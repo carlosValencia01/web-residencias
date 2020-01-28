@@ -120,9 +120,9 @@ export class TitulacionPageComponent implements OnInit {
           this.isActive = true;
         } else {
           this.isActive = false;
-        }        
+        }
       }, error => {
-        this.isActive = false;        
+        this.isActive = false;
       });
   }
 
@@ -149,7 +149,7 @@ export class TitulacionPageComponent implements OnInit {
           this.Request = <iRequest>res.request[0];
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
-          this.oRequest = new uRequest(this.Request, this.imgService);
+          this.oRequest = new uRequest(this.Request, this.imgService, this.cookiesService);
           this.getFolderId();
         } else {
           this.Request = {

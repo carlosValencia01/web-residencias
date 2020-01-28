@@ -15,6 +15,14 @@ export class RequestProvider {
         return this.api.getURL();
     }
 
+    titled(data) {
+        return this.api.post(`request/titled`, data).pipe(map(res => res.json()));
+    }
+
+    removeTitle(_id) {
+        return this.api.delete(`request/${_id}`).pipe(map(res => res.json()));
+    }
+
     getAllRequestByStatus(role) {
         return this.api.get(`request/phase/${role}`)
             .pipe(map(requests => requests.json()));

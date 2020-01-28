@@ -96,52 +96,56 @@ export class EmployeeProvider {
     }
 
     getEmployee(email) {
-      return this.api.get(`user/employee/${email}`).pipe(map(res => res.json()));
+        return this.api.get(`user/employee/${email}`).pipe(map(res => res.json()));
     }
 
     updateProfile(id, data) {
-      return this.api.put(`user/update/${id}`, data).pipe(map(res => res.json()));
+        return this.api.put(`user/update/${id}`, data).pipe(map(res => res.json()));
     }
 
     getEmployeeById(employeeId: string) {
-      return this.api.get(`employee/${employeeId}`)
-        .pipe(map(res => res.json()));
+        return this.api.get(`employee/${employeeId}`)
+            .pipe(map(res => res.json()));
     }
 
     updateEmployeePositions(id: string, positions: any) {
-      return this.api.put(`employee/positions/${id}`, positions)
-        .pipe(map(res => res.json()));
+        return this.api.put(`employee/positions/${id}`, positions)
+            .pipe(map(res => res.json()));
     }
 
     updateEmployeeGrades(id: string, grades: any) {
-      return this.api.put(`employee/grades/${id}`, grades)
-        .pipe(map(res => res.json()));
+        return this.api.put(`employee/grades/${id}`, grades)
+            .pipe(map(res => res.json()));
     }
 
     updateGradesAndPositions(id: string, data: Object) {
-      return this.api
-        .put(`employee/gradesPositions/${id}`, data)
-        .pipe(map(res => res.json()));
+        return this.api
+            .put(`employee/gradesPositions/${id}`, data)
+            .pipe(map(res => res.json()));
     }
 
     getEmployeesPositions(rfc) {
-      return this.api.get(`employee/positions/${rfc}`).pipe(
-        map(res => res.json())
-      );
+        return this.api.get(`employee/positions/${rfc}`).pipe(
+            map(res => res.json())
+        );
     }
 
     uploadCsvPositions(employeeId: string, data: Array<any>) {
-      return this.api.post(`employee/uploadCsvPositions/${employeeId}`, data)
-        .pipe(map(res => res.json()));
+        return this.api.post(`employee/uploadCsvPositions/${employeeId}`, data)
+            .pipe(map(res => res.json()));
     }
 
     uploadCsvGrades(employeeId: string, data: Array<any>) {
-      return this.api.post(`employee/uploadCsvGrades/${employeeId}`, data)
-        .pipe(map(res => res.json()));
+        return this.api.post(`employee/uploadCsvGrades/${employeeId}`, data)
+            .pipe(map(res => res.json()));
     }
 
     canReallocateBossOrDirectorPosition(positionId: string) {
         return this.api.get(`employee/reallocate/${positionId}`)
             .pipe(map(res => res.json()));
+    }
+    
+    searchEmployee(data) {
+        return this.api.post(`department/search`, data).pipe(map(res => res.json()));
     }
 }
