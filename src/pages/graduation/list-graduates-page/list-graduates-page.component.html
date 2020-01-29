@@ -14,10 +14,10 @@
                      <div class="col-sm-3">
                         <mat-card class = "cardCListos"><b>Verificados</b><br>{{totalVerificados}}</mat-card>
                      </div>
-                     <div class="col-sm-3">
+                     <div class="col-sm-3" *ngIf="role === 'administration' || role === 'comunication'">
                         <mat-card class = "cardCPendientes"><b>Boletos Totales</b><br>{{boletosTotales}}</mat-card>
                      </div>
-                     <div class="col-sm-3">
+                     <div class="col-sm-3" *ngIf="role === 'administration' || role === 'comunication'">
                         <mat-card class = "cardRestantes"><b>Boletos Restantes</b><br>{{boletosRestantes}}</mat-card>
                      </div>
                    </div><br>
