@@ -159,7 +159,7 @@ export class uRequest {
         return doc;
     }
 
-    projectRegistrationOffice(): jsPDF {
+    projectRegistrationOffice(qrCode?, eStamp?): jsPDF {
         const doc = this.newDocumentTec();
         const registerHistory = this._request.history
             .filter(x => x.phase === 'Verificado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
@@ -218,11 +218,9 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Bold');
         const observationY = 185 + observationsLines + (nameProjectLines - 5) + integrantsLines;
-        doc.text('ATENTAMENTE', (this.WIDTH / 2), observationY < 220 ? 220 : observationY, { align: 'center' });
-        doc.setFont(this.FONT, 'Normal');
-        doc.text(this._request.department.boss, (this.WIDTH / 2), 240, { align: 'center' });
-        this.addLineCenter(doc, 'Nombre y firma del (de la) Jefe(a) de Departamento Académico', 244);
-
+        doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
+        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)),  this.MARGIN.LEFT + 45, 235);
+        // doc.setFont(this.FONT, 'Normal');
         return doc;
     }
 

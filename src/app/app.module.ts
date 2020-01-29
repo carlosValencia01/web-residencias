@@ -23,6 +23,7 @@ import { SidebarModule } from 'ng-sidebar';
 import { DropzoneModule } from 'ngx-dropzone-wrapper';
 import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { QRCodeModule } from 'angularx-qrcode';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
@@ -446,6 +447,7 @@ registerLocaleData(localeEs);
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
+    QRCodeModule,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },

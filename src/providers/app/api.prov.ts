@@ -7,17 +7,15 @@ export class Api {
     // url = 'http://localhost:3003/escolares/credenciales';
     // url = 'https://api.cideti.com.mx/escolares/credenciales';
     url = 'https://rijimenezesdev.me/escolares/credenciales';
-    urlE = 'http://localhost:3000/escolares/credenciales';
+    urlE = 'https://rijimenezesdev.me/escolares/firma';
 
     headers: Headers = new Headers();
-    headersE: Headers = new Headers();
 
     constructor(
         private http: Http,
         private cookiesServ: CookiesService,
     ) {
         this.headers.append('Content-Type', 'application/json');
-        this.headersE.append('Content-Type', 'application/json');
         // this.headers.append('Authorization', `Bearer ${this.cookiesServ.getData().token}`);
     }
 
@@ -73,7 +71,7 @@ export class Api {
     }
 
     getE(endpoint: string, params?: any) {
-        const options = new RequestOptions({ headers: this.headersE });
+        const options = new RequestOptions({ headers: this.headers });
 
         if (params) {
             const p = new URLSearchParams();
