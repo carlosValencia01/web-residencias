@@ -4,8 +4,8 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { Router } from '@angular/router';
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
-import TableToExcel from '@linways/table-to-excel';
 import Swal from 'sweetalert2';
+import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
 @Component({
   selector: 'app-loader-data-graduation-page',
@@ -252,12 +252,12 @@ export class LoaderDataGraduationPageComponent implements OnInit {
       confirmButtonText: 'Descargar'
     }).then((result) => {
       if (result.value) {
-        TableToExcel.convert(document.getElementById('templateStudent'), {
-          name: 'Plantilla Alumnos Graduación.xlsx',
-          sheet: {
-            name: 'Alumnos'
-          }
-        });
+        const ExampleStudents = [
+          { no: 'No', nc: 'Número de Control', nombreApellidos: 'Nombre Apellido', nombre: 'Nombre del Alumno', carrera: 'Carrera', especialidad: 'Especialidad', calificacion: 'Calificacion', email: 'Email' },
+          { no: '1', nc: '14400975', nombreApellidos: 'NAVA HERNANDEZ IRVING YAIR', nombre: 'IRVING YAIR NAVA HERNANDEZ', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '88.93', email: 'iryanavahe@ittepic.edu.mx' },
+          { no: '2', nc: '15401011', nombreApellidos: 'JIMENEZ ESPERICUETA RICARDO', nombre: 'RICARDO JIMENEZ ESPERICUETA', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '93.13', email: 'rijimenezes@ittepic.edu.mx' }
+        ];
+        new Angular5Csv(ExampleStudents, 'Ejemplo Estudiantes Graduación');
       }
     });
   }
