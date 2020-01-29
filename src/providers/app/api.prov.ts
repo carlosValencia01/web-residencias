@@ -6,9 +6,9 @@ import { CookiesService } from 'src/services/app/cookie.service';
 export class Api {
     // url = 'http://localhost:3004/escolares/credenciales';
     // url = 'http://localhost:3003/escolares/credenciales';
-    // url = 'https://api.cideti.com.mx/escolares/credenciales';
+    url = 'https://api.cideti.com.mx/escolares/credenciales';
        
-    url = 'https://rijimenezesdev.me/escolares/credenciales';
+    // url = 'https://rijimenezesdev.me/escolares/credenciales';
     // urlE = 'http://localhost:3000/escolares/credenciales';
     urlE = 'https://rijimenezesdev.me/escolares/firma';
 
