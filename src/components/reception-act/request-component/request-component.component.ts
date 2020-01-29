@@ -79,7 +79,7 @@ export class RequestComponentComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.oRequest = new uRequest(this._request, this.imgService);
+    this.oRequest = new uRequest(this._request, this.imgService, this.cookiesService);
     console.log("Information", this.userInformation);
     this.frmRequest = new FormGroup(
       {
@@ -94,7 +94,7 @@ export class RequestComponentComponent implements OnInit {
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
         'honorific': new FormControl(false, Validators.required),
-        'titulationOption': new FormControl({ value: 'XI - TITULACIÓN INTEGRAL', disabled: true}, Validators.required)
+        'titulationOption': new FormControl({ value: 'XI - TITULACIÓN INTEGRAL', disabled: true }, Validators.required)
       });
     this.getRequest();
   }
@@ -464,7 +464,7 @@ export class RequestComponentComponent implements OnInit {
             student => {
               if (student.folder) {// folder exists
                 if (student.folder.idFolderInDrive) {
-                  this.folderId = student.folder.idFolderInDrive;                  
+                  this.folderId = student.folder.idFolderInDrive;
                 }
                 else { //folder doesn't exists then create it                  
                   this.createFolder();
@@ -481,10 +481,10 @@ export class RequestComponentComponent implements OnInit {
   createFolder() {
     const _idStudent = this.userInformation._id;
     let folderStudentName = this.userInformation.email + ' - ' + this.userInformation.name.fullName;
-    console.log("Periodo", this.activePeriod._id,"--", folderStudentName);
+    console.log("Periodo", this.activePeriod._id, "--", folderStudentName);
     this._InscriptionsProvider.getFoldersByPeriod(this.activePeriod._id, 2).subscribe(
       (folders) => {
-         console.log(folders,'folderss');
+        console.log(folders, 'folderss');
 
         this.foldersByPeriod = folders.folders;
         let folderPeriod = this.foldersByPeriod.filter(folder => folder.name.indexOf(this.activePeriod.periodName) !== -1);
@@ -502,7 +502,7 @@ export class RequestComponentComponent implements OnInit {
               // student folder doesn't exists then create new folder
               this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, career.folder.idFolderInDrive, 2).subscribe(
                 studentF => {
-                  this.folderId = studentF.folder.idFolderInDrive;                 
+                  this.folderId = studentF.folder.idFolderInDrive;
                   this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id });
                 },
                 err => {
@@ -517,7 +517,7 @@ export class RequestComponentComponent implements OnInit {
         } else {
           this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, folderCareer[0].idFolderInDrive, 2).subscribe(
             studentF => {
-              this.folderId = studentF.folder.idFolderInDrive;                            
+              this.folderId = studentF.folder.idFolderInDrive;
               this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id }).subscribe(
                 upd => { },
                 err => { }
@@ -584,8 +584,8 @@ export class RequestComponentComponent implements OnInit {
       .subscribe(_ => {
         this.notificationsServ
           .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Correo envíado con éxito');
-          this.isSentVerificationCode = true;
-          this._request.sentVerificationCode = true;
+        this.isSentVerificationCode = true;
+        this._request.sentVerificationCode = true;
       }, err => {
         const message = JSON.parse(err._body).error;
         this.notificationsServ

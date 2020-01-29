@@ -3,6 +3,9 @@ import * as jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as moment from 'moment';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { CookiesService } from 'src/services/app/cookie.service';
+import { IBoss } from './boss.model';
+
 
 moment.locale('es');
 
@@ -35,8 +38,17 @@ export class uRequest {
     private directorFirm: any;
     private montserratNormal: any;
     private montserratBold: any;
-
-    constructor(public _request: iRequest, public _getImage: ImageToBase64Service) {
+    private JDeptoDiv: IBoss;
+    private CDeptoDiv: IBoss;
+    private JDeptoEsc: IBoss;
+    private Director: IBoss;
+    private bosses: any;
+    constructor(public _request: iRequest, public _getImage: ImageToBase64Service, public _CookiesService: CookiesService) {
+        this.bosses = this._CookiesService.getBosses();
+        this.JDeptoDiv = this.bosses.JDeptoDiv;
+        this.CDeptoDiv = this.bosses.CDeptoDiv;
+        this.JDeptoEsc = this.bosses.JDeptoEsc;
+        this.Director = this.bosses.Director;
         this._getImageToPdf();
     }
 
@@ -97,19 +109,23 @@ export class uRequest {
 
         // Saludos
         doc.setFont(this.FONT, 'Bold');
-        const jefe = 'Lic. LAURA ELENA CASILLAS CASTAÑEDA';
+        // const jefe = 'Lic. LAURA ELENA CASILLAS CASTAÑEDA';
+        const jefe = this.JDeptoDiv.name;
         // let tmn = doc.getTextWidth(jefe);
         // doc.text(doc.splitTextToSize(jefe, 150), this.MARGIN.LEFT, 75, { align: 'left' });
         doc.text(jefe, this.MARGIN.LEFT, 75, { align: 'left' });
         // doc.text(doc.splitTextToSize('Jefe(a) de la división de estudios profesionales', 150), this.MARGIN.LEFT, 80, { align: 'left' });
-        doc.text('JEFE DE LA DIVISÓN DE ESTUDIOS PROFESIONALES', this.MARGIN.LEFT, 80, { align: 'left' });
+        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        doc.text(`${positionGender} DE LA DIVISÓN DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 80, { align: 'left' });
         doc.text('P R E S E N T E', this.MARGIN.LEFT, 85, { align: 'left' });
 
         // doc.text(doc.splitTextToSize('AT´N. ANA GUADALUPE RAMIREZ LOPEZ', 150), (this.WIDTH / 2), 100, { align: 'left' });
         // doc.text(doc.splitTextToSize('Coordinador(a) de apoyo a la titulación', 100), (this.WIDTH / 2), 105, { align: 'left' });}}
         doc.setFont(this.FONT, 'Bold');
-        this.addTextRight(doc, this.addArroba('AT´N. ANA GUADALUPE RAMIREZ LOPEZ'), 100);
-        this.addTextRight(doc, this.addArroba('COORDINADOR DE APOYO A TITULACION O EQUIVALENTE'), 105);
+        // this.addTextRight(doc, this.addArroba('AT´N. ANA GUADALUPE RAMIREZ LOPEZ'), 100);
+        this.addTextRight(doc, this.addArroba(`AT´N. ${this.CDeptoDiv.name}`), 100);
+        positionGender = this.CDeptoDiv.gender === 'FEMENINO' ? 'COORDINADORA' : 'COORDINADOR';
+        this.addTextRight(doc, this.addArroba(`${positionGender} DE APOYO A TITULACION O EQUIVALENTE`), 105);
 
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por medio del presente solicito autorización para iniciar trámite de registro del ' +
@@ -159,14 +175,16 @@ export class uRequest {
 
         // Saludos
         doc.setFont(this.FONT, 'Bold');
-        doc.text('LIC. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 62);
-        doc.text('Jefe(a) de la División de Estudios Profesionales', this.MARGIN.LEFT, 67, { align: 'left' });
+        // doc.text('LIC. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 62);
+        doc.text(`${this.JDeptoDiv.name}`, this.MARGIN.LEFT, 62);
+        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        doc.text(`${this.letterCapital(positionGender)} de la División de Estudios Profesionales`, this.MARGIN.LEFT, 67, { align: 'left' });
         doc.text('P R E S E N T E', this.MARGIN.LEFT, 72, { align: 'left' });
 
         doc.setFont(this.FONT, 'Normal');
         doc.text(this._request.department.name, this.MARGIN.LEFT, 83, { align: 'left' });
         doc.text(`Lugar: Tepic, Nayarit y Fecha: ${
-                moment(registerHistory ? (registerHistory.achievementDate || new Date()) : new Date()).format('LL')
+            moment(registerHistory ? (registerHistory.achievementDate || new Date()) : new Date()).format('LL')
             }`, this.MARGIN.LEFT, 88, { align: 'left' });
 
         this.addTable(doc, [
@@ -226,10 +244,11 @@ export class uRequest {
         doc.text('Asunto: Liberación de proyecto para la titulación integral', (this.WIDTH / 2) * 3, 77, { align: 'left' });
         // Saludos
         doc.setFont(this.FONT, 'Bold');
-        const jefe = 'MDO LUIS ALBERTO GARNICA LOPEZ';
-        const tmn = doc.getTextWidth(jefe);
+        const jefe = this.JDeptoDiv.name;
+        // const tmn = doc.getTextWidth(jefe);
         doc.text(doc.splitTextToSize(jefe, 150), this.MARGIN.LEFT, 85, { align: 'left' });
-        doc.text(doc.splitTextToSize('Jefe(a) de la División de Estudios Profesionales', 150), this.MARGIN.LEFT, 92, { align: 'left' });
+        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        doc.text(doc.splitTextToSize(`${this.letterCapital(positionGender)} de la División de Estudios Profesionales`, 150), this.MARGIN.LEFT, 92, { align: 'left' });
         doc.text('PRESENTE', this.MARGIN.LEFT, 100, { align: 'left' });
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por este medio informo que ha sido liberado el siguiente proyecto para la titulación:',
@@ -250,11 +269,11 @@ export class uRequest {
         doc.text('ATENTAMENTE', (this.WIDTH / 2), 190, { align: 'center' });
 
         doc.setFont(this.FONT, 'Normal');
-        doc.text(jefe, (this.WIDTH / 2), 215, { align: 'center' });
+        doc.text(this._request.department.boss, (this.WIDTH / 2), 215, { align: 'center' });
         this.addLineCenter(doc, 'Nombre y firma del (de la) Jefe(a) de Departamento Académico', 217);
 
         this.addTable(doc, [
-            [this._request.adviser],
+            [this._request.adviser.name],
             ['Nombre y firma del asesor']
         ], 227);
         return doc;
@@ -284,7 +303,7 @@ export class uRequest {
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(11);
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
-        doc.text('ISRAEL ARJONA VIZCAÍNO', this.MARGIN.LEFT, 170, { align: 'left' }); // Cambiar de forma dinámica
+        doc.text(this.JDeptoEsc.name, this.MARGIN.LEFT, 170, { align: 'left' }); // Cambiar de forma dinámica
         doc.text('JEFE DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });
 
         doc.setFontSize(11);
@@ -316,7 +335,7 @@ export class uRequest {
         doc.setFontSize(17);
         // tslint:disable-next-line:max-line-length
         this.justityText(doc, `DEDICO MIS CONOCIMIENTOS PROFESIONALES AL PROGRESO Y MEJORAMIENTO DEL BIENESTAR HUMANO, ME COMPROMETO A DAR UN RENDIMIENTO MÁXIMO, A PARTICIPAR TAN SOLO EN EMPRESAS DIGNAS, A VIVIR Y TRABAJAR DE ACUERDO CON LAS LEYES PROPIAS DEL HOMBRE Y EL MÁS ELEVADO NIVEL DE CONDUCTA PROFESIONAL, A PREFERIR EL SERVICIO AL PROVECHO, EL HONOR Y LA CALIDAD PROFESIONAL A LA VENTAJA PERSONAL, EL BIEN PÚBLICO A TODA CONSIDERACIÓN, CON RESPETO Y HONRADEZ HAGO EL PRESENTE JURAMENTO.`,
-            {x: this.MARGIN.LEFT + 15, y: initialHeight + (lineHeight * 9)},
+            { x: this.MARGIN.LEFT + 15, y: initialHeight + (lineHeight * 9) },
             (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), 7);
         doc.setFontSize(14);
         this._drawCenterTextWithLineUp(doc, 'FIRMA', initialHeight + (lineHeight * 26.5));
@@ -397,9 +416,11 @@ export class uRequest {
         this.addTextRight(doc, 'ASUNTO: @LIBERACION@ @DE@ @PROYECTO@', 64);
         this.addTextRight(doc, '@PARA@ @LA@ @TITULACION@ @INTEGRAL@', 68);
         doc.setFont(this.FONT, 'Bold');
-        doc.text("LIC. LAURA ELENA CASILLAS CASTAÑEDA", this.MARGIN.LEFT, 74);
+        // doc.text("LIC. LAURA ELENA CASILLAS CASTAÑEDA", this.MARGIN.LEFT, 74);
+        doc.text(`${this.JDeptoDiv.name}`, this.MARGIN.LEFT, 74);
         doc.setFont(this.FONT, 'Normal');
-        doc.text("JEFA DE LA DIVISION DE ESTUDIOS PROFESIONALES", this.MARGIN.LEFT, 78);
+        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        doc.text(`${positionGender} DE LA DIVISION DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 78);
         doc.text("PRESENTE", this.MARGIN.LEFT, 82);
         this.addTextRight(doc, `CON AT’N.: ${this.addArroba("COORD. DE TITULACION O EQUIVALENTE")}`, 86);
         doc.setFont(this.FONT, 'Normal');
@@ -423,41 +444,48 @@ export class uRequest {
 
         doc.setFontSize(9);
         doc.setFont(this.FONT, 'Bold');
-        console.log("SOLICITUD REQ", this._request);
+        // console.log("SOLICITUD REQ", this._request);
         doc.text(this._request.department.boss, this.MARGIN.LEFT, 170);
         doc.setFont(this.FONT, 'Normal');
-        doc.text("JEFE " + this._request.department.name, this.MARGIN.LEFT, 174);
+        doc.text("JEFE DE " + this._request.department.name, this.MARGIN.LEFT, 174);
 
         doc.setDrawColor(0, 0, 0);
         const widthRect: number = (this.WIDTH - (this.MARGIN.RIGHT + this.MARGIN.LEFT));
         const heightRect: number = this.HEIGHT - (185 + this.MARGIN.BOTTOM);
         const widthLine: number = widthRect / 4;
-        doc.rect(this.MARGIN.LEFT, 178, widthRect, heightRect, "S");
-        doc.line(this.MARGIN.LEFT + widthLine, 178, this.MARGIN.LEFT + widthLine, 178 + heightRect);
-        doc.line(this.MARGIN.LEFT + widthLine * 2, 178, this.MARGIN.LEFT + widthLine * 2, 178 + heightRect);
-        doc.line(this.MARGIN.LEFT + widthLine * 3, 178, this.MARGIN.LEFT + widthLine * 3, 178 + heightRect);
+        // doc.rect(this.MARGIN.LEFT, 178, widthRect, heightRect, "S");
+        // doc.line(this.MARGIN.LEFT + widthLine, 178, this.MARGIN.LEFT + widthLine, 178 + heightRect);
+        // doc.line(this.MARGIN.LEFT + widthLine * 2, 178, this.MARGIN.LEFT + widthLine * 2, 178 + heightRect);
+        // doc.line(this.MARGIN.LEFT + widthLine * 3, 178, this.MARGIN.LEFT + widthLine * 3, 178 + heightRect);
 
         doc.setFont(this.FONT, 'Bold');
-        doc.setFontSize(6);
-        doc.text(doc.splitTextToSize(this._request.jury[0].name, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 185 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize("Asesor", widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 193 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize(this._request.jury[0].title, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 196 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[0].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 202 + (heightRect / 2), { align: "center" });
+        doc.setFontSize(10);
+        doc.text(`${this._request.jury[0].name}`, this.WIDTH / 2, 193 + (heightRect / 2), { align: "center" });
+        // doc.text('ASESOR', this.WIDTH / 2, 197 + (heightRect / 2), { align: "center" });
+        this.addLineCenter(doc, 'Nombre y firma del asesor', 197 + (heightRect / 2));
+        // doc.text(this._request.jury[0].title, this.WIDTH / 2, 196 + (heightRect / 2), { align: "center" });
+        // doc.text(`NO. CEDULA PROF. ${this._request.jury[0].cedula}`, this.WIDTH / 2, 202 + (heightRect / 2), { align: "center" });
 
-        doc.text(doc.splitTextToSize(this._request.jury[1].name, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 185 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize("Revisor", widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 193 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize(this._request.jury[1].title, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 196 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[1].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 202 + (heightRect / 2), { align: "center" });
 
-        doc.text(doc.splitTextToSize(this._request.jury[2].name, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 185 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize("Revisor", widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 193 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize(this._request.jury[2].title, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 196 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[2].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 202 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(this._request.jury[0].name, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 185 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize("Asesor", widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 193 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(this._request.jury[0].title, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 196 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[0].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 202 + (heightRect / 2), { align: "center" });
 
-        doc.text(doc.splitTextToSize(this._request.jury[3].name, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 185 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize("Revisor Suplente", widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 193 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize(this._request.jury[3].title, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 196 + (heightRect / 2), { align: "center" });
-        doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[3].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 202 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(this._request.jury[1].name, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 185 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize("Revisor", widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 193 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(this._request.jury[1].title, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 196 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[1].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 202 + (heightRect / 2), { align: "center" });
+
+        // doc.text(doc.splitTextToSize(this._request.jury[2].name, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 185 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize("Revisor", widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 193 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(this._request.jury[2].title, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 196 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[2].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 202 + (heightRect / 2), { align: "center" });
+
+        // doc.text(doc.splitTextToSize(this._request.jury[3].name, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 185 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize("Revisor Suplente", widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 193 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(this._request.jury[3].title, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 196 + (heightRect / 2), { align: "center" });
+        // doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[3].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 202 + (heightRect / 2), { align: "center" });
 
         let appointment: Date = new Date(this._request.proposedDate);
         appointment.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0)
@@ -506,8 +534,10 @@ export class uRequest {
 
         doc.text('Por lo que se le pide su puntual asistencia.', this.MARGIN.LEFT, 210);
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 225);
-        doc.text('L.A. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 240);
-        doc.text('JEFA DE LA DIV. DE EST. PROFESIONALES', this.MARGIN.LEFT, 245);
+        // doc.text('L.A. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 240);
+        doc.text(`${this.JDeptoDiv.name}`, this.MARGIN.LEFT, 240);
+        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        doc.text(`${positionGender} DE LA DIV. DE EST. PROFESIONALES`, this.MARGIN.LEFT, 245);
         return doc;
     }
 
@@ -521,13 +551,14 @@ export class uRequest {
         this.addTextRight(doc, `Tepic, Nayarit a ${moment(new Date()).format('LL').toUpperCase()}`, 45);
         this.addTextRight(doc, `OFICIO No. ${duty}`, 50);
         doc.setFont(this.FONT, 'Normal');
-        this.addTextRight(doc, `ASUNTO: ${position} Acto de Recepcion Profesional`, 65);
+        // this.addTextRight(doc, `ASUNTO: ${position} Acto de Recepcion Profesional`, 65);
+        this.addTextRight(doc, `ASUNTO: Comisión, Acto de Recepcion Profesional`, 65);
         doc.setFont(this.FONT, 'Bold');
         doc.text(`C. ${employee.toUpperCase()}`, this.MARGIN.LEFT, 90);
         doc.text(`CATEDRÁTICO DE ESTE INSTITUTO`, this.MARGIN.LEFT, 95);
         doc.text(`P R E S E N T E`, this.MARGIN.LEFT, 100);
         // tslint:disable-next-line: max-line-length
-        let contenido = `En atención a lo marcado por el Artículo 22o. del Reglamento de Examen Profesional, me permito notificarle que ha sido designado (a) @PUESTO del Jurado del Acto de Recepción Profesional del (la) Pasante C. @ESTUDIANTE, egresado (a) de la Carrera de @CARRERA, por la Opción XI, TITULACIÓN INTEGRAL (INFORME TÉCNICO DE RESIDENCIA PROFESIONAL) con el proyecto @PROYECTO, quien presentará el Acto de Recepción Profesional el día @FECHA del presente año, a las @HORA hrs. en la Sala @LUGAR de este Instituto.`;
+        let contenido = `En atención a lo marcado por el Artículo 22o. del Reglamento de Examen Profesional, me permito notificarle que ha sido designado (a) @PUESTO del Jurado del Acto de Recepción Profesional del (la) C. @ESTUDIANTE, egresado (a) de la Carrera de @CARRERA, por la Opción XI, TITULACIÓN INTEGRAL (INFORME TÉCNICO DE RESIDENCIA PROFESIONAL) con el proyecto @PROYECTO, quien presentará el Acto de Recepción Profesional el día @FECHA del presente año, a las @HORA hrs. en la Sala @LUGAR de este Instituto.`;
         contenido = contenido.replace('@PUESTO', `${this.addArroba(position.toUpperCase())}`);
         contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())}`);
         contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())}`);
@@ -540,8 +571,10 @@ export class uRequest {
         doc.setFontSize(10);
         doc.text('A T E N T A M E N T E.', this.MARGIN.LEFT, 190);
         doc.text('“SABIDURÍA TECNOLÓGICA, PASIÓN DE NUESTRO ESPÍRITU”®', this.MARGIN.LEFT, 195);
-        doc.text('MARTHA ANGÉLICA PARRA URÍAS', this.MARGIN.LEFT, 225);
-        doc.text('JEFA DEL DEPARTAMENTO DE SISTEMAS COMPUTACIONALES', this.MARGIN.LEFT, 230);
+        // doc.text('MARTHA ANGÉLICA PARRA URÍAS', this.MARGIN.LEFT, 225);
+        doc.text(this._request.department.boss, this.MARGIN.LEFT, 225);
+        // doc.text('JEFA DEL DEPARTAMENTO DE SISTEMAS COMPUTACIONALES', this.MARGIN.LEFT, 230);
+        doc.text(`JEFE DEL ${this._request.department.name}`, this.MARGIN.LEFT, 225);
         return doc;
     }
 
@@ -597,14 +630,17 @@ export class uRequest {
         // tslint:disable-next-line: max-line-length
         doc.text(`Se extiende esta certificación a los ${tmpDate.getDate()} del mes ${this.letterCapital(moment(tmpDate).format('MMMM'))} del Año ${tmpDate.getFullYear()}`, this.MARGIN.LEFT + 32, 184, { align: 'left' });
 
-        let servicios = 'M.C. Israel Arjona Vizcaíno';
-        let director = 'LIC. MANUEL ÁNGEL URIBE VÁZQUEZ';
+        // let servicios = 'M.C. Israel Arjona Vizcaíno';
+        // let director = 'LIC. MANUEL ÁNGEL URIBE VÁZQUEZ';
+        let servicios = this.JDeptoEsc.name;
+        let director = this.Director.name;
         doc.setFont(this.FONT, 'Bold');
 
         doc.text(`COTEJO`, this.MARGIN.LEFT + 32, 190, { align: 'left' });
 
         doc.addImage(this.serviceFirm, 'PNG', this.MARGIN.LEFT + 32, 193, 60, 25);
-        doc.text(`Jefe del Departamento de Servicios Escolares`, this.MARGIN.LEFT + 32, 220, { maxWidth: 50, align: 'left' });
+        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        doc.text(`${this.letterCapital(positionGender)} del Departamento de Servicios Escolares`, this.MARGIN.LEFT + 32, 220, { maxWidth: 50, align: 'left' });
         doc.text(servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
 
         doc.addImage(this.directorFirm, 'PNG', this.WIDTH / 2, 213, 60, 25);
@@ -628,7 +664,7 @@ export class uRequest {
 
     private letterCapital(text: string): string {
         text = text.toLowerCase();
-        if (text.trim().length>0)
+        if (text.trim().length > 0)
             return text.split(/\s+/).map((value) => { return value.replace(/^./, value[0].toUpperCase()) }).join(' ');
         return '';
     }

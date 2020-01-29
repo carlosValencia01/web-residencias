@@ -246,6 +246,7 @@ import { UploadDeliveredComponent } from '../modals/reception-act/upload-deliver
 import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appointment-page/view-appointment-page.component';
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
 import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
+import { NewTitleComponent } from '../modals/reception-act/new-title/new-title.component';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -318,7 +319,7 @@ registerLocaleData(localeEs);
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
-
+    NewTitleComponent,
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -373,7 +374,7 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ViewAppointmentPageComponent,
     UploadFileTitledComponent,
-    ActNotificacionComponent,
+    ActNotificacionComponent    
   ],
   imports: [
     // Angular
@@ -524,6 +525,7 @@ registerLocaleData(localeEs);
     StepperDocumentComponent,
     UploadDeliveredComponent,
     ActNotificacionComponent,
+    NewTitleComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,

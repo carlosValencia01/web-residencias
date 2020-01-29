@@ -7,6 +7,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { IGrade } from 'src/entities/reception-act/grade.model';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-employee-adviser',
@@ -17,6 +18,7 @@ export class EmployeeAdviserComponent implements OnInit {
   private departments: IDepartment[];
   private employees: IAdviserTable[];
   private allEmployees: IAdviserTable[];
+  public frmAuxiliar: FormGroup;
   private onlyEmployees: IAdviserTable[];
   private career: String;
   private departmentInfo: { name: String, boss: String } = { name: '', boss: '' };
@@ -38,6 +40,12 @@ export class EmployeeAdviserComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.frmAuxiliar = new FormGroup({
+      'Name': new FormControl(null, Validators.required),
+      'Titled': new FormControl(null, Validators.required),
+      'Cedula': new FormControl(null, Validators.required)
+    });
+
     this.employeProvider.getEmployeesByDepto().subscribe(
       data => {
         this.departments = <IDepartment[]>data.departments;
@@ -168,7 +176,24 @@ export class EmployeeAdviserComponent implements OnInit {
     this.dialogRef.close({ Employee: item.name, Depto: this.departmentInfo, ExtraInfo: item.ExtraInfo });
   }
 
+  onSave() {
+    this.dialogRef.close({
+      Employee:
+        this.frmAuxiliar.get('Name').value, Depto: null, ExtraInfo: {
+          name: this.frmAuxiliar.get('Name').value,
+          title: this.frmAuxiliar.get('Titled').value,
+          cedula: this.frmAuxiliar.get('Cedula').value
+        }
+    });
+  }
   addEmploye(): void {
+    this.frmAuxiliar.get('Name').setErrors(null);
+    this.frmAuxiliar.get('Name').markAsUntouched();
+    this.frmAuxiliar.get('Titled').setErrors(null);
+    this.frmAuxiliar.get('Titled').markAsUntouched();
+    this.frmAuxiliar.get('Cedula').setErrors(null);
+    this.frmAuxiliar.get('Cedula').markAsUntouched();
+    this.frmAuxiliar.setValue({ 'Name': '', 'Titled': '', 'Cedula': '' });
     this.isNewEmployee = !this.isNewEmployee;
   }
 }

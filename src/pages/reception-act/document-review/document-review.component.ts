@@ -38,7 +38,7 @@ export class DocumentReviewComponent implements OnInit {
     private notificationService: NotificationsServices,
     private activatedRoute: ActivatedRoute,
     public imgSrv: ImageToBase64Service,
-    private _CookiesService: CookiesService) {
+    public _CookiesService: CookiesService) {
     if (typeof (this.activatedRoute.snapshot.url[2]) !== 'undefined')
       this.isTitled = this.activatedRoute.snapshot.url[2].path === 'titled';
     this.activatedRoute.params.subscribe(
@@ -47,7 +47,7 @@ export class DocumentReviewComponent implements OnInit {
           data => {
             this.request = data.request[0];
             this.request.student = data.request[0].studentId;
-            this.uRequest = new uRequest(this.request, imgSrv);
+            this.uRequest = new uRequest(this.request, imgSrv, _CookiesService);
             this.refresh();
             this.drawer.toggle();
           },

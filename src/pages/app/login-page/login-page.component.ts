@@ -3,16 +3,17 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
 import { NotificationsServices } from 'src/services/app/notifications.service';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 
-import {SelectPositionComponent} from 'src/modals/electronic-signature/select-position/select-position.component';
+import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
 
 import { UserProvider } from 'src/providers/app/user.prov';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
-import {CurrentPositionService} from 'src/services/shared/current-position.service';
+import { CurrentPositionService } from 'src/services/shared/current-position.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { IBoss } from 'src/entities/reception-act/boss.model';
 
 @Component({
   selector: 'app-login-page',
@@ -89,7 +90,7 @@ export class LoginPageComponent implements OnInit {
           if (positions.length > 1) {
             const dialogRef = this.dialog.open(SelectPositionComponent, {
               width: '25em',
-              data: {positions: positions},
+              data: { positions: positions },
               hasBackdrop: true,
               disableClose: true
             });
@@ -119,7 +120,8 @@ export class LoginPageComponent implements OnInit {
   }
 
   private loginIsSuccessful(res, position?) {
-    if (position) {
+    this.getBosses();
+    if (position) {      
       this.cookiesServ.savePosition(position);
       this.currentPositionService.setCurrentPosition(position);
       res.user.position = position._id;
@@ -127,6 +129,32 @@ export class LoginPageComponent implements OnInit {
     this.cookiesServ.saveData(res);
     this.showAlertDiv = false;
     this.loginSuccessful.emit();
+  }
+
+  async getBosses() {
+    const JDeptoDiv = await this.getBoss({ Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES', Position: 'JEFE DE DEPARTAMENTO' });
+    const CDeptoDiv = await this.getBoss({ Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES', Position: 'COORDINADOR DE TITULACIÓN' });
+    const JDeptoEsc = await this.getBoss({ Department: 'DEPARTAMENTO DE SERVICIOS ESCOLARES', Position: 'JEFE DE DEPARTAMENTO' });
+    const Director = await this.getBoss({ Department: 'DIRECCIÓN', Position: 'DIRECTOR' });
+    const Bosses = {
+      JDeptoDiv: JDeptoDiv,
+      CDeptoDiv: CDeptoDiv,
+      JDeptoEsc: JDeptoEsc,
+      Director: Director,
+    };
+    this.cookiesServ.saveBosses(Bosses);
+  }
+
+  getBoss(search: { Department: string, Position: string }) {
+    return new Promise(resolve => {
+      this.employeeProv.searchEmployee(
+        search
+      ).subscribe(response => {
+        resolve(response.Employee);
+      }, error => {
+        resolve(null);
+      });
+    });
   }
 
   getPositions(email) {
@@ -138,7 +166,7 @@ export class LoginPageComponent implements OnInit {
       );
     });
   }
-  viewVideo(){
+  viewVideo() {
     window.open('https://drive.google.com/file/d/1QlVOPP6_wy89Ld7sJsDKFNNH6gMn3V-B/view?usp=sharing');
   }
 

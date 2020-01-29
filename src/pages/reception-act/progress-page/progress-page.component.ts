@@ -389,7 +389,7 @@ export class ProgressPageComponent implements OnInit {
     let lDuration: number = 60;
 
     const tmpRequest = this.getRequestById(Identificador);
-
+    console.log("TMPRES", tmpRequest);
     if (tmpRequest.status === 'Rechazado' || tmpRequest.jury.length > 0) {
       const value = tmpRequest.history.filter(x => x.phase === 'Liberado').slice(0).sort(
         function (a, b) {
@@ -439,9 +439,8 @@ export class ProgressPageComponent implements OnInit {
         width: '60em'
       });
 
-      ref.afterClosed().subscribe(result => {
-        console.log("RESULT comida", result);
-        if (typeof (result) !== 'undefined') {
+      ref.afterClosed().subscribe(result => {        
+        if (typeof (result) !== 'undefined') {          
           this.requestProvider.releasedRequest(Identificador, {
             proposedHour: result.proposedHour,
             duration: result.duration,
@@ -453,6 +452,8 @@ export class ProgressPageComponent implements OnInit {
           }, error => {
             this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
           });
+        } else {
+          this.loadRequest();
         }
       });
     }
@@ -528,7 +529,7 @@ export class ProgressPageComponent implements OnInit {
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
           if (eOperation === eStatusRequest.PROCESS) {
             const _request: iRequest = this.getRequestById(Identificador);
-            const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service);
+            const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service,this._CookiesService);
             setTimeout(() => {
               window.open(oRequest.testReport().output('bloburl'), '_blank');
             }, 500);
@@ -655,7 +656,7 @@ export class ProgressPageComponent implements OnInit {
 
   seeRequestPDF(_id: string): void {
     const _request: iRequest = this.getRequestById(_id);
-    const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service);
+    const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service,this._CookiesService);
     setTimeout(() => {
       window.open(oRequest.protocolActRequest().output('bloburl'), '_blank');
     }, 500);
@@ -772,7 +773,7 @@ export class ProgressPageComponent implements OnInit {
   }
 
   juryNotification(_id: string): void {
-    let oRequest = new uRequest(this.getRequestById(_id), this._ImageToBase64Service);
+    let oRequest = new uRequest(this.getRequestById(_id), this._ImageToBase64Service, this._CookiesService);
     setTimeout(() => {
       window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
       // window.open(oRequest.professionalEthicsOath().output('bloburl'), '_blank');

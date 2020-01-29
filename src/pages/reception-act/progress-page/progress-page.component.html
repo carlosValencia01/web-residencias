@@ -518,10 +518,15 @@
                                                 Revisar3
                                             </button> -->
                                             <div *ngSwitchCase="'Asignado'">
-                                                <button
+                                                <!-- <button
                                                     *ngIf="row.status==='Pendiente'  && (role==='coordinación de titulación' || role==='administrador')"
-                                                    mat-menu-item (click)="openDiary(row._id)">
+                                                    mat-menu-item (click)="openDiary(row._id)">                                                    
+                                                    Agenda
                                                     <mat-icon>calendar_today</mat-icon>
+                                                </button> -->
+                                                <button mat-menu-item (click)="openDiary(row._id)"
+                                                    *ngIf="row.status==='Pendiente'  && (role==='coordinación de titulación' || role==='administrador')">
+                                                    <mat-icon>gavel</mat-icon>
                                                     Agenda
                                                 </button>
                                                 <button

@@ -28,13 +28,22 @@ export class CookiesService {
         return this.cookieService.get('folder');
     }
 
-    savePosition(position: IPosition) {        
-        this.cookieService.set('position', JSON.stringify(position));        
+    savePosition(position: IPosition) {
+        this.cookieService.set('position', JSON.stringify(position));
     }
 
-    getPosition():IPosition {
+    getPosition(): IPosition {
         return JSON.parse(this.cookieService.get('position'));
     }
+
+    saveBosses(bosses: any) {        
+        this.cookieService.set('bosses', JSON.stringify(bosses));
+    }
+
+    getBosses(): any {
+        return JSON.parse(this.cookieService.get('bosses'));
+    }
+
     deleteCookie() {
         this.cookieService.delete('session');
     }
