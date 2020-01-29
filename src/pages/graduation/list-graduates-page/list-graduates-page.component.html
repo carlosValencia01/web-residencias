@@ -625,6 +625,11 @@
                                     <img src="../../assets/icons/documentacion/generarConstancia.svg" class="action" (click)="generateConstancys()">
                                  </div>
                               </td>
+                              <td  *ngIf="searchCarreerDocumentation != '' ">
+                                 <div class="div-img" ngbTooltip="Generar Pestañas  para {{searchCarreerDocumentation}}" tooltipClass="my-custom-class">
+                                   <img src="../../assets/icons/label.svg" class="action" (click)="generateLabels()">
+                                 </div>
+                               </td>
                            </tr>
                         </div>
                      </td>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import TableToExcel from '@linways/table-to-excel';
-
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { FirebaseService } from 'src/services/graduation/firebase.service';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
@@ -1538,5 +1538,97 @@ export class ListGraduatesPageComponent implements OnInit {
     );
   }
 
-}
+  // Generar Pestañas
+generateLabels() {
+  if (this.alumnosConstancia.length !== 0) {
+    this.loading = true;
+    const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
 
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    
+    for(var i = 0; i < this.alumnosConstancia.length; i++){
+      var titulo = '';
+      doc.setFontSize(10);
+      doc.setFontType('bold');
+      //Identificador
+      doc.text((i+1)+'',2.5,(pageHeight/2)+1.5);
+      doc.setFontSize(9.5);
+      doc.setFontType('bold');
+
+      //Titulo
+      if(this.alumnosConstancia[i].degree == true){
+        switch(this.alumnosConstancia[i].carreerComplete){
+          case "ARQUITECTURA":
+            titulo = 'ARQ.'
+            break;
+          case "INGENIERÍA CIVIL":
+            titulo = 'ING.'
+            break;
+          case "INGENIERÍA BIOQUÍMICA":
+            titulo = 'ING.'
+            break;
+          case "INGENIERÍA EN GESTIÓN EMPRESARIAL":
+            titulo = 'ING.'
+            break;
+          case "INGENIERÍA QUÍMICA":
+            titulo = 'ING.'
+            break;
+          case "INGENIERÍA MECATRÓNICA":
+            titulo = 'ING.'
+            break;
+          case "INGENIERÍA ELÉCTRICA":
+            titulo = 'ING.'
+            break;
+          case "INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES":
+            titulo = 'ING.'
+            break;
+          case "INGENIERÍA EN SISTEMAS COMPUTACIONALES":
+            titulo = 'ING.'
+            break;
+          case "INGENIERÍA INDUSTRIAL":
+            titulo = 'ING.'
+            break;
+          case "LICENCIATURA EN ADMINISTRACIÓN":
+            titulo = 'LIC.'
+            break;
+          case "MAESTRÍA EN CIENCIAS DE LOS ALIMENTOS":
+            titulo = 'MCA.'
+            break;
+          case "DOCTORADO EN CIENCIAS DE LOS ALIMENTOS":
+            titulo = 'DCA.'
+            break;
+          default:
+            titulo = ''
+            break; 
+          }
+          doc.text(titulo,23,(pageHeight/2)+1.5);
+      }
+
+      //Nombre
+      doc.text(this.alumnosConstancia[i].name,35,(pageHeight/2)+1.5);
+
+      //Carrera
+      doc.text(this.alumnosConstancia[i].carreer,150,(pageHeight/2)+1.5);
+
+      doc.setFontSize(10);
+      doc.setFontType('bold');
+      
+      if (i < this.alumnosConstancia.length - 1) {
+        doc.addPage();
+      }
+    }
+    this.loading = false;
+    window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+    } else {
+      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
+    }
+  }
+
+}
