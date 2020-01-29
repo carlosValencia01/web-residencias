@@ -53,7 +53,9 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
               directorName: data.payload.doc.get('directorName'),              
               directorMessage: data.payload.doc.get('directorMessage'),              
               totalTickets: data.payload.doc.get('totalTickets'),              
-              studentTickets: data.payload.doc.get('studentTickets'),              
+              studentTickets: data.payload.doc.get('studentTickets'),
+              observationsMessage: data.payload.doc.get('observationsMessage'),
+              hourGallery: data.payload.doc.get('hourGallery')             
             }) );
           this.year = this.today.getFullYear() + '';
         }
@@ -127,7 +129,9 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       limitDate: event.event.limitDate ,
       hour: event.event.hour ,
       directorMessage: event.event.directorMessage,
-      directorName: event.event.directorName
+      directorName: event.event.directorName,
+      observationsMessage: event.event.observationsMessage,
+      hourGallery: event.event.hourGallery
     };
         
     this.firestoreService.createEvent(newEvent.name, newEvent).then(
@@ -218,6 +222,8 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
   }
 
   updateEvent(event){
+    console.log(event);
+    
 
     const linkModal = this.dialog.open(NewEventComponent, {
       data: {
@@ -273,7 +279,9 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       limitDate: event.event.limitDate ,
       hour: event.event.hour ,
       directorMessage: event.event.directorMessage,
-      directorName: event.event.directorName
+      directorName: event.event.directorName,
+      observationsMessage: event.event.observationsMessage,
+      hourGallery: event.event.hourGallery
     };
         
     this.firestoreService.updateEvent(newEvent.name, newEvent).then(

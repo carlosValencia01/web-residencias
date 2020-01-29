@@ -334,6 +334,7 @@ export class StudentPageComponent implements OnInit {
   // Busqueda de estudiantes *************************************************************************************//#endregion
 
   searchStudent(showForm) {
+    this.photoStudent = null;
     this.showForm = showForm;
     this.loading = true;
     this.studentProv.searchStudents(this.search).subscribe(res => {
@@ -416,6 +417,7 @@ export class StudentPageComponent implements OnInit {
   // Cropper Image ***************************************************************************************************//#endregion
 
   showSelectFileDialog() {
+    this.photoStudent = null;
     const input = document.getElementById('fileButton');
     input.click();
   }
@@ -486,8 +488,9 @@ export class StudentPageComponent implements OnInit {
     const red = new FileReader;
        
             // console.log(this.folderId,'folder student exists');
-            red.addEventListener('load', () => {
-              // console.log(red.result);
+            red.addEventListener('load', (data) => {
+              // console.log(red.result);              
+              
               let file = { mimeType: this.selectedFile.type, nameInDrive: this.currentStudent.controlNumber + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
         
               this.inscriptionProv.uploadFile2(file).subscribe(
@@ -602,9 +605,9 @@ export class StudentPageComponent implements OnInit {
             await this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive, this.imageDoc.filename).toPromise().then(
               succss => {
                 this.showImg = true;
-                // console.log('3');
-                const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
-                this.photoStudent = "data:image/"+extension+";base64,"+succss.file;
+                // // console.log('3');
+                // const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
+                this.photoStudent = "data:image/jpg"+";base64,"+succss.file;
               },
               err => { this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg = true; }
             );
