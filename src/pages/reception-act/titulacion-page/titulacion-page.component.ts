@@ -77,7 +77,8 @@ export class TitulacionPageComponent implements OnInit {
   CompletedGeneratedMessage: String = 'ACTA DE EXAMEN ENTREGADA';
   ProcessTitledMessage: String = 'EN ESPERA DE NOTIFICACIÓN PARA RECEPCIÓN DEL TÍTULO';
   CompletedTitledMessage: String = 'TÍTULO PROFESIONAL';
-  ProcessTitledMessageSubtitle: String = 'FAVOR DE SUBIR LOS SIGUIENTE DOCUMENTOS PARA LA ENTREGA DEL TÍTULO';
+  ProcessTitledMessageSubtitle: String = `FAVOR DE GENERAR TU CÉDULA ELECTRÓNICA Y SUBE LOS SIGUIENTES DOCUMENTOS
+    PARA LA ENTREGA DE TU TÍTULO`;
   AcceptTitledMessage: String = 'TÍTULO PROFESIONAL LISTO PARA SER ENTREGADO';
   FinalizedTitledMessage: String = 'TÍTULO PROFESIONAL ENTREGADO';
   get frmStepOne() {
