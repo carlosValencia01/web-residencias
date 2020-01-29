@@ -3,5 +3,6 @@ export enum eOperation {
     EDIT,
     DELETE,
     MODAL,
-    DML
+    DML,
+    VERIFICATION,
 }

@@ -28,7 +28,7 @@ export class CurrentPositionService {
   }
 
   getPosition() {
-    return new Promise(resolve => {
+    return new Promise(resolve => {      
       const positionId = this.cookiesService.getData().user.position;
       this.positionProvider.getPositionById(positionId).subscribe(position => {
         resolve(position);

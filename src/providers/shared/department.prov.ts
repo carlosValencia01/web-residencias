@@ -1,14 +1,14 @@
-import {Injectable} from '@angular/core';
-import {map} from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { map } from 'rxjs/operators';
 
-import {Api} from 'src/providers/app/api.prov';
-import {IDepartment} from 'src/entities/shared/department.model';
+import { Api } from 'src/providers/app/api.prov';
+import { IDepartment } from 'src/entities/shared/department.model';
 
 @Injectable()
 export class DepartmentProvider {
   constructor(
     private api: Api,
-  ) {}
+  ) { }
 
   getAllDepartments() {
     return this.api.get('department/all')
@@ -28,5 +28,5 @@ export class DepartmentProvider {
   removeDepartment(departmentId: string) {
     return this.api.delete(`department/remove/${departmentId}`)
       .pipe(map(res => res.json()));
-  }
+  }  
 }

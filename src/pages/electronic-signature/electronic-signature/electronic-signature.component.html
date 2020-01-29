@@ -3,7 +3,7 @@
     <mat-card-header>
       <mat-card-title>Generar firma electrónica</mat-card-title>
     </mat-card-header>
-    <form class="example-form" [formGroup]="formGroupPsw" (ngSubmit)="onSubmit()">
+    <form class="example-form" [formGroup]="formGroupPsw" (ngSubmit)="createDocument()">
       <mat-card-content>
         <mat-form-field class="example-full-width">
           <input matInput type="password" placeholder="Contraseña" formControlName="psw">
@@ -45,7 +45,7 @@
     <mat-label *ngIf="eSignatureStatus !== ''">Sujeto a invalidación por cambio de puesto.</mat-label>
     <mat-label *ngIf="eSignatureStatus === ''">Aún no tiene una firma electrónica.</mat-label>
     <mat-card-actions align="end">
-      <button mat-flat-button style="margin-top: 50px;" color="primary" [disabled]="eSignatureStatus === ''" (click)="onSubmit1()">Descargar</button>
+      <button mat-flat-button style="margin-top: 50px;" color="primary" [disabled]="eSignatureStatus === ''" (click)="getDocument()">Descargar</button>
     </mat-card-actions>
   </mat-card>
 </div>

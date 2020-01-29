@@ -13,8 +13,7 @@ export class ExtendViewerComponent implements OnInit {
     public dialogRef: MatDialogRef<ExtendViewerComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.pdf = data.isBase64 ? data.source : URL.createObjectURL(data.source);
-    this.title = data.title;
-    console.log("DATA EX",data);
+    this.title = data.title;    
   }
 
   ngOnInit() {

@@ -14,6 +14,7 @@ import { ViewMoreComponent } from '../../../modals/reception-act/view-more/view-
 import { eRole } from 'src/enumerators/app/role.enum';
 import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { CurrentPositionService } from 'src/services/shared/current-position.service';
 moment.locale('es');
 @Component({
   selector: 'app-view-appointment-page',
@@ -35,14 +36,19 @@ export class ViewAppointmentPageComponent implements OnInit {
   locale: string = 'es';
   role: string;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices,
-    private _sourceDataProvider: sourceDataProvider, public dialog: MatDialog, public _InscriptionsProvider: InscriptionsProvider) {
-    this.role =
-      //'Secretaria Académica';
-      'Jefe Académico';
+    private _sourceDataProvider: sourceDataProvider, public _InscriptionsProvider: InscriptionsProvider,
+    public dialog: MatDialog, private _CookiesService: CookiesService) {
+    this.carrers = [];
+    // this.role =
+    //   //'Secretaria Académica';
+    //   // 'Jefe Académico';
     // this._CookiesService.getData().user.rol.name;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    // let currentPosition: any = await this.currentPositionService.getCurrentPosition();    
+    // let tmpCarrers = currentPosition.ascription.careers;
+    let tmpCarrers = this._CookiesService.getPosition().ascription.careers;
     this._InscriptionsProvider.getActivePeriod().subscribe(
       periodo => {
         if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
@@ -51,26 +57,32 @@ export class ViewAppointmentPageComponent implements OnInit {
         }
       });
 
-    this.carrers = this._sourceDataProvider.getCareerAbbreviation();
-    this.allCarrers = this.carrers.slice(0);
-    switch (this.role) {
-      case eRole.SECRETARYACEDMIC: {
-        this.filterDepto('ISIC');
-        break;
-      }
-      case eRole.CHIEFACADEMIC: {
-        // this.filterDepto('IBQA');
-        this.filterDepto('ISIC');
-        break;
-      }
-      default: {
-        this.carrers.push({
-          carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
-          color: { primary: '#57c7d4', secondary: '#ace3ea' }
-        });
-        break;
-      }
-    }
+    //this._sourceDataProvider.getCareerAbbreviation();
+    this.allCarrers = this._sourceDataProvider.getCareerAbbreviation();// this.carrers.slice(0);
+    this.allCarrers.forEach(element => {
+      let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
+      if (i !== -1)
+        this.carrers.push(element);
+    });
+
+    // switch (this.role) {
+    //   case eRole.SECRETARYACEDMIC: {
+    //     this.filterDepto('ISIC');
+    //     break;
+    //   }
+    //   case eRole.CHIEFACADEMIC: {
+    //     // this.filterDepto('IBQA');
+    //     this.filterDepto('ISIC');
+    //     break;
+    //   }
+    //   default: {
+    //     this.carrers.push({
+    //       carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
+    //       color: { primary: '#57c7d4', secondary: '#ace3ea' }
+    //     });
+    //     break;
+    //   }
+    // }
   }
 
   filterDepto(depto: string): void {
@@ -94,13 +106,19 @@ export class ViewAppointmentPageComponent implements OnInit {
 
   diary(month: number, year: number): void {
     this.Appointments = [];
+    let minDate = new Date(this.viewDate.getTime());
+    let maxDate = new Date(this.viewDate.getTime());
+    minDate.setDate(minDate.getDate() - minDate.getDay());
+    maxDate.setDate(maxDate.getDate() + (6 - maxDate.getDay()));
     this._RequestProvider.getDiary({
       month: month,
-      year: year
+      year: year,
+      isWeek: this.view === CalendarView.Week,
+      min: minDate,
+      max: maxDate
     }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
-        this.Appointments = data.Diary;
-        console.log("APPOINTMENTS", this.Appointments);
+        this.Appointments = data.Diary;         
         this.loadAppointment();
         this.refresh.next();
       }

@@ -28,6 +28,7 @@ export class ReleaseComponentComponent implements OnInit {
   private juryInfo: Array<{ name: string, title: string, cedula: string }>;
   private oRequest: uRequest;
   public activeReleased: boolean = false;
+  public enableUpload: boolean = false;
   @ViewChild('time') Time: NgxTimepickerFieldComponent;
   private studentCareer: string;
   constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
@@ -37,22 +38,24 @@ export class ReleaseComponentComponent implements OnInit {
     public _ImageToBase64Service: ImageToBase64Service,
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.information = data;
-    console.log("INORMATION", this.information);
-    this.isReject = typeof (this.information.observation) !== 'undefined';
+    this.isReject = typeof (this.information.observation) !== 'undefined' && this.information.observation.length > 0;
     this.userInformation = this.cookiesService.getData().user;
-    this.studentCareer = this.data.studentCareer;
+    console.log("Data", this.information);
+    this.studentCareer = this.information.request.career;
+    console.log("Data", this.studentCareer);
   }
 
   ngOnInit() {
     this.frmConsejo = new FormGroup({
-      'president': new FormControl(this.information.request.adviser, Validators.required),
+      'president': new FormControl(this.information.request.adviser.name, Validators.required),
       'secretary': new FormControl(null, Validators.required),
       'vocal': new FormControl(null, Validators.required),
       'substitute': new FormControl(null, Validators.required),
       'duration': new FormControl('60', Validators.required)
     });
 
-    if (this.isReject) {
+    console.log("JURADO", this.information);
+    if (this.isReject || this.information.jury.length > 0) {
       this.juryInfo = this.information.jury;
       this.frmConsejo.setValue({
         'president': this.juryInfo[0].name,
@@ -64,36 +67,49 @@ export class ReleaseComponentComponent implements OnInit {
       const hour = this.information.minutes / 60;
       const minutes = this.information.minutes % 60;
       this.Time.writeValue(hour + ":" + minutes);
-      this.activeReleased = true;
+      this.activeReleased = this.isReject;
+      this.enableUpload = !this.isReject;
     } else {
       this.juryInfo = [
-        { name: '', title: '', cedula: '' },
+        { name: this.information.request.adviser.name, title: this.information.request.adviser.title, cedula: this.information.request.adviser.cedula },
         { name: '', title: '', cedula: '' },
         { name: '', title: '', cedula: '' },
         { name: '', title: '', cedula: '' }
-      ]
+      ];
+      console.log("ELSE", this.juryInfo);
       this.Time.writeValue("7:00");
     }
   }
 
+  obtenerCarreras(): Array<string> {
+    let tmpArray: Array<string> = [];
+    if (typeof (this.cookiesService.getPosition()) !== 'undefined') {
+      this.cookiesService.getPosition().ascription.careers.forEach(e => {
+        tmpArray.push(e.fullName);
+      });
+    }
+    return tmpArray;
+  }
   selectEmployee(button): void {
     if (this.frmConsejo.disabled) {
       return;
     }
     this.frmConsejo.get(button).markAsUntouched();
     this.frmConsejo.get(button).setErrors(null);
+    console.log("USER INFORMA", this.userInformation);
     const ref = this.dialog.open(EmployeeAdviserComponent, {
       data: {
-        carrer: this.userInformation.career
+        carrer: this.studentCareer
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '45em'
+      width: '50em'
     });
 
     ref.afterClosed().subscribe((result) => {
 
       if (typeof (result) != "undefined") {
+        this.enableUpload = false;
         if (this.juryInfo.findIndex(x => x.name === result.ExtraInfo.name) !== -1) {
           this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", "Empleado ya asignado");
         } else {
@@ -139,10 +155,8 @@ export class ReleaseComponentComponent implements OnInit {
   }
 
   onUpload(event): void {
-    console.log("event", event);
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
-        console.log("entro");
         // this.fileData = event.target.files[0];
         let frmData = new FormData();
         frmData.append('file', event.target.files[0]);
@@ -164,31 +178,31 @@ export class ReleaseComponentComponent implements OnInit {
   }
 
   onSave(): void {
-    if (typeof (this.fileData) !== 'undefined') {
-      const time: number = Number(this.Time.hour * 60) + Number(this.Time.minute);
-      this.dialogRef.close(
-        {
-          file: this.fileData,
-          proposedHour: time,
-          jury: this.juryInfo,
-          duration: this.frmConsejo.get('duration').value
-        });
-    }
-    else {
-      this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App',
-        'Error, archivo no cargado');
-    }
+    // if (typeof (this.fileData) !== 'undefined') {
+    const time: number = Number(this.Time.hour * 60) + Number(this.Time.minute);
+    this.dialogRef.close(
+      {
+        file: this.fileData,
+        proposedHour: time,
+        jury: this.juryInfo,
+        upload: typeof (this.fileData) !== 'undefined',
+        duration: this.frmConsejo.get('duration').value
+      });
+    // }
+    // else {
+    //   this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App',
+    //     'Error, archivo no cargado');
+    // }
   }
 
   async releaseGenerate() {
     this.information.request.jury = this.juryInfo;
     this.information.request.proposedDate = new Date();
     this.information.request.proposedHour = Number(this.Time.hour * 60) + Number(this.Time.minute);
-    console.log("eee");
-    this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service);
+    this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
     await this.delay(1000);
-    console.log("bien");
     window.open(this.oRequest.projectReleaseNew().output('bloburl'), '_blank');
+    this.enableUpload = true;
     // async () => {
     //   await this.delay(400);
     //   console.log("entro");

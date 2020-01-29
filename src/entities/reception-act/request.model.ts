@@ -19,7 +19,7 @@ export interface iRequest {
     actDate?: Date;
     honorificMention?: boolean;
     adviserId?: string;
-    adviser?: string;
+    adviser?: { name: string, title: string, cedula: string };
     place?: string;
     noIntegrants?: number;
     integrants?: Array<iIntegrant>;
@@ -32,6 +32,7 @@ export interface iRequest {
     doer?: string;
     observation?: string;
     jury?: Array<any>;
+    folder?: string;
     history?: [
         {
             phase: string,
@@ -52,4 +53,8 @@ export interface iRequest {
             driveId?: string
         }
     ];
+    titulationOption?: string;
+    verificationStatus?: boolean;
+    sentVerificationCode?: boolean;
+    grade?: string;
 }

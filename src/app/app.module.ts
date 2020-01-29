@@ -23,6 +23,7 @@ import { SidebarModule } from 'ng-sidebar';
 import { DropzoneModule } from 'ngx-dropzone-wrapper';
 import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { QRCodeModule } from 'angularx-qrcode';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
@@ -209,6 +210,7 @@ import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/posi
 import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
 import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
 import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
+import { UploadEmployeesCsvComponent } from 'src/modals/electronic-signature/upload-employees-csv/upload-employees-csv.component';
 // Providers
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
@@ -245,6 +247,7 @@ import { UploadDeliveredComponent } from '../modals/reception-act/upload-deliver
 import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appointment-page/view-appointment-page.component';
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
 import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
+import { NewTitleComponent } from '../modals/reception-act/new-title/new-title.component';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -317,7 +320,7 @@ registerLocaleData(localeEs);
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
-
+    NewTitleComponent,
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -347,6 +350,7 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
+    UploadEmployeesCsvComponent,
 
     // Shared
     // Components
@@ -371,7 +375,7 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ViewAppointmentPageComponent,
     UploadFileTitledComponent,
-    ActNotificacionComponent,
+    ActNotificacionComponent    
   ],
   imports: [
     // Angular
@@ -443,6 +447,7 @@ registerLocaleData(localeEs);
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
+    QRCodeModule,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -522,6 +527,7 @@ registerLocaleData(localeEs);
     StepperDocumentComponent,
     UploadDeliveredComponent,
     ActNotificacionComponent,
+    NewTitleComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,
@@ -538,7 +544,8 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
-    
+    UploadEmployeesCsvComponent,
+
     // Graduation
     // Modals
     NewGraduationEventComponent,

@@ -20,6 +20,7 @@ import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { DropzoneConfigInterface, DropzoneComponent } from 'ngx-dropzone-wrapper';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-request-component',
@@ -34,7 +35,7 @@ export class RequestComponentComponent implements OnInit {
   @Output('onSubmit') btnSubmitRequest = new EventEmitter<boolean>();
   private MAX_SIZE_FILE: number = 3145728;
   public frmRequest: FormGroup;
-  private fileData: any;
+  public fileData: any;
   private frmData: any;
   private isLoadFile: boolean;
   private userInformation: any;
@@ -52,8 +53,11 @@ export class RequestComponentComponent implements OnInit {
   // public dropZone: DropzoneConfigInterface;
   public folderId: String;
   public activePeriod;
-  public foldersByPeriod = [];  
-  // @ViewChild('dropZone') drop: any;  
+  public foldersByPeriod = [];
+  private adviserInfo: { name: string, title: string, cedula: string };
+  public isSentVerificationCode: Boolean;
+  // @ViewChild('dropZone') drop: any;
+
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -71,16 +75,16 @@ export class RequestComponentComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.typeCareer = <keyof typeof eCAREER>this.userInformation.career;
-    this.getFolderId();    
+    this.getFolderId();
   }
 
   ngOnInit() {
-    this.oRequest = new uRequest(this._request, this.imgService);
+    this.oRequest = new uRequest(this._request, this.imgService, this.cookiesService);
     console.log("Information", this.userInformation);
     this.frmRequest = new FormGroup(
       {
-        'name': new FormControl(this.firstName(this.userInformation.name.fullName), Validators.required),
-        'lastname': new FormControl(this.lastName(this.userInformation.name.fullName), Validators.required),
+        'name': new FormControl({ value: this.userInformation.name.firstName, disabled: true }, Validators.required),
+        'lastname': new FormControl({ value: this.userInformation.name.lastName, disabled: true }, Validators.required),
         'telephone': new FormControl(null, [Validators.required,
         Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
@@ -89,7 +93,8 @@ export class RequestComponentComponent implements OnInit {
         'observations': new FormControl(null),
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
-        'honorific': new FormControl(false, Validators.required)
+        'honorific': new FormControl(false, Validators.required),
+        'titulationOption': new FormControl({ value: 'XI - TITULACIÓN INTEGRAL', disabled: true }, Validators.required)
       });
     this.getRequest();
   }
@@ -119,13 +124,14 @@ export class RequestComponentComponent implements OnInit {
       lastName = "Sin Capturar ";
     return lastName.substr(0, lastName.length - 1);
   }
+
   getRequest() {
     this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {
       if (typeof (res) !== 'undefined' && res.request.length > 0
         && (res.request[0].phase === 'Capturado' && res.request[0].phase !== 'None')
       ) {
         this.loadRequest(res);
-        this.operationMode = eOperation.EDIT;
+        this.operationMode = this.request.verificationStatus ? eOperation.EDIT : eOperation.VERIFICATION;
         this.observations = this.request.observation;
         if (typeof (this.request.history) !== 'undefined' && this.request.history.length > 0) {
           const lastHistoryIndex = this.request.history.length - 1;
@@ -159,27 +165,35 @@ export class RequestComponentComponent implements OnInit {
     this.request.studentId = this.request.student._id;
     this.integrants = this.request.integrants;
     this.deptoInfo = request.request[0].department;
+    this.adviserInfo = request.request[0].adviser;
+    this.request.student.name = this.userInformation.name.firstName;
+    this.request.student.lastName = this.userInformation.name.lastName;
 
-    this.assignName();
+    // this.assignName();
 
     this.frmRequest.setValue({
       'name': this.request.student.name,
       'lastname': this.request.student.lastName,
       'telephone': this.request.telephone,
       'email': this.request.email.toLowerCase(),
-      'adviser': this.request.adviser,
+      'adviser': this.request.adviser.name,
       'noIntegrants': this.request.noIntegrants,
       'observations': this.request.observation,
       'project': this.request.projectName,
       'product': this.request.product,
       'honorific': this.request.honorificMention,
+      'titulationOption': this.request.titulationOption,
     });
     this.disabledControl();
     this.isToggle = this.request.honorificMention;
+    this.isSentVerificationCode = this._request.sentVerificationCode;
   }
 
   Edit(): void {
     this.isEdit = !this.isEdit;
+    if (this.operationMode === eOperation.VERIFICATION) {
+      this.operationMode = eOperation.EDIT;
+    }
     this.disabledControl();
   }
 
@@ -192,10 +206,9 @@ export class RequestComponentComponent implements OnInit {
     this.frmRequest.get('observations').markAsUntouched();
     this.frmRequest.get('noIntegrants').markAsUntouched();
     this.frmRequest.get('honorific').markAsUntouched();
+    this.frmRequest.get('titulationOption').markAsUntouched();
 
     if (this.isEdit) {
-      this.frmRequest.get('name').enable();
-      this.frmRequest.get('lastname').enable();
       this.frmRequest.get('telephone').enable();
       this.frmRequest.get('email').enable();
       this.frmRequest.get('project').enable();
@@ -213,6 +226,7 @@ export class RequestComponentComponent implements OnInit {
       this.frmRequest.get('adviser').disable();
       this.frmRequest.get('noIntegrants').disable();
       this.frmRequest.get('honorific').disable();
+      this.frmRequest.get('titulationOption').disable();
     }
   }
 
@@ -254,7 +268,8 @@ export class RequestComponentComponent implements OnInit {
       errorExists = true;
     }
 
-    if (typeof (this.frmRequest.get('adviser').value) === 'undefined' || !this.frmRequest.get('adviser').value) {
+    if (typeof (this.frmRequest.get('adviser').value) === 'undefined' || !this.frmRequest.get('adviser').value || !this.adviserInfo) {
+      this.notificationsServ.showNotification(eNotificationType.ERROR, '', 'No se ha seleccionado asesor');
       this.frmRequest.get('adviser').setErrors({ required: true });
       this.frmRequest.get('adviser').markAsTouched();
       errorExists = true;
@@ -271,7 +286,9 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('Career', this.typeCareer);
     this.frmData.append('Document', eFILES.PROYECTO);
     // Data
-    this.frmData.append('adviser', this.frmRequest.get('adviser').value);
+    this.frmData.append('adviserName', this.adviserInfo.name);
+    this.frmData.append('adviserTitle', this.adviserInfo.title);
+    this.frmData.append('adviserCedula', this.adviserInfo.cedula);
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
     this.frmData.append('projectName', this.frmRequest.get('project').value);
     this.frmData.append('email', this.frmRequest.get('email').value);
@@ -283,34 +300,58 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('product', this.frmRequest.get('product').value);
     this.frmData.append('department', this.deptoInfo.name);
     this.frmData.append('boss', this.deptoInfo.boss);
+    this.frmData.append('titulationOption', this.frmRequest.get('titulationOption').value);
     switch (this.operationMode) {
       case eOperation.NEW: {
-        // this.frmData.append('department', this.deptoInfo.name);
-        // this.frmData.append('boss', this.deptoInfo.boss);
         this.studentProvider.request(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(_ => {
-            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Guardada Correctamente');
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud guardada correctamente');
             this.btnSubmitRequest.emit(true);
           }, error => {
-            console.log("error2", error);
-            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+            console.log('error2', error);
+            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar integrantes');
             this.btnSubmitRequest.emit(false);
           });
+          if (data.code && data.code !== 200) {
+            this.notificationsServ
+              .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+          } else {
+            this.notificationsServ
+              .showNotification(eNotificationType.INFORMATION,
+                'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
+          }
         }, error => {
-          console.log("error", error);
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+          console.log('error', error);
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar solicitud');
           this.btnSubmitRequest.emit(false);
         });
         break;
       }
       case eOperation.EDIT: {
         const value = this.request.documents.find(x => x.nameFile === eFILES.PROYECTO);
+        let isEmailChanged = false;
         this.frmData.append('fileId', value.driveId);
+        if (this._request.email !== this.frmData.get('email')) {
+          this.frmData.append('verificationCode', '000000');
+          this.frmData.append('verificationStatus', 'false');
+          this.frmData.append('sentVerificationCode', 'false');
+          isEmailChanged = true;
+        }
         this.studentProvider.updateRequest(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Editada Correctamente');
             this.isEdit = false;
             this.viewObservation = false;
+            if (isEmailChanged) {
+              if (data.code && data.code !== 200) {
+                this.notificationsServ
+                  .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+              } else {
+                this.notificationsServ
+                  .showNotification(eNotificationType.INFORMATION,
+                    'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
+              }
+            }
             this.getRequest();
             this.btnSubmitRequest.emit(true);
           }, error => {
@@ -362,8 +403,9 @@ export class RequestComponentComponent implements OnInit {
 
     ref.afterClosed().subscribe((result) => {
       if (result) {
-        this.frmRequest.patchValue({ 'adviser': result.Employee });
+        this.frmRequest.patchValue({ 'adviser': result.Employee.trim() });
         this.deptoInfo = result.Depto;
+        this.adviserInfo = result.ExtraInfo;
         console.log("depto", this.deptoInfo);
       }
     });
@@ -397,10 +439,9 @@ export class RequestComponentComponent implements OnInit {
     });
   }
 
-  generateRequestPDF() {    
+  generateRequestPDF() {
     window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
   }
-
 
   getFolderId() {
     let _idStudent = this.userInformation._id;
@@ -423,7 +464,7 @@ export class RequestComponentComponent implements OnInit {
             student => {
               if (student.folder) {// folder exists
                 if (student.folder.idFolderInDrive) {
-                  this.folderId = student.folder.idFolderInDrive;                  
+                  this.folderId = student.folder.idFolderInDrive;
                 }
                 else { //folder doesn't exists then create it                  
                   this.createFolder();
@@ -440,10 +481,10 @@ export class RequestComponentComponent implements OnInit {
   createFolder() {
     const _idStudent = this.userInformation._id;
     let folderStudentName = this.userInformation.email + ' - ' + this.userInformation.name.fullName;
-    console.log("Periodo", this.activePeriod._id,"--", folderStudentName);
+    console.log("Periodo", this.activePeriod._id, "--", folderStudentName);
     this._InscriptionsProvider.getFoldersByPeriod(this.activePeriod._id, 2).subscribe(
       (folders) => {
-         console.log(folders,'folderss');
+        console.log(folders, 'folderss');
 
         this.foldersByPeriod = folders.folders;
         let folderPeriod = this.foldersByPeriod.filter(folder => folder.name.indexOf(this.activePeriod.periodName) !== -1);
@@ -461,7 +502,7 @@ export class RequestComponentComponent implements OnInit {
               // student folder doesn't exists then create new folder
               this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, career.folder.idFolderInDrive, 2).subscribe(
                 studentF => {
-                  this.folderId = studentF.folder.idFolderInDrive;                 
+                  this.folderId = studentF.folder.idFolderInDrive;
                   this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id });
                 },
                 err => {
@@ -476,7 +517,7 @@ export class RequestComponentComponent implements OnInit {
         } else {
           this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, folderCareer[0].idFolderInDrive, 2).subscribe(
             studentF => {
-              this.folderId = studentF.folder.idFolderInDrive;                            
+              this.folderId = studentF.folder.idFolderInDrive;
               this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id }).subscribe(
                 upd => { },
                 err => { }
@@ -490,5 +531,83 @@ export class RequestComponentComponent implements OnInit {
         console.log(err, '==============error');
       }
     );
-  } 
+  }
+
+  public verifyEmail() {
+    Swal.fire({
+      title: 'Verificación de correo',
+      text: 'Ingrese el código de verificación que llegó a su correo',
+      type: 'warning',
+      input: 'text',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      confirmButtonColor: 'blue',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Verificar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: true,
+      preConfirm: (code) => {
+        if (code) {
+          return code;
+        } else {
+          Swal.showValidationMessage('El campo es requerido');
+        }
+      },
+    }).then((result) => {
+      if (result.value) {
+        this.requestProvider.verifyCode(this.request._id, result.value)
+          .subscribe(res => {
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Verificación de correo', res.message);
+            this.operationMode = eOperation.EDIT;
+            this.request.verificationStatus = true;
+          }, err => {
+            const message = JSON.parse(err._body).error;
+            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Verificación de correo', message);
+          });
+      }
+    });
+  }
+
+  public cancelEdit() {
+    this.isEdit = false;
+    if (this.request.verificationStatus) {
+      this.operationMode = eOperation.EDIT;
+    } else {
+      this.operationMode = eOperation.VERIFICATION;
+    }
+    this.disabledControl();
+    this._resetValues(this.request);
+  }
+
+  public sendVerificationCode() {
+    this.requestProvider.sendVerificationCode(this._request._id)
+      .subscribe(_ => {
+        this.notificationsServ
+          .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Correo envíado con éxito');
+        this.isSentVerificationCode = true;
+        this._request.sentVerificationCode = true;
+      }, err => {
+        const message = JSON.parse(err._body).error;
+        this.notificationsServ
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
+      });
+  }
+
+  private _resetValues(request: iRequest) {
+    this.frmRequest.setValue({
+      'name': request.student.name,
+      'lastname': request.student.lastName,
+      'telephone': request.telephone,
+      'email': request.email.toLowerCase(),
+      'adviser': request.adviser.name,
+      'noIntegrants': request.noIntegrants,
+      'observations': request.observation,
+      'project': request.projectName,
+      'product': request.product,
+      'honorific': request.honorificMention,
+      'titulationOption': request.titulationOption,
+    });
+    this.adviserInfo = request.adviser;
+    this.isToggle = this.request.honorificMention;
+  }
 }

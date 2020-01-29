@@ -30,6 +30,7 @@ export class UploadFilesComponent implements OnInit {
   public UploadPago: IDocument;
   public UploadRevalidacion: IDocument;
   public UploadPhotos: IDocument;
+  public UploadActaExamen: IDocument;
   public isEditable: boolean;
   constructor(
     private requestService: RequestService,
@@ -48,10 +49,12 @@ export class UploadFilesComponent implements OnInit {
     this.UploadPago = { type: eFILES.PAGO, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadRevalidacion = { type: eFILES.CERTIFICADO_R, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadPhotos = { type: eFILES.PHOTOS, status: eStatusRequest.NONE, file: null, isBase64: false };
+    this.UploadActaExamen = { type: eFILES.ACTA_EXAMEN, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.requestService.requestUpdate.subscribe(
       (result) => {
         this.Request = result.Request;
         this.isEditable = result.IsEdit;
+        console.log("REQUEST UPLOAD", this.Request);
         this.onLoad(this.Request.documents);
       }
     );
@@ -93,6 +96,9 @@ export class UploadFilesComponent implements OnInit {
 
       const isPhotos = this.getDocument(eFILES.PHOTOS);
       this.UploadPhotos = typeof (isPhotos) === 'undefined' ? this.UploadPhotos : isPhotos;
+
+      const isActaExamen = this.getDocument(eFILES.ACTA_EXAMEN);
+      this.UploadActaExamen = typeof (isActaExamen) === 'undefined' ? this.UploadActaExamen : isActaExamen;
     }
   }
 
@@ -153,6 +159,11 @@ export class UploadFilesComponent implements OnInit {
         isBase64 = this.UploadRevalidacion.isBase64;
         break;
       }
+      case eFILES.ACTA_EXAMEN: {
+        pdf = this.UploadActaExamen.file;
+        isBase64 = this.UploadActaExamen.isBase64;
+        break;
+      }
     }
     // console.log('ES BASE ', isBase64, 'pdf', pdf, 'type', typeof (pdf));
     if (!isBase64) {
@@ -175,7 +186,7 @@ export class UploadFilesComponent implements OnInit {
       data: {
         source: source,
         isBase64: isBase64,
-        title: type
+        title: this.documentTitle(type)
       },
       disableClose: true,
       hasBackdrop: true,
@@ -184,6 +195,87 @@ export class UploadFilesComponent implements OnInit {
     });
   }
 
+  documentTitle(type: eFILES): string {
+    let name: string;
+    switch (type) {
+      case eFILES.PROYECTO: {
+        name = "PORTADA DE PROYECTO";
+        break;
+      }
+      case eFILES.SOLICITUD: {
+        name = "SOLICITUD DE PROYECTO";
+        break;
+      }
+      case eFILES.REGISTRO: {
+        name = "REGISTRO DE PROYECTO";
+        break;
+      }
+      case eFILES.RELEASED: {
+        name = "CONSTANCIA DE LIBERACION";
+        break;
+      }
+      case eFILES.INCONVENIENCE: {
+        name = "CONSTANCIA DE NO INCONVENIENCIA"
+        break;
+      }
+      case eFILES.ACTA_NACIMIENTO: {
+        name = "ACTA DE NACIMIENTO";
+        break;
+      }
+      case eFILES.CURP: {
+        name = "CURPO";
+        break;
+      }
+      case eFILES.CERTIFICADO_B: {
+        name = "CERTIFICADO DE BACHILLERATO";
+        break;
+      }
+      case eFILES.CEDULA: {
+        name = "CÉDULA TÉCNICA";
+        break;
+      }
+      case eFILES.CERTIFICADO_L: {
+        name = "CERTIFICADO PROFESIONAL";
+        break;
+      }
+      case eFILES.SERVICIO: {
+        name = "CONSTANCIA DE SERVICIO SOCIAL";
+        break;
+      }
+      case eFILES.INGLES: {
+        name = "CONSTANCIA DE SEGUNDA LENGUA";
+        break;
+      }
+      case eFILES.PAGO: {
+        name = "COMPROBANTE DE PAGO";
+        break;
+      }
+      case eFILES.CERTIFICADO_R: {
+        name = "CERTIFICADO DE REVALIDACIÓN";
+        break;
+      }
+      case eFILES.PHOTOS: {
+        name = "FOTOGRAFÍAS";
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        name = "ACTA DE EXAMEN";
+        break;
+      }
+      case eFILES.INE: {
+        name = "CREDENCIAL DE ELECTOR";
+        break;
+      }
+      case eFILES.CED_PROFESIONAL: {
+        name = "CÉDULA PROFESIONAL";
+        break;
+      }
+      default: {
+        name = "DESCONOCIDO";
+      }
+    }
+    return name;
+  }
   onMessage(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let message = '';
@@ -242,7 +334,7 @@ export class UploadFilesComponent implements OnInit {
     let document: any;
 
     const frmData = new FormData();
-    frmData.append('folderId', this._CookiesService.getFolder());
+    frmData.append('folderId', this.isEditable ? this.Request.folder : this._CookiesService.getFolder());
     frmData.append('Document', type);
     frmData.append('IsEdit', this.isEditable ? "true" : "false");
     switch (type) {
@@ -289,6 +381,11 @@ export class UploadFilesComponent implements OnInit {
       case eFILES.CERTIFICADO_R: {
         frmData.append('file', this.UploadRevalidacion.file);
         document = this.UploadRevalidacion;
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        frmData.append('file', this.UploadActaExamen.file);
+        document = this.UploadActaExamen;
         break;
       }
     }
@@ -354,6 +451,11 @@ export class UploadFilesComponent implements OnInit {
       case eFILES.CERTIFICADO_R: {
         this.UploadRevalidacion.file = null;
         this.UploadRevalidacion.isBase64 = this.isEditable ? true : this.UploadRevalidacion.isBase64;
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        this.UploadActaExamen.file = null;
+        this.UploadActaExamen.isBase64 = this.isEditable ? true : this.UploadActaExamen.isBase64;
         break;
       }
     }
@@ -429,6 +531,11 @@ export class UploadFilesComponent implements OnInit {
           case eFILES.CERTIFICADO_R: {
             this.UploadRevalidacion.file = fileUpload.file;
             this.UploadRevalidacion.isBase64 = false;
+            break;
+          }
+          case eFILES.ACTA_EXAMEN: {
+            this.UploadActaExamen.file = fileUpload.file;
+            this.UploadActaExamen.isBase64 = false;
             break;
           }
         }
