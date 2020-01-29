@@ -4,6 +4,8 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { Router } from '@angular/router';
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
+import Swal from 'sweetalert2';
+import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
 @Component({
   selector: 'app-loader-data-graduation-page',
@@ -232,5 +234,31 @@ export class LoaderDataGraduationPageComponent implements OnInit {
       object[elem] = elem;
     });
     return object;
+  }
+
+  downloadTemplate(){
+    Swal.fire({
+      title: 'Atención',
+      text: 'Recuerda que debes cambiar la "," por "%20" en la especialidad del alumno en caso de requerirlo.',
+      imageUrl: 'assets/imgs/reemplazarComa.png',
+      imageWidth: 500,
+      imageHeight: 100,
+      imageAlt: 'Custom image',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Descargar'
+    }).then((result) => {
+      if (result.value) {
+        const ExampleStudents = [
+          { no: 'No', nc: 'Número de Control', nombreApellidos: 'Nombre Apellido', nombre: 'Nombre del Alumno', carrera: 'Carrera', especialidad: 'Especialidad', calificacion: 'Calificacion', email: 'Email' },
+          { no: '1', nc: '14400975', nombreApellidos: 'NAVA HERNANDEZ IRVING YAIR', nombre: 'IRVING YAIR NAVA HERNANDEZ', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '88.93', email: 'iryanavahe@ittepic.edu.mx' },
+          { no: '2', nc: '15401011', nombreApellidos: 'JIMENEZ ESPERICUETA RICARDO', nombre: 'RICARDO JIMENEZ ESPERICUETA', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '93.13', email: 'rijimenezes@ittepic.edu.mx' }
+        ];
+        new Angular5Csv(ExampleStudents, 'Ejemplo Estudiantes Graduación');
+      }
+    });
   }
 }

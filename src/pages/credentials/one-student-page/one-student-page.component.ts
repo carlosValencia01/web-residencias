@@ -9,6 +9,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 import { ActivatedRoute, Router } from '@angular/router';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { CareerProvider } from 'src/providers/shared/career.prov';
 
 @Component({
   selector: 'app-one-student-page',
@@ -46,8 +47,10 @@ export class OneStudentPageComponent implements OnInit {
   activePeriod;
   folderId;
   foldersByPeriod = [];
+  careers=[];
 
   active: boolean;
+  student;
 
   constructor(
     private studentProv: StudentProvider,
@@ -57,7 +60,8 @@ export class OneStudentPageComponent implements OnInit {
     private router: Router,
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
-    private inscriptionProv : InscriptionsProvider
+    private inscriptionProv : InscriptionsProvider,
+    private careerProv: CareerProvider
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -65,6 +69,28 @@ export class OneStudentPageComponent implements OnInit {
 
     this.getBase64ForStaticImages();
     this.data = this.cookiesService.getData().user;
+
+    this.careerProv.getAllCareers().subscribe(
+      (careers)=>{
+        this.careers =careers.careers;        
+        
+        this.init();
+      }
+    );
+            
+  }
+
+  async init(){
+    // console.log(this.data);
+    
+    await this.studentProv.searchStudents(this.data.email+'').toPromise().then(
+      (students)=>{
+        // console.log(students.students,'ff');
+        this.student = students.students[0];
+        // console.log(this.student,'e');
+        
+      }
+    );
     
     this.inscriptionProv.getActivePeriod().subscribe(
       period=>{
@@ -76,10 +102,26 @@ export class OneStudentPageComponent implements OnInit {
               // console.log(per.student.idPeriodInscription, 'idperrrrr');              
               
               if(!per.student.idPeriodInscription){
-                this.studentProv.updateStudent(this.data._id,{idPeriodInscription:this.activePeriod._id});
+                this.studentProv.updateStudent(this.data._id,{idPeriodInscription:this.activePeriod._id}).subscribe(
+                  f=>{}
+                );
               }
             }
           );
+          // console.log('1');
+          
+          if(this.student.careerId){
+            const career = this.careers.filter( career=> career._id == this.student.careerId)[0];
+            this.data.career = career.fullName;           
+          }else if(this.student.career){
+            const career = this.careers.filter( career=> career.fullName.indexOf(this.student.career) > -1 )[0];
+            if(career){              
+              this.studentProv.updateStudent(this.data._id,{careerId:career._id}).subscribe(up=>{},err=>{});
+            }else{ // error en la carrera
+              return;
+            }
+          }
+
           //first check folderId on Student model
           this.studentProv.getFolderId(this.data._id).subscribe(
             student=>{
@@ -88,9 +130,9 @@ export class OneStudentPageComponent implements OnInit {
                   this.folderId = student.folder.idFolderInDrive;
                   // console.log(this.folderId,'folder student exists');                     
                 }         
-              } else{
-                // console.log('333');
-               this.createFolder();}
+              } else{                
+               this.createFolder();
+              }
                 
             });
         }
@@ -100,8 +142,8 @@ export class OneStudentPageComponent implements OnInit {
         }    
       }  
     );
-  }
 
+  }
   ngOnInit() {
     const _id = this.data._id;
     this.loading = true;
@@ -225,69 +267,69 @@ export class OneStudentPageComponent implements OnInit {
   uploadFile() {
     this.loading = true;
     // console.log('upload');
-    const red = new FileReader;
+    const red = new FileReader;  
     
-
-   
-            // console.log(this.folderId,'folder student exists');
-            red.addEventListener('load', () => {
-              // console.log(red.result);
-              let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
-        
-              this.inscriptionProv.uploadFile2(file).subscribe(
-                resp => {
-                  if (resp.action == 'create file') {
-        
-                    const documentInfo = {
-        
-                      doc: {
-                        filename: resp.name,
-                        type: 'DRIVE',
-                        fileIdInDrive: resp.fileId
-                      },
-                      status: {
-                        name: 'EN PROCESO',
-                        active: true,
-                        message: 'Se subio foto de credencial por primera vez'
-                      }
-                    };
-                    this.studentProv.uploadDocumentDrive(this.data._id, documentInfo).subscribe(
-                      updated => {
-                        this.notificationServ.showNotification(eNotificationType.SUCCESS,
-                          'Exito', 'Foto cargada correctamente.');
-        
-                      },
-                      err => {
-                        console.log(err);
-        
-                      }, () => this.loading = false
-                    );
-                  } else {
-        
-                    const documentInfo = {
-                      filename: resp.filename,
-                      status: {
-                        name: 'EN PROCESO',
-                        active: true,
-                        message: 'Se actualizo foto de credencial'
-                      }
-                    };
-                    this.studentProv.updateDocumentStatus(this.data._id, documentInfo).subscribe(
-                      res => {
-                        this.notificationServ.showNotification(eNotificationType.SUCCESS,
-                          'Exito', 'Foto actualizada correctamente.');
-                      },
-                      err => console.log(err)
-                    );
-                  }
-                  this.loading = false;
+    if(this.folderId){
+      red.addEventListener('load', () => {
+        // console.log(red.result);
+        let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
+  
+        this.inscriptionProv.uploadFile2(file).subscribe(
+          resp => {
+            if (resp.action == 'create file') {
+  
+              const documentInfo = {
+  
+                doc: {
+                  filename: resp.name,
+                  type: 'DRIVE',
+                  fileIdInDrive: resp.fileId
+                },
+                status: {
+                  name: 'EN PROCESO',
+                  active: true,
+                  message: 'Se subio foto de credencial por primera vez'
+                }
+              };
+              this.studentProv.uploadDocumentDrive(this.data._id, documentInfo).subscribe(
+                updated => {
+                  this.notificationServ.showNotification(eNotificationType.SUCCESS,
+                    'Exito', 'Foto cargada correctamente.');
+  
                 },
                 err => {
-                  console.log(err); this.loading = false;
+                  console.log(err);
+  
+                }, () => this.loading = false
+              );
+            } else {
+  
+              const documentInfo = {
+                filename: resp.filename,
+                status: {
+                  name: 'EN PROCESO',
+                  active: true,
+                  message: 'Se actualizo foto de credencial'
                 }
-              )
-            }, false);
-            red.readAsDataURL(this.croppedImage);
+              };
+              this.studentProv.updateDocumentStatus(this.data._id, documentInfo).subscribe(
+                res => {
+                  this.notificationServ.showNotification(eNotificationType.SUCCESS,
+                    'Exito', 'Foto actualizada correctamente.');
+                },
+                err => console.log(err)
+              );
+            }
+            this.loading = false;
+          },
+          err => {
+            console.log(err); this.loading = false;
+          }
+        )
+      }, false);
+      red.readAsDataURL(this.croppedImage);
+    }
+            
          
     
   }
@@ -326,21 +368,27 @@ export class OneStudentPageComponent implements OnInit {
     this.studentProv.getDriveDocuments(this.data._id).subscribe(
       docs=>{
         let documents = docs.documents;              
-        this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];        
-        this.showImg=true;
-        if(this.imageDoc){
+        if(documents){
 
-          this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
-            succss=>{
-              this.showImg=true;
-              const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
-              this.photoStudent = "data:image/"+extension+";base64,"+succss.file;
-            },
-            err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
-          );
+          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];                
+          if(this.imageDoc){
+  
+            this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
+              succss=>{
+                this.showImg=true;
+                const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
+                this.photoStudent = "data:image/"+extension+";base64,"+succss.file;
+              },
+              err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
+            );
+          }else{
+            // console.log('1');
+            
+            this.loading = false
+            this.photoStudent = 'assets/imgs/studentAvatar.png';
+            this.showImg=true;
+          }
         }else{
-          // console.log('1');
-          
           this.loading = false
           this.photoStudent = 'assets/imgs/studentAvatar.png';
           this.showImg=true;
@@ -350,21 +398,26 @@ export class OneStudentPageComponent implements OnInit {
   }
 
   createFolder(){
-    let folderStudentName = this.data.email+' - '+ this.data.name.fullName;
-  
+    let folderStudentName = this.data.email +' - '+ this.data.name.fullName;      
+    // console.log(this.data.email);
+    
+    // console.log(folderStudentName);
+    
     this.inscriptionProv.getFoldersByPeriod(this.activePeriod._id,1).subscribe(
       (folders)=>{
         // console.log(folders,'folderss');
         
-        this.foldersByPeriod=folders.folders;                                     
-        let folderPeriod = this.foldersByPeriod.filter( folder=> folder.name.indexOf(this.activePeriod.periodName) !==-1);
-
+        this.foldersByPeriod=folders.folders;     
+        // console.log(this.foldersByPeriod);
+                                        
+        let folderPeriod = this.foldersByPeriod.filter( folder=> folder ? folder.name.indexOf(this.activePeriod.periodName) !==-1 : false);        
+        
         // 1 check career folder
-        let folderCareer = this.foldersByPeriod.filter( folder=> folder.name === this.data.career);
-        // let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
+        let folderCareer = this.foldersByPeriod.filter( folder=> folder ?  folder.name === this.data.career : false);
+        // console.log(folderCareer,'career');
+        
 
-        if(folderCareer.length===0){
-          // console.log('1');
+        if(folderCareer.length===0){        
           
           this.inscriptionProv.createSubFolder(this.data.career,this.activePeriod._id,folderPeriod[0].idFolderInDrive,1).subscribe(
             career=>{
@@ -376,7 +429,7 @@ export class OneStudentPageComponent implements OnInit {
                   this.folderId = studentF.folder.idFolderInDrive;                 
                   // console.log('3');
                   
-                  this.studentProv.updateStudent(this.data._id,{folderId:studentF.folder._id});
+                  this.studentProv.updateStudent(this.data._id,{folderId:studentF.folder._id}).subscribe(carpeta=>{});
                 },
                 err=>{console.log(err);
                 }
@@ -392,9 +445,7 @@ export class OneStudentPageComponent implements OnInit {
                 // console.log('3.1');
                 
                 this.studentProv.updateStudent(this.data._id,{folderId:studentF.folder._id}).subscribe(
-                  upd=>{
-                    
-                    
+                  upd=>{                                        
                   },
                   err=>{
                   }
