@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {EmployeeProvider} from 'src/providers/shared/employee.prov';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {CookiesService} from 'src/services/app/cookie.service';
-import {NotificationsServices} from 'src/services/app/notifications.service';
-import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import {ActivatedRoute, Router} from '@angular/router';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
+import {EmployeeProvider} from 'src/providers/shared/employee.prov';
+import {CookiesService} from 'src/services/app/cookie.service';
 import {CurrentPositionService} from 'src/services/shared/current-position.service';
+import {NotificationsServices} from 'src/services/app/notifications.service';
 
 @Component({
   selector: 'app-profile-settings',
@@ -15,47 +15,35 @@ import {CurrentPositionService} from 'src/services/shared/current-position.servi
 export class ProfileSettingsComponent implements OnInit {
   public formGroupData;
   public formGroupPsw;
-  private user;
   public isMatchPasswords = false;
   private position;
+  private user;
+  private usr;
 
   constructor(
-      private employeeProvider: EmployeeProvider,
-      private cookiesService: CookiesService,
-      private notification: NotificationsServices,
-      private activedRoute: ActivatedRoute,
-      private router: Router,
-      private currentPositionService: CurrentPositionService
-  ) {
-    if (!this.cookiesService.isAllowed(this.activedRoute.snapshot.url[0].path)) {
-      this.router.navigate(['/']);
-    }
+    private activedRoute: ActivatedRoute,
+    private router: Router,
+    private employeeProvider: EmployeeProvider,
+    private cookiesService: CookiesService,
+    private currentPositionService: CurrentPositionService,
+    private notification: NotificationsServices) {
+      if (!this.cookiesService.isAllowed(this.activedRoute.snapshot.url[0].path)) {
+        this.router.navigate(['/']);
+      }
 
-    this.formGroupData = new FormGroup({
-      'name': new FormControl(null, [
-        Validators.required
-      ]),
-      'lastName': new FormControl(null, [
-        Validators.required
-      ]),
-      'position': new FormControl({value: '', disabled: true}),
-      'area': new FormControl({value: '', disabled: true}),
-      'loginPsw': new FormControl(null, [
-        Validators.required
-      ])
-    });
+      this.formGroupData = new FormGroup({
+        'name': new FormControl(null, [Validators.required]),
+        'lastName': new FormControl(null, [Validators.required]),
+        'position': new FormControl({value: '', disabled: true}),
+        'area': new FormControl({value: '', disabled: true}),
+        'loginPsw': new FormControl(null, [Validators.required])
+      });
 
-    this.formGroupPsw = new FormGroup({
-      'psw': new FormControl(null, [
-        Validators.required
-      ]),
-      'confPsw': new FormControl(null, [
-        Validators.required
-      ]),
-      'loginPsw': new FormControl(null, [
-        Validators.required
-      ])
-    });
+      this.formGroupPsw = new FormGroup({
+        'psw': new FormControl(null, [Validators.required]),
+        'confPsw': new FormControl(null, [Validators.required]),
+        'loginPsw': new FormControl(null, [Validators.required])
+      });
   }
 
   ngOnInit() {
@@ -63,8 +51,10 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   async init() {
+    this.usr = this.cookiesService.getData();
+    console.log(this.usr);
     this.user = this.cookiesService.getData().user;
-    this.position = await this.currentPositionService.getCurrentPosition(); // this.getPosition();
+    this.position = await this.currentPositionService.getCurrentPosition();
     this.currentPositionService.changedPosition.subscribe(position => {
       if (position) {
         this.position = position;
@@ -84,7 +74,7 @@ export class ProfileSettingsComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  updateProfile() {
     const firstName = this.formGroupData.get('name').value;
     const lastName = this.formGroupData.get('lastName').value;
     const name = {
@@ -101,20 +91,22 @@ export class ProfileSettingsComponent implements OnInit {
       }
     }).subscribe(res => {
       if (res.status) {
-        this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
+        this.notification.showNotification(eNotificationType.ERROR, res.message, '');
       } else {
         this.notification.showNotification(eNotificationType.SUCCESS, 'Datos actualizados correctamente', '');
         this.user.name = name;
-        this.cookiesService.saveData(this.user);
+        this.cookiesService.deleteCookie();
+        this.usr.user = this.user;
+        this.cookiesService.saveData(this.usr);
         this.setFormGroupData();
         this.formGroupData.get('loginPsw').reset();
       }
     }, err => {
-      this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
+      this.notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error', '');
     });
   }
 
-  onSubmit1() {
+  changePassword() {
     if (this.isMatchPasswords) {
       this.employeeProvider.updateProfile(this.user._id, {
         user: {
@@ -123,13 +115,13 @@ export class ProfileSettingsComponent implements OnInit {
         }
       }).subscribe(res => {
           if (res.status) {
-            this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
+            this.notification.showNotification(eNotificationType.ERROR, res.message, '');
           } else {
             this.notification.showNotification(eNotificationType.SUCCESS, 'Contraseña actualizada correctamente', '');
             this.formGroupPsw.reset();
           }
         }, err => {
-        this.notification.showNotification(eNotificationType.ERROR, 'Ocurrió un error', '');
+        this.notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error', '');
         }
       );
     } else {

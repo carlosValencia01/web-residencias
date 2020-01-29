@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import {EmployeeProvider} from 'src/providers/shared/employee.prov';
 import {ESignatureProvider} from 'src/providers/electronic-signature/eSignature.prov';
 import {CookiesService} from 'src/services/app/cookie.service';
 import {CurrentPositionService} from 'src/services/shared/current-position.service';
 import {NotificationsServices} from 'src/services/app/notifications.service';
-import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
 moment.locale('es');
@@ -16,29 +16,32 @@ moment.locale('es');
   styleUrls: ['./electronic-signature.component.scss']
 })
 export class ElectronicSignatureComponent implements OnInit {
-  public formGroupPsw;
-  private cookies;
-  private employee;
-  public eSignatureStatus;
-  private fileName = '';
-  public isMatchPasswords = false;
   public currentPosition;
+  public eSignatureStatus;
+  public formGroupPsw;
+  public isMatchPasswords = false;
+  private user;
   private docString;
+  private employee;
+  private fileName = '';
 
-  constructor(private employeeProvider: EmployeeProvider, private eSignatureProvider: ESignatureProvider ,
-              private cookiesService: CookiesService, private currentPositionService: CurrentPositionService,
-              private notificationsServices: NotificationsServices) {
-    this.formGroupPsw = new FormGroup({
-      'psw': new FormControl(null, [
-        Validators.required
-      ]),
-      'confPsw': new FormControl(null, [
-        Validators.required
-      ]),
-      'loginPsw': new FormControl(null, [
-        Validators.required
-      ])
-    });
+  constructor(
+    private employeeProvider: EmployeeProvider,
+    private eSignatureProvider: ESignatureProvider ,
+    private cookiesService: CookiesService,
+    private currentPositionService: CurrentPositionService,
+    private notification: NotificationsServices) {
+      this.formGroupPsw = new FormGroup({
+        'psw': new FormControl(null, [
+          Validators.required
+        ]),
+        'confPsw': new FormControl(null, [
+          Validators.required
+        ]),
+        'loginPsw': new FormControl(null, [
+          Validators.required
+        ])
+      });
   }
 
   ngOnInit() {
@@ -46,11 +49,11 @@ export class ElectronicSignatureComponent implements OnInit {
   }
 
   async init() {
-    this.currentPosition = await this.currentPositionService.getCurrentPosition(); // this.getPosition();
+    this.currentPosition = await this.currentPositionService.getCurrentPosition();
 
-    this.cookies = this.cookiesService.getData().user;
+    this.user = this.cookiesService.getData().user;
 
-    this.employeeProvider.getEmployee(this.cookies.email).subscribe( res => {
+    this.employeeProvider.getEmployee(this.user.email).subscribe( res => {
       this.employee = res;
       this.fileName = res.employee.rfc + this.currentPosition.name;
 
@@ -63,35 +66,35 @@ export class ElectronicSignatureComponent implements OnInit {
           if (error.status === 404) {
             this.eSignatureStatus = '';
           } else {
-            this.notificationsServices.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error', '');
+            this.notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error', '');
           }
           this.formGroupPsw.enable();
         });
     });
   }
 
-  private async getPosition() {
-    return await this.currentPositionService.getCurrentPosition();
-  }
-
-  onSubmit() {
+  createDocument() {
     this.eSignatureProvider.createDocument({
-      rfc: this.employee.employee.rfc,
-      position: this.currentPosition.name,
-      department: this.currentPosition.ascription.name,
       employeeId: this.employee.employee._id,
       positionId: this.currentPosition._id,
+      userId: this.user._id,
+      userPsw: this.formGroupPsw.get('loginPsw').value,
+      rfc: this.employee.employee.rfc,
+      department: this.currentPosition.ascription.name,
+      position: this.currentPosition.name,
       password: this.formGroupPsw.get('psw').value
     }).subscribe(eSignature => {
       this.formGroupPsw.reset();
       this.formGroupPsw.disable();
       this.docString = eSignature.docString;
       this.eSignatureStatus = moment(eSignature.expireDate).format('LL');
-      Swal.fire('Firma electrónica', 'Firma electrónica creada', 'success');
+      this.notification.showNotification(eNotificationType.SUCCESS, 'Firma electrónica creada', '');
+    }, error => {
+      this.notification.showNotification(eNotificationType.ERROR, 'Contraseña incorrecta', '');
     });
   }
 
-  onSubmit1() {
+  getDocument() {
     this.eSignatureProvider.getDocument(this.employee.employee._id, this.currentPosition._id).subscribe(data => {
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(data.text(), `${this.fileName}.itt`);
