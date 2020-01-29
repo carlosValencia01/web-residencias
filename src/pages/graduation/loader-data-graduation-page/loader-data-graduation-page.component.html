@@ -6,8 +6,10 @@
       <h2 *ngIf="type !== '1' && type !== '0'">Invalido</h2>
     </div>
     <div class="card-body" *ngIf="type === '1' || type === '0'">
-
             <div style="margin: 20px 0px;">
+              <div style="margin-bottom:10px;">
+                <button mat-flat-button color="primary" (click)="downloadTemplate()">DESCARGAR PLANTILLA</button>
+              </div>
               <div class="input-group">
                 <div class="custom-file">
                   <input type="file" accept=".csv" (change)="onFileSelect($event.target)" class="custom-file-input"
@@ -27,10 +29,10 @@
                       <th scope="col">NC</th>
                       <th scope="col">NombreApellidos</th>
                       <th scope="col">Nombre</th>
-                      <th scope="col">CarreraCompleta</th>
                       <th scope="col">Carrera</th>
-                      <th scope="col">Email</th>
-                      <th scope="col">Estatus</th>
+                      <!-- <th scope="col">CarreraCompleta</th> -->
+                      <th scope="col">Especialidad</th>
+                      <th scope="col">Promedio</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -40,9 +42,9 @@
                       <td>{{ student.nombreApellidos }}</td>
                       <td>{{ student.nombre }}</td>
                       <td>{{ student.carreraCompleta }}</td>
-                      <td>{{ student.carrera }}</td>
-                      <td>{{ student.correo }}</td>
-                      <td>{{ student.estatus }}</td>
+                      <!-- <td>{{ student.carrera }}</td> -->
+                      <td>{{ student.especialidad }}</td>
+                      <td>{{ student.promedio }}</td>
                     </tr>                    
                   </tbody>
                 </table>                
@@ -67,9 +69,46 @@
                 </div>
               </div>
             </div>
-
-
     </div>
-
   </div>
+</div>
+<!-- Tabla reporte alumnos Excel-->
+<table class="table table-striped table-bordered table-hover" id="templateStudent" style="display: none;" data-cols-width="9,21,46,46,46,46,15,30">
+  <thead>
+    <tr>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre Apellido</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Especialidad</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Calificacion</th>
+        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Email</th>
+    </tr>
+  </thead>
+  <body>
+    <tr>
+      <td>1</td>
+      <td>14400975</td>
+      <td>NAVA HERNANDEZ IRVING YAIR</td>
+      <td>IRVING YAIR NAVA HERNANDEZ</td>
+      <td>INGENIERÍA EN SISTEMAS COMPUTACIONALES</td>
+      <td>DESARROLLO WEB Y MULTIPLATAFORMAS</td>
+      <td>88.93</td>
+      <td>iryanavahe@ittepic.edu.mx</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>15401011</td>
+      <td>JIMENEZ ESPERICUETA RICARDO</td>
+      <td>RICARDO JIMENEZ ESPERICUETA</td>
+      <td>INGENIERÍA EN SISTEMAS COMPUTACIONALES</td>
+      <td>DESARROLLO WEB Y MULTIPLATAFORMAS</td>
+      <td>93.13</td>
+      <td>rijimenezes@ittepic.edu.mx</td>
+    </tr>
+  </body>
+</table>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
 </div>
