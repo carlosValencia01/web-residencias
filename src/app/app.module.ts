@@ -210,6 +210,7 @@ import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/posi
 import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
 import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
 import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
+import { UploadEmployeesCsvComponent } from 'src/modals/electronic-signature/upload-employees-csv/upload-employees-csv.component';
 // Providers
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
@@ -348,6 +349,7 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
+    UploadEmployeesCsvComponent,
 
     // Shared
     // Components
@@ -540,10 +542,11 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
-    
+
     // Graduation
     // Modals
     NewGraduationEventComponent,
+    UploadEmployeesCsvComponent,
 
     // Shared
     // Modals
