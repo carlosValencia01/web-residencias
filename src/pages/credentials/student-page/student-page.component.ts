@@ -120,7 +120,7 @@ export class StudentPageComponent implements OnInit {
       (careers)=>{
         this.careers =careers.careers;
       }
-    )
+    );
   }
 
   // Formulario *************************************************************************************//#endregion
@@ -128,7 +128,7 @@ export class StudentPageComponent implements OnInit {
     this.formStudent = this.formBuilder.group({
       // 'fullNameInput': ['', [Validators.required]],
       'fatherFirstNameInput': ['', [Validators.required]],
-      'motherFirstNameInput': ['', [Validators.required]],
+      'motherFirstNameInput': ['', null],
       'firstNameInput': ['', [Validators.required]],
       'numberControlInput': ['', [Validators.required]],
       'nssInput': ['', [Validators.required]]
@@ -186,9 +186,13 @@ export class StudentPageComponent implements OnInit {
   showFormValues(student) {
     this.isNewStudent = false;
     this.showImg = false;
-    this.currentStudent = JSON.parse(JSON.stringify(student));
-    this.imgForSend = false;
     // console.log(student);
+    this.currentStudent = JSON.parse(JSON.stringify(student));
+    // console.log('estudent');
+    console.log(this.currentStudent);
+    
+    
+    this.imgForSend = false;
     this.getDocuments(student._id);
 
     // this.getImageFromService(student._id);
@@ -339,8 +343,27 @@ export class StudentPageComponent implements OnInit {
     this.loading = true;
     this.studentProv.searchStudents(this.search).subscribe(res => {
       // console.log('res', res);
+      // console.log(res.students);
+      
       this.data = res.students;
-
+      this.data = this.data.map( (data)=>{
+        if(data.careerId){                    
+          const career = this.careers.filter(career=> career._id == data.careerId)[0];
+          return {
+            controlNumber: data.controlNumber,
+            fullName: data.fullName,
+            nss: data.nss,
+            career: career.fullName,
+            _id: data._id,            
+            firstName:data.firstName,
+            fatherLastName:data.fatherLastName,
+            motherLastName:data.motherLastName,
+            careerId: data.careerId
+          }
+        }else{
+          return data;
+        }
+      });
       if (this.data.length > 0) {
         this.showTable = true;
         this.showNotFound = false;
@@ -488,7 +511,7 @@ export class StudentPageComponent implements OnInit {
     const red = new FileReader;
        
             // console.log(this.folderId,'folder student exists');
-            red.addEventListener('load', (data) => {
+            red.addEventListener('load', () => {
               // console.log(red.result);              
               
               let file = { mimeType: this.selectedFile.type, nameInDrive: this.currentStudent.controlNumber + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
@@ -545,7 +568,7 @@ export class StudentPageComponent implements OnInit {
                 err => {
                   console.log(err); this.loading = false;
                 }
-              )
+              );
             }, false);
             red.readAsDataURL(this.croppedImage);
          
@@ -600,6 +623,8 @@ export class StudentPageComponent implements OnInit {
           //console.log(this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length));
           
           if (this.imageDoc) {
+            console.log(this.imageDoc,'imagedoc');
+            
             // console.log('2');
             this.haveImage = true;
             await this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive, this.imageDoc.filename).toPromise().then(
@@ -611,13 +636,15 @@ export class StudentPageComponent implements OnInit {
               },
               err => { this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg = true; }
             );
+          }else{
+            this.haveImage = false;
+            this.showImg = true;
+            this.photoStudent = 'assets/imgs/studentAvatar.png';
           }
         } else {
-          // console.log('1');
-
-          // this.loading = false
-          this.photoStudent = 'assets/imgs/studentAvatar.png';
+          this.haveImage = false;
           this.showImg = true;
+          this.photoStudent = 'assets/imgs/studentAvatar.png';
         }
       }
     );
@@ -670,10 +697,10 @@ export class StudentPageComponent implements OnInit {
         // console.log(folders,'folderss');
         
         foldersByPeriod=folders.folders;                                     
-        let folderPeriod = foldersByPeriod.filter( folder=> folder.name.indexOf(period.periodName) !==-1);
+        let folderPeriod = foldersByPeriod.filter( folder=> folder ?   folder.name.indexOf(period.periodName) !==-1 : false);
 
         // 1 check career folder
-        let folderCareer = foldersByPeriod.filter( folder=> folder.name === this.currentStudent.career);
+        let folderCareer = foldersByPeriod.filter( folder=> folder ?   folder.name === this.currentStudent.career : false);
         // let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
 
         if(folderCareer.length===0){

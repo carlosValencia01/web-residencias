@@ -1284,7 +1284,7 @@ export class ListGraduatesPageComponent implements OnInit {
       case "Listo":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
 
-        this.sendNotification('Certificado', 'Tu certificado ya esta listo',student.nc);
+        this.sendNotification('Certificado', 'Tu certificado ya está listo',student.nc);
         break;
       case "Entregado":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
