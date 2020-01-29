@@ -36,8 +36,8 @@ export class ViewAppointmentPageComponent implements OnInit {
   locale: string = 'es';
   role: string;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices,
-    private _sourceDataProvider: sourceDataProvider, public dialog: MatDialog, public _InscriptionsProvider: InscriptionsProvider,
-    private currentPositionService: CurrentPositionService) {
+    private _sourceDataProvider: sourceDataProvider, public _InscriptionsProvider: InscriptionsProvider,
+    public dialog: MatDialog, private _CookiesService: CookiesService) {
     this.carrers = [];
     // this.role =
     //   //'Secretaria Académica';
@@ -46,8 +46,9 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
 
   async ngOnInit() {
-    let currentPosition: any = await this.currentPositionService.getCurrentPosition();    
-    let tmpCarrers = currentPosition.ascription.careers;
+    // let currentPosition: any = await this.currentPositionService.getCurrentPosition();    
+    // let tmpCarrers = currentPosition.ascription.careers;
+    let tmpCarrers = this._CookiesService.getPosition().ascription.careers;
     this._InscriptionsProvider.getActivePeriod().subscribe(
       periodo => {
         if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
@@ -105,13 +106,19 @@ export class ViewAppointmentPageComponent implements OnInit {
 
   diary(month: number, year: number): void {
     this.Appointments = [];
+    let minDate = new Date(this.viewDate.getTime());
+    let maxDate = new Date(this.viewDate.getTime());
+    minDate.setDate(minDate.getDate() - minDate.getDay());
+    maxDate.setDate(maxDate.getDate() + (6 - maxDate.getDay()));
     this._RequestProvider.getDiary({
       month: month,
-      year: year
+      year: year,
+      isWeek: this.view === CalendarView.Week,
+      min: minDate,
+      max: maxDate
     }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
-        this.Appointments = data.Diary;
-        console.log("APPOINTMENTS", this.Appointments);
+        this.Appointments = data.Diary;         
         this.loadAppointment();
         this.refresh.next();
       }

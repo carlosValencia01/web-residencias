@@ -77,7 +77,8 @@ export class TitulacionPageComponent implements OnInit {
   CompletedGeneratedMessage: String = 'ACTA DE EXAMEN ENTREGADA';
   ProcessTitledMessage: String = 'EN ESPERA DE NOTIFICACIÓN PARA RECEPCIÓN DEL TÍTULO';
   CompletedTitledMessage: String = 'TÍTULO PROFESIONAL';
-  ProcessTitledMessageSubtitle: String = 'FAVOR DE SUBIR LOS SIGUIENTE DOCUMENTOS PARA LA ENTREGA DEL TÍTULO';
+  ProcessTitledMessageSubtitle: String = `FAVOR DE GENERAR TU CÉDULA ELECTRÓNICA Y SUBE LOS SIGUIENTES DOCUMENTOS
+    PARA LA ENTREGA DE TU TÍTULO`;
   AcceptTitledMessage: String = 'TÍTULO PROFESIONAL LISTO PARA SER ENTREGADO';
   FinalizedTitledMessage: String = 'TÍTULO PROFESIONAL ENTREGADO';
   get frmStepOne() {
@@ -88,8 +89,8 @@ export class TitulacionPageComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private cookiesService: CookiesService,
     private imgService: ImageToBase64Service,
-    // private router: Router,
-    // private routeActive: ActivatedRoute,
+    private router: Router,
+    private routeActive: ActivatedRoute,
     private srvNotifications: NotificationsServices,
     private requestService: RequestService,
     public _InscriptionsProvider: InscriptionsProvider
@@ -98,10 +99,10 @@ export class TitulacionPageComponent implements OnInit {
     const user = this.cookiesService.getData().user;
     this.isApprovedEnglish = user.english;
     this.isGraduate = user.graduate;
-    this.isOkTitulation = true; //user.english && user.graduate;
-    // if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
-    //   this.router.navigate(['/']);
-    // }
+    this.isOkTitulation = user.english && user.graduate;
+    if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
+      this.router.navigate(['/']);
+    }
   }
 
   ngOnInit() {
@@ -120,9 +121,9 @@ export class TitulacionPageComponent implements OnInit {
           this.isActive = true;
         } else {
           this.isActive = false;
-        }        
+        }
       }, error => {
-        this.isActive = false;        
+        this.isActive = false;
       });
   }
 
@@ -149,7 +150,7 @@ export class TitulacionPageComponent implements OnInit {
           this.Request = <iRequest>res.request[0];
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
-          this.oRequest = new uRequest(this.Request, this.imgService);
+          this.oRequest = new uRequest(this.Request, this.imgService, this.cookiesService);
           this.getFolderId();
         } else {
           this.Request = {

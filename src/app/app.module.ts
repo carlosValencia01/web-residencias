@@ -60,7 +60,8 @@ import {
   MatProgressSpinnerModule,
   MatSelectModule,
   MatExpansionModule,
-  MatAutocompleteModule
+  MatAutocompleteModule,
+  MatBadgeModule
 } from '@angular/material';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -120,6 +121,9 @@ import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirma
 import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
 import { ProfileInscriptionPageComponent } from '../pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
 import { SecretaryInscriptionPageComponent } from '../pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
+import { ListProcessStudentComponent } from '../pages/inscriptions/list-process-student/list-process-student.component';
+import { ListPendingStudentComponent } from '../pages/inscriptions/list-pending-student/list-pending-student.component';
+import { ListAceptStudentComponent } from '../pages/inscriptions/list-acept-student/list-acept-student.component';
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 // Pipes
@@ -190,6 +194,8 @@ import { FilterPipe } from 'src/pages/graduation/list-graduates-page/filter.pipe
 import { FirebaseService } from 'src/services/graduation/firebase.service';
 // Providers
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
+// Modals
+import { NewEventComponent as NewGraduationEventComponent } from 'src/modals/graduation/new-event/new-event.component' ;
 
 // Electronic signature module
 // Pages
@@ -203,6 +209,7 @@ import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/posi
 import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
 import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
 import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
+import { UploadEmployeesCsvComponent } from 'src/modals/electronic-signature/upload-employees-csv/upload-employees-csv.component';
 // Providers
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
@@ -239,6 +246,7 @@ import { UploadDeliveredComponent } from '../modals/reception-act/upload-deliver
 import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appointment-page/view-appointment-page.component';
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
 import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
+import { NewTitleComponent } from '../modals/reception-act/new-title/new-title.component';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -271,6 +279,9 @@ registerLocaleData(localeEs);
     InscriptionsUploadFilesPageComponent,
     ProfileInscriptionPageComponent,
     SecretaryInscriptionPageComponent,
+    ListProcessStudentComponent,
+    ListPendingStudentComponent,
+    ListAceptStudentComponent,
     //Modals
     NewPeriodComponent,
     ReviewExpedientComponent,
@@ -308,7 +319,7 @@ registerLocaleData(localeEs);
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
-
+    NewTitleComponent,
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -323,6 +334,8 @@ registerLocaleData(localeEs);
     SurveyRegisterPageComponent,
     // Pipes
     FilterPipe,
+    // Modals
+    NewGraduationEventComponent,
 
     // Electronic signature module
     // Pages
@@ -336,6 +349,7 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
+    UploadEmployeesCsvComponent,
 
     // Shared
     // Components
@@ -360,7 +374,7 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ViewAppointmentPageComponent,
     UploadFileTitledComponent,
-    ActNotificacionComponent,
+    ActNotificacionComponent    
   ],
   imports: [
     // Angular
@@ -410,6 +424,7 @@ registerLocaleData(localeEs);
     MatExpansionModule,
     MatSlideToggleModule,
     MatAutocompleteModule,
+    MatBadgeModule,
 
     // Ngx
     ImageCropperModule,
@@ -510,6 +525,7 @@ registerLocaleData(localeEs);
     StepperDocumentComponent,
     UploadDeliveredComponent,
     ActNotificacionComponent,
+    NewTitleComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,
@@ -526,6 +542,11 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
+    UploadEmployeesCsvComponent,
+
+    // Graduation
+    // Modals
+    NewGraduationEventComponent,
 
     // Shared
     // Modals

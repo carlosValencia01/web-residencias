@@ -9,9 +9,11 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 export class ReleaseCheckComponent implements OnInit {
 
   public pdf: any;
+  public jury: Array<any>;
   constructor(public dialogRef: MatDialogRef<ReleaseCheckComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.pdf = data;
+    @Inject(MAT_DIALOG_DATA) public data: { file: any, jury: any }) {
+    this.pdf = data.file;
+    this.jury = data.jury;
   }
 
   ngOnInit() {

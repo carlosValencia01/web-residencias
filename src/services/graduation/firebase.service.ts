@@ -40,8 +40,8 @@ export class FirebaseService {
   }
 
   // crear evento
-  public createEvent(name: string, status: number) {
-    return this.db.collection('eventosG').doc(name).set({estatus: status});
+  public createEvent(name: string, data) {
+    return this.db.collection('eventosG').doc(name).set(data);
   }
 
   // obtiene evento activo === estatus = 1

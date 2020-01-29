@@ -129,11 +129,21 @@
                                 <div class="input-group input-group-sm mb-3">
                                     <input type="number" class="form-control" id="duration" formControlName="duration"
                                         placeholder="Duración"
+                                        min="30" max="120"
                                         [ngClass]="(!frmConsejo.get('duration').valid && frmConsejo.get('duration').touched)?'form-control is-invalid':'form-control'">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">Minutos</span>
+                                    </div>
                                     <div class="invalid-feedback"
                                         *ngIf="!frmConsejo.get('duration').valid && frmConsejo.get('duration').touched">
                                         <span *ngIf="frmConsejo.get('duration').errors['required']">
                                             ¡Campo obligatorio!
+                                        </span>
+                                        <span *ngIf="frmConsejo.get('duration').errors['min']">
+                                            Valor mínimo 30
+                                        </span>
+                                        <span *ngIf="frmConsejo.get('duration').errors['max']">
+                                            Valor máximo 120
                                         </span>
                                     </div>
                                 </div>
@@ -148,15 +158,15 @@
                             <div class="col-6">
                                 <button type="button" class="btn btn-outline-success btn-sm btn-block"
                                     [disabled]="!activeReleased" (click)="releaseGenerate()">
-                                    Generar archivo de liberación
+                                    Generar liberación
                                 </button>
                             </div>
                             <div class="col-6">
                                 <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
                                     style="display: none">
                                 <button type="button" class="btn btn-outline-primary btn-sm btn-block"
-                                    (click)="fileUpload.click()">
-                                    Cargar archivo de liberación
+                                    [disabled]="!enableUpload" (click)="fileUpload.click()">
+                                    Cargar liberación
                                 </button>
                             </div>
                         </div>

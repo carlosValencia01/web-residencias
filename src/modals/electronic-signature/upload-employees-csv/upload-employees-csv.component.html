@@ -1,0 +1,79 @@
+<div class="row">
+  <div class="col-sm-7 col-md-9">
+    <h1 mat-dialog-title>Subir empleados por csv</h1>
+  </div>
+  <div class="col-sm-3 col-md-2">
+    <input #fileUpload (change)="onUpload($event)" accept=".csv" style="display:none" type="file">
+    <button (click)="fileUpload.click()" class="m-1 float-right" color="primary" mat-mini-fab data-toggle="tooltip"
+      title="Subir archivo">
+      <mat-icon>cloud_upload</mat-icon>
+    </button>
+    <button (click)="downloadExampleCsvFile()" class="m-1 float-right" color="secondary" mat-mini-fab
+      data-toggle="tooltip" title="Descargar ejemplo de plantilla">
+      <mat-icon>cloud_download</mat-icon>
+    </button>
+  </div>
+  <div class="col-sm-2 col-md-1">
+    <button [mat-dialog-close] class="float-right" mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<mat-dialog-content>
+  <div class="row">
+    <table *ngIf="dataSource" mat-table [dataSource]="dataSource" multiTemplateDataRows class="col-12 mat-elevation-z8">
+      <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay;let index=index">
+        <th mat-header-cell *matHeaderCellDef> {{columnsNameToDisplay[index]}} </th>
+        <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+          <div class="element-detail" [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
+            <mat-accordion class="col-12">
+              <mat-expansion-panel *ngIf="element.positions.length">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>Puestos</mat-panel-title>
+                </mat-expansion-panel-header>
+                <table mat-table [dataSource]="element.positions" class="col-12">
+                  <ng-container matColumnDef="{{column}}"
+                    *ngFor="let column of columnsToDisplayPosition;let index=index">
+                    <th mat-header-cell *matHeaderCellDef> {{columnsNameToDisplayPosition[index]}} </th>
+                    <td mat-cell *matCellDef="let position"> {{position[column]}} </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="columnsToDisplayPosition"></tr>
+                  <tr mat-row *matRowDef="let position; columns: columnsToDisplayPosition;"></tr>
+                </table>
+              </mat-expansion-panel>
+              <mat-expansion-panel *ngIf="element.grades.length">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>Grados</mat-panel-title>
+                </mat-expansion-panel-header>
+                <table mat-table [dataSource]="element.grades" class="col-12">
+                  <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplayGrade;let index=index">
+                    <th mat-header-cell *matHeaderCellDef> {{columnsNameToDisplayGrade[index]}} </th>
+                    <td mat-cell *matCellDef="let grade"> {{grade[column]}} </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="columnsToDisplayGrade"></tr>
+                  <tr mat-row *matRowDef="let grade; columns: columnsToDisplayGrade;"></tr>
+                </table>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="element-row"
+        [class.expanded-row]="expandedElement === element"
+        (click)="expandedElement = expandedElement === element ? null : element">
+      </tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+    </table>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button (click)="saveData()" [disabled]="!employeesData" class="m-1" color="primary" mat-stroked-button>Enviar</button>
+  <button (click)="onClose()" class="m-1" color="warn" mat-dialog-close mat-stroked-button
+    type="button">Cancelar</button>
+</mat-dialog-actions>

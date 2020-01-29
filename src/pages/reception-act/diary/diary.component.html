@@ -100,6 +100,13 @@
           Agregar
           Evento</div>
       </ng-template>
+      <ng-template contextMenuItem (execute)="addTitled($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
+          Agregar
+          Titulación</div>
+      </ng-template>
       <ng-template class="mt-1" contextMenuItem (execute)="cancelledEvent($event.item)">
         <div style=" border-style: solid;
         border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
@@ -113,7 +120,8 @@
         <div style=" border-style: solid;
               border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#08a3bc"
             class="fa fa-calendar-check-o"></i>
-          Confirmar Evento</div>
+          Confirmar
+          Evento</div>
       </ng-template>
       <ng-template contextMenuItem (execute)="addEvent($event.item)">
         <div style=" border-style: solid;
@@ -127,6 +135,14 @@
           border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
             class="fa fa-ban"></i>
           Rechazar Evento</div>
+      </ng-template>
+
+      <ng-template contextMenuItem (execute)="addTitled($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
+          Agregar
+          Titulación</div>
       </ng-template>
     </context-menu>
 
@@ -200,6 +216,13 @@
       <ng-template contextMenuItem (execute)="addNewEvent($event.item)">
         <div style=" border-style: solid; border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>Agregar Evento</div>
+      </ng-template>
+      <ng-template contextMenuItem (execute)="addNewTitled($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
+          Agregar
+          Titulación</div>
       </ng-template>
     </context-menu>
 

@@ -28,6 +28,7 @@ import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov'
 import { UploadDeliveredComponent } from 'src/modals/reception-act/upload-delivered/upload-delivered.component';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CurrentPositionService } from 'src/services/shared/current-position.service';
+import { ICareer } from 'src/entities/shared/career.model';
 
 @Component({
   selector: 'app-progress-page',
@@ -51,31 +52,32 @@ export class ProgressPageComponent implements OnInit {
   phases: Array<string>;
   search: string;
   role: string;
-  _carrers: Array<string>
+  _carrers: Array<ICareer>
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private requestProvider: RequestProvider,
     public dialog: MatDialog,
-    private notifications: NotificationsServices,
-    private cookiesService: CookiesService,
+    private _NotificationsServices: NotificationsServices,
+    private _CookiesService: CookiesService,
     private router: Router,
-    private activeRoute: ActivatedRoute,
-    private imgService: ImageToBase64Service,
+    private _ActivatedRoute: ActivatedRoute,
+    private _ImageToBase64Service: ImageToBase64Service,
     private _StudentProvider: StudentProvider,
-    public _RequestService: RequestService,
-    private currentPositionService: CurrentPositionService
+    public _RequestService: RequestService
   ) {
     this.careers = [];
     this.phases = [];
     this.allCarrers = ['ARQUITECTURA', 'INGENIERÍA CIVIL', 'INGENIERÍA ELÉCTRICA', 'INGENIERÍA INDUSTRIAL',
       'INGENIERÍA EN SISTEMAS COMPUTACIONALES', 'INGENIERÍA BIOQUÍMICA', 'INGENIERÍA QUÍMICA', 'LICENCIATURA EN ADMINISTRACIÓN', 'INGENIERÍA EN GESTIÓN EMPRESARIAL', 'INGENIERÍA MECATRÓNICA', 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES'];
     this.allRequest = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado', 'Realizado', 'Generado', 'Finalized',];
-    if (!this.cookiesService.isAllowed(this.activeRoute.snapshot.url[0].path)) {
+    if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    this.role = this.cookiesService.getData().user.rol.name.toLowerCase();
+    this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
+    this._carrers = this._CookiesService.getPosition().ascription.careers;
+    console.log("CARRERAS", this._carrers);
   }
 
   ngOnInit() {
@@ -94,7 +96,12 @@ export class ProgressPageComponent implements OnInit {
     ];
   }
 
+  reload(): void {
+    this.loadRequest(false);
+  }
+
   loadRequest(isInit: boolean = false): void {
+    console.log("k");
     let filter = '';
     // switch (this.cookiesService.getData().user.rol.name) {
     switch (this.role) {
@@ -128,46 +135,15 @@ export class ProgressPageComponent implements OnInit {
       res => {
         this.request = [];
         res.request.forEach(element => {
-          console.log("Eelemento reques", element);
-          let tmp: iRequest = new Object();//<iRequest>element;          
-          tmp._id = element._id;
-          tmp.status = this.convertStatus(element.status);
-          tmp.controlNumber = element.studentId.controlNumber;
-          tmp.phase = element.phase;
-          tmp.career = element.studentId.career;
-          tmp.fullName = element.studentId.fullName;
-          tmp.student = element.studentId;
-          tmp.studentId = element.studentId._id;
-          tmp.jury = element.jury;
-          tmp.adviser = element.adviser;
-          tmp.history = element.history;
-          tmp.honorificMention = element.honorificMention;
-          tmp.observation = element.observation;
-          tmp.noIntegrants = element.noIntegrants;
-          tmp.projectName = element.projectName;
-          tmp.telephone = element.telephone;
-          tmp.integrants = element.integrants;
-          tmp.email = element.email;
-          tmp.product = element.product;
-          tmp.place = element.place;
-          tmp.department = element.department;
-          tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
-          tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
-          this.request.push(tmp);
+          if (this.role !== 'jefe académico' && this.role !== 'secretaria académica') {
+            this.request.push(this.castRequest(element));
+          } else {
+            let tmpRequest: iRequest = this.castRequest(element);
+            let index = this._carrers.findIndex(x => x.fullName === tmpRequest.career);
+            if (index !== -1)
+              this.request.push(tmpRequest);
+          }
         });
-
-        // console.log("REQUEST", this.request);
-        // if (this.role === 'Jefe académico'.toLocaleLowerCase() || this.role === 'Secretaria académica'.toLocaleLowerCase()) {
-        //   let tmpRequest: iRequest[] = [];
-        //   this.request.forEach(x => {
-        //     let index = this._carrers.findIndex(y => y === x.career);
-        //     if (index !== -1) {
-        //       tmpRequest.push(x);
-        //     }
-        //   });
-        //   this.request = tmpRequest;
-        //   console.log("Solicutu", this.request);
-        // }
 
         this.requestFilter = this.request.slice(0);
         if (isInit) {
@@ -180,11 +156,42 @@ export class ProgressPageComponent implements OnInit {
         this.refresh();
       },
       error => {
-        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
       });
   }
 
-  refresh(): void {
+  public castRequest(element: any): iRequest {
+    let tmp: iRequest = new Object();//<iRequest>element;          
+    tmp._id = element._id;
+    tmp.status = this.convertStatus(element.status);
+    tmp.controlNumber = element.studentId.controlNumber;
+    tmp.phase = element.phase;
+    tmp.career = element.studentId.career;
+    tmp.fullName = element.studentId.fullName;
+    tmp.student = element.studentId;
+    tmp.studentId = element.studentId._id;
+    tmp.jury = element.jury;
+    tmp.duration = element.duration;
+    tmp.proposedHour = element.proposedHour;
+    tmp.adviser = element.adviser;
+    tmp.history = element.history;
+    tmp.honorificMention = element.honorificMention;
+    tmp.observation = element.observation;
+    tmp.noIntegrants = element.noIntegrants;
+    tmp.projectName = element.projectName;
+    tmp.telephone = element.telephone;
+    tmp.integrants = element.integrants;
+    tmp.email = element.email;
+    tmp.product = element.product;
+    tmp.place = element.place;
+    tmp.department = element.department;
+    tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
+    tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
+    return tmp;
+  }
+
+  refresh() {
+    console.log("Requesfilter", this.requestFilter);
     this.dataSource = new MatTableDataSource(this.requestFilter);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -221,19 +228,19 @@ export class ProgressPageComponent implements OnInit {
     ref.afterClosed().subscribe((valor: boolean) => {
       if (valor) {
         const data = {
-          doer: this.cookiesService.getData().user.name.fullName,
+          doer: this._CookiesService.getData().user.name.fullName,
           observation: '',
           operation: eStatusRequest.ACCEPT
         };
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.loadRequest();
         }, error => {
-          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
         });
       }
     }, error => {
-      this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
     });
   }
 
@@ -349,7 +356,7 @@ export class ProgressPageComponent implements OnInit {
         this.loadRequest();
       }
     }, error => {
-      this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
     });
   }
 
@@ -370,7 +377,7 @@ export class ProgressPageComponent implements OnInit {
         this.loadRequest();
       }
     }, error => {
-      this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
     });
   }
 
@@ -380,9 +387,10 @@ export class ProgressPageComponent implements OnInit {
     let lObservation: string;
     let lMinutes: number = 420;
     let lDuration: number = 60;
+
     const tmpRequest = this.getRequestById(Identificador);
-    if (tmpRequest.status === 'Rechazado') {
-      lJury = tmpRequest.jury;
+    console.log("TMPRES", tmpRequest);
+    if (tmpRequest.status === 'Rechazado' || tmpRequest.jury.length > 0) {
       const value = tmpRequest.history.filter(x => x.phase === 'Liberado').slice(0).sort(
         function (a, b) {
           const bDate: Date = new Date(b.achievementDate);
@@ -390,7 +398,8 @@ export class ProgressPageComponent implements OnInit {
           return bDate.getTime() - aDate.getTime();
         }
       );
-      lObservation = value[0].observation;
+      lJury = tmpRequest.jury;
+      lObservation = tmpRequest.status === 'Rechazado' ? value[0].observation : "";
       lMinutes = tmpRequest.proposedHour;
       lDuration = tmpRequest.duration;
     }
@@ -404,11 +413,11 @@ export class ProgressPageComponent implements OnInit {
               resolve(student.folder.idFolderInDrive);
             }
             else {
-              this.notifications.showNotification(eNotificationType.ERROR, "Titulacion App", "El folder del estudiante ha desaparecido");
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "El folder del estudiante ha desaparecido");
               resolve('');
             }
           } else {
-            this.notifications.showNotification(eNotificationType.ERROR, "Titulacion App", "El folder del estudiante ha desaparecido");
+            this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "El folder del estudiante ha desaparecido");
             resolve('');
           }
         });
@@ -430,18 +439,21 @@ export class ProgressPageComponent implements OnInit {
         width: '60em'
       });
 
-      ref.afterClosed().subscribe(result => {
-        if (typeof (result) !== 'undefined') {
+      ref.afterClosed().subscribe(result => {        
+        if (typeof (result) !== 'undefined') {          
           this.requestProvider.releasedRequest(Identificador, {
             proposedHour: result.proposedHour,
             duration: result.duration,
-            Doer: this.cookiesService.getData().user.name.fullName,
+            upload: result.upload,
+            Doer: this._CookiesService.getData().user.name.fullName,
             jury: result.jury
           }).subscribe(data => {
             this.loadRequest();
           }, error => {
-            this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
           });
+        } else {
+          this.loadRequest();
         }
       });
     }
@@ -471,7 +483,7 @@ export class ProgressPageComponent implements OnInit {
       });
       if (typeof (response.value) !== 'undefined') {
         let data = {
-          doer: this.cookiesService.getData().user.name.fullName,
+          doer: this._CookiesService.getData().user.name.fullName,
           observation: '',
           operation: eStatusRequest.ACCEPT
         };
@@ -484,11 +496,11 @@ export class ProgressPageComponent implements OnInit {
         }
 
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.loadRequest();
         }, error => {
           let tmpJson = JSON.parse(error._body);
-          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
         });
       }
 
@@ -509,7 +521,7 @@ export class ProgressPageComponent implements OnInit {
       if (result.value) {
         const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
         let data = {
-          doer: this.cookiesService.getData().user.name.fullName,
+          doer: this._CookiesService.getData().user.name.fullName,
           observation: '',
           operation: eOperation// eStatusRequest.PROCESS
         };
@@ -517,17 +529,17 @@ export class ProgressPageComponent implements OnInit {
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
           if (eOperation === eStatusRequest.PROCESS) {
             const _request: iRequest = this.getRequestById(Identificador);
-            const oRequest: uRequest = new uRequest(_request, this.imgService);
+            const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service,this._CookiesService);
             setTimeout(() => {
               window.open(oRequest.testReport().output('bloburl'), '_blank');
             }, 500);
           }
-          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App',
             (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : (eOperation === eStatusRequest.PRINTED) ? 'Acta de Examen Impresa' : 'Acta de Examen Entregada'));
           this.loadRequest();
         }, error => {
           let tmpJson = JSON.parse(error._body);
-          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
         });
       }
     });
@@ -552,34 +564,34 @@ export class ProgressPageComponent implements OnInit {
         }).then((result) => {
           if (result.value) {
             let data = {
-              doer: this.cookiesService.getData().user.name.fullName,
+              doer: this._CookiesService.getData().user.name.fullName,
               observation: '',
               operation: eOperation// eStatusRequest.PROCESS
             };
             this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-              this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App',
                 (eOperation === eStatusRequest.PROCESS ? 'Alumno notificado' : 'Título Profesional Entregado'));
               this.loadRequest();
             }, error => {
               let tmpJson = JSON.parse(error._body);
-              this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
             });
           }
         })
         break;
       }
       case eStatusRequest.ACCEPT: {
-        this.router.navigate([Identificador + '/titled'], { relativeTo: this.activeRoute });
+        this.router.navigate([Identificador + '/titled'], { relativeTo: this._ActivatedRoute });
       }
     }
   }
 
   Review(Identificador): void {
-    this.router.navigate([Identificador], { relativeTo: this.activeRoute });
+    this.router.navigate([Identificador], { relativeTo: this._ActivatedRoute });
   }
 
   seeRecord(Identificador): void {
-    this.router.navigate([Identificador + '/expediente'], { relativeTo: this.activeRoute });
+    this.router.navigate([Identificador + '/expediente'], { relativeTo: this._ActivatedRoute });
   }
 
   // acceptRequest(Identificador): void {
@@ -644,7 +656,7 @@ export class ProgressPageComponent implements OnInit {
 
   seeRequestPDF(_id: string): void {
     const _request: iRequest = this.getRequestById(_id);
-    const oRequest: uRequest = new uRequest(_request, this.imgService);
+    const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service,this._CookiesService);
     setTimeout(() => {
       window.open(oRequest.protocolActRequest().output('bloburl'), '_blank');
     }, 500);
@@ -655,10 +667,10 @@ export class ProgressPageComponent implements OnInit {
     this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
       console.log("DATA", data);
       const dialogRef = this.dialog.open(ReleaseCheckComponent, {
-        data: data,
+        data: { file: data, jury: Request.jury },
         disableClose: true,
         hasBackdrop: true,
-        width: '50em'
+        width: '65em'
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -666,18 +678,18 @@ export class ProgressPageComponent implements OnInit {
           let data;
           if (result) {
             data = {
-              doer: this.cookiesService.getData().user.name.fullName,
+              doer: this._CookiesService.getData().user.name.fullName,
               observation: '',
               operation: eStatusRequest.ACCEPT,
               phase: Request.phase
             };
             this.requestProvider.updateRequest(Request._id, data).subscribe(
               data => {
-                this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
                 this.loadRequest();
               },
               error => {
-                this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
               }
             );
           } else {
@@ -705,18 +717,18 @@ export class ProgressPageComponent implements OnInit {
             }).then((result) => {
               if (result.value) {
                 data = {
-                  doer: this.cookiesService.getData().user.name.fullName,
+                  doer: this._CookiesService.getData().user.name.fullName,
                   observation: result.value,
                   operation: eStatusRequest.REJECT,
                   phase: Request.phase
                 };
                 this.requestProvider.updateRequest(Request._id, data).subscribe(
                   data => {
-                    this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                    this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
                     this.loadRequest();
                   },
                   error => {
-                    this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+                    this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
                   }
                 );
               }
@@ -725,11 +737,11 @@ export class ProgressPageComponent implements OnInit {
         }
       },
         error => {
-          this.notifications.showNotification(eNotificationType.ERROR,
+          this._NotificationsServices.showNotification(eNotificationType.ERROR,
             'Titulación App', error);
         });
     }, error => {
-      this.notifications.showNotification(eNotificationType.ERROR,
+      this._NotificationsServices.showNotification(eNotificationType.ERROR,
         'Titulación App', error);
     });
   }
@@ -761,10 +773,12 @@ export class ProgressPageComponent implements OnInit {
   }
 
   juryNotification(_id: string): void {
-    let oRequest = new uRequest(this.getRequestById(_id), this.imgService);
+    let oRequest = new uRequest(this.getRequestById(_id), this._ImageToBase64Service, this._CookiesService);
     setTimeout(() => {
       window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
-    }, 500);
+      // window.open(oRequest.professionalEthicsOath().output('bloburl'), '_blank');
+      window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+    }, 1000);
   }
 }
 

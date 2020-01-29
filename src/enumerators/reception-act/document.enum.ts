@@ -16,5 +16,6 @@ export enum eFILES {
     PHOTOS = 'FOTOS',
     INE = 'INE',
     CED_PROFESIONAL = 'CEDULA_PROFESIONAL',
-    XML = 'XML'
+    XML = 'XML',
+    ACTA_EXAMEN = 'ACTA_EXAMEN'
 }

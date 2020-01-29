@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Api } from 'src/providers/app/api.prov';
 import { ResponseContentType } from '@angular/http';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import {tap} from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 @Injectable()
 export class StudentProvider {
 
@@ -35,9 +35,13 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-    getStudentByControlNumber(controlnumber) {
-        console.log(controlnumber);
-        return this.api.post(`student/login`, controlnumber)
+    getStudentByControlNumber(controlNumber) {
+        return this.api.post(`student/login`, { controlNumber: controlNumber })
+            .pipe(map(student => student.json()));
+    }
+
+    getByControlNumber(controlNumber) {
+        return this.api.post('student/search/numero', { controlNumber: controlNumber })
             .pipe(map(student => student.json()));
     }
 
@@ -84,8 +88,8 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-    csvEnglish(data: any) {
-        return this.api.post(`student/csv`, data).pipe(map(res => res.json()));
+    releaseEnglishCsv(data: any) {
+        return this.api.post(`english/release/csv`, data).pipe(map(res => res.json()));
     }
 
     searchStudentWithEnglish(search: string) {
@@ -96,18 +100,36 @@ export class StudentProvider {
         return this.api.post(`english/create`, data).pipe(map(res => res.json()));
     }
 
-    csvRemoveStudentEnglish(id: string) {
-        return this.api.delete(`english/remove/${id}`).pipe(map(res => res.json()));
+    // csvRemoveStudentEnglish(id: string) {
+    //     return this.api.delete(`english/remove/${id}`).pipe(map(res => res.json()));
+    // }
+
+    studentsEnglishReleased() {
+        return this.api.get(`english/released`).pipe(map(res => res.json()));
     }
 
-    StudentWithEnglish() {
-        return this.api.get(`english/`).pipe(map(res => res.json()));
+    studentsEnglishNotReleased() {
+        return this.api.get(`english/notReleased`).pipe(map(res => res.json()));
+    }
+
+    releaseEnglish(controlNumber: string) {
+        const doc = {
+            releaseDate: new Date(),
+            type: 'Ingles'
+        };
+        return this.api.put(`english/release/${controlNumber}`, doc)
+            .pipe(map(res => res.json()));
+    }
+
+    removeRelease(controlNumber: string) {
+        return this.api.delete(`english/removeRelease/${controlNumber}`)
+            .pipe(map(res => res.json()));
     }
 
     request(id, data) {
         return this.api.post(`request/create/${id}`, data, true).pipe(map(res => res.json()));
     }
-
+  
     updateRequest(id, data) {
         return this.api.put(`request/${id}`, data, true).pipe(map(res => res.json()));
     }
@@ -124,36 +146,36 @@ export class StudentProvider {
 
     }
 
-    getDriveDocuments(studentId : string): Observable<any>  {
+    getDriveDocuments(studentId: string): Observable<any> {
         return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
     }
-    getFolderId(studentId : String): Observable<any>  {
+    getFolderId(studentId: String): Observable<any> {
         return this.api.get(`student/get/folderid/${studentId}`).pipe(map(res => res.json()));
     }
 
-    uploadDocumentDrive(id,data): Observable<any> {
+    uploadDocumentDrive(id, data): Observable<any> {
         return this.api.put(`student/document/drive/${id}`, data).pipe(map(res => res.json())).pipe(
             tap(() => {
-              this._refreshNeeded$.next();
+                this._refreshNeeded$.next();
             })
-          );
+        );
     }
-    
-    getDriveFolderId(studentId : string): Observable<any>  {
+
+    getDriveFolderId(studentId: string): Observable<any> {
         return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
     }
-    getPeriodId(studentId : string): Observable<any>  {
+    getPeriodId(studentId: string): Observable<any> {
         return this.api.get(`student/get/periodinscription/${studentId}`).pipe(map(res => res.json()));
     }
-    updateDocumentStatus(id,data): Observable<any> {
+    updateDocumentStatus(id, data): Observable<any> {
         return this.api.put(`student/document/status/${id}`, data).pipe(map(res => res.json())).pipe(
             tap(() => {
                 this._refreshNeeded$.next();
             })
-            );
+        );
     }
 
-    getDocumentsUpload(_id : string): Observable<any>{
-        return this.api.get(`student/get/documents/status/${_id}`).pipe(map( res=>res.json()));
+    getDocumentsUpload(_id: string): Observable<any> {
+        return this.api.get(`student/get/documents/status/${_id}`).pipe(map(res => res.json()));
     }
 }

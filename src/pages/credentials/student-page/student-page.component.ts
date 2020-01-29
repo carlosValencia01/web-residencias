@@ -231,26 +231,27 @@ export class StudentPageComponent implements OnInit {
   
     if (student.nss) {
       this.loading = true;
-      this.studentProv.verifyStatus(student.controlNumber)
-        .subscribe(async res => {
+      this.printCredential(student);
+      // this.studentProv.verifyStatus(student.controlNumber)
+      //   .subscribe(async res => {
           
-          this.haveSubjects = res.status === 1 ?  true : userRol == 'Administrador' ? true : false;
-          if (this.haveSubjects) {
-            this.printCredential(student);
-          } else {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-          }
+      //     this.haveSubjects = res.status === 1 ?  true : userRol == 'Administrador' ? true : false;
+      //     if (this.haveSubjects) {
+      //       this.printCredential(student);
+      //     } else {
+      //       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
+      //     }
 
-        }, error => {
+      //   }, error => {
           
-          if (error.status === 401 && userRol !== 'Administrador') {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-          } if(userRol == 'Administrador'){
-            this.printCredential(student);
-          } else {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
-          }
-        }, () => this.loading = false);
+      //     if (error.status === 401 && userRol !== 'Administrador') {
+      //       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
+      //     } if(userRol == 'Administrador'){
+      //       this.printCredential(student);
+      //     } else {
+      //       this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
+      //     }
+      //   }, () => this.loading = false);
     } else {
       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
     }

@@ -7,6 +7,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { IGrade } from 'src/entities/reception-act/grade.model';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-employee-adviser',
@@ -17,12 +18,14 @@ export class EmployeeAdviserComponent implements OnInit {
   private departments: IDepartment[];
   private employees: IAdviserTable[];
   private allEmployees: IAdviserTable[];
+  public frmAuxiliar: FormGroup;
   private onlyEmployees: IAdviserTable[];
   private career: String;
   private departmentInfo: { name: String, boss: String } = { name: '', boss: '' };
   public dataSource: MatTableDataSource<IAdviserTable>;
   public displayedColumns: string[];
   public type: string;
+  public isNewEmployee: boolean;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -31,14 +34,21 @@ export class EmployeeAdviserComponent implements OnInit {
     public dialogRef: MatDialogRef<EmployeeAdviserComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
+    this.isNewEmployee = false;
     this.career = this.data.carrer;
     this.displayedColumns = ['name', 'position', 'action'];
   }
 
   ngOnInit() {
+    this.frmAuxiliar = new FormGroup({
+      'Name': new FormControl(null, Validators.required),
+      'Titled': new FormControl(null, Validators.required),
+      'Cedula': new FormControl(null, Validators.required)
+    });
+
     this.employeProvider.getEmployeesByDepto().subscribe(
-      data => {        
-        this.departments = <IDepartment[]>data.departments;        
+      data => {
+        this.departments = <IDepartment[]>data.departments;
         const indice = this.departments.findIndex((department) => {
           return department.careers.findIndex(career => career.fullName === this.career) !== -1;
         });
@@ -79,7 +89,7 @@ export class EmployeeAdviserComponent implements OnInit {
     }
   }
 
-  getAllEmployees(index: number): void {    
+  getAllEmployees(index: number): void {
     this.allEmployees = [];
     this.onlyEmployees = [];
     if (index !== -1) {
@@ -118,7 +128,7 @@ export class EmployeeAdviserComponent implements OnInit {
     });
   }
 
-  gradeInfoMax(employee: IEmployee): IGrade {    
+  gradeInfoMax(employee: IEmployee): IGrade {
     if (typeof (employee.grade) === 'undefined' || employee.grade.length === 0) {
       return undefined;
     }
@@ -162,8 +172,29 @@ export class EmployeeAdviserComponent implements OnInit {
     return '';
   }
 
-  selected(item): void {    
+  selected(item): void {
     this.dialogRef.close({ Employee: item.name, Depto: this.departmentInfo, ExtraInfo: item.ExtraInfo });
+  }
+
+  onSave() {
+    this.dialogRef.close({
+      Employee:
+        this.frmAuxiliar.get('Name').value, Depto: null, ExtraInfo: {
+          name: this.frmAuxiliar.get('Name').value,
+          title: this.frmAuxiliar.get('Titled').value,
+          cedula: this.frmAuxiliar.get('Cedula').value
+        }
+    });
+  }
+  addEmploye(): void {
+    this.frmAuxiliar.get('Name').setErrors(null);
+    this.frmAuxiliar.get('Name').markAsUntouched();
+    this.frmAuxiliar.get('Titled').setErrors(null);
+    this.frmAuxiliar.get('Titled').markAsUntouched();
+    this.frmAuxiliar.get('Cedula').setErrors(null);
+    this.frmAuxiliar.get('Cedula').markAsUntouched();
+    this.frmAuxiliar.setValue({ 'Name': '', 'Titled': '', 'Cedula': '' });
+    this.isNewEmployee = !this.isNewEmployee;
   }
 }
 

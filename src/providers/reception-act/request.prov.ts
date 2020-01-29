@@ -15,6 +15,14 @@ export class RequestProvider {
         return this.api.getURL();
     }
 
+    titled(data) {
+        return this.api.post(`request/titled`, data).pipe(map(res => res.json()));
+    }
+
+    removeTitle(_id) {
+        return this.api.delete(`request/${_id}`).pipe(map(res => res.json()));
+    }
+
     getAllRequestByStatus(role) {
         return this.api.get(`request/phase/${role}`)
             .pipe(map(requests => requests.json()));
@@ -63,5 +71,15 @@ export class RequestProvider {
 
     StudentsToSchedule() {
         return this.api.get(`request/students`).pipe(map(request => request.json()));
+    }
+
+    verifyCode(requestId, code) {
+        return this.api.get(`request/verify/${requestId}/${code}`)
+            .pipe(map(res => res.json()));
+    }
+
+    sendVerificationCode(_requestId) {
+        return this.api.get(`request/sendCode/${_requestId}`)
+            .pipe(map(res => res.json()));
     }
 }
