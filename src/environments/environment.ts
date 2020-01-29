@@ -14,7 +14,7 @@ export const environment = {
     appId: '1:452486540507:web:214d62ad8c0e0147'
   },
   // filesURL:'http://localhost:3003/escolares/credenciales/drive/upload/file'
-  filesURL:'https://rijimenezesdev.me/escolares/credenciales'
+  filesURL:'https://rijimenezesdev.me/escolares/credenciales/drive/upload/file'
 };
 
 /*

@@ -4,6 +4,8 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { Router } from '@angular/router';
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
+import Swal from 'sweetalert2';
+import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
 @Component({
   selector: 'app-loader-data-graduation-page',
@@ -21,6 +23,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   page = 1;
   pageSize = 10;
   students = [];
+  loading : boolean = false;
 
   careers = {
     'INGENIERÍA BIOQUÍMICA': 'IBQ',
@@ -54,8 +57,9 @@ export class LoaderDataGraduationPageComponent implements OnInit {
       this.collection = url[2];
       this.type = url[3];
       if (this.type === '1') {
-        this.firebaseService.getGraduates(this.collection).subscribe(
+        const su = this.firebaseService.getGraduates(this.collection).subscribe(
           res => {
+            su.unsubscribe();
             this.students = res.map( student => {
               return {
                 id: student.payload.doc.id,
@@ -68,6 +72,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   }
 
   ngOnInit() {
+    
   }
 
   // para leer el archivo csv por carrera
@@ -95,44 +100,98 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     this.arrayCsvContent = this.csvContent.split('\n');
     this.arrayCsvContent.shift();
     this.arrayCsvContent.forEach(student => {
+      // const indice = student.trim().toLowerCase().indexOf('calidad,');
+      
+      // if( indice >-1){
+      //   const tmpStudent = student.split('CALIDAD,');
+      //   console.log(tmpStudent);
+        
+        
+      // }else{
+        
+        
+      //   }
       const tmpStudent = student.split(',');
-      if (this.type === '0') {
-        this.csvObjects.push({
-          nc: tmpStudent[1],
-          nombreApellidos: tmpStudent[2],
-          nombre: tmpStudent[3],
-          carreraCompleta: tmpStudent[4],
-          carrera: this.careers[tmpStudent[4].trim()],
-          correo: tmpStudent[5],
-          observations: '',
-          degree: '',
-          estatus: 'Registrado',
-          survey: false
-        });
-      }
-      if (this.type === '1') {
-        if (tmpStudent[0] !== '') {
-          const st = this.students.find( std => std.data.nc.trim() === tmpStudent[0].trim());
+        if (this.type === '0') {
           this.csvObjects.push({
-            id: st.id,
-            nc: st.data.nc,
-            nombreApellidos: st.data.nombreApellidos,
-            nombre: st.data.nombre,
-            carreraCompleta: st.data.carreraCompleta,
-            carrera: st.data.carrera,
-            correo: st.data.correo,
-            estatus: st.data.estatus
+            nc: tmpStudent[1],
+            nombreApellidos: tmpStudent[2],
+            nombre: tmpStudent[3],
+            carreraCompleta: tmpStudent[4],
+            carrera: this.careers[tmpStudent[4].trim()],
+            especialidad: tmpStudent[5].replace('%20',','),
+            promedio: tmpStudent[6],
+            correo: tmpStudent[7],
+            observations: '',
+            degree: '',
+            estatus: 'Registrado',
+            survey: false,
+            mejorPromedio:false
           });
-        }
       }
+      // if (this.type === '1') {
+      //   if (tmpStudent[0] !== '') {
+      //     const st = this.students.find( std => std.data.nc.trim() === tmpStudent[0].trim());
+      //     this.csvObjects.push({
+      //       id: st.id,
+      //       nc: st.data.nc,
+      //       nombreApellidos: st.data.nombreApellidos,
+      //       nombre: st.data.nombre,
+      //       carreraCompleta: st.data.carreraCompleta,
+      //       carrera: st.data.carrera,
+      //       correo: st.data.correo,
+      //       estatus: st.data.estatus
+      //     });
+      //   }
+      // }
     });
+    // console.log(this.csvObjects);
+    
   }
 
-  sendData() {
+  async sendData() {
+    this.loading=true;
     if (this.type === '0') {
-      this.csvObjects.forEach(async (student) => {
-        await this.firebaseService.loadCSV(student, this.collection).then(resp => {}).catch(err => {});
-      });
+
+      // let students = ;
+      for await (const student of this.csvObjects){
+        await this.firebaseService.loadCSV(student, this.collection).then(resp => {
+        }).catch(err => {});
+        await this.firebaseService.asignEvent(this.collection
+          ,student.nc).then((col=>{
+          })).catch(err=>{});            
+      }  
+      const sst =this.firebaseService.getGraduates(this.collection).subscribe(
+        async (stds)=>{
+          sst.unsubscribe();
+          const students = stds.map( (std)=> ({id:std.payload.doc.id,promedio:std.payload.doc.get('promedio'), carrera:std.payload.doc.get('carrera')}));
+          const sb = this.firebaseService.getCareers().subscribe(
+            async (careers :any)=>{
+              sb.unsubscribe();                    
+              for await (const career of careers){
+            
+                const studentsCareer = students.filter( (st)=> st.carrera+'' == career.nombre+'').map( std=> std.promedio);
+                const greaterAvg = studentsCareer.length > 0 ? Math.max(...studentsCareer) : 0;
+                
+                const stGreaterAvg = greaterAvg > 0 ? students.filter( (st)=> st.carrera+'' == career.nombre+'').filter( (st)=> st.promedio == greaterAvg) : false;
+                if(stGreaterAvg){
+                  
+                  for await (const bestAvg of stGreaterAvg){
+                    console.log(bestAvg);
+                    await this.firebaseService.updateFieldGraduate(bestAvg.id,{mejorPromedio:true},this.collection).then( up=>{}).catch(err=>{});
+                  }
+                }
+                
+                
+                
+              }
+              
+            }
+          );
+        }
+      );
+      
+      
       this.notificationsServices.showNotification(0, 'Exito', 'Alumnos registrados correctamente');
     }
     if (this.type === '1') {
@@ -144,6 +203,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         );
       });
     }
+    this.loading=false;
     this.cancel();
   }
 
@@ -174,5 +234,31 @@ export class LoaderDataGraduationPageComponent implements OnInit {
       object[elem] = elem;
     });
     return object;
+  }
+
+  downloadTemplate(){
+    Swal.fire({
+      title: 'Atención',
+      text: 'Recuerda que debes cambiar la "," por "%20" en la especialidad del alumno en caso de requerirlo.',
+      imageUrl: 'assets/imgs/reemplazarComa.png',
+      imageWidth: 500,
+      imageHeight: 100,
+      imageAlt: 'Custom image',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Descargar'
+    }).then((result) => {
+      if (result.value) {
+        const ExampleStudents = [
+          { no: 'No', nc: 'Número de Control', nombreApellidos: 'Nombre Apellido', nombre: 'Nombre del Alumno', carrera: 'Carrera', especialidad: 'Especialidad', calificacion: 'Calificacion', email: 'Email' },
+          { no: '1', nc: '14400975', nombreApellidos: 'NAVA HERNANDEZ IRVING YAIR', nombre: 'IRVING YAIR NAVA HERNANDEZ', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '88.93', email: 'iryanavahe@ittepic.edu.mx' },
+          { no: '2', nc: '15401011', nombreApellidos: 'JIMENEZ ESPERICUETA RICARDO', nombre: 'RICARDO JIMENEZ ESPERICUETA', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '93.13', email: 'rijimenezes@ittepic.edu.mx' }
+        ];
+        new Angular5Csv(ExampleStudents, 'Ejemplo Estudiantes Graduación');
+      }
+    });
   }
 }
