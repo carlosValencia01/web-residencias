@@ -4,6 +4,8 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { Router } from '@angular/router';
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
+import TableToExcel from '@linways/table-to-excel';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-loader-data-graduation-page',
@@ -232,5 +234,31 @@ export class LoaderDataGraduationPageComponent implements OnInit {
       object[elem] = elem;
     });
     return object;
+  }
+
+  downloadTemplate(){
+    Swal.fire({
+      title: 'Atención',
+      text: 'Recuerda que debes cambiar la "," por "%20" en la especialidad del alumno en caso de requerirlo.',
+      imageUrl: 'assets/imgs/reemplazarComa.png',
+      imageWidth: 500,
+      imageHeight: 100,
+      imageAlt: 'Custom image',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Descargar'
+    }).then((result) => {
+      if (result.value) {
+        TableToExcel.convert(document.getElementById('templateStudent'), {
+          name: 'Plantilla Alumnos Graduación.xlsx',
+          sheet: {
+            name: 'Alumnos'
+          }
+        });
+      }
+    });
   }
 }

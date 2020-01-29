@@ -431,7 +431,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         case "INGENIERÍA EN GESTIÓN EMPRESARIAL":
           doc.text('IGE',pageWidth-15,(pageHeight/2)+1.5)
           break;
-        case "INGENIERÍA QUIMICA":
+        case "INGENIERÍA QUÍMICA":
           doc.text('IQ',pageWidth-15,(pageHeight/2)+1.5)
           break;
         case "INGENIERÍA MECATRÓNICA":

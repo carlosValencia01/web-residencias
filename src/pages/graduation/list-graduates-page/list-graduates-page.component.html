@@ -1,7 +1,7 @@
 <div class="content-general">
    <div class="card card-shadow">
       <mat-tab-group>
-         <mat-tab>
+         <mat-tab *ngIf="role === 'administration' || role === 'comunication' || role === 'coordinator'">
             <ng-template matTabLabel>
                <span>Graduación {{collection.toUpperCase()}}</span>
             </ng-template>
@@ -9,15 +9,15 @@
                <div style="overflow-x:auto; padding-top: 20px;">
                   <div class="row">
                      <div class="col-sm-3">
-                        <mat-card class = "cardEgresados"><b>Total Egresados</b><br>{{totalEgresados}}</mat-card>
+                        <mat-card class = "cardEgresados"><b>Egresados</b><br>{{totalEgresados}}</mat-card>
                      </div>
                      <div class="col-sm-3">
-                        <mat-card class = "cardCListos"><b>Total Verificados</b><br>{{totalVerificados}}</mat-card>
+                        <mat-card class = "cardCListos"><b>Verificados</b><br>{{totalVerificados}}</mat-card>
                      </div>
-                     <div class="col-sm-3">
+                     <div class="col-sm-3" *ngIf="role === 'administration' || role === 'comunication'">
                         <mat-card class = "cardCPendientes"><b>Boletos Totales</b><br>{{boletosTotales}}</mat-card>
                      </div>
-                     <div class="col-sm-3">
+                     <div class="col-sm-3" *ngIf="role === 'administration' || role === 'comunication'">
                         <mat-card class = "cardRestantes"><b>Boletos Restantes</b><br>{{boletosRestantes}}</mat-card>
                      </div>
                    </div><br>
@@ -68,14 +68,14 @@
                                     <label class="custom-control-label" for="defaultInline2">R</label>
                                  </div>
                               </td>
-                              <td id="checkPagado">
+                              <!--<td id="checkPagado">
                                  <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Pagado"
                                     tooltipClass="my-custom-class">
                                     <input [(ngModel)]="searchSPC" type="checkbox" class="custom-control-input"
                                        id="defaultInline3" value="Pagado" (change)="eventFilterReport()">
                                     <label class="custom-control-label" for="defaultInline3">P</label>
                                  </div>
-                              </td>
+                              </td>-->
                               <td id="checkVerificado">
                                  <div class="custom-control custom-checkbox custom-control-inline"
                                     ngbTooltip="Verificado" tooltipClass="my-custom-class">
@@ -176,17 +176,10 @@
                            <td *ngIf="role === 'administration' || role === 'comunication'">
                               <div class="div-actions" id="{{item.status}}">
                         <tr *ngIf="item.email && status == '1'">
-                           <td *ngIf="item.status == 'Registrado' && role === 'comunication'">
+                           <td *ngIf="item.status == 'Registrado' && role === 'comunication' || item.status === 'Registrado' && role === 'administration'">
                               <div class="div-img" ngbTooltip="Confirmar Pago" tooltipClass="my-custom-class"
                                  *ngIf="item.email">
-                                 <img src="../../assets/icons/paid.svg" class="action" (click)="confirmPaidEvent(item)">
-                              </div>
-                           </td>
-                           <td *ngIf="item.status == 'Pagado' && role === 'administration'">
-                              <div class="div-img" ngbTooltip="Verificar Alumno" tooltipClass="my-custom-class"
-                                 *ngIf="item.email">
-                                 <img src="../../assets/icons/verifyStudent.svg" class="action"
-                                    (click)="verifyStudent(item)">
+                                 <img src="../../assets/icons/paid.svg" class="action" (click)="verifyStudent(item)">
                               </div>
                            </td>
                            <td *ngIf="item.status === 'Verificado' && role === 'administration'">
@@ -304,7 +297,7 @@
                                  <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
                               </div>
                            </td>
-                           <td>
+                           <td *ngIf="role === 'administration'">
                               <div class="div-img" ngbTooltip="Generar Reporte Mejor Promedio"
                                  tooltipClass="my-custom-class">
                                  <img src="../../assets/icons/bestAverage.svg" class="action"
@@ -475,7 +468,7 @@
             </table>
    </div>
    </mat-tab>
-   <mat-tab>
+   <mat-tab *ngIf="role === 'administration' || role === 'secretary'">
       <ng-template matTabLabel>
          <span>Documentación</span>
       </ng-template>
@@ -483,7 +476,7 @@
          <div style="overflow-x:auto; padding-top: 20px;">
             <div class="row">
                <div class="col-sm-4">
-                  <mat-card class = "cardEgresados"><b>Total Egresados</b><br>{{totalEgresados}}</mat-card>
+                  <mat-card class = "cardEgresados"><b>Egresados</b><br>{{totalEgresados}}</mat-card>
                </div>
                <div class="col-sm-2">
                   <mat-card class = "cardCPendientes"><b>Pendientes</b><br>{{certificadosPendientes}}</mat-card>
@@ -495,7 +488,7 @@
                   <mat-card class = "cardCListos"><b>Listos</b><br>{{certificadosListos}}</mat-card>
                </div>
                <div class="col-sm-2">
-                  <mat-card style="text-align: center;"><b>Entregados</b><br>{{certificadosEntregados}}</mat-card>
+                  <mat-card class = "cardEgresados"><b>Entregados</b><br>{{certificadosEntregados}}</mat-card>
                </div>
              </div><br>
             <div class="row">
@@ -545,7 +538,7 @@
                         <th>Nombre del Alumno</th>
                         <th>Carrera</th>
                         <th>Estatus</th>
-                        <th *ngIf="role === 'administration' || role === 'comunication'">Acciones</th>
+                        <th>Acciones</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -569,7 +562,7 @@
                         <td *ngIf="!item.degree">{{item.name}}</td>
                         <td>{{item.carreer}}</td>
                         <td>{{item.documentationStatus}}</td>
-                        <td *ngIf="role === 'administration' || role === 'comunication'">
+                        <td>
                            <div class="div-actions" id="{{item.status}}">
                               <tr>
                                  <td *ngIf="item.documentationStatus == ' '">
@@ -592,8 +585,23 @@
                                        <img src="../../assets/icons/documentacion/entregado.svg" class="action" (click)="changeStatusDocumentation(item,'Entregado')">
                                     </div>
                                  </td>
-                                 <td *ngIf="item.documentationStatus != ' '">
-                                    <div class="div-img" ngbTooltip="Regresar Estatus" tooltipClass="my-custom-class" *ngIf="item.email">
+                                 <td *ngIf="item.documentationStatus == 'Fotos y Recibo'">
+                                    <div class="div-img" ngbTooltip="Regresar Estatus a Sin Entrega" tooltipClass="my-custom-class" *ngIf="item.email">
+                                       <img src="../../assets/icons/documentacion/regresar.svg" class="action" (click)="changeStatusDocumentation(item,'Regresar')">
+                                    </div>
+                                 </td>
+                                 <td *ngIf="item.documentationStatus == 'Impreso'">
+                                    <div class="div-img" ngbTooltip="Regresar Estatus a Fotos y Recibo" tooltipClass="my-custom-class" *ngIf="item.email">
+                                       <img src="../../assets/icons/documentacion/regresar.svg" class="action" (click)="changeStatusDocumentation(item,'Regresar')">
+                                    </div>
+                                 </td>
+                                 <td *ngIf="item.documentationStatus == 'Listo'">
+                                    <div class="div-img" ngbTooltip="Regresar Estatus a Impreso" tooltipClass="my-custom-class" *ngIf="item.email">
+                                       <img src="../../assets/icons/documentacion/regresar.svg" class="action" (click)="changeStatusDocumentation(item,'Regresar')">
+                                    </div>
+                                 </td>
+                                 <td *ngIf="item.documentationStatus == 'Entregado'">
+                                    <div class="div-img" ngbTooltip="Regresar Estatus a Listo" tooltipClass="my-custom-class" *ngIf="item.email">
                                        <img src="../../assets/icons/documentacion/regresar.svg" class="action" (click)="changeStatusDocumentation(item,'Regresar')">
                                     </div>
                                  </td>
@@ -612,11 +620,16 @@
                         <div class="div-actionsFoot">
                            <tr>
                               <td *ngIf="searchCarreerDocumentation != '' ">
-                                 <div class="div-img" ngbTooltip="Generar Constancias para {{searchCarreer}}"
+                                 <div class="div-img" ngbTooltip="Generar Constancias para {{searchCarreerDocumentation}}"
                                     tooltipClass="my-custom-class">
                                     <img src="../../assets/icons/documentacion/generarConstancia.svg" class="action" (click)="generateConstancys()">
                                  </div>
                               </td>
+                              <td  *ngIf="searchCarreerDocumentation != '' ">
+                                 <div class="div-img" ngbTooltip="Generar Pestañas  para {{searchCarreerDocumentation}}" tooltipClass="my-custom-class">
+                                   <img src="../../assets/icons/label.svg" class="action" (click)="generateLabels()">
+                                 </div>
+                               </td>
                            </tr>
                         </div>
                      </td>
