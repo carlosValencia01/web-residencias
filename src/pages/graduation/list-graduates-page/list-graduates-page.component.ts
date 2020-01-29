@@ -1493,10 +1493,10 @@ export class ListGraduatesPageComponent implements OnInit {
                                     
             this.firestoreService.sendNotification(infoToken.id,notification).then(
               (sended)=>{
-                this.studentProv.sendNotification({title,body,token:infoToken.token}).subscribe(
+                this.studentProv.sendNotification({title,body,token:infoToken.token, screen:'graduation'}).subscribe(
                   (send)=>{
                     console.log(send, 'Enviado');
-                    
+                    this.notificationsServices.showNotification(eNotificationType.SUCCESS,'Notificación enviada','');
                   }
                 );
               }
