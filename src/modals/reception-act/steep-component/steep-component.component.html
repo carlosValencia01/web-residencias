@@ -3,7 +3,7 @@
     <h1 mat-dialog-title></h1>
   </div>
   <div class="col-2">
-    <button mat-icon-button [mat-dialog-close] class="float-right">
+    <button mat-icon-button [mat-dialog-close] class="float-right" *ngIf="enableNext">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -19,14 +19,21 @@
     </div>
   </mat-step>
   <mat-step [completed]="SteepTwoCompleted">
-    <ng-template matStepLabel>Registro de Proyecto</ng-template>
-    <div class="row">
-      <div class="col-3 col-sm-3 col-md-3 col-lg-3"></div>
-      <div class="col-6 col-sm-6 col-md-6 col-lg-6">
-        <app-viewer-component [Request]="Request" [Phase]="'Verificado'" [Title]="''" [Type]="'None'">
-        </app-viewer-component>
-      </div>
-      <div class="col-3 col-sm-3 col-md-3 col-lg-3"></div>
+    <ng-template matStepLabel>Firma electrónica</ng-template>
+    <div class="row justify-content-center">
+      <mat-card class="col-sm-12 col-md-5 m-2">
+        <mat-card-header>
+          <mat-card-title>Firma</mat-card-title>
+        </mat-card-header>
+        <div>
+          <input type='file' (change)="fileChanged($event)" style="margin-bottom: 10px">
+          <input type="password" placeholder="Contraseña"  [(ngModel)]="password">
+        </div>
+        <mat-card-actions align="end">
+          <button type="button" class="btn btn-primary" (click)="uploadDocument()"
+          [disabled]="!fileFlag || !password">Firmar</button>
+        </mat-card-actions>
+      </mat-card>
     </div>
     <div class="row">
       <div class="col-6 text-left">
@@ -34,21 +41,20 @@
           <mat-icon>navigate_before</mat-icon>Atrás
         </button>
       </div>
-      <div class="col-6 text-right">
-        <button mat-stroked-button color="primary" (click)="Next(1)">
-          Siguiente<mat-icon>navigate_next</mat-icon>
-        </button>
-      </div>
     </div>
   </mat-step>
   <mat-step [completed]="SteepThreeCompleted">
-    <ng-template matStepLabel>Firma</ng-template>
-    You are now done.
+    <ng-template matStepLabel>Registro de Proyecto</ng-template>
+    <div class="row">
+      <div class="col-3 col-sm-3 col-md-3 col-lg-3"></div>
+      <div class="col-6 col-sm-6 col-md-6 col-lg-6">
+        <app-viewer-component [Request]="Request" [Phase]="'Verificado'" [Title]="''" [Type]="'None'" [QR]="QR" [EStamp]="EStamp">
+        </app-viewer-component>
+      </div>
+      <div class="col-3 col-sm-3 col-md-3 col-lg-3"></div>
+    </div>
     <div class="row">
       <div class="col-6 text-left">
-        <button mat-stroked-button color="primary" (click)="Back(2)">
-          <mat-icon>navigate_before</mat-icon>Atrás
-        </button>
       </div>
       <div class="col-6 text-right">
         <button mat-stroked-button color="primary" (click)="Next(2)">

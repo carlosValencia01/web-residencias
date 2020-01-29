@@ -3,7 +3,7 @@
     <mat-card-header>
       <mat-card-title>Datos personales</mat-card-title>
     </mat-card-header>
-    <form (ngSubmit)="onSubmit()" [formGroup]="formGroupData" class="col-12">
+    <form (ngSubmit)="updateProfile()" [formGroup]="formGroupData" class="col-12">
       <mat-card-content>
         <mat-form-field class="col-12">
           <input formControlName="name" matInput placeholder="Nombres">
@@ -42,7 +42,7 @@
     <mat-card-header>
       <mat-card-title>Contraseña</mat-card-title>
     </mat-card-header>
-    <form (ngSubmit)="onSubmit1()" [formGroup]="formGroupPsw" class="col-12">
+    <form (ngSubmit)="changePassword()" [formGroup]="formGroupPsw" class="col-12">
       <mat-card-content>
         <mat-form-field class="col-12">
           <input formControlName="psw" matInput placeholder="Nueva contraseña" type="password">

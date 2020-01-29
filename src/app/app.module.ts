@@ -33,7 +33,6 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   maxFiles: 1
 };
 
-
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
