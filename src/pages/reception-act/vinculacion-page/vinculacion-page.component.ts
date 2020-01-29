@@ -1,15 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import * as Papa from 'papaparse';
-import { IStudent } from 'src/entities/shared/student.model';
-import { StudentProvider } from 'src/providers/shared/student.prov';
-import { NotificationsServices } from 'src/services/app/notifications.service';
-import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
-import { CookiesService } from 'src/services/app/cookie.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatTableDataSource, MatDialog, MatPaginator, MatSort } from '@angular/material';
-import { EnglishComponent } from 'src/modals/reception-act/english/english.component';
-// import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
+import { ComponentType } from '@angular/cdk/overlay';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
 import Swal from 'sweetalert2';
+import * as Papa from 'papaparse';
+import * as moment from 'moment';
+moment.locale('es');
+
+import { CookiesService } from 'src/services/app/cookie.service';
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
+import { IStudent } from 'src/entities/shared/student.model';
+import { LoadCsvDataComponent } from 'src/modals/shared/load-csv-data/load-csv-data.component';
+import { NotificationsServices } from 'src/services/app/notifications.service';
+import { StudentProvider } from 'src/providers/shared/student.prov';
+
 @Component({
   selector: 'app-vinculacion-page',
   templateUrl: './vinculacion-page.component.html',
@@ -17,226 +22,226 @@ import Swal from 'sweetalert2';
 })
 
 export class VinculacionPageComponent implements OnInit {
-  @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  students: IStudent[] = [];
-  displayedColumns: string[];
-  dataSource: MatTableDataSource<IEnglishTable>;
-  search: string;
+  @ViewChild('matPaginatorReleased') paginatorReleased: MatPaginator;
+  @ViewChild('matPaginatorNotReleased') paginatorNotReleased: MatPaginator;
+  public students: IStudent[] = [];
+  public displayedColumnsReleased: string[];
+  public displayedColumnsReleasedName: string[];
+  public displayedColumnsNotReleased: string[];
+  public displayedColumnsNotReleasedName: string[];
+  public dataSourceReleased: MatTableDataSource<IEnglishTable>;
+  public dataSourceNotReleased: MatTableDataSource<IEnglishTable>;
+  public search: string;
+  public selectedTab: FormControl;
+  public loading: boolean;
 
   constructor(
-    public studentProvider: StudentProvider,
-    private notificationServ: NotificationsServices,
     private cookiesService: CookiesService,
-    public dialog: MatDialog,
-    private router: Router, private routeActive: ActivatedRoute) {
+    private notificationServ: NotificationsServices,
+    private router: Router,
+    private routeActive: ActivatedRoute,
+    private studentProvider: StudentProvider,
+    private dialog: MatDialog,
+  ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+    this.selectedTab = new FormControl(0);
+    this.loading = false;
   }
 
   ngOnInit() {
-    this.displayedColumns = ['numeroControl', 'nombre', 'carrera', 'liberacion', 'action'];
-    this.loadStudentsWithEnglish();
+    this.displayedColumnsReleased = ['name', 'career', 'controlNumber', 'dateRelease', 'actions'];
+    this.displayedColumnsReleasedName = ['Nombre', 'Carrera', 'Número de control', 'Fecha de liberación'];
+    this.displayedColumnsNotReleased = ['name', 'career', 'controlNumber', 'actions'];
+    this.displayedColumnsNotReleasedName = ['Nombre', 'Carrera', 'Número de control'];
+    this._getAllNotReleased();
   }
 
-  applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+  public changeTab(event) {
+    this.selectedTab.setValue(event);
+    switch (event) {
+      case 0: return this._getAllNotReleased();
+      case 1: return this._getAllReleased();
     }
   }
 
-  loadStudentsWithEnglish(): void {
-    this.students = [];
-    this.studentProvider.StudentWithEnglish().subscribe(data => {
-      data.students.forEach(element => {
-        const student: IStudent = {
-          _id: element._id,
-          controlNumber: element.controlNumber,
-          fullName: element.fullName,
-          career: element.career,
-          english: new Date(element.documents[0].releaseDate).toLocaleDateString()
-        };
-        this.students.push(student);
-        this.refresh();
-      });
-    }, error => {
-      this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al recuperar los datos, intente nuevamente', '');
-    });
-  }
-
-  refresh(): void {
-    this.dataSource = new MatTableDataSource(<IEnglishTable[]>this.students.slice());
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  onUpload(event) {
-    // Se convierte el archivo csv a un arreglo de arrays
-    const Students: IStudent[] = [];
-    const estudiantes = this.students;
-    const provider = this.studentProvider;
-    const notificacion = this.notificationServ;
-    const refresh = this.refresh();
-    if (event.target.files && event.target.files[0]) {
-      Papa.parse(event.target.files[0], {
-        complete: function (results) {
-          if (results.data.length > 0) {
-            results.data.forEach((element, index) => {
-              if (index > 0) {
-                const Student: IStudent = {
-                  controlNumber: element[0],
-                  fullName: element[1],
-                  career: element[2],
-                  document: { type: 'Ingles', 'status': 'Activo' }
-                };
-                Students.push(Student);
-              }
-            });
-            console.log('students', Students);
-            provider.csvEnglish(Students).subscribe(res => {
-              res.Data.forEach(e => {
-                const lStudent: IStudent = {
-                  _id: e._id,
-                  controlNumber: e.controlNumber,
-                  fullName: e.fullName,
-                  career: e.career,
-                  english: new Date(e.document.releaseDate).toLocaleDateString()
-                };
-                const indice = estudiantes.findIndex(x => x._id === e._id);
-                if (indice !== -1) {
-                  estudiantes[indice] = lStudent;
-                } else {
-                  estudiantes.push(lStudent);
-                }
-              });
-              notificacion.showNotification(eNotificationType.SUCCESS, 'La importación ha sido un éxito', '');
-            }, error => {
-              this.notificationServ.showNotification(eNotificationType.ERROR,
-                'Ocurrió un error al recuperar los datos, intente nuevamente', '');
-            });
-          }
+  public applyFilter(filterValue: string) {
+    switch (this.selectedTab.value) {
+      case 0:
+        this.dataSourceNotReleased.filter = filterValue.trim().toLowerCase();
+        if (this.dataSourceNotReleased.paginator) {
+          this.dataSourceNotReleased.paginator.firstPage();
         }
-      });
-
+        break;
+      case 1:
+        this.dataSourceReleased.filter = filterValue.trim().toLowerCase();
+        if (this.dataSourceReleased.paginator) {
+          this.dataSourceReleased.paginator.firstPage();
+        }
+        break;
     }
   }
 
-  getStudent() {
-    this.students = [];
-    if (typeof (this.search) !== 'undefined' && this.search !== '') {
-      this.studentProvider.searchStudentWithEnglish(this.search)
-        .subscribe(data => {
-          data.students.forEach(element => {
-            const student: IStudent = {
-              _id: element._id,
-              controlNumber: element.controlNumber,
-              fullName: element.fullName,
-              career: element.career,
-              english: new Date(element.documents[0].releaseDate).toLocaleDateString()
-            };
-            this.students.push(student);
-            this.refresh();
+  public release(student: IEnglishTable) {
+    Swal.fire({
+      title: 'Liberación de inglés',
+      text: `¿Está seguro de liberar el inglés al estudiante ${student.name}?`,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Liberar'
+    }).then((result) => {
+      if (result.value) {
+        this.studentProvider.releaseEnglish(student.controlNumber)
+          .subscribe(_ => {
+            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante liberado con éxito', '');
+            this._getAllNotReleased();
+          }, _ => {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'Error, no se pudo liberar el inglés al estudiante', '');
           });
-        }, error => {
-          this.notificationServ.showNotification(eNotificationType.ERROR,
-            'Ocurrió un error al recuperar los datos, intente nuevamente', '');
-        });
-    } else {
-      this.loadStudentsWithEnglish();
-    }
-  }
-
-  addNewStudent() {
-    const ref = this.dialog.open(EnglishComponent, {
-      width: '45em',
-      disableClose: true,
-      hasBackdrop: true,
-    });
-
-    ref.afterClosed().subscribe((student: IStudent) => {
-      if (student) {
-        student.document = { type: 'Ingles', 'status': 'Activo' };
-        this.studentProvider.csvAddStudentEnglish(student).subscribe(data => {
-          // tslint:disable-next-line:no-shadowed-variable
-          const student: IStudent = {
-            _id: data.student._id,
-            controlNumber: data.student.controlNumber,
-            fullName: data.student.fullName,
-            career: data.student.career,
-            english: new Date(data.student.documents[0].releaseDate).toLocaleDateString()
-          };
-          const i = this.students.findIndex(x => x._id === student._id);
-          if (i !== -1) {
-            this.students[i] = student;
-          } else {
-            this.students.push(student);
-          }
-          this.refresh();
-          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante agregado exitosamente', '');
-        }, error => {
-          this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
-        });
       }
     });
   }
 
-  onRowRemove(row: IStudent) {
+  public cancelRelease(student: IEnglishTable) {
     Swal.fire({
-      title: '¿Está seguro de remover dicho elemento?',
-      text: '¡No podrás revertir esto!',
-      type: 'question',
+      title: 'Cancelación de liberación de inglés',
+      text: `¿Está seguro de cancelar la liberación de inglés al estudiante ${student.name}?`,
       showCancelButton: true,
       allowOutsideClick: false,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Aceptar'
     }).then((result) => {
       if (result.value) {
-        this.studentProvider.csvRemoveStudentEnglish(row._id).subscribe(
-          res => {
-            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante eliminado', '');
-            this.students.splice(this.students.indexOf(row), 1);
-            this.refresh();
-          }, error => {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema: ' + error.message, '');
-          }
-        );
+        this.studentProvider.removeRelease(student.controlNumber)
+          .subscribe(_ => {
+            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Se ha quitado la liberación con éxito', '');
+            this._getAllReleased();
+          }, _ => {
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'Error al quitar liberación al estudiante', '');
+          });
       }
     });
+  }
 
-    // const ref = this.dialog.open(ConfirmDialogComponent, {
-    //   data: '¿Está seguro de remover dicho elemento?',
-    //   width: '30em',
-    //   disableClose: true,
-    //   hasBackdrop: true,
-    // });
+  public refreshReleased() {
+    this._getAllReleased();
+  }
 
-    // ref.afterClosed().subscribe(
-    //   result => {
-    //     if (result) {
-    //       this.studentProvider.csvRemoveStudentEnglish(row._id).subscribe(
-    //         res => {
-    //           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante eliminado', '');
-    //           this.students.splice(this.students.indexOf(row), 1);
-    //           this.refresh();
-    //         }, error => {
-    //           this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema: ' + error.message, '');
-    //         }
-    //       );
-    //     }
-    //   }
-    // );
+  public refreshNotReleased() {
+    this._getAllNotReleased();
+  }
 
+  public onUpload(event) {
+    const provider = this.studentProvider;
+    const notificacion = this.notificationServ;
+    const students = [];
+    if (event.target.files && event.target.files[0]) {
+      Papa.parse(event.target.files[0], {
+        complete: (results) => {
+          if (results.data.length > 0) {
+            results.data.slice(1).forEach(element => {
+              if (element[0]) {
+                students.push({ controlNumber: element[0] });
+              }
+            });
+            const _data = {
+              config: {
+                title: 'Liberación de inglés',
+                displayedColumns: ['controlNumber'],
+                displayedColumnsName: ['Número de control']
+              },
+              componentData: students
+            };
+            const refDialog = this._openDialog(LoadCsvDataComponent, 'EnglishRelease', _data);
+            refDialog.afterClosed().subscribe((_students: Array<any>) => {
+              if (_students) {
+                // provider.releaseEnglishCsv(_students).subscribe(_ => {
+                //   notificacion.showNotification(eNotificationType.SUCCESS, 'Estudiantes liberados con éxito', '');
+                //   this.changeTab(this.selectedTab.value);
+                // }, _ => {
+                //   this.notificationServ.showNotification(eNotificationType.ERROR,
+                //     'Ocurrió un error al liberar los estudiantes', '');
+                // });
+              }
+            });
+          }
+        }
+      });
+    }
+  }
+
+  private _getAllReleased() {
+    this.loading = true;
+    this.studentProvider.studentsEnglishReleased()
+      .subscribe(res => {
+        const data = res.students.map(this._castToTable);
+        this._refreshReleased(data);
+      }, _ => {
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'No se pudieron cargar los estudiantes liberados', '');
+        this.loading = false;
+      }, () => {
+        this.loading = false;
+      });
+  }
+
+  private _getAllNotReleased() {
+    this.loading = true;
+    this.studentProvider.studentsEnglishNotReleased()
+      .subscribe(res => {
+        const data = res.students.map(this._castToTable);
+        this._refreshNotReleased(data);
+      }, _ => {
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'No se pudieron cargar los estudiantes sin liberar', '');
+        this.loading = false;
+      }, () => {
+        this.loading = false;
+      });
+  }
+
+  private _refreshReleased(data: Array<any>): void {
+    this.dataSourceReleased = new MatTableDataSource(data);
+    this.dataSourceReleased.paginator = this.paginatorReleased;
+    this.dataSourceReleased.sort = this.sort;
+  }
+
+  private _refreshNotReleased(data: Array<any>): void {
+    this.dataSourceNotReleased = new MatTableDataSource(data);
+    this.dataSourceNotReleased.paginator = this.paginatorNotReleased;
+    this.dataSourceNotReleased.sort = this.sort;
+  }
+
+  private _castToTable(data) {
+    return {
+      controlNumber: data.controlNumber,
+      name: data.fullName,
+      career: data.career,
+      dateRelease: (data.documents && data.documents.length) ? moment(data.documents[0].releaseDate).format('LL') : '',
+    };
+  }
+
+  private _openDialog(component: ComponentType<any>, id?: string, data?: any) {
+    return this.dialog.open(component, {
+      id: id ? id : '',
+      data: data ? data : null,
+      disableClose: true,
+      hasBackdrop: true,
+      width: '50em'
+    });
   }
 }
 
 interface IEnglishTable {
   _id?: string;
   controlNumber?: string;
-  fullName?: string;
+  name?: string;
   career?: string;
+  dateRelease?: string;
   action?: string;
 }

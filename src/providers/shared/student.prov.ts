@@ -84,8 +84,8 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-    csvEnglish(data: any) {
-        return this.api.post(`student/csv`, data).pipe(map(res => res.json()));
+    releaseEnglishCsv(data: any) {
+        return this.api.post(`english/release/csv`, data).pipe(map(res => res.json()));
     }
 
     searchStudentWithEnglish(search: string) {
@@ -96,12 +96,30 @@ export class StudentProvider {
         return this.api.post(`english/create`, data).pipe(map(res => res.json()));
     }
 
-    csvRemoveStudentEnglish(id: string) {
-        return this.api.delete(`english/remove/${id}`).pipe(map(res => res.json()));
+    // csvRemoveStudentEnglish(id: string) {
+    //     return this.api.delete(`english/remove/${id}`).pipe(map(res => res.json()));
+    // }
+
+    studentsEnglishReleased() {
+        return this.api.get(`english/released`).pipe(map(res => res.json()));
     }
 
-    StudentWithEnglish() {
-        return this.api.get(`english/`).pipe(map(res => res.json()));
+    studentsEnglishNotReleased() {
+        return this.api.get(`english/notReleased`).pipe(map(res => res.json()));
+    }
+
+    releaseEnglish(controlNumber: string) {
+        const doc = {
+            releaseDate: new Date(),
+            type: 'Ingles'
+        };
+        return this.api.put(`english/release/${controlNumber}`, doc)
+            .pipe(map(res => res.json()));
+    }
+
+    removeRelease(controlNumber: string) {
+        return this.api.delete(`english/removeRelease/${controlNumber}`)
+            .pipe(map(res => res.json()));
     }
 
     request(id, data) {
