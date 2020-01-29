@@ -23,6 +23,10 @@ export class ViewerComponentComponent implements OnInit {
   @Input('Title') _Title: String;
   // tslint:disable-next-line: no-input-rename
   @Input('Type') Type: String;
+  // tslint:disable-next-line: no-input-rename
+  @Input('QR')  QR: String;
+  // tslint:disable-next-line: no-input-rename
+  @Input('EStamp')  EStamp: String;
   public message: string;
   public Title: String;
   public existTitle: boolean;
@@ -116,16 +120,16 @@ export class ViewerComponentComponent implements OnInit {
         window.open(this.oRequest.noInconvenience().output('bloburl'), '_blank');
         break;
       }
-      case eRequest.RELEASED: {        
+      case eRequest.RELEASED: {
         window.open(`${this.requestProvider.getApiURL()}/request/${this._Request._id}/file/${eFILES.RELEASED}`, '_blank');
         break;
       }
       case eRequest.REGISTERED: {
-        window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
+        window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         break;
       }
       case eRequest.VERIFIED: {
-        window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
+        window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         break;
       }
       case eRequest.SENT: {
