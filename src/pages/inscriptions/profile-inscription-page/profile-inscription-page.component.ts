@@ -921,7 +921,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     
     this.config2 = {
       clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO.pdf', 'mimeType': 'application/pdf', newF: false, fileId: this.docCertificado.fileIdInDrive},
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO.pdf', 'mimeType': 'application/pdf', newF: this.docCertificado ? false :true, fileId: this.docCertificado ? this.docCertificado.fileIdInDrive : ''},
       acceptedFiles:'application/pdf',      
     };
     this.config3 = {
@@ -931,7 +931,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     };
     this.config4 = {
       clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROBANTE.pdf', 'mimeType': 'application/pdf', newF:false, fileId: this.docComprobante.fileIdInDrive},    
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROBANTE.pdf', 'mimeType': 'application/pdf', newF: this.docComprobante? false : true, fileId: this.docComprobante ? this.docComprobante.fileIdInDrive : ''},    
       acceptedFiles:'application/pdf',
       
     };
