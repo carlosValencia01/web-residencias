@@ -505,7 +505,8 @@ export class StudentPageComponent implements OnInit {
 
   async uploadFile() {      
     this.loading = true;
-    var folderId = await this.getFolderId(this.currentStudent._id);    
+    var folderId = await this.getFolderId(this.currentStudent._id,this.currentStudent.controlNumber);    
+    console.log(folderId);
     
     // console.log('upload');
     const red = new FileReader;
@@ -652,9 +653,11 @@ export class StudentPageComponent implements OnInit {
 
   }
 
-  async getFolderId(id){  
+  async getFolderId(id, controlNumber){  
     
     var folderId='';
+    console.log(id,controlNumber);
+    
     await this.inscriptionProv.getActivePeriod().toPromise().then(
      async period=>{
         if(period.period){          
@@ -668,87 +671,26 @@ export class StudentPageComponent implements OnInit {
             }
           );
           //first check folderId on Student model
-         await this.studentProv.getFolderId(id).toPromise().then(
-           async student=>{
-              if(student.folder){// folder exists
-                if(student.folder.idFolderInDrive){
-                  folderId = student.folder.idFolderInDrive;
-                  // console.log(this.folderId,'folder student exists');                     
-                }                       
-              } else{
-                // console.log('333');
-             folderId = await  this.createFolder(period.period);}
-                
+          console.log('1');
+          
+         await this.studentProv.getDriveFolderId(controlNumber,1).toPromise().then(
+           (folder)=>{
+              console.log('2',folder);
+              
+             folderId = folder.folderIdInDrive;
+            console.log(folderId);
+            
             });
+            console.log('3');
+            
         }
         else{ // no hay periodo activo
-          // console.log('444');
+          // console.log('404');
           
         }    
       }  
     );
     return folderId;
   }
-  async createFolder(period){
-    let folderStudentName = this.currentStudent.controlNumber +' - '+ this.currentStudent.fullName;
-    var foldersByPeriod,folderId;
-    await this.inscriptionProv.getFoldersByPeriod(period._id,1).toPromise().then(
-      async (folders)=>{
-        // console.log(folders,'folderss');
-        
-        foldersByPeriod=folders.folders;                                     
-        let folderPeriod = foldersByPeriod.filter( folder=> folder ?   folder.name.indexOf(period.periodName) !==-1 : false);
-
-        // 1 check career folder
-        let folderCareer = foldersByPeriod.filter( folder=> folder ?   folder.name === this.currentStudent.career : false);
-        // let folderStudent = this.foldersByPeriod.filter( folder=> folder.name === folderStudentName)[0];
-
-        if(folderCareer.length===0){
-          // console.log('1');
-          
-         await this.inscriptionProv.createSubFolder(this.currentStudent.career,period._id,folderPeriod[0].idFolderInDrive,1).toPromise().then(
-           async career=>{
-              // console.log('2');
-              
-              // student folder doesn't exists then create new folder
-             await this.inscriptionProv.createSubFolder(folderStudentName,period._id,career.folder.idFolderInDrive,1).toPromise().then(
-                studentF=>{
-                  folderId = studentF.folder.idFolderInDrive;                 
-                  // console.log('3');
-                  
-                  this.studentProv.updateStudent(this.currentStudent._id,{folderId:studentF.folder._id}).toPromise().then(res=>{},err=>{});
-                },
-                err=>{
-                }
-              );
-            },
-            err=>{
-            }
-          );
-        }else{
-           await this.inscriptionProv.createSubFolder(folderStudentName,period._id,folderCareer[0].idFolderInDrive,1).toPromise().then(
-              studentF=>{
-                folderId = studentF.folder.idFolderInDrive;   
-                // console.log('3.1');
-                
-                this.studentProv.updateStudent(this.currentStudent._id,{folderId:studentF.folder._id}).toPromise().then(
-                  upd=>{
-                    
-                    
-                  },
-                  err=>{
-                  }
-                );
-                
-              },
-              err=>{
-              }
-            );         
-        }
-      },
-      err=>{
-      }
-    );
-    return folderId;
-  }
+ 
 }
