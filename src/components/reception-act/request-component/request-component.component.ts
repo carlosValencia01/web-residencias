@@ -89,7 +89,7 @@ export class RequestComponentComponent implements OnInit {
         Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
         'project': new FormControl(null, Validators.required),
-        'product': new FormControl({ value: 'MEMORIA DE RESIDENCIA PROFESIONAL', disabled: true }, Validators.required),
+        'product': new FormControl({ value: 'INFORME TÉCNICO DE RESIDENCIA PROFESIONAL', disabled: true }, Validators.required),
         'observations': new FormControl(null),
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
