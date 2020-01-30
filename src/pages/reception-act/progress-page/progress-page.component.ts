@@ -25,7 +25,10 @@ import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/re
 import Swal from 'sweetalert2';
 import { eCAREER } from 'src/enumerators/shared/career.enum';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
-import { UploadDeliveredComponent } from 'src/app/upload-delivered/upload-delivered.component';
+import { UploadDeliveredComponent } from 'src/modals/reception-act/upload-delivered/upload-delivered.component';
+import { StudentProvider } from 'src/providers/shared/student.prov';
+import { CurrentPositionService } from 'src/services/shared/current-position.service';
+import { ICareer } from 'src/entities/shared/career.model';
 
 @Component({
   selector: 'app-progress-page',
@@ -42,32 +45,39 @@ export class ProgressPageComponent implements OnInit {
   dataSource: MatTableDataSource<iRequestSource>;
   careers: Array<string>;
   allCarrers: Array<string>;
+  allRequest: Array<string>;
   isAll: boolean;
+  _isAll: boolean;
   reset: boolean;
   phases: Array<string>;
   search: string;
   role: string;
+  _carrers: Array<ICareer>
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private requestProvider: RequestProvider,
     public dialog: MatDialog,
-    private notifications: NotificationsServices,
-    private cookiesService: CookiesService,
+    private _NotificationsServices: NotificationsServices,
+    private _CookiesService: CookiesService,
     private router: Router,
-    private activeRoute: ActivatedRoute,
-    private imgService: ImageToBase64Service,
-    public _RequestService: RequestService,
+    private _ActivatedRoute: ActivatedRoute,
+    private _ImageToBase64Service: ImageToBase64Service,
+    private _StudentProvider: StudentProvider,
+    public _RequestService: RequestService
   ) {
     this.careers = [];
     this.phases = [];
     this.allCarrers = ['ARQUITECTURA', 'INGENIERÍA CIVIL', 'INGENIERÍA ELÉCTRICA', 'INGENIERÍA INDUSTRIAL',
       'INGENIERÍA EN SISTEMAS COMPUTACIONALES', 'INGENIERÍA BIOQUÍMICA', 'INGENIERÍA QUÍMICA', 'LICENCIATURA EN ADMINISTRACIÓN', 'INGENIERÍA EN GESTIÓN EMPRESARIAL', 'INGENIERÍA MECATRÓNICA', 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES'];
-    if (!this.cookiesService.isAllowed(this.activeRoute.snapshot.url[0].path)) {
+    this.allRequest = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado', 'Realizado', 'Generado', 'Finalized',];
+    if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    this.role = this.cookiesService.getData().user.rol.name.toLowerCase();
+    this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
+    this._carrers = this._CookiesService.getPosition().ascription.careers;
+    console.log("CARRERAS", this._carrers);
   }
 
   ngOnInit() {
@@ -86,9 +96,13 @@ export class ProgressPageComponent implements OnInit {
     ];
   }
 
+  reload(): void {
+    this.loadRequest(false);
+  }
+
   loadRequest(isInit: boolean = false): void {
+    console.log("k");
     let filter = '';
-    console.log("dd", this.role);
     // switch (this.cookiesService.getData().user.rol.name) {
     switch (this.role) {
       case eRole.CHIEFACADEMIC.toLowerCase(): {
@@ -121,38 +135,78 @@ export class ProgressPageComponent implements OnInit {
       res => {
         this.request = [];
         res.request.forEach(element => {
-          const tmp: iRequest = <iRequest>element;
-          tmp._id = element._id;
-          tmp.status = this.convertStatus(tmp.status);
-          tmp.controlNumber = element.studentId.controlNumber;
-          tmp.career = element.studentId.career;
-          tmp.fullName = element.studentId.fullName;
-          tmp.student = element.studentId;
-          tmp.studentId = element.studentId._id;
-          tmp.applicationDateLocal = new Date(tmp.applicationDate).toLocaleDateString();
-          tmp.lastModifiedLocal = new Date(tmp.lastModified).toLocaleDateString();
-          this.request.push(tmp);
+          if (this.role !== 'jefe académico' && this.role !== 'secretaria académica') {
+            this.request.push(this.castRequest(element));
+          } else {
+            let tmpRequest: iRequest = this.castRequest(element);
+            let index = this._carrers.findIndex(x => x.fullName === tmpRequest.career);
+            if (index !== -1)
+              this.request.push(tmpRequest);
+          }
         });
+
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
           this.isAll = true;
+          this._isAll = true;
         }
         this.reset = true;
         this.requestFilter = this.filter(this.careers, this.phases).slice(0);
         this.refresh();
       },
       error => {
-        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
       });
   }
 
-  refresh(): void {
+  public castRequest(element: any): iRequest {
+    let tmp: iRequest = new Object();//<iRequest>element;          
+    tmp._id = element._id;
+    tmp.status = this.convertStatus(element.status);
+    tmp.controlNumber = element.studentId.controlNumber;
+    tmp.phase = element.phase;
+    tmp.career = element.studentId.career;
+    tmp.fullName = element.studentId.fullName;
+    tmp.student = element.studentId;
+    tmp.studentId = element.studentId._id;
+    tmp.jury = element.jury;
+    tmp.duration = element.duration;
+    tmp.proposedHour = element.proposedHour;
+    tmp.adviser = element.adviser;
+    tmp.history = element.history;
+    tmp.honorificMention = element.honorificMention;
+    tmp.observation = element.observation;
+    tmp.noIntegrants = element.noIntegrants;
+    tmp.projectName = element.projectName;
+    tmp.telephone = element.telephone;
+    tmp.integrants = element.integrants;
+    tmp.email = element.email;
+    tmp.product = element.product;
+    tmp.place = element.place;
+    tmp.department = element.department;
+    tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
+    tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
+    return tmp;
+  }
+
+  refresh() {
+    console.log("Requesfilter", this.requestFilter);
     this.dataSource = new MatTableDataSource(this.requestFilter);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
+  // filterCedula(request: Array<iRequest>, isCedula: boolean): Array<iRequest> {
+  //   return this.request.filter(function (element) {
+  //     if (isCedula) {
+  //       return element.status !== 'Finalized';
+  //     }
+  //     else {
+  //       return element.status === 'Finalized'
+  //     }
+  //   });
+  // }
   filter(carrers: string[], phases: string[]): Array<iRequest> {
     return this.request.filter(function (element) {
       if (phases.length === 0) {
@@ -174,34 +228,49 @@ export class ProgressPageComponent implements OnInit {
     ref.afterClosed().subscribe((valor: boolean) => {
       if (valor) {
         const data = {
-          doer: this.cookiesService.getData().user.name.fullName,
+          doer: this._CookiesService.getData().user.name.fullName,
           observation: '',
           operation: eStatusRequest.ACCEPT
         };
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.loadRequest();
         }, error => {
-          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
         });
       }
     }, error => {
-      this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
     });
   }
 
   changedPhase(event) {
-    const key = <eRequest><keyof typeof eRequest>event.value;
-    const value = eRequest[key];
-    const checked = event.event.checked;
-    const index = this.phases.findIndex(x => x === value);
-    if (index !== -1 && !checked) {
-      this.phases.splice(index, 1);
+    if (event.value === 'ALL') {
+      this._isAll = event.event.checked;
+      this.phases = this._isAll ? this.allRequest.slice(0) : [];
+      this.requestFilter = this.filter(this.careers, this.phases).slice(0);
+    } else {
+      const key = <eRequest><keyof typeof eRequest>event.value;
+      let value = eRequest[key];
+      const isCedula = eRequest[key] === eRequest.CEDULA;
+      const checked = event.event.checked;
+
+      // if (value === eRequest.CEDULA) {
+      //   value = eRequest.TITLED;
+      // }
+
+      const index = this.phases.findIndex(x => x === value);
+      // console.log("INDICE", index, "value", value, "chec", checked);
+      if (index !== -1 && !checked) {
+        this.phases.splice(index, 1);
+      }
+      if (index == -1 && checked) {
+        this.phases.push(value);
+      }
+      let tmpRequest = this.requestFilter = this.filter(this.careers, this.phases).slice(0);
+      // console.log("rquest", tmpRequest);
+      this.requestFilter = tmpRequest;//(value === eRequest.TITLED) ? this.filterCedula(tmpRequest, isCedula) : tmpRequest;
     }
-    if (index == -1 && checked) {
-      this.phases.push(value);
-    }
-    this.requestFilter = this.filter(this.careers, this.phases).slice(0);
     this.refresh();
   }
   changed(event) {
@@ -251,6 +320,10 @@ export class ProgressPageComponent implements OnInit {
         value = 'Finalizado';
         break;
       }
+      case 'Printed': {
+        value = 'Impreso';
+        break;
+      }
       default:
         // value = 'Ninguno'; //17/11
         value = 'Pendiente';
@@ -283,7 +356,7 @@ export class ProgressPageComponent implements OnInit {
         this.loadRequest();
       }
     }, error => {
-      this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
     });
   }
 
@@ -304,17 +377,20 @@ export class ProgressPageComponent implements OnInit {
         this.loadRequest();
       }
     }, error => {
-      this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
     });
   }
 
-  releasedRequest(Identificador): void {
+
+  async releasedRequest(Identificador) {
     let lJury: Array<string> = [];
     let lObservation: string;
     let lMinutes: number = 420;
+    let lDuration: number = 60;
+
     const tmpRequest = this.getRequestById(Identificador);
-    if (tmpRequest.status === 'Rechazado') {
-      lJury = tmpRequest.jury;
+    console.log("TMPRES", tmpRequest);
+    if (tmpRequest.status === 'Rechazado' || tmpRequest.jury.length > 0) {
       const value = tmpRequest.history.filter(x => x.phase === 'Liberado').slice(0).sort(
         function (a, b) {
           const bDate: Date = new Date(b.achievementDate);
@@ -322,46 +398,65 @@ export class ProgressPageComponent implements OnInit {
           return bDate.getTime() - aDate.getTime();
         }
       );
-      console.log("Liberado", value);
-      console.log("Liberado", value[0]);
-      lObservation = value[0].observation;
+      lJury = tmpRequest.jury;
+      lObservation = tmpRequest.status === 'Rechazado' ? value[0].observation : "";
       lMinutes = tmpRequest.proposedHour;
+      lDuration = tmpRequest.duration;
     }
 
-    const ref = this.dialog.open(ReleaseComponentComponent, {
-      data: {
-        jury: lJury,
-        observation: lObservation,
-        minutes: lMinutes,
-        studentCareer: tmpRequest.career
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '60em'
+    let folder = await new Promise(resolve => {
+      this._StudentProvider.getFolderId(tmpRequest.studentId).subscribe(
+        student => {
+          console.log("student", student);
+          if (student.folder) {// folder exists
+            if (student.folder.idFolderInDrive) {
+              resolve(student.folder.idFolderInDrive);
+            }
+            else {
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "El folder del estudiante ha desaparecido");
+              resolve('');
+            }
+          } else {
+            this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "El folder del estudiante ha desaparecido");
+            resolve('');
+          }
+        });
     });
 
-    ref.afterClosed().subscribe(result => {
-      if (typeof (result) !== 'undefined') {
-        let frmData = new FormData();
-        frmData.append('file', result.file);
-        frmData.append('ControlNumber', tmpRequest.student.controlNumber);
-        frmData.append('FullName', tmpRequest.student.fullName);
-        frmData.append('Career', tmpRequest.student.career);
-        frmData.append('Document', eFILES.RELEASED);
-        frmData.append('President', result.jury[0]);
-        frmData.append('Secretary', result.jury[1]);
-        frmData.append('Vocal', result.jury[2]);
-        frmData.append('Substitute', result.jury[3]);
-        frmData.append('proposedHour', result.proposedHour);
-        frmData.append('Doer', this.cookiesService.getData().user.name.fullName);
-        console.log("proposed", result.proposedHour);
-        this.requestProvider.releasedRequest(Identificador, frmData).subscribe(data => {
+    if (folder !== '') {
+      const ref = this.dialog.open(ReleaseComponentComponent, {
+        data: {
+          jury: lJury,
+          observation: lObservation,
+          minutes: lMinutes,
+          id: Identificador,
+          folder: folder,
+          duration: lDuration,
+          request: tmpRequest
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '60em'
+      });
+
+      ref.afterClosed().subscribe(result => {        
+        if (typeof (result) !== 'undefined') {          
+          this.requestProvider.releasedRequest(Identificador, {
+            proposedHour: result.proposedHour,
+            duration: result.duration,
+            upload: result.upload,
+            Doer: this._CookiesService.getData().user.name.fullName,
+            jury: result.jury
+          }).subscribe(data => {
+            this.loadRequest();
+          }, error => {
+            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+          });
+        } else {
           this.loadRequest();
-        }, error => {
-          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-        });
-      }
-    });
+        }
+      });
+    }
   }
 
   approve(Identificador): void {
@@ -388,7 +483,7 @@ export class ProgressPageComponent implements OnInit {
       });
       if (typeof (response.value) !== 'undefined') {
         let data = {
-          doer: this.cookiesService.getData().user.name.fullName,
+          doer: this._CookiesService.getData().user.name.fullName,
           observation: '',
           operation: eStatusRequest.ACCEPT
         };
@@ -401,11 +496,11 @@ export class ProgressPageComponent implements OnInit {
         }
 
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
           this.loadRequest();
         }, error => {
           let tmpJson = JSON.parse(error._body);
-          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
         });
       }
 
@@ -426,17 +521,25 @@ export class ProgressPageComponent implements OnInit {
       if (result.value) {
         const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
         let data = {
-          doer: this.cookiesService.getData().user.name.fullName,
+          doer: this._CookiesService.getData().user.name.fullName,
           observation: '',
           operation: eOperation// eStatusRequest.PROCESS
         };
+
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-          this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App',
-            (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : 'Acta de Examen Entregada'));
+          if (eOperation === eStatusRequest.PROCESS) {
+            const _request: iRequest = this.getRequestById(Identificador);
+            const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service,this._CookiesService);
+            setTimeout(() => {
+              window.open(oRequest.testReport().output('bloburl'), '_blank');
+            }, 500);
+          }
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+            (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : (eOperation === eStatusRequest.PRINTED) ? 'Acta de Examen Impresa' : 'Acta de Examen Entregada'));
           this.loadRequest();
         }, error => {
           let tmpJson = JSON.parse(error._body);
-          this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
         });
       }
     });
@@ -461,34 +564,34 @@ export class ProgressPageComponent implements OnInit {
         }).then((result) => {
           if (result.value) {
             let data = {
-              doer: this.cookiesService.getData().user.name.fullName,
+              doer: this._CookiesService.getData().user.name.fullName,
               observation: '',
               operation: eOperation// eStatusRequest.PROCESS
             };
             this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-              this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App',
                 (eOperation === eStatusRequest.PROCESS ? 'Alumno notificado' : 'Título Profesional Entregado'));
               this.loadRequest();
             }, error => {
               let tmpJson = JSON.parse(error._body);
-              this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
             });
           }
         })
         break;
       }
       case eStatusRequest.ACCEPT: {
-        this.router.navigate([Identificador + '/titled'], { relativeTo: this.activeRoute });
+        this.router.navigate([Identificador + '/titled'], { relativeTo: this._ActivatedRoute });
       }
     }
   }
 
   Review(Identificador): void {
-    this.router.navigate([Identificador], { relativeTo: this.activeRoute });
+    this.router.navigate([Identificador], { relativeTo: this._ActivatedRoute });
   }
 
   seeRecord(Identificador): void {
-    this.router.navigate([Identificador + '/expediente'], { relativeTo: this.activeRoute });
+    this.router.navigate([Identificador + '/expediente'], { relativeTo: this._ActivatedRoute });
   }
 
   // acceptRequest(Identificador): void {
@@ -553,7 +656,7 @@ export class ProgressPageComponent implements OnInit {
 
   seeRequestPDF(_id: string): void {
     const _request: iRequest = this.getRequestById(_id);
-    const oRequest: uRequest = new uRequest(_request, this.imgService);
+    const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service,this._CookiesService);
     setTimeout(() => {
       window.open(oRequest.protocolActRequest().output('bloburl'), '_blank');
     }, 500);
@@ -562,11 +665,12 @@ export class ProgressPageComponent implements OnInit {
   checkReleased(_id: string) {
     const Request = this.getRequestById(_id);
     this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
+      console.log("DATA", data);
       const dialogRef = this.dialog.open(ReleaseCheckComponent, {
-        data: data,
+        data: { file: data, jury: Request.jury },
         disableClose: true,
         hasBackdrop: true,
-        width: '50em'
+        width: '65em'
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -574,18 +678,18 @@ export class ProgressPageComponent implements OnInit {
           let data;
           if (result) {
             data = {
-              doer: this.cookiesService.getData().user.name.fullName,
+              doer: this._CookiesService.getData().user.name.fullName,
               observation: '',
               operation: eStatusRequest.ACCEPT,
               phase: Request.phase
             };
             this.requestProvider.updateRequest(Request._id, data).subscribe(
               data => {
-                this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
                 this.loadRequest();
               },
               error => {
-                this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
               }
             );
           } else {
@@ -613,18 +717,18 @@ export class ProgressPageComponent implements OnInit {
             }).then((result) => {
               if (result.value) {
                 data = {
-                  doer: this.cookiesService.getData().user.name.fullName,
+                  doer: this._CookiesService.getData().user.name.fullName,
                   observation: result.value,
                   operation: eStatusRequest.REJECT,
                   phase: Request.phase
                 };
                 this.requestProvider.updateRequest(Request._id, data).subscribe(
                   data => {
-                    this.notifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                    this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
                     this.loadRequest();
                   },
                   error => {
-                    this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+                    this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
                   }
                 );
               }
@@ -633,11 +737,11 @@ export class ProgressPageComponent implements OnInit {
         }
       },
         error => {
-          this.notifications.showNotification(eNotificationType.ERROR,
+          this._NotificationsServices.showNotification(eNotificationType.ERROR,
             'Titulación App', error);
         });
     }, error => {
-      this.notifications.showNotification(eNotificationType.ERROR,
+      this._NotificationsServices.showNotification(eNotificationType.ERROR,
         'Titulación App', error);
     });
   }
@@ -648,10 +752,11 @@ export class ProgressPageComponent implements OnInit {
   }
 
   applyFilter(filterValue: string) {
+    console.log("Filtro", filterValue.trim().toUpperCase());
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+    // if (this.dataSource.paginator) {
+    //   this.dataSource.paginator.firstPage();
+    // }
   }
 
   viewHistory(_id: string): void {
@@ -665,6 +770,15 @@ export class ProgressPageComponent implements OnInit {
       hasBackdrop: true,
       width: '45em',
     });
+  }
+
+  juryNotification(_id: string): void {
+    let oRequest = new uRequest(this.getRequestById(_id), this._ImageToBase64Service, this._CookiesService);
+    setTimeout(() => {
+      window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
+      // window.open(oRequest.professionalEthicsOath().output('bloburl'), '_blank');
+      window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+    }, 1000);
   }
 }
 

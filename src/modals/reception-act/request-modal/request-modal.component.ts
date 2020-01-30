@@ -101,7 +101,7 @@ export class RequestModalComponent implements OnInit {
       'honorific': this.request.honorificMention,
     });
     this.isToggle = this.request.honorificMention;
-    this.oRequest = new uRequest(this.request, this.imgService);
+    this.oRequest = new uRequest(this.request, this.imgService,this.cookiesService);
   }
 
   accept(): void {
@@ -186,7 +186,8 @@ export class RequestModalComponent implements OnInit {
   }
 
   getProjectCover() {
-    window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.PROYECTO}/${this.request._id}`, '_blank');
+    // window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.PROYECTO}/${this.request._id}`, '_blank');
+    window.open(`${this.requestProvider.getApiURL()}/request/${this.request._id}/file/${eFILES.PROYECTO}`, '_blank');
   }
 
   getRequestPDF() {

@@ -15,10 +15,11 @@ import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMo
 import * as moment from 'moment';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { MatDialog } from '@angular/material';
-import { NewEventComponent } from 'src/app/new-event/new-event.component';
+import { NewEventComponent } from 'src/modals/reception-act/new-event/new-event.component';
 import { eOperation } from 'src/enumerators/reception-act/operation.enum';
-import { ViewMoreComponent } from 'src/app/view-more/view-more.component';
+import { ViewMoreComponent } from 'src/modals/reception-act/view-more/view-more.component';
 import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
+import { NewTitleComponent } from 'src/modals/reception-act/new-title/new-title.component';
 moment.locale('es');
 @Component({
   selector: 'app-diary',
@@ -55,7 +56,7 @@ export class DiaryComponent implements OnInit {
       this.viewDate = new Date(tmpFecha);
       this.view = CalendarView.Week;
       localStorage.removeItem('Appointment');
-    } 
+    }
     // else {
     //   this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1);
     // }
@@ -71,12 +72,20 @@ export class DiaryComponent implements OnInit {
 
   diary(month: number, year: number): void {
     this.Appointments = [];
+    // let nowDate = new Date(this.viewDate.getTime());
+    let minDate = new Date(this.viewDate.getTime());
+    let maxDate = new Date(this.viewDate.getTime());
+    minDate.setDate(minDate.getDate() - minDate.getDay());
+    maxDate.setDate(maxDate.getDate() + (6 - maxDate.getDay()));
     this._RequestProvider.getDiary({
       month: month,
-      year: year
+      year: year,
+      isWeek: this.view === CalendarView.Week,
+      min: minDate,
+      max: maxDate
     }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
-        console.log("Appoint", data.Diary);
+        console.log("Appoint diary", data.Diary);
         this.Appointments = data.Diary;
         this.Ranges = data.Ranges;
         // this.generateAppointment(month, year);
@@ -110,7 +119,7 @@ export class DiaryComponent implements OnInit {
               if (typeof (AppointmentCareer) !== 'undefined') {
                 // console.log("Carrera", AppointmentCareer._id[0], "Appointment", { id: -1, student: Student, proposedDate: onlyDate, proposedHour: j });
                 // AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--" });
-                AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '' });
+                AppointmentCareer.values.push({ id: '-1', student: Student, project: '', proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '', duration: 60, option: '', product: '' });
               }
               // _id: string[], values: [{ id: number, student: string[], proposedDate: Date, proposedHour: number }]
               // Carrera.push(c.carrer);
@@ -160,10 +169,9 @@ export class DiaryComponent implements OnInit {
   loadAppointment(): void {
     this.events = [];
     this.carrers.forEach(career => {
-      console.log("Carr", career);
       if (career.status) {
         // console.log("Carrera", career);
-        let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] };
+        let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
         tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
         if (typeof (tmp) != 'undefined') {
           tmp.values.forEach(element => {
@@ -174,7 +182,7 @@ export class DiaryComponent implements OnInit {
             tmpStart.setHours(0, 0, 0, 0);
             tmpEnd.setHours(0, 0, 0, 0);
             tmpStart.setMinutes(element.proposedHour);
-            tmpEnd.setMinutes(element.proposedHour + 60);
+            tmpEnd.setMinutes(element.proposedHour + element.duration);
             // let tmpStart = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);
             // let tmpEnd = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);            
 
@@ -186,7 +194,7 @@ export class DiaryComponent implements OnInit {
           });
         }
       }
-      console.log("event", this.events);
+      // console.log("event", this.events);
     });
     this.refresh.next();
   }
@@ -201,8 +209,10 @@ export class DiaryComponent implements OnInit {
     })();
   }
 
-  setView(view) {
+  async setView(view) {
     this.view = view;
+    await this.delay(200);
+    this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
   }
 
   async closeOpenMonthViewDay() {
@@ -214,26 +224,43 @@ export class DiaryComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  addNewEvent(date: Date) {
-    const dialogRef = this.dialog.open(NewEventComponent, {
-      data: {
-        operation: eOperation.NEW,
-        date: date
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '45em'
-    });
+  addNewTitled(date: Date) {
+    this.addNewEvent(date, true);
+  }
 
-    dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string } }) => {
+  addNewEvent(date: Date, isTitled: boolean = false) {
+    let dialogRef;
+    if (isTitled) {
+      dialogRef = this.dialog.open(NewTitleComponent, {
+        data: {
+          operation: eOperation.NEW,
+          date: date
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '45em'
+      });
+    } else {
+      dialogRef = this.dialog.open(NewEventComponent, {
+        data: {
+          operation: eOperation.NEW,
+          date: date
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '45em'
+      });
+    }
+
+
+    dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], project: string, phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string, duration: number, option: string, product: string } }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
       //Para no llamar a la bd
       // console.log("Rsponse", response);
       if (typeof (response) !== 'undefined') {
         const index = this.Appointments.findIndex(x => x._id[0] === response.career);
-        // console.log("Index", index);
+        console.log("Index", response.value);
         if (index != -1) {
-          // console.log("ENTRO");
           this.Appointments[index].values.push(response.value);
         } else {
           // const tmpAppointment: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] } = { _id: [response.career], values: [response.value] }
@@ -248,16 +275,35 @@ export class DiaryComponent implements OnInit {
     })
   }
 
-  addEvent($event): void {
-    const dialogRef = this.dialog.open(NewEventComponent, {
-      data: {
-        operation: eOperation.DML,
-        event: $event
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '45em'
-    });
+  addTitled($event) {
+    this.addEvent($event, true);
+  }
+
+  addEvent($event, isTitled: boolean = false): void {
+    let dialogRef;
+    if (isTitled) {
+      dialogRef = this.dialog.open(
+        NewTitleComponent, {
+        data: {
+          operation: eOperation.DML,
+          event: $event
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '55em'
+      });
+    } else {
+      dialogRef = this.dialog.open(
+        NewEventComponent, {
+        data: {
+          operation: eOperation.DML,
+          event: $event
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '45em'
+      });
+    }
 
     dialogRef.afterClosed().subscribe((response
       : {
@@ -265,11 +311,15 @@ export class DiaryComponent implements OnInit {
         value: {
           id: string,
           student: string[],
+          project: string,
           phase: string,
           proposedDate: Date,
           proposedHour: number,
           jury: string[],
-          place: string
+          place: string,
+          duration: number,
+          option: string,
+          product: string
         }
       }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
@@ -286,7 +336,6 @@ export class DiaryComponent implements OnInit {
           const tmpAppointment: iAppointmentGroup = { _id: [response.career], values: [response.value] }
           this.Appointments.push(tmpAppointment);
         }
-        console.log("Appoin", this.Appointments);
         this.loadAppointment();
       }
     }, error => {
@@ -303,7 +352,7 @@ export class DiaryComponent implements OnInit {
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '45em'
+      width: '50em'
     });
   }
   cancelledEvent($event): void {
@@ -388,44 +437,76 @@ export class DiaryComponent implements OnInit {
   }
 
   confirmDenial($event: any, operation: eStatusRequest): void {
+    console.log("%", $event);
     let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
+    console.log("aapoint", AppointmentCareer);
     const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
+    console.log("aapoint", tmpAppointment);
     if (typeof (tmpAppointment) !== 'undefined') {
-      const msnCancel = "¿Está seguro de cancelar este espacio?";
-      const msnReject = "¿Está seguro de rechazar este espacio?"
-      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-        data: {
-          Configuration: {
-            Status: operation,
-            Message: {
-              Title:
-                operation === eStatusRequest.CANCELLED ? msnCancel : msnReject
-            },
-            Buttons: { ConfirmText: 'Aceptar', CancelText: 'Cancelar' }
-          }
-        },
-        disableClose: true,
-        hasBackdrop: true,
-        width: '30em'
-      });
+      if (tmpAppointment.option === 'XI - TITULACIÓN INTEGRAL') {
+        const msnCancel = "¿Está seguro de cancelar este espacio?";
+        const msnReject = "¿Está seguro de rechazar este espacio?"
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+          data: {
+            Configuration: {
+              Status: operation,
+              Message: {
+                Title:
+                  operation === eStatusRequest.CANCELLED ? msnCancel : msnReject
+              },
+              Buttons: { ConfirmText: 'Aceptar', CancelText: 'Cancelar' }
+            }
+          },
+          disableClose: true,
+          hasBackdrop: true,
+          width: '30em'
+        });
 
-      dialogRef.afterClosed().subscribe((response: { confirm: boolean, motivo: string }) => {
-        if (response.confirm) {
-          const data = {
-            operation: operation,
-            observation: response.motivo,
-            doer: this._CookiesService.getData().user.name.fullName
-          };
-          this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
-            this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
-            AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
-            this.loadAppointment();
-          }, error => {
-            let tmpJson = JSON.parse(error._body);
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
-          });
-        }
-      });
+        dialogRef.afterClosed().subscribe((response: { confirm: boolean, motivo: string }) => {
+          if (typeof (response) !== 'undefined') {
+            if (response.confirm) {
+              const data = {
+                operation: operation,
+                observation: response.motivo,
+                doer: this._CookiesService.getData().user.name.fullName
+              };
+              console.log("APPOINTMENT_id", tmpAppointment.id);
+              this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
+                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
+                AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
+                this.loadAppointment();
+              }, error => {
+                let tmpJson = JSON.parse(error._body);
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+              });
+            }
+          }
+        });
+      } else {
+        Swal.fire({
+          title: '¿Está seguro de eliminar esta titulación?',
+          // text: '¡No podrás revertir esto!',
+          type: 'question',
+          showCancelButton: true,
+          allowOutsideClick: false,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Aceptar'
+        }).then((result) => {
+          if (result.value) {
+            this._RequestProvider.removeTitle(tmpAppointment.id).subscribe(_ => {
+              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Titulación removida');
+              AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
+              this.loadAppointment();
+            }, error => {
+              console.log("ERROR ELIMINACION", error);
+              let tmpJson = JSON.parse(error._body);
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+            });
+          }
+        });
+      }
     } else {
       this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Evento no encontrado, reporte el problema');
     }
@@ -593,6 +674,9 @@ export class DiaryComponent implements OnInit {
     }
 
   }
+  eventClicked($event) {
+
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -610,4 +694,4 @@ export class DiaryComponent implements OnInit {
 }
 interface iAppointmentGroup { _id: string[], values: [iAppointment] }
 interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }
-interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string }
+interface iAppointment { id: string, student: string[], project: string, proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, duration: number, option: string, product: string }

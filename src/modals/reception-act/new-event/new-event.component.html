@@ -83,6 +83,20 @@
         </div>
       </div>
     </div>
+
+    <div class="form-group row">
+      <label for="inpDuration" class="col-sm-2 col-form-label">Duración</label>
+      <div class="col-sm-10">
+        <input type="number"
+          [ngClass]="(!frmNewEvent.get('duration').valid && frmNewEvent.get('duration').touched)?'form-control is-invalid':'form-control'"
+          id="inpDuration" placeholder="Duración" formControlName="duration">
+        <div class="invalid-feedback" *ngIf="!frmNewEvent.get('duration').valid && frmNewEvent.get('duration').touched">
+          <span *ngIf="frmNewEvent.get('duration').errors['required']">
+            ¡Por favor ingrese una duración!
+          </span>
+        </div>
+      </div>
+    </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <!-- <button mat-button mat-dialog-close  mat-stroked-button >Cancel</button>

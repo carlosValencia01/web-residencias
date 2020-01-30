@@ -1,0 +1,20 @@
+.element-detail {
+    overflow: hidden;
+    display: flex;
+}
+
+tr.detail-row {
+    height: 0;
+}
+
+.element-row td {
+    border-bottom-width: 0;
+}
+
+tr.element-row:not(.expanded-row):hover {
+    background: #e0dbdb;
+}
+
+tr.element-row:not(.expanded-row):active {
+    background: #e0dbdb;
+}

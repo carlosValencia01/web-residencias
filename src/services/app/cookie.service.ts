@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
+import { IPosition } from 'src/entities/shared/position.model';
 
 
 @Injectable()
@@ -12,11 +13,35 @@ export class CookiesService {
     }
 
     saveData(data) {
-        this.cookieService.set( 'session', JSON.stringify(data) );
+        this.cookieService.set('session', JSON.stringify(data));
     }
 
     getData() {
-        return JSON.parse( this.cookieService.get('session') );
+        return JSON.parse(this.cookieService.get('session'));
+    }
+
+    saveFolder(folder) {
+        this.cookieService.set('folder', folder);
+    }
+
+    getFolder() {
+        return this.cookieService.get('folder');
+    }
+
+    savePosition(position: IPosition) {
+        this.cookieService.set('position', JSON.stringify(position));
+    }
+
+    getPosition(): IPosition {
+        return JSON.parse(this.cookieService.get('position'));
+    }
+
+    saveBosses(bosses: any) {        
+        this.cookieService.set('bosses', JSON.stringify(bosses));
+    }
+
+    getBosses(): any {
+        return JSON.parse(this.cookieService.get('bosses'));
     }
 
     deleteCookie() {

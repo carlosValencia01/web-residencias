@@ -9,7 +9,8 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
 import Swal from 'sweetalert2';
-import { StepperDocumentComponent } from 'src/app/stepper-document/stepper-document.component';
+import { StepperDocumentComponent } from 'src/modals/reception-act/stepper-document/stepper-document.component';
+import { CookiesService } from 'src/services/app/cookie.service';
 @Component({
   selector: 'app-upload-file-titled',
   templateUrl: './upload-file-titled.component.html',
@@ -22,7 +23,7 @@ export class UploadFileTitledComponent implements OnInit {
   public UploadCedula: IDocument;
   public UploadXML: IDocument;
   constructor(private _RequestService: RequestService, public _RequestProvider: RequestProvider,
-    public dialog: MatDialog, public _NotificationsServices: NotificationsServices) { }
+    public dialog: MatDialog, public _NotificationsServices: NotificationsServices,private _CookiesService: CookiesService) { }
 
   ngOnInit() {
     this.UploadINE = { type: eFILES.INE, status: eStatusRequest.NONE, file: null, isBase64: false };
@@ -173,11 +174,9 @@ export class UploadFileTitledComponent implements OnInit {
   onSend(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let document: any;
-    const frmData = new FormData();
-    frmData.append('ControlNumber', this.Request.student.controlNumber);
-    frmData.append('FullName', this.Request.student.fullName);
-    frmData.append('Career', this.Request.student.career);
+    const frmData = new FormData();  
     frmData.append('Document', type);
+    frmData.append('folderId', this._CookiesService.getFolder());
     frmData.append('IsEdit', "false");
     switch (type) {
       case eFILES.INE: {

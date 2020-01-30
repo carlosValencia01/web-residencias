@@ -9,191 +9,71 @@
         </div>
       </div>
       <div class="row">
-        <div class="form-group col-md-12 col-lg-6">
-          <label class="form-col-form-label" for="name">Nombre</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-user"></i></span>
-            </div>
-            <input type="text"
-                   [ngClass]="(!frmRequest.get('name').valid && frmRequest.get('name').touched)?'form-control is-invalid':'form-control'"
-                   id="name" formControlName="name" placeholder="Nombre"
-                   oninput="this.value = this.value.toUpperCase()" readonly>
-            <div class="invalid-feedback" *ngIf="!frmRequest.get('name').valid && frmRequest.get('name').touched">
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-6">
+          <mat-label>Nombre</mat-label>
+          <input matInput type="text" formControlName="name" placeholder="Nombre"
+            oninput="this.value = this.value.toUpperCase()" required>
+          <mat-error *ngIf="!frmRequest.get('name').valid && frmRequest.get('name').touched">
             <span *ngIf="frmRequest.get('name').errors['required']">
               ¡Por favor ingrese un nombre!
             </span>
-            </div>
-          </div>
-        </div>
-        <div class="form-group col-md-12 col-lg-6">
-          <label class="form-col-form-label" for="lastname">Apellidos</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-user"></i></span>
-            </div>
-            <input type="text"
-                   [ngClass]="(!frmRequest.get('lastname').valid && frmRequest.get('lastname').touched)?'form-control is-invalid':'form-control'"
-                   id="lastname" formControlName="lastname" placeholder="Apellidos"
-                   oninput="this.value = this.value.toUpperCase()" readonly>
-            <div class="invalid-feedback"
-                 *ngIf="!frmRequest.get('lastname').valid && frmRequest.get('lastname').touched">
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-6">
+          <mat-label>Apellidos</mat-label>
+          <input matInput type="text" formControlName="lastname" placeholder="Apellidos"
+            oninput="this.value = this.value.toUpperCase()" required>
+          <mat-error *ngIf="!frmRequest.get('lastname').valid && frmRequest.get('lastname').touched">
             <span *ngIf="frmRequest.get('lastname').errors['required']">
               ¡Por favor ingrese sus apellidos!
             </span>
-            </div>
-          </div>
-        </div>
+          </mat-error>
+        </mat-form-field>
       </div>
       <div class="row">
-        <div class="form-group col-md-12 col-lg-6">
-          <label class="form-col-form-label" for="telephone">Número Telefónico</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-phone"></i></span>
-            </div>
-            <input type="text"
-                   [ngClass]="(!frmRequest.get('telephone').valid && frmRequest.get('telephone').touched)?'form-control is-invalid':'form-control'"
-                   id="telephone" formControlName="telephone" placeholder="(311)-102-3456">
-            <div class="invalid-feedback"
-                 *ngIf="!frmRequest.get('telephone').valid && frmRequest.get('telephone').touched">
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-6">
+          <mat-label>Número telefónico</mat-label>
+          <input matInput type="text" formControlName="telephone" placeholder="(311)-102-3456" required>
+          <mat-error *ngIf="!frmRequest.get('telephone').valid && frmRequest.get('telephone').touched">
             <span *ngIf="frmRequest.get('telephone').errors['required']">
-              Número telefónico obligatorio
+              ¡Número telefónico obligatorio!
             </span>
-
-              <span *ngIf="frmRequest.get('telephone').errors['pattern']">
-              Número telefónico incorrecto
+            <span *ngIf="frmRequest.get('telephone').errors['pattern']">
+              ¡Número telefónico incorrecto!
             </span>
-            </div>
-          </div>
-        </div>
-        <div class="form-group col-md-12 col-lg-6">
-          <label class="form-col-form-label" for="email">Correo electrónico</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-            </div>
-            <input type="email"
-                   [ngClass]="(!frmRequest.get('email').valid && frmRequest.get('email').touched)?'form-control is-invalid':'form-control'"
-                   id="email" formControlName="email" placeholder="Correo electrónico">
-            <div class="invalid-feedback" *ngIf="!frmRequest.get('email').valid && frmRequest.get('email').touched">
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-6">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="Correo electrónico" required>
+          <mat-error *ngIf="!frmRequest.get('email').valid && frmRequest.get('email').touched">
             <span *ngIf="frmRequest.get('email').errors['required']">
-              Correo electrónico obligatorio
+              ¡Correo electrónico obligatorio!
             </span>
-              <span *ngIf="frmRequest.get('email').errors['email']">
-              Ingrese un correo válido
+            <span *ngIf="frmRequest.get('email').errors['email']">
+              ¡Ingrese un correo válido!
             </span>
-            </div>
-          </div>
-        </div>
+          </mat-error>
+        </mat-form-field>
       </div>
       <div class="row">
-        <div class="form-group col-md-12 col-lg-6">
-          <label class="form-col-form-label" for="adviser">Asesor</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-male"></i></span>
-            </div>
-            <input type="text" id="adviser" formControlName="adviser" placeholder="Nombre del Asesor"
-               [ngClass]="(!frmRequest.get('adviser').valid && frmRequest.get('adviser').touched)?'form-control is-invalid':'form-control'"
-               oninput="this.value = this.value.toUpperCase()">
-            <div class="input-group-append" (click)="selectAdviser()">
-              <span class="input-group-text btn">...</span>
-            </div>
-            <div class="invalid-feedback" *ngIf="!frmRequest.get('adviser').valid && frmRequest.get('adviser').touched">
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-6">
+          <mat-label>Asesor</mat-label>
+          <input matInput type="text" formControlName="adviser" placeholder="Nombre del Asesor"
+            oninput="this.value = this.value.toUpperCase()" required>
+          <button [disabled]="this.frmRequest.disabled" mat-icon-button matSuffix type="button"
+            (click)="selectAdviser()">
+            <mat-icon>add_circle</mat-icon>
+          </button>
+          <mat-error *ngIf="!frmRequest.get('adviser').valid && frmRequest.get('adviser').touched">
             <span *ngIf="frmRequest.get('adviser').errors['required']">
-              Nombre del asesor obligatorio
+              ¡Nombre del asesor obligatorio!
             </span>
-            </div>
-          </div>
-        </div>
-        <div class="form-group col-md-12 col-lg-6">
-          <label class="form-col-form-label" for="noIntegrants">Número de integrantes</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-group"></i></span>
-            </div>
-            <input type="number" pKeyFilter="pnum" min="1"
-                   [ngClass]="(!frmRequest.get('noIntegrants').valid && frmRequest.get('noIntegrants').touched)?'form-control is-invalid':'form-control'"
-                   id="noIntegrants" formControlName="noIntegrants" placeholder="Número de integrantes"
-                   oninput="this.value = this.value.toUpperCase()">
-            <div class="input-group-append" (click)="addIntegrants()"
-                 *ngIf="this.frmRequest.get('noIntegrants').value>1">
-              <span class="input-group-text btn">...</span>
-            </div>
-            <div class="invalid-feedback"
-                 *ngIf="!frmRequest.get('noIntegrants').valid && frmRequest.get('noIntegrants').touched">
-            <span *ngIf="frmRequest.get('noIntegrants').errors['required']">
-              Número de integrantes obligatorio
-            </span>
-              <span *ngIf="frmRequest.get('noIntegrants').errors['pattern']">
-              Ingrese un valor superior a 0
-            </span>
-              <span *ngIf="frmRequest.get('noIntegrants').errors['notEntered']">
-              Registro de integrantes obligatorio
-            </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12 col-lg-12">
-          <label class="form-col-form-label" for="project">Proyecto</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-folder"></i></span>
-            </div>
-            <input type="text"
-                   [ngClass]="(!frmRequest.get('project').valid && frmRequest.get('project').touched)?'form-control is-invalid':'form-control'"
-                   id="project" formControlName="project" placeholder="Nombre del proyecto"
-                   oninput="this.value = this.value.toUpperCase()">
-            <div class="invalid-feedback" *ngIf="!frmRequest.get('project').valid && frmRequest.get('project').touched">
-            <span *ngIf="frmRequest.get('project').errors['required']">
-              Nombre del proyecto obligatorio
-            </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12 col-lg-12">
-          <label class="form-col-form-label" for="name">Producto</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-thermometer"></i></span>
-            </div>
-            <input type="text"
-                   [ngClass]="(!frmRequest.get('product').valid && frmRequest.get('product').touched)?'form-control is-invalid':'form-control'"
-                   id="product" formControlName="product" placeholder="Producto"
-                   oninput="this.value = this.value.toUpperCase()">
-            <div class="invalid-feedback" *ngIf="!frmRequest.get('product').valid && frmRequest.get('product').touched">
-            <span *ngIf="frmRequest.get('product').errors['required']">
-              ¡Por favor ingrese el producto obtenido!
-            </span>
-            </div>
-          </div>
-        </div>
-        <!-- <div class="form-group col-md-12 col-lg-6">
-          <label class="form-col-form-label" for="date">Día propuesto para titulación</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-calendar"></i></span>
-            </div>
-            <input type="date" id="date" formControlName="dateProposed"
-                   [ngClass]="(!frmRequest.get('dateProposed').valid && frmRequest.get('dateProposed').touched)?'form-control is-invalid':'form-control'">
-            <div class="invalid-feedback"
-                 *ngIf="!frmRequest.get('dateProposed').valid && frmRequest.get('dateProposed').touched">
-            <span *ngIf="frmRequest.get('dateProposed').errors['required']">
-              Día propuesto obligatorio
-            </span>
-            </div>
-          </div>
-        </div> -->
-      </div>
-      <div class="row">
-        <div class="form-group col-md-12 col-lg-6" [ngSwitch]="operationMode">
+          </mat-error>
+        </mat-form-field>
+      <div class="form-group col-md-12 col-lg-6" [ngSwitch]="operationMode">
+          <label class="form-col-form-label" for="project">Portada del Proyecto</label>
           <div *ngSwitchCase="1">
-            <label class="form-col-form-label" for="project">Portada del Proyecto</label>
             <div class="form-group form-actions">
               <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
               <button [disabled]="!isEdit" type="button" class="btn btn-outline-success btn-block"
@@ -201,16 +81,78 @@
               </button>
             </div>
           </div>
+          <div *ngSwitchCase="5">
+            <div class="form-group form-actions">
+              <button [disabled]="!isEdit" type="button" class="btn btn-outline-success btn-block">Cargar
+                Portada</button>
+            </div>
+          </div>
           <div *ngSwitchDefault>
-            <label class="form-col-form-label" for="project">Portada del Proyecto</label>
             <div class="form-group form-actions">
               <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
-              <button type="button" [class]="fileData ? 'btn btn-outline-success btn-block' : 'btn btn-outline-danger btn-block'"
+              <button type="button"
+                [class]="fileData ? 'btn btn-outline-success btn-block' : 'btn btn-outline-danger btn-block'"
                 (click)="fileUpload.click()">Cargar Portada
               </button>
             </div>
           </div>
         </div>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline" class="col-12">
+          <mat-label>Proyecto</mat-label>
+          <input matInput type="text" formControlName="project" placeholder="Nombre del proyecto"
+            oninput="this.value = this.value.toUpperCase()" required>
+          <mat-error *ngIf="!frmRequest.get('project').valid && frmRequest.get('project').touched">
+            <span *ngIf="frmRequest.get('project').errors['required']">
+              ¡Nombre del proyecto obligatorio!
+            </span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-6">
+          <mat-label>Opción de titulación</mat-label>
+          <input matInput type="text" formControlName="titulationOption" placeholder="Opción de titulación"
+            oninput="this.value = this.value.toUpperCase()" required>
+          <mat-error *ngIf="!frmRequest.get('titulationOption').valid && frmRequest.get('titulationOption').touched">
+            <span *ngIf="frmRequest.get('titulationOption').errors['required']">
+              ¡Por favor ingrese la opción de titulación!
+            </span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-6">
+          <mat-label>Producto</mat-label>
+          <input matInput type="text" formControlName="product" placeholder="Producto"
+            oninput="this.value = this.value.toUpperCase()" required>
+          <mat-error *ngIf="!frmRequest.get('product').valid && frmRequest.get('product').touched">
+            <span *ngIf="frmRequest.get('product').errors['required']">
+              ¡Por favor ingrese el producto obtenido!
+            </span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <!-- <div class="row">
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-6">
+          <mat-label>Número de integrantes</mat-label>
+          <input matInput type="number" pKeyFilter="pnum" min="1" formControlName="noIntegrants"
+            placeholder="Número de integrantes">
+          <button type="button" *ngIf="this.frmRequest.get('noIntegrants').value>1" mat-icon-button matSuffix
+            (click)="addIntegrants()">
+            <mat-icon>add_circle</mat-icon>
+          </button>
+          <mat-error *ngIf="!frmRequest.get('noIntegrants').valid && frmRequest.get('noIntegrants').touched">
+            <span *ngIf="frmRequest.get('noIntegrants').errors['required']">
+              ¡Número de integrantes obligatorio!
+            </span>
+            <span *ngIf="frmRequest.get('noIntegrants').errors['pattern']">
+              ¡Ingrese un valor superior a 0!
+            </span>
+            <span *ngIf="frmRequest.get('noIntegrants').errors['notEntered']">
+              ¡Registro de integrantes obligatorio!
+            </span>
+          </mat-error>
+        </mat-form-field>
         <div class="col-md-12 col-lg-6" stlye="padding: 0.375rem 0.75rem" [ngSwitch]="operationMode">
           <label class="form-col-form-label" for="project">Mención honorífica</label>
           <div *ngSwitchCase="1">
@@ -228,29 +170,35 @@
             </button>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="card-footer text-right" [ngSwitch]="operationMode">
       <div *ngSwitchCase="0">
         <button type="submit" class="btn btn-outline-success" style="margin-right: 0.3em"
-                [disabled]="frmRequest.invalid"> Guardar
-        </button>
-        <button type="reset" class="btn btn-outline-danger"> Reiniciar</button>
+          [disabled]="frmRequest.invalid">Guardar</button>
+        <button type="reset" class="btn btn-outline-danger">Reiniciar</button>
+      </div>
+      <div *ngSwitchCase="5">
+        <button *ngIf="isSentVerificationCode" type="button" (click)="verifyEmail()" class="btn btn-outline-primary"
+          style="margin-right: 0.3em">Verificar correo</button>
+        <button *ngIf="!isSentVerificationCode" type="button" (click)="sendVerificationCode()" class="btn btn-outline-secondary"
+          style="margin-right: 0.3em">Envíar código</button>
+        <button type="button" class="btn btn-outline-success" style="margin-right: 0.3em"
+          (click)="Edit()">Editar</button>
       </div>
       <div *ngSwitchDefault>
         <div *ngIf="!isEdit">
           <button type="button" (click)="generateRequestPDF()" class="btn btn-outline-secondary"
-                  style="margin-right: 0.3em"> Generar</button>
-          <button type="buton" class="btn btn-outline-success" style="margin-right: 0.3em" (click)="Edit()"> Editar
-          </button>
-          <button type="button" (click)="Send()" class="btn btn-outline-primary"> Enviar</button>
+            style="margin-right: 0.3em">Generar</button>
+          <button type="button" class="btn btn-outline-success" style="margin-right: 0.3em"
+            (click)="Edit()">Editar</button>
+          <button type="button" (click)="Send()" class="btn btn-outline-primary">Enviar</button>
         </div>
         <div *ngIf="isEdit">
           <button type="submit" class="btn btn-outline-success" style="margin-right: 0.3em"
-                  [disabled]="frmRequest.invalid"> Guardar
-          </button>
-          <button type="reset" class="btn btn-outline-danger"> Reiniciar</button>
+            [disabled]="frmRequest.invalid">Guardar</button>
+          <button type="button" (click)="cancelEdit()" class="btn btn-outline-danger">Cancelar</button>
         </div>
       </div>
     </div>

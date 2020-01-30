@@ -129,7 +129,7 @@ export class StudentProvider {
     request(id, data) {
         return this.api.post(`request/create/${id}`, data, true).pipe(map(res => res.json()));
     }
-  
+
     updateRequest(id, data) {
         return this.api.put(`request/${id}`, data, true).pipe(map(res => res.json()));
     }
@@ -137,6 +137,7 @@ export class StudentProvider {
     addIntegrants(id, data) {
         return this.api.put(`request/${id}/integrants`, data, true).pipe(map(res => res.json()));
     }
+
     getRequest(id) {
         return this.api.get(`student/request/${id}`).pipe(map(res => res.json()));
     }
@@ -149,6 +150,7 @@ export class StudentProvider {
     getDriveDocuments(studentId: string): Observable<any> {
         return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
     }
+
     getFolderId(studentId: String): Observable<any> {
         return this.api.get(`student/get/folderid/${studentId}`).pipe(map(res => res.json()));
     }
@@ -164,9 +166,11 @@ export class StudentProvider {
     getDriveFolderId(controlNumber: string, type: number): Observable<any> {
         return this.api.get(`student/get/folderid/${controlNumber}/${type}`).pipe(map(res => res.json()));
     }
+
     getPeriodId(studentId: string): Observable<any> {
         return this.api.get(`student/get/periodinscription/${studentId}`).pipe(map(res => res.json()));
     }
+
     updateDocumentStatus(id, data): Observable<any> {
         return this.api.put(`student/document/status/${id}`, data).pipe(map(res => res.json())).pipe(
             tap(() => {

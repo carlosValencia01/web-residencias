@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="col-10 text-center">
+    <h1 mat-dialog-title>Generador de Oficios</h1>
+  </div>
+  <div class="col-2">
+    <button mat-icon-button [mat-dialog-close] class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<mat-dialog-content>
+  <div class="row">
+    <label for="oficio">Oficio</label>
+    <input type="text" [ngClass]="existError?'form-control is-invalid':'form-control'" [(ngModel)]="oficio" />
+    <div class="invalid-feedback" *ngIf="existError">
+      <span>Oficio Obligatorio</span>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <mat-radio-group aria-label="Selecciona una opción" [(ngModel)]="jury">
+      <mat-radio-button value="Presidente">Presidente</mat-radio-button>
+      <mat-radio-button value="Secretario"> Secretario</mat-radio-button>
+      <mat-radio-button value="Vocal"> Vocal</mat-radio-button>
+      <mat-radio-button value="Suplente"> Suplente</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <button type="button" (click)="Generar()" class="btn btn-outline-success" style="margin-right: 0.3em">
+    Generar
+  </button>
+</mat-dialog-content>

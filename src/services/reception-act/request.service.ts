@@ -9,7 +9,6 @@ export class RequestService {
 
     public AddRequest(request: iRequest, phase: eRequest, isEdit: boolean = false): void {
         this.Request = request;
-        console.log('ADD REQUEST service', this.Request);
         (async () => {
             await this.delay(150);
             this.requestUpdate.emit({ Request: this.Request, Phase: phase, IsEdit: isEdit });

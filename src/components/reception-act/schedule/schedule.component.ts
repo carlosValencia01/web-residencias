@@ -11,6 +11,7 @@ import { RequestService } from 'src/services/reception-act/request.service';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { ISchedule } from 'src/entities/reception-act/schedule.model';
+import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 
 @Component({
   selector: 'app-schedule',
@@ -28,7 +29,7 @@ import { ISchedule } from 'src/entities/reception-act/schedule.model';
 export class ScheduleComponent implements OnInit {
   // @Input('Request') size;
   @Output('onResponse') eventResponse = new EventEmitter<boolean>();
-  maxDate: Date = new Date(2019, 11, 15);
+  maxDate: Date;
   excludeDays: number[] = [0, 6];
   viewDate = new Date();
   events: CalendarEvent[];
@@ -40,7 +41,7 @@ export class ScheduleComponent implements OnInit {
   // diary: Array<ISchedule>;
   career: String;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices, private _RequestService: RequestService,
-    private _CookiesService: CookiesService) {
+    private _CookiesService: CookiesService, public _InscriptionsProvider: InscriptionsProvider) {
     const user = this._CookiesService.getData().user;
     this.career = user.career;
   }
@@ -52,12 +53,17 @@ export class ScheduleComponent implements OnInit {
         let hours = this.request.proposedHour / 60;
         let minutes = this.request.proposedHour % 60;
         this.hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
-        this.schedule(this.viewDate.getMonth(), this.viewDate.getFullYear());
       }
     );
-    // this.schedule(this.viewDate.getMonth(), this.viewDate.getFullYear());
-  }
 
+    this._InscriptionsProvider.getActivePeriod().subscribe(
+      periodo => {
+        if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
+          this.maxDate = new Date(periodo.period.arecPerEndDate);
+          this.schedule(this.viewDate.getMonth(), this.viewDate.getFullYear());
+        }
+      });
+  }
   //Retorna los eventos que estan en la misma hora que el estudiante
   getEvents(Schedule: any): Array<ISchedule> {
     let diary: Array<ISchedule> = [];
@@ -150,8 +156,8 @@ export class ScheduleComponent implements OnInit {
           // let tmp: { fecha: Date, count: Number } = this.citas.find(x => x.fecha.getTime() === lDate.getTime());   
 
           let tmp: { date: Date, count: Number } = this.appointments.find(x => x.date.getTime() === lDate.getTime());
-          console.log("compar", lDate.getTime(), "dd", tmp);
-          console.log("ranges", this.ranges);
+          // console.log("compar", lDate.getTime(), "dd", tmp);
+          // console.log("ranges", this.ranges);
           let tmpRange = this.ranges.find(x => x.start.getTime() <= lDate.getTime() && lDate.getTime() <= x.end.getTime());
           if (typeof (tmp) === 'undefined')
             day.cssClass = 'free';

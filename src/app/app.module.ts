@@ -30,9 +30,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: environment.filesURL,
   maxFilesize: 3,
   acceptedFiles: 'application/pdf',
-  maxFiles:1
+  maxFiles: 1
 };
-
 
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { ContextMenuModule } from 'ngx-contextmenu';
@@ -79,7 +78,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 // App module
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
@@ -209,6 +208,7 @@ import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/posi
 import { NewPositionComponent } from 'src/modals/electronic-signature/new-position/new-position.component';
 import { PositionsHistoryComponent } from 'src/modals/electronic-signature/positions-history/positions-history.component';
 import { SelectPositionComponent } from 'src/modals/electronic-signature/select-position/select-position.component';
+import { UploadEmployeesCsvComponent } from 'src/modals/electronic-signature/upload-employees-csv/upload-employees-csv.component';
 // Providers
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
@@ -235,15 +235,17 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { CustomDateFormatter } from 'src/providers/reception-act/custom-date-formatter.provider';
 import { DiaryComponent } from '../pages/reception-act/diary/diary.component';
-import { RangePageComponent } from './range-page/range-page.component';
-import { RangeModalComponent } from './range-modal/range-modal.component';
+import { RangePageComponent } from '../pages/reception-act/range-page/range-page.component';
+import { RangeModalComponent } from '../modals/reception-act/range-modal/range-modal.component';
 import { RangeProvider } from 'src/providers/reception-act/range.prov';
-import { NewEventComponent } from './new-event/new-event.component';
-import { ViewMoreComponent } from './view-more/view-more.component';
-import { StepperDocumentComponent } from './stepper-document/stepper-document.component';
-import { UploadDeliveredComponent } from './upload-delivered/upload-delivered.component';
-import { ViewAppointmentPageComponent } from './view-appointment-page/view-appointment-page.component';
+import { NewEventComponent } from '../modals/reception-act/new-event/new-event.component';
+import { ViewMoreComponent } from '../modals/reception-act/view-more/view-more.component';
+import { StepperDocumentComponent } from '../modals/reception-act/stepper-document/stepper-document.component';
+import { UploadDeliveredComponent } from '../modals/reception-act/upload-delivered/upload-delivered.component';
+import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appointment-page/view-appointment-page.component';
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
+import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
+import { NewTitleComponent } from '../modals/reception-act/new-title/new-title.component';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -316,7 +318,7 @@ registerLocaleData(localeEs);
     ReleaseComponentComponent,
     RequestModalComponent,
     SteepComponentComponent,
-
+    NewTitleComponent,
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -346,6 +348,7 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
+    UploadEmployeesCsvComponent,
 
     // Shared
     // Components
@@ -370,6 +373,7 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ViewAppointmentPageComponent,
     UploadFileTitledComponent,
+    ActNotificacionComponent    
   ],
   imports: [
     // Angular
@@ -519,7 +523,8 @@ registerLocaleData(localeEs);
     RangeModalComponent,
     StepperDocumentComponent,
     UploadDeliveredComponent,
-
+    ActNotificacionComponent,
+    NewTitleComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,
@@ -536,7 +541,8 @@ registerLocaleData(localeEs);
     NewPositionComponent,
     PositionsHistoryComponent,
     SelectPositionComponent,
-    
+    UploadEmployeesCsvComponent,
+
     // Graduation
     // Modals
     NewGraduationEventComponent,

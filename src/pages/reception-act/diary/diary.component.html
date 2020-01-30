@@ -35,16 +35,16 @@
     <div class="row text-center">
       <div class="col-md-4">
         <div class="btn-group" style="border: 1px;">
-          <div class="btn btn-light" mwlCalendarPreviousView [view]="view" [excludeDays]="excludeDays" [(viewDate)]="viewDate"
-            (viewDateChange)="closeOpenMonthViewDay()" data-toggle="tooltip" title="Anterior">
+          <div class="btn btn-light" mwlCalendarPreviousView [view]="view" [excludeDays]="excludeDays"
+            [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()" data-toggle="tooltip" title="Anterior">
             <i class="fa fa-chevron-left"></i>
           </div>
           <div class="btn btn-light" mwlCalendarToday (viewDateChange)="closeOpenMonthViewDay()" [(viewDate)]="viewDate"
             data-toggle="tooltip" title="Hoy">
             <i class="fa fa-calendar"></i>
           </div>
-          <div class="btn btn-light" mwlCalendarNextView [view]="view" [excludeDays]="excludeDays" [(viewDate)]="viewDate"
-            (viewDateChange)="closeOpenMonthViewDay()" data-toggle="tooltip" title="Siguiente">
+          <div class="btn btn-light" mwlCalendarNextView [view]="view" [excludeDays]="excludeDays"
+            [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()" data-toggle="tooltip" title="Siguiente">
             <i class="fa fa-chevron-right"></i>
           </div>
         </div>
@@ -71,14 +71,15 @@
     <div [ngSwitch]="view" class="mt-3">
       <mwl-calendar-month-view *ngSwitchCase="'month'" [viewDate]="viewDate" [events]="events"
         (beforeViewRender)="beforeMonthViewRender($event)" [locale]="locale" [refresh]="refresh"
-        [excludeDays]="excludeDays"
-        [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)">
+        [excludeDays]="excludeDays" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)">
       </mwl-calendar-month-view>
-      <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" 
-      [excludeDays]="excludeDays" [events]="events" [dayStartHour]="7"
-        [locale]="locale" [dayEndHour]="19" [refresh]="refresh" [headerTemplate]="weekHeaderTemplate"
+      <!-- <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" [events]="events"
+        (eventClicked)="eventClicked($event)"></mwl-calendar-week-view> -->
+      <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" [excludeDays]="excludeDays" [events]="events"
+        [dayStartHour]="7" [locale]="locale" [dayEndHour]="19" [refresh]="refresh" [headerTemplate]="weekHeaderTemplate"
         [hourSegmentTemplate]="weekViewHourSegment" [eventTemplate]="customCellTemplate">
       </mwl-calendar-week-view>
+
       <!-- (eventClicked)="appointmentClicked($event.event)" -->
       <!-- Vista Día -->
       <!-- <mwl-calendar-day-view *ngSwitchCase="'day'" [viewDate]="viewDate" [events]="events" [dayStartHour]="7"
@@ -99,6 +100,13 @@
           Agregar
           Evento</div>
       </ng-template>
+      <ng-template contextMenuItem (execute)="addTitled($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
+          Agregar
+          Titulación</div>
+      </ng-template>
       <ng-template class="mt-1" contextMenuItem (execute)="cancelledEvent($event.item)">
         <div style=" border-style: solid;
         border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
@@ -112,7 +120,8 @@
         <div style=" border-style: solid;
               border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#08a3bc"
             class="fa fa-calendar-check-o"></i>
-          Confirmar Evento</div>
+          Confirmar
+          Evento</div>
       </ng-template>
       <ng-template contextMenuItem (execute)="addEvent($event.item)">
         <div style=" border-style: solid;
@@ -127,6 +136,14 @@
             class="fa fa-ban"></i>
           Rechazar Evento</div>
       </ng-template>
+
+      <ng-template contextMenuItem (execute)="addTitled($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
+          Agregar
+          Titulación</div>
+      </ng-template>
     </context-menu>
 
     <ng-template #customCellTemplate let-weekEvent="weekEvent" let-tooltipPlacement="tooltipPlacement"
@@ -137,7 +154,7 @@
         [style.borderColor]="weekEvent.event.color?.primary"
         [mwlCalendarTooltip]="!tooltipDisabled ? (weekEvent.event.title | calendarEventTitle:'weekTooltip':weekEvent.event) : ''"
         [tooltipPlacement]="tooltipPlacement" [tooltipEvent]="weekEvent.event" [tooltipTemplate]="tooltipTemplate"
-        [tooltipAppendToBody]="tooltipAppendToBody" (mwlClick)="eventClicked.emit()">
+        [tooltipAppendToBody]="tooltipAppendToBody" (mwlClick)="eventClicked.emit(weekEvent.event)">
         <div *ngIf="weekEvent.event.color.secondary==='#69f0ae'" [contextMenu]="basicMenu"
           [contextMenuSubject]="weekEvent.event">
           <div class="cal-cell-top text-right" style="color: #b64443;">
@@ -199,6 +216,13 @@
       <ng-template contextMenuItem (execute)="addNewEvent($event.item)">
         <div style=" border-style: solid; border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>Agregar Evento</div>
+      </ng-template>
+      <ng-template contextMenuItem (execute)="addNewTitled($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
+          <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
+          Agregar
+          Titulación</div>
       </ng-template>
     </context-menu>
 

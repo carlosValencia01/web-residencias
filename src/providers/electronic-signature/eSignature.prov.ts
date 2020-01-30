@@ -12,13 +12,18 @@ export class ESignatureProvider {
       .pipe(map(res => res.json()));
   }
 
-  getDocument() {
-    return this.api.getE('eSignature')
+  getDocument(employeeId, positionId) {
+    return this.api.getE(`eSignature/${employeeId}/${positionId}`)
       .pipe(map(data => data));
   }
 
   hasESignature(rfc, positionId) {
     return this.api.getE(`eSignature/has/${rfc}/${positionId}`)
+      .pipe(map(res => res.json()));
+  }
+
+  sign(data) {
+    return this.api.postE('eSignature/sign', data)
       .pipe(map(res => res.json()));
   }
 }

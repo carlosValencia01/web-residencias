@@ -6,6 +6,7 @@ import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
+import { CookiesService } from 'src/services/app/cookie.service';
 
 @Component({
   selector: 'app-viewer-component',
@@ -23,6 +24,10 @@ export class ViewerComponentComponent implements OnInit {
   @Input('Title') _Title: String;
   // tslint:disable-next-line: no-input-rename
   @Input('Type') Type: String;
+  // tslint:disable-next-line: no-input-rename
+  @Input('QR')  QR: String;
+  // tslint:disable-next-line: no-input-rename
+  @Input('EStamp')  EStamp: String;
   public message: string;
   public Title: String;
   public existTitle: boolean;
@@ -33,6 +38,7 @@ export class ViewerComponentComponent implements OnInit {
     private imgService: ImageToBase64Service,
     private _RequestService: RequestService,
     private requestProvider: RequestProvider,
+    private _CookiesService: CookiesService
   ) { }
 
   ngOnInit() {
@@ -49,7 +55,7 @@ export class ViewerComponentComponent implements OnInit {
     //   }
     // );
     // if (typeof (this.oRequest) !== 'undefined') {
-    this.oRequest = new uRequest(this._Request, this.imgService);
+    this.oRequest = new uRequest(this._Request, this.imgService, this._CookiesService);
     this.PHASE = <eRequest>this._Phase;
     this.loadMessage(<eRequest>this._Phase);
     this.existTitle = this._Title !== '';
@@ -117,15 +123,15 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.RELEASED: {
-        window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.RELEASED}/${this._Request._id}`, '_blank');
+        window.open(`${this.requestProvider.getApiURL()}/request/${this._Request._id}/file/${eFILES.RELEASED}`, '_blank');
         break;
       }
       case eRequest.REGISTERED: {
-        window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
+        window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         break;
       }
       case eRequest.VERIFIED: {
-        window.open(this.oRequest.projectRegistrationOffice().output('bloburl'), '_blank');
+        window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         break;
       }
       case eRequest.SENT: {
