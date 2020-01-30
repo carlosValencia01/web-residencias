@@ -33,7 +33,7 @@ export class SteepComponentComponent implements OnInit {
   SteepThreeCompleted: boolean;
   public file;
   public password;
-  private QR;
+  public QR;
   public EStamp;
   private cookies;
   private employee;
