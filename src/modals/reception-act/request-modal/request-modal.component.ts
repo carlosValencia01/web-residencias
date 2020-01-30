@@ -92,7 +92,7 @@ export class RequestModalComponent implements OnInit {
       'lastname': this.request.student.lastName,
       'telephone': this.request.telephone,
       'email': this.request.email,
-      'adviser': this.request.adviser,
+      'adviser': this.request.adviser.name,
       'noIntegrants': this.request.noIntegrants,
       'observations': this.request.observation,
       'project': this.request.projectName,

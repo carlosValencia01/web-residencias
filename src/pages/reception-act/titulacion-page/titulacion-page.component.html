@@ -6,7 +6,7 @@
         <div class="row no-gutters">
           <div class="col-4">
             <div class="card-body text-center">
-              <img alt="File" src="../../../assets/imgs/sorry.png" style="width: 80px; height: 80px;">
+              <img alt="File" src="assets/imgs/sorry.png" style="width: 80px; height: 80px;">
             </div>
           </div>
           <div class="col-8">
@@ -38,7 +38,7 @@
           </mat-card-header>
           <mat-card-content>
             <img mat-card-image style="width:70px;margin:5px;"
-              [src]="isApprovedEnglish ? 'src/assets/imgs/approved.png' : 'src/assets/imgs/notApproved.png'">
+              [src]="isApprovedEnglish ? 'assets/imgs/approved.png' : 'assets/imgs/notApproved.png'">
           </mat-card-content>
           <mat-card-footer>
             <div *ngIf="isApprovedEnglish; else notApprovedEnglish">
@@ -56,7 +56,7 @@
           </mat-card-header>
           <mat-card-content>
             <img mat-card-image style="width:70px;margin:5px;"
-              [src]="isGraduate ? 'src/assets/imgs/approved.png' : 'src/assets/imgs/notApproved.png'">
+              [src]="isGraduate ? 'assets/imgs/approved.png' : 'assets/imgs/notApproved.png'">
           </mat-card-content>
           <mat-card-footer>
             <div *ngIf="isGraduate; else notGraduate">
@@ -463,7 +463,7 @@
               <div class="alert alert-info">
                 {{ProcessTitledMessageSubtitle}}
               </div>
-              <img src="src/assets/imgs/tramite_cedula.png" alt="Trámite de cédula electrónica" style="width:50%;margin:10px;">
+              <img src="assets/imgs/tramite_cedula.png" alt="Trámite de cédula electrónica" style="width:50%;margin:10px;">
               <br><a href="https://www.sat.gob.mx/tramites/16703/obten-tu-certificado-de-e.firma-(antes-firma-electronica)" target="_blank">Genera tu e-firma</a>
               <br><a href="https://www.gob.mx/tramites/ficha/expedicion-de-cedula-profesional-electronica/SEP6534" target="_blank">Tramita tu cédula electrónica</a>
               <app-upload-file-titled></app-upload-file-titled>
