@@ -1193,9 +1193,34 @@ export class ListGraduatesPageComponent implements OnInit {
       }
     });
   }
+  // Confirmar regresar status de asistió a registrado por alumno
+  confirmReturnStatusR(item) {
+    Swal.fire({
+      title: 'Regresar Estatus a Registrado',
+      text: 'Para ' + item.name,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then(async (result) => {
+      if (result.value) {
+        await this.returnRegisterEvent(item);
+      }
+    });
+  }
 
   returnVerifiedEvent(item) {
     this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Verificado'},this.collection).then(() =>{
+      this.eventFilterReport();
+    }, (error) => {
+      console.log(error);
+    });
+  }
+  returnRegisterEvent(item) {
+    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Registrado',invitados:[],numInvitados:0},this.collection).then(() =>{
       this.eventFilterReport();
     }, (error) => {
       console.log(error);
