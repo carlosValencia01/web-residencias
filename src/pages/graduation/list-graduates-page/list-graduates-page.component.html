@@ -248,6 +248,12 @@
                                     (click)="confirmReturnStatusV(item)">
                               </div>
                            </td>
+                           <td *ngIf="item.status === 'Verificado' && role === 'administration'">
+                              <div class="div-img" ngbTooltip="Regresar a Registrado" tooltipClass="my-custom-class">
+                                 <img src="../../assets/imgs/backVerified.png" class="action"
+                                    (click)="confirmReturnStatusR(item)">
+                              </div>
+                           </td>
                         </tr>
                </div>
                </td>
