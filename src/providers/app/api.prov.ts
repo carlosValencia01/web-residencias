@@ -111,6 +111,11 @@ export class Api {
         // .do(res => console.log(res));
     }
 
+    putE(endpoint: string, body: any) {
+        const options = new RequestOptions({ headers: this.headers });
+        return this.http.put(this.urlE + '/' + endpoint, body, options);
+    }
+
     delete(endpoint: string) {
         const options = new RequestOptions({ headers: this.headers });
         return this.http.delete(this.url + '/' + endpoint, options);
