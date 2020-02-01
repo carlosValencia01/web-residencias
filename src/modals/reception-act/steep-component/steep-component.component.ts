@@ -42,8 +42,8 @@ export class SteepComponentComponent implements OnInit {
   public filteredDepartments: Observable<Array<IDepartment>>;
   private departments: Array<IDepartment>;
   public enableNext;
-  public  fileFlag;
-  public  passwordFlag;
+  public fileFlag;
+  public passwordFlag;
 
   constructor(
     public dialogRef: MatDialogRef<SteepComponentComponent>,
@@ -74,7 +74,6 @@ export class SteepComponentComponent implements OnInit {
     this.employeeProvider.getEmployee(this.cookies.email).subscribe( res => {
       this.employee = res;
     });
-
   }
 
   // tslint:disable-next-line: use-life-cycle-interface

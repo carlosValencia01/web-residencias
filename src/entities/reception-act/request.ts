@@ -258,7 +258,7 @@ export class uRequest {
         return doc;
     }
 
-    noInconvenience(): jsPDF {
+    noInconvenience(qrCode?, eStamp?): jsPDF {
         const doc = this.newDocumentTec();
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Bold');
@@ -274,16 +274,18 @@ export class uRequest {
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(11);
         doc.text('C. ' + this._request.student.fullName, (this.WIDTH / 2), 115, { align: 'center' });
-
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(10);
         // tslint:disable-next-line: max-line-length
         this.justityText(doc, 'Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', { x: this.MARGIN.LEFT, y: 130 }, 180);
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(11);
-        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
+        /*doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
         doc.text('ISRAEL ARJONA VIZCAÍNO', this.MARGIN.LEFT, 170, { align: 'left' }); // Cambiar de forma dinámica
-        doc.text('JEFE DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });
+        doc.text('JEFE DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });*/
+
+        doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
+        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)),  this.MARGIN.LEFT + 45, 235);
 
         doc.setFontSize(11);
         doc.text('"Sabiduría Tecnológica, Pasión de nuestro Espíritu" ®', this.MARGIN.LEFT, 186, { align: 'left' });
