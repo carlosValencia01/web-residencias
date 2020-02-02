@@ -9,7 +9,19 @@
                <div style="overflow-x:auto; padding-top: 20px;">
                   <div class="row">
                      <div class="col-sm-3">
-                        <mat-card class = "cardEgresados"><b>Egresados</b><br>{{totalEgresados}}</mat-card>
+                        <mat-card class = "cardEgresados"><b>Egresados</b>
+                           <!-- <br>{{totalEgresados}} -->
+                           <mat-card-content>
+                              <div class="row text-center">
+                                 <div class="col">
+                                    H: {{totalEgresadosH}}
+                                 </div>
+                                 <div class="col">
+                                    M: {{totalEgresadosM}}
+                                 </div>
+                              </div>
+                           </mat-card-content>
+                        </mat-card>
                      </div>
                      <div class="col-sm-3">
                         <mat-card class = "cardCListos"><b>Verificados</b><br>{{totalVerificados}}</mat-card>

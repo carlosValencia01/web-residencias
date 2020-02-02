@@ -20,7 +20,7 @@
 
               </div>
             </div>            
-            <div style="margin-top: 15px;" *ngIf="csvObjects.length>0">
+            <div style="margin-top: 15px;" *ngIf="displayStudents.length>0">
               <h3>LISTADO DE ALUMNOS</h3>
               <div class="table-responsive d-none d-lg-block">
                 <table class="table table-striped table-bordered table-hover">
@@ -36,7 +36,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let student of csvObjects | paginate: {id:pag2, itemsPerPage: pageSize,
+                    <tr *ngFor="let student of displayStudents | paginate: {id:pag2, itemsPerPage: pageSize,
                       currentPage: page };">                    
                       <td>{{ student.nc }}</td>
                       <td>{{ student.nombreApellidos }}</td>
@@ -59,7 +59,7 @@
             </div>
               </div>
               <div >
-                <div class="row justify-content-center mt-3">                  
+                <div class="row justify-content-center mt-3" >                  
                   <div >
                     <button type="button" (click)="sendData()" class="btn btn-success">Enviar</button>
                   </div>
