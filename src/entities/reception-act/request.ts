@@ -340,8 +340,8 @@ export class uRequest {
         doc.text(this.JDeptoEsc.name, this.MARGIN.LEFT, 170, { align: 'left' }); // Cambiar de forma dinámica
         doc.text('JEFE DEL DEPARTAMENTO DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });
 
-        doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
-        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)),  this.MARGIN.LEFT + 45, 235);
+        // doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
+        // doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)),  this.MARGIN.LEFT + 45, 235);
 
         doc.setFontSize(11);
         doc.text('"Sabiduría Tecnológica, Pasión de nuestro Espíritu" ®', this.MARGIN.LEFT, 186, { align: 'left' });
