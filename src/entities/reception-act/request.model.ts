@@ -3,7 +3,7 @@ import { iIntegrant } from './integrant.model';
 
 export interface iRequest {
     _id?: string;
-    studentId?: string;
+    studentId?: any;
     student?: IStudent;
     controlNumber?: string;
     career?: string;
