@@ -1,7 +1,7 @@
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef, MatPaginator, MatTableDataSource } from '@angular/material';
 import * as Papa from 'papaparse';
 import Swal from 'sweetalert2';
 
@@ -20,8 +20,9 @@ import { IEmployee } from 'src/entities/shared/employee.model';
   ],
 })
 export class UploadEmployeesCsvComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   public employeesData: Array<any>;
-  public dataSource: Array<any>;
+  public dataSource: MatTableDataSource<any>;
   public expandedElement: IEmployeeCsv | null;
   public columnsToDisplay: Array<string>;
   public columnsNameToDisplay: Array<string>;
@@ -32,7 +33,9 @@ export class UploadEmployeesCsvComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<UploadEmployeesCsvComponent>,
-  ) { }
+  ) {
+    this.dataSource = new MatTableDataSource();
+  }
 
   ngOnInit() {
     this.columnsToDisplay = ['rfc', 'curp', 'email', 'firstName', 'lastName', 'gender', 'birthDate'];
@@ -96,7 +99,12 @@ export class UploadEmployeesCsvComponent implements OnInit {
                 }
               }
             });
-            this.dataSource = this.employeesData;
+            if (currentEmployee) {
+              this.employeesData.push(currentEmployee);
+              currentEmployee = null;
+            }
+            this.dataSource.data = this.employeesData;
+            this.dataSource.paginator = this.paginator;
           }
         }
       });
