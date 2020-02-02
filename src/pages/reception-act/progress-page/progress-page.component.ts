@@ -164,7 +164,7 @@ export class ProgressPageComponent implements OnInit {
   }
 
   public castRequest(element: any): iRequest {
-    let tmp: iRequest = new Object();//<iRequest>element;          
+    let tmp: iRequest = new Object();//<iRequest>element;
     tmp._id = element._id;
     tmp.status = this.convertStatus(element.status);
     tmp.controlNumber = element.studentId.controlNumber;
@@ -226,7 +226,8 @@ export class ProgressPageComponent implements OnInit {
     const ref = this.dialog.open(UploadDeliveredComponent, {
       disableClose: true,
       hasBackdrop: true,
-      width: '30em'
+      width: '25em',
+      data: {reqId: Identificador}
     });
 
     ref.afterClosed().subscribe((valor: boolean) => {

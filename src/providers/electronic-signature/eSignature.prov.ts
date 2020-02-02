@@ -26,4 +26,9 @@ export class ESignatureProvider {
     return this.api.postE('eSignature/sign', data)
       .pipe(map(res => res.json()));
   }
+
+  changeESignatureStatus(employeeId, data) {
+    return this.api.putE(`eSignature/changeStatus/${employeeId}`, data)
+      .pipe(map(res => res.json()));
+  }
 }
