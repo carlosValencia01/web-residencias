@@ -29,6 +29,7 @@ import { UploadDeliveredComponent } from 'src/modals/reception-act/upload-delive
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CurrentPositionService } from 'src/services/shared/current-position.service';
 import { ICareer } from 'src/entities/shared/career.model';
+import { BookComponent } from 'src/modals/reception-act/book/book.component';
 
 @Component({
   selector: 'app-progress-page',
@@ -52,7 +53,8 @@ export class ProgressPageComponent implements OnInit {
   phases: Array<string>;
   search: string;
   role: string;
-  _carrers: Array<ICareer>
+  _carrers;
+  // _carrers: Array<ICareer>
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -76,7 +78,8 @@ export class ProgressPageComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
-    this._carrers = this._CookiesService.getPosition().ascription.careers;
+    this._carrers = this.allCarrers;
+    // this._CookiesService.getPosition().ascription.careers;
     console.log("CARRERAS", this._carrers);
   }
 
@@ -187,6 +190,7 @@ export class ProgressPageComponent implements OnInit {
     tmp.department = element.department;
     tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
     tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
+    tmp.registry = element.registry;
     return tmp;
   }
 
@@ -482,26 +486,49 @@ export class ProgressPageComponent implements OnInit {
         confirmButtonText: 'Aceptar'
       });
       if (typeof (response.value) !== 'undefined') {
-        let data = {
-          doer: this._CookiesService.getData().user.name.fullName,
-          observation: '',
-          operation: eStatusRequest.ACCEPT
-        };
-        if (typeof (result.value) !== 'undefined') {
-          data.observation = '';
-        }
-        else {
-          data.observation = 'Acto recepcional no aprobado';
-          data.operation = eStatusRequest.REJECT;
-        }
-
-        this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
-          this.loadRequest();
-        }, error => {
-          let tmpJson = JSON.parse(error._body);
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+        
+        
+        const linkModal = this.dialog.open(BookComponent, {
+          data: {
+            operation: 'create'        
+          },
+          disableClose: true,
+          hasBackdrop: true,
+          width: '50em',
+          height: '400px'
         });
+        linkModal.afterClosed().subscribe(
+          (book)=>{   
+            let data = {
+              doer: this._CookiesService.getData().user.name.fullName,
+              observation: '',
+              operation: eStatusRequest.ACCEPT,
+              registry: {}
+            };
+            if (typeof (result.value) !== 'undefined') {
+              data.observation = '';
+            }
+            else {
+              data.observation = 'Acto recepcional no aprobado';
+              data.operation = eStatusRequest.REJECT;
+            }      
+            if(book.action === 'create'){         
+             //crear 
+              console.log(book);
+              data.registry = book.book;                            
+            }            
+             this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
+              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+              this.loadRequest();
+            }, error => {
+              let tmpJson = JSON.parse(error._body);
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+            });
+          },
+          err=>console.log(err)
+        );
+
+        
       }
 
     })
@@ -518,7 +545,7 @@ export class ProgressPageComponent implements OnInit {
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Aceptar'
     }).then((result) => {
-      if (result.value) {
+      if (result.value) {        
         const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
         let data = {
           doer: this._CookiesService.getData().user.name.fullName,

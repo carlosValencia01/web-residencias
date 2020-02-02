@@ -576,8 +576,9 @@ export class uRequest {
         return doc;
     }
 
-    public testReport(): jsPDF {
-        const doc = this.newDocumentTec();
+    public testReport(): jsPDF {        
+        
+        const doc = this.newDocumentTec(true,false);
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(10);
@@ -587,10 +588,11 @@ export class uRequest {
         doc.setFontSize(8);
         let tmpDate = new Date();
         // tslint:disable-next-line: max-line-length
-        let content = 'El (la) suscrito (a) Director (a) del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a la carrera de @CARRERA No.2 Autorizado el día @AUTORIZACION, por la Dirección de Asuntos Escolares y Apoyo a Estudiantes del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a le letra dice:';
-        content = content.replace('@CARRERA', this.letterCapital(this._request.student.career));
-        content = content.replace('@AUTORIZACION', moment(tmpDate).format('LL'));
-        content = content.replace('@NUMERO', '180');
+        let content = 'El (la) suscrito (a) Director (a) del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a la carrera de @CARRERA No. @LIBRO Autorizado el día @AUTORIZACION, por la Dirección de Asuntos Escolares y Apoyo a Estudiantes del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a le letra dice:';
+        content = content.replace('@CARRERA', this.letterCapital(this._request.registry.career));
+        content = content.replace('@AUTORIZACION', moment(this._request.registry.date).format('LL'));
+        content = content.replace('@NUMERO', this._request.registry.foja+'');
+        content = content.replace('@LIBRO', this._request.registry.bookNumber+'');
         this.justityText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
         doc.ellipse(28, 90, 20, 30);
         // tslint:disable-next-line: max-line-length
@@ -630,14 +632,17 @@ export class uRequest {
 
         // let servicios = 'M.C. Israel Arjona Vizcaíno';
         // let director = 'LIC. MANUEL ÁNGEL URIBE VÁZQUEZ';
-        let servicios = this.JDeptoEsc.name;
-        let director = this.Director.name;
+        let servicios = 'el profe';
+        // this.JDeptoEsc.name;
+        let director = 'director';
+        // this.Director.name;
         doc.setFont(this.FONT, 'Bold');
 
         doc.text(`COTEJO`, this.MARGIN.LEFT + 32, 190, { align: 'left' });
 
         doc.addImage(this.serviceFirm, 'PNG', this.MARGIN.LEFT + 32, 193, 60, 25);
-        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        let positionGender = 'JEFE';
+        // this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
         doc.text(`${this.letterCapital(positionGender)} del Departamento de Servicios Escolares`, this.MARGIN.LEFT + 32, 220, { maxWidth: 50, align: 'left' });
         doc.text(servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
 
@@ -840,4 +845,6 @@ export class uRequest {
             body: data
         });
     }
+
+
 }

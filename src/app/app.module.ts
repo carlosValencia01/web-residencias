@@ -166,6 +166,7 @@ import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/re
 import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
+import { BookComponent } from 'src/modals/reception-act/book/book.component';
 
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
@@ -319,6 +320,8 @@ registerLocaleData(localeEs);
     RequestModalComponent,
     SteepComponentComponent,
     NewTitleComponent,
+    BookComponent,
+
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -525,6 +528,7 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ActNotificacionComponent,
     NewTitleComponent,
+    BookComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,
