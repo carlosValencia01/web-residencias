@@ -5,6 +5,7 @@ import { ResponseContentType } from '@angular/http';
 import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 @Injectable()
 export class StudentProvider {
 
@@ -89,19 +90,11 @@ export class StudentProvider {
     }
 
     releaseEnglishCsv(data: any) {
-        return this.api.post(`english/release/csv`, data).pipe(map(res => res.json()));
+        return this.api.put(`english/release/csv`, data).pipe(map(res => res.json()));
     }
 
-    searchStudentWithEnglish(search: string) {
-        return this.api.get(`english/search/${search}`).pipe(map(res => res.json()));
-    }
-
-    csvAddStudentEnglish(data: any) {
-        return this.api.post(`english/create`, data).pipe(map(res => res.json()));
-    }
-
-    // csvRemoveStudentEnglish(id: string) {
-    //     return this.api.delete(`english/remove/${id}`).pipe(map(res => res.json()));
+    // searchStudentWithEnglish(search: string) {
+    //     return this.api.get(`english/search/${search}`).pipe(map(res => res.json()));
     // }
 
     studentsEnglishReleased() {
@@ -129,7 +122,7 @@ export class StudentProvider {
     request(id, data) {
         return this.api.post(`request/create/${id}`, data, true).pipe(map(res => res.json()));
     }
-  
+
     updateRequest(id, data) {
         return this.api.put(`request/${id}`, data, true).pipe(map(res => res.json()));
     }
@@ -137,6 +130,7 @@ export class StudentProvider {
     addIntegrants(id, data) {
         return this.api.put(`request/${id}/integrants`, data, true).pipe(map(res => res.json()));
     }
+
     getRequest(id) {
         return this.api.get(`student/request/${id}`).pipe(map(res => res.json()));
     }
@@ -149,6 +143,7 @@ export class StudentProvider {
     getDriveDocuments(studentId: string): Observable<any> {
         return this.api.get(`student/get/documents/drive/${studentId}`).pipe(map(res => res.json()));
     }
+
     getFolderId(studentId: String): Observable<any> {
         return this.api.get(`student/get/folderid/${studentId}`).pipe(map(res => res.json()));
     }
@@ -161,12 +156,14 @@ export class StudentProvider {
         );
     }
 
-    getDriveFolderId(controlNumber: string, type: number): Observable<any> {
+    getDriveFolderId(controlNumber: string, type: eFOLDER): Observable<any> {
         return this.api.get(`student/get/folderid/${controlNumber}/${type}`).pipe(map(res => res.json()));
     }
+
     getPeriodId(studentId: string): Observable<any> {
         return this.api.get(`student/get/periodinscription/${studentId}`).pipe(map(res => res.json()));
     }
+
     updateDocumentStatus(id, data): Observable<any> {
         return this.api.put(`student/document/status/${id}`, data).pipe(map(res => res.json())).pipe(
             tap(() => {

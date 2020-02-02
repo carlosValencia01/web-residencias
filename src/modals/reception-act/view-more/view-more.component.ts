@@ -25,4 +25,4 @@ export class ViewMoreComponent implements OnInit {
 
 }
 
-interface iAppointment { id: string, student: string[], project: string, proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, option: string, product: string }
+interface iAppointment { id: string, student: string[], project: string, proposedDate: Date, proposedHour: number, phase: string, jury: Array<any>, place: string, option: string, product: string }

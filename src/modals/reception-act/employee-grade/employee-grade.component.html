@@ -64,7 +64,7 @@
     </div>
     <div class="row">
       <mat-form-field class="col-sm-12 col-md-6">
-        <input matInput formControlName="email" placeholder="Correo electrónico" type="email" required>
+        <input matInput formControlName="email" placeholder="Correo electrónico" type="email">
         <mat-error *ngIf="!frmNewEmployeeGrade.get('email').valid && frmNewEmployeeGrade.get('email').touched">
           <span *ngIf="frmNewEmployeeGrade.get('email').errors['required']">
             ¡Ingrese un correo!

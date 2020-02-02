@@ -46,6 +46,7 @@ export class DocumentReviewComponent implements OnInit {
         this.requestProvider.getRequestById(params.id).subscribe(
           data => {
             this.request = data.request[0];
+            this.request.phase = "Registrado";
             this.request.student = data.request[0].studentId;
             this.uRequest = new uRequest(this.request, imgSrv, _CookiesService);
             this.refresh();

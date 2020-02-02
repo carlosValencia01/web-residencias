@@ -14,6 +14,7 @@ import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { CareerProvider } from 'src/providers/shared/career.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 
 @Component({
   selector: 'app-student-page',
@@ -673,7 +674,7 @@ export class StudentPageComponent implements OnInit {
           //first check folderId on Student model
           console.log('1');
           
-         await this.studentProv.getDriveFolderId(controlNumber,1).toPromise().then(
+         await this.studentProv.getDriveFolderId(controlNumber,eFOLDER.INSCRIPCIONES).toPromise().then(
            (folder)=>{
               console.log('2',folder);
               

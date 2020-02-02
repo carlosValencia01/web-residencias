@@ -14,7 +14,10 @@ import { ViewMoreComponent } from '../../../modals/reception-act/view-more/view-
 import { eRole } from 'src/enumerators/app/role.enum';
 import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
-import { CurrentPositionService } from 'src/services/shared/current-position.service';
+
+const jsPDF = require('jspdf');
+require('jspdf-autotable');
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 moment.locale('es');
 @Component({
   selector: 'app-view-appointment-page',
@@ -22,6 +25,29 @@ moment.locale('es');
   styleUrls: ['./view-appointment-page.component.scss']
 })
 export class ViewAppointmentPageComponent implements OnInit {
+
+  loading : boolean = false;
+    private WIDTH = 286;
+    private HEIGHT = 239;
+    private FONT = 'Montserrat';
+    private MARGIN: {
+        LEFT: number,
+        RIGHT: number,
+        TOP: number,
+        BOTTOM: number
+    } = {
+            LEFT: 20,
+            RIGHT: 20,
+            TOP: 25,
+            BOTTOM: 25
+        };
+  private sepLogo: any;  
+  private tecNacLogoTitle: any;
+  private tecLogo: any;
+  private montserratNormal: any;
+  private montserratBold: any;
+  mapedStudents = [];
+
   carrers: iCarrera[];
   allCarrers: iCarrera[];
   activeDayIsOpen: boolean = true;
@@ -37,12 +63,15 @@ export class ViewAppointmentPageComponent implements OnInit {
   role: string;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices,
     private _sourceDataProvider: sourceDataProvider, public _InscriptionsProvider: InscriptionsProvider,
-    public dialog: MatDialog, private _CookiesService: CookiesService) {
+    public dialog: MatDialog, private _CookiesService: CookiesService,
+    public _getImage: ImageToBase64Service
+    ) {
     this.carrers = [];
     // this.role =
     //   //'Secretaria Académica';
     //   // 'Jefe Académico';
     // this._CookiesService.getData().user.rol.name;
+    this._getImageToPdf();
   }
 
   async ngOnInit() {
@@ -63,7 +92,7 @@ export class ViewAppointmentPageComponent implements OnInit {
       let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
       if (i !== -1)
         this.carrers.push(element);
-    });
+    });    
 
     // switch (this.role) {
     //   case eRole.SECRETARYACEDMIC: {
@@ -134,6 +163,7 @@ export class ViewAppointmentPageComponent implements OnInit {
       let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
       // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
       tmp = this.Appointments.find(x => x._id[0] === career.carrer);
+      console.log("Appointment__", this.Appointments);
       if (typeof (tmp) != 'undefined') {
         tmp.values.forEach(element => {
           const vFecha = element.proposedDate.toString().split('T')[0].split('-');
@@ -235,11 +265,11 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
 
   toggle(carrer: { carrer: string, abbreviation: string, icon: string, status: boolean }): void {
-    carrer.status = !carrer.status;
+    carrer.status = !carrer.status;      
     if (carrer.carrer === 'Todos') {
       this.carrers.forEach(x => {
         x.status = carrer.status;
-      })
+      });
     }
     this.loadAppointment();
     this.refresh.next();
@@ -258,6 +288,141 @@ export class ViewAppointmentPageComponent implements OnInit {
       this.viewDate = date;
     }
   }
+  excelExport(){
+    const filteredCareers = this.carrers.filter( (ca)=> ca.status == true);
+    this.mapedStudents = [];
+    if(filteredCareers.length > 0){
+      this.loading = true;       
+      let y = 60;
+      
+      const doc = this.newDocumentTec(true,false);        
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(this.FONT, 'Bold');
+        doc.setFontSize(10);
+        // doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', (this.WIDTH / 2), 45, { align: 'center' });
+        doc.text('AGENDA DE ACTO RECEPCIONAL', (this.WIDTH / 2), 45, { align: 'center' });
+        doc.setFont(this.FONT, 'Normal');
+        doc.setFontSize(8);                       
+        
+
+      filteredCareers.forEach( (car)=>{
+        const maped = this.Appointments.filter( (ap)=> ap._id[0] == car.carrer).map(
+          (care)=> care.values
+        )[0].
+        map((st)=>( {
+          date:moment(st.proposedDate).format('LL'),
+          hour:moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
+          student:st.student,
+          place:st.place,
+          jury:st.jury.map( (jr: any)=>jr.name )
+        }));        
+        maped.forEach( maped=>{
+          this.mapedStudents.push(maped);                
+        
+        }); 
+        
+      });
+      setTimeout(() => {
+        doc.autoTable(
+          {
+            html: '#table',
+            theme: 'grid',
+            startY:y,
+            headStyles: { fillColor: [24, 57, 105], halign: 'center', valign:'middle'  },
+            bodyStyles:{textColor:[0,0,0]},
+            columnStyles: {
+              0: { cellWidth: 10, halign: 'center' , valign:'middle'  },
+              1: { cellWidth: 30, halign: 'center', valign:'middle'   },
+              2: { cellWidth: 10, halign: 'center', valign:'middle'  },
+              3: { cellWidth: 40, halign: 'center', valign:'middle'  },
+              4: { cellWidth: 30, halign: 'center', valign:'middle'  },
+              5: { cellWidth: 80, halign: 'center', valign:'middle'  },                
+            }
+          }
+        );
+        this.loading=false;
+      window.open(doc.output('bloburl'), '_blank');
+      }, 200);
+        
+    }
+  }
+  private newDocumentTec(header = true, footer = true) {
+      const doc = new jsPDF({
+          unit: 'mm',
+          format: 'letter',
+          orientation: 'landscape'
+      });
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+      doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+      doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+      if (header) {
+          this.addHeaderTec(doc);
+      }
+      if (footer) {
+          this.addFooterTec(doc);
+      }
+      return doc;
+  }
+  private addHeaderTec(document) {
+    const tecnmHeight = 15;
+    const sepHeight = tecnmHeight * 100 / 53;
+    document.setFont(this.FONT, 'Bold');
+    document.setFontSize(8);
+    document.setTextColor(189, 189, 189);
+    // Logo Izquierdo
+    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 35 * 3, sepHeight);
+    // Logo Derecho
+    document.addImage(this.tecNacLogoTitle, 'PNG', 215, 5, 40, tecnmHeight);
+    document.text('Instituto Tecnólogico de Tepic', 212, 23, { align: 'left' });
+  }
+
+  private addFooterTec(document) {
+    document.setFont(this.FONT, 'Bold');
+    document.setFontSize(8);
+    document.setTextColor(189, 189, 189);
+    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    // document.setTextColor(183, 178, 178);
+    document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2), 260, { align: 'center' });
+    document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01. email: info@ittepic.edu.mx',
+        (this.WIDTH / 2), 265, { align: 'center' });
+    document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
+  }
+  private _getImageToPdf() {
+    // this._getImage.getBase64('assets/imgs/logo.jpg').then(logo => {
+    //     this.tecNacLogo = logo;
+    // });
+
+    this._getImage.getBase64('assets/imgs/sep.png').then(logo => {
+        this.sepLogo = logo;
+    });
+
+    this._getImage.getBase64('assets/imgs/ittepic-sm.png').then(logo => {
+        this.tecLogo = logo;
+    });
+
+    this._getImage.getBase64('assets/imgs/tecnm.png').then(logo => {
+        this.tecNacLogoTitle = logo;
+    });
+
+    this._getImage.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
+        this.montserratNormal = base64.toString().split(',')[1];
+    });
+
+    this._getImage.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
+        this.montserratBold = base64.toString().split(',')[1];
+    });
+
+    // this._getImage.getBase64('assets/imgs/firms/director.png').then(firm => {
+    //     this.directorFirm = firm;
+    // });
+
+    // this._getImage.getBase64('assets/imgs/firms/servicios.png').then(firm => {
+    //     this.serviceFirm = firm;
+    // });
+}
 }
 interface iAppointmentGroup { _id: string[], values: [iAppointment] }
 interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }

@@ -96,12 +96,15 @@ export class VinculacionPageComponent implements OnInit {
       confirmButtonText: 'Liberar'
     }).then((result) => {
       if (result.value) {
+        this.loading = true;
         this.studentProvider.releaseEnglish(student.controlNumber)
           .subscribe(_ => {
+            this.loading = false;
             this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante liberado con éxito', '');
             this._getAllNotReleased();
           }, _ => {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'Error, no se pudo liberar el inglés al estudiante', '');
+            this.loading = false;
           });
       }
     });
@@ -119,12 +122,15 @@ export class VinculacionPageComponent implements OnInit {
       confirmButtonText: 'Aceptar'
     }).then((result) => {
       if (result.value) {
+        this.loading = true;
         this.studentProvider.removeRelease(student.controlNumber)
           .subscribe(_ => {
+            this.loading = false;
             this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Se ha quitado la liberación con éxito', '');
             this._getAllReleased();
           }, _ => {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'Error al quitar liberación al estudiante', '');
+            this.loading = false;
           });
       }
     });
@@ -148,7 +154,10 @@ export class VinculacionPageComponent implements OnInit {
           if (results.data.length > 0) {
             results.data.slice(1).forEach(element => {
               if (element[0]) {
-                students.push({ controlNumber: element[0] });
+                const index = students.findIndex(student => student.controlNumber === element[0]);
+                if (index === -1) {
+                  students.push({ controlNumber: element[0] });
+                }
               }
             });
             const _data = {
@@ -162,13 +171,16 @@ export class VinculacionPageComponent implements OnInit {
             const refDialog = this._openDialog(LoadCsvDataComponent, 'EnglishRelease', _data);
             refDialog.afterClosed().subscribe((_students: Array<any>) => {
               if (_students) {
-                // provider.releaseEnglishCsv(_students).subscribe(_ => {
-                //   notificacion.showNotification(eNotificationType.SUCCESS, 'Estudiantes liberados con éxito', '');
-                //   this.changeTab(this.selectedTab.value);
-                // }, _ => {
-                //   this.notificationServ.showNotification(eNotificationType.ERROR,
-                //     'Ocurrió un error al liberar los estudiantes', '');
-                // });
+                this.loading = true;
+                provider.releaseEnglishCsv(_students).subscribe(_ => {
+                  this.loading = false;
+                  notificacion.showNotification(eNotificationType.SUCCESS, 'Estudiantes liberados con éxito', '');
+                  this.changeTab(this.selectedTab.value);
+                }, _ => {
+                  this.notificationServ.showNotification(eNotificationType.ERROR,
+                    'Ocurrió un error al liberar los estudiantes', '');
+                  this.loading = false;
+                });
               }
             });
           }

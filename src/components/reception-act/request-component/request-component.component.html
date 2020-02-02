@@ -71,13 +71,16 @@
             </span>
           </mat-error>
         </mat-form-field>
-      <div class="form-group col-md-12 col-lg-6" [ngSwitch]="operationMode">
+        <div class="form-group col-md-12 col-lg-6" [ngSwitch]="operationMode">
           <label class="form-col-form-label" for="project">Portada del Proyecto</label>
           <div *ngSwitchCase="1">
             <div class="form-group form-actions">
               <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
               <button [disabled]="!isEdit" type="button" class="btn btn-outline-success btn-block"
                 (click)="fileUpload.click()">Cargar Portada
+              </button>
+              <button mat-icon-button>
+                <mat-icon>contact_support</mat-icon>
               </button>
             </div>
           </div>
@@ -86,14 +89,28 @@
               <button [disabled]="!isEdit" type="button" class="btn btn-outline-success btn-block">Cargar
                 Portada</button>
             </div>
+            <button mat-icon-button>
+              <mat-icon>contact_support</mat-icon>
+            </button>
           </div>
           <div *ngSwitchDefault>
             <div class="form-group form-actions">
-              <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)" style="display: none">
-              <button type="button"
-                [class]="fileData ? 'btn btn-outline-success btn-block' : 'btn btn-outline-danger btn-block'"
-                (click)="fileUpload.click()">Cargar Portada
-              </button>
+              <div class="row">
+                <div class="col-10">
+                  <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
+                    style="display: none">
+                  <button type="button"
+                    [class]="fileData ? 'btn btn-outline-success btn-block' : 'btn btn-outline-danger btn-block'"
+                    (click)="fileUpload.click()">Cargar Portada
+                  </button>
+                </div>
+                <div class="col-2">
+                  <button type="button" mat-icon-button color="primary"
+                    aria-label="Example icon-button with a heart icon" (click)="showHelp()">
+                    <mat-icon>help</mat-icon>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -182,8 +199,8 @@
       <div *ngSwitchCase="5">
         <button *ngIf="isSentVerificationCode" type="button" (click)="verifyEmail()" class="btn btn-outline-primary"
           style="margin-right: 0.3em">Verificar correo</button>
-        <button *ngIf="!isSentVerificationCode" type="button" (click)="sendVerificationCode()" class="btn btn-outline-secondary"
-          style="margin-right: 0.3em">Envíar código</button>
+        <button *ngIf="!isSentVerificationCode" type="button" (click)="sendVerificationCode()"
+          class="btn btn-outline-secondary" style="margin-right: 0.3em">Envíar código</button>
         <button type="button" class="btn btn-outline-success" style="margin-right: 0.3em"
           (click)="Edit()">Editar</button>
       </div>

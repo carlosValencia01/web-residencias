@@ -23,7 +23,6 @@ import { SidebarModule } from 'ng-sidebar';
 import { DropzoneModule } from 'ngx-dropzone-wrapper';
 import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
-import { QRCodeModule } from 'angularx-qrcode';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
@@ -33,7 +32,6 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   acceptedFiles: 'application/pdf',
   maxFiles: 1
 };
-
 
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { ContextMenuModule } from 'ngx-contextmenu';
@@ -168,6 +166,7 @@ import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/re
 import { ReleaseComponentComponent } from 'src/modals/reception-act/release-component/release-component.component';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
+import { BookComponent } from 'src/modals/reception-act/book/book.component';
 
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
@@ -196,7 +195,7 @@ import { FirebaseService } from 'src/services/graduation/firebase.service';
 // Providers
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 // Modals
-import { NewEventComponent as NewGraduationEventComponent } from 'src/modals/graduation/new-event/new-event.component' ;
+import { NewEventComponent as NewGraduationEventComponent } from 'src/modals/graduation/new-event/new-event.component';
 
 // Electronic signature module
 // Pages
@@ -230,7 +229,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CareerProvider } from 'src/providers/shared/career.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
-import {CurrentPositionService} from 'src/services/shared/current-position.service';
+import { CurrentPositionService } from 'src/services/shared/current-position.service';
 
 import { ScheduleComponent } from '../components/reception-act/schedule/schedule.component';
 import { registerLocaleData } from '@angular/common';
@@ -248,6 +247,7 @@ import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appoin
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
 import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
 import { NewTitleComponent } from '../modals/reception-act/new-title/new-title.component';
+import { SafePipe } from 'src/pipes/safePipe.pipe';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -321,6 +321,8 @@ registerLocaleData(localeEs);
     RequestModalComponent,
     SteepComponentComponent,
     NewTitleComponent,
+    BookComponent,
+
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -375,7 +377,10 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ViewAppointmentPageComponent,
     UploadFileTitledComponent,
-    ActNotificacionComponent    
+    ActNotificacionComponent,
+
+    //Pipes
+    SafePipe
   ],
   imports: [
     // Angular
@@ -447,7 +452,6 @@ registerLocaleData(localeEs);
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    QRCodeModule,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -528,6 +532,7 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ActNotificacionComponent,
     NewTitleComponent,
+    BookComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,

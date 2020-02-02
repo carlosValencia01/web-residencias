@@ -116,4 +116,23 @@
   border-radius: 50%;
   background: #32cd32;
 }
- 
+
+.div-img, .careers{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.div-img img{
+  cursor: pointer;
+}
+#table{
+  display: none;
+}
+#table thead{
+  text-align: center;
+    background-color: #1e2d49;
+    color: #fff;
+}
+#table tbody{
+  text-align: center;
+}

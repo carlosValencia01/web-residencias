@@ -15,6 +15,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import Swal from 'sweetalert2';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 
 @Component({
   selector: 'app-request-modal',
@@ -31,7 +32,8 @@ export class RequestModalComponent implements OnInit {
   public isToggle = false;
   private integrants: Array<iIntegrant> = [];
   private oRequest: uRequest;
-
+  private folderId: string;
+  public showLoading: boolean;
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -43,7 +45,7 @@ export class RequestModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private imgService: ImageToBase64Service,
   ) {
-    console.log("dd",this.cookiesService.getData());
+    console.log("dd", this.cookiesService.getData());
     this.userInformation = this.cookiesService.getData().user;
   }
 
@@ -63,10 +65,19 @@ export class RequestModalComponent implements OnInit {
         // 'dateProposed': new FormControl({ value: null, disabled: true }, Validators.required),
         'honorific': new FormControl({ value: false, disabled: true }, Validators.required)
       });
+
     this.requestProvider.getRequestById(this.data.Id).subscribe(res => {
       this.loadRequest(res);
+      this.getFolder();
     }, error => {
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+    });
+  }
+
+  getFolder(): void {
+    this.studentProvider.getDriveFolderId(this.request.student.controlNumber, eFOLDER.TITULACION).subscribe(folder => {
+      this.folderId = folder.folderIdInDrive;
+      console.log("FOLDER-reques-modal", this.folderId);
     });
   }
 
@@ -87,12 +98,13 @@ export class RequestModalComponent implements OnInit {
     this.request.studentId = this.request.student._id;
     this.integrants = this.request.integrants;
     this.assignName();
+    this.oRequest = new uRequest(this.request, this.imgService, this.cookiesService);
     this.frmRequest.setValue({
       'name': this.request.student.name,
       'lastname': this.request.student.lastName,
       'telephone': this.request.telephone,
       'email': this.request.email,
-      'adviser': this.request.adviser,
+      'adviser': this.request.adviser.name,
       'noIntegrants': this.request.noIntegrants,
       'observations': this.request.observation,
       'project': this.request.projectName,
@@ -101,7 +113,7 @@ export class RequestModalComponent implements OnInit {
       'honorific': this.request.honorificMention,
     });
     this.isToggle = this.request.honorificMention;
-    this.oRequest = new uRequest(this.request, this.imgService,this.cookiesService);
+
   }
 
   accept(): void {
@@ -117,6 +129,12 @@ export class RequestModalComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         const data = {
+          file: {
+            mimetype: "application/pdf",
+            data: this.oRequest.documentSend(eFILES.SOLICITUD),
+            name: eFILES.SOLICITUD + '.pdf'
+          },
+          folderId: this.folderId,
           doer: this.cookiesService.getData().user.name.fullName,
           operation: eStatusRequest.ACCEPT,
           observation: this.frmRequest.get('observations').value
@@ -164,10 +182,14 @@ export class RequestModalComponent implements OnInit {
   }
 
   updateRequest(data: any) {
+    this.showLoading = true;
+    this.notificationsServ.showNotification(eNotificationType.INFORMATION, "Titulación App", "Procesando Solicitud");
     this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
       this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+      this.showLoading = false;
       this.dialogRef.close(true);
     }, error => {
+      this.showLoading = false;
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
       this.dialogRef.close(false);
     });
