@@ -32,6 +32,7 @@ export class UploadFilesComponent implements OnInit {
   public UploadPhotos: IDocument;
   public UploadActaExamen: IDocument;
   public isEditable: boolean;
+  public showLoading: boolean = false;
   constructor(
     private requestService: RequestService,
     public dialog: MatDialog,
@@ -54,7 +55,6 @@ export class UploadFilesComponent implements OnInit {
       (result) => {
         this.Request = result.Request;
         this.isEditable = result.IsEdit;
-        console.log("REQUEST UPLOAD", this.Request);
         this.onLoad(this.Request.documents);
       }
     );
@@ -175,7 +175,7 @@ export class UploadFilesComponent implements OnInit {
         this.openView(data, isBase64, type);
       }, error => {
         this.notificationServices.showNotification(eNotificationType.ERROR,
-          'Titulación App', error);
+          'Acto recepcional', error);
       });
     }
 
@@ -330,9 +330,9 @@ export class UploadFilesComponent implements OnInit {
   }
 
   onSend(file): void {
+    this.showLoading = true;
     const type = <eFILES><keyof typeof eFILES>file;
     let document: any;
-
     const frmData = new FormData();
     frmData.append('folderId', this.isEditable ? this.Request.folder : this._CookiesService.getFolder());
     frmData.append('Document', type);
@@ -394,13 +394,15 @@ export class UploadFilesComponent implements OnInit {
       const doc = this.getDocument(type);
       doc.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;
       document.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;//eStatusRequest.PROCESS;
+      this.showLoading = false;
       if (this.isEditable) {
         this.onRemove(file);
-        this.notificationServices.showNotification(eNotificationType.SUCCESS, "Titulación App", "Documento cambiado");
+        this.notificationServices.showNotification(eNotificationType.SUCCESS, "Acto recepcional", "Documento cambiado");
       }
     }, error => {
+      this.showLoading = false;
       this.notificationServices.showNotification(eNotificationType.ERROR,
-        "Titulación App", error);
+        "Acto recepcional", error);
     });
   }
   onRemove(file): void {
@@ -468,8 +470,8 @@ export class UploadFilesComponent implements OnInit {
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '45em',
-      height: '550px'
+      width: '60em',
+      height: '650px'
     });
 
     dialogRef.afterClosed().subscribe((fileUpload: any) => {
@@ -655,7 +657,7 @@ export class UploadFilesComponent implements OnInit {
       document.status = eStatusRequest.OMIT;
     }, error => {
       this.notificationServices.showNotification(eNotificationType.ERROR,
-        "Titulación App", error);
+        "Acto recepcional", error);
     });
   }
 
@@ -705,7 +707,7 @@ export class UploadFilesComponent implements OnInit {
       document.status = eStatusRequest.NONE;
     }, error => {
       this.notificationServices.showNotification(eNotificationType.ERROR,
-        "Titulación App", error);
+        "Acto recepcional", error);
     });
   }
 }

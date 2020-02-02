@@ -21,6 +21,7 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { DropzoneConfigInterface, DropzoneComponent } from 'ngx-dropzone-wrapper';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import Swal from 'sweetalert2';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 
 @Component({
   selector: 'app-request-component',
@@ -235,16 +236,16 @@ export class RequestComponentComponent implements OnInit {
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
         if (event.target.files[0].size > this.MAX_SIZE_FILE) {
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App',
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional',
             'Error, su archivo debe ser inferior a 3MB');
         } else {
           this.fileData = event.target.files[0];
-          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App',
+          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional',
             'Archivo ' + this.fileData.name + ' cargado correctamente');
           this.isLoadFile = true;
         }
       } else {
-        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App',
+        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional',
           'Error, su archivo debe ser de tipo PDF');
       }
     }
@@ -339,7 +340,7 @@ export class RequestComponentComponent implements OnInit {
         }
         this.studentProvider.updateRequest(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(_ => {
-            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Editada Correctamente');
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Editada Correctamente');
             this.isEdit = false;
             this.viewObservation = false;
             if (isEmailChanged) {
@@ -355,11 +356,11 @@ export class RequestComponentComponent implements OnInit {
             this.getRequest();
             this.btnSubmitRequest.emit(true);
           }, error => {
-            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
             this.btnSubmitRequest.emit(false);
           });
         }, error => {
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
           this.btnSubmitRequest.emit(false);
         });
         break;
@@ -373,10 +374,10 @@ export class RequestComponentComponent implements OnInit {
       doer: this.cookiesService.getData().user.name.fullName
     };
     this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
-      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Enviada');
+      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Enviada');
       this.btnSubmitRequest.emit(true);
     }, error => {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
       this.btnSubmitRequest.emit(false);
     });
   }
@@ -444,95 +445,28 @@ export class RequestComponentComponent implements OnInit {
   }
 
   getFolderId() {
-    let _idStudent = this.userInformation._id;
-    this._InscriptionsProvider.getActivePeriod().subscribe(
-      period => {
-        console.log("periodo", period);
-        if (period.period) {
-          this.activePeriod = period.period;
-          console.log("ActivePeriod", this.activePeriod);
-          this.studentProvider.getPeriodId(_idStudent.toString()).subscribe(
-            per => {
-              console.log("per", per);
-              if (!per.student.idPeriodInscription) {
-                this.studentProvider.updateStudent(_idStudent, { idPeriodInscription: this.activePeriod._id });
-              }
-            }
-          );
-          //first check folderId on Student model
-          this.studentProvider.getFolderId(_idStudent).subscribe(
-            student => {
-              if (student.folder) {// folder exists
-                if (student.folder.idFolderInDrive) {
-                  this.folderId = student.folder.idFolderInDrive;
-                }
-                else { //folder doesn't exists then create it                  
-                  this.createFolder();
-                }
-              } else {
-                this.createFolder();
-              }
-            });
-        }
-      }
-    );
+    this.studentProvider.getDriveFolderId(this.userInformation.email, eFOLDER.TITULACION).subscribe(folder => {
+      this.folderId = folder.folderIdInDrive;
+      console.log("FOLDER", this.folderId);
+    });
   }
 
   createFolder() {
-    const _idStudent = this.userInformation._id;
-    let folderStudentName = this.userInformation.email + ' - ' + this.userInformation.name.fullName;
-    console.log("Periodo", this.activePeriod._id, "--", folderStudentName);
-    this._InscriptionsProvider.getFoldersByPeriod(this.activePeriod._id, 2).subscribe(
-      (folders) => {
-        console.log(folders, 'folderss');
-
-        this.foldersByPeriod = folders.folders;
-        let folderPeriod = this.foldersByPeriod.filter(folder => folder.name.indexOf(this.activePeriod.periodName) !== -1);
-
-        // 1 check career folder
-        let folderCareer = this.foldersByPeriod.filter(folder => folder.name === this.userInformation.career);
-
-        if (folderCareer.length === 0) {
-          // console.log('1');
-
-          this._InscriptionsProvider.createSubFolder(this.userInformation.career, this.activePeriod._id, folderPeriod[0].idFolderInDrive, 2).subscribe(
-            career => {
-              // console.log('2');
-
-              // student folder doesn't exists then create new folder
-              this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, career.folder.idFolderInDrive, 2).subscribe(
-                studentF => {
-                  this.folderId = studentF.folder.idFolderInDrive;
-                  this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id });
-                },
-                err => {
-                  console.log(err);
-                }
-              );
-            },
-            err => {
-              console.log(err);
-            }
-          );
-        } else {
-          this._InscriptionsProvider.createSubFolder(folderStudentName, this.activePeriod._id, folderCareer[0].idFolderInDrive, 2).subscribe(
-            studentF => {
-              this.folderId = studentF.folder.idFolderInDrive;
-              this.studentProvider.updateStudent(this.userInformation._id, { folderId: studentF.folder._id }).subscribe(
-                upd => { },
-                err => { }
-              );
-            },
-            err => { console.log(err); }
-          );
-        }
-      },
-      err => {
-        console.log(err, '==============error');
-      }
-    );
+    this.studentProvider.getDriveFolderId(this.userInformation.email, eFOLDER.TITULACION).subscribe(folder => {
+      this.folderId = folder.folderIdInDrive;
+    });
   }
 
+  showHelp(): void {
+    Swal.fire({
+      type: 'info',
+      title: '¡Ayuda!',
+      text: 'Sube en un archivo PDF la carátula de tu proyecto de residencia firmada con el Visto Bueno de tu asesor',      
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar',            
+    })
+  }
   public verifyEmail() {
     Swal.fire({
       title: 'Verificación de correo',

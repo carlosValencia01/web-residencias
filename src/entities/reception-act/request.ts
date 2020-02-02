@@ -5,6 +5,7 @@ import * as moment from 'moment';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { IBoss } from './boss.model';
+import { eFILES } from 'src/enumerators/reception-act/document.enum';
 
 
 moment.locale('es');
@@ -90,9 +91,43 @@ export class uRequest {
         });
     }
 
-    protocolActRequest(): jsPDF {
+    documentSend(file: eFILES) {
+        let document;
+        let binary;
+        switch (file) {
+            case eFILES.SOLICITUD: {
+                document = this.protocolActRequest().output('arraybuffer');
+                binary = this.bufferToBase64(document);
+                break;
+            }
+            case eFILES.REGISTRO: {
+                document = this.projectRegistrationOffice().output('arraybuffer');
+                binary = this.bufferToBase64(document);
+                break;
+            }
+            case eFILES.INCONVENIENCE: {
+                document = this.noInconvenience().output('arraybuffer');
+                binary = this.bufferToBase64(document);
+                break;
+            }
+            case eFILES.ACTA_EXAMEN: {
+                document = this.testReport().output('arraybuffer');
+                binary = this.bufferToBase64(document);
+                break;
+            }
+        }
+        return binary;
+    }
+
+    bufferToBase64(buffer) {
+        return btoa(new Uint8Array(buffer).reduce((data, byte) => {
+            return data + String.fromCharCode(byte);
+        }, ''));
+    }
+
+    protocolActRequest(isPreview: boolean = true): jsPDF {
         const doc = this.newDocumentTec();
-        const sentHistory = this._request.history.filter(x => x.phase === 'Capturado' && x.status === 'Accept').reverse()[0];
+        const sentHistory = this._request.history.filter(x => x.phase === (isPreview ? 'Capturado' : 'Enviado') && x.status === (isPreview ? 'Accept' : 'None')).reverse()[0];
         console.log('Listas', doc.getFontList());
         doc.setTextColor(0, 0, 0);
         // Title
@@ -104,8 +139,10 @@ export class uRequest {
         // Fecha
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(11);
-        doc.text(doc.splitTextToSize(`Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LL')}`, 80),
-            this.WIDTH - this.MARGIN.RIGHT, 55, { align: 'right' });
+        // console.log("FECHA A EMOSTRAR", moment(sentHistory.achievementDate).format('LLL'));
+        this.addTextRight(doc, `Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LLL')}`, 55);
+        // doc.text(doc.splitTextToSize(`Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LLL')}`, 50),
+        //     this.WIDTH - this.MARGIN.RIGHT, 55, { align: 'right' });
 
         // Saludos
         doc.setFont(this.FONT, 'Bold');
@@ -150,7 +187,7 @@ export class uRequest {
         doc.setFont(this.FONT, 'Normal');
         // tmn = doc.getTextWidth(this._request.student.fullName);
         doc.setFont(this.FONT, 'Bold');
-        this.addLineCenter(doc, 'Nombre y firma del estudiante', 222);
+        // this.addLineCenter(doc, 'Nombre y firma del estudiante', 222);
 
         this.addTable(doc, [
             ['Teléfono particular o de contacto: ', this._request.telephone],
@@ -183,7 +220,7 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Normal');
         doc.text(this._request.department.name, this.MARGIN.LEFT, 83, { align: 'left' });
-        doc.text(`Lugar: Tepic, Nayarit y Fecha: ${
+        doc.text(`Lugar: Tepic, Nayarit  Fecha: ${
             moment(registerHistory ? (registerHistory.achievementDate || new Date()) : new Date()).format('LL')
             }`, this.MARGIN.LEFT, 88, { align: 'left' });
 
@@ -218,8 +255,8 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Bold');
         const observationY = 185 + observationsLines + (nameProjectLines - 5) + integrantsLines;
-        doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
-        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)),  this.MARGIN.LEFT + 45, 235);
+        // doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
+        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 235);
         // doc.setFont(this.FONT, 'Normal');
         return doc;
     }
@@ -277,7 +314,7 @@ export class uRequest {
         return doc;
     }
 
-    noInconvenience(): jsPDF {
+    noInconvenience(qrCode?, eStamp?): jsPDF {
         const doc = this.newDocumentTec();
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Bold');
@@ -293,7 +330,6 @@ export class uRequest {
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(11);
         doc.text('C. ' + this._request.student.fullName, (this.WIDTH / 2), 115, { align: 'center' });
-
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(10);
         // tslint:disable-next-line: max-line-length
@@ -302,7 +338,10 @@ export class uRequest {
         doc.setFontSize(11);
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
         doc.text(this.JDeptoEsc.name, this.MARGIN.LEFT, 170, { align: 'left' }); // Cambiar de forma dinámica
-        doc.text('JEFE DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });
+        doc.text('JEFE DEL DEPARTAMENTO DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });
+
+        doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
+        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)),  this.MARGIN.LEFT + 45, 235);
 
         doc.setFontSize(11);
         doc.text('"Sabiduría Tecnológica, Pasión de nuestro Espíritu" ®', this.MARGIN.LEFT, 186, { align: 'left' });
@@ -493,6 +532,28 @@ export class uRequest {
         return doc;
     }
 
+    public notificationAdvisory(officeNumber: string): jsPDF {
+        const doc = this.newDocumentTec();
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(this.FONT, 'Normal');
+        doc.setFontSize(7);
+        doc.text(`${this.ENCABEZADO}`, (this.WIDTH / 2), 45, { align: 'center' });
+        doc.setFontSize(10);
+        this.addTextRight(doc, `Tepic, Nayarit; ${moment(new Date()).format('LL')}`, 58);
+        this.addTextRight(doc, `OFICIO No. ${officeNumber}`, 63);
+        this.addTextRight(doc, `ASUNTO: Asesor de Trabajo Profesional`, 70);
+        doc.setFont(this.FONT, 'Bold');
+        doc.text(`C. ${this._request.adviser.name}`, this.MARGIN.LEFT, 75);
+        doc.text('CATEDRÁTICO DE ESTE INSTITUTO', this.MARGIN.LEFT, 80);
+        doc.text('PRESENTE', this.MARGIN.LEFT, 85);
+        doc.setFont(this.FONT, 'Normal');
+        let msn = `Me permito comunicarle que ha sido ratificado como @ASESOR@ del Trabajo Profesional con el nombre: ${this.addArroba(this._request.projectName)}`;
+        this.justityText(doc, msn, { x: this.MARGIN.LEFT, y: 95 }, 10);
+        msn = `Que presenta el (la) C. ${this._request.student.fullName}`;
+        this.justityText(doc, msn, { x: this.MARGIN.LEFT, y: 10 }, 10);
+        return doc;
+    }
+
     public notificationOffice(): jsPDF {
         let tmpDate = new Date(this._request.proposedDate);
         tmpDate.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0);
@@ -570,14 +631,15 @@ export class uRequest {
         doc.text('A T E N T A M E N T E.', this.MARGIN.LEFT, 190);
         doc.text('“SABIDURÍA TECNOLÓGICA, PASIÓN DE NUESTRO ESPÍRITU”®', this.MARGIN.LEFT, 195);
         // doc.text('MARTHA ANGÉLICA PARRA URÍAS', this.MARGIN.LEFT, 225);
-        doc.text(this._request.department.boss, this.MARGIN.LEFT, 225);
+        doc.text(this._request.department.boss, this.MARGIN.LEFT, 220);
         // doc.text('JEFA DEL DEPARTAMENTO DE SISTEMAS COMPUTACIONALES', this.MARGIN.LEFT, 230);
         doc.text(`JEFE DEL ${this._request.department.name}`, this.MARGIN.LEFT, 225);
         return doc;
     }
 
-    public testReport(): jsPDF {
-        const doc = this.newDocumentTec();
+    public testReport(): jsPDF {        
+        
+        const doc = this.newDocumentTec(true,false);
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(10);
@@ -587,10 +649,11 @@ export class uRequest {
         doc.setFontSize(8);
         let tmpDate = new Date();
         // tslint:disable-next-line: max-line-length
-        let content = 'El (la) suscrito (a) Director (a) del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a la carrera de @CARRERA No.2 Autorizado el día @AUTORIZACION, por la Dirección de Asuntos Escolares y Apoyo a Estudiantes del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a le letra dice:';
-        content = content.replace('@CARRERA', this.letterCapital(this._request.student.career));
-        content = content.replace('@AUTORIZACION', moment(tmpDate).format('LL'));
-        content = content.replace('@NUMERO', '180');
+        let content = 'El (la) suscrito (a) Director (a) del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a la carrera de @CARRERA No. @LIBRO Autorizado el día @AUTORIZACION, por la Dirección de Asuntos Escolares y Apoyo a Estudiantes del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a le letra dice:';
+        content = content.replace('@CARRERA', this.letterCapital(this._request.registry.career));
+        content = content.replace('@AUTORIZACION', moment(this._request.registry.date).format('LL'));
+        content = content.replace('@NUMERO', this._request.registry.foja+'');
+        content = content.replace('@LIBRO', this._request.registry.bookNumber+'');
         this.justityText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
         doc.ellipse(28, 90, 20, 30);
         // tslint:disable-next-line: max-line-length
@@ -630,14 +693,17 @@ export class uRequest {
 
         // let servicios = 'M.C. Israel Arjona Vizcaíno';
         // let director = 'LIC. MANUEL ÁNGEL URIBE VÁZQUEZ';
-        let servicios = this.JDeptoEsc.name;
-        let director = this.Director.name;
+        let servicios = 'el profe';
+        // this.JDeptoEsc.name;
+        let director = 'director';
+        // this.Director.name;
         doc.setFont(this.FONT, 'Bold');
 
         doc.text(`COTEJO`, this.MARGIN.LEFT + 32, 190, { align: 'left' });
 
         doc.addImage(this.serviceFirm, 'PNG', this.MARGIN.LEFT + 32, 193, 60, 25);
-        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        let positionGender = 'JEFE';
+        // this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
         doc.text(`${this.letterCapital(positionGender)} del Departamento de Servicios Escolares`, this.MARGIN.LEFT + 32, 220, { maxWidth: 50, align: 'left' });
         doc.text(servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
 
@@ -840,4 +906,6 @@ export class uRequest {
             body: data
         });
     }
+
+
 }
