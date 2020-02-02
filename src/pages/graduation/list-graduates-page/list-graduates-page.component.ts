@@ -44,6 +44,8 @@ export class ListGraduatesPageComponent implements OnInit {
   public showTotal = true;
 
   public totalEgresados;
+  public totalEgresadosH;
+  public totalEgresadosM;
   public certificadosPendientes;
   public certificadosImpresos;
   public certificadosListos;
@@ -224,6 +226,8 @@ export class ListGraduatesPageComponent implements OnInit {
           degree: alumno.payload.doc.get('degree') ? true : false,
           observations: alumno.payload.doc.get('observations'),
           survey: alumno.payload.doc.get('survey'),
+          genero: alumno.payload.doc.get('genero'),
+          curp: alumno.payload.doc.get('curp'),
           bestAverage: alumno.payload.doc.get('mejorPromedio') ? alumno.payload.doc.get('mejorPromedio') : false,
           average: alumno.payload.doc.get('promedio') ? alumno.payload.doc.get('promedio') : 0,
           documentationStatus: alumno.payload.doc.get('documentationStatus') ? alumno.payload.doc.get('documentationStatus') : ' ',
@@ -246,6 +250,8 @@ export class ListGraduatesPageComponent implements OnInit {
       this.eventFilterReport();
       // Contar total de alumnos
       this.totalEgresados = this.alumnos.length;
+      this.totalEgresadosH = this.alumnos.filter( st=> st.genero =='M').length;
+      this.totalEgresadosM = this.alumnos.filter( st=> st.genero =='F').length;
       this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
       this.certificadosListos = this.filterCountItemsStatus('Listo').length;
       this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
