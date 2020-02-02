@@ -128,8 +128,7 @@
                             <div class="col-sm-8">
                                 <div class="input-group input-group-sm mb-3">
                                     <input type="number" class="form-control" id="duration" formControlName="duration"
-                                        placeholder="Duración"
-                                        min="30" max="120"
+                                        placeholder="Duración" min="30" max="120"
                                         [ngClass]="(!frmConsejo.get('duration').valid && frmConsejo.get('duration').touched)?'form-control is-invalid':'form-control'">
                                     <div class="input-group-append">
                                         <span class="input-group-text">Minutos</span>
@@ -189,4 +188,9 @@
             </div> -->
         </form>
     </div>
+</div>
+
+
+<div class="center">
+    <app-loader [loading]="showLoading"></app-loader>
 </div>

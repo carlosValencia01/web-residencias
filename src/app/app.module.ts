@@ -195,7 +195,7 @@ import { FirebaseService } from 'src/services/graduation/firebase.service';
 // Providers
 import { GraduationProvider } from 'src/providers/graduation/graduation.prov';
 // Modals
-import { NewEventComponent as NewGraduationEventComponent } from 'src/modals/graduation/new-event/new-event.component' ;
+import { NewEventComponent as NewGraduationEventComponent } from 'src/modals/graduation/new-event/new-event.component';
 
 // Electronic signature module
 // Pages
@@ -229,7 +229,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CareerProvider } from 'src/providers/shared/career.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
-import {CurrentPositionService} from 'src/services/shared/current-position.service';
+import { CurrentPositionService } from 'src/services/shared/current-position.service';
 
 import { ScheduleComponent } from '../components/reception-act/schedule/schedule.component';
 import { registerLocaleData } from '@angular/common';
@@ -247,6 +247,7 @@ import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appoin
 import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
 import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
 import { NewTitleComponent } from '../modals/reception-act/new-title/new-title.component';
+import { SafePipe } from 'src/pipes/safePipe.pipe';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -376,7 +377,10 @@ registerLocaleData(localeEs);
     UploadDeliveredComponent,
     ViewAppointmentPageComponent,
     UploadFileTitledComponent,
-    ActNotificacionComponent    
+    ActNotificacionComponent,
+
+    //Pipes
+    SafePipe
   ],
   imports: [
     // Angular

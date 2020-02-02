@@ -1,14 +1,14 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import {eNotificationType} from '../../../enumerators/app/notificationType.enum';
+import { eNotificationType } from '../../../enumerators/app/notificationType.enum';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 import { CurrentPositionService } from 'src/services/shared/current-position.service';
 import { NotificationsServices } from 'src/services/app/notifications.service';
-import {CookiesService} from '../../../services/app/cookie.service';
+import { CookiesService } from '../../../services/app/cookie.service';
 import { uRequest } from 'src/entities/reception-act/request';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
-import {eRequest} from '../../../enumerators/reception-act/request.enum';
+import { eRequest } from '../../../enumerators/reception-act/request.enum';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 
 
@@ -40,7 +40,7 @@ export class UploadDeliveredComponent implements OnInit {
     private notificationsServ: NotificationsServices,
     private cookiesService: CookiesService,
     private requestProvider: RequestProvider,
-    private imgService: ImageToBase64Service,) {
+    private imgService: ImageToBase64Service, ) {
     this.reqId = this.data.reqId;
   }
 
@@ -53,7 +53,7 @@ export class UploadDeliveredComponent implements OnInit {
 
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
-    this.oRequest = new uRequest(this.request, this.imgService);
+    this.oRequest = new uRequest(this.request, this.imgService, this.cookiesService);
   }
 
   async init() {
@@ -61,7 +61,7 @@ export class UploadDeliveredComponent implements OnInit {
 
     this.cookies = this.cookiesService.getData().user;
 
-    this.employeeProvider.getEmployee(this.cookies.email).subscribe( res => {
+    this.employeeProvider.getEmployee(this.cookies.email).subscribe(res => {
       this.employee = res;
     });
   }
