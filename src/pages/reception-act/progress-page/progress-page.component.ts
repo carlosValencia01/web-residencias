@@ -79,8 +79,7 @@ export class ProgressPageComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
-    this._carrers = this.allCarrers;
-    // this._CookiesService.getPosition().ascription.careers;
+    this._carrers = this._CookiesService.getPosition().ascription.careers;
     console.log("CARRERAS", this._carrers);
   }
 
@@ -105,7 +104,6 @@ export class ProgressPageComponent implements OnInit {
   }
 
   loadRequest(isInit: boolean = false): void {
-    console.log("k");
     let filter = '';
     // switch (this.cookiesService.getData().user.rol.name) {
     switch (this.role) {
@@ -140,22 +138,25 @@ export class ProgressPageComponent implements OnInit {
         this.request = [];
         res.request.forEach(element => {
           if (this.role !== 'jefe académico' && this.role !== 'secretaria académica') {
-            this.request.push(this.castRequest(element));
+            let tmpRequest: iRequest = this.castRequest(element);
+            this.request.push(tmpRequest);
           } else {
             let tmpRequest: iRequest = this.castRequest(element);
+            console.log("CARRERA_FILTRO", this._carrers);
+            console.log("CARRERA_FILTRO___", tmpRequest);
             let index = this._carrers.findIndex(x => x.fullName === tmpRequest.career);
             if (index !== -1)
               this.request.push(tmpRequest);
           }
         });
-
+        console.log("REQUEST", res.request);
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
           this.isAll = true;
           this._isAll = true;
         }
-        this.reset = true;
+        this.reset = true;        
         this.requestFilter = this.filter(this.careers, this.phases).slice(0);
         this.refresh();
       },
@@ -164,7 +165,7 @@ export class ProgressPageComponent implements OnInit {
       });
   }
 
-  public castRequest(element: any): iRequest {
+  public castRequest(element: any): iRequest {    
     let tmp: iRequest = new Object();//<iRequest>element;
     tmp._id = element._id;
     tmp.status = this.convertStatus(element.status);
@@ -193,12 +194,11 @@ export class ProgressPageComponent implements OnInit {
     tmp.department = element.department;
     tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
     tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
-    tmp.registry = element.registry;
+    tmp.registry = element.registry;    
     return tmp;
   }
 
-  refresh() {
-    console.log("Requesfilter", this.requestFilter);
+  refresh() {    
     this.dataSource = new MatTableDataSource(this.requestFilter);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -214,7 +214,7 @@ export class ProgressPageComponent implements OnInit {
   //     }
   //   });
   // }
-  filter(carrers: string[], phases: string[]): Array<iRequest> {
+  filter(carrers: string[], phases: string[]): Array<iRequest> {    
     return this.request.filter(function (element) {
       if (phases.length === 0) {
         return carrers.findIndex(x => x === element.career) !== -1;
