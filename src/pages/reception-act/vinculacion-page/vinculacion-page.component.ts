@@ -162,13 +162,13 @@ export class VinculacionPageComponent implements OnInit {
             const refDialog = this._openDialog(LoadCsvDataComponent, 'EnglishRelease', _data);
             refDialog.afterClosed().subscribe((_students: Array<any>) => {
               if (_students) {
-                // provider.releaseEnglishCsv(_students).subscribe(_ => {
-                //   notificacion.showNotification(eNotificationType.SUCCESS, 'Estudiantes liberados con éxito', '');
-                //   this.changeTab(this.selectedTab.value);
-                // }, _ => {
-                //   this.notificationServ.showNotification(eNotificationType.ERROR,
-                //     'Ocurrió un error al liberar los estudiantes', '');
-                // });
+                provider.releaseEnglishCsv(_students).subscribe(_ => {
+                  notificacion.showNotification(eNotificationType.SUCCESS, 'Estudiantes liberados con éxito', '');
+                  this.changeTab(this.selectedTab.value);
+                }, _ => {
+                  this.notificationServ.showNotification(eNotificationType.ERROR,
+                    'Ocurrió un error al liberar los estudiantes', '');
+                });
               }
             });
           }

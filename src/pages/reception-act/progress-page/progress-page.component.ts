@@ -446,6 +446,7 @@ export class ProgressPageComponent implements OnInit {
       ref.afterClosed().subscribe(result => {        
         if (typeof (result) !== 'undefined') {          
           this.requestProvider.releasedRequest(Identificador, {
+            email: tmpRequest.email,
             proposedHour: result.proposedHour,
             duration: result.duration,
             upload: result.upload,

@@ -89,19 +89,11 @@ export class StudentProvider {
     }
 
     releaseEnglishCsv(data: any) {
-        return this.api.post(`english/release/csv`, data).pipe(map(res => res.json()));
+        return this.api.put(`english/release/csv`, data).pipe(map(res => res.json()));
     }
 
-    searchStudentWithEnglish(search: string) {
-        return this.api.get(`english/search/${search}`).pipe(map(res => res.json()));
-    }
-
-    csvAddStudentEnglish(data: any) {
-        return this.api.post(`english/create`, data).pipe(map(res => res.json()));
-    }
-
-    // csvRemoveStudentEnglish(id: string) {
-    //     return this.api.delete(`english/remove/${id}`).pipe(map(res => res.json()));
+    // searchStudentWithEnglish(search: string) {
+    //     return this.api.get(`english/search/${search}`).pipe(map(res => res.json()));
     // }
 
     studentsEnglishReleased() {
