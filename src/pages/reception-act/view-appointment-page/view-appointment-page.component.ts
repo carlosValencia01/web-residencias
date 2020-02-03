@@ -163,6 +163,7 @@ export class ViewAppointmentPageComponent implements OnInit {
       let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
       // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
       tmp = this.Appointments.find(x => x._id[0] === career.carrer);
+      console.log("Appointment__", this.Appointments);
       if (typeof (tmp) != 'undefined') {
         tmp.values.forEach(element => {
           const vFecha = element.proposedDate.toString().split('T')[0].split('-');

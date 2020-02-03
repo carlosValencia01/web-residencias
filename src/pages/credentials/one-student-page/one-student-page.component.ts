@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { CareerProvider } from 'src/providers/shared/career.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 
 @Component({
   selector: 'app-one-student-page',
@@ -123,7 +124,7 @@ export class OneStudentPageComponent implements OnInit {
           }
 
           //first check folderId on Student model
-          this.studentProv.getDriveFolderId(this.data.email,1).toPromise().then(
+          this.studentProv.getDriveFolderId(this.data.email,eFOLDER.INSCRIPCIONES).toPromise().then(
             (folder)=>{               
                
               this.folderId = folder.folderIdInDrive;                 

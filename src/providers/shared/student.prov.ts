@@ -5,6 +5,7 @@ import { ResponseContentType } from '@angular/http';
 import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 @Injectable()
 export class StudentProvider {
 
@@ -155,7 +156,7 @@ export class StudentProvider {
         );
     }
 
-    getDriveFolderId(controlNumber: string, type: number): Observable<any> {
+    getDriveFolderId(controlNumber: string, type: eFOLDER): Observable<any> {
         return this.api.get(`student/get/folderid/${controlNumber}/${type}`).pipe(map(res => res.json()));
     }
 

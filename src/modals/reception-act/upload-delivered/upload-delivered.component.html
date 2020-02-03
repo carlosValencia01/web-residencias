@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<!--<div class="container-fluid">
   <div class="row">
     <div class="col-12">
       <div class="card text-center">
@@ -16,4 +16,25 @@
       <button type="button" class="btn btn-outline-danger btn-sm ml-2" [mat-dialog-close]>Cancelar</button>
     </div>
   </div>
+</div>-->
+
+<div>
+  <div align="end">
+    <button mat-icon-button [mat-dialog-close]="false">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Firma</mat-card-title>
+    </mat-card-header>
+    <div>
+      <input type='file' (change)="fileChanged($event)" style="margin-bottom: 10px">
+      <input type="password" placeholder="Contraseña" [(ngModel)]="password">
+    </div>
+    <mat-card-actions align="end">
+      <button type="button" class="btn btn-primary" (click)="uploadDocument()"
+              [disabled]="!fileFlag || !password">Firmar</button>
+    </mat-card-actions>
+  </mat-card>
 </div>

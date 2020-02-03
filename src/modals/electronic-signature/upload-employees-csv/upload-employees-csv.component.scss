@@ -13,8 +13,10 @@ tr.detail-row {
 
 tr.element-row:not(.expanded-row):hover {
     background: #e0dbdb;
+    cursor: pointer;
 }
 
 tr.element-row:not(.expanded-row):active {
     background: #e0dbdb;
+    cursor: pointer;
 }

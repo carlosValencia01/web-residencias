@@ -31,6 +31,7 @@ export class ReleaseComponentComponent implements OnInit {
   public enableUpload: boolean = false;
   @ViewChild('time') Time: NgxTimepickerFieldComponent;
   private studentCareer: string;
+  public showLoading: boolean = false;
   constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
     private notifications: NotificationsServices, public dialog: MatDialog,
     private cookiesService: CookiesService,
@@ -54,7 +55,6 @@ export class ReleaseComponentComponent implements OnInit {
       'duration': new FormControl('60', Validators.required)
     });
 
-    console.log("JURADO", this.information);
     if (this.isReject || this.information.jury.length > 0) {
       this.juryInfo = this.information.jury;
       this.frmConsejo.setValue({
@@ -76,7 +76,6 @@ export class ReleaseComponentComponent implements OnInit {
         { name: '', title: '', cedula: '' },
         { name: '', title: '', cedula: '' }
       ];
-      console.log("ELSE", this.juryInfo);
       this.Time.writeValue("7:00");
     }
   }
@@ -96,7 +95,7 @@ export class ReleaseComponentComponent implements OnInit {
     }
     this.frmConsejo.get(button).markAsUntouched();
     this.frmConsejo.get(button).setErrors(null);
-    console.log("USER INFORMA", this.userInformation);
+
     const ref = this.dialog.open(EmployeeAdviserComponent, {
       data: {
         carrer: this.studentCareer
@@ -111,7 +110,7 @@ export class ReleaseComponentComponent implements OnInit {
       if (typeof (result) != "undefined") {
         this.enableUpload = false;
         if (this.juryInfo.findIndex(x => x.name === result.ExtraInfo.name) !== -1) {
-          this.notifications.showNotification(eNotificationType.ERROR, "Titulación App", "Empleado ya asignado");
+          this.notifications.showNotification(eNotificationType.ERROR, "Acto recepcional", "Empleado ya asignado");
         } else {
           switch (button) {
             case "president": {
@@ -155,6 +154,7 @@ export class ReleaseComponentComponent implements OnInit {
   }
 
   onUpload(event): void {
+    this.showLoading = true;
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
         // this.fileData = event.target.files[0];
@@ -165,14 +165,17 @@ export class ReleaseComponentComponent implements OnInit {
         frmData.append('IsEdit', 'true');
         this._RequestProvider.uploadFile(this.information.id, frmData).subscribe(data => {
           this.fileData = event.target.files[0];
+          this.showLoading = false;
         }, error => {
           this.notifications.showNotification(eNotificationType.ERROR,
-            "Titulación App", error);
+            "Acto recepcional", error);
+          this.showLoading = false;
         });
 
       } else {
-        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App',
+        this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional',
           'Error, su archivo debe ser de tipo PDF');
+        this.showLoading = false;
       }
     }
   }
@@ -190,7 +193,7 @@ export class ReleaseComponentComponent implements OnInit {
       });
     // }
     // else {
-    //   this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App',
+    //   this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional',
     //     'Error, archivo no cargado');
     // }
   }

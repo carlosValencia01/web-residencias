@@ -7,6 +7,7 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-viewer-component',
@@ -25,9 +26,9 @@ export class ViewerComponentComponent implements OnInit {
   // tslint:disable-next-line: no-input-rename
   @Input('Type') Type: String;
   // tslint:disable-next-line: no-input-rename
-  @Input('QR')  QR: String;
+  @Input('QR') QR: String;
   // tslint:disable-next-line: no-input-rename
-  @Input('EStamp')  EStamp: String;
+  @Input('EStamp') EStamp: String;
   public message: string;
   public Title: String;
   public existTitle: boolean;
@@ -119,7 +120,11 @@ export class ViewerComponentComponent implements OnInit {
       }
       case eRequest.VALIDATED: {
         this.oRequest.setRequest(this._Request);
-        window.open(this.oRequest.noInconvenience().output('bloburl'), '_blank');
+        this.requestProvider.getResource(this._Request._id, eFILES.INCONVENIENCE).subscribe(data => {
+          window.open(URL.createObjectURL(data), '_blank');
+        }, error => {
+          window.open(this.oRequest.noInconvenience().output('bloburl'), '_blank');
+        });
         break;
       }
       case eRequest.RELEASED: {
@@ -127,7 +132,12 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.REGISTERED: {
-        window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
+        // window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
+        this.requestProvider.getResource(this._Request._id, eFILES.REGISTRO).subscribe(data => {
+          window.open(URL.createObjectURL(data), '_blank');
+        }, error => {
+          window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
+        });
         break;
       }
       case eRequest.VERIFIED: {
@@ -139,7 +149,14 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.CAPTURED: {
-        window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
+        this.requestProvider.getResource(this._Request._id, eFILES.SOLICITUD).subscribe(data => {
+          window.open(URL.createObjectURL(data), '_blank');
+        }, error => {
+          console.log("Error de Viewer", error);
+          window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
+        });
+
+        // window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
         break;
       }
       default: { }

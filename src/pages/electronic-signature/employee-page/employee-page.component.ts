@@ -18,6 +18,7 @@ import {NewGradeComponent} from 'src/modals/reception-act/new-grade/new-grade.co
 import {NewPositionComponent} from 'src/modals/electronic-signature/new-position/new-position.component';
 import {NotificationsServices} from 'src/services/app/notifications.service';
 import {PositionsHistoryComponent} from 'src/modals/electronic-signature/positions-history/positions-history.component';
+import {ESignatureProvider} from 'src/providers/electronic-signature/eSignature.prov';
 
 moment.locale('es');
 
@@ -46,6 +47,7 @@ export class EmployeePageComponent implements OnInit {
   public isChangedPositions = false;
   public isChangedGrades = false;
   public employeeeBirthDate: string;
+  private positionIds: Array<string>;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -53,6 +55,7 @@ export class EmployeePageComponent implements OnInit {
     private employeeProvider: EmployeeProvider,
     private notifications: NotificationsServices,
     private router: Router,
+    private eSignatureProvider: ESignatureProvider
   ) {
     this.dataSourceGrades = new MatTableDataSource();
     this.dataSourcePositions = new MatTableDataSource();
@@ -62,6 +65,7 @@ export class EmployeePageComponent implements OnInit {
     this.displayedColumnsGrades = ['abbreviation', 'title', 'cedula', 'level', 'actions'];
     this.displayedColumnsPositions = ['name', 'ascription', 'canSign', 'actions'];
     this.activatedRoute.params.subscribe((params: Params) => this._getEmployee(params.id));
+    this.positionIds = [];
   }
 
   public onRowRemoveGrade(row: IGrade) {
@@ -121,6 +125,7 @@ export class EmployeePageComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         const position = this.positions.actives.find(pos => pos.position._id === row._id);
+        this.positionIds.push(position.position._id);
         this.positions.actives.splice(this.positions.actives.indexOf(position), 1);
         position.deactivateDate = new Date();
         this.positions.inactives.push(position);
@@ -174,9 +179,9 @@ export class EmployeePageComponent implements OnInit {
         const allPositions = this._joinPositions(this.positions);
         this._saveEmployeePositions(allPositions)
           .then(_ => {
-            this.notifications.showNotification(eNotificationType.SUCCESS, 'Puestos', '¡Actualización exitosa!');
             this.isChangedPositions = false;
             this.employee.positions = allPositions.slice();
+            this._changeSignatureStatus()
           })
           .catch(_ => {
             this.notifications.showNotification(eNotificationType.ERROR, 'Puestos', '¡Actualización fallida, intente de nuevo!');
@@ -230,8 +235,29 @@ export class EmployeePageComponent implements OnInit {
       if (result.value) {
         const allPositions = this._joinPositions(this.positions);
         await this._callSaveGradesAndPositions('Puestos y grados guardados con éxito', allPositions, this.grades);
+
+        this._changeSignatureStatus();
       }
     });
+  }
+
+  private _changeSignatureStatus () {
+    if (this.positionIds) {
+      const msg1 = 'La firma del puesto ha sido deshabilitada';
+      const msg2 = 'Las firmas de los puestos han sido deshabilitadas';
+      let msg;
+      if (this.positionIds.length > 1) {
+        msg = msg2;
+      } else {
+        msg = msg1;
+      }
+      this.eSignatureProvider.changeESignatureStatus(this.employee._id, this.positionIds)
+        .subscribe(data => {
+          this.notifications.showNotification(eNotificationType.SUCCESS, 'Puestos', msg);
+        });
+    } else {
+      this.notifications.showNotification(eNotificationType.SUCCESS, 'Puestos', '¡Actualización exitosa!');
+    }
   }
 
   public discardAllChanges() {
@@ -249,6 +275,7 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
+        this.positionIds = [];
         this.positions = this._separatePositions(this.employee.positions);
         this.grades = this.employee.grade.slice();
         this.isChangedPositions = false;
@@ -274,6 +301,7 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
+        this.positionIds = [];
         this.positions = this._separatePositions(this.employee.positions);
         this.isChangedPositions = false;
         this._refreshPositionsTable();
@@ -460,6 +488,8 @@ export class EmployeePageComponent implements OnInit {
     return new Promise(resolve => {
       this._saveEmployeeGradesAndPositions(positions, grades)
         .then(_ => {
+          // Petición a baja de firma
+          this._changeSignatureStatus()
           this.notifications.showNotification(eNotificationType.SUCCESS, '¡Actualización!', messageOk);
           this.isChangedPositions = false;
           this.isChangedGrades = false;

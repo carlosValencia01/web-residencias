@@ -1,0 +1,4 @@
+export enum eFOLDER {
+    INSCRIPCIONES=1,
+    TITULACION=2
+}

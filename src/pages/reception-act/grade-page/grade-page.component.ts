@@ -23,6 +23,7 @@ export class GradePageComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   public dataSource: MatTableDataSource<IGradeTable>;
   public displayedColumns: string[];
+  public loading: Boolean;
   private employees: any;
 
   constructor(
@@ -36,6 +37,7 @@ export class GradePageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+    this.loading = false;
   }
 
   ngOnInit() {
@@ -81,13 +83,16 @@ export class GradePageComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe((employeeResult: IEmployee) => {
         if (employeeResult) {
+          this.loading = true;
           employeeResult.name.fullName = employeeResult.name.firstName.concat(' ', employeeResult.name.lastName);
           this.employeeProvider.updateEmployee(employeeResult._id, employeeResult).subscribe(data => {
+            this.loading =  false;
             this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Empleado actualizado exitosamente', '');
             this.employees[this.employees.indexOf(row)] = this.castEmployeeRow(employeeResult);
             this.refresh();
           }, error => {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
+            this.loading = false;
           });
         }
       });
@@ -99,15 +104,18 @@ export class GradePageComponent implements OnInit {
 
   private getEmployees() {
     const Empleados = new Array<Object>();
+    this.loading = true;
     this.employeeProvider.getAllEmployee()
       .subscribe(data => {
+        this.loading = false;
         data.employees.forEach(element => {
           Empleados.push(this.castEmployeeRow(element));
         });
         this.employees = Empleados;
         this.refresh();
-      }, error => {
+      }, _ => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al recuperar los datos, intente nuevamente', '');
+        this.loading = false;
       });
   }
 
@@ -124,14 +132,17 @@ export class GradePageComponent implements OnInit {
 
     ref.afterClosed().subscribe((employeeResult: IEmployee) => {
       if (employeeResult) {
+        this.loading = true;
         employeeResult.name.fullName = employeeResult.name.firstName.concat(' ', employeeResult.name.lastName);
         this.employeeProvider.newEmployee(employeeResult).subscribe(data => {
+          this.loading = false;
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Empleado registrado exitosamente', '');
           employeeResult._id = data._id;
           this.employees.push(this.castEmployeeRow(employeeResult));
           this.router.navigate([employeeResult._id], {relativeTo: this.routeActive});
         }, error => {
           this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
+          this.loading = false;
         });
       }
     });
@@ -158,11 +169,14 @@ export class GradePageComponent implements OnInit {
 
     ref.afterClosed().subscribe((employees) => {
       if (employees && employees.length) {
+        this.loading = true;
         this.employeeProvider.csvEmployeGrade(employees).subscribe(_ => {
+          this.loading = false;
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Los empleados se han guardado con éxito', '');
           this.refreshEmployees();
         }, _ => {
           this.notificationServ.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error al importar los empleados', '');
+          this.loading = false;
         });
       }
     });

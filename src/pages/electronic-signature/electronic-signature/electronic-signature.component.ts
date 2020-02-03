@@ -59,8 +59,8 @@ export class ElectronicSignatureComponent implements OnInit {
 
       this.eSignatureProvider.hasESignature(res.employee.rfc, this.currentPosition._id)
         .subscribe( data => {
-          this.docString = data.eSignatureId.docString;
-          this.eSignatureStatus = moment(data.eSignatureId.expireDate).format('LL');
+          this.docString = data.docString;
+          this.eSignatureStatus = moment(data.expireDate).format('LL');
           this.formGroupPsw.disable();
         }, error => {
           if (error.status === 404) {
