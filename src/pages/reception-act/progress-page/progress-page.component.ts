@@ -532,14 +532,14 @@ export class ProgressPageComponent implements OnInit {
               //crear 
               console.log(book);
               data.registry = book.book;
+              this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
+                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                this.loadRequest();
+              }, error => {
+                let tmpJson = JSON.parse(error._body);
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+              });
             }
-            this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
-              this.loadRequest();
-            }, error => {
-              let tmpJson = JSON.parse(error._body);
-              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
-            });
           },
           err => console.log(err)
         );

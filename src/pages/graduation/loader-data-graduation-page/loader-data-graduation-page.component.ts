@@ -212,7 +212,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
           setTimeout(() => {
             
             this.updateBestAvg();
-          }, 60000);
+          }, 70000);
           this.notificationsServices.showNotification(0, 'Exito',' Alumnos registrados');
           this.loading=false;
           this.cancel();
@@ -221,7 +221,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         setTimeout(() => {
             
           this.updateBestAvg();
-        }, 60000);
+        }, 70000);
         this.notificationsServices.showNotification(0, 'Exito',' Alumnos registrados');
         this.loading=false;
         this.cancel();

@@ -75,7 +75,7 @@ export class ListGraduatesPageComponent implements OnInit {
   // Variable para almacenar los alumnos verificados e imprimir papeletas
   public alumnosBallotPaper = [];
   public alumnosConstancia = [];
-
+  bestStudents = [];
 
   public role: string;
   public no = 0;
@@ -134,8 +134,8 @@ export class ListGraduatesPageComponent implements OnInit {
       (alumnos) => {
         const sub = this.firestoreService.getCareers().subscribe(
           (carreras) => {
-            sub.unsubscribe();
-
+            sub.unsubscribe();            
+            
             this.careersPosition = carreras.map((carrera: any) => {
               return { carrera: carrera.nombre, posicion: carrera.posicion };
             });
@@ -242,7 +242,7 @@ export class ListGraduatesPageComponent implements OnInit {
         return a.nameLastName.localeCompare(b.nameLastName);
       });
 
-      this.alumnosReport = this.alumnos;
+      this.alumnosReport = this.alumnos;      
       this.totalAlumnos = this.alumnosReport.length;
       this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, '');
       this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation,'');
@@ -575,6 +575,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Generar reporte de alumnos
   generateReport() {
+    this.loading = true;
     var doc = new jsPDF('l', 'pt');
 
     // Header
@@ -653,8 +654,8 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontStyle('bold');
     doc.setFontSize(7);
     doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
-
     window.open(doc.output('bloburl'), '_blank');
+    this.loading=false;
     // doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
 
@@ -979,11 +980,14 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
-  generateReportBestAverage() {
+  async generateReportBestAverage() {    
+    this.loading = true;
+    await this.getBestAvgs();    
+    
     var doc = new jsPDF('p', 'pt');
 
     // Header
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    // var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
     doc.addImage(this.logoSep, 'PNG', 36, 10, 110, 27); // Logo SEP
@@ -1010,35 +1014,47 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.autoTable({
       html: '#tableReportBestAverageOut',
       theme: 'striped',
-      headStyles: { fillColor: [218, 12, 12], halign: 'center' },
+      headStyles: { fillColor:  [218, 12, 12], halign: 'center' },
       columnStyles: {
         0: { cellWidth: 150 },
         1: { cellWidth: 200 },
         2: { cellWidth: 60, halign: 'center' }
       }
     });
-
-    // FOOTER
-    var today = new Date();
-    var m = today.getMonth() + 1;
-    var mes = (m < 10) ? '0' + m : m;
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 15, pageHeight - 47, 30, 30); // Logo SEP
-    let footer = '© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n';
-    doc.setTextColor(0, 0, 0);
-    doc.setFontStyle('bold');
-    doc.setFontSize(7);
-    doc.text(footer, pageWidth / 2, pageHeight - 12, 'center');
-
-    // Hour PDF
-    let hour = today.getDate() + '/' + mes + '/' + today.getFullYear() + ' - ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-    doc.setTextColor(100);
-    doc.setFontStyle('bold');
-    doc.setFontSize(7);
-    doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
-
-    window.open(doc.output('bloburl'), '_blank');
+    setTimeout(() => {
+      doc.autoTable({
+        html: '#tableReportBestAverage',
+        theme: 'striped',
+        headStyles: { fillColor: [24, 57, 105] , halign: 'center' },
+        columnStyles: {
+          0: { cellWidth: 150 },
+          1: { cellWidth: 200 },
+          2: { cellWidth: 60, halign: 'center' }
+        }
+      });
+  
+      // FOOTER
+      var today = new Date();
+      var m = today.getMonth() + 1;
+      var mes = (m < 10) ? '0' + m : m;
+      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+      doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 15, pageHeight - 47, 30, 30); // Logo SEP
+      let footer = '© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n';
+      doc.setTextColor(0, 0, 0);
+      doc.setFontStyle('bold');
+      doc.setFontSize(7);
+      doc.text(footer, pageWidth / 2, pageHeight - 12, 'center');
+  
+      // Hour PDF
+      let hour = today.getDate() + '/' + mes + '/' + today.getFullYear() + ' - ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+      doc.setTextColor(100);
+      doc.setFontStyle('bold');
+      doc.setFontSize(7);
+      doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
+      this.loading = false;
+      window.open(doc.output('bloburl'), '_blank');
+    }, 500);
     // doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
 
@@ -1660,6 +1676,79 @@ generateLabels() {
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
     }
+  }
+
+  getBestAvgs(){
+    this.bestStudents = [];
+
+    
+    return new Promise( (resolve)=>{
+
+      
+      const femaleAvgs  = this.alumnosReport.filter((std)=>std.genero == 'F').map( (st)=> ({id:st.id,avg:parseFloat(st.average),career:st.carreerComplete,name:st.name, careerS:st.carreer,degree:st.degree}));
+      const maleAvgs = this.alumnosReport.filter((std)=>std.genero == 'M').map( (st)=> ({id:st.id,avg:parseFloat(st.average),career:st.carreerComplete,name:st.name, careerS:st.carreer,degree:st.degree}));
+      let bestMaleAvg ={
+        id:'',
+        avg:0,
+        name:'',
+        career:'',
+        degree:false,
+        careerS:''
+      }, bestFemaleAvg ={
+        id:'',
+        avg:0,
+        name:'',
+        career:'',
+        degree:false,
+        careerS:''
+      };
+      const sub = this.firestoreService.getGraduates(this.collection).subscribe(
+        (gr)=>{
+          
+          sub.unsubscribe();
+          const graduates = gr.map( (st)=>({id:st.payload.doc.id,avg:st.payload.doc.get('promedio'),bestAvgM:st.payload.doc.get('mejorPromedioM'),bestAvgFM:st.payload.doc.get('mejorPromedioF')}));
+          const bestAvgM = graduates.filter((st)=> st.bestAvgM == true)[0];
+          const bestAvgFM = graduates.filter((st)=> st.bestAvgFM == true)[0];
+          for( const stu of femaleAvgs){
+            if(stu.avg > bestFemaleAvg.avg){
+              bestFemaleAvg = stu;
+            }
+          }
+          for( const stu of maleAvgs){
+            if(stu.avg > bestMaleAvg.avg){
+              bestMaleAvg = stu;
+            }
+          }
+          if(bestAvgM){
+            if(bestAvgM.id !== bestMaleAvg.id){
+              this.firestoreService.updateFieldGraduate(bestAvgM.id,{mejorPromedioM:false},this.collection).then((upd)=>{});
+              this.firestoreService.updateFieldGraduate(bestMaleAvg.id,{mejorPromedioM:true},this.collection).then((up)=>{                
+              });
+            }
+          }else{
+            this.firestoreService.updateFieldGraduate(bestMaleAvg.id,{mejorPromedioM:true},this.collection).then((up)=>{                
+            });
+          }
+          if(bestAvgFM){
+            if(bestAvgFM.id !== bestFemaleAvg.id){
+              this.firestoreService.updateFieldGraduate(bestAvgFM.id,{mejorPromedioF:false},this.collection).then((upd)=>{});
+              this.firestoreService.updateFieldGraduate(bestFemaleAvg.id,{mejorPromedioF:true},this.collection).then((up)=>{                
+              });
+            }
+          }else{
+            this.firestoreService.updateFieldGraduate(bestFemaleAvg.id,{mejorPromedioF:true},this.collection).then((up)=>{                
+            });
+          }
+          
+          this.bestStudents.push(bestFemaleAvg);
+          this.bestStudents.push(bestMaleAvg);          
+          // console.log(graduates.filter( (st)=> st.id == bestFemaleAvg.id));        
+          resolve(true);
+        }
+      );    
+      
+    });
+    
   }
 
 }

@@ -156,7 +156,7 @@ td {
     color: white;
 }
 
-#tableReport,#tableReportBestAverageOut,#tableReportBestAverageIn{
+#tableReport,#tableReportBestAverageOut,#tableReportBestAverageIn,#tableReportBestAverage{
     display: none;
 }
 
@@ -164,9 +164,6 @@ td {
     display: none;
 }
 
-#tableReportBestAverage{
-    display: none;
-}
 
 .rowRegistrado{
     background: rgb(77, 190, 224);

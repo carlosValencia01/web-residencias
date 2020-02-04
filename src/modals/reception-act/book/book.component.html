@@ -46,20 +46,20 @@
     </div>
     <div class="col-md-4">
       <mat-form-field>
-        <input matInput placeholder="Número del libro" formControlName="bookNumber" type="number" step="1" min="0">
+        <input matInput placeholder="Número del libro" formControlName="bookNumber" type="text">
       </mat-form-field>
       <mat-error>
           <span
-          *ngIf="!form.get('bookNumber').valid && form.get('bookNumber').touched">Seleccione un número valido</span>
+          *ngIf="!form.get('bookNumber').valid && form.get('bookNumber').touched">Ingrese un número valido</span>
       </mat-error> 
     </div>
     <div class="col-md-4">
         <mat-form-field>
-          <input matInput placeholder="Foja" formControlName="foja" type="number" step="1" min="0" >
+          <input matInput placeholder="Foja" formControlName="foja" type="text" >
           </mat-form-field>
           <mat-error>
               <span
-              *ngIf="!form.get('foja').valid && form.get('foja').touched">Seleccione  un número valido</span>
+              *ngIf="!form.get('foja').valid && form.get('foja').touched">Ingrese  un número valido</span>
           </mat-error> 
     </div>    
   </div>
