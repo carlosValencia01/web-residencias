@@ -16,6 +16,7 @@ import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import Swal from 'sweetalert2';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 @Component({
   selector: 'app-request-modal',
@@ -70,7 +71,7 @@ export class RequestModalComponent implements OnInit {
       this.loadRequest(res);
       this.getFolder();
     }, error => {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
     });
   }
 
@@ -134,6 +135,7 @@ export class RequestModalComponent implements OnInit {
             data: this.oRequest.documentSend(eFILES.SOLICITUD),
             name: eFILES.SOLICITUD + '.pdf'
           },
+          phase: eRequest.SENT,
           folderId: this.folderId,
           doer: this.cookiesService.getData().user.name.fullName,
           operation: eStatusRequest.ACCEPT,
@@ -172,7 +174,7 @@ export class RequestModalComponent implements OnInit {
           doer: this.cookiesService.getData().user.name.fullName,
           observation: observation,
           operation: eStatusRequest.REJECT,
-          phase: this.request.phase
+          phase: eRequest.SENT
         };
         this.updateRequest(data);
       }
@@ -183,14 +185,14 @@ export class RequestModalComponent implements OnInit {
 
   updateRequest(data: any) {
     this.showLoading = true;
-    this.notificationsServ.showNotification(eNotificationType.INFORMATION, "Titulación App", "Procesando Solicitud");
+    this.notificationsServ.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Procesando Solicitud");
     this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
-      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Actualizada');
       this.showLoading = false;
       this.dialogRef.close(true);
     }, error => {
       this.showLoading = false;
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
       this.dialogRef.close(false);
     });
   }

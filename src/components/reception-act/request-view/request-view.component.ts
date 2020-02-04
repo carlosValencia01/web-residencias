@@ -13,6 +13,7 @@ import { ObservationsComponentComponent } from 'src/modals/reception-act/observa
 import { RequestService } from 'src/services/reception-act/request.service';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-request-view',
@@ -26,7 +27,7 @@ export class RequestViewComponent implements OnInit {
   public isToggle = false;
   private integrants: Array<iIntegrant> = [];
   private oRequest: uRequest;
-
+  public showLoading: boolean = false;
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -110,6 +111,15 @@ export class RequestViewComponent implements OnInit {
   }
 
   getRequestPDF() {
-    window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
+    this.showLoading = true;
+    this.requestProvider.getResource(this.request._id, eFILES.SOLICITUD).subscribe(data => {
+      this.showLoading = false;
+      window.open(URL.createObjectURL(data), '_blank');
+    }, error => {
+      this.showLoading = false;
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'Error al obtener la solicitud');
+      // window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
+    });
+
   }
 }

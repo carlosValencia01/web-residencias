@@ -22,6 +22,7 @@ import { DropzoneConfigInterface, DropzoneComponent } from 'ngx-dropzone-wrapper
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import Swal from 'sweetalert2';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 @Component({
   selector: 'app-request-component',
@@ -49,7 +50,7 @@ export class RequestComponentComponent implements OnInit {
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
   public isEdit = false;
-  private URL: string;
+  public showLoading: boolean = false;
   private oRequest: uRequest;
   // public dropZone: DropzoneConfigInterface;
   public folderId: String;
@@ -80,7 +81,6 @@ export class RequestComponentComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.oRequest = new uRequest(this._request, this.imgService, this.cookiesService);
     console.log("Information", this.userInformation);
     this.frmRequest = new FormGroup(
       {
@@ -142,7 +142,6 @@ export class RequestComponentComponent implements OnInit {
         }
       } else {
         this.operationMode = eOperation.NEW;
-        console.log("opera", this.operationMode);
       }
     }, error => {
       this.operationMode = eOperation.NEW;
@@ -169,7 +168,7 @@ export class RequestComponentComponent implements OnInit {
     this.adviserInfo = request.request[0].adviser;
     this.request.student.name = this.userInformation.name.firstName;
     this.request.student.lastName = this.userInformation.name.lastName;
-
+    this.oRequest = new uRequest(this.request, this.imgService, this.cookiesService);
     // this.assignName();
 
     this.frmRequest.setValue({
@@ -187,7 +186,10 @@ export class RequestComponentComponent implements OnInit {
     });
     this.disabledControl();
     this.isToggle = this.request.honorificMention;
-    this.isSentVerificationCode = this._request.sentVerificationCode;
+    //Así estaba
+    // this.isSentVerificationCode = this._request.sentVerificationCode;
+    this.isSentVerificationCode = typeof (this._request) === 'undefined' ?
+      this.request.sentVerificationCode : this._request.sentVerificationCode;
   }
 
   Edit(): void {
@@ -294,7 +296,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('projectName', this.frmRequest.get('project').value);
     this.frmData.append('email', this.frmRequest.get('email').value);
     this.frmData.append('status', 'Process');
-    this.frmData.append('phase', 'Solicitado');
+    this.frmData.append('phase', eRequest.CAPTURED);
     this.frmData.append('telephone', this.frmRequest.get('telephone').value);
     this.frmData.append('honorificMention', this.frmRequest.get('honorific').value);
     this.frmData.append('lastModified', this.frmRequest.get('project').value);
@@ -302,33 +304,34 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('department', this.deptoInfo.name);
     this.frmData.append('boss', this.deptoInfo.boss);
     this.frmData.append('titulationOption', this.frmRequest.get('titulationOption').value);
+    this.showLoading = true;
     switch (this.operationMode) {
       case eOperation.NEW: {
         this.studentProvider.request(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud guardada correctamente');
+            this.showLoading = false;
             this.btnSubmitRequest.emit(true);
           }, error => {
-            console.log('error2', error);
+            this.showLoading = false;
             this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar integrantes');
             this.btnSubmitRequest.emit(false);
           });
+          this.showLoading = false;
           if (data.code && data.code !== 200) {
-            this.notificationsServ
-              .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
           } else {
-            this.notificationsServ
-              .showNotification(eNotificationType.INFORMATION,
-                'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
+            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
           }
         }, error => {
-          console.log('error', error);
+          this.showLoading = false;
           this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar solicitud');
           this.btnSubmitRequest.emit(false);
         });
         break;
       }
       case eOperation.EDIT: {
+        console.log("EDITADO");
         const value = this.request.documents.find(x => x.nameFile === eFILES.PROYECTO);
         let isEmailChanged = false;
         this.frmData.append('fileId', value.driveId);
@@ -343,23 +346,23 @@ export class RequestComponentComponent implements OnInit {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Editada Correctamente');
             this.isEdit = false;
             this.viewObservation = false;
+            this.showLoading = false;
             if (isEmailChanged) {
               if (data.code && data.code !== 200) {
-                this.notificationsServ
-                  .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+                this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
               } else {
-                this.notificationsServ
-                  .showNotification(eNotificationType.INFORMATION,
-                    'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
+                this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
               }
             }
             this.getRequest();
             this.btnSubmitRequest.emit(true);
           }, error => {
+            this.showLoading = false;
             this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
             this.btnSubmitRequest.emit(false);
           });
         }, error => {
+          this.showLoading = false;
           this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
           this.btnSubmitRequest.emit(false);
         });
@@ -369,22 +372,23 @@ export class RequestComponentComponent implements OnInit {
   }
 
   Send(): void {
+    this.showLoading = true;
     const data = {
       operation: eStatusRequest.ACCEPT,
-      doer: this.cookiesService.getData().user.name.fullName
+      doer: this.cookiesService.getData().user.name.fullName,
+      phase: eRequest.CAPTURED,
+      department: this.request.department.name,
+      boss: this.request.department.boss
     };
     this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
+      this.showLoading = false;
       this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Enviada');
       this.btnSubmitRequest.emit(true);
     }, error => {
+      this.showLoading = false;
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
       this.btnSubmitRequest.emit(false);
     });
-  }
-
-  valor(): void {
-    console.log(typeof (this.frmRequest.get('adviser').value) === 'undefined');
-    console.log(!(this.frmRequest.get('adviser').value));
   }
 
   selectAdviser(): void {
@@ -407,7 +411,6 @@ export class RequestComponentComponent implements OnInit {
         this.frmRequest.patchValue({ 'adviser': result.Employee.trim() });
         this.deptoInfo = result.Depto;
         this.adviserInfo = result.ExtraInfo;
-        console.log("depto", this.deptoInfo);
       }
     });
   }
@@ -447,7 +450,6 @@ export class RequestComponentComponent implements OnInit {
   getFolderId() {
     this.studentProvider.getDriveFolderId(this.userInformation.email, eFOLDER.TITULACION).subscribe(folder => {
       this.folderId = folder.folderIdInDrive;
-      console.log("FOLDER", this.folderId);
     });
   }
 
@@ -461,10 +463,10 @@ export class RequestComponentComponent implements OnInit {
     Swal.fire({
       type: 'info',
       title: '¡Ayuda!',
-      text: 'Sube en un archivo PDF la carátula de tu proyecto de residencia firmada con el Visto Bueno de tu asesor',      
+      text: 'Sube en un archivo PDF la carátula de tu proyecto de residencia firmada con el visto bueno de tu asesor',
       allowOutsideClick: false,
       confirmButtonColor: '#3085d6',
-      confirmButtonText: 'Aceptar',            
+      confirmButtonText: 'Aceptar',
     })
   }
   public verifyEmail() {

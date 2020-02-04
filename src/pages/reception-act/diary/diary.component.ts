@@ -20,6 +20,7 @@ import { eOperation } from 'src/enumerators/reception-act/operation.enum';
 import { ViewMoreComponent } from 'src/modals/reception-act/view-more/view-more.component';
 import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
 import { NewTitleComponent } from 'src/modals/reception-act/new-title/new-title.component';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 moment.locale('es');
 @Component({
   selector: 'app-diary',
@@ -469,9 +470,9 @@ export class DiaryComponent implements OnInit {
               const data = {
                 operation: operation,
                 observation: response.motivo,
-                doer: this._CookiesService.getData().user.name.fullName
+                doer: this._CookiesService.getData().user.name.fullName,
+                phase: eRequest.ASSIGNED
               };
-              console.log("APPOINTMENT_id", tmpAppointment.id);
               this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
                 this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
                 AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
@@ -656,7 +657,8 @@ export class DiaryComponent implements OnInit {
         if (result.value) {
           const data = {
             operation: eStatusRequest.ACCEPT,
-            doer: this._CookiesService.getData().user.name.fullName
+            doer: this._CookiesService.getData().user.name.fullName,
+            phase: eRequest.ASSIGNED
           };
           this._RequestProvider.updateRequest(tmpValor.id, data).subscribe(_ => {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Fecha Propuesta Aceptada');
