@@ -11,6 +11,7 @@ import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-vi
 import Swal from 'sweetalert2';
 import { StepperDocumentComponent } from 'src/modals/reception-act/stepper-document/stepper-document.component';
 import { CookiesService } from 'src/services/app/cookie.service';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 @Component({
   selector: 'app-upload-file-titled',
   templateUrl: './upload-file-titled.component.html',
@@ -22,8 +23,9 @@ export class UploadFileTitledComponent implements OnInit {
   public UploadINE: IDocument;
   public UploadCedula: IDocument;
   public UploadXML: IDocument;
+  public showLoading: boolean = false;
   constructor(private _RequestService: RequestService, public _RequestProvider: RequestProvider,
-    public dialog: MatDialog, public _NotificationsServices: NotificationsServices,private _CookiesService: CookiesService) { }
+    public dialog: MatDialog, public _NotificationsServices: NotificationsServices, private _CookiesService: CookiesService) { }
 
   ngOnInit() {
     this.UploadINE = { type: eFILES.INE, status: eStatusRequest.NONE, file: null, isBase64: false };
@@ -100,7 +102,7 @@ export class UploadFileTitledComponent implements OnInit {
       }
     });
   }
-  
+
   onView(file) {
     const type = <eFILES><keyof typeof eFILES>file;
     let pdf: any;
@@ -132,7 +134,7 @@ export class UploadFileTitledComponent implements OnInit {
         this.openView(data, isBase64, type);
       }, error => {
         this._NotificationsServices.showNotification(eNotificationType.ERROR,
-          'Titulación App', error);
+          'Acto Recepcional', error);
       });
     }
   }
@@ -174,7 +176,7 @@ export class UploadFileTitledComponent implements OnInit {
   onSend(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let document: any;
-    const frmData = new FormData();  
+    const frmData = new FormData();
     frmData.append('Document', type);
     frmData.append('folderId', this._CookiesService.getFolder());
     frmData.append('IsEdit', "false");
@@ -195,13 +197,18 @@ export class UploadFileTitledComponent implements OnInit {
         break;
       }
     }
+    frmData.append('phase', this.Request.phase);
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Cargando Archivo");
+    this.showLoading = true;
     this._RequestProvider.uploadFile(this.Request._id, frmData).subscribe(data => {
       const doc = this.getDocument(type);
       doc.status = eStatusRequest.PROCESS;
       document.status = eStatusRequest.PROCESS;//eStatusRequest.PROCESS;      
+      this.showLoading = false;
     }, error => {
+      this.showLoading = false;
       this._NotificationsServices.showNotification(eNotificationType.ERROR,
-        "Titulación App", error);
+        "Acto Recepcional", error);
     });
   }
 

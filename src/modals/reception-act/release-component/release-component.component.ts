@@ -11,7 +11,8 @@ import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { iRequest } from 'src/entities/reception-act/request.model';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
-
+import Swal from 'sweetalert2';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 @Component({
   selector: 'app-release-component',
@@ -41,9 +42,8 @@ export class ReleaseComponentComponent implements OnInit {
     this.information = data;
     this.isReject = typeof (this.information.observation) !== 'undefined' && this.information.observation.length > 0;
     this.userInformation = this.cookiesService.getData().user;
-    console.log("Data", this.information);
     this.studentCareer = this.information.request.career;
-    console.log("Data", this.studentCareer);
+    this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
   }
 
   ngOnInit() {
@@ -69,6 +69,9 @@ export class ReleaseComponentComponent implements OnInit {
       this.Time.writeValue(hour + ":" + minutes);
       this.activeReleased = this.isReject;
       this.enableUpload = !this.isReject;
+      if (this.isReject) {
+        this.loadFile();
+      }
     } else {
       this.juryInfo = [
         { name: this.information.request.adviser.name, title: this.information.request.adviser.title, cedula: this.information.request.adviser.cedula },
@@ -78,8 +81,19 @@ export class ReleaseComponentComponent implements OnInit {
       ];
       this.Time.writeValue("7:00");
     }
+
   }
 
+  loadFile(): void {
+    this.showLoading = true;
+    this._RequestProvider.getResource(this.information.request._id, eFILES.RELEASED).subscribe(data => {
+      this.fileData = data;
+      this.showLoading = false;
+    }, error => {
+      this.showLoading = false;
+      this.notifications.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Recuperación Fallidad");
+    });
+  }
   obtenerCarreras(): Array<string> {
     let tmpArray: Array<string> = [];
     if (typeof (this.cookiesService.getPosition()) !== 'undefined') {
@@ -89,6 +103,35 @@ export class ReleaseComponentComponent implements OnInit {
     }
     return tmpArray;
   }
+
+  seeTrade() {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: 'btn btn-outline-success mx-2',
+        cancelButton: 'btn btn-outline-danger'
+      },
+      buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+      title: 'Número de oficio',
+      input: 'textarea',
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      showCloseButton: true,
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Número de oficio obligatorio'
+        }
+      }
+    }).then((result) => {
+      if (result.value) {
+        window.open(this.oRequest.notificationAdvisory(result.value).output('bloburl'), '_blank');
+      }
+    });
+  }
+
   selectEmployee(button): void {
     if (this.frmConsejo.disabled) {
       return;
@@ -145,7 +188,9 @@ export class ReleaseComponentComponent implements OnInit {
           }
         }
         const isCompleted = this.juryInfo.reduce((value, current) => { return current.name.length > 0 && value; }, true);
-        console.log("compleado", isCompleted);
+        if (isCompleted) {
+          this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
+        }
         this.activeReleased = isCompleted;//this.juryInfo.length === 4;
       }
     });
@@ -163,6 +208,7 @@ export class ReleaseComponentComponent implements OnInit {
         frmData.append('folderId', this.information.folder);
         frmData.append('Document', eFILES.RELEASED);
         frmData.append('IsEdit', 'true');
+        frmData.append('phase', this.information.request.phase);
         this._RequestProvider.uploadFile(this.information.id, frmData).subscribe(data => {
           this.fileData = event.target.files[0];
           this.showLoading = false;
@@ -202,8 +248,7 @@ export class ReleaseComponentComponent implements OnInit {
     this.information.request.jury = this.juryInfo;
     this.information.request.proposedDate = new Date();
     this.information.request.proposedHour = Number(this.Time.hour * 60) + Number(this.Time.minute);
-    this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
-    await this.delay(1000);
+    // await this.delay(1000);
     window.open(this.oRequest.projectReleaseNew().output('bloburl'), '_blank');
     this.enableUpload = true;
     // async () => {

@@ -11,6 +11,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import Swal from 'sweetalert2';
 import { StepperDocumentComponent } from 'src/modals/reception-act/stepper-document/stepper-document.component';
 import { CookiesService } from 'src/services/app/cookie.service';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 @Component({
   selector: 'app-upload-files',
@@ -335,7 +336,7 @@ export class UploadFilesComponent implements OnInit {
     let document: any;
     const frmData = new FormData();
     frmData.append('folderId', this.isEditable ? this.Request.folder : this._CookiesService.getFolder());
-    frmData.append('Document', type);
+    frmData.append('Document', type);    
     frmData.append('IsEdit', this.isEditable ? "true" : "false");
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
@@ -389,7 +390,7 @@ export class UploadFilesComponent implements OnInit {
         break;
       }
     }
-
+    frmData.append('phase', this.Request.phase);
     this.requestProvider.uploadFile(this.Request._id, frmData).subscribe(data => {
       const doc = this.getDocument(type);
       doc.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;

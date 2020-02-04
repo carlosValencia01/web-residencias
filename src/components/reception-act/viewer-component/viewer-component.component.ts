@@ -141,7 +141,13 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.VERIFIED: {
-        window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
+        this.oRequest.setRequest(this._Request);
+        this.oRequest.setCode(this.QR, this.EStamp);
+        this.requestProvider.getResource(this._Request._id, eFILES.REGISTRO).subscribe(data => {
+          window.open(URL.createObjectURL(data), '_blank');
+        }, error => {
+          window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
+        });
         break;
       }
       case eRequest.SENT: {

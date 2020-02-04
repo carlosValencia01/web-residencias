@@ -12,6 +12,7 @@ import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum
 import { CookiesService } from 'src/services/app/cookie.service';
 import { ISchedule } from 'src/entities/reception-act/schedule.model';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 @Component({
   selector: 'app-schedule',
@@ -204,7 +205,8 @@ export class ScheduleComponent implements OnInit {
           const data = {
             operation: eStatusRequest.PROCESS,
             doer: this._CookiesService.getData().user.name.fullName,
-            appointment: tmpAppointment
+            appointment: tmpAppointment,
+            phase: eRequest.ASSIGNED
           };
           this._RequestProvider.updateRequest(this.request._id, data).subscribe(_ => {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Fecha Propuesta Agendada');

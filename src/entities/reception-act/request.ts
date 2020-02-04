@@ -44,6 +44,8 @@ export class uRequest {
     private JDeptoEsc: IBoss;
     private Director: IBoss;
     private bosses: any;
+    private _qrCode: any;
+    private _stamp: any;
     constructor(public _request: iRequest, public _getImage: ImageToBase64Service, public _CookiesService: CookiesService) {
         this.bosses = this._CookiesService.getBosses();
         this.JDeptoDiv = this.bosses.JDeptoDiv;
@@ -55,6 +57,12 @@ export class uRequest {
 
     public setRequest(request: iRequest) {
         this._request = request;
+    }
+
+    public setCode(qrCode: any, eStamp: any) {
+        this._qrCode = qrCode;
+        this._stamp = eStamp;
+        console.log("VALORES", this._qrCode);
     }
 
     private _getImageToPdf() {
@@ -91,7 +99,7 @@ export class uRequest {
         });
     }
 
-    documentSend(file: eFILES) {
+    documentSend(file: eFILES, qrCode?: any, eStamp?: any) {
         let document;
         let binary;
         switch (file) {
@@ -101,12 +109,17 @@ export class uRequest {
                 break;
             }
             case eFILES.REGISTRO: {
-                document = this.projectRegistrationOffice().output('arraybuffer');
+                document = this.projectRegistrationOffice(qrCode, eStamp).output('arraybuffer');
                 binary = this.bufferToBase64(document);
                 break;
             }
             case eFILES.INCONVENIENCE: {
-                document = this.noInconvenience().output('arraybuffer');
+                document = this.noInconvenience(qrCode, eStamp).output('arraybuffer');
+                binary = this.bufferToBase64(document);
+                break;
+            }
+            case eFILES.JURAMENTO_ETICA: {
+                document = this.professionalEthicsAndCode().output('arraybuffer');
                 binary = this.bufferToBase64(document);
                 break;
             }
@@ -198,6 +211,7 @@ export class uRequest {
 
     projectRegistrationOffice(qrCode?, eStamp?): jsPDF {
         const doc = this.newDocumentTec();
+        console.log("REGISTRO DE PROYECTO", this._request);
         const registerHistory = this._request.history
             .filter(x => x.phase === 'Verificado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         doc.setTextColor(0, 0, 0);
@@ -255,9 +269,9 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Bold');
         const observationY = 185 + observationsLines + (nameProjectLines - 5) + integrantsLines;
-        // doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
-        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 235);
-        // doc.setFont(this.FONT, 'Normal');
+        doc.addImage(((typeof (this._qrCode) !== 'undefined') ? this._qrCode : qrCode), 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
+        doc.text(doc.splitTextToSize(((typeof (this._stamp) !== 'undefined') ? this._stamp : eStamp) || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 235);
+
         return doc;
     }
 
@@ -333,7 +347,7 @@ export class uRequest {
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(10);
         // tslint:disable-next-line: max-line-length
-        this.justityText(doc, 'Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', { x: this.MARGIN.LEFT, y: 130 }, 180);
+        this.justifyText(doc, 'Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', { x: this.MARGIN.LEFT, y: 130 }, 180);
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(11);
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
@@ -341,7 +355,7 @@ export class uRequest {
         doc.text('JEFE DEL DEPARTAMENTO DE SERVICIOS ESCOLARES', this.MARGIN.LEFT, 176, { align: 'left' });
 
         doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
-        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)),  this.MARGIN.LEFT + 45, 235);
+        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 235);
 
         doc.setFontSize(11);
         doc.text('"Sabiduría Tecnológica, Pasión de nuestro Espíritu" ®', this.MARGIN.LEFT, 186, { align: 'left' });
@@ -371,7 +385,7 @@ export class uRequest {
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(17);
         // tslint:disable-next-line:max-line-length
-        this.justityText(doc, `DEDICO MIS CONOCIMIENTOS PROFESIONALES AL PROGRESO Y MEJORAMIENTO DEL BIENESTAR HUMANO, ME COMPROMETO A DAR UN RENDIMIENTO MÁXIMO, A PARTICIPAR TAN SOLO EN EMPRESAS DIGNAS, A VIVIR Y TRABAJAR DE ACUERDO CON LAS LEYES PROPIAS DEL HOMBRE Y EL MÁS ELEVADO NIVEL DE CONDUCTA PROFESIONAL, A PREFERIR EL SERVICIO AL PROVECHO, EL HONOR Y LA CALIDAD PROFESIONAL A LA VENTAJA PERSONAL, EL BIEN PÚBLICO A TODA CONSIDERACIÓN, CON RESPETO Y HONRADEZ HAGO EL PRESENTE JURAMENTO.`,
+        this.justifyText(doc, `DEDICO MIS CONOCIMIENTOS PROFESIONALES AL PROGRESO Y MEJORAMIENTO DEL BIENESTAR HUMANO, ME COMPROMETO A DAR UN RENDIMIENTO MÁXIMO, A PARTICIPAR TAN SOLO EN EMPRESAS DIGNAS, A VIVIR Y TRABAJAR DE ACUERDO CON LAS LEYES PROPIAS DEL HOMBRE Y EL MÁS ELEVADO NIVEL DE CONDUCTA PROFESIONAL, A PREFERIR EL SERVICIO AL PROVECHO, EL HONOR Y LA CALIDAD PROFESIONAL A LA VENTAJA PERSONAL, EL BIEN PÚBLICO A TODA CONSIDERACIÓN, CON RESPETO Y HONRADEZ HAGO EL PRESENTE JURAMENTO.`,
             { x: this.MARGIN.LEFT + 15, y: initialHeight + (lineHeight * 9) },
             (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), 7);
         doc.setFontSize(14);
@@ -434,7 +448,7 @@ export class uRequest {
                 totalLines = 0;
                 y = initialHeight + (lineHeight * totalLines);
             }
-            this.justityText(doc, ruleData, { x: startLine, y: y }, lineWidth, 7);
+            this.justifyText(doc, ruleData, { x: startLine, y: y }, lineWidth, 7);
             totalLines += linesRule;
         });
     }
@@ -490,40 +504,18 @@ export class uRequest {
         const widthRect: number = (this.WIDTH - (this.MARGIN.RIGHT + this.MARGIN.LEFT));
         const heightRect: number = this.HEIGHT - (185 + this.MARGIN.BOTTOM);
         const widthLine: number = widthRect / 4;
-        // doc.rect(this.MARGIN.LEFT, 178, widthRect, heightRect, "S");
-        // doc.line(this.MARGIN.LEFT + widthLine, 178, this.MARGIN.LEFT + widthLine, 178 + heightRect);
-        // doc.line(this.MARGIN.LEFT + widthLine * 2, 178, this.MARGIN.LEFT + widthLine * 2, 178 + heightRect);
-        // doc.line(this.MARGIN.LEFT + widthLine * 3, 178, this.MARGIN.LEFT + widthLine * 3, 178 + heightRect);
-
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(10);
-        doc.text(`${this._request.jury[0].name}`, this.WIDTH / 2, 193 + (heightRect / 2), { align: "center" });
-        // doc.text('ASESOR', this.WIDTH / 2, 197 + (heightRect / 2), { align: "center" });
-        this.addLineCenter(doc, 'Nombre y firma del asesor', 197 + (heightRect / 2));
-        // doc.text(this._request.jury[0].title, this.WIDTH / 2, 196 + (heightRect / 2), { align: "center" });
-        // doc.text(`NO. CEDULA PROF. ${this._request.jury[0].cedula}`, this.WIDTH / 2, 202 + (heightRect / 2), { align: "center" });
 
-
-        // doc.text(doc.splitTextToSize(this._request.jury[0].name, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 185 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize("Asesor", widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 193 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize(this._request.jury[0].title, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 196 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[0].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 1 / 2), 202 + (heightRect / 2), { align: "center" });
-
-        // doc.text(doc.splitTextToSize(this._request.jury[1].name, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 185 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize("Revisor", widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 193 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize(this._request.jury[1].title, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 196 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[1].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 3 / 2), 202 + (heightRect / 2), { align: "center" });
-
-        // doc.text(doc.splitTextToSize(this._request.jury[2].name, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 185 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize("Revisor", widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 193 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize(this._request.jury[2].title, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 196 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[2].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 5 / 2), 202 + (heightRect / 2), { align: "center" });
-
-        // doc.text(doc.splitTextToSize(this._request.jury[3].name, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 185 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize("Revisor Suplente", widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 193 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize(this._request.jury[3].title, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 196 + (heightRect / 2), { align: "center" });
-        // doc.text(doc.splitTextToSize(`NO. CEDULA PROF. ${this._request.jury[3].cedula}`, widthLine), this.MARGIN.LEFT + (widthLine * 7 / 2), 202 + (heightRect / 2), { align: "center" });
-
+        let line = this._request.jury[0].name.split('').map((x) => { return '_'; }).join('');
+        const sizeAdvisory = doc.getTextWidth(`Asesor: ${this._request.jury[0].name}`) - doc.getTextWidth('Firma: ');
+        let sizeLine;
+        do {
+            line += "_";
+            sizeLine = doc.getTextWidth(line);
+        } while (sizeLine < sizeAdvisory);
+        doc.text(`Firma: ${line}`, this.WIDTH / 2, 193 + (heightRect / 2), { align: "center" });
+        doc.text(`Asesor: ${this._request.jury[0].name}`, this.WIDTH / 2, 197 + (heightRect / 2), { align: "center" });
         let appointment: Date = new Date(this._request.proposedDate);
         appointment.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0)
         doc.setFontSize(9);
@@ -539,18 +531,36 @@ export class uRequest {
         doc.setFontSize(7);
         doc.text(`${this.ENCABEZADO}`, (this.WIDTH / 2), 45, { align: 'center' });
         doc.setFontSize(10);
-        this.addTextRight(doc, `Tepic, Nayarit; ${moment(new Date()).format('LL')}`, 58);
-        this.addTextRight(doc, `OFICIO No. ${officeNumber}`, 63);
+        this.addTextRight(doc, `Tepic, Nayarit; ${moment(new Date()).format('LL')} `, 58);
+        this.addTextRight(doc, `OFICIO No.${officeNumber} `, 63);
         this.addTextRight(doc, `ASUNTO: Asesor de Trabajo Profesional`, 70);
         doc.setFont(this.FONT, 'Bold');
-        doc.text(`C. ${this._request.adviser.name}`, this.MARGIN.LEFT, 75);
+        doc.text(`C.${this._request.adviser.name} `, this.MARGIN.LEFT, 75);
         doc.text('CATEDRÁTICO DE ESTE INSTITUTO', this.MARGIN.LEFT, 80);
         doc.text('PRESENTE', this.MARGIN.LEFT, 85);
         doc.setFont(this.FONT, 'Normal');
-        let msn = `Me permito comunicarle que ha sido ratificado como @ASESOR@ del Trabajo Profesional con el nombre: ${this.addArroba(this._request.projectName)}`;
-        this.justityText(doc, msn, { x: this.MARGIN.LEFT, y: 95 }, 10);
-        msn = `Que presenta el (la) C. ${this._request.student.fullName}`;
-        this.justityText(doc, msn, { x: this.MARGIN.LEFT, y: 10 }, 10);
+
+        let msn = `Me permito comunicarle que ha sido ratificado como @ASESOR@ del Trabajo Profesional con el nombre: ${this.addArroba(this._request.projectName)} `;
+        const rows: Array<string> = doc.splitTextToSize(msn, 180);
+        const increment: number = rows.length - 1;
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 95 }, 180);
+        msn = `Que presenta el(la) C. ${this.addArroba(this._request.student.fullName)} `;
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 105 + (increment * 5) }, 180);
+        msn = `Correspondiente a la opción ${this.addArroba(this._request.titulationOption)} ( ${this.addArroba(this._request.product)} )`;
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 115 + (increment * 5) }, 180);
+        msn = `Pasante de la carrera de ${this.addArroba(this._request.career)} `;
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 130 + (increment * 5) }, 180);
+        msn = `No. de control: ${this.addArroba(this._request.controlNumber)} `;
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 140 + (increment * 5) }, 180);
+        msn = `Sin más por el momento, me despido`;
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 150 + (increment * 5) }, 180);
+
+        doc.setFont(this.FONT, 'Bold');
+        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 185);
+        doc.text('"SABIDURÍA TECNOLÓGICA, PASIÓN DE NUESTRO ESPÍRITU"®', this.MARGIN.LEFT, 190);
+
+        doc.text(`${this._request.department.boss} `, this.MARGIN.LEFT, 230);
+        doc.text(`${this._request.department.name} `, this.MARGIN.LEFT, 235);
         return doc;
     }
 
@@ -561,7 +571,7 @@ export class uRequest {
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(8);
-        doc.text(`${this.ENCABEZADO}`, (this.WIDTH / 2), 45, { align: 'center' });
+        doc.text(`${this.ENCABEZADO} `, (this.WIDTH / 2), 45, { align: 'center' });
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(10);
         doc.text('TEPIC, NAYARIT;', (this.WIDTH / 2), 55, { align: 'center' });
@@ -579,24 +589,25 @@ export class uRequest {
         this.addJury(doc, this._request.jury[3], 140); // 145,150,155
 
         // tslint:disable-next-line: max-line-length
-        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI (TITULACION INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO. El cual se realizará el día @FECHA , a las @HORA Hrs. En la Sala @LUGAR de este Instituto.`;
-
-        contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())}`);
-        contenido = contenido.replace('@NUMERO', `${this.addArroba(this._request.student.controlNumber.toUpperCase())}`);
-        contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())}`);
-        contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())}`);
+        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACION INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
+        contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
+        contenido = contenido.replace('@NUMERO', `${this.addArroba(this._request.student.controlNumber.toUpperCase())} `);
+        contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())} `);
+        contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())} `);
         // tslint:disable-next-line: max-line-length
-        contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)}`);
-        contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))}`);
-        contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())}`);
-        this.justityText(doc, contenido, { x: this.MARGIN.LEFT, y: 160 }, 180);
+        contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)} `);
+        contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))} `);
+        contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())} `);
+
+        this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 160 }, 180);
 
         doc.text('Por lo que se le pide su puntual asistencia.', this.MARGIN.LEFT, 210);
+        doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 225);
         // doc.text('L.A. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 240);
-        doc.text(`${this.JDeptoDiv.name}`, this.MARGIN.LEFT, 240);
+        doc.text(`${this.JDeptoDiv.name} `, this.MARGIN.LEFT, 240);
         let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
-        doc.text(`${positionGender} DE LA DIV. DE EST. PROFESIONALES`, this.MARGIN.LEFT, 245);
+        doc.text(`${positionGender} DE LA DIV.DE EST.PROFESIONALES`, this.MARGIN.LEFT, 245);
         return doc;
     }
 
@@ -607,39 +618,40 @@ export class uRequest {
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(10);
-        this.addTextRight(doc, `Tepic, Nayarit a ${moment(new Date()).format('LL').toUpperCase()}`, 45);
-        this.addTextRight(doc, `OFICIO No. ${duty}`, 50);
+        this.addTextRight(doc, `Tepic, Nayarit a ${moment(new Date()).format('LL').toUpperCase()} `, 45);
+        this.addTextRight(doc, `OFICIO No.${duty} `, 50);
         doc.setFont(this.FONT, 'Normal');
-        // this.addTextRight(doc, `ASUNTO: ${position} Acto de Recepcion Profesional`, 65);
+        // this.addTextRight(doc, `ASUNTO: ${ position } Acto de Recepcion Profesional`, 65);
         this.addTextRight(doc, `ASUNTO: Comisión, Acto de Recepcion Profesional`, 65);
         doc.setFont(this.FONT, 'Bold');
-        doc.text(`C. ${employee.toUpperCase()}`, this.MARGIN.LEFT, 90);
+        doc.text(`C.${employee.toUpperCase()} `, this.MARGIN.LEFT, 90);
         doc.text(`CATEDRÁTICO DE ESTE INSTITUTO`, this.MARGIN.LEFT, 95);
         doc.text(`P R E S E N T E`, this.MARGIN.LEFT, 100);
         // tslint:disable-next-line: max-line-length
-        let contenido = `En atención a lo marcado por el Artículo 22o. del Reglamento de Examen Profesional, me permito notificarle que ha sido designado (a) @PUESTO del Jurado del Acto de Recepción Profesional del (la) C. @ESTUDIANTE, egresado (a) de la Carrera de @CARRERA, por la Opción XI, TITULACIÓN INTEGRAL (INFORME TÉCNICO DE RESIDENCIA PROFESIONAL) con el proyecto @PROYECTO, quien presentará el Acto de Recepción Profesional el día @FECHA del presente año, a las @HORA hrs. en la Sala @LUGAR de este Instituto.`;
-        contenido = contenido.replace('@PUESTO', `${this.addArroba(position.toUpperCase())}`);
-        contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())}`);
-        contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())}`);
-        contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())}`);
+        let contenido = `En atención a lo marcado por el Artículo 22o.del Reglamento de Examen Profesional, me permito notificarle que ha sido designado(a) @PUESTO del Jurado del Acto de Recepción Profesional del(la) C. @ESTUDIANTE, egresado(a) de la Carrera de @CARRERA, por la Opción XI, TITULACIÓN INTEGRAL(INFORME TÉCNICO DE RESIDENCIA PROFESIONAL) con el proyecto @PROYECTO, quien presentará el Acto de Recepción Profesional el día @FECHA del presente año, a las @HORA hrs.en la Sala @LUGAR de este Instituto.`;
+        contenido = contenido.replace('@PUESTO', `${this.addArroba(position.toUpperCase())} `);
+        contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
+        contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())} `);
+        contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())} `);
         // tslint:disable-next-line: max-line-length
-        contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)}`);
-        contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))}`);
-        contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())}`);
-        this.justityText(doc, contenido, { x: this.MARGIN.LEFT, y: 120 }, 180);
+        contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)} `);
+        contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))} `);
+        contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())} `);
+        this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 120 }, 180);
         doc.setFontSize(10);
+        doc.setFont(this.FONT, 'Bold');
         doc.text('A T E N T A M E N T E.', this.MARGIN.LEFT, 190);
         doc.text('“SABIDURÍA TECNOLÓGICA, PASIÓN DE NUESTRO ESPÍRITU”®', this.MARGIN.LEFT, 195);
         // doc.text('MARTHA ANGÉLICA PARRA URÍAS', this.MARGIN.LEFT, 225);
         doc.text(this._request.department.boss, this.MARGIN.LEFT, 220);
         // doc.text('JEFA DEL DEPARTAMENTO DE SISTEMAS COMPUTACIONALES', this.MARGIN.LEFT, 230);
-        doc.text(`JEFE DEL ${this._request.department.name}`, this.MARGIN.LEFT, 225);
+        doc.text(`JEFE DEL ${this._request.department.name} `, this.MARGIN.LEFT, 225);
         return doc;
     }
 
-    public testReport(): jsPDF {        
-        
-        const doc = this.newDocumentTec(true,false);
+    public testReport(): jsPDF {
+
+        const doc = this.newDocumentTec(true, false);
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(10);
@@ -652,51 +664,49 @@ export class uRequest {
         let content = 'El (la) suscrito (a) Director (a) del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a la carrera de @CARRERA No. @LIBRO Autorizado el día @AUTORIZACION, por la Dirección de Asuntos Escolares y Apoyo a Estudiantes del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a le letra dice:';
         content = content.replace('@CARRERA', this.letterCapital(this._request.registry.career));
         content = content.replace('@AUTORIZACION', moment(this._request.registry.date).format('LL'));
-        content = content.replace('@NUMERO', this._request.registry.foja+'');
-        content = content.replace('@LIBRO', this._request.registry.bookNumber+'');
-        this.justityText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
+        content = content.replace('@NUMERO', this._request.registry.foja + '');
+        content = content.replace('@LIBRO', this._request.registry.bookNumber + '');
+        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
         doc.ellipse(28, 90, 20, 30);
         // tslint:disable-next-line: max-line-length
         content = 'De acuerdo con el instructivo vigente de Titulación, que no tiene como requisito la sustentación del Examen Profesional para Efecto de obtención de Título, en las opciones VIII, IX y Titulación Integral, el Jurado HACE CONSTAR: que al (la) C. @ESTUDIANTE con número de control @CONTROL egresado(a) del Instituto Tecnológico de Tepic, Clave 18DIT0002Z, que cursó la carrera de: @CARRERA.';
-        content = content.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())}`);
-        content = content.replace('@CONTROL', `${this.addArroba(this._request.student.controlNumber)}`);
-        content = content.replace('@CARRERA', `${this.addArroba(this.letterCapital(this._request.student.career))}`);
-        this.justityText(doc, content, { x: this.MARGIN.LEFT + 32, y: 86 }, 138, 4);
+        content = content.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
+        content = content.replace('@CONTROL', `${this.addArroba(this._request.student.controlNumber)} `);
+        content = content.replace('@CARRERA', `${this.addArroba(this.letterCapital(this._request.student.career))} `);
+        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 86 }, 138, 4);
         // tslint:disable-next-line: max-line-length
-        this.justityText(doc, 'Cumplió satisfactoriamente con lo estipulado en la opción: @Titulación@ @Integral.@', { x: this.MARGIN.LEFT + 32, y: 106 }, 138, 4);
+        this.justifyText(doc, 'Cumplió satisfactoriamente con lo estipulado en la opción: @Titulación@ @Integral.@', { x: this.MARGIN.LEFT + 32, y: 106 }, 138, 4);
 
         // tslint:disable-next-line: max-line-length
         content = 'El presidente (a) del jurado le hizo saber a el (la) el resultado obtenido, el Código de Ética Profesional y le tomó la Protesta de Ley, una vez escrita, leída la firmaron las personas que en el acto protocolario intervinieron, para los efectos legales a que haya lugar, se asienta la presente en la ciudad de Tepic Nayarit el @dia@ @HOY';
         // tslint:disable-next-line: max-line-length
         content = content.replace('@HOY', `@${String(tmpDate.getDate())}@ @del@ @mes@ @${this.letterCapital(moment(tmpDate).format('MMMM'))}@ @del@ @Año@ @${tmpDate.getFullYear()}@`);
-        this.justityText(doc, content, { x: this.MARGIN.LEFT + 32, y: 116 }, 138, 4);
+        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 116 }, 138, 4);
 
         doc.setFont(this.FONT, 'Normal');
         doc.text('Rubrican', this.MARGIN.LEFT + 32, 138, { align: 'left' });
 
         // tslint:disable-next-line: max-line-length
-        this.justityText(doc, `@Presidente(a):@ ${this.letterCapital(this._request.jury[0].name)}`, { x: this.MARGIN.LEFT + 32, y: 142 }, 180);
+        this.justifyText(doc, `@Presidente(a):@ ${this.letterCapital(this._request.jury[0].name)} `, { x: this.MARGIN.LEFT + 32, y: 142 }, 180);
         doc.text(this.letterCapital(this._request.jury[0].title), this.MARGIN.LEFT + 32, 146, { align: 'left' });
-        doc.text(`No.Ced.Prof. : ${this._request.jury[0].cedula}`, this.MARGIN.LEFT + 32, 150, { align: 'left' });
+        doc.text(`No.Ced.Prof. : ${this._request.jury[0].cedula} `, this.MARGIN.LEFT + 32, 150, { align: 'left' });
 
         // tslint:disable-next-line: max-line-length
-        this.justityText(doc, `@Secretario(a):@ ${this.letterCapital(this._request.jury[1].name)}`, { x: this.MARGIN.LEFT + 32, y: 155 }, 180);
+        this.justifyText(doc, `@Secretario(a):@ ${this.letterCapital(this._request.jury[1].name)} `, { x: this.MARGIN.LEFT + 32, y: 155 }, 180);
         doc.text(this.letterCapital(this._request.jury[1].title), this.MARGIN.LEFT + 32, 159, { align: 'left' });
-        doc.text(`No.Ced.Prof. : ${this._request.jury[1].cedula}`, this.MARGIN.LEFT + 32, 163, { align: 'left' });
+        doc.text(`No.Ced.Prof. : ${this._request.jury[1].cedula} `, this.MARGIN.LEFT + 32, 163, { align: 'left' });
 
-        this.justityText(doc, `@Vocal:@ ${this.letterCapital(this._request.jury[2].name)}`, { x: this.MARGIN.LEFT + 32, y: 168 }, 180);
+        this.justifyText(doc, `@Vocal:@ ${this.letterCapital(this._request.jury[2].name)} `, { x: this.MARGIN.LEFT + 32, y: 168 }, 180);
         doc.text(this.letterCapital(this._request.jury[2].title), this.MARGIN.LEFT + 32, 172, { align: 'left' });
-        doc.text(`No.Ced.Prof. : ${this._request.jury[2].cedula}`, this.MARGIN.LEFT + 32, 176, { align: 'left' });
+        doc.text(`No.Ced.Prof. : ${this._request.jury[2].cedula} `, this.MARGIN.LEFT + 32, 176, { align: 'left' });
 
         // tslint:disable-next-line: max-line-length
-        doc.text(`Se extiende esta certificación a los ${tmpDate.getDate()} del mes ${this.letterCapital(moment(tmpDate).format('MMMM'))} del Año ${tmpDate.getFullYear()}`, this.MARGIN.LEFT + 32, 184, { align: 'left' });
+        doc.text(`Se extiende esta certificación a los ${tmpDate.getDate()} del mes ${this.letterCapital(moment(tmpDate).format('MMMM'))} del Año ${tmpDate.getFullYear()} `, this.MARGIN.LEFT + 32, 184, { align: 'left' });
 
         // let servicios = 'M.C. Israel Arjona Vizcaíno';
         // let director = 'LIC. MANUEL ÁNGEL URIBE VÁZQUEZ';
-        let servicios = 'el profe';
-        // this.JDeptoEsc.name;
-        let director = 'director';
-        // this.Director.name;
+        let servicios = this.JDeptoEsc.name;
+        let director = this.Director.name;
         doc.setFont(this.FONT, 'Bold');
 
         doc.text(`COTEJO`, this.MARGIN.LEFT + 32, 190, { align: 'left' });
@@ -708,7 +718,7 @@ export class uRequest {
         doc.text(servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
 
         doc.addImage(this.directorFirm, 'PNG', this.WIDTH / 2, 213, 60, 25);
-        doc.text(`${director}`, this.WIDTH / 2, 240, { align: 'left' });
+        doc.text(`${director} `, this.WIDTH / 2, 240, { align: 'left' });
         doc.text(`Director`, (this.WIDTH / 2) + ((doc.getStringUnitWidth(director) * 72 / 25.6) / 2), 244, { maxWidth: 50, align: 'left' });
         return doc;
     }
@@ -718,7 +728,7 @@ export class uRequest {
         doc.text(doc.splitTextToSize(jury.title, 150), this.MARGIN.LEFT + 35, positionY);
         doc.text(jury.name, this.MARGIN.LEFT + 35, positionY + 5);
         doc.setFont(this.FONT, 'Normal');
-        doc.text(`No.de Cedula Profesional: ${jury.cedula}`, this.MARGIN.LEFT + 35, positionY + 10);
+        doc.text(`No.de Cedula Profesional: ${jury.cedula} `, this.MARGIN.LEFT + 35, positionY + 10);
     }
     // A una cadena de texto, le añade @ a cada palabra tanto al inicio y al final
     // Esto es para indicar que se le agregará texto en negritas
@@ -753,8 +763,10 @@ export class uRequest {
         });
         // doc.text(text, this.WIDTH - (this.MARGIN.RIGHT + tmpCount), positionY);
     }
-    // Justifica un texto
-    private justityText(Doc: jsPDF, Text: string, Point: { x: number, y: number }, Size: number, lineBreak: number = 5) {
+    // Justifica un texto 
+    //Doc: Instancia JSPDF, Text: Texto a justificar, Point: Coordenada (X,Y) de dibujo
+    //Size: Anchura en la que se dividirá, lineaBreak: Salto de linea    
+    private justifyText(Doc: jsPDF, Text: string, Point: { x: number, y: number }, Size: number, lineBreak: number = 5) {
         // Texto sin @ (Negritas) para conocer más adelante las filas en las que será dividido
         const tmpText: string = Text.split('@').join('');
         // Texto original
@@ -764,6 +776,7 @@ export class uRequest {
         // Filas en las cuales se dividirá el texto
         const rows: Array<string> = Doc.splitTextToSize(tmpText, Size);
         const lastRow = rows.length - 1;
+
         rows.forEach((row, index) => {
             // Cantidad de palabras que tiene la fila
             let longitud = row.split(/\s+/).length;
@@ -774,21 +787,25 @@ export class uRequest {
             // Posicion X,Y para poner la palabra
             let tmpIncX = Point.x;
             let tmpIncY = Point.y + (index * lineBreak);
+
             while (longitud > 0) {
-                // Se obtiene la palabra del texto original a escribiri
+                // Se obtiene la palabra del texto original a escribiri                
                 let tmpWord = aText[iWord];
-                // Verifico si la palabra es negrita
-                if (/^@[^\s]+@$/.test(tmpWord.replace(',', '').replace('.', ''))) {
-                    Doc.setFont(this.FONT, 'Bold');
-                    // Limpio la palabra de @
-                    tmpWord = tmpWord.split('@').join('');
-                } else {
-                    Doc.setFont(this.FONT, 'Normal');
+
+                if (typeof (tmpWord) !== 'undefined') {
+                    // Verifico si la palabra es negrita
+                    if (/^@[^\s]+@$/.test(tmpWord.replace(',', '').replace('.', ''))) {
+                        Doc.setFont(this.FONT, 'Bold');
+                        // Limpio la palabra de @
+                        tmpWord = tmpWord.split('@').join('');
+                    } else {
+                        Doc.setFont(this.FONT, 'Normal');
+                    }
+                    // Impresión de la palabra
+                    Doc.text(tmpWord, tmpIncX, tmpIncY);
+                    // Nueva posición
+                    tmpIncX += Doc.getTextWidth(tmpWord) + space;
                 }
-                // Impresión de la palabra
-                Doc.text(tmpWord, tmpIncX, tmpIncY);
-                // Nueva posición
-                tmpIncX += Doc.getTextWidth(tmpWord) + space;
                 // Se prosigue con la otra palabra
                 longitud--;
                 // Se incrementa el indice global

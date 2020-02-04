@@ -94,7 +94,7 @@ export class SteepComponentComponent implements OnInit {
   }
 
   async updateRequest(request) {
-    await this.delay(150);
+    await this.delay(300);
     this._RequestService.AddRequest(request, eRequest.VERIFIED);
   }
 
@@ -119,26 +119,27 @@ export class SteepComponentComponent implements OnInit {
         break;
       }
       case 2: {
+        this.notificationsServ.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Guardando Solicitud");
         this.showLoading = true;
         const data = {
           doer: this.cookiesService.getData().user.name.fullName,
           observation: '',
           operation: eStatusRequest.ACCEPT,
-          phase: this.Request.phase,
+          phase: eRequest.VERIFIED,
           folderId: this.folderId,
           file: {
             mimetype: "application/pdf",
-            data: this.oRequest.documentSend(eFILES.REGISTRO),
+            data: this.oRequest.documentSend(eFILES.REGISTRO, this.QR, this.EStamp),
             name: eFILES.REGISTRO + '.pdf'
           }
         };
         this._RequestProvider.updateRequest(this.Request._id, data).subscribe(data => {
-          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Actualizada');
           this.showLoading = false;
           this.dialogRef.close(true);
         }, error => {
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-          this.showLoading = true;
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
+          this.showLoading = false;
           this.dialogRef.close(false);
         });
         break;
@@ -191,6 +192,7 @@ export class SteepComponentComponent implements OnInit {
         };
         this.eSignatureProvider.sign(data).subscribe(signed => {
           if (signed) {
+            console.log("SIGNED", signed);
             this.QR = signed.qrData;
             this.EStamp = signed.eStamp;
             this.enableNext = false;

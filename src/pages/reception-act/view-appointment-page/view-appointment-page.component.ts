@@ -26,22 +26,22 @@ moment.locale('es');
 })
 export class ViewAppointmentPageComponent implements OnInit {
 
-  loading : boolean = false;
-    private WIDTH = 286;
-    private HEIGHT = 239;
-    private FONT = 'Montserrat';
-    private MARGIN: {
-        LEFT: number,
-        RIGHT: number,
-        TOP: number,
-        BOTTOM: number
-    } = {
-            LEFT: 20,
-            RIGHT: 20,
-            TOP: 25,
-            BOTTOM: 25
-        };
-  private sepLogo: any;  
+  loading: boolean = false;
+  private WIDTH = 286;
+  private HEIGHT = 239;
+  private FONT = 'Montserrat';
+  private MARGIN: {
+    LEFT: number,
+    RIGHT: number,
+    TOP: number,
+    BOTTOM: number
+  } = {
+      LEFT: 20,
+      RIGHT: 20,
+      TOP: 25,
+      BOTTOM: 25
+    };
+  private sepLogo: any;
   private tecNacLogoTitle: any;
   private tecLogo: any;
   private montserratNormal: any;
@@ -65,7 +65,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     private _sourceDataProvider: sourceDataProvider, public _InscriptionsProvider: InscriptionsProvider,
     public dialog: MatDialog, private _CookiesService: CookiesService,
     public _getImage: ImageToBase64Service
-    ) {
+  ) {
     this.carrers = [];
     // this.role =
     //   //'Secretaria Académica';
@@ -78,6 +78,13 @@ export class ViewAppointmentPageComponent implements OnInit {
     // let currentPosition: any = await this.currentPositionService.getCurrentPosition();    
     // let tmpCarrers = currentPosition.ascription.careers;
     let tmpCarrers = this._CookiesService.getPosition().ascription.careers;
+    this.allCarrers = this._sourceDataProvider.getCareerAbbreviation();// this.carrers.slice(0);
+    this.allCarrers.forEach(element => {
+      let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
+      if (i !== -1)
+        this.carrers.push(element);
+    });
+
     this._InscriptionsProvider.getActivePeriod().subscribe(
       periodo => {
         if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
@@ -86,14 +93,17 @@ export class ViewAppointmentPageComponent implements OnInit {
         }
       });
 
-    //this._sourceDataProvider.getCareerAbbreviation();
-    this.allCarrers = this._sourceDataProvider.getCareerAbbreviation();// this.carrers.slice(0);
-    this.allCarrers.forEach(element => {
-      let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
-      if (i !== -1)
-        this.carrers.push(element);
-    });    
+    // //this._sourceDataProvider.getCareerAbbreviation();
+    //PASADO
+    // this.allCarrers = this._sourceDataProvider.getCareerAbbreviation();// this.carrers.slice(0);
+    // this.allCarrers.forEach(element => {
+    //   let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
+    //   if (i !== -1)
+    //     this.carrers.push(element);
+    // });
+    //PASADO
 
+    // console.log("CARRERAS__", this.carrers);
     // switch (this.role) {
     //   case eRole.SECRETARYACEDMIC: {
     //     this.filterDepto('ISIC');
@@ -147,7 +157,7 @@ export class ViewAppointmentPageComponent implements OnInit {
       max: maxDate
     }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
-        this.Appointments = data.Diary;         
+        this.Appointments = data.Diary;
         this.loadAppointment();
         this.refresh.next();
       }
@@ -157,11 +167,12 @@ export class ViewAppointmentPageComponent implements OnInit {
     });
   }
   loadAppointment(): void {
+    console.log("APPOINTMENTS DE LOAD", this.Appointments);
     this.events = [];
     this.allCarrers.forEach(career => {
       // if (career.status) {
       let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
-      // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
+      // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);      
       tmp = this.Appointments.find(x => x._id[0] === career.carrer);
       console.log("Appointment__", this.Appointments);
       if (typeof (tmp) != 'undefined') {
@@ -265,7 +276,7 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
 
   toggle(carrer: { carrer: string, abbreviation: string, icon: string, status: boolean }): void {
-    carrer.status = !carrer.status;      
+    carrer.status = !carrer.status;
     if (carrer.carrer === 'Todos') {
       this.carrers.forEach(x => {
         x.status = carrer.status;
@@ -288,83 +299,83 @@ export class ViewAppointmentPageComponent implements OnInit {
       this.viewDate = date;
     }
   }
-  excelExport(){
-    const filteredCareers = this.carrers.filter( (ca)=> ca.status == true);
+  excelExport() {
+    const filteredCareers = this.carrers.filter((ca) => ca.status == true);
     this.mapedStudents = [];
-    if(filteredCareers.length > 0){
-      this.loading = true;       
+    if (filteredCareers.length > 0) {
+      this.loading = true;
       let y = 60;
-      
-      const doc = this.newDocumentTec(true,false);        
-        doc.setTextColor(0, 0, 0);
-        doc.setFont(this.FONT, 'Bold');
-        doc.setFontSize(10);
-        // doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', (this.WIDTH / 2), 45, { align: 'center' });
-        doc.text('AGENDA DE ACTO RECEPCIONAL', (this.WIDTH / 2), 45, { align: 'center' });
-        doc.setFont(this.FONT, 'Normal');
-        doc.setFontSize(8);                       
-        
 
-      filteredCareers.forEach( (car)=>{
-        const maped = this.Appointments.filter( (ap)=> ap._id[0] == car.carrer).map(
-          (care)=> care.values
+      const doc = this.newDocumentTec(true, false);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont(this.FONT, 'Bold');
+      doc.setFontSize(10);
+      // doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', (this.WIDTH / 2), 45, { align: 'center' });
+      doc.text('AGENDA DE ACTO RECEPCIONAL', (this.WIDTH / 2), 45, { align: 'center' });
+      doc.setFont(this.FONT, 'Normal');
+      doc.setFontSize(8);
+
+
+      filteredCareers.forEach((car) => {
+        const maped = this.Appointments.filter((ap) => ap._id[0] == car.carrer).map(
+          (care) => care.values
         )[0].
-        map((st)=>( {
-          date:moment(st.proposedDate).format('LL'),
-          hour:moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
-          student:st.student,
-          place:st.place,
-          jury:st.jury.map( (jr: any)=>jr.name )
-        }));        
-        maped.forEach( maped=>{
-          this.mapedStudents.push(maped);                
-        
-        }); 
-        
+          map((st) => ({
+            date: moment(st.proposedDate).format('LL'),
+            hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
+            student: st.student,
+            place: st.place,
+            jury: st.jury.map((jr: any) => jr.name)
+          }));
+        maped.forEach(maped => {
+          this.mapedStudents.push(maped);
+
+        });
+
       });
       setTimeout(() => {
         doc.autoTable(
           {
             html: '#table',
             theme: 'grid',
-            startY:y,
-            headStyles: { fillColor: [24, 57, 105], halign: 'center', valign:'middle'  },
-            bodyStyles:{textColor:[0,0,0]},
+            startY: y,
+            headStyles: { fillColor: [24, 57, 105], halign: 'center', valign: 'middle' },
+            bodyStyles: { textColor: [0, 0, 0] },
             columnStyles: {
-              0: { cellWidth: 10, halign: 'center' , valign:'middle'  },
-              1: { cellWidth: 30, halign: 'center', valign:'middle'   },
-              2: { cellWidth: 10, halign: 'center', valign:'middle'  },
-              3: { cellWidth: 40, halign: 'center', valign:'middle'  },
-              4: { cellWidth: 30, halign: 'center', valign:'middle'  },
-              5: { cellWidth: 80, halign: 'center', valign:'middle'  },                
+              0: { cellWidth: 10, halign: 'center', valign: 'middle' },
+              1: { cellWidth: 30, halign: 'center', valign: 'middle' },
+              2: { cellWidth: 10, halign: 'center', valign: 'middle' },
+              3: { cellWidth: 40, halign: 'center', valign: 'middle' },
+              4: { cellWidth: 30, halign: 'center', valign: 'middle' },
+              5: { cellWidth: 80, halign: 'center', valign: 'middle' },
             }
           }
         );
-        this.loading=false;
-      window.open(doc.output('bloburl'), '_blank');
+        this.loading = false;
+        window.open(doc.output('bloburl'), '_blank');
       }, 200);
-        
+
     }
   }
   private newDocumentTec(header = true, footer = true) {
-      const doc = new jsPDF({
-          unit: 'mm',
-          format: 'letter',
-          orientation: 'landscape'
-      });
-      // @ts-ignore
-      doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
-      // @ts-ignore
-      doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
-      doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
-      doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
-      if (header) {
-          this.addHeaderTec(doc);
-      }
-      if (footer) {
-          this.addFooterTec(doc);
-      }
-      return doc;
+    const doc = new jsPDF({
+      unit: 'mm',
+      format: 'letter',
+      orientation: 'landscape'
+    });
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+    if (header) {
+      this.addHeaderTec(doc);
+    }
+    if (footer) {
+      this.addFooterTec(doc);
+    }
+    return doc;
   }
   private addHeaderTec(document) {
     const tecnmHeight = 15;
@@ -387,7 +398,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     // document.setTextColor(183, 178, 178);
     document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2), 260, { align: 'center' });
     document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01. email: info@ittepic.edu.mx',
-        (this.WIDTH / 2), 265, { align: 'center' });
+      (this.WIDTH / 2), 265, { align: 'center' });
     document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
   }
   private _getImageToPdf() {
@@ -396,23 +407,23 @@ export class ViewAppointmentPageComponent implements OnInit {
     // });
 
     this._getImage.getBase64('assets/imgs/sep.png').then(logo => {
-        this.sepLogo = logo;
+      this.sepLogo = logo;
     });
 
     this._getImage.getBase64('assets/imgs/ittepic-sm.png').then(logo => {
-        this.tecLogo = logo;
+      this.tecLogo = logo;
     });
 
     this._getImage.getBase64('assets/imgs/tecnm.png').then(logo => {
-        this.tecNacLogoTitle = logo;
+      this.tecNacLogoTitle = logo;
     });
 
     this._getImage.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
-        this.montserratNormal = base64.toString().split(',')[1];
+      this.montserratNormal = base64.toString().split(',')[1];
     });
 
     this._getImage.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
-        this.montserratBold = base64.toString().split(',')[1];
+      this.montserratBold = base64.toString().split(',')[1];
     });
 
     // this._getImage.getBase64('assets/imgs/firms/director.png').then(firm => {
@@ -422,7 +433,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     // this._getImage.getBase64('assets/imgs/firms/servicios.png').then(firm => {
     //     this.serviceFirm = firm;
     // });
-}
+  }
 }
 interface iAppointmentGroup { _id: string[], values: [iAppointment] }
 interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }

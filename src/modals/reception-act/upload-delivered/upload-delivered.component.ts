@@ -90,7 +90,8 @@ export class UploadDeliveredComponent implements OnInit {
             const req = this.request.request[0];
             req.student = req.studentId;
             this.oRequest.setRequest(req);
-            window.open(this.oRequest.noInconvenience(this.QR, this.EStamp).output('bloburl'), '_blank');
+            this.dialogRef.close({ QR: this.QR, ESTAMP: this.EStamp, RESPONSE: true });
+            // window.open(this.oRequest.noInconvenience(this.QR, this.EStamp).output('bloburl'), '_blank');            
           }
         }, err => {
           const error = JSON.parse(err._body).err;

@@ -14,6 +14,11 @@
     </div>
 
     <div mat-dialog-content>
+        <div class="text-right">
+            <button mat-mini-fab aria-label="report" color="primary" (click)="seeTrade()">
+                <mat-icon>assignment</mat-icon>
+            </button>
+        </div>
         <form [formGroup]="frmConsejo" (ngSubmit)="onSave()">
             <div class="card border-dark mb-3 p-3" style="height: 100%;">
                 <div class="row">
