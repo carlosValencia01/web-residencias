@@ -484,6 +484,36 @@
                   </tr>
                </tbody>
             </table>
+            <table class="table table-striped table-bordered table-hover" id="tableReportBestAverage" >
+               <thead>
+                  <tr>
+                     <td colspan="3" class="text-center">MEJORES PROMEDIOS DE LA GENERACIÓN</td>
+                  </tr>
+                  <tr>
+                     <th>Carrera</th>
+                     <th>Nombre del Alumno</th>
+                     <th>Promedio</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let alumno of bestStudents">
+                     <td>{{alumno.career}}</td>
+                     <td
+                        *ngIf="(alumno.degree && alumno.careerS != 'LA' && alumno.careerS != 'ARQ' && alumno.careerS != 'MCA' && alumno.careerS != 'DCA')">
+                        <b>ING.</b> {{alumno.name}}</td>
+                     <td *ngIf="(alumno.degree && alumno.careerS == 'LA')"><b>LIC.</b> {{alumno.name}}
+                     </td>
+                     <td *ngIf="(alumno.degree && alumno.careerS == 'ARQ')"><b>ARQ.</b> {{alumno.name}}
+                     </td>
+                     <td *ngIf="(alumno.degree && alumno.careerS == 'MCA')"><b>MCA.</b> {{alumno.name}}
+                     </td>
+                     <td *ngIf="(alumno.degree && alumno.careerS == 'DCA')"><b>DCA.</b> {{alumno.name}}
+                     </td>
+                     <td *ngIf="!alumno.degree">{{alumno.name}}</td>
+                     <td>{{alumno.avg}}</td>
+                  </tr>
+               </tbody>
+            </table>
    </div>
    </mat-tab>
    <mat-tab *ngIf="role === 'administration' || role === 'secretary'">

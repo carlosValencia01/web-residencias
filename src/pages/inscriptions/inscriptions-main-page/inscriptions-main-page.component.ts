@@ -367,4 +367,9 @@ export class InscriptionsMainPageComponent implements OnInit {
     });
   }
 
+  onUpload(event, file): void {
+    console.log( event.target.files[0]);
+    
+  }
+
 }

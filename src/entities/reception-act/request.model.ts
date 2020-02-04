@@ -58,8 +58,8 @@ export interface iRequest {
     sentVerificationCode?: boolean;
     grade?: string;
     registry?: {
-        bookNumber: number,
-        foja: number,
+        bookNumber: string,
+        foja: string,
         date: Date,
         career: string
     };
