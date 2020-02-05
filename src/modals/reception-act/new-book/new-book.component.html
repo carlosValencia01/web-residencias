@@ -20,7 +20,8 @@
                   <mat-label>Nombre del Libro</mat-label>
                   <input matInput  [readonly]="enabledName" formControlName="name" [(ngModel)]="nombreLibro" [errorStateMatcher]="matcher"
                     oninput="this.value = this.value.toUpperCase()" autocomplete="off">
-                  <mat-icon matSuffix (click)="editName()" style="cursor: pointer;" ngbTooltip="{{enabledName == true ? 'Habilitar Edición':'Deshabilitar Edición'}} ">edit</mat-icon>
+                  <mat-icon *ngIf="enabledName" matSuffix (click)="editName()" style="cursor: pointer;" ngbTooltip="Habilitar Edición">edit</mat-icon>
+                  <mat-icon *ngIf="!enabledName" matSuffix (click)="editName()" style="cursor: pointer;" ngbTooltip="Deshabilitar Edición">block</mat-icon>
                   <mat-error>
                     <span *ngIf="!bookForm.get('name').valid && bookForm.get('name').touched">Ingrese Nombre del Libro</span>
                   </mat-error>
