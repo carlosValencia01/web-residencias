@@ -11,6 +11,7 @@ import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eOperation } from 'src/enumerators/reception-act/operation.enum';
 import * as moment from 'moment';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 moment.locale('es');
 @Component({
   selector: 'app-new-event',
@@ -161,6 +162,7 @@ export class NewEventComponent implements OnInit {
   addEvent(request: string, appointment: { appointment: Date, minutes: number, abbreviation: string }): void {
     const data = {
       operation: eStatusRequest.ASSIGN,
+      phase: eRequest.ASSIGNED,
       appointment: appointment.appointment,
       minutes: appointment.minutes,
       place: this.frmNewEvent.get('place').value,
