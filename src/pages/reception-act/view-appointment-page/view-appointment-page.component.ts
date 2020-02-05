@@ -314,23 +314,28 @@ export class ViewAppointmentPageComponent implements OnInit {
       doc.text('AGENDA DE ACTO RECEPCIONAL', (this.WIDTH / 2), 45, { align: 'center' });
       doc.setFont(this.FONT, 'Normal');
       doc.setFontSize(8);
-
-
-      filteredCareers.forEach((car) => {
-        const maped = this.Appointments.filter((ap) => ap._id[0] == car.carrer).map(
+      
+      console.log(filteredCareers);
+      
+      filteredCareers.forEach((car) => {       
+        const filtered = this.Appointments.filter((ap) => ap._id[0] == car.carrer).map(
           (care) => care.values
-        )[0].
-          map((st) => ({
-            date: moment(st.proposedDate).format('LL'),
-            hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
-            student: st.student,
-            place: st.place,
-            jury: st.jury.map((jr: any) => jr.name)
-          }));
-        maped.forEach(maped => {
-          this.mapedStudents.push(maped);
-
-        });
+        )[0];
+        if(filtered)  {
+          const maped = filtered.
+            map((st) => ({
+              date: moment(st.proposedDate).format('LL'),
+              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
+              student: st.student,
+              place: st.place,
+              jury: st.jury.map((jr: any,index: number) => index == 0 ? 'PRESIDENTE: '+jr.name: index == 1 ? 'SECRETARIO: '+ jr.name : index == 2 ? 'VOCAL '+ jr.name : 'VOCAL SUPLENTE: '+ jr.name).join('\r\n')
+            }));
+            
+          maped.forEach(maped => {
+            this.mapedStudents.push(maped);
+  
+          });
+        }
 
       });
       setTimeout(() => {
@@ -353,7 +358,7 @@ export class ViewAppointmentPageComponent implements OnInit {
         );
         this.loading = false;
         window.open(doc.output('bloburl'), '_blank');
-      }, 200);
+      }, 500);
 
     }
   }

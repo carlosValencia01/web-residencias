@@ -22,7 +22,7 @@
       </div>
       <div class="col-4">
         <div class="div-img" >
-          <img src="../../assets/icons/pdfReport.svg" class="action" (click)="excelExport()" style="width: 50px;" ngbTooltip="Guardar Reporte">
+          <img *ngIf="Appointments.length > 0" src="../../assets/icons/pdfReport.svg" class="action" (click)="excelExport()" style="width: 50px;" ngbTooltip="Guardar Reporte">
         </div>
       </div>
     </div>
