@@ -197,7 +197,7 @@ export class ProgressPageComponent implements OnInit {
     tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
     tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
     tmp.registry = element.registry;
-    tmp.documents=element.documents;
+    tmp.documents = element.documents;
     return tmp;
   }
 
@@ -233,8 +233,8 @@ export class ProgressPageComponent implements OnInit {
       data: { reqId: Identificador }
     });
 
-    ref.afterClosed().subscribe((valor: { QR: any, ESTAMP: any, RESPONSE: boolean }) => {
-      if (typeof (valor) !== 'undefined') {
+    ref.afterClosed().subscribe((valor: { response: boolean, data: { QR: any, ESTAMP: any, RESPONSE: boolean } }) => {      
+      if (typeof (valor) !== 'undefined' && valor.response) {
         this.showLoading = true;
         const data = {
           doer: this._CookiesService.getData().user.name.fullName,
@@ -242,7 +242,7 @@ export class ProgressPageComponent implements OnInit {
           operation: eStatusRequest.ACCEPT,
           file: {
             mimetype: "application/pdf",
-            data: oRequest.documentSend(eFILES.INCONVENIENCE, valor.QR, valor.ESTAMP),
+            data: oRequest.documentSend(eFILES.INCONVENIENCE, valor.data.QR, valor.data.ESTAMP),
             name: eFILES.INCONVENIENCE + '.pdf'
           },
           folderId: this.folderId,
@@ -657,7 +657,10 @@ export class ProgressPageComponent implements OnInit {
 
   checkReleased(_id: string) {
     const Request = this.getRequestById(_id);
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Procesando Liberacion");
+    this.showLoading = true;
     this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
+      this.showLoading = false;
       const dialogRef = this.dialog.open(ReleaseCheckComponent, {
         data: { file: data, jury: Request.jury },
         disableClose: true,
@@ -733,6 +736,7 @@ export class ProgressPageComponent implements OnInit {
             'Acto recepcional', error);
         });
     }, error => {
+      this.showLoading = false;
       this._NotificationsServices.showNotification(eNotificationType.ERROR,
         'Acto recepcional', error);
     });

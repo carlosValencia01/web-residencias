@@ -89,8 +89,8 @@ export class UploadDeliveredComponent implements OnInit {
             this.EStamp = signed.eStamp;
             const req = this.request.request[0];
             req.student = req.studentId;
-            this.oRequest.setRequest(req);
-            this.dialogRef.close({ QR: this.QR, ESTAMP: this.EStamp, RESPONSE: true });
+            this.oRequest.setRequest(req);            
+            this.dialogRef.close({ response: true, data: { QR: this.QR, ESTAMP: this.EStamp, RESPONSE: true } });
             // window.open(this.oRequest.noInconvenience(this.QR, this.EStamp).output('bloburl'), '_blank');            
           }
         }, err => {
