@@ -446,8 +446,8 @@ export class DiaryComponent implements OnInit {
     console.log("aapoint", tmpAppointment);
     if (typeof (tmpAppointment) !== 'undefined') {
       if (tmpAppointment.option === 'XI - TITULACIÓN INTEGRAL') {
-        const msnCancel = "¿Está seguro de cancelar este espacio?";
-        const msnReject = "¿Está seguro de rechazar este espacio?"
+        const msnCancel = `¿ESTÁ SEGURO DE CANCELAR EL ESPACIO DE ${tmpAppointment.student}?`;
+        const msnReject = `¿ESTÁ SEGURO DE RECHAZAR EL ESPACIO DE ${tmpAppointment.student}?`
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
           data: {
             Configuration: {
@@ -626,16 +626,27 @@ export class DiaryComponent implements OnInit {
   appointmentClicked($event): void {
     console.log("event", $event);
     let index: { appointment: number, value: number };
+
     // const tmpMinutes: number = value.start.getHours() * 60;
     // let tmpDate: Date = new Date(value.start.getFullYear(), value.start.getMonth(), value.start.getDate(), 0, 0, 0, 0);
     const tmpMinutes: number = $event.start.getHours() * 60;
     let tmpDate: Date = new Date($event.start.getFullYear(), $event.start.getMonth(), $event.start.getDate(), 0, 0, 0, 0);
+    //Obtencion de datos del evento
+    let student = $event.title.split(' ').slice(2).join(' ');
+    let abbreviation = $event.title.split(' ')[1];
+    let career = this.carrers.find(x => x.abbreviation === abbreviation);
+    console.log("DATOS DEL EVENTO", student, "Abreviatura", abbreviation, "carrera", career);
+
+    //Busqueda del evento
+    console.log("Appointments", this.Appointments);
     let tmpValor: { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string };
     for (let i = 0; i < this.Appointments.length; i++) {
       for (let j = 0; j < this.Appointments[i].values.length; j++) {
         let tmpFecha: Date = new Date(this.Appointments[i].values[j].proposedDate);
         tmpFecha.setHours(0, 0, 0, 0);
-        if (tmpFecha.getTime() === tmpDate.getTime() && this.Appointments[i].values[j].proposedHour === tmpMinutes) {
+        if (tmpFecha.getTime() === tmpDate.getTime() && this.Appointments[i].values[j].proposedHour === tmpMinutes
+          && this.Appointments[i].values[j].student[0].trim() === student.trim() && this.Appointments[i]._id[0].trim() === career.carrer.trim()
+        ) {
           tmpValor = this.Appointments[i].values[j];
           index = { appointment: i, value: j };
           break;
@@ -644,7 +655,7 @@ export class DiaryComponent implements OnInit {
     }
     if (typeof (tmpValor) !== 'undefined') {
       Swal.fire({
-        title: '¿Está seguro de confirmar este espacio?',
+        title: `¿ESTÁ SEGURO DE CONFIRMAR EL ESPACIO DE ${tmpValor.student[0]}?`,
         // text: '¡No podrás revertir esto!',
         type: 'question',
         showCancelButton: true,
