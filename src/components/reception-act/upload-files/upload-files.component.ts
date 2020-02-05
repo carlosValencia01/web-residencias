@@ -332,11 +332,12 @@ export class UploadFilesComponent implements OnInit {
 
   onSend(file): void {
     this.showLoading = true;
+    this.notificationServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Cargando Archivo");
     const type = <eFILES><keyof typeof eFILES>file;
     let document: any;
     const frmData = new FormData();
     frmData.append('folderId', this.isEditable ? this.Request.folder : this._CookiesService.getFolder());
-    frmData.append('Document', type);    
+    frmData.append('Document', type);
     frmData.append('IsEdit', this.isEditable ? "true" : "false");
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
