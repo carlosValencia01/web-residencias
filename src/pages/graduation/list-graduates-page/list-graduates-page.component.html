@@ -117,7 +117,7 @@
                         </tr>
                      </thead>
                      <tbody>
-                        <tr *ngFor="let item of alumnosReport | filter:{survey:searchSurvey} | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
+                        <tr *ngFor="let item of alumnosReport | filter:{survey:searchSurvey} | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
                   currentPage: page };">
                            <td (click)="observationsModal(item)">{{item.nc}} </td>
                            <td (click)="observationsModal(item)"

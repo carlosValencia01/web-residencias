@@ -1,0 +1,97 @@
+<div class="content-general">
+  <div class="card card-shadow">
+    <div class="card-header text-white bg-secondary">
+      <div class="row">
+        <div class="col-10">
+          <h1 mat-dialog-title>{{title}}</h1>
+        </div>
+        <div class="col-2">
+          <button mat-icon-button (click)="onClose()" class="float-right">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="example-container">
+      <form [formGroup]="bookForm" (ngSubmit)="onFormSubmit(bookForm.value)" class="tp-form">
+            <div class="row">
+              <div class="col-sm-8">
+                <mat-form-field class="example-full-width" appearance="outline">
+                  <mat-label>Nombre del Libro</mat-label>
+                  <input matInput  [readonly]="enabledName" formControlName="name" [(ngModel)]="nombreLibro" [errorStateMatcher]="matcher"
+                    oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+                  <mat-icon matSuffix (click)="editName()" style="cursor: pointer;" ngbTooltip="{{enabledName == true ? 'Habilitar Edición':'Deshabilitar Edición'}} ">edit</mat-icon>
+                  <mat-error>
+                    <span *ngIf="!bookForm.get('name').valid && bookForm.get('name').touched">Ingrese Nombre del Libro</span>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-sm-4">
+                <mat-form-field class="example-full-width" appearance="outline">
+                  <mat-label>Número de Libro</mat-label>
+                  <input matInput type="number" formControlName="number" [errorStateMatcher]="matcher"
+                    oninput="this.value = this.value.toUpperCase()" autocomplete="off">
+                  <mat-error>
+                    <span *ngIf="!bookForm.get('number').valid && bookForm.get('number').touched">Ingrese Número de Libro</span>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-sm-5">
+                <mat-form-field class="example-full-width" appearance="outline">
+                  <mat-label>Fecha de Registro</mat-label>
+                  <input [min]="minDate" matInput [matDatepicker]="picker" placeholder="Fecha del evento" formControlName="registerDate" [errorStateMatcher]="matcher" autocomplete="off">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  <mat-error>
+                    <span *ngIf="!bookForm.get('registerDate').valid && bookForm.get('registerDate').touched">Ingrese Fecha de Registro</span>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-sm-12">
+                <mat-form-field class="example-full-width" appearance="outline">
+                  <mat-label>Opción de Titulación</mat-label>
+                  <select matNativeControl required [(ngModel)]="opcionTitulacion" formControlName="titleOption">
+                    <option value="TESIS PROFESIONAL">I - TESIS PROFESIONAL</option>
+                    <option value="ELABORACIÓN DE TEXTOS, PROTOTIPOS O INSTRUCTIVOS PARA PRÁCTICAS DE LABORATORIO O TALLER">II - ELABORACIÓN DE TEXTOS, PROTOTIPOS O INSTRUCTIVOS PARA PRÁCTICAS DE LABORATORIO O TALLER</option>
+                    <option value="PARTICIPACIÓN EN PROYECTOS DE INVESTIGACIÓN">III - PARTICIPACIÓN EN PROYECTOS DE INVESTIGACIÓN</option>
+                    <option value="DISEÑO O REDISEÑO DE EQUIPO, APARATOS O MAQUINARIA">IV - DISEÑO O REDISEÑO DE EQUIPO, APARATOS O MAQUINARIA</option>
+                    <option value="CURSOS ESPECIALES DE TITULACIÓN">V - CURSOS ESPECIALES DE TITULACIÓN</option>
+                    <option value="EXAMEN GLOBAL POR ÁREAS DE CONOCIMIENTO O EGEL">VI - EXAMEN GLOBAL POR ÁREAS DE CONOCIMIENTO O EGEL</option>
+                    <option value="MEMORIA DE EXPERIENCIA PROFESIONAL">VII - MEMORIA DE EXPERIENCIA PROFESIONAL</option>
+                    <option value="ESCOLARIDAD POR PROMEDIO">VIII - ESCOLARIDAD POR PROMEDIO</option>
+                    <option value="ESCOLARIDAD POR ESTUDIOS DE POSGRADOS">IX - ESCOLARIDAD POR ESTUDIOS DE POSGRADOS</option>
+                    <option value="MEMORIA DE RESIDENCIA PROFESIONAL">X - MEMORIA DE RESIDENCIA PROFESIONAL</option>
+                    <option value="TITULACIÓN INTEGRAL">XI - TITULACIÓN INTEGRAL</option>
+                  </select>
+                </mat-form-field>
+              </div>
+              <div class="col-12">
+                <mat-card class="m-2 p-2">
+                  <mat-card-subtitle>Carreras</mat-card-subtitle>
+                  <mat-card-content class="careers-list list">
+                    <mat-chip-list>
+                      <mat-chip (removed)="isCareerAssigned(career) ? deallocateCareer(career) : assignCareer(career)"
+                                *ngFor="let career of careers"
+                                [ngClass]="isCareerAssigned(career) ? 'assigned-career' : 'not-assigned-career'"
+                                [removable]="!isViewDetails">
+                        {{ career.shortName }}
+                        <mat-icon matChipRemove *ngIf="!isViewDetails">{{isCareerAssigned(career) ? 'cancel' : 'check'}}</mat-icon>
+                      </mat-chip>
+                    </mat-chip-list>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+            </div>
+        <div class="row justify-content-center mt-3">
+          <div>
+            <button type="submit" [disabled]="!bookForm.valid || assignedCareers.length == 0" class="btn btn-success">Registrar Libro</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
+</div>

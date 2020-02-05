@@ -34,6 +34,7 @@ import { VinculacionPageComponent } from 'src/pages/reception-act/vinculacion-pa
 import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
 import { ExpedienteComponent } from 'src/pages/reception-act/expediente/expediente.component';
 import { DocumentsValidComponent } from 'src/pages/reception-act/documents-valid/documents-valid.component';
+import { ListBooksPagesComponent} from 'src/pages/reception-act/list-books-pages/list-books-pages.component';
 
 // Graduation
 import { RegisterEmailgraduationPageComponent } from 'src/pages/graduation/register-emailgraduation-page/register-emailgraduation-page.component';
@@ -93,6 +94,8 @@ const appRoutes: Routes = [
   { path: 'progressPage/:id', component: DocumentReviewComponent, pathMatch: 'full' },
   { path: 'progressPage/:id/titled', component: DocumentReviewComponent, pathMatch: 'full' },
   { path: 'progressPage/:id/expediente', component: ExpedienteComponent, pathMatch: 'full' },
+  { path: 'librosActas', component: ListBooksPagesComponent, pathMatch: 'full' },
+
 
   // Graduation
   { path: 'encuestaEgresados', component: SurveyListPageComponent, pathMatch: 'full' },
