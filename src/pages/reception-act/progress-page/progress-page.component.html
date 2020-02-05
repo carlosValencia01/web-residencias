@@ -538,13 +538,13 @@
                                             </div>
                                             <div *ngSwitchCase="'Realizado'">
                                                 <button
-                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador')"
+                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
                                                     mat-menu-item (click)="approve(row._id)">
                                                     <mat-icon>gavel</mat-icon>
                                                     Aprobar
                                                 </button>
                                                 <button
-                                                    *ngIf="(role==='coordinación de titulación'  || role==='administrador')"
+                                                    *ngIf="(role==='coordinación de titulación'  || role==='administrador') && (row.status==='Pendiente' || row.status==='Proceso')"
                                                     mat-menu-item (click)="juryNotification(row._id)">
                                                     <mat-icon>contact_mail</mat-icon>
                                                     Generar Documentacion

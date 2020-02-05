@@ -75,7 +75,7 @@ export class ProgressPageComponent implements OnInit {
     this.phases = [];
     this.allCarrers = ['ARQUITECTURA', 'INGENIERÍA CIVIL', 'INGENIERÍA ELÉCTRICA', 'INGENIERÍA INDUSTRIAL',
       'INGENIERÍA EN SISTEMAS COMPUTACIONALES', 'INGENIERÍA BIOQUÍMICA', 'INGENIERÍA QUÍMICA', 'LICENCIATURA EN ADMINISTRACIÓN', 'INGENIERÍA EN GESTIÓN EMPRESARIAL', 'INGENIERÍA MECATRÓNICA', 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES'];
-    this.allPhases = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado', 'Realizado', 'Generado', 'Finalized','Titulado'];
+    this.allPhases = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado', 'Realizado', 'Generado', 'Finalized', 'Titulado'];
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -197,6 +197,7 @@ export class ProgressPageComponent implements OnInit {
     tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
     tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
     tmp.registry = element.registry;
+    tmp.documents=element.documents;
     return tmp;
   }
 
@@ -591,6 +592,8 @@ export class ProgressPageComponent implements OnInit {
 
   titled(Identificador: string, operation: string): void {
     const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
+    const tmpRequest: iRequest = this.getRequestById(Identificador);
+    console.log("TITLE REQUEST", tmpRequest);
     switch (eOperation) {
       case eStatusRequest.PROCESS: {
 
@@ -626,7 +629,12 @@ export class ProgressPageComponent implements OnInit {
         break;
       }
       case eStatusRequest.ACCEPT: {
-        this.router.navigate([Identificador + '/titled'], { relativeTo: this._ActivatedRoute });
+        let index = tmpRequest.documents.findIndex(x => x.type === eFILES.XML || x.type === eFILES.INE || x.type === eFILES.CED_PROFESIONAL)
+        if (index !== -1)
+          this.router.navigate([Identificador + '/titled'], { relativeTo: this._ActivatedRoute });
+        else
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "El estudiante no ha registrado ningún archivo");
+        break;
       }
     }
   }
@@ -773,8 +781,26 @@ export class ProgressPageComponent implements OnInit {
       IsEdit: 'true'
     }
     this.requestProvider.uploadFile(_id, data).subscribe((response) => {
-      window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
-      this.showLoading = false;
+      if (_request.status === 'Pendiente') {
+        let data = {
+          doer: this._CookiesService.getData().user.name.fullName,
+          observation: '',
+          phase: eRequest.REALIZED,
+          operation: eStatusRequest.PROCESS
+        };
+        this.requestProvider.updateRequest(_id, data).subscribe((response) => {
+          window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+          this.loadRequest();
+          this.showLoading = false;
+        }, error => {
+          this.showLoading = false;
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+        });
+      }
+      else {
+        window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+        this.showLoading = false;
+      }
     }, error => {
       this.showLoading = false;
       this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
