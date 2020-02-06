@@ -1,0 +1,96 @@
+<div class="content-general">
+    <mat-tab-group>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span  matBadge="{{numberActiveBooks}}" matBadgeOverlap="false" style="padding-right: 10px;">Libros Activos</span>
+        </ng-template>
+        <div class="row fluid-content">
+          <div class="col-sm-12" style="overflow-x:auto; padding-top: 20px;">
+            <div style="text-align: end;">
+              <button class="btn btn-info" (click)="createBook()">Nuevo Libro</button>
+            </div>
+            <table class="table table-striped table-bordered table-hover" id="my-table">
+              <thead>
+                <tr>
+                  <th style="width: 40%;">Nombre del Libro</th>
+                  <th>No. Libro</th>
+                  <th>Opción Titulación</th>
+                  <th>Carreras</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of listActiveBooks | paginate: {id:'pagAB', itemsPerPage: pageSizeAB, currentPage: pageAB };">
+                  <td>{{item.name}}</td>
+                  <td>{{item.number}}</td>
+                  <td>{{item.titleOption}}</td>
+                  <td>{{displayData(item.careers)}}</td>
+                  <td>
+                    <div *ngIf="!item.status" class="div-img" ngbTooltip="Activar" tooltipClass="my-custom-class">
+                      <img src="../../assets/icons/presence.svg" class="action"
+                          (click)="changeStatusBook(item._id,true)">
+                    </div>
+                    <div *ngIf="item.status" class="div-img" ngbTooltip="Desactivar" tooltipClass="my-custom-class">
+                      <img src="../../assets/icons/remove-paid.svg" class="action"
+                          (click)="changeStatusBook(item._id,false)">
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class='div-pagination'>
+              <pagination-controls id="pagAB" directionLinks="true" (pageChange)="pageChangedAB($event)" responsive="true"
+                previousLabel="Anterior" nextLabel="Siguiente">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span  matBadge="{{numberInactiveBooks}}" matBadgeOverlap="false" style="padding-right: 10px;">Libros Inactivos</span>
+        </ng-template>
+        <div class="row fluid-content">
+          <div class="col-sm-12" style="overflow-x:auto; padding-top: 20px;">
+            <div style="text-align: end;">
+              <button class="btn btn-info" (click)="createBook()">Nuevo Libro</button>
+            </div>
+            <table class="table table-striped table-bordered table-hover" id="my-table">
+              <thead>
+                <tr>
+                  <th style="width: 40%;">Nombre del Libro</th>
+                  <th>No. Libro</th>
+                  <th>Opción Titulación</th>
+                  <th>Carreras</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of listInactiveBooks  | paginate: {id:'pagIB', itemsPerPage: pageSizeIB, currentPage: pageIB };">
+                  <td>{{item.name}}</td>
+                  <td>{{item.number}}</td>
+                  <td>{{item.titleOption}}</td>
+                  <td>{{displayData(item.careers)}}</td>
+                  <td>
+                    <div *ngIf="!item.status" class="div-img" ngbTooltip="Activar" tooltipClass="my-custom-class">
+                      <img src="../../assets/icons/presence.svg" class="action"
+                          (click)="changeStatusBook(item._id,true)">
+                    </div>
+                    <div *ngIf="item.status" class="div-img" ngbTooltip="Desactivar" tooltipClass="my-custom-class">
+                      <img src="../../assets/icons/remove-paid.svg" class="action"
+                          (click)="changeStatusBook(item._id,false)">
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class='div-pagination'>
+              <pagination-controls id="pagIB" directionLinks="true" (pageChange)="pageChangedIB($event)" responsive="true"
+                previousLabel="Anterior" nextLabel="Siguiente">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+</div>
