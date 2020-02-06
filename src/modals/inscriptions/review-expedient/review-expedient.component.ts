@@ -497,5 +497,16 @@ export class ReviewExpedientComponent implements OnInit {
       });
     }
   }
+  updateCurp(){
+    console.log(this.data.student.curp);
+    
+    this.studentProv.updateStudent(this.data.student._id,{curp:this.data.student.curp}).subscribe(up=>{
+      console.log(up);
+      this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+        'Exito', 'CURP actualizada correctamente.');
+      
+    },err=>{console.log(err);
+    });
+  }
 
 }
