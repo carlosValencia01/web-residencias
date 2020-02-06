@@ -6,6 +6,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { ICareer } from 'src/entities/shared/career.model';
 import { CareerProvider } from 'src/providers/shared/career.prov';
 import { BookProvider } from 'src/providers/reception-act/book.prov';
+import Swal from 'sweetalert2';
 
 const years = require('ye-ars');
 
@@ -22,11 +23,19 @@ export class NewBookComponent implements OnInit {
   cAsigned = false;
   nombreLibro = '';
   enabledName = true;
+  activeBooks;
+  assignCareers;
+  numberBooks;
+  titulationBook;
+  existCareer = false;
+  carreraRepetida = '';
+  indexNumberBook = '';
+  titulationOption = '';
+
   public careers: Array<ICareer>;
   public searchText: string;
   private assignedCareers: Array<ICareer>;
   private unassignedCareers: Array<ICareer>;
-
 
   constructor(
     public dialogRef: MatDialogRef<NewBookComponent>,
@@ -42,6 +51,7 @@ export class NewBookComponent implements OnInit {
   ngOnInit() {
     this._getAllCareers();
     this._cleanCareersAssignment();
+    this.getActiveBooks();
   }
 
   validateForm() {
@@ -64,12 +74,54 @@ export class NewBookComponent implements OnInit {
 
   async createBook(data) {
     data.careers = this.assignedCareers;
-    this.bookProvider.newBook(data).subscribe(res => {});
-    this.loading = false;
-    this.onClose();
-    this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Libro Creado.');
-  }
+    this.assignCareers.forEach((carreraA,index) => {
+      if(!this.existCareer){
+        data.careers.forEach((carrera) => {
+          if(!this.existCareer) {
+            if(carreraA.includes(carrera.fullName)) {
+              if(this.titulationBook[index] == data.titleOption){
+                if(this.numberBooks[index] == data.number){
+                  this.carreraRepetida = carrera.shortName;
+                  this.indexNumberBook = data.number;
+                  this.titulationOption = data.titleOption;
+                  this.existCareer = true;
+                } else {
+                  return;
+                }
+              } else {
+                return
+              }
+            }
+          } else {
+            return;
+          }
+        });
+      }
+    });
+    if(this.existCareer){
+      this.existCareer = false;
+      Swal.fire({
+        title: 'Ya existe un libro con la siguiente información',
+        type: 'info',
+        html:
+          '<p>Carrera: <b>'+this.carreraRepetida+'</b><p/>'+
+          '<p>Típo de Titulación: <b>'+this.titulationOption+'</b><p/>'+
+          '<p>Número de Libro: <b>'+this.indexNumberBook+'</b><p/>',
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar'
+      });
 
+    } else {
+        //Guardar elemento
+        this.existCareer = false;
+        this.bookProvider.newBook(data).subscribe(res => {});
+        this.onClose();
+        this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Libro Creado.');
+    }
+    this.loading = false;
+  }
+  
   public isCareerAssigned(career: ICareer): boolean {
     return this.assignedCareers.findIndex(_career => _career._id === career._id) !== -1;
   }
@@ -134,6 +186,15 @@ export class NewBookComponent implements OnInit {
 
   editName(){
     this.enabledName = !this.enabledName;
+  }
+
+  getActiveBooks(){
+    this.bookProvider.getAllBooks().subscribe(res => {
+      this.assignCareers = res.map(({careers}) => careers.map(({fullName})=> fullName));
+      this.numberBooks = res.map(({number}) => number);
+      this.titulationBook = res.map(({titleOption}) => titleOption);
+
+    });
   }
 
 }

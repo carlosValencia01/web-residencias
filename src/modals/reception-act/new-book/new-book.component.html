@@ -30,7 +30,7 @@
               <div class="col-sm-4">
                 <mat-form-field class="example-full-width" appearance="outline">
                   <mat-label>Número de Libro</mat-label>
-                  <input matInput type="number" formControlName="number" [errorStateMatcher]="matcher"
+                  <input matInput formControlName="number" [errorStateMatcher]="matcher"
                     oninput="this.value = this.value.toUpperCase()" autocomplete="off">
                   <mat-error>
                     <span *ngIf="!bookForm.get('number').valid && bookForm.get('number').touched">Ingrese Número de Libro</span>

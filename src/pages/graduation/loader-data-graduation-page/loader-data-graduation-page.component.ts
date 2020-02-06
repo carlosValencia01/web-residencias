@@ -253,9 +253,9 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         const ExampleStudents = [
-          { no: 'No', nc: 'Número de Control', nombreApellidos: 'Nombre Apellido', nombre: 'Nombre del Alumno', carrera: 'Carrera', especialidad: 'Especialidad', calificacion: 'Calificacion', email: 'Email' },
-          { no: '1', nc: '14400975', nombreApellidos: 'NAVA HERNANDEZ IRVING YAIR', nombre: 'IRVING YAIR NAVA HERNANDEZ', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '88.93', email: 'iryanavahe@ittepic.edu.mx' },
-          { no: '2', nc: '15401011', nombreApellidos: 'JIMENEZ ESPERICUETA RICARDO', nombre: 'RICARDO JIMENEZ ESPERICUETA', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '93.13', email: 'rijimenezes@ittepic.edu.mx' }
+          { no: 'No', nc: 'Número de Control', nombreApellidos: 'Nombre Apellido', nombre: 'Nombre del Alumno', carrera: 'Carrera', especialidad: 'Especialidad', calificacion: 'Calificacion', email: 'Email', genero: 'Genero', curp: 'Curp'},
+          { no: '1', nc: '14400975', nombreApellidos: 'NAVA HERNANDEZ IRVING YAIR', nombre: 'IRVING YAIR NAVA HERNANDEZ', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '88.93', email: 'iryanavahe@ittepic.edu.mx', genero: 'M', curp: 'NAHI951122HNTVRR09' },
+          { no: '2', nc: '15401011', nombreApellidos: 'JIMENEZ ESPERICUETA RICARDO', nombre: 'RICARDO JIMENEZ ESPERICUETA', carrera: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', especialidad: 'DESARROLLO WEB Y MULTIPLATAFORMAS', calificacion: '93.13', email: 'rijimenezes@ittepic.edu.mx', genero: 'M', curp: 'JIER960211HNTVRR09' }
         ];
         new Angular5Csv(ExampleStudents, 'Ejemplo Estudiantes Graduación');
       }
