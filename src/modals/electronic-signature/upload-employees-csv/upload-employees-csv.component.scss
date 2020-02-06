@@ -16,6 +16,11 @@ tr.element-row:not(.expanded-row):hover {
     cursor: pointer;
 }
 
+tr.element-row:hover {
+    background: #e0dbdb;
+    cursor: pointer;
+}
+
 tr.element-row:not(.expanded-row):active {
     background: #e0dbdb;
     cursor: pointer;

@@ -31,7 +31,7 @@
         <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
           <div class="element-detail" [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
             <mat-accordion class="col-12">
-              <mat-expansion-panel *ngIf="element.positions.length">
+              <mat-expansion-panel *ngIf="element.positions && element.positions.length">
                 <mat-expansion-panel-header>
                   <mat-panel-title>Puestos</mat-panel-title>
                 </mat-expansion-panel-header>
@@ -45,7 +45,7 @@
                   <tr mat-row *matRowDef="let position; columns: columnsToDisplayPosition;"></tr>
                 </table>
               </mat-expansion-panel>
-              <mat-expansion-panel *ngIf="element.grades.length">
+              <mat-expansion-panel *ngIf="element.grades && element.grades.length">
                 <mat-expansion-panel-header>
                   <mat-panel-title>Grados</mat-panel-title>
                 </mat-expansion-panel-header>
