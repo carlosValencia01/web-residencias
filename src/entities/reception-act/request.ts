@@ -175,7 +175,7 @@ export class uRequest {
         // this.addTextRight(doc, this.addArroba('AT´N. ANA GUADALUPE RAMIREZ LOPEZ'), 100);
         this.addTextRight(doc, this.addArroba(`AT´N. ${this.CDeptoDiv.name}`), 100);
         positionGender = this.CDeptoDiv.gender === 'FEMENINO' ? 'COORDINADORA' : 'COORDINADOR';
-        this.addTextRight(doc, this.addArroba(`${positionGender} DE APOYO A TITULACION O EQUIVALENTE`), 105);
+        this.addTextRight(doc, this.addArroba(`${positionGender} DE APOYO A TITULACIÓN O EQUIVALENTE`), 105);
 
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por medio del presente solicito autorización para iniciar trámite de registro del ' +
@@ -462,10 +462,10 @@ export class uRequest {
         doc.setFontSize(7);
         doc.text(`${this.ENCABEZADO}`, (this.WIDTH / 2), 45, { align: 'center' });
         doc.setFontSize(8);
-        doc.text('FORMATO DE LIBERACION DEL PROYECTO PARA LA TITULACION INTEGRAL', (this.WIDTH / 2), 52, { align: 'center' });
+        doc.text('FORMATO DE LIBERACION DEL PROYECTO PARA LA TITULACIÓN INTEGRAL', (this.WIDTH / 2), 52, { align: 'center' });
         this.addTextRight(doc, `Tepic, Nayarit; ${moment(tmpDate).format('LL')}`, 58);
         this.addTextRight(doc, 'ASUNTO: @LIBERACION@ @DE@ @PROYECTO@', 64);
-        this.addTextRight(doc, '@PARA@ @LA@ @TITULACION@ @INTEGRAL@', 68);
+        this.addTextRight(doc, '@PARA@ @LA@ @TITULACIÓN@ @INTEGRAL@', 68);
         doc.setFont(this.FONT, 'Bold');
         // doc.text("LIC. LAURA ELENA CASILLAS CASTAÑEDA", this.MARGIN.LEFT, 74);
         doc.text(`${this.JDeptoDiv.name}`, this.MARGIN.LEFT, 74);
@@ -473,7 +473,7 @@ export class uRequest {
         let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
         doc.text(`${positionGender} DE LA DIVISION DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 78);
         doc.text("PRESENTE", this.MARGIN.LEFT, 82);
-        this.addTextRight(doc, `CON AT’N.: ${this.addArroba("COORD. DE TITULACION O EQUIVALENTE")}`, 86);
+        this.addTextRight(doc, `CON AT’N.: ${this.addArroba("COORD. DE TITULACIÓN O EQUIVALENTE")}`, 86);
         doc.setFont(this.FONT, 'Normal');
         doc.text("Por este medio le informo que ha sido liberado el siguiente proyecto para la Titulación Integral:", this.MARGIN.LEFT, 94);
         this.addTable(doc, [
@@ -589,7 +589,7 @@ export class uRequest {
         this.addJury(doc, this._request.jury[3], 140); // 145,150,155
 
         // tslint:disable-next-line: max-line-length
-        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACION INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
+        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACIÓN INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
         contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
         contenido = contenido.replace('@NUMERO', `${this.addArroba(this._request.student.controlNumber.toUpperCase())} `);
         contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())} `);

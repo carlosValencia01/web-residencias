@@ -60,6 +60,9 @@
           <div class="btn btn-light btm-sm" (click)="setView('week')" [class.active]="view === 'week'">
             <i class="fa fa-calendar"></i> Semana
           </div>
+          <div class="btn btn-light btm-sm" (click)="reload()">
+            <i class="fa fa-refresh"></i> Recargar
+          </div>
           <!-- Calendario vista dia -->
           <!-- <div class="btn btn-light btm-sm" (click)="setView('day')" [class.active]="view === 'day'">
             <i class="fa fa-calendar"></i> Día

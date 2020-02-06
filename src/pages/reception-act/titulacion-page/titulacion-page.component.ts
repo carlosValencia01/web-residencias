@@ -55,16 +55,17 @@ export class TitulacionPageComponent implements OnInit {
   public titrationHour: string;
   public isActive: boolean = true;
   // Mensajes
-  ProcessSentMessage: String = 'En espera de que tú solicitud sea aceptada';
-  CompletedSentMessage: String = 'TÚ SOLICITUD HA SIDO ACEPTADA'; //'Tú solicitud ha sido aceptada';
-  ProcessVerifiedMessage: String = 'En espera del registro de tu proyecto';
-  CompletedVerifiedMessage: String = 'TÚ PROYECTO HA SIDO REGISTRADO'; //'Tú proyecto ha sido registrado';
-  ProcessReleasedMessage: String = 'En espera de la liberación del proyecto';
-  CompletedReleasedMessage: String = 'TÚ PROYECTO HA SIDO LIBERADO';//'Tú proyecto ha sido liberado';
+  ProcessSentMessage: String = 'En espera de que tu solicitud sea aceptada';
+  CompletedSentMessage: String = 'TU SOLICITUD HA SIDO ACEPTADA'; //'Tú solicitud ha sido aceptada';  
+  ProcessRegistreVerifiedMessage: String = 'Procesando registro de tu proyecto';
+  CompletedVerifiedMessage: String = 'TU PROYECTO HA SIDO REGISTRADO'; //'Tú proyecto ha sido registrado';
+  NoneReleasedMessage: String = 'En espera de la liberación del proyecto';
+  ProcessReleasesMessage: String = 'Procesando liberación de tu proyecto';
+  CompletedReleasedMessage: String = 'TU PROYECTO HA SIDO LIBERADO';//'Tú proyecto ha sido liberado';
   ProcessReleasedValidMessage: String = 'EN ESPERA DE LA VALIDACIÓN';
   CompletedReleasedValidMessage: String = 'LIBERACIÓN APROBADA';
   ProcessValidatedMessage: String = 'EN ESPERA DE LA HOJA DE NO INCONVENIENCIA';
-  ProcessAssignedMessage: String = 'En espera de que tú fecha sea aceptada';
+  ProcessAssignedMessage: String = 'En espera de que tu fecha sea aceptada';
   WaitAssignedMessage: String = 'Ha ocurrido un inconveniente con la fecha, espera ha ser contactado';
   RejectAssignedMessage: String = 'Su petición de titulación ha sido rechazada, registre una nueva fecha';
   CancelledAssignedMessage: String = 'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada, registre una nueva fecha';

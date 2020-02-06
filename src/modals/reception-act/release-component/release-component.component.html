@@ -7,6 +7,13 @@
             <h1 mat-dialog-title>Liberación</h1>
         </div>
         <div class="col-2">
+            <div class="float-left">
+                <button mat-mini-fab aria-label="report" color="primary" (click)="seeTrade()" data-toggle="tooltip"
+                    title="Oficio">
+                    <mat-icon>description</mat-icon>
+                </button>
+            </div>
+
             <button mat-icon-button [mat-dialog-close] class="float-right">
                 <mat-icon>close</mat-icon>
             </button>
@@ -14,11 +21,6 @@
     </div>
 
     <div mat-dialog-content>
-        <div class="text-right">
-            <button mat-mini-fab aria-label="report" color="primary" (click)="seeTrade()">
-                <mat-icon>assignment</mat-icon>
-            </button>
-        </div>
         <form [formGroup]="frmConsejo" (ngSubmit)="onSave()">
             <div class="card border-dark mb-3 p-3" style="height: 100%;">
                 <div class="row">

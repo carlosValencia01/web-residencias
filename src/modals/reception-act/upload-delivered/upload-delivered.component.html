@@ -20,7 +20,7 @@
 
 <div>
   <div align="end">
-    <button mat-icon-button [mat-dialog-close]="false">
+    <button mat-icon-button [mat-dialog-close]="{response:false, data:null}">
       <mat-icon>close</mat-icon>
     </button>
   </div>
@@ -34,7 +34,7 @@
     </div>
     <mat-card-actions align="end">
       <button type="button" class="btn btn-primary" (click)="uploadDocument()"
-              [disabled]="!fileFlag || !password">Firmar</button>
+        [disabled]="!fileFlag || !password">Firmar</button>
     </mat-card-actions>
   </mat-card>
 </div>

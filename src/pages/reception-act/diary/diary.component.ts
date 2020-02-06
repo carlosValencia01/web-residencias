@@ -71,6 +71,14 @@ export class DiaryComponent implements OnInit {
     });
   }
 
+  reload() {
+    this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
+    this.carrers = this._sourceDataProvider.getCareerAbbreviation();
+    this.carrers.push({
+      carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
+      color: { primary: '#57c7d4', secondary: '#ace3ea' }
+    });
+  }
   diary(month: number, year: number): void {
     this.Appointments = [];
     // let nowDate = new Date(this.viewDate.getTime());
@@ -86,7 +94,6 @@ export class DiaryComponent implements OnInit {
       max: maxDate
     }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
-        console.log("Appoint diary", data.Diary);
         this.Appointments = data.Diary;
         this.Ranges = data.Ranges;
         // this.generateAppointment(month, year);
@@ -471,7 +478,7 @@ export class DiaryComponent implements OnInit {
                 operation: operation,
                 observation: response.motivo,
                 doer: this._CookiesService.getData().user.name.fullName,
-                phase: eRequest.ASSIGNED
+                phase: operation === eStatusRequest.CANCELLED ? eRequest.REALIZED : eRequest.ASSIGNED
               };
               this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
                 this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
