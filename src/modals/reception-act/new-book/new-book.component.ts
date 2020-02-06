@@ -34,7 +34,7 @@ export class NewBookComponent implements OnInit {
 
   public careers: Array<ICareer>;
   public searchText: string;
-  private assignedCareers: Array<ICareer>;
+  public assignedCareers: Array<ICareer>;
   private unassignedCareers: Array<ICareer>;
 
   constructor(
