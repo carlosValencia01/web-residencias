@@ -7,7 +7,7 @@ export class Api {
     // url = 'http://localhost:3003/escolares/credenciales';
     url = 'https://api.cideti.com.mx/escolares/credenciales';
     // url = 'https://rijimenezesdev.me/escolares/credenciales';
-    urlE = 'https://rijimenezesdev.me/escolares/firma';
+    urlE = 'https://api.cideti.com.mx/firma/v1';
 
     headers: Headers = new Headers();
 
