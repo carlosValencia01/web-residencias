@@ -1,0 +1,59 @@
+.action{
+    margin-top: 10px;
+    width: 30px; 
+    height: 30px;
+}
+
+.div-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.div-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.div-actions{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 100%; 
+    height: 25px;
+}
+
+th {
+    background: rgb(21,43,84);
+    color: white;
+}
+
+tr:hover{
+    cursor: pointer;
+}
+
+tr>th:hover{
+    cursor: default;
+}
+
+td {
+    vertical-align: middle;
+}
+.table-hover tbody tr{
+    transition: all 300ms ease-out;
+}
+.table-hover tbody tr:hover {
+    background: rgb(55, 89, 149);
+    color: white;
+}
+
+.div-pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

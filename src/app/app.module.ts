@@ -140,6 +140,7 @@ import { SecretaryAssignmentComponent } from '../modals/inscriptions/secretary-a
 import { ReviewCredentialsComponent } from '../modals/inscriptions/review-credentials/review-credentials.component';
 
 import { DocumentsHelpComponent } from 'src/modals/inscriptions/documents-help/documents-help.component';
+
 // Reception act module
 // Pages
 import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
@@ -149,6 +150,7 @@ import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-pag
 import { ProgressPageComponent } from 'src/pages/reception-act/progress-page/progress-page.component';
 import { TitulacionPageComponent } from 'src/pages/reception-act/titulacion-page/titulacion-page.component';
 import { VinculacionPageComponent } from 'src/pages/reception-act/vinculacion-page/vinculacion-page.component';
+import { ListBooksPagesComponent } from '../pages/reception-act/list-books-pages/list-books-pages.component';
 // Components
 import { ProcessComponentComponent } from 'src/components/reception-act/process-component/process-component.component';
 import { RequestComponentComponent } from 'src/components/reception-act/request-component/request-component.component';
@@ -167,12 +169,14 @@ import { ReleaseComponentComponent } from 'src/modals/reception-act/release-comp
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
 import { BookComponent } from 'src/modals/reception-act/book/book.component';
+import { NewBookComponent } from 'src/modals/reception-act/new-book/new-book.component';
 
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
 // Providers
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
+import { BookProvider } from 'src/providers/reception-act/book.prov';
 
 // Graduation module
 // Pages
@@ -304,6 +308,7 @@ registerLocaleData(localeEs);
     VinculacionPageComponent,
     DocumentsValidComponent,
     ExpedienteComponent,
+    ListBooksPagesComponent,
     // Components
     ProcessComponentComponent,
     RequestComponentComponent,
@@ -322,6 +327,7 @@ registerLocaleData(localeEs);
     SteepComponentComponent,
     NewTitleComponent,
     BookComponent,
+    NewBookComponent,
 
     // Graduation module
     // Pages
@@ -380,7 +386,7 @@ registerLocaleData(localeEs);
     ActNotificacionComponent,
 
     //Pipes
-    SafePipe
+    SafePipe,
   ],
   imports: [
     // Angular
@@ -481,6 +487,7 @@ registerLocaleData(localeEs);
     RequestProvider,
     sourceDataProvider,
     RangeProvider,
+    BookProvider,
     // Services
     RequestService,
 
@@ -533,6 +540,7 @@ registerLocaleData(localeEs);
     ActNotificacionComponent,
     NewTitleComponent,
     BookComponent,
+    NewBookComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,
