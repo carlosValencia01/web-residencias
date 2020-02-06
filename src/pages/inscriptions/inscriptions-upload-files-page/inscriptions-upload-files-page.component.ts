@@ -15,6 +15,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 const jsPDF = require('jspdf');
 
 @Component({
@@ -177,19 +178,29 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   }
   checkFolders() {
     
-    
-    this.studentProv.getFolderId(this._idStudent).subscribe(
-      folder => {
-        // console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
+    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email,eFOLDER.INSCRIPCIONES).subscribe(
+      (folder)=>{
+         console.log('2',folder);
+         this.folderId =  folder.folderIdInDrive;
+         this.assingConfigForDropzone();
+      //  console.log(folder.folderIdInDrive);
+       
+       },
+       err=>{console.log(err);
+       }
+       );
+    // this.studentProv.getFolderId(this._idStudent).subscribe(
+    //   folder => {
+    //     // console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
 
-        if (folder.folder) {// folder exists
-          if (folder.folder.idFolderInDrive) {
-            this.folderId = folder.folder.idFolderInDrive;
-            // console.log(this.folderId,'folder student exists');
-            this.assingConfigForDropzone();
-          }
-        }
-      });
+    //     if (folder.folder) {// folder exists
+    //       if (folder.folder.idFolderInDrive) {
+    //         this.folderId = folder.folder.idFolderInDrive;
+    //         // console.log(this.folderId,'folder student exists');
+    //         this.assingConfigForDropzone();
+    //       }
+    //     }
+    //   });
   }
 
   assingConfigForDropzone() {
