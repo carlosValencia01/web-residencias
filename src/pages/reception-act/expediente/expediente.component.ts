@@ -16,6 +16,7 @@ import { RequestService } from 'src/services/reception-act/request.service';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 moment.locale('es');
 
 @Component({
@@ -82,14 +83,27 @@ export class ExpedienteComponent implements OnInit {
             this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
 
             this.Request.student = data.request[0].studentId;
-            this._StudentProvider.getFolderId(this.Request.student._id).subscribe(
-              student => {
-                if (student.folder && student.folder.idFolderInDrive) {
-                  this.folderId = student.folder.idFolderInDrive;
-                } else {
-                  this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-                }
-              });
+
+            this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber,eFOLDER.TITULACION).subscribe(
+              (folder)=>{
+                 console.log('2',folder);
+                 this.folderId =  folder.folderIdInDrive;                 
+              //  console.log(folder.folderIdInDrive);
+               
+               },
+               err=>{console.log(err);
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+               }
+               );
+            
+            // this._StudentProvider.getFolderId(this.Request.student._id).subscribe(
+            //   student => {
+            //     if (student.folder && student.folder.idFolderInDrive) {
+            //       this.folderId = student.folder.idFolderInDrive;
+            //     } else {
+            //       this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+            //     }
+            //   });
             this._Request = new uRequest(this.Request, imgSrv,this._CookiesService);
             this.onLoad(this.Request.documents);
             (async () => {

@@ -1,8 +1,20 @@
 <div class="row sticky">
   <div class="col-10">
-    <h1 mat-dialog-title>
-      {{ title }} {{ data.student.fullName }} - {{ data.student.controlNumber }}
-    </h1>
+    <div class="row text-center">
+      <div class="col-6">
+        <h1 mat-dialog-title>
+          {{ title }} {{ data.student.fullName }} - {{ data.student.controlNumber }}
+        </h1>
+      </div>
+      <div class="col-6">
+        <mat-form-field>
+          <input type="text" matInput placeholder="CURP" [(ngModel)]="data.sutent.curp">   
+        </mat-form-field>
+        <div style="display: inline;">
+          <button type="button" class="btn btn-secondary">Actualizar</button>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="col-2">
     <button mat-icon-button (click)="onClose()" class="float-right">
@@ -537,7 +549,7 @@
                       <mat-chip-list aria-label="Historial">
                         <mat-chip (click)="history()" color="warn"
                           ><strong
-                            >Ver historial del documento</strong
+                            >Historial</strong
                           ></mat-chip
                         >
                       </mat-chip-list>

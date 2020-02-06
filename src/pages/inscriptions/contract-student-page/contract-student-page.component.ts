@@ -6,6 +6,7 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 
 
 
@@ -236,16 +237,16 @@ export class ContractStudentPageComponent implements OnInit {
   getFolderId() {
     this.data = this.cookiesServ.getData().user;
     this._idStudent = this.data._id;
-    this.studentProv.getFolderId(this._idStudent).subscribe(
-      student=>{
-        // console.log(student,'contratooo');
-        if(student.folder){// folder exists
-          if(student.folder.idFolderInDrive){
-            this.folderId = student.folder.idFolderInDrive;
-            // console.log(this.folderId,'folder student exists');                     
-          }
-        }          
-      });
+    this.studentProv.getDriveFolderId(this.cookiesServ.getData().user.email,eFOLDER.INSCRIPCIONES).subscribe(
+      (folder)=>{
+         console.log('2',folder);
+         this.folderId =  folder.folderIdInDrive;
+      //  console.log(folder.folderIdInDrive);
+       
+       },
+       err=>{console.log(err);
+       }
+       );
   }
 
   saveDocument(document) {

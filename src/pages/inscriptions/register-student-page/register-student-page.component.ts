@@ -10,6 +10,7 @@ import { StudentProvider } from 'src/providers/shared/student.prov';
 import { Router } from '@angular/router';
 import * as jsPDF from 'jspdf';
 import Swal from 'sweetalert2';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 
 @Component({
   selector: 'app-register-student-page',
@@ -615,20 +616,16 @@ export class RegisterStudentPageComponent implements OnInit {
               }
           );
           //first check folderId on Student model
-          this.studentProv.getFolderId(this._idStudent).toPromise().then(
-            student => {              
-
-              if (student.folder) {// folder exists
-                if (student.folder.idFolderInDrive) {
-                  this.folderId = student.folder.idFolderInDrive;
-                  // console.log(this.folderId,'folder student exists');                     
-                }
-              } else {
-                // console.log('333');
-                this.createFolder();
-              }
-
-            });
+          this.studentProv.getDriveFolderId(this.data.email,eFOLDER.INSCRIPCIONES).subscribe(
+            (folder)=>{
+               console.log('2',folder);
+               this.folderId =  folder.folderIdInDrive;               
+            //  console.log(folder.folderIdInDrive);
+             
+             },
+             err=>{console.log(err);
+             }
+             );
         }
         else { // no hay periodo activo
           // console.log('444');

@@ -19,6 +19,7 @@ import { RequestService } from 'src/services/reception-act/request.service';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import * as moment from 'moment';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 moment.locale('es');
 
 @Component({
@@ -129,19 +130,33 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   getFolderId(): void {
-    this.studentProv.getFolderId(this.cookiesService.getData().user._id).subscribe(
-      student => {
-        if (student.folder) {// folder exists
-          if (student.folder.idFolderInDrive) {
-            this.cookiesService.saveFolder(student.folder.idFolderInDrive);
-          }
-          else {
-            this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-          }
-        } else {
-          this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-        }
-      });
+    // console.log('sssssssssssssssssssssssssssssssss');
+    
+    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email,eFOLDER.TITULACION).subscribe(
+      (folder)=>{
+         console.log('2',folder);
+         this.cookiesService.saveFolder(folder.folderIdInDrive);        
+      //  console.log(folder.folderIdInDrive);
+       
+       },
+       err=>{console.log(err);
+       }
+       );
+      //  console.log('3');
+       
+    // this.studentProv.getFolderId(this.cookiesService.getData().user._id).subscribe(
+    //   student => {
+    //     if (student.folder) {// folder exists
+    //       if (student.folder.idFolderInDrive) {
+    //         this.cookiesService.saveFolder(student.folder.idFolderInDrive);
+    //       }
+    //       else {
+    //         this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+    //       }
+    //     } else {
+    //       this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+    //     }
+    //   });
   }
 
   loadRequest() {
@@ -152,6 +167,8 @@ export class TitulacionPageComponent implements OnInit {
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
           this.oRequest = new uRequest(this.Request, this.imgService, this.cookiesService);
+          console.log('sa');
+          
           this.getFolderId();
         } else {
           this.Request = {

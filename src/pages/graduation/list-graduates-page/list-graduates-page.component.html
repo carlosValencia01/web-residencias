@@ -315,7 +315,7 @@
                                  <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
                               </div>
                            </td>
-                           <td *ngIf="role === 'administration'">
+                           <td *ngIf="role === 'administration' || role === 'comunication'">
                               <div class="div-img" ngbTooltip="Generar Reporte Mejor Promedio"
                                  tooltipClass="my-custom-class">
                                  <img src="../../assets/icons/bestAverage.svg" class="action"
