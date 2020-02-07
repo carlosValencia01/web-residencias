@@ -11,7 +11,7 @@ import { eFILES } from 'src/enumerators/reception-act/document.enum';
 moment.locale('es');
 
 export class uRequest {
-    private ENCABEZADO = "2020, Año de Leona Vicario, Benemérita Madre de la Patria";
+    private ENCABEZADO = '"2020, Año de Leona Vicario, Benemérita Madre de la Patria"';
     private FONT_SIZE: {
         BODY: 9,
         BOLD: 10,
@@ -163,7 +163,7 @@ export class uRequest {
         doc.text(jefe, this.MARGIN.LEFT, 75, { align: 'left' });
         // doc.text(doc.splitTextToSize('Jefe(a) de la división de estudios profesionales', 150), this.MARGIN.LEFT, 80, { align: 'left' });
         let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
-        doc.text(`${positionGender} DE LA DIVISÓN DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 80, { align: 'left' });
+        doc.text(`${positionGender} DE LA DIVISIÓN DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 80, { align: 'left' });
         doc.text('P R E S E N T E', this.MARGIN.LEFT, 85, { align: 'left' });
 
         // doc.text(doc.splitTextToSize('AT´N. ANA GUADALUPE RAMIREZ LOPEZ', 150), (this.WIDTH / 2), 100, { align: 'left' });
@@ -458,16 +458,16 @@ export class uRequest {
         doc.setFontSize(7);
         doc.text(`${this.ENCABEZADO}`, (this.WIDTH / 2), 45, { align: 'center' });
         doc.setFontSize(8);
-        doc.text('FORMATO DE LIBERACION DEL PROYECTO PARA LA TITULACIÓN INTEGRAL', (this.WIDTH / 2), 52, { align: 'center' });
+        doc.text('FORMATO DE LIBERACIÓN DEL PROYECTO PARA LA TITULACIÓN INTEGRAL', (this.WIDTH / 2), 52, { align: 'center' });
         this.addTextRight(doc, `Tepic, Nayarit; ${moment(tmpDate).format('LL')}`, 58);
-        this.addTextRight(doc, 'ASUNTO: @LIBERACION@ @DE@ @PROYECTO@', 64);
+        this.addTextRight(doc, 'ASUNTO: @LIBERACIÓN@ @DE@ @PROYECTO@', 64);
         this.addTextRight(doc, '@PARA@ @LA@ @TITULACIÓN@ @INTEGRAL@', 68);
         doc.setFont(this.FONT, 'Bold');
         // doc.text("LIC. LAURA ELENA CASILLAS CASTAÑEDA", this.MARGIN.LEFT, 74);
         doc.text(`${this.JDeptoDiv.name}`, this.MARGIN.LEFT, 74);
         doc.setFont(this.FONT, 'Normal');
         let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
-        doc.text(`${positionGender} DE LA DIVISION DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 78);
+        doc.text(`${positionGender} DE LA DIVISIÓN DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 78);
         doc.text("PRESENTE", this.MARGIN.LEFT, 82);
         this.addTextRight(doc, `CON AT’N.: ${this.addArroba("COORD. DE TITULACIÓN O EQUIVALENTE")}`, 86);
         doc.setFont(this.FONT, 'Normal');
@@ -569,9 +569,9 @@ export class uRequest {
         doc.text(`${this.ENCABEZADO} `, (this.WIDTH / 2), 45, { align: 'center' });
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(10);
-        doc.text('TEPIC, NAYARIT;', (this.WIDTH / 2), 55, { align: 'center' });
-        this.addTextRight(doc, moment(new Date()).format('LL').toUpperCase(), 55)
-        doc.text('ACTO DE RECEPCION PROFESIONAL', (this.WIDTH / 2), 70, { align: 'center' });
+        // doc.text('TEPIC, NAYARIT;', (this.WIDTH / 2), 55, { align: 'center' });
+        this.addTextRight(doc, `TEPIC, NAYARIT; ${moment(new Date()).format('LL').toUpperCase()}`, 55)
+        doc.text('ACTO DE RECEPCIÓN PROFESIONAL', (this.WIDTH / 2), 70, { align: 'center' });
         doc.text('INTEGRANTES DEL JURADO', (this.WIDTH / 2), 85, { align: 'center' });
         doc.setFont(this.FONT, 'Normal');
         doc.text('PRESIDENTE', this.MARGIN.LEFT, 95);
@@ -584,11 +584,15 @@ export class uRequest {
         this.addJury(doc, this._request.jury[3], 140); // 145,150,155
 
         // tslint:disable-next-line: max-line-length
-        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACIÓN INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
+        // let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACIÓN INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
+        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, @OPCION @PRODUCTO, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs. En la Sala @LUGAR de este Instituto.`;
+        
         contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
         contenido = contenido.replace('@NUMERO', `${this.addArroba(this._request.student.controlNumber.toUpperCase())} `);
         contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())} `);
         contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())} `);
+        contenido = contenido.replace('@OPCION', `${this.addArroba(this._request.titulationOption.toUpperCase())} `);
+        contenido = contenido.replace('@PRODUCTO', `${this.addArroba(this._request.product.toUpperCase())} `);
         // tslint:disable-next-line: max-line-length
         contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)} `);
         contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))} `);
@@ -617,7 +621,7 @@ export class uRequest {
         this.addTextRight(doc, `OFICIO No.${duty} `, 50);
         doc.setFont(this.FONT, 'Normal');
         // this.addTextRight(doc, `ASUNTO: ${ position } Acto de Recepcion Profesional`, 65);
-        this.addTextRight(doc, `ASUNTO: Comisión, Acto de Recepcion Profesional`, 65);
+        this.addTextRight(doc, `ASUNTO: Comisión, Acto de Recepción Profesional`, 65);
         doc.setFont(this.FONT, 'Bold');
         doc.text(`C.${employee.toUpperCase()} `, this.MARGIN.LEFT, 90);
         doc.text(`CATEDRÁTICO DE ESTE INSTITUTO`, this.MARGIN.LEFT, 95);
@@ -723,7 +727,7 @@ export class uRequest {
         doc.text(doc.splitTextToSize(jury.title, 150), this.MARGIN.LEFT + 35, positionY);
         doc.text(jury.name, this.MARGIN.LEFT + 35, positionY + 5);
         doc.setFont(this.FONT, 'Normal');
-        doc.text(`No.de Cedula Profesional: ${jury.cedula} `, this.MARGIN.LEFT + 35, positionY + 10);
+        doc.text(`No.de Cédula Profesional: ${jury.cedula} `, this.MARGIN.LEFT + 35, positionY + 10);
     }
     // A una cadena de texto, le añade @ a cada palabra tanto al inicio y al final
     // Esto es para indicar que se le agregará texto en negritas

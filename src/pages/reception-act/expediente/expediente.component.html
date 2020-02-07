@@ -81,15 +81,15 @@
             </mat-card-header>
             <mat-card-content>
               <div [ngSwitch]="whatStatus(FileRequest)">
-                <div *ngSwitchCase="'Process'" class="text-center" (click)="onViewPdf('SOLICITUD')">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('SOLICITUD')">
                   <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                   <p class="card-text">En revision</p>
                 </div>
-                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onViewPdf('SOLICITUD')">
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('SOLICITUD')">
                   <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Aceptado</p>
                 </div>
-                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onViewPdf('SOLICITUD')">
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('SOLICITUD')">
                   <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Rechazado</p>
                 </div>
@@ -115,15 +115,15 @@
             </mat-card-header>
             <mat-card-content>
               <div [ngSwitch]="whatStatus(FileRegistered)">
-                <div *ngSwitchCase="'Process'" class="text-center" (click)="onViewPdf('REGISTRO')">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('REGISTRO')">
                   <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                   <p class="card-text">En revision</p>
                 </div>
-                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onViewPdf('REGISTRO')">
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('REGISTRO')">
                   <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Aceptado</p>
                 </div>
-                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onViewPdf('REGISTRO')">
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('REGISTRO')">
                   <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Rechazado</p>
                 </div>
@@ -182,15 +182,15 @@
             </mat-card-header>
             <mat-card-content>
               <div [ngSwitch]="whatStatus(FileInconvenience)">
-                <div *ngSwitchCase="'Process'" class="text-center" (click)="onViewPdf('NO_INCONVENIENCIA')">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('NO_INCONVENIENCIA')">
                   <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                   <p class="card-text">En revision</p>
                 </div>
-                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onViewPdf('NO_INCONVENIENCIA')">
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('NO_INCONVENIENCIA')">
                   <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Aceptado</p>
                 </div>
-                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onViewPdf('NO_INCONVENIENCIA')">
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('NO_INCONVENIENCIA')">
                   <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Rechazado</p>
                 </div>
@@ -571,4 +571,8 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="center">
+  <app-loader [loading]="showLoading"></app-loader>
 </div>

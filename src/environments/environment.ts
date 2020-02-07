@@ -28,10 +28,10 @@ export const environment = {
   },
   // Local
   apiURL: 'http://localhost:3003/escolares/credenciales',
-  eSignatureURL: 'http://localhost:3017/firma/v1',
+  // eSignatureURL: 'http://localhost:3017/firma/v1',
   // Pruebas
   // apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
-  // eSignatureURL: 'https://rijimenezesdev.me/escolares/firma',
+  eSignatureURL: 'https://rijimenezesdev.me/escolares/firma',
 };
 
 /*

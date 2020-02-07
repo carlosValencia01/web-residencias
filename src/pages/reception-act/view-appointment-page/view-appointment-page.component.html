@@ -21,12 +21,13 @@
         </button>
       </div>
       <div class="col-4">
-        <div class="div-img" >
-          <img *ngIf="Appointments.length > 0" src="../../assets/icons/pdfReport.svg" class="action" (click)="excelExport()" style="width: 50px;" ngbTooltip="Guardar Reporte">
+        <div class="div-img">
+          <img *ngIf="Appointments.length > 0" src="../../assets/icons/pdfReport.svg" class="action"
+            (click)="excelExport()" style="width: 50px;" ngbTooltip="Guardar Reporte">
         </div>
       </div>
     </div>
-<hr/>
+    <hr />
     <div class="row text-center">
       <div class="col-md-4">
         <div class="btn-group" style="border: 1px;">
@@ -54,6 +55,9 @@
           </div>
           <div class="btn btn-light btm-sm" (click)="setView('week')" [class.active]="view === 'week'">
             <i class="fa fa-calendar"></i> Semana
+          </div>
+          <div class="btn btn-light btm-sm" (click)="reload()">
+            <i class="fa fa-refresh"></i> Recargar
           </div>
         </div>
       </div>
@@ -144,8 +148,7 @@
 </div>
 
 <div *ngIf="mapedStudents.length>0">
-  <table  class="table table-striped table-bordered table-hover" id="table"
-  >
+  <table class="table table-striped table-bordered table-hover" id="table">
     <thead>
       <tr>
         <th data-fill-color="#112043" data-f-color="#FFFFFF">#</th>
@@ -154,7 +157,7 @@
         <th data-fill-color="#112043" data-f-color="#FFFFFF">Egresado</th>
         <th data-fill-color="#112043" data-f-color="#FFFFFF">Aula</th>
         <th data-fill-color="#112043" data-f-color="#FFFFFF">Jurado</th>
-      </tr>     
+      </tr>
     </thead>
     <tbody>
       <tr *ngFor="let maped of mapedStudents; let i = index">
