@@ -27,8 +27,6 @@ export class HomeHeaderComponent implements OnInit {
   ngOnInit() {
     if(!this.survey){
 
-      // console.log(this.cookiesServ.getData().user.role);
-
       switch (this.cookiesServ.getData().user.role) {
         case 0:
           this.role = 'administration';
@@ -62,7 +60,6 @@ export class HomeHeaderComponent implements OnInit {
           break;
       }
     }
-    // console.log(this.router.url); //  /routename
 
   }
 

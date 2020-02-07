@@ -178,7 +178,6 @@ export class RegisterStudentPageComponent implements OnInit {
   getStudentData(id) {
     this.inscriptionsProv.getStudent(id).subscribe(res => {
       this.studentData = res.student[0];
-      // console.log(this.studentData);
 
       // Obtener Paso del Wizard
       this.stepWizard = this.studentData.stepWizard ? this.studentData.stepWizard : 1;
@@ -599,11 +598,9 @@ export class RegisterStudentPageComponent implements OnInit {
     this.inscriptionsProv.getActivePeriod().toPromise().then(
       period => {
         if (period.period) {
-          this.activePeriod = period.period;                      
+          this.activePeriod = period.period;
           this.studentProv.getPeriodId(this._idStudent.toString()).toPromise().then(
             per => {
-              // console.log(per.student.idPeriodInscription, 'idperrrrr');              
-              
               if (!per.student.idPeriodInscription) {
                 this.studentProv.updateStudent(this._idStudent, { idPeriodInscription: this.activePeriod._id }).subscribe(
                   upd => {
@@ -618,20 +615,16 @@ export class RegisterStudentPageComponent implements OnInit {
           //first check folderId on Student model
           this.studentProv.getDriveFolderId(this.data.email,eFOLDER.INSCRIPCIONES).subscribe(
             (folder)=>{
-               console.log('2',folder);
-               this.folderId =  folder.folderIdInDrive;               
-            //  console.log(folder.folderIdInDrive);
-             
+               this.folderId =  folder.folderIdInDrive;
              },
              err=>{console.log(err);
              }
              );
         }
         else { // no hay periodo activo
-          // console.log('444');
-          this.activePeriod = false;  
-        }    
-      }  
+          this.activePeriod = false;
+        }
+      }
     );
   }
 
@@ -640,27 +633,22 @@ export class RegisterStudentPageComponent implements OnInit {
 
     this.inscriptionsProv.getFoldersByPeriod(this.activePeriod._id, 1).toPromise().then(
       (folders) => {
-        console.log(folders, 'folderss');
 
         this.foldersByPeriod = folders.folders;
         let folderPeriod = this.foldersByPeriod.filter(folder => folder.name.indexOf(this.activePeriod.periodName) !== -1);
 
         // 1 check career folder
         let folderCareer = this.foldersByPeriod.filter(folder => folder.name === this.data.career);
-        console.log('1');
 
         if (folderCareer.length === 0) {
-          // console.log('1');
 
           this.inscriptionsProv.createSubFolder(this.data.career, this.activePeriod._id, folderPeriod[0].idFolderInDrive, 1).toPromise().then(
             career => {
-              console.log('2');
 
               // student folder doesn't exists then create new folder
               this.inscriptionsProv.createSubFolder(folderStudentName, this.activePeriod._id, career.folder.idFolderInDrive, 1).toPromise().then(
                 studentF => {
                   this.folderId = studentF.folder.idFolderInDrive;
-                  console.log('3');
 
                   this.studentProv.updateStudent(this._idStudent, { folderId: studentF.folder._id }).subscribe(
                     upd => {
@@ -680,12 +668,10 @@ export class RegisterStudentPageComponent implements OnInit {
             }
           );
         } else {
-          console.log('2.1');
           //folder career exists then create student folder
           this.inscriptionsProv.createSubFolder(folderStudentName, this.activePeriod._id, folderCareer[0].idFolderInDrive, 1).toPromise().then(
             studentF => {
               this.folderId = studentF.folder.idFolderInDrive;
-              // console.log('3.1');
 
               this.studentProv.updateStudent(this.data._id, { folderId: studentF.folder._id }).subscribe(
                 upd => {

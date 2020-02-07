@@ -125,7 +125,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
           var pdfSrcSolicitud = buffSolicitud;
           this.loading = false; 
           var blob = new Blob([pdfSrcSolicitud], {type: "application/pdf"});
-          
+
           //FileSaver.saveAs(blob,this.data.email+'-Solicitud.pdf');
           window.open( URL.createObjectURL(blob) );
 
@@ -141,7 +141,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
           var pdfSrcContrato = buffContrato;
           this.loading = false; 
           var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});
-          
+
           //FileSaver.saveAs(blob,this.data.email+'-Contrato.pdf');
           window.open( URL.createObjectURL(blob) );
 

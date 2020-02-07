@@ -74,11 +74,9 @@ export class LoginPageComponent implements OnInit {
     } else {
       this.userProv.login({ email: this.formLogin.get('usernameInput').value, password: this.formLogin.get('passwordInput').value })
         .subscribe(async (res) => {
-          // console.log(res);
           // Aqui emitiremos la señal, de que todo esta correcto y se cambiara la pagina.
 
           this.userProv.sendTokenFromAPI(res.token);
-          console.log("RES", res.user.rol.name);
           if (res.user.rol.name.toUpperCase() === 'ESTUDIANTE') {
             this.loginIsSuccessful(res);
             return;
@@ -111,7 +109,6 @@ export class LoginPageComponent implements OnInit {
             });
           }
         }, (error) => {
-          // console.log(error);
           const msg = JSON.parse(error._body);
           this.messageAlertDiv = msg.error;
           this.showAlertDiv = true;

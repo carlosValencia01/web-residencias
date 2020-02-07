@@ -29,7 +29,6 @@ export class EmployeeProvider {
     }
 
     getStudentByControlNumber(controlnumber) {
-        console.log(controlnumber);
         return this.api.post(`student/login`, controlnumber)
             .pipe(map(student => student.json()));
     }

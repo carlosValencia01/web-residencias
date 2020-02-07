@@ -118,21 +118,18 @@ export class DiaryComponent implements OnInit {
             const countRange = this.getCountRange(c.carrer, tmpDate);
             const countAppointment = this.getCountAppointment(c.carrer, tmpDate);
             const quantity = countRange - countAppointment;
-            // console.log("Date", onlyDate, "--", countRange, "--", countAppointment);
             for (let k = 0; k < quantity; k++) {
               let Carrera: string[] = [];
               let Student: string[] = [];
               Student.push("");
               const AppointmentCareer = this.Appointments.find(x => x._id[0] === c.carrer);
               if (typeof (AppointmentCareer) !== 'undefined') {
-                // console.log("Carrera", AppointmentCareer._id[0], "Appointment", { id: -1, student: Student, proposedDate: onlyDate, proposedHour: j });
                 // AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--" });
                 AppointmentCareer.values.push({ id: '-1', student: Student, project: '', proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '', duration: 60, option: '', product: '' });
               }
               // _id: string[], values: [{ id: number, student: string[], proposedDate: Date, proposedHour: number }]
               // Carrera.push(c.carrer);
               // Student.push('');
-
             }
           }
         )
@@ -162,10 +159,8 @@ export class DiaryComponent implements OnInit {
     this.Ranges.forEach(element => {
       const value = element.careers.find(x => x === Career);
       if (typeof (value) !== 'undefined') {
-        // console.log("Carrera0", value);
         const endDate: Date = new Date(element.end);
         const startDate: Date = new Date(element.start);
-        // console.log("Carrera0", startDate.getTime(), "-", endDate.getTime(), "-", Appointment.getTime());
         if (startDate.getTime() < Appointment.getTime() && Appointment.getTime() < endDate.getTime())
           quantity = element.quantity
       }
@@ -178,13 +173,10 @@ export class DiaryComponent implements OnInit {
     this.events = [];
     this.carrers.forEach(career => {
       if (career.status) {
-        // console.log("Carrera", career);
         let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
         tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
-        console.log("Appointment__", this.Appointments);
         if (typeof (tmp) != 'undefined') {
           tmp.values.forEach(element => {
-            // console.log("UN VALOR", element);
             const vFecha = element.proposedDate.toString().split('T')[0].split('-');
             let tmpStart = new Date(element.proposedDate);
             let tmpEnd = new Date(element.proposedDate);
@@ -203,7 +195,6 @@ export class DiaryComponent implements OnInit {
           });
         }
       }
-      // console.log("event", this.events);
     });
     this.refresh.next();
   }
@@ -265,10 +256,8 @@ export class DiaryComponent implements OnInit {
     dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], project: string, phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string, duration: number, option: string, product: string } }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
       //Para no llamar a la bd
-      // console.log("Rsponse", response);
       if (typeof (response) !== 'undefined') {
         const index = this.Appointments.findIndex(x => x._id[0] === response.career);
-        console.log("Index", response.value);
         if (index != -1) {
           this.Appointments[index].values.push(response.value);
         } else {
@@ -276,7 +265,6 @@ export class DiaryComponent implements OnInit {
           const tmpAppointment: iAppointmentGroup = { _id: [response.career], values: [response.value] }
           this.Appointments.push(tmpAppointment);
         }
-        // console.log("Appoin", this.Appointments);
         this.loadAppointment();
       }
     }, error => {
@@ -333,12 +321,9 @@ export class DiaryComponent implements OnInit {
       }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
       //Para no llamar a la bd
-      // console.log("Rsponse", response);
       if (typeof (response) !== 'undefined') {
         const index = this.Appointments.findIndex(x => x._id[0] === response.career);
-        // console.log("Index", index);
         if (index != -1) {
-          // console.log("ENTRO");
           this.Appointments[index].values.push(response.value);
         } else {
           // const tmpAppointment: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] } = { _id: [response.career], values: [response.value] }
@@ -354,7 +339,6 @@ export class DiaryComponent implements OnInit {
 
   viewEvent($event): void {
     const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
-    console.log("Appointment", tmpAppointment);
     const dialogRef = this.dialog.open(ViewMoreComponent, {
       data: {
         Appointment: tmpAppointment
@@ -446,11 +430,8 @@ export class DiaryComponent implements OnInit {
   }
 
   confirmDenial($event: any, operation: eStatusRequest): void {
-    console.log("%", $event);
     let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
-    console.log("aapoint", AppointmentCareer);
     const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
-    console.log("aapoint", tmpAppointment);
     if (typeof (tmpAppointment) !== 'undefined') {
       if (tmpAppointment.option === 'XI - TITULACIÓN INTEGRAL') {
         const msnCancel = `¿ESTÁ SEGURO DE CANCELAR EL ESPACIO DE ${tmpAppointment.student}?`;
@@ -509,7 +490,6 @@ export class DiaryComponent implements OnInit {
               AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
               this.loadAppointment();
             }, error => {
-              console.log("ERROR ELIMINACION", error);
               let tmpJson = JSON.parse(error._body);
               this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
             });
@@ -631,7 +611,6 @@ export class DiaryComponent implements OnInit {
   }
 
   appointmentClicked($event): void {
-    console.log("event", $event);
     let index: { appointment: number, value: number };
 
     // const tmpMinutes: number = value.start.getHours() * 60;
@@ -642,10 +621,8 @@ export class DiaryComponent implements OnInit {
     let student = $event.title.split(' ').slice(2).join(' ');
     let abbreviation = $event.title.split(' ')[1];
     let career = this.carrers.find(x => x.abbreviation === abbreviation);
-    console.log("DATOS DEL EVENTO", student, "Abreviatura", abbreviation, "carrera", career);
 
     //Busqueda del evento
-    console.log("Appointments", this.Appointments);
     let tmpValor: { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string };
     for (let i = 0; i < this.Appointments.length; i++) {
       for (let j = 0; j < this.Appointments[i].values.length; j++) {
@@ -682,10 +659,7 @@ export class DiaryComponent implements OnInit {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Fecha Propuesta Aceptada');
             // tmpValor.phase = "Realizado";
             this.Appointments[index.appointment].values[index.value].phase = "Realizado";
-            console.log("tmpvalor", tmpValor);
-            console.log("Appoint", this.Appointments);
             this.loadAppointment();
-            // console.log(this.Appointments)
             // this.refresh.next();
           }, error => {
             this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);

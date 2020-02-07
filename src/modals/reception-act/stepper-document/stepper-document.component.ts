@@ -29,7 +29,6 @@ export class StepperDocumentComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any, private _NotificationsServices: NotificationsServices) {
     // this.fileData = `../../assets/docs/${data.Documento}.pdf`;
     // this.tmpFileData = `../../assets/docs/${data.Documento}.pdf`;
-    // console.log("File path", this.fileData);
     this.onLoad(data.Documento);
   }
 
@@ -42,8 +41,6 @@ export class StepperDocumentComponent implements OnInit {
         this.existsVideoHelper = environment.documentHelper.birthCertificate.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.birthCertificate.file : '';
         this.URLVideo = this.existsVideoHelper ? environment.documentHelper.birthCertificate.video : '';
-        console.log("VALORES", this.existsVideoHelper, this.existsFileHelper,
-          "URL_VILE", this.URLFile, "URL VIIDE", this.URLVideo);
         break;
       }
       case eFILES.CURP: {
@@ -118,7 +115,6 @@ export class StepperDocumentComponent implements OnInit {
 
   onUpload(event): void {
     // [src]="'../../assets/Requisitos.pdf'"
-    // console.log("event",event);
     this.fileUpload = null;
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
@@ -177,7 +173,6 @@ export class StepperDocumentComponent implements OnInit {
   async updateSteeps(index: number) {
     await this.delay(150);
     this.stepperComponent.selectedIndex = index;
-    // console.log("STEEP", this.stepperComponent)
   }
 
   delay(ms: number) {

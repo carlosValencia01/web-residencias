@@ -56,7 +56,6 @@ export class ContractStudentPageComponent implements OnInit {
     this.convertNumericalMonth();
     this.getIdStudent();
     this.getFolderId();
-    // console.log(this.currentDate);
   }
 
   ngOnInit() {
@@ -85,14 +84,12 @@ export class ContractStudentPageComponent implements OnInit {
 
   onChange(event) {
     this.acceptedTerms = !this.acceptedTerms;
-    // console.log(this.acceptedTerms);
   }
 
   async continue() {
     this.loading=true;
     var data = { acceptedTerms: this.acceptedTerms, dateAcceptedTerms: this.currentDate }
     await this.updateStudent(data, this._idStudent);
-    
   }
 
   async updateStudent(data, id) {
@@ -100,7 +97,7 @@ export class ContractStudentPageComponent implements OnInit {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Contrato ...', 'Esto puede tardar unos minutos');
         this.generatePDF();
     });
-  }  
+  }
 
   convertNumericalMonth() {
     switch (this.currentDate.getMonth()) {
@@ -239,10 +236,7 @@ export class ContractStudentPageComponent implements OnInit {
     this._idStudent = this.data._id;
     this.studentProv.getDriveFolderId(this.cookiesServ.getData().user.email,eFOLDER.INSCRIPCIONES).subscribe(
       (folder)=>{
-         console.log('2',folder);
          this.folderId =  folder.folderIdInDrive;
-      //  console.log(folder.folderIdInDrive);
-       
        },
        err=>{console.log(err);
        }

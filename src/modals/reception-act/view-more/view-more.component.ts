@@ -16,7 +16,6 @@ export class ViewMoreComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any) {
     this.Appointment = data.Appointment;
     this._Date = moment(this.Appointment.proposedDate).format('LLL');
-    // console.log("Appoint", this.Appointment);
     // this.Student = this.Appointment.student[0];
   }
 

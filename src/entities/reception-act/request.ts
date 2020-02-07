@@ -62,7 +62,6 @@ export class uRequest {
     public setCode(qrCode: any, eStamp: any) {
         this._qrCode = qrCode;
         this._stamp = eStamp;
-        console.log("VALORES", this._qrCode);
     }
 
     private _getImageToPdf() {
@@ -141,7 +140,6 @@ export class uRequest {
     protocolActRequest(isPreview: boolean = true): jsPDF {
         const doc = this.newDocumentTec();
         const sentHistory = this._request.history.filter(x => x.phase === (isPreview ? 'Capturado' : 'Enviado') && x.status === (isPreview ? 'Accept' : 'None')).reverse()[0];
-        console.log('Listas', doc.getFontList());
         doc.setTextColor(0, 0, 0);
         // Title
         doc.setFont(this.FONT, 'Bold');
@@ -152,7 +150,6 @@ export class uRequest {
         // Fecha
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(11);
-        // console.log("FECHA A EMOSTRAR", moment(sentHistory.achievementDate).format('LLL'));
         this.addTextRight(doc, `Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LLL')}`, 55);
         // doc.text(doc.splitTextToSize(`Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LLL')}`, 50),
         //     this.WIDTH - this.MARGIN.RIGHT, 55, { align: 'right' });
@@ -211,7 +208,6 @@ export class uRequest {
 
     projectRegistrationOffice(qrCode?, eStamp?): jsPDF {
         const doc = this.newDocumentTec();
-        console.log("REGISTRO DE PROYECTO", this._request);
         const registerHistory = this._request.history
             .filter(x => x.phase === 'Verificado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         doc.setTextColor(0, 0, 0);
@@ -495,7 +491,6 @@ export class uRequest {
 
         doc.setFontSize(9);
         doc.setFont(this.FONT, 'Bold');
-        // console.log("SOLICITUD REQ", this._request);
         doc.text(this._request.department.boss, this.MARGIN.LEFT, 170);
         doc.setFont(this.FONT, 'Normal');
         doc.text("JEFE DE " + this._request.department.name, this.MARGIN.LEFT, 174);

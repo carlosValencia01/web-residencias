@@ -130,20 +130,13 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   getFolderId(): void {
-    // console.log('sssssssssssssssssssssssssssssssss');
-    
     this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email,eFOLDER.TITULACION).subscribe(
       (folder)=>{
-         console.log('2',folder);
-         this.cookiesService.saveFolder(folder.folderIdInDrive);        
-      //  console.log(folder.folderIdInDrive);
-       
+         this.cookiesService.saveFolder(folder.folderIdInDrive);
        },
        err=>{console.log(err);
        }
        );
-      //  console.log('3');
-       
     // this.studentProv.getFolderId(this.cookiesService.getData().user._id).subscribe(
     //   student => {
     //     if (student.folder) {// folder exists
@@ -167,8 +160,6 @@ export class TitulacionPageComponent implements OnInit {
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
           this.oRequest = new uRequest(this.Request, this.imgService, this.cookiesService);
-          console.log('sa');
-          
           this.getFolderId();
         } else {
           this.Request = {
@@ -212,7 +203,6 @@ export class TitulacionPageComponent implements OnInit {
 
   enableSteps(phase: eRequest): void {
     this.resetSteep();
-    console.log('fase', phase);
     switch (phase) {
       case eRequest.TITLED: {
         this.SteepElevenCompleted = (this.StatusComponent === eStatusRequest.FINALIZED ? true : false);
@@ -262,7 +252,6 @@ export class TitulacionPageComponent implements OnInit {
     }
     (async () => {
       await this.delay(100);
-      // console.log('index', this.Steeps.getIndex());
       this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     })();
   }
@@ -276,10 +265,6 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   valores() {
-    console.log(this.stepperComponent);
-    console.log('STEP INDEX', this.stepperComponent.selectedIndex);
-    console.log('STEP INDEX', this.stepperComponent.selectedIndex = 2);
-    console.log('values', this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted);
   }
 
   viewRequeriments() {

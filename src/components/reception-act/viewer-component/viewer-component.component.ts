@@ -107,7 +107,6 @@ export class ViewerComponentComponent implements OnInit {
   }
 
   view(): void {
-    console.log('registered', this.oRequest);
     switch (this.PHASE) {
       case eRequest.GENERATED: {
         break;

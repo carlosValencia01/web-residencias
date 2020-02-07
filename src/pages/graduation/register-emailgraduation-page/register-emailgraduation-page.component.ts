@@ -84,7 +84,6 @@ export class RegisterEmailgraduationPageComponent implements OnInit {
                 promedio: alumnosData.payload.doc.data().promedio ? alumnosData.payload.doc.data().promedio : ''
               };
               this.dataUpdate = data;
-              console.log(this.dataUpdate);
               data = null;
               this.hidden = true;
             }

@@ -103,7 +103,6 @@ export class ViewAppointmentPageComponent implements OnInit {
     // });
     //PASADO
 
-    // console.log("CARRERAS__", this.carrers);
     // switch (this.role) {
     //   case eRole.SECRETARYACEDMIC: {
     //     this.filterDepto('ISIC');
@@ -167,14 +166,12 @@ export class ViewAppointmentPageComponent implements OnInit {
     });
   }
   loadAppointment(): void {
-    console.log("APPOINTMENTS DE LOAD", this.Appointments);
     this.events = [];
     this.allCarrers.forEach(career => {
       // if (career.status) {
       let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
       // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);      
       tmp = this.Appointments.find(x => x._id[0] === career.carrer);
-      console.log("Appointment__", this.Appointments);
       if (typeof (tmp) != 'undefined') {
         tmp.values.forEach(element => {
           const vFecha = element.proposedDate.toString().split('T')[0].split('-');
@@ -191,13 +188,11 @@ export class ViewAppointmentPageComponent implements OnInit {
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
           }
           else {
-            console.log("CITA", element);
             title = element.phase == 'Asignado' ? " Evento Solicitado" : " Evento Reservado";
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? { primary: '#b64443', secondary: '#dcdcdc' } : { primary: '#b64443', secondary: '#e5bab9' }) });
           }
           // let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];          
         });
-        console.log("EVENT", this.events);
         // }
       }
     });
@@ -314,10 +309,8 @@ export class ViewAppointmentPageComponent implements OnInit {
       doc.text('AGENDA DE ACTO RECEPCIONAL', (this.WIDTH / 2), 45, { align: 'center' });
       doc.setFont(this.FONT, 'Normal');
       doc.setFontSize(8);
-      
-      console.log(filteredCareers);
-      
-      filteredCareers.forEach((car) => {       
+
+      filteredCareers.forEach((car) => {
         const filtered = this.Appointments.filter((ap) => ap._id[0] == car.carrer).map(
           (care) => care.values
         )[0];

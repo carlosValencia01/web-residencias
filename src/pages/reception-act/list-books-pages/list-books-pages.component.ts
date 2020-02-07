@@ -60,8 +60,7 @@ export class ListBooksPagesComponent implements OnInit {
       height: '37em'
     });
     let sub = linkModal.afterClosed().subscribe(
-      book=>{         
-        console.log(book);
+      book=>{
         this.getBooks();
       },
       err=>console.log(err), ()=> sub.unsubscribe()

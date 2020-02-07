@@ -52,7 +52,6 @@ export class ProfileSettingsComponent implements OnInit {
 
   async init() {
     this.usr = this.cookiesService.getData();
-    console.log(this.usr);
     this.user = this.cookiesService.getData().user;
     this.position = await this.currentPositionService.getCurrentPosition();
     this.currentPositionService.changedPosition.subscribe(position => {

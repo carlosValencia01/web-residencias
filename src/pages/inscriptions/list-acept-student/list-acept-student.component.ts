@@ -86,7 +86,6 @@ export class ListAceptStudentComponent implements OnInit {
     private studentProv: StudentProvider
   ) { 
     this.rolName = this.cookiesService.getData().user.rol.name;
-    //console.log(this.rolName);
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -188,7 +187,6 @@ export class ListAceptStudentComponent implements OnInit {
     }
 
     this.listCovers = this.filterItemsCovers(this.searchCarreer,this.searchText);
-    //console.log(this.listCovers);
 
     this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
 
@@ -204,7 +202,6 @@ export class ListAceptStudentComponent implements OnInit {
    // FILTRADO POR CARRERA O ESTATUS
    filterItems(carreer, EC, E, EP, V, A) {
     return this.students.filter(function (student) {
-      //console.log(student);
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
         student.inscriptionStatus.toLowerCase().indexOf(EC.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(E.toLowerCase()) > -1 ||
@@ -217,30 +214,27 @@ export class ListAceptStudentComponent implements OnInit {
   filterItemsCovers(carreer,nc) {
     return this.students.filter(function (student) {
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 &&
-        student.controlNumber.toLowerCase().indexOf(nc.toLowerCase()) > -1    
+        student.controlNumber.toLowerCase().indexOf(nc.toLowerCase()) > -1
       });
   }
-  
 
   getPeriods(){
     let sub = this.inscriptionsProv.getAllPeriods()
-      .subscribe(periods => {       
-        this.periods=periods.periods;     
-        //console.log(this.periods); 
-        this.periods.reverse();                        
+      .subscribe(periods => {
+        this.periods=periods.periods;
+        this.periods.reverse();
         sub.unsubscribe();
       });
   }
 
   getActivePeriod(){
     let sub = this.inscriptionsProv.getActivePeriod()
-      .subscribe(period => {       
-        this.activPeriod = period.period.year;     
+      .subscribe(period => {
+        this.activPeriod = period.period.year;
       });
   }
 
   updateGI(student){
-    //console.log(student);
     const linkModal = this.dialog.open(StudentInformationComponent, {
       data: {
         operation: 'view',
@@ -252,8 +246,7 @@ export class ListAceptStudentComponent implements OnInit {
       height: '800px'
     });
     let sub = linkModal.afterClosed().subscribe(
-      information=>{         
-        //console.log(information);
+      information=>{
         this.getStudents();
       },
       err=>console.log(err), ()=> sub.unsubscribe()
@@ -274,9 +267,7 @@ export class ListAceptStudentComponent implements OnInit {
     });
     let sub = linkModal.afterClosed().subscribe(
       expedient=>{
-        this.getStudents();  
-        // console.log(expedient);
-        
+        this.getStudents();
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -413,8 +404,7 @@ export class ListAceptStudentComponent implements OnInit {
             height: '800px'
           });
           let sub = linkModal.afterClosed().subscribe(
-            analysis=>{         
-              //console.log(analysis);
+            analysis=>{
               this.getStudents();
             },
             err=>console.log(err), ()=> sub.unsubscribe()
@@ -497,8 +487,6 @@ export class ListAceptStudentComponent implements OnInit {
         }
       }
       default:{
-        console.log('nada');
-        
       }
     }
   }
@@ -634,7 +622,6 @@ export class ListAceptStudentComponent implements OnInit {
                   
                 //FOTOGRAFIA DEL ALUMNO
                 var foto = await this.findFoto(docFoto);
-                //console.log(foto);
                 doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
 
                 doc.setTextColor(255, 255, 255);
@@ -672,16 +659,12 @@ export class ListAceptStudentComponent implements OnInit {
                   doc.addPage();
                 }
               } else {
-                console.log(this.credentialStudents[i].controlNumber+' - Credencial ya fue impresa.');
               }
             } else {
-              console.log(this.credentialStudents[i].controlNumber+' - Foto no aceptada.');
             }
           } else { 
-            console.log(this.credentialStudents[i].controlNumber+' - No tiene foto.');
           }
         } else {
-          console.log(this.credentialStudents[i].controlNumber+' - No tiene expediente.');
         }
       }
       var pageCount = doc.internal.getNumberOfPages();
@@ -705,7 +688,6 @@ export class ListAceptStudentComponent implements OnInit {
         });
         let sub = linkModal.afterClosed().subscribe(
           credentials=>{         
-            console.log(credentials);
             this.getStudents();
           },
           err=>console.log(err), ()=> sub.unsubscribe()
@@ -781,7 +763,6 @@ export class ListAceptStudentComponent implements OnInit {
   }
 
   updateSolicitud(student){
-    // console.log(student,'solicitud');
     this.loading = true;
     var day = student.curp.substring(8, 10);
     var month = student.curp.substring(6, 8);
@@ -1014,7 +995,6 @@ export class ListAceptStudentComponent implements OnInit {
     let binary = this.bufferToBase64(document);
 
     this.updateDocument(binary,student);
-    // console.log(binary);
     // window.open(doc.output('bloburl'), '_blank');
 
   }
@@ -1026,7 +1006,6 @@ export class ListAceptStudentComponent implements OnInit {
   }
 
   async updateDocument(document, student){
-    
     const fileId = student.documents[0].fileIdInDrive;
     const folderId = await this.getFolderId(student._id);
     const documentInfo = {
@@ -1037,17 +1016,12 @@ export class ListAceptStudentComponent implements OnInit {
       newF: false, 
       fileId: fileId
     };
-    console.log(documentInfo);
-    
-    
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-      async updated => {     
-        console.log(updated);
-           
+      async updated => {
         const documentInfo2 = {
           doc: {
             filename: updated.filename,
-            type: 'DRIVE',          
+            type: 'DRIVE',
             fileIdInDrive: updated.fileId
           },
           status: {
@@ -1056,7 +1030,6 @@ export class ListAceptStudentComponent implements OnInit {
             message: 'Se envio por primera vez'
           }
         };
-        
         await this.studentProv.uploadDocumentDrive(student._id, documentInfo2).subscribe(
           updated => {
             this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');    
@@ -1100,10 +1073,8 @@ export class ListAceptStudentComponent implements OnInit {
           });
            // cara frontal de la credencial
            doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-                  
            //FOTOGRAFIA DEL ALUMNO
            var foto = await this.findFoto(docFoto);
-           //console.log(foto);
            doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
 
            doc.setTextColor(255, 255, 255);
@@ -1150,8 +1121,7 @@ export class ListAceptStudentComponent implements OnInit {
              height: '800px'
            });
            let sub = linkModal.afterClosed().subscribe(
-             credentials=>{         
-               console.log(credentials);
+             credentials=>{
                this.getStudents();
              },
              err=>console.log(err), ()=> sub.unsubscribe()
@@ -1168,7 +1138,6 @@ export class ListAceptStudentComponent implements OnInit {
   }
 
   updateExpedientStatus(student){
-    //console.log(student);
     this.studentProv.getDocumentsUpload(student._id).subscribe(res => {
       var comprobante = res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
       var acta = res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';

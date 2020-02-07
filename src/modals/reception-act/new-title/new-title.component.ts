@@ -265,7 +265,6 @@ export class NewTitleComponent implements OnInit {
   addEvent(): void {
 
     this._RequestProvider.titled(this.request).subscribe(data => {
-      // console.log("values_neevent", data);
       if (typeof (data) !== 'undefined') {
         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento Asignado');
         this.dialogRef.close({

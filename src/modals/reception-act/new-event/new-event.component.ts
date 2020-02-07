@@ -46,11 +46,8 @@ export class NewEventComponent implements OnInit {
     //   tmpDate = new Date(data.event.start);
     //   this.event = { appointment: tmpDate, minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()), abbreviation: data.event.title.split(' ')[1] };
     // }
-    // console.log("operation", data.operation);
     const tmpDate = data.operation === eOperation.NEW ? data.date : new Date(data.event.start);
-    // console.log("operation",tmpDate);
     this.event = { appointment: tmpDate, minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()), abbreviation: data.operation === eOperation.NEW ? '' : data.event.title.split(' ')[1] };
-    // console.log("evento", this.event);
     this.displayedColumns = ['controlNumber', 'fullName', 'career', 'select']
     this.title = "NUEVO EVENTO A LAS " + moment(tmpDate).format('LT');
     // this.onRefresh();
@@ -170,7 +167,6 @@ export class NewEventComponent implements OnInit {
       duration: this.frmNewEvent.get('duration').value
     };
     this._RequestProvider.updateRequest(request, data).subscribe(data => {
-      // console.log("values_neevent", data);
       if (typeof (data) !== 'undefined') {
         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento Asignado');
         this.dialogRef.close({

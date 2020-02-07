@@ -46,7 +46,6 @@ export class RequestModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private imgService: ImageToBase64Service,
   ) {
-    console.log("dd", this.cookiesService.getData());
     this.userInformation = this.cookiesService.getData().user;
   }
 
@@ -78,7 +77,6 @@ export class RequestModalComponent implements OnInit {
   getFolder(): void {
     this.studentProvider.getDriveFolderId(this.request.student.controlNumber, eFOLDER.TITULACION).subscribe(folder => {
       this.folderId = folder.folderIdInDrive;
-      console.log("FOLDER-reques-modal", this.folderId);
     });
   }
 

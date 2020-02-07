@@ -177,12 +177,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
       this.carreraCursar = this.studentData.career ? this.studentData.career : '';
 
       this.step = this.studentData.stepWizard;
-      // console.log("Paso: "+this.step);
 
       this.obtenerFechaNacimiento(this.curp);
 
-      // console.log(this.step,'stpsp');
-      
       if(this.step == 6){
         this.getIdDocuments();
       }
@@ -897,55 +894,47 @@ export class ProfileInscriptionPageComponent implements OnInit {
   checkFolders(){
     this.studentProv.getFolderId(this._idStudent).subscribe(
       folder=>{
-        // console.log(folder.folder,'asldaosfhasjfnksjdfnlkasnfjnk');
-        
         if(folder.folder.idFolderInDrive){// folder exists
           this.folderId = folder.folder.idFolderInDrive;
-          // console.log(this.folderId,'folder student exists');
-          this.assingConfigForDropzone();          
+          this.assingConfigForDropzone();
         }
       });
   }
 
-  assingConfigForDropzone(){        
-        
+  assingConfigForDropzone(){
+
     /*Dropzone*/
-    
+
     this.config1 = {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-ACTA.pdf', 'mimeType': 'application/pdf', newF: this.docActa ? false :true, fileId:this.docActa ? this.docActa.fileIdInDrive :''},   
-        acceptedFiles:'application/pdf',        
-    };        
-    // console.log(this.config1);
-    
-    
+        acceptedFiles:'application/pdf',
+    };
     this.config2 = {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO.pdf', 'mimeType': 'application/pdf', newF: this.docCertificado ? false :true, fileId: this.docCertificado ? this.docCertificado.fileIdInDrive : ''},
-      acceptedFiles:'application/pdf',      
+      acceptedFiles:'application/pdf',
     };
     this.config3 = {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CLINICOS.pdf', 'mimeType': 'application/pdf', newF: this.docAnalisis ? false :true, fileId:this.docAnalisis ? this.docAnalisis.fileIdInDrive :''},
-      acceptedFiles:'application/pdf',      
+      acceptedFiles:'application/pdf',
     };
     this.config4 = {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROBANTE.pdf', 'mimeType': 'application/pdf', newF: this.docComprobante? false : true, fileId: this.docComprobante ? this.docComprobante.fileIdInDrive : ''},    
       acceptedFiles:'application/pdf',
-      
     };
     this.config5 = {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CURP.pdf', 'mimeType': 'application/pdf', newF: this.docCurp ? false :true, fileId:this.docCurp ? this.docCurp.fileIdInDrive :''},
       acceptedFiles:'application/pdf',
-      
     };
-    
+
     this.config6 = {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-NSS.pdf','mimeType': 'application/pdf', newF: this.docNss ? false :true, fileId:this.docNss ? this.docNss.fileIdInDrive :''},
-      acceptedFiles:'application/pdf',        
+      acceptedFiles:'application/pdf',
     };
 
     this.config7 = {
@@ -953,18 +942,16 @@ export class ProfileInscriptionPageComponent implements OnInit {
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO.pdf', 'mimeType': 'application/pdf', newF: this.docCompromiso ? false :true, fileId:this.docCompromiso ? this.docCompromiso.fileIdInDrive :''},
       acceptedFiles:'application/pdf',
     };
-    
   }
   /*  DROPZONE 1 METHODS  */
   public resetDropzoneUploads(): void {
-    this.componentRef.directiveRef.reset();    
+    this.componentRef.directiveRef.reset();
   }
 
   public onUploadSuccess(args: any): void {
-    
     if(args[1].action !== 'create file'){
-      const documentInfo = {      
-        filename:args[1].name,        
+      const documentInfo = {
+        filename:args[1].name,
         status : {
         name:'EN PROCESO',
         active:true,
@@ -978,12 +965,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
       },
       err=>console.log(err)
     );
-      
     }else{
-      const documentInfo = {      
+      const documentInfo = {
         doc:{
           filename:args[1].name,
-          type:'DRIVE',      
+          type:'DRIVE',
           fileIdInDrive:args[1].fileId,
         },
           status : {
@@ -992,23 +978,18 @@ export class ProfileInscriptionPageComponent implements OnInit {
           message:'Se envio por primera vez'
         }
       };
-      // console.log(documentInfo);
-      
       this.studentProv.uploadDocumentDrive(this.data._id,documentInfo).subscribe(
         updated=>{
-              
           this.notificationsServices.showNotification(eNotificationType.SUCCESS,
             'Exito', 'Documento cargado correctamente.');
-            
         },
         err=>{
           console.log(err);
-          
         }
       );
     }
-    this.resetDropzoneUploads();  
-  }  
+    this.resetDropzoneUploads();
+  }
 
   onErrorCommon(args: any) {
     this.resetDropzoneUploads();
@@ -1024,21 +1005,19 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
   onErrored(error: any) {
     // do anything
-    // console.log(error);    
   }
 
   /*Se lanza cuando se cambia la foto*/
   fileChangeEvent(event: any, content) {
     if (event) {
       this.selectedFile = <File>event.target.files[0];
-            
       this.imageChangedEvent = event;
 
       this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
         this.closeResult = `Closed with: ${result}`;
 
         this.photoStudent = this.croppedImageBase64;
-        this.imgForSend = true;        
+        this.imgForSend = true;
 
         this.uploadFile();
         event.target.value = '';
@@ -1064,10 +1043,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
   uploadFile() {
     this.loading = true; 
-    // console.log('upload');
     const red = new FileReader;
-    red.addEventListener('load', () => {      
-      // console.log(red.result);
+    red.addEventListener('load', () => {
       let file = { 
         mimeType:this.selectedFile.type, 
         nameInDrive:this.data.email+'-FOTO.'+this.selectedFile.type.substr(6,this.selectedFile.type.length-1),
@@ -1125,14 +1102,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
         }
       )
     }, false);
-    red.readAsDataURL(this.croppedImage);    
-    
+    red.readAsDataURL(this.croppedImage);
   }
   imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.file;
     this.croppedImageBase64 = event.base64;
-    // console.log('crop');
-    
   }
   imageLoaded() {
     // show cropper

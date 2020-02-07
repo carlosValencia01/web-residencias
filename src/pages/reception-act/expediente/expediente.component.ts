@@ -79,23 +79,19 @@ export class ExpedienteComponent implements OnInit {
             }
             this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
             this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
-            // console.log("eee",(<eRequest><keyof typeof eRequest>this.Request.phase),"dd",(<eStatusRequest><keyof typeof eStatusRequest>this.Request.phase))
             this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
 
             this.Request.student = data.request[0].studentId;
 
             this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber,eFOLDER.TITULACION).subscribe(
               (folder)=>{
-                 console.log('2',folder);
-                 this.folderId =  folder.folderIdInDrive;                 
-              //  console.log(folder.folderIdInDrive);
-               
+                 this.folderId =  folder.folderIdInDrive;
                },
                err=>{console.log(err);
                 this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
                }
                );
-            
+
             // this._StudentProvider.getFolderId(this.Request.student._id).subscribe(
             //   student => {
             //     if (student.folder && student.folder.idFolderInDrive) {

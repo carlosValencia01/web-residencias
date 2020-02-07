@@ -201,7 +201,6 @@ export class DocumentReviewComponent implements OnInit {
         this.request._id,
         update
       ).subscribe(result => {
-        console.log("RESULTTT", result);
         this.notificationService.showNotification(eNotificationType.SUCCESS, 'Documento aceptado', '');
         this.request = result.request;
         this.refresh();

@@ -26,7 +26,6 @@ export class IntegrantsComponentComponent implements OnInit {
     this.integrants = this.data.integrants;
     this.careers = [];
     this.careers = this.source.getCareers();
-    console.log('INTEGRANTES', this.integrants);
   }
 
   ngOnInit() {
@@ -85,7 +84,6 @@ export class IntegrantsComponentComponent implements OnInit {
 
   onSave() {
     const indice = this.integrants.findIndex(x => x.controlNumber === this.frmIntegrants.get('controlNumber').value);
-    console.log('indice', indice, 'response', indice === -1);
     if (indice === -1) {
       this.integrants.push({
         name: this.frmIntegrants.get('name').value,
@@ -101,7 +99,6 @@ export class IntegrantsComponentComponent implements OnInit {
     }
     this.frmIntegrants.get('controlNumber').enable();
     this.isEditing = false;
-    console.log('integrants', this.integrants);
     this.frmIntegrants.reset({
       career: 'Seleccione la Carrera'
     });
@@ -109,7 +106,6 @@ export class IntegrantsComponentComponent implements OnInit {
   }
 
   onSaveAll() {
-    console.log('SAVE ALGOO', this.integrants);
     this.dialogRef.close(this.integrants);
   }
   onClose() {

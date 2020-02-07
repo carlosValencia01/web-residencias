@@ -49,7 +49,6 @@ export class ScheduleComponent implements OnInit {
   ngOnInit() {
     this._RequestService.requestUpdate.subscribe(
       (result) => {
-        // console.log("re sched", result.Request);
         this.request = result.Request;
         let hours = this.request.proposedHour / 60;
         let minutes = this.request.proposedHour % 60;
@@ -101,7 +100,6 @@ export class ScheduleComponent implements OnInit {
       month: month,
       year: year
     }).subscribe(data => {
-      // console.log("ESPACIOS DISPO", data.Schedule);
       if (typeof (data.Schedule) !== "undefined") {
         this.getRanges(data.Ranges);
         const diary = this.getEvents(data.Schedule)
@@ -121,7 +119,6 @@ export class ScheduleComponent implements OnInit {
           tmpDate.setHours(0, 0, 0, 0);
           this.appointments.push({ date: tmpDate, count: e.count });
         });
-        console.log("APPOINTMENTS", this.appointments);
         // data.Schedule.forEach(element => {
         //   for (let i = 0; i < element.count; i++) {
         //     this.events.push({ title: '', start: element._id });
@@ -146,7 +143,6 @@ export class ScheduleComponent implements OnInit {
   weekendDays: number[] = [DAYS_OF_WEEK.FRIDAY, DAYS_OF_WEEK.SATURDAY];
 
   beforeMonthViewRender(renderEvent: CalendarMonthViewBeforeRenderEvent): void {
-    console.log("Appointments---", this.appointments);
     renderEvent.body.forEach(day => {
       if (typeof (this.appointments) !== 'undefined') {
         if ((day.isPast && !day.isToday) || day.date > this.maxDate) {
@@ -157,8 +153,6 @@ export class ScheduleComponent implements OnInit {
           // let tmp: { fecha: Date, count: Number } = this.citas.find(x => x.fecha.getTime() === lDate.getTime());   
 
           let tmp: { date: Date, count: Number } = this.appointments.find(x => x.date.getTime() === lDate.getTime());
-          // console.log("compar", lDate.getTime(), "dd", tmp);
-          // console.log("ranges", this.ranges);
           let tmpRange = this.ranges.find(x => x.start.getTime() <= lDate.getTime() && lDate.getTime() <= x.end.getTime());
           if (typeof (tmp) === 'undefined')
             day.cssClass = 'free';

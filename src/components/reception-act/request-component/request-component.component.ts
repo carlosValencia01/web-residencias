@@ -81,7 +81,6 @@ export class RequestComponentComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("Information", this.userInformation);
     this.frmRequest = new FormGroup(
       {
         'name': new FormControl({ value: this.userInformation.name.firstName, disabled: true }, Validators.required),

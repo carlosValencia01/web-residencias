@@ -16,8 +16,6 @@ import { TitledState } from './TitledState';
 export class ContextState {
     public state: iState;
     constructor(phase: eRequest = eRequest.NONE, status: eStatusRequest = eStatusRequest.NONE) {
-        console.log('c pahe', phase);
-        console.log('c status', status);
         switch (phase) {
             case eRequest.NONE: {
                 this.state = new CapturedState();

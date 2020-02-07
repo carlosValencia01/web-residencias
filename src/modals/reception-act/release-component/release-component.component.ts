@@ -195,7 +195,6 @@ export class ReleaseComponentComponent implements OnInit {
       }
     });
     // const time: number = Number(this.Time.hour * 60) + Number(this.Time.minute);
-    // console.log("time", time);
   }
 
   onUpload(event): void {
@@ -253,7 +252,6 @@ export class ReleaseComponentComponent implements OnInit {
     this.enableUpload = true;
     // async () => {
     //   await this.delay(400);
-    //   console.log("entro");
     //   window.open(this.oRequest.projectReleaseNew().output('bloburl'), '_blank');
     // }
   }

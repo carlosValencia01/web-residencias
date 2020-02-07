@@ -81,15 +81,10 @@ export class OneStudentPageComponent implements OnInit {
             
   }
 
-  async init(){
-    // console.log(this.data);
-    
+  async init(){    
     await this.studentProv.searchStudents(this.data.email+'').toPromise().then(
       (students)=>{
-        // console.log(students.students,'ff');
-        this.student = students.students[0];
-        // console.log(this.student,'e');
-        
+        this.student = students.students[0];        
       }
     );
     
@@ -99,18 +94,14 @@ export class OneStudentPageComponent implements OnInit {
           this.getDocuments();
           this.activePeriod = period.period;                      
           this.studentProv.getPeriodId(this.data._id.toString()).subscribe(
-            per=>{
-              // console.log(per.student.idPeriodInscription, 'idperrrrr');              
-              
+            per=>{              
               if(!per.student.idPeriodInscription){
                 this.studentProv.updateStudent(this.data._id,{idPeriodInscription:this.activePeriod._id}).subscribe(
                   f=>{}
                 );
               }
             }
-          );
-          // console.log('1');
-          
+          );          
           if(this.student.careerId){
             const career = this.careers.filter( career=> career._id == this.student.careerId)[0];
             this.data.career = career.fullName;           
@@ -125,15 +116,12 @@ export class OneStudentPageComponent implements OnInit {
 
           //first check folderId on Student model
           this.studentProv.getDriveFolderId(this.data.email,eFOLDER.INSCRIPCIONES).toPromise().then(
-            (folder)=>{               
-               
-              this.folderId = folder.folderIdInDrive;                 
-                 
+            (folder)=>{
+              this.folderId = folder.folderIdInDrive;
              });
         }
         else{ // no hay periodo activo
-          // console.log('444');
-          
+
         }    
       }  
     );
@@ -149,7 +137,6 @@ export class OneStudentPageComponent implements OnInit {
         this.imgForSend = false;
         this.active = true;
         // this.studentProv.verifyStatus(this.currentStudent.controlNumber).subscribe(res => {
-        //   // console.log(res);
         //   this.active =  res.status === 1 ? true : false;
         // }, err=>{this.active=false;});
 
@@ -261,12 +248,10 @@ export class OneStudentPageComponent implements OnInit {
 
   uploadFile() {
     this.loading = true;
-    // console.log('upload');
     const red = new FileReader;  
     
     if(this.folderId){
       red.addEventListener('load', () => {
-        // console.log(red.result);
         let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
   
         this.inscriptionProv.uploadFile2(file).subscribe(
@@ -376,9 +361,7 @@ export class OneStudentPageComponent implements OnInit {
               },
               err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
             );
-          }else{
-            // console.log('1');
-            
+          }else{            
             this.loading = false
             this.photoStudent = 'assets/imgs/studentAvatar.png';
             this.showImg=true;

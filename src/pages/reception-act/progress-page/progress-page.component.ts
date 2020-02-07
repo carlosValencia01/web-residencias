@@ -82,9 +82,6 @@ export class ProgressPageComponent implements OnInit {
     this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
     //Asigno las carreras asociadas al puesto
     this.departmentCareers = this._CookiesService.getPosition().ascription.careers;
-    console.log("DEPARTAMENTO CARRERAS", this.departmentCareers, "r", this.role);
-    console.log("DEPARTAMENTO CARRERAS", this._CookiesService.getPosition().ascription.careers);
-
   }
 
   ngOnInit() {
@@ -284,7 +281,6 @@ export class ProgressPageComponent implements OnInit {
         this.phases.push(value);
       }
       let tmpRequest = this.requestFilter = this.filter(this.careers, this.phases).slice(0);
-      // console.log("rquest", tmpRequest);
       this.requestFilter = tmpRequest;//(value === eRequest.TITLED) ? this.filterCedula(tmpRequest, isCedula) : tmpRequest;
     }
     this.refresh();
@@ -593,7 +589,6 @@ export class ProgressPageComponent implements OnInit {
   titled(Identificador: string, operation: string): void {
     const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
     const tmpRequest: iRequest = this.getRequestById(Identificador);
-    console.log("TITLE REQUEST", tmpRequest);
     switch (eOperation) {
       case eStatusRequest.PROCESS: {
 
