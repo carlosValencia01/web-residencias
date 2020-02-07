@@ -181,7 +181,7 @@ export class DiaryComponent implements OnInit {
         // console.log("Carrera", career);
         let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
         tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
-        console.log("Appointment__", this.Appointments);
+        // console.log("Appointment__", this.Appointments);
         if (typeof (tmp) != 'undefined') {
           tmp.values.forEach(element => {
             // console.log("UN VALOR", element);
@@ -509,7 +509,7 @@ export class DiaryComponent implements OnInit {
               AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
               this.loadAppointment();
             }, error => {
-              console.log("ERROR ELIMINACION", error);
+              // console.log("ERROR ELIMINACION", error);
               let tmpJson = JSON.parse(error._body);
               this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
             });
@@ -631,7 +631,7 @@ export class DiaryComponent implements OnInit {
   }
 
   appointmentClicked($event): void {
-    console.log("event", $event);
+    // console.log("event", $event);
     let index: { appointment: number, value: number };
 
     // const tmpMinutes: number = value.start.getHours() * 60;
@@ -642,10 +642,10 @@ export class DiaryComponent implements OnInit {
     let student = $event.title.split(' ').slice(2).join(' ');
     let abbreviation = $event.title.split(' ')[1];
     let career = this.carrers.find(x => x.abbreviation === abbreviation);
-    console.log("DATOS DEL EVENTO", student, "Abreviatura", abbreviation, "carrera", career);
+    // console.log("DATOS DEL EVENTO", student, "Abreviatura", abbreviation, "carrera", career);
 
     //Busqueda del evento
-    console.log("Appointments", this.Appointments);
+    // console.log("Appointments", this.Appointments);
     let tmpValor: { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string };
     for (let i = 0; i < this.Appointments.length; i++) {
       for (let j = 0; j < this.Appointments[i].values.length; j++) {
@@ -682,8 +682,8 @@ export class DiaryComponent implements OnInit {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Fecha Propuesta Aceptada');
             // tmpValor.phase = "Realizado";
             this.Appointments[index.appointment].values[index.value].phase = "Realizado";
-            console.log("tmpvalor", tmpValor);
-            console.log("Appoint", this.Appointments);
+            // console.log("tmpvalor", tmpValor);
+            // console.log("Appoint", this.Appointments);
             this.loadAppointment();
             // console.log(this.Appointments)
             // this.refresh.next();
