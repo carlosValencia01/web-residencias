@@ -189,7 +189,7 @@ export class uRequest {
         const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 60);
         doc.setFont(this.FONT, 'Normal');
         doc.text('En espera de la aceptación de esta solicitud, quedo a sus órdenes.', this.MARGIN.LEFT,
-            176 + nameProjectLines, { align: 'left' });
+            186 + nameProjectLines, { align: 'left' });
         doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', (this.WIDTH / 2), 213, { align: 'center' });
 
