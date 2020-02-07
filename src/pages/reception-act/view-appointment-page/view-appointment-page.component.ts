@@ -167,14 +167,14 @@ export class ViewAppointmentPageComponent implements OnInit {
     });
   }
   loadAppointment(): void {
-    console.log("APPOINTMENTS DE LOAD", this.Appointments);
+    // console.log("APPOINTMENTS DE LOAD", this.Appointments);
     this.events = [];
     this.allCarrers.forEach(career => {
       // if (career.status) {
       let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
       // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);      
       tmp = this.Appointments.find(x => x._id[0] === career.carrer);
-      console.log("Appointment__", this.Appointments);
+      // console.log("Appointment__", this.Appointments);
       if (typeof (tmp) != 'undefined') {
         tmp.values.forEach(element => {
           const vFecha = element.proposedDate.toString().split('T')[0].split('-');
@@ -191,13 +191,13 @@ export class ViewAppointmentPageComponent implements OnInit {
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
           }
           else {
-            console.log("CITA", element);
+            // console.log("CITA", element);
             title = element.phase == 'Asignado' ? " Evento Solicitado" : " Evento Reservado";
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? { primary: '#b64443', secondary: '#dcdcdc' } : { primary: '#b64443', secondary: '#e5bab9' }) });
           }
           // let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];          
         });
-        console.log("EVENT", this.events);
+        // console.log("EVENT", this.events);
         // }
       }
     });
@@ -228,27 +228,36 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
 
   viewEvent($event): void {
-    const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
-    const dialogRef = this.dialog.open(ViewMoreComponent, {
-      data: {
-        Appointment: tmpAppointment
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '45em'
-    });
+    let title: string = $event.title;
+    if (!title.includes('Evento')) {
+      const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+      const dialogRef = this.dialog.open(ViewMoreComponent, {
+        data: {
+          Appointment: tmpAppointment
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '45em'
+      });
+    }
   }
 
+  reload(): void {
+    this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
+  }
   genTrades($event): void {
-    const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
-    const dialogRef = this.dialog.open(ActNotificacionComponent, {
-      data: {
-        Appointment: tmpAppointment
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '45em'
-    });
+    let title: string = $event.title;
+    if (!title.includes('Evento')) {
+      const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+      const dialogRef = this.dialog.open(ActNotificacionComponent, {
+        data: {
+          Appointment: tmpAppointment
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '45em'
+      });
+    }
   }
 
   searchAppointment(abbreviation: string, date: any, student: string): iAppointment {
@@ -314,26 +323,26 @@ export class ViewAppointmentPageComponent implements OnInit {
       doc.text('AGENDA DE ACTO RECEPCIONAL', (this.WIDTH / 2), 45, { align: 'center' });
       doc.setFont(this.FONT, 'Normal');
       doc.setFontSize(8);
-      
-      console.log(filteredCareers);
-      
-      filteredCareers.forEach((car) => {       
+
+      // console.log(filteredCareers);
+
+      filteredCareers.forEach((car) => {
         const filtered = this.Appointments.filter((ap) => ap._id[0] == car.carrer).map(
           (care) => care.values
         )[0];
-        if(filtered)  {
+        if (filtered) {
           const maped = filtered.
             map((st) => ({
               date: moment(st.proposedDate).format('LL'),
               hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
               student: st.student,
               place: st.place,
-              jury: st.jury.map((jr: any,index: number) => index == 0 ? 'PRESIDENTE: '+jr.name: index == 1 ? 'SECRETARIO: '+ jr.name : index == 2 ? 'VOCAL '+ jr.name : 'VOCAL SUPLENTE: '+ jr.name).join('\r\n')
+              jury: st.jury.map((jr: any, index: number) => index == 0 ? 'PRESIDENTE: ' + jr.name : index == 1 ? 'SECRETARIO: ' + jr.name : index == 2 ? 'VOCAL ' + jr.name : 'VOCAL SUPLENTE: ' + jr.name).join('\r\n')
             }));
-            
+
           maped.forEach(maped => {
             this.mapedStudents.push(maped);
-  
+
           });
         }
 
