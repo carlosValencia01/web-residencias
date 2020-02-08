@@ -62,8 +62,6 @@ export class ReviewExpedientComponent implements OnInit {
     private notificationsServices: NotificationsServices,
     public dialog: MatDialog,
   ) {
-
-    console.log(data);
     this.studentProv.refreshNeeded$.subscribe(
       () => {
         this.getDocuments();
@@ -72,7 +70,7 @@ export class ReviewExpedientComponent implements OnInit {
     this.getDocuments();
   }
 
-  ngOnInit() {    
+  ngOnInit() {
   }
 
   onClose() {
@@ -105,10 +103,8 @@ export class ReviewExpedientComponent implements OnInit {
       cancelButtonColor: '#d33',
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Confirmar',
-      input: 'text'      
+      input: 'text'
     }).then((result) => {
-      // console.log(result);
-      
       return result.value ?  result.value !== '' ? result.value : false : false;
     });
   }
@@ -116,9 +112,6 @@ export class ReviewExpedientComponent implements OnInit {
     this.studentProv.getDriveDocuments(this.data.student._id).subscribe(
       docs => {
         let documents = docs.documents;
-        ;
-        
-        
         this.payDoc = documents.filter(docc => docc.filename.indexOf('COMPROBANTE') !== -1 && docc.status.length>0)[0];
         this.docto = this.docto ? documents.filter(docc => docc._id === this.docto._id)[0] : null;
 
@@ -187,16 +180,11 @@ export class ReviewExpedientComponent implements OnInit {
           this.acceptDocuments[2].statusname = this.nssDoc.status;
           this.pendings = this.nssDoc.status === 'VALIDADO' || this.nssDoc.status === 'EN PROCESO' || this.nssDoc.status === 'RECHAZADO' ? ++this.pendings : this.pendings;
         }
-
-        // console.log(this.pendings);
-        
-
       }
     );
   }
 
-  cardClick(card) {    
-    // this.form.get('observation').setValue('');
+  cardClick(card) {
     if (card === this.prevCard) {
       this.viewdoc = !this.viewdoc;
     } else {
@@ -316,8 +304,7 @@ export class ReviewExpedientComponent implements OnInit {
       var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
       var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
       var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-      
-      console.log(this.data.student);
+
       if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
         // Cambiar estatus a ACEPTADO
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => {
@@ -468,9 +455,8 @@ export class ReviewExpedientComponent implements OnInit {
 
   async acceptManyDocuments() {
 
-    
+
     let updateDocs = this.acceptDocuments.filter(docs => docs.status === true && docs.filename !== '' && docs.statusname !== 'ACEPTADO');
-    console.log(updateDocs);
 
     let confirmdialog = await this.swalDialog(`¿ Está seguro de aceptar ${updateDocs.length} documentos ?`, '', 'question');
 
@@ -496,6 +482,13 @@ export class ReviewExpedientComponent implements OnInit {
         );
       });
     }
+  }
+  updateCurp(){
+    this.studentProv.updateStudent(this.data.student._id,{curp:this.data.student.curp}).subscribe(up=>{
+      this.notificationsServices.showNotification(eNotificationType.SUCCESS,
+        'Exito', 'CURP actualizada correctamente.');
+    }, err=>{console.log(err);
+    });
   }
 
 }

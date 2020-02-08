@@ -18,8 +18,6 @@ import { MatDialog } from '@angular/material';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
-import { DropzoneConfigInterface, DropzoneComponent } from 'ngx-dropzone-wrapper';
-import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import Swal from 'sweetalert2';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
@@ -30,35 +28,36 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
   styleUrls: ['./request-component.component.scss']
 })
 export class RequestComponentComponent implements OnInit {
-  //CONSTANTES
+  // CONSTANTES
   // tslint:disable-next-line: no-input-rename
   @Input('request') _request: iRequest;
   // tslint:disable-next-line: no-output-rename
   @Output('onSubmit') btnSubmitRequest = new EventEmitter<boolean>();
   private MAX_SIZE_FILE: number = 3145728;
+
   public frmRequest: FormGroup;
   public fileData: any;
+  public operationMode: eOperation;
+  public isToggle = false;
+  public observations: string;
+  public viewObservation = false;
+  public isEdit = false;
+  public showLoading = false;
+  public folderId: String;
+  public activePeriod;
+  public foldersByPeriod = [];
+  public isSentVerificationCode: Boolean;
   private frmData: any;
   private isLoadFile: boolean;
   private userInformation: any;
   private typeCareer: any;
-  public operationMode: eOperation;
   private request: iRequest;
-  public isToggle = false;
-  public observations: string;
-  public viewObservation = false;
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
-  public isEdit = false;
-  public showLoading: boolean = false;
   private oRequest: uRequest;
-  // public dropZone: DropzoneConfigInterface;
-  public folderId: String;
-  public activePeriod;
-  public foldersByPeriod = [];
   private adviserInfo: { name: string, title: string, cedula: string };
-  public isSentVerificationCode: Boolean;
-  // @ViewChild('dropZone') drop: any;
+  private product = 'INFORME TÉCNICO DE RESIDENCIA PROFESIONAL';
+  private titulationOption = 'XI - TITULACIÓN INTEGRAL';
 
   constructor(
     public studentProvider: StudentProvider,
@@ -70,7 +69,6 @@ export class RequestComponentComponent implements OnInit {
     private routeActive: ActivatedRoute,
     public dialog: MatDialog,
     private imgService: ImageToBase64Service,
-    private _InscriptionsProvider: InscriptionsProvider,
   ) {
     this.userInformation = this.cookiesService.getData().user;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -81,7 +79,6 @@ export class RequestComponentComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("Information", this.userInformation);
     this.frmRequest = new FormGroup(
       {
         'name': new FormControl({ value: this.userInformation.name.firstName, disabled: true }, Validators.required),
@@ -90,12 +87,12 @@ export class RequestComponentComponent implements OnInit {
         Validators.pattern('^[(]{0,1}[0-9]{3}[)]{0,1}[-]{0,1}[0-9]{3}[-]{0,1}[0-9]{4}$')]),
         'email': new FormControl(null, [Validators.required, Validators.email]),
         'project': new FormControl(null, Validators.required),
-        'product': new FormControl({ value: 'INFORME TÉCNICO DE RESIDENCIA PROFESIONAL', disabled: true }, Validators.required),
+        'product': new FormControl({ value: this.product, disabled: true }, Validators.required),
         'observations': new FormControl(null),
         'adviser': new FormControl({ value: '', disabled: true }, Validators.required),
         'noIntegrants': new FormControl(1, [Validators.required, Validators.pattern('^[1-9]\d*$')]),
         'honorific': new FormControl(false, Validators.required),
-        'titulationOption': new FormControl({ value: 'XI - TITULACIÓN INTEGRAL', disabled: true }, Validators.required)
+        'titulationOption': new FormControl({ value: this.titulationOption, disabled: true }, Validators.required)
       });
     this.getRequest();
   }
@@ -169,7 +166,6 @@ export class RequestComponentComponent implements OnInit {
     this.request.student.name = this.userInformation.name.firstName;
     this.request.student.lastName = this.userInformation.name.lastName;
     this.oRequest = new uRequest(this.request, this.imgService, this.cookiesService);
-    // this.assignName();
 
     this.frmRequest.setValue({
       'name': this.request.student.name,
@@ -186,8 +182,6 @@ export class RequestComponentComponent implements OnInit {
     });
     this.disabledControl();
     this.isToggle = this.request.honorificMention;
-    //Así estaba
-    // this.isSentVerificationCode = this._request.sentVerificationCode;
     this.isSentVerificationCode = typeof (this._request) === 'undefined' ?
       this.request.sentVerificationCode : this._request.sentVerificationCode;
   }
@@ -527,6 +521,18 @@ export class RequestComponentComponent implements OnInit {
         this.notificationsServ
           .showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
       });
+  }
+
+  public cleanForm() {
+    this.frmRequest.get('telephone').reset();
+    this.frmRequest.get('email').reset();
+    this.frmRequest.get('adviser').reset();
+    this.frmRequest.get('project').reset();
+
+    this.adviserInfo = {name: '', title: '', cedula: ''};
+    this.isToggle = false;
+    this.isLoadFile = false;
+    this.fileData = null;
   }
 
   private _resetValues(request: iRequest) {

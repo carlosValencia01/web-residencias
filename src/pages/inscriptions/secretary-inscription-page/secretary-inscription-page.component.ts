@@ -104,7 +104,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     private studentProv: StudentProvider,
   ) { 
     this.rolName = this.cookiesService.getData().user.rol.name;
-    //console.log(this.rolName);
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -151,12 +150,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       });
       this.listStudents = this.students;
       this.cantListStudents = this.listStudents.length;
-      //console.log(this.listStudents);
       this.listCovers = this.listStudents;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
-      this.eventFilterStatus();       
-
-      //console.log(this.listStudents);
+      this.eventFilterStatus();
     });
     this.inscriptionsProv.getStudentsLogged().subscribe(res => {
       this.listStudentsLogged = res.students;
@@ -262,7 +258,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     }
 
     this.listCovers = this.filterItemsCovers(this.searchCarreer,this.searchText);
-    //console.log(this.listCovers);
 
     this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
 
@@ -278,7 +273,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
    // FILTRADO POR CARRERA O ESTATUS
    filterItems(carreer, EC, E, EP, V, A) {
     return this.students.filter(function (student) {
-      //console.log(student);
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
         student.inscriptionStatus.toLowerCase().indexOf(EC.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(E.toLowerCase()) > -1 ||
@@ -294,27 +288,24 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         student.controlNumber.toLowerCase().indexOf(nc.toLowerCase()) > -1    
       });
   }
-  
 
   getPeriods(){
     let sub = this.inscriptionsProv.getAllPeriods()
-      .subscribe(periods => {       
-        this.periods=periods.periods;     
-        //console.log(this.periods); 
-        this.periods.reverse();                        
+      .subscribe(periods => {
+        this.periods=periods.periods;
+        this.periods.reverse();
         sub.unsubscribe();
       });
   }
 
   getActivePeriod(){
     let sub = this.inscriptionsProv.getActivePeriod()
-      .subscribe(period => {       
-        this.activPeriod = period.period.year;     
+      .subscribe(period => {
+        this.activPeriod = period.period.year;
       });
   }
 
   updateGI(student){
-    //console.log(student);
     const linkModal = this.dialog.open(StudentInformationComponent, {
       data: {
         operation: 'view',
@@ -326,8 +317,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       height: '800px'
     });
     let sub = linkModal.afterClosed().subscribe(
-      information=>{         
-        //console.log(information);
+      information=>{
         this.getStudents();
       },
       err=>console.log(err), ()=> sub.unsubscribe()
@@ -348,9 +338,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     });
     let sub = linkModal.afterClosed().subscribe(
       expedient=>{
-        this.getStudents();  
-        // console.log(expedient);
-        
+        this.getStudents();
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -371,7 +359,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   // Generar Carátulas
   generateCovers() {
-    console.log(this.listCovers.length);
     if(this.listCovers.length != 0){
       this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO CARÁTULAS', '');
       this.loading = true;
@@ -488,8 +475,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             height: '800px'
           });
           let sub = linkModal.afterClosed().subscribe(
-            analysis=>{         
-              //console.log(analysis);
+            analysis=>{
               this.getStudents();
             },
             err=>console.log(err), ()=> sub.unsubscribe()
@@ -575,8 +561,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         }
       }
       default:{
-        console.log('nada');
-        
+
       }
     }
   }
@@ -712,7 +697,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
                   
                 //FOTOGRAFIA DEL ALUMNO
                 var foto = await this.findFoto(docFoto);
-                //console.log(foto);
                 doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
 
                 doc.setTextColor(255, 255, 255);
@@ -750,16 +734,12 @@ export class SecretaryInscriptionPageComponent implements OnInit {
                   doc.addPage();
                 }
               } else {
-                console.log(this.credentialStudents[i].controlNumber+' - Credencial ya fue impresa.');
               }
             } else {
-              console.log(this.credentialStudents[i].controlNumber+' - Foto no aceptada.');
             }
-          } else { 
-            console.log(this.credentialStudents[i].controlNumber+' - No tiene foto.');
+          } else {
           }
         } else {
-          console.log(this.credentialStudents[i].controlNumber+' - No tiene expediente.');
         }
       }
       var pageCount = doc.internal.getNumberOfPages();
@@ -782,8 +762,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           height: '800px'
         });
         let sub = linkModal.afterClosed().subscribe(
-          credentials=>{         
-            console.log(credentials);
+          credentials=>{
             this.getStudents();
           },
           err=>console.log(err), ()=> sub.unsubscribe()
@@ -859,7 +838,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   updateSolicitud(student){
-    // console.log(student,'solicitud');
     Swal.fire({
       title: 'Actualizar Solicitud',
       text: 'Para ' + student.controlNumber,
@@ -988,53 +966,53 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
         doc.text(15, 132, 'Dirección');
-    
+
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.text('Calle: ', 15, 140);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.street, 70, 140);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Colonia: ', 15, 145);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.suburb, 70, 145);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Ciudad: ', 15, 150);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.city, 70, 150);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Estado: ', 15, 155);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.state, 70, 155);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Código Postal: ', 15, 160);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.cp + '', 70, 160);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Teléfono: ', 15, 165);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.phone + '', 70, 165);
-    
+
         // Cuadro 3
         doc.setDrawColor(0);
         doc.setFillColor(0, 0, 0);
         doc.rect(10, 175, 190, 10, 'f');
-    
+
         doc.setDrawColor(0);
         doc.setFillColor(230, 230, 230);
         doc.rect(10, 185, 190, 25, 'f');
-    
+
         doc.setFontSize(18);
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
         doc.text(15, 182, 'Datos académicos');
-    
+
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
@@ -1042,69 +1020,68 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(9);
         doc.text(student.originSchool + ': ' + student.nameOriginSchool, 70, 190);
-    
+
         doc.setFontSize(12);
         doc.setFont('Montserrat', 'Bold');
         doc.text('Otra: ', 15, 195);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.otherSchool, 70, 195);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Promedio: ', 15, 200);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.averageOriginSchool + '', 70, 200);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Carrera a cursar: ', 15, 205);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.career, 70, 205);
-    
+
         // Cuadro 4
         doc.setDrawColor(0);
         doc.setFillColor(0, 0, 0);
         doc.rect(10, 215, 190, 10, 'f');
-    
+
         doc.setDrawColor(0);
         doc.setFillColor(230, 230, 230);
         doc.rect(10, 225, 190, 25, 'f');
-    
+
         doc.setFontSize(18);
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
         doc.text(15, 222, 'Datos extras');
-    
+
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.text('¿Perteneces a alguna Etnia? ', 15, 230);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.etnia, 85, 230);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('¿Cuál?', 15, 235);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.typeEtnia, 85, 235);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('¿Tienes alguna discapacidad? ', 15, 240);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.disability, 85, 240);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('¿Cuál?', 15, 245);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.typeDisability, 85, 245);
-    
+
         doc.line((pageWidth / 2)-35, 270, (pageWidth / 2)+35, 270);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text("Firma del Estudiante", pageWidth / 2, 280, 'center');
-    
+
         let document = doc.output('arraybuffer');
         let binary = this.bufferToBase64(document);
-    
+
         this.updateDocument(binary,student);
-        // console.log(binary);
         // window.open(doc.output('bloburl'), '_blank'); 
       }
     });
@@ -1128,17 +1105,12 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       newF: false, 
       fileId: fileId
     };
-    console.log(documentInfo);
-    
-    
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-      async updated => {     
-        console.log(updated);
-           
+      async updated => {
         const documentInfo2 = {
           doc: {
             filename: updated.filename,
-            type: 'DRIVE',          
+            type: 'DRIVE',
             fileIdInDrive: updated.fileId
           },
           status: {
@@ -1147,7 +1119,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             message: 'Se envio por primera vez'
           }
         };
-        
         await this.studentProv.uploadDocumentDrive(student._id, documentInfo2).subscribe(
           updated => {
             this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');    
@@ -1168,10 +1139,10 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   async getFolderId(id){
     let folderId;
    await this.studentProv.getFolderId(id).toPromise().then(
-      folder => {        
+      folder => {
         if (folder.folder) {// folder exists
           if (folder.folder.idFolderInDrive) {
-            folderId = folder.folder.idFolderInDrive;                        
+            folderId = folder.folder.idFolderInDrive;
           }
         }
       });
@@ -1194,7 +1165,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
                   
            //FOTOGRAFIA DEL ALUMNO
            var foto = await this.findFoto(docFoto);
-           //console.log(foto);
            doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
 
            doc.setTextColor(255, 255, 255);
@@ -1241,8 +1211,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
              height: '800px'
            });
            let sub = linkModal.afterClosed().subscribe(
-             credentials=>{         
-               console.log(credentials);
+             credentials=>{
                this.getStudents();
              },
              err=>console.log(err), ()=> sub.unsubscribe()
@@ -1259,7 +1228,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   updateExpedientStatus(student){
-    //console.log(student);
     Swal.fire({
       title: 'Actualizar Estatus de Expediente',
       text: 'Para ' + student.controlNumber,
@@ -1288,18 +1256,18 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             }); 
             this.getStudents();
             return;
-          } 
+          }
           if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
             // Cambiar estatus a VALIDADO
             this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
-            });   
+            });
             this.getStudents();
             return;
           }
-    
+
           var allDiferentProcess = true;
           var allValidateOrAcept = true;
-    
+
           for(var i = 0; i < res.documents.length; i++){
             if(res.documents[i].statusName == "EN PROCESO"){
               allDiferentProcess = false;
@@ -1310,7 +1278,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
               allValidateOrAcept = false;
             }
           }
-    
+
           if(allDiferentProcess){
             if(!allValidateOrAcept){
               // Cambiar estatus a EN PROCESO

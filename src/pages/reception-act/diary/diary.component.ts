@@ -71,6 +71,14 @@ export class DiaryComponent implements OnInit {
     });
   }
 
+  reload() {
+    this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
+    this.carrers = this._sourceDataProvider.getCareerAbbreviation();
+    this.carrers.push({
+      carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
+      color: { primary: '#57c7d4', secondary: '#ace3ea' }
+    });
+  }
   diary(month: number, year: number): void {
     this.Appointments = [];
     // let nowDate = new Date(this.viewDate.getTime());
@@ -86,7 +94,6 @@ export class DiaryComponent implements OnInit {
       max: maxDate
     }).subscribe(data => {
       if (typeof (data.Diary) !== "undefined") {
-        console.log("Appoint diary", data.Diary);
         this.Appointments = data.Diary;
         this.Ranges = data.Ranges;
         // this.generateAppointment(month, year);
@@ -111,21 +118,18 @@ export class DiaryComponent implements OnInit {
             const countRange = this.getCountRange(c.carrer, tmpDate);
             const countAppointment = this.getCountAppointment(c.carrer, tmpDate);
             const quantity = countRange - countAppointment;
-            // console.log("Date", onlyDate, "--", countRange, "--", countAppointment);
             for (let k = 0; k < quantity; k++) {
               let Carrera: string[] = [];
               let Student: string[] = [];
               Student.push("");
               const AppointmentCareer = this.Appointments.find(x => x._id[0] === c.carrer);
               if (typeof (AppointmentCareer) !== 'undefined') {
-                // console.log("Carrera", AppointmentCareer._id[0], "Appointment", { id: -1, student: Student, proposedDate: onlyDate, proposedHour: j });
                 // AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--" });
                 AppointmentCareer.values.push({ id: '-1', student: Student, project: '', proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '', duration: 60, option: '', product: '' });
               }
               // _id: string[], values: [{ id: number, student: string[], proposedDate: Date, proposedHour: number }]
               // Carrera.push(c.carrer);
               // Student.push('');
-
             }
           }
         )
@@ -155,10 +159,8 @@ export class DiaryComponent implements OnInit {
     this.Ranges.forEach(element => {
       const value = element.careers.find(x => x === Career);
       if (typeof (value) !== 'undefined') {
-        // console.log("Carrera0", value);
         const endDate: Date = new Date(element.end);
         const startDate: Date = new Date(element.start);
-        // console.log("Carrera0", startDate.getTime(), "-", endDate.getTime(), "-", Appointment.getTime());
         if (startDate.getTime() < Appointment.getTime() && Appointment.getTime() < endDate.getTime())
           quantity = element.quantity
       }
@@ -171,13 +173,10 @@ export class DiaryComponent implements OnInit {
     this.events = [];
     this.carrers.forEach(career => {
       if (career.status) {
-        // console.log("Carrera", career);
         let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
         tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
-        console.log("Appointment__", this.Appointments);
         if (typeof (tmp) != 'undefined') {
           tmp.values.forEach(element => {
-            // console.log("UN VALOR", element);
             const vFecha = element.proposedDate.toString().split('T')[0].split('-');
             let tmpStart = new Date(element.proposedDate);
             let tmpEnd = new Date(element.proposedDate);
@@ -196,7 +195,6 @@ export class DiaryComponent implements OnInit {
           });
         }
       }
-      // console.log("event", this.events);
     });
     this.refresh.next();
   }
@@ -258,10 +256,8 @@ export class DiaryComponent implements OnInit {
     dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], project: string, phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string, duration: number, option: string, product: string } }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
       //Para no llamar a la bd
-      // console.log("Rsponse", response);
       if (typeof (response) !== 'undefined') {
         const index = this.Appointments.findIndex(x => x._id[0] === response.career);
-        console.log("Index", response.value);
         if (index != -1) {
           this.Appointments[index].values.push(response.value);
         } else {
@@ -269,7 +265,6 @@ export class DiaryComponent implements OnInit {
           const tmpAppointment: iAppointmentGroup = { _id: [response.career], values: [response.value] }
           this.Appointments.push(tmpAppointment);
         }
-        // console.log("Appoin", this.Appointments);
         this.loadAppointment();
       }
     }, error => {
@@ -326,12 +321,9 @@ export class DiaryComponent implements OnInit {
       }) => {
       // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
       //Para no llamar a la bd
-      // console.log("Rsponse", response);
       if (typeof (response) !== 'undefined') {
         const index = this.Appointments.findIndex(x => x._id[0] === response.career);
-        // console.log("Index", index);
         if (index != -1) {
-          // console.log("ENTRO");
           this.Appointments[index].values.push(response.value);
         } else {
           // const tmpAppointment: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] } = { _id: [response.career], values: [response.value] }
@@ -347,7 +339,6 @@ export class DiaryComponent implements OnInit {
 
   viewEvent($event): void {
     const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
-    console.log("Appointment", tmpAppointment);
     const dialogRef = this.dialog.open(ViewMoreComponent, {
       data: {
         Appointment: tmpAppointment
@@ -359,91 +350,11 @@ export class DiaryComponent implements OnInit {
   }
   cancelledEvent($event): void {
     this.confirmDenial($event, eStatusRequest.CANCELLED);
-    // // const tmpCarrera = this.carrers.find(x => x.abbreviation === $event.title.split(' ')[1]);
-    // // let AppointmentCareer = this.Appointments.find(x => x._id[0] === tmpCarrera.carrer);
-    // // const size = AppointmentCareer.values.length;
-    // // let tmpAppointment: { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string };
-    // // // let Identificador: string = '';
-    // // const Student: string = $event.title.split(' ').slice(2).join(' ');
-    // // for (let i = 0; i < size; i++) {
-    // //   let eventDate = new Date($event.start)
-    // //   let appointmentDate = new Date(AppointmentCareer.values[i].proposedDate);
-    // //   appointmentDate.setHours(0, 0, 0, 0);
-    // //   appointmentDate.setMinutes(AppointmentCareer.values[i].proposedHour);
-    // //   if (AppointmentCareer.values[i].student[0].trim() === Student.trim() && appointmentDate.getTime() === eventDate.getTime()) {
-    // //     tmpAppointment = AppointmentCareer.values[i];
-    // //     break;
-    // //   }
-    // // }
-
-    // let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
-    // const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
-    // if (typeof (tmpAppointment) !== 'undefined') {
-    //   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-    //     data: {
-    //       Configuration: {
-    //         Message: { Title: '¿Está seguro de cancelar este espacio?' },
-    //         Buttons: { ConfirmText: 'Aceptar', CancelText: 'Cancelar' }
-    //       }
-    //     },
-    //     disableClose: true,
-    //     hasBackdrop: true,
-    //     width: '30em'
-    //   });
-
-    //   dialogRef.afterClosed().subscribe((response: { confirm: boolean, motivo: string }) => {
-    //     if (response.confirm) {
-    //       const data = {
-    //         operation: eStatusRequest.CANCELLED,
-    //         observation: response.motivo,
-    //         doer: this._CookiesService.getData().user.name.fullName
-    //       };
-    //       this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
-    //         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento cancelado');
-    //         AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
-    //         this.loadAppointment();
-    //       }, error => {
-    //         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-    //       });
-    //     }
-    //   });
-
-    //   // Swal.fire({
-    //   //   title: '¿Está seguro de cancelar este espacio?',
-    //   //   text: '¡No podrás revertir esto!',
-    //   //   type: 'question',
-    //   //   showCancelButton: true,
-    //   //   allowOutsideClick: false,
-    //   //   confirmButtonColor: '#3085d6',
-    //   //   cancelButtonColor: '#d33',
-    //   //   cancelButtonText: 'Cancelar',
-    //   //   confirmButtonText: 'Aceptar'
-    //   // }).then((result) => {
-    //   //   if (result.value) {
-    //   //     const data = {
-    //   //       operation: eStatusRequest.CANCELLED,
-    //   //       doer: this._CookiesService.getData().user.name.fullName
-    //   //     };
-    //   //     this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
-    //   //       this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento cancelado');
-    //   //       AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
-    //   //       this.loadAppointment();
-    //   //     }, error => {
-    //   //       this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-    //   //     });
-    //   //   }
-    //   // });
-    // } else {
-    //   this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Evento no encontrado, reporte el problema');
-    // }
   }
 
   confirmDenial($event: any, operation: eStatusRequest): void {
-    console.log("%", $event);
     let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
-    console.log("aapoint", AppointmentCareer);
     const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
-    console.log("aapoint", tmpAppointment);
     if (typeof (tmpAppointment) !== 'undefined') {
       if (tmpAppointment.option === 'XI - TITULACIÓN INTEGRAL') {
         const msnCancel = `¿ESTÁ SEGURO DE CANCELAR EL ESPACIO DE ${tmpAppointment.student}?`;
@@ -471,7 +382,7 @@ export class DiaryComponent implements OnInit {
                 operation: operation,
                 observation: response.motivo,
                 doer: this._CookiesService.getData().user.name.fullName,
-                phase: eRequest.ASSIGNED
+                phase: operation === eStatusRequest.CANCELLED ? eRequest.REALIZED : eRequest.ASSIGNED
               };
               this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
                 this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
@@ -502,7 +413,6 @@ export class DiaryComponent implements OnInit {
               AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
               this.loadAppointment();
             }, error => {
-              console.log("ERROR ELIMINACION", error);
               let tmpJson = JSON.parse(error._body);
               this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
             });
@@ -560,56 +470,6 @@ export class DiaryComponent implements OnInit {
 
   rejectEvent($event): void {
     this.confirmDenial($event, eStatusRequest.REJECT);
-    // // const tmpCarrera = this.carrers.find(x => x.abbreviation === $event.title.split(' ')[1]);
-    // // let AppointmentCareer = this.Appointments.find(x => x._id[0] === tmpCarrera.carrer);
-    // // const size = AppointmentCareer.values.length;
-    // // let tmpAppointment: { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string };
-    // // // let Identificador: string = '';
-    // // const Student: string = $event.title.split(' ').slice(2).join(' ');
-    // // for (let i = 0; i < size; i++) {
-    // //   let eventDate = new Date($event.start)
-    // //   let appointmentDate = new Date(AppointmentCareer.values[i].proposedDate);
-    // //   appointmentDate.setHours(0, 0, 0, 0);
-    // //   appointmentDate.setMinutes(AppointmentCareer.values[i].proposedHour);
-    // //   if (AppointmentCareer.values[i].student[0].trim() === Student.trim() && appointmentDate.getTime() === eventDate.getTime()) {
-    // //     tmpAppointment = AppointmentCareer.values[i];
-    // //     // Identificador = AppointmentCareer.values[i].id;
-    // //     break;
-    // //   }
-    // // }
-    // let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
-    // const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
-    // // if (Identificador.trim() !== '') {
-    // if (typeof (tmpAppointment) !== 'undefined') {
-    //   Swal.fire({
-    //     title: '¿Está seguro de rechazar este espacio?',
-    //     text: '¡No podrás revertir esto!',
-    //     type: 'question',
-    //     showCancelButton: true,
-    //     allowOutsideClick: false,
-    //     confirmButtonColor: '#3085d6',
-    //     cancelButtonColor: '#d33',
-    //     cancelButtonText: 'Cancelar',
-    //     confirmButtonText: 'Aceptar'
-    //   }).then((result) => {
-    //     if (result.value) {
-    //       const data = {
-    //         operation: eStatusRequest.REJECT,
-    //         doer: this._CookiesService.getData().user.name.fullName
-    //       };
-    //       this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
-    //         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento rechazado');
-    //         AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
-    //         this.loadAppointment();
-    //       }, error => {
-    //         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-    //       });
-    //     }
-    //   });
-    // } else {
-    //   this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Evento no encontrado, reporte el problema');
-    // }
-    // // this._RequestProvider.updateRequest()
   }
 
   toggle(carrer: { carrer: string, abbreviation: string, icon: string, status: boolean }): void {
@@ -624,7 +484,6 @@ export class DiaryComponent implements OnInit {
   }
 
   appointmentClicked($event): void {
-    console.log("event", $event);
     let index: { appointment: number, value: number };
 
     // const tmpMinutes: number = value.start.getHours() * 60;
@@ -635,10 +494,8 @@ export class DiaryComponent implements OnInit {
     let student = $event.title.split(' ').slice(2).join(' ');
     let abbreviation = $event.title.split(' ')[1];
     let career = this.carrers.find(x => x.abbreviation === abbreviation);
-    console.log("DATOS DEL EVENTO", student, "Abreviatura", abbreviation, "carrera", career);
 
     //Busqueda del evento
-    console.log("Appointments", this.Appointments);
     let tmpValor: { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string };
     for (let i = 0; i < this.Appointments.length; i++) {
       for (let j = 0; j < this.Appointments[i].values.length; j++) {
@@ -675,10 +532,7 @@ export class DiaryComponent implements OnInit {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Fecha Propuesta Aceptada');
             // tmpValor.phase = "Realizado";
             this.Appointments[index.appointment].values[index.value].phase = "Realizado";
-            console.log("tmpvalor", tmpValor);
-            console.log("Appoint", this.Appointments);
             this.loadAppointment();
-            // console.log(this.Appointments)
             // this.refresh.next();
           }, error => {
             this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);

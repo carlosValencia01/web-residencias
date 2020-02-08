@@ -145,7 +145,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
             this.studentOut = this.studentsBestAverage.filter((student: any) =>
               student.data.estatus === 'Registrado' || student.data.estatus === 'Pagado' || student.data.estatus === 'Verificado');
-            //console.log(this.studentOut);
           },
           err => console.log(err)
         );
@@ -1139,7 +1138,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Mostar modal para actualizar email de un alumno
   emailModal(item) {
-    console.log(item);
     if (this.role === 'administration') {
       const id = 'newEmailInput';
       if (item.email) {
@@ -1311,17 +1309,15 @@ export class ListGraduatesPageComponent implements OnInit {
         this.firestoreService.updateFieldGraduate(student.id, { estatus: 'Asistió' }, this.collection);
       }
     });
-    console.log(alumnosVerificados);
   }
 
   changeStatusDocumentation(student,status){
-    //console.log(student);
     switch (status){
       case "Fotos y Recibo":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);        
-        
+
         this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
-        
+
         break;
       case "Impreso":
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
@@ -1515,45 +1511,38 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   assignTicketsStudent(){
-    console.log(this.boletosXAlumno);
+
   }
 
   sendNotification(title: string, body: string, nc: string){
     const subTok = this.firestoreService.getStudentToken(nc).subscribe(
       (token)=>{
-        subTok.unsubscribe();
-        // console.log(token);
-        
+        subTok.unsubscribe();        
         const infoToken = token[0];
         const notification = {
           "titulo":title,
           "descripcion": body,
           "fecha": new Date()
         };
-        
         if(infoToken){
-          // student device exist              
+          // student device exist
           if(infoToken.token){
-            // student has token device 
-            // send notification        
-            console.log(infoToken.token);
-                                    
+            // student has token device
+            // send notification
             this.firestoreService.sendNotification(infoToken.id,notification).then(
               (sended)=>{
                 this.studentProv.sendNotification({title,body,token:infoToken.token, screen:'graduation'}).subscribe(
                   (send)=>{
-                    console.log(send, 'Enviado');
                     this.notificationsServices.showNotification(eNotificationType.SUCCESS,'Notificación enviada','');
                   }
                 );
               }
             );
           }else{
-            // only save notification in firebase                
+            // only save notification in firebase
             this.firestoreService.sendNotification(infoToken.id,notification).then(
               (sended)=>{
                 console.log('Enviado');
-                
               }
             );
           }
@@ -1567,7 +1556,7 @@ export class ListGraduatesPageComponent implements OnInit {
             (created)=>{
               const subST = this.firestoreService.getStudentToken(nc).subscribe(
                 (token)=>{
-                  subST.unsubscribe();                      
+                  subST.unsubscribe();
                   this.firestoreService.sendNotification(infoToken.id,notification).then(
                     (sended)=>{
                       console.log('Enviado');
@@ -1575,7 +1564,7 @@ export class ListGraduatesPageComponent implements OnInit {
                         (updated)=>{}
                       );
                     }
-                  );                  
+                  );
                 }
               );
             }
@@ -1739,16 +1728,12 @@ generateLabels() {
             this.firestoreService.updateFieldGraduate(bestFemaleAvg.id,{mejorPromedioF:true},this.collection).then((up)=>{                
             });
           }
-          
           this.bestStudents.push(bestFemaleAvg);
-          this.bestStudents.push(bestMaleAvg);          
-          // console.log(graduates.filter( (st)=> st.id == bestFemaleAvg.id));        
+          this.bestStudents.push(bestMaleAvg);
           resolve(true);
         }
-      );    
-      
+      );
     });
-    
   }
 
 }

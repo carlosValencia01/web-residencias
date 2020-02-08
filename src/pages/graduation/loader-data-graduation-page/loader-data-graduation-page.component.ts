@@ -72,7 +72,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+
   }
 
   // para leer el archivo csv por carrera
@@ -101,15 +101,14 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     this.arrayCsvContent.shift();
     this.arrayCsvContent.forEach(student => {
       // const indice = student.trim().toLowerCase().indexOf('calidad,');
-      
+
       // if( indice >-1){
       //   const tmpStudent = student.split('CALIDAD,');
-      //   console.log(tmpStudent);
-        
-        
+
+
       // }else{
-        
-        
+
+
       //   }
       const tmpStudent = student.split(',');
         if (this.type === '0') {
@@ -147,19 +146,18 @@ export class LoaderDataGraduationPageComponent implements OnInit {
       //   }
       // }
     });
-    // console.log(this.csvObjects);
     const sub = this.firebaseService.getGraduates(this.collection).subscribe(
       (students)=>{
         sub.unsubscribe();
-        const sts = students.map( (st)=> ({nc:st.payload.doc.get('nc'),id:st.payload.doc.id,genero:st.payload.doc.get('genero')}));                    
-                             
-          if(sts.length>0){                         
-            for (const student of this.csvObjects){ 
-              const stu = sts.filter( st=> st.nc == student.nc)[0];             
+        const sts = students.map( (st)=> ({nc:st.payload.doc.get('nc'),id:st.payload.doc.id,genero:st.payload.doc.get('genero')}));
+
+          if(sts.length>0){
+            for (const student of this.csvObjects){
+              const stu = sts.filter( st=> st.nc == student.nc)[0];
               if(!stu){
                 this.displayStudents.push(student);
               }
-            }  
+            }
           }else{
             this.displayStudents = this.csvObjects;
           }
@@ -171,46 +169,41 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     let i=0;
     this.loading=true;
     if (this.type === '0') {
-      let objects = this.csvObjects;      
+      let objects = this.csvObjects;
       const sub = this.firebaseService.getGraduates(this.collection).subscribe(
         async (students)=>{
-          const sts = students.map( (st)=> ({nc:st.payload.doc.get('nc'),id:st.payload.doc.id,genero:st.payload.doc.get('genero')}));                    
-                             
+          const sts = students.map( (st)=> ({nc:st.payload.doc.get('nc'),id:st.payload.doc.id,genero:st.payload.doc.get('genero')}));
           sub.unsubscribe();
-          
-          if(sts.length>0){            
-                        
+
+          if(sts.length>0){
             for await (const student of objects){ 
-              const stu = sts.filter( st=> st.nc == student.nc)[0];             
+              const stu = sts.filter( st=> st.nc == student.nc)[0];
               if(!stu){
                 await this.firebaseService.loadCSV(student, this.collection).then(resp => {
                 }).catch(err => {});
                 await this.firebaseService.asignEvent(this.collection
                   ,student.nc).then((col=>{
-                  })).catch(err=>{});            
+                  })).catch(err=>{});
               }else{
                 if(!stu.genero){
                   await this.firebaseService.updateFieldGraduate(stu.id,{genero:student.genero,curp:student.curp},this.collection).then(up=>{});
                 }
               }
-            }  
+            }
           }else{
             for await (const student of objects){
               await this.firebaseService.loadCSV(student, this.collection).then(resp => {
               }).catch(err => {});
               await this.firebaseService.asignEvent(this.collection
                 ,student.nc).then((col=>{
-                })).catch(err=>{});            
-              
-            }  
+                })).catch(err=>{});
+            }
           }
-          
         }
       );
       if(this.displayStudents.length>=100){
         setTimeout(() => {
           setTimeout(() => {
-            
             this.updateBestAvg();
           }, 70000);
           this.notificationsServices.showNotification(0, 'Exito',' Alumnos registrados');
@@ -219,16 +212,12 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         }, 30000);
       }else{
         setTimeout(() => {
-            
           this.updateBestAvg();
         }, 70000);
         this.notificationsServices.showNotification(0, 'Exito',' Alumnos registrados');
         this.loading=false;
         this.cancel();
       }
-
-      
-      
     }
     if (this.type === '1') {
       this.csvObjects.forEach( student => {
@@ -239,7 +228,6 @@ export class LoaderDataGraduationPageComponent implements OnInit {
         );
       });
     }
-    
     this.cancel();
   }
 
@@ -247,18 +235,17 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     const sst =this.firebaseService.getGraduates(this.collection).subscribe(
       async (stds)=>{
         sst.unsubscribe();
-               
           const students = stds.map( (std)=> ({id:std.payload.doc.id,promedio:std.payload.doc.get('promedio'), carrera:std.payload.doc.get('carrera'),mejorPromedio:std.payload.doc.get('mejorPromedio')}));
           const sb = this.firebaseService.getCareers().subscribe(
             async (careers :any)=>{
-              sb.unsubscribe();                    
+              sb.unsubscribe();
               for await (const career of careers){
                 const prevBestAvg = students.filter(st=> st.mejorPromedio == true && st.carrera+'' == career.nombre+'')[0];
                 const studentsCareer = students.filter( (st)=> st.carrera+'' == career.nombre+'').map( std=> std.promedio);
                 const greaterAvg = studentsCareer.length > 0 ? Math.max(...studentsCareer) : false;              
-                
-                const stGreaterAvg = greaterAvg > 0 ? students.filter( (st)=> st.carrera+'' == career.nombre+'').filter( (st)=> st.promedio == greaterAvg) : false;           
-                
+
+                const stGreaterAvg = greaterAvg > 0 ? students.filter( (st)=> st.carrera+'' == career.nombre+'').filter( (st)=> st.promedio == greaterAvg) : false;
+
                 if(stGreaterAvg){
                   if(prevBestAvg){
 
@@ -267,25 +254,21 @@ export class LoaderDataGraduationPageComponent implements OnInit {
                       const best = stGreaterAvg.filter( st=> st.promedio >= prevBestAvg.promedio);
                       if(best.length>0){
                         await this.firebaseService.updateFieldGraduate(prevBestAvg.id,{mejorPromedio:false},this.collection).then(up=>{});
-                        for await (const bestAvg of best){                            
+                        for await (const bestAvg of best){
                           await this.firebaseService.updateFieldGraduate(bestAvg.id,{mejorPromedio:true},this.collection).then( up=>{}).catch(err=>{});
                         }
                       }
                     }
                   }else{
-                    for await (const bestAvg of stGreaterAvg){                      
+                    for await (const bestAvg of stGreaterAvg){
                       await this.firebaseService.updateFieldGraduate(bestAvg.id,{mejorPromedio:true},this.collection).then( up=>{}).catch(err=>{});
                     }
                   }
                 }
-                
-                
-                
               }
-              
             }
           );
-        }                    
+        }
     );
   }
   sendOneMail(item) {
@@ -302,7 +285,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   cancel() {
     this.fileName = 'Seleccione un archivo';
     this.csvObjects = [];
-    this.displayStudents = [];  
+    this.displayStudents = [];
   }
 
   // para cambiar el contador de las paginas

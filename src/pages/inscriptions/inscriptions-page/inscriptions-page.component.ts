@@ -86,7 +86,6 @@ export class InscriptionsPageComponent implements OnInit {
       const template = this.formEmail.get('template').value;
       this.inscriptionsProv.sendEmail({ 'to_email': this.emails, 'index': Number(template), 'many': false })
         .subscribe((res) => {
-          console.log(res);
           if (res.code === 200) {
             this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Envío de correo',
               `${this.emails.length === 1 ? 'El correo' : 'Los correos'} ha sido enviado con éxito.`);

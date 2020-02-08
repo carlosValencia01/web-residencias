@@ -16,6 +16,7 @@ import { RequestService } from 'src/services/reception-act/request.service';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 moment.locale('es');
 
 @Component({
@@ -50,6 +51,7 @@ export class ExpedienteComponent implements OnInit {
   public titledHour: string;
   public registeredDate: string;
   public folderId: string;
+  public showLoading: boolean;
   constructor(
     public requestProvider: RequestProvider,
     private _NotificationsServices: NotificationsServices,
@@ -78,19 +80,21 @@ export class ExpedienteComponent implements OnInit {
             }
             this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
             this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
-            // console.log("eee",(<eRequest><keyof typeof eRequest>this.Request.phase),"dd",(<eStatusRequest><keyof typeof eStatusRequest>this.Request.phase))
             this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
 
             this.Request.student = data.request[0].studentId;
-            this._StudentProvider.getFolderId(this.Request.student._id).subscribe(
-              student => {
-                if (student.folder && student.folder.idFolderInDrive) {
-                  this.folderId = student.folder.idFolderInDrive;
-                } else {
-                  this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-                }
-              });
-            this._Request = new uRequest(this.Request, imgSrv,this._CookiesService);
+
+            this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber, eFOLDER.TITULACION).subscribe(
+              (folder) => {
+                this.folderId = folder.folderIdInDrive;
+              },
+              err => {
+                console.log(err);
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+              }
+            );
+
+            this._Request = new uRequest(this.Request, imgSrv, this._CookiesService);
             this.onLoad(this.Request.documents);
             (async () => {
               await this.delay(150);
@@ -98,7 +102,7 @@ export class ExpedienteComponent implements OnInit {
           },
           error => {
             this._NotificationsServices.showNotification(eNotificationType.ERROR,
-              'Titulación App', error);
+              'Acto Recepcional', error);
           });
       });
   }
@@ -114,7 +118,7 @@ export class ExpedienteComponent implements OnInit {
       }
       this.changeDocument = !this.changeDocument;
     } else {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulación App", "Folder del estudiante no encontrado");
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Folder del estudiante no encontrado");
     }
 
     // if (this.changeDocument) {
@@ -140,46 +144,6 @@ export class ExpedienteComponent implements OnInit {
     this.FileServicio = this.getDocument(eFILES.SERVICIO);
     this.FilePago = this.getDocument(eFILES.PAGO);
     this.FilePhotos = this.getDocument(eFILES.PHOTOS);
-  }
-
-  onViewPdf(file): void {
-    const type = <eFILES><keyof typeof eFILES>file;
-    let exists: boolean = false;
-    let pdf: any;
-    switch (type) {
-      case eFILES.SOLICITUD: {
-        exists = typeof (this.FileRequest) !== 'undefined';
-        if (exists)
-          pdf = this._Request.protocolActRequest().output('bloburl');
-        break;
-      }
-      case eFILES.REGISTRO: {
-        exists = typeof (this.FileRegistered) !== 'undefined';
-        if (exists)
-          pdf = this._Request.projectRegistrationOffice().output('bloburl');
-        break;
-      }
-      case eFILES.INCONVENIENCE: {
-        exists = typeof (this.FileInconvenience) !== 'undefined';
-        if (exists)
-          pdf = this._Request.noInconvenience().output('bloburl');
-        break;
-      }
-    }
-
-    if (exists) {
-      this.dialog.open(ExtendViewerComponent, {
-        data: {
-          source: pdf,
-          isBase64: true,
-          title: this.documentTitle(type)
-        },
-        disableClose: true,
-        hasBackdrop: true,
-        width: '60em',
-        height: '600px'
-      });
-    }
   }
 
   documentTitle(type: eFILES): string {
@@ -267,7 +231,21 @@ export class ExpedienteComponent implements OnInit {
   onView(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let exists = false;
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Recuperando Archivo");
+    this.showLoading = true;
     switch (type) {
+      case eFILES.SOLICITUD: {
+        exists = typeof (this.FileRequest) !== 'undefined';
+        break;
+      }
+      case eFILES.REGISTRO: {
+        exists = typeof (this.FileRegistered) !== 'undefined';
+        break;
+      }
+      case eFILES.INCONVENIENCE: {
+        exists = typeof (this.FileInconvenience) !== 'undefined';
+        break;
+      }
       case eFILES.RELEASED: {
         exists = typeof (this.FileReleased) !== 'undefined';
         break;
@@ -309,8 +287,10 @@ export class ExpedienteComponent implements OnInit {
         break;
       }
     }
+
     if (exists) {
       this.requestProvider.getResource(this.Request._id, type).subscribe(data => {
+        this.showLoading = false;
         this.dialog.open(ExtendViewerComponent, {
           data: {
             source: data,
@@ -323,9 +303,13 @@ export class ExpedienteComponent implements OnInit {
           height: '600px'
         });
       }, error => {
+        this.showLoading = false;
         this._NotificationsServices.showNotification(eNotificationType.ERROR,
-          'Titulación App', error);
+          'Acto Recepcional', 'Documento no encontrado');
       });
+    }
+    else {
+      this.showLoading = false;
     }
   }
 

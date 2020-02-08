@@ -66,10 +66,7 @@ export class SecretaryAssignmentComponent implements OnInit {
                this.careersAvailable = this.careersAvailable.filter( car=> car._id !== this.secretaries[i].careers[j].careerId._id);                
               }
             }
-          }
-          // console.log(this.careersAvailable);
-          
-                    
+          }       
           // for(let i=0; i< this.secretaries.length; i++){
           //   let notin = [];
           //   if(this.secretaries[i].careers){
@@ -97,11 +94,10 @@ export class SecretaryAssignmentComponent implements OnInit {
   }
   getSecretaries(){
     this.userProv.getSecretaries().subscribe(
-      users=>{          
-        this.secretaries = users.users;    
-        // console.log(this.secretaries);
-          
-        this.getCareers();         
+      users=>{
+        this.secretaries = users.users;
+
+        this.getCareers();
       }
     );
   }
@@ -109,7 +105,6 @@ export class SecretaryAssignmentComponent implements OnInit {
 
 
   updateCareers(careerId,action,secreId){
-    
     this.userProv.updateCareers(secreId,{careerId:careerId},action).subscribe(
       se=>{
       },
@@ -117,28 +112,22 @@ export class SecretaryAssignmentComponent implements OnInit {
         console.log(err,'errror');
         
       }
-    );
-    // console.log(careerId,'setc',action);
-    
+    );    
   }
 
   add(event: MatChipInputEvent): void {
     // Add fruit only when MatAutocomplete is not open
     // To make sure this does not conflict with OptionSelected Event
-    
+
     if (!this.matAutocomplete.isOpen) {
-      // console.log('add');
       const input = event.input;
       const value = event.value;
       // Reset the input value
-     
-      // console.log('value');
-      
-      
+
       if (input) {
         input.value = '';
       }
-      
+
       this.careerCtrl.setValue(null);
     }
   }
@@ -170,7 +159,6 @@ export class SecretaryAssignmentComponent implements OnInit {
     this.filteredCareers = this.careersAvailable;
   }
   slectedCareer(career,sec){
-    // console.log('click',career,sec);
     this.updateCareers(career._id,'insert', sec._id);
     this.careerCtrl.setValue(null);
   }

@@ -118,13 +118,14 @@ export class NewTitleComponent implements OnInit {
             career: students.student[0].career,
             controlNumber: students.student[0].controlNumber,
             phase: eRequest.REALIZED,
-            status: eStatusRequest.PROCESS
+            status: eStatusRequest.NONE
           };
           this.frmNewTitle.get("student").setValue(this.request.student);
           this.frmNewTitle.get("career").setValue(this.request.career);
           this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
         } else {
           this.existError = "Número de control no encontrado";
+          this.request = { studentId: '', student: '', career: '', controlNumber: '' };
           this.request.student = '';
           this.request.career = '';
           this.request.controlNumber = '';
@@ -264,7 +265,6 @@ export class NewTitleComponent implements OnInit {
   addEvent(): void {
 
     this._RequestProvider.titled(this.request).subscribe(data => {
-      // console.log("values_neevent", data);
       if (typeof (data) !== 'undefined') {
         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento Asignado');
         this.dialogRef.close({

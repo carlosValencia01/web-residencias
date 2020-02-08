@@ -192,7 +192,6 @@ export class SteepComponentComponent implements OnInit {
         };
         this.eSignatureProvider.sign(data).subscribe(signed => {
           if (signed) {
-            console.log("SIGNED", signed);
             this.QR = signed.qrData;
             this.EStamp = signed.eStamp;
             this.enableNext = false;

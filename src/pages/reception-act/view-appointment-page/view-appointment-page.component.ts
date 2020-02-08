@@ -67,10 +67,6 @@ export class ViewAppointmentPageComponent implements OnInit {
     public _getImage: ImageToBase64Service
   ) {
     this.carrers = [];
-    // this.role =
-    //   //'Secretaria Académica';
-    //   // 'Jefe Académico';
-    // this._CookiesService.getData().user.rol.name;
     this._getImageToPdf();
   }
 
@@ -92,36 +88,6 @@ export class ViewAppointmentPageComponent implements OnInit {
           this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
         }
       });
-
-    // //this._sourceDataProvider.getCareerAbbreviation();
-    //PASADO
-    // this.allCarrers = this._sourceDataProvider.getCareerAbbreviation();// this.carrers.slice(0);
-    // this.allCarrers.forEach(element => {
-    //   let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
-    //   if (i !== -1)
-    //     this.carrers.push(element);
-    // });
-    //PASADO
-
-    // console.log("CARRERAS__", this.carrers);
-    // switch (this.role) {
-    //   case eRole.SECRETARYACEDMIC: {
-    //     this.filterDepto('ISIC');
-    //     break;
-    //   }
-    //   case eRole.CHIEFACADEMIC: {
-    //     // this.filterDepto('IBQA');
-    //     this.filterDepto('ISIC');
-    //     break;
-    //   }
-    //   default: {
-    //     this.carrers.push({
-    //       carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
-    //       color: { primary: '#57c7d4', secondary: '#ace3ea' }
-    //     });
-    //     break;
-    //   }
-    // }
   }
 
   filterDepto(depto: string): void {
@@ -167,14 +133,12 @@ export class ViewAppointmentPageComponent implements OnInit {
     });
   }
   loadAppointment(): void {
-    console.log("APPOINTMENTS DE LOAD", this.Appointments);
     this.events = [];
     this.allCarrers.forEach(career => {
       // if (career.status) {
       let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
       // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);      
       tmp = this.Appointments.find(x => x._id[0] === career.carrer);
-      console.log("Appointment__", this.Appointments);
       if (typeof (tmp) != 'undefined') {
         tmp.values.forEach(element => {
           const vFecha = element.proposedDate.toString().split('T')[0].split('-');
@@ -191,13 +155,11 @@ export class ViewAppointmentPageComponent implements OnInit {
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
           }
           else {
-            console.log("CITA", element);
             title = element.phase == 'Asignado' ? " Evento Solicitado" : " Evento Reservado";
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? { primary: '#b64443', secondary: '#dcdcdc' } : { primary: '#b64443', secondary: '#e5bab9' }) });
           }
           // let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];          
         });
-        console.log("EVENT", this.events);
         // }
       }
     });
@@ -228,27 +190,36 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
 
   viewEvent($event): void {
-    const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
-    const dialogRef = this.dialog.open(ViewMoreComponent, {
-      data: {
-        Appointment: tmpAppointment
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '45em'
-    });
+    let title: string = $event.title;
+    if (!title.includes('Evento')) {
+      const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+      const dialogRef = this.dialog.open(ViewMoreComponent, {
+        data: {
+          Appointment: tmpAppointment
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '45em'
+      });
+    }
   }
 
+  reload(): void {
+    this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
+  }
   genTrades($event): void {
-    const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
-    const dialogRef = this.dialog.open(ActNotificacionComponent, {
-      data: {
-        Appointment: tmpAppointment
-      },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '45em'
-    });
+    let title: string = $event.title;
+    if (!title.includes('Evento')) {
+      const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+      const dialogRef = this.dialog.open(ActNotificacionComponent, {
+        data: {
+          Appointment: tmpAppointment
+        },
+        disableClose: true,
+        hasBackdrop: true,
+        width: '45em'
+      });
+    }
   }
 
   searchAppointment(abbreviation: string, date: any, student: string): iAppointment {
@@ -315,22 +286,25 @@ export class ViewAppointmentPageComponent implements OnInit {
       doc.setFont(this.FONT, 'Normal');
       doc.setFontSize(8);
 
-
       filteredCareers.forEach((car) => {
-        const maped = this.Appointments.filter((ap) => ap._id[0] == car.carrer).map(
+        const filtered = this.Appointments.filter((ap) => ap._id[0] == car.carrer).map(
           (care) => care.values
-        )[0].
-          map((st) => ({
-            date: moment(st.proposedDate).format('LL'),
-            hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
-            student: st.student,
-            place: st.place,
-            jury: st.jury.map((jr: any) => jr.name)
-          }));
-        maped.forEach(maped => {
-          this.mapedStudents.push(maped);
+        )[0];
+        if (filtered) {
+          const maped = filtered.
+            map((st) => ({
+              date: moment(st.proposedDate).format('LL'),
+              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
+              student: st.student,
+              place: st.place,
+              jury: st.jury.map((jr: any, index: number) => index == 0 ? 'PRESIDENTE: ' + jr.name : index == 1 ? 'SECRETARIO: ' + jr.name : index == 2 ? 'VOCAL ' + jr.name : 'VOCAL SUPLENTE: ' + jr.name).join('\r\n')
+            }));
 
-        });
+          maped.forEach(maped => {
+            this.mapedStudents.push(maped);
+
+          });
+        }
 
       });
       setTimeout(() => {
@@ -353,7 +327,7 @@ export class ViewAppointmentPageComponent implements OnInit {
         );
         this.loading = false;
         window.open(doc.output('bloburl'), '_blank');
-      }, 200);
+      }, 500);
 
     }
   }
@@ -402,9 +376,6 @@ export class ViewAppointmentPageComponent implements OnInit {
     document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
   }
   private _getImageToPdf() {
-    // this._getImage.getBase64('assets/imgs/logo.jpg').then(logo => {
-    //     this.tecNacLogo = logo;
-    // });
 
     this._getImage.getBase64('assets/imgs/sep.png').then(logo => {
       this.sepLogo = logo;

@@ -19,6 +19,7 @@ import { RequestService } from 'src/services/reception-act/request.service';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import * as moment from 'moment';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 moment.locale('es');
 
 @Component({
@@ -55,16 +56,17 @@ export class TitulacionPageComponent implements OnInit {
   public titrationHour: string;
   public isActive: boolean = true;
   // Mensajes
-  ProcessSentMessage: String = 'En espera de que tú solicitud sea aceptada';
-  CompletedSentMessage: String = 'TÚ SOLICITUD HA SIDO ACEPTADA'; //'Tú solicitud ha sido aceptada';
-  ProcessVerifiedMessage: String = 'En espera del registro de tu proyecto';
-  CompletedVerifiedMessage: String = 'TÚ PROYECTO HA SIDO REGISTRADO'; //'Tú proyecto ha sido registrado';
-  ProcessReleasedMessage: String = 'En espera de la liberación del proyecto';
-  CompletedReleasedMessage: String = 'TÚ PROYECTO HA SIDO LIBERADO';//'Tú proyecto ha sido liberado';
+  ProcessSentMessage: String = 'En espera de que tu solicitud sea aceptada';
+  CompletedSentMessage: String = 'TU SOLICITUD HA SIDO ACEPTADA'; //'Tú solicitud ha sido aceptada';  
+  ProcessRegistreVerifiedMessage: String = 'Procesando registro de tu proyecto';
+  CompletedVerifiedMessage: String = 'TU PROYECTO HA SIDO REGISTRADO'; //'Tú proyecto ha sido registrado';
+  NoneReleasedMessage: String = 'En espera de la liberación del proyecto';
+  ProcessReleasesMessage: String = 'Procesando liberación de tu proyecto';
+  CompletedReleasedMessage: String = 'TU PROYECTO HA SIDO LIBERADO';//'Tú proyecto ha sido liberado';
   ProcessReleasedValidMessage: String = 'EN ESPERA DE LA VALIDACIÓN';
   CompletedReleasedValidMessage: String = 'LIBERACIÓN APROBADA';
   ProcessValidatedMessage: String = 'EN ESPERA DE LA HOJA DE NO INCONVENIENCIA';
-  ProcessAssignedMessage: String = 'En espera de que tú fecha sea aceptada';
+  ProcessAssignedMessage: String = 'En espera de que tu fecha sea aceptada';
   WaitAssignedMessage: String = 'Ha ocurrido un inconveniente con la fecha, espera ha ser contactado';
   RejectAssignedMessage: String = 'Su petición de titulación ha sido rechazada, registre una nueva fecha';
   CancelledAssignedMessage: String = 'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada, registre una nueva fecha';
@@ -128,19 +130,26 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   getFolderId(): void {
-    this.studentProv.getFolderId(this.cookiesService.getData().user._id).subscribe(
-      student => {
-        if (student.folder) {// folder exists
-          if (student.folder.idFolderInDrive) {
-            this.cookiesService.saveFolder(student.folder.idFolderInDrive);
-          }
-          else {
-            this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-          }
-        } else {
-          this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-        }
-      });
+    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email,eFOLDER.TITULACION).subscribe(
+      (folder)=>{
+         this.cookiesService.saveFolder(folder.folderIdInDrive);
+       },
+       err=>{console.log(err);
+       }
+       );
+    // this.studentProv.getFolderId(this.cookiesService.getData().user._id).subscribe(
+    //   student => {
+    //     if (student.folder) {// folder exists
+    //       if (student.folder.idFolderInDrive) {
+    //         this.cookiesService.saveFolder(student.folder.idFolderInDrive);
+    //       }
+    //       else {
+    //         this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+    //       }
+    //     } else {
+    //       this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+    //     }
+    //   });
   }
 
   loadRequest() {
@@ -194,7 +203,6 @@ export class TitulacionPageComponent implements OnInit {
 
   enableSteps(phase: eRequest): void {
     this.resetSteep();
-    console.log('fase', phase);
     switch (phase) {
       case eRequest.TITLED: {
         this.SteepElevenCompleted = (this.StatusComponent === eStatusRequest.FINALIZED ? true : false);
@@ -244,7 +252,6 @@ export class TitulacionPageComponent implements OnInit {
     }
     (async () => {
       await this.delay(100);
-      // console.log('index', this.Steeps.getIndex());
       this.stepperComponent.selectedIndex = this.Steeps.getIndex();
     })();
   }
@@ -258,10 +265,6 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   valores() {
-    console.log(this.stepperComponent);
-    console.log('STEP INDEX', this.stepperComponent.selectedIndex);
-    console.log('STEP INDEX', this.stepperComponent.selectedIndex = 2);
-    console.log('values', this.SteepOneCompleted, this.SteepTwoCompleted, this.SteepThreeCompleted);
   }
 
   viewRequeriments() {

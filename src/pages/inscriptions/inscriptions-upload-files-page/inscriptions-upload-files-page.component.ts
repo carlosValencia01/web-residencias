@@ -15,6 +15,7 @@ import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component
 import Swal from 'sweetalert2';
 import { MatDialog } from '@angular/material';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 const jsPDF = require('jspdf');
 
 @Component({
@@ -132,8 +133,6 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     this.studentProv.getDriveDocuments(this.data._id).subscribe(
       docs => {
         let documents = docs.documents;
-        // console.log(documents);
-
         this.curpDoc = documents.filter(docc => docc.filename.indexOf('CURP') !== -1)[0];
         this.nssDoc = documents.filter(docc => docc.filename.indexOf('NSS') !== -1)[0];
         this.imageDoc = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0];
@@ -177,19 +176,24 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   }
   checkFolders() {
     
-    
-    this.studentProv.getFolderId(this._idStudent).subscribe(
-      folder => {
-        // console.log(folder,'asldaosfhasjfnksjdfnlkasnfjnk');
+    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email,eFOLDER.INSCRIPCIONES).subscribe(
+      (folder)=>{
+         this.folderId =  folder.folderIdInDrive;
+         this.assingConfigForDropzone();
+       },
+       err=>{console.log(err);
+       }
+       );
+    // this.studentProv.getFolderId(this._idStudent).subscribe(
+    //   folder => {
 
-        if (folder.folder) {// folder exists
-          if (folder.folder.idFolderInDrive) {
-            this.folderId = folder.folder.idFolderInDrive;
-            // console.log(this.folderId,'folder student exists');
-            this.assingConfigForDropzone();
-          }
-        }
-      });
+    //     if (folder.folder) {// folder exists
+    //       if (folder.folder.idFolderInDrive) {
+    //         this.folderId = folder.folder.idFolderInDrive;
+    //         this.assingConfigForDropzone();
+    //       }
+    //     }
+    //   });
   }
 
   assingConfigForDropzone() {
@@ -264,7 +268,6 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
   public onUploadSuccess(args: any): void {
 
-    // console.log(args);
     if (args[1].action == 'create file') {
 
       const documentInfo = {
@@ -279,7 +282,6 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
           message: 'Se envio por primera vez'
         }
       };
-      // console.log(documentInfo);
 
       this.studentProv.uploadDocumentDrive(this.data._id, documentInfo).subscribe(
         updated => {
@@ -360,7 +362,6 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
   onErrored(error: any) {
     // do anything
-    // console.log(error);    
   }
 
   /*Se lanza cuando se cambia la foto*/
@@ -400,10 +401,8 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   }
   uploadFile() {
     this.loading = true;
-    // console.log('upload');
     const red = new FileReader;
     red.addEventListener('load', () => {
-      // console.log(red.result);
       let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg' , bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
 
       this.inscriptionsProv.uploadFile2(file).subscribe(
@@ -465,8 +464,6 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.file;
     this.croppedImageBase64 = event.base64;
-    // console.log('crop');
-
   }
   imageLoaded() {
     // show cropper
@@ -619,9 +616,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     }).then((result) => { });
   }
 
-  hasCertificate(ev){    
+  hasCertificate(ev){
     this.hasCert = ev.checked;
-    console.log(this.hasCert);
-    
   }
 }

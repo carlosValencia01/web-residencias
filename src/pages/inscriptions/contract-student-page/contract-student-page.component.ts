@@ -6,6 +6,7 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 
 
 
@@ -55,7 +56,6 @@ export class ContractStudentPageComponent implements OnInit {
     this.convertNumericalMonth();
     this.getIdStudent();
     this.getFolderId();
-    // console.log(this.currentDate);
   }
 
   ngOnInit() {
@@ -84,14 +84,12 @@ export class ContractStudentPageComponent implements OnInit {
 
   onChange(event) {
     this.acceptedTerms = !this.acceptedTerms;
-    // console.log(this.acceptedTerms);
   }
 
   async continue() {
     this.loading=true;
     var data = { acceptedTerms: this.acceptedTerms, dateAcceptedTerms: this.currentDate }
     await this.updateStudent(data, this._idStudent);
-    
   }
 
   async updateStudent(data, id) {
@@ -99,7 +97,7 @@ export class ContractStudentPageComponent implements OnInit {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Contrato ...', 'Esto puede tardar unos minutos');
         this.generatePDF();
     });
-  }  
+  }
 
   convertNumericalMonth() {
     switch (this.currentDate.getMonth()) {
@@ -236,16 +234,13 @@ export class ContractStudentPageComponent implements OnInit {
   getFolderId() {
     this.data = this.cookiesServ.getData().user;
     this._idStudent = this.data._id;
-    this.studentProv.getFolderId(this._idStudent).subscribe(
-      student=>{
-        // console.log(student,'contratooo');
-        if(student.folder){// folder exists
-          if(student.folder.idFolderInDrive){
-            this.folderId = student.folder.idFolderInDrive;
-            // console.log(this.folderId,'folder student exists');                     
-          }
-        }          
-      });
+    this.studentProv.getDriveFolderId(this.cookiesServ.getData().user.email,eFOLDER.INSCRIPCIONES).subscribe(
+      (folder)=>{
+         this.folderId =  folder.folderIdInDrive;
+       },
+       err=>{console.log(err);
+       }
+       );
   }
 
   saveDocument(document) {

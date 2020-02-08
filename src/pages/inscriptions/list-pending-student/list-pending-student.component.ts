@@ -79,7 +79,6 @@ export class ListPendingStudentComponent implements OnInit {
     private studentProv: StudentProvider
   ) { 
     this.rolName = this.cookiesService.getData().user.rol.name;
-    //console.log(this.rolName);
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -122,8 +121,7 @@ export class ListPendingStudentComponent implements OnInit {
         return a.fatherLastName.localeCompare(b.fatherLastName);
       });
       this.listStudentsPending = this.students;
-      //console.log(this.listStudents);     
-      this.eventFilterStatus();        
+      this.eventFilterStatus();
     });
   }
 
@@ -186,7 +184,6 @@ export class ListPendingStudentComponent implements OnInit {
    // FILTRADO POR CARRERA O ESTATUS
    filterItems(carreer, EC, E, EP, V, A) {
     return this.students.filter(function (student) {
-      //console.log(student);
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
         student.inscriptionStatus.toLowerCase().indexOf(EC.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(E.toLowerCase()) > -1 ||
@@ -206,16 +203,14 @@ export class ListPendingStudentComponent implements OnInit {
 
   getPeriods(){
     let sub = this.inscriptionsProv.getAllPeriods()
-      .subscribe(periods => {       
-        this.periods=periods.periods;     
-        //console.log(this.periods); 
-        this.periods.reverse();                        
+      .subscribe(periods => {
+        this.periods=periods.periods;
+        this.periods.reverse();
         sub.unsubscribe();
       });
   }
 
   updateGI(student){
-    //console.log(student);
     const linkModal = this.dialog.open(StudentInformationComponent, {
       data: {
         operation: 'view',
@@ -227,8 +222,7 @@ export class ListPendingStudentComponent implements OnInit {
       height: '800px'
     });
     let sub = linkModal.afterClosed().subscribe(
-      information=>{         
-        //console.log(information);
+      information=>{
         this.getStudents();
       },
       err=>console.log(err), ()=> sub.unsubscribe()
@@ -249,9 +243,7 @@ export class ListPendingStudentComponent implements OnInit {
     });
     let sub = linkModal.afterClosed().subscribe(
       expedient=>{
-        this.getStudents();  
-        // console.log(expedient);
-        
+        this.getStudents();
       },
       err=>console.log(err), ()=> sub.unsubscribe()
     );
@@ -286,8 +278,7 @@ export class ListPendingStudentComponent implements OnInit {
             height: '800px'
           });
           let sub = linkModal.afterClosed().subscribe(
-            analysis=>{         
-              //console.log(analysis);
+            analysis=>{
               this.getStudents();
             },
             err=>console.log(err), ()=> sub.unsubscribe()
@@ -373,8 +364,7 @@ export class ListPendingStudentComponent implements OnInit {
         }
       }
       default:{
-        console.log('nada');
-        
+
       }
     }
   }
@@ -789,7 +779,6 @@ export class ListPendingStudentComponent implements OnInit {
         let binary = this.bufferToBase64(document);
     
         this.updateDocument(binary,student);
-        // console.log(binary);
         // window.open(doc.output('bloburl'), '_blank');    
       }
     });
@@ -813,17 +802,12 @@ export class ListPendingStudentComponent implements OnInit {
       newF: false, 
       fileId: fileId
     };
-    console.log(documentInfo);
-    
-    
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-      async updated => {     
-        console.log(updated);
-           
+      async updated => {
         const documentInfo2 = {
           doc: {
             filename: updated.filename,
-            type: 'DRIVE',          
+            type: 'DRIVE',
             fileIdInDrive: updated.fileId
           },
           status: {
@@ -832,7 +816,6 @@ export class ListPendingStudentComponent implements OnInit {
             message: 'Se envio por primera vez'
           }
         };
-        
         await this.studentProv.uploadDocumentDrive(student._id, documentInfo2).subscribe(
           updated => {
             this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');    

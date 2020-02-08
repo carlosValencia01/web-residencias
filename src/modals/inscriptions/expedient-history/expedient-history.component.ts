@@ -33,8 +33,6 @@ export class ExpedientHistoryComponent implements OnInit {
     this.studentProv.getDriveDocuments(this.data.student).subscribe(
       docs=>{
         let documents = docs.documents;
-        // console.log(this.data.filename);
-        
         this.status = documents.filter( docc => docc.filename.indexOf(this.data.filename === 'NÚMERO DE SEGURO SOCIAL' ? 'NSS' : this.data.filename === 'CARTA COMPROMISO' ? 'COMPROMISO' : this.data.filename) !== -1)[0].status;          
       }
     );

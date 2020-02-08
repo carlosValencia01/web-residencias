@@ -156,8 +156,6 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
   }
 
   changeEventStatus(ev) {
-    console.log(ev);
-
     let i = 0, oldEvent = '';
     if (ev.status === 2) {
 
@@ -222,13 +220,10 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
   }
 
   updateEvent(event){
-    console.log(event);
-    
-
     const linkModal = this.dialog.open(NewEventComponent, {
       data: {
         operation: 'edit',
-        event     
+        event
       },
       disableClose: true,
       hasBackdrop: true,
@@ -296,10 +291,9 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       students=>{
         s.unsubscribe();
         const studentsMap = students.map(st=> ({nc:st.payload.doc.get('nc'),}));
-        console.log(studentsMap);
         studentsMap.forEach(elem=>{
           this.firestoreService.asignEvent('agodic2019',elem.nc).then(
-            sd=>{console.log(elem.nc);
+            sd=>{
             }
           );
         });

@@ -166,7 +166,6 @@ export class UploadFilesComponent implements OnInit {
         break;
       }
     }
-    // console.log('ES BASE ', isBase64, 'pdf', pdf, 'type', typeof (pdf));
     if (!isBase64) {
       if (pdf !== null) {
         this.openView(pdf, isBase64, type);
@@ -485,7 +484,6 @@ export class UploadFilesComponent implements OnInit {
             type: type, dateRegistered: new Date(), path: '',
             status: eStatusRequest.NONE, file: fileUpload.file, isBase64: false
           });
-          console.log("Docume", this.Documents);
         } else {
           archivo.file = fileUpload.file;
           archivo.isBase64 = false;
@@ -551,8 +549,6 @@ export class UploadFilesComponent implements OnInit {
     if (typeof (event.target.files) !== 'undefined' && event.target.files.length > 0) {
       const type = <eFILES><keyof typeof eFILES>file;
       const archivo = this.getDocument(type);
-      console.log("Srhico upo", archivo);
-      console.log("archivo type", type);
       if (typeof (archivo) === 'undefined') {
         this.Documents.push({
           type: type, dateRegistered: new Date(), path: '',

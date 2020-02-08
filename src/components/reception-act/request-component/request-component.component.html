@@ -194,7 +194,7 @@
       <div *ngSwitchCase="0">
         <button type="submit" class="btn btn-outline-success" style="margin-right: 0.3em"
           [disabled]="frmRequest.invalid">Guardar</button>
-        <button type="reset" class="btn btn-outline-danger">Reiniciar</button>
+        <button type="button" class="btn btn-outline-danger" (click)="cleanForm()">Reiniciar</button>
       </div>
       <div *ngSwitchCase="5">
         <button *ngIf="isSentVerificationCode" type="button" (click)="verifyEmail()" class="btn btn-outline-primary"

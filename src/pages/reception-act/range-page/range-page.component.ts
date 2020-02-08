@@ -41,7 +41,6 @@ export class RangePageComponent implements OnInit {
     const Empleados = new Array<Object>();
     this._RangeProvider.getAll()
       .subscribe(data => {
-        console.log("Ranges", data);
         this.ranges = data.ranges;
         this.refresh();
       }, error => {
@@ -61,7 +60,6 @@ export class RangePageComponent implements OnInit {
 
     ref.afterClosed().subscribe((result: IRange) => {
       if (result) {
-        // console.log("Value", result);
         this._RangeProvider.add(result).subscribe(data => {
           this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Rango registrado exitosamente', '');
           this.ranges.push(result);
