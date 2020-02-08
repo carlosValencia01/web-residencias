@@ -470,7 +470,7 @@ export class ProgressPageComponent implements OnInit {
     }
   }
 
-  approve(Identificador): void {
+  approve(Identificador,studentId): void {
     Swal.fire({
       title: 'Estatus del Acto Recepcional',
       type: 'question',
@@ -495,7 +495,8 @@ export class ProgressPageComponent implements OnInit {
       if (typeof (response.value) !== 'undefined') {
         const linkModal = this.dialog.open(BookComponent, {
           data: {
-            operation: 'create'
+            operation: 'create',
+            data: studentId
           },
           disableClose: true,
           hasBackdrop: true,
@@ -520,13 +521,14 @@ export class ProgressPageComponent implements OnInit {
             }
             if (book.action === 'create') {
               data.registry = book.book;
-              this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
+              console.log(book.book);
+              /*this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
                 this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
                 this.loadRequest();
               }, error => {
                 let tmpJson = JSON.parse(error._body);
                 this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
-              });
+              });*/
             }
           },
           err => console.log(err)
