@@ -17,7 +17,7 @@ export class ObservationsComponentComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   public displayedColumns: string[];
-
+  private STATUS: string = 'Accept Reject Process Error None';
   constructor(
     public dialogRef: MatDialogRef<ObservationsComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -25,27 +25,30 @@ export class ObservationsComponentComponent implements OnInit {
     this.request = this.data.request;
     this.observations = <iObservation[]>this.request.history.slice();
     this.observations.forEach(e => {
-      e.status = this.convertStatus(e.status);
+      e.status = this.STATUS.includes(e.status) ? this.convertStatus(e.status) : e.status;
       const date = new Date(e.achievementDate);
       e.achievementDateString = date.toLocaleDateString();
-    });
-
-
-  } 
+    });    
+    this.observations = this.observations.reverse();    
+  }
 
   ngOnInit() {
     this.displayedColumns = ['phase', 'status', 'observation', 'achievementDateString', 'doer'];
     this.dataSource = new MatTableDataSource(this.observations);
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;    
+    this.dataSource.sort = this.sort;
   }
 
   convertStatus(status: string): string {
     let value = '';
     switch (status) {
+      case 'None': {
+        value = 'Pendiente';
+        break;
+      }
       case 'Process':
         {
-          value = 'Pendiente';
+          value = 'Process';
           break;
         }
       case 'Error':
