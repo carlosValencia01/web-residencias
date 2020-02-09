@@ -15,15 +15,51 @@
   </div>
 </div>
 
-<div class="form-group row">
+<div class="row" *ngIf="existWarning!==''">
+  <div class="col-12 alert alert-warning" role="alert">
+    {{existWarning}}
+  </div>
+</div>
+
+
+<div class="form-group row" *ngIf="!notFound">
   <label for="txtSearch" class="col-sm-2 col-form-label">Buscar</label>
   <div class="col-sm-10 input-group input-group-sm">
     <input type="text" id="txtSearch" [(ngModel)]="controlNumber" class="form-control" placeholder="Número de Control">
     <div class="input-group-append">
-      <span class="input-group-text" (click)="onSearch()"><i class="fa fa-search"></i></span>
+      <span class="input-group-text" (click)="onSearch()"><i class="fa fa-search" data-toggle="tooltip"
+          title="Buscar"></i></span>
     </div>
   </div>
 </div>
+
+<div class="row" *ngIf="notFound">
+  <div class="col-6">
+    <div class="form-group row">
+      <label for="txtSearch" class="col-sm-2 col-form-label">Buscar</label>
+      <div class="col-sm-10 input-group input-group-sm">
+        <input type="text" id="txtSearch" [(ngModel)]="controlNumber" class="form-control"
+          placeholder="Número de Control">
+
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="form-group row">
+      <label for="txtNip" class="col-sm-2 col-form-label">Nip</label>
+      <div class="col-sm-10 input-group input-group-sm">
+        <input type="password" id="txtNip" [(ngModel)]="nip" class="form-control" placeholder="Nip">
+        <div class="input-group-append">
+          <span class="input-group-text" (click)="onSearch()"><i class="fa fa-search" data-toggle="tooltip"
+              title="Buscar"></i></span>
+          <span class="input-group-text" (click)="onClose()"><i class="fa fa-close" data-toggle="tooltip"
+              title="Cancelar"></i></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <form [formGroup]="frmNewTitle" (ngSubmit)="onSubmit()">
   <mat-dialog-content>

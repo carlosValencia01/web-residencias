@@ -46,6 +46,11 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
+    getByControlNumberSII(data: { controlNumber: string, nip: string }) {
+        return this.api.post('user/titled/register', data)
+            .pipe(map(student => student.json()));
+    }
+
     getProfileImage(id) {
         return this.api.get(`student/image/${id}`, { responseType: ResponseContentType.Blob })
             .pipe(map((res: Response) => res.blob()));
@@ -176,7 +181,7 @@ export class StudentProvider {
         return this.api.get(`student/get/documents/status/${_id}`).pipe(map(res => res.json()));
     }
 
-    sendNotification(data){
+    sendNotification(data) {
         return this.api.post(`student/notify`, data, true).pipe(map(res => res.json()));
     }
 }

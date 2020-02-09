@@ -252,6 +252,8 @@ import { UploadFileTitledComponent } from '../components/reception-act/upload-fi
 import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
 import { NewTitleComponent } from '../modals/reception-act/new-title/new-title.component';
 import { SafePipe } from 'src/pipes/safePipe.pipe';
+import { ChangeJuryComponent } from 'src/modals/reception-act/change-jury/change-jury.component';
+import { DocumentTypePipe } from 'src/pipes/doumentType.pipe';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -387,6 +389,8 @@ registerLocaleData(localeEs);
 
     //Pipes
     SafePipe,
+    DocumentTypePipe,
+    ChangeJuryComponent,
   ],
   imports: [
     // Angular
@@ -541,6 +545,7 @@ registerLocaleData(localeEs);
     NewTitleComponent,
     BookComponent,
     NewBookComponent,
+    ChangeJuryComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,

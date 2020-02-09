@@ -63,4 +63,5 @@ export interface iRequest {
         date: Date,
         career: string
     };
+    isIntegral?: boolean;
 }
