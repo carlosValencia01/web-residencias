@@ -38,6 +38,8 @@ export class ReviewExpedientComponent implements OnInit {
   docto;  
   refused;
   loading = false;
+  showInputCurp = false;
+  showInputNss = false;
 
   acceptDocuments = [
     { filename: '', checkActa: false, status: false, statusname: '' },
@@ -185,6 +187,12 @@ export class ReviewExpedientComponent implements OnInit {
   }
 
   cardClick(card) {
+    if(card === 'curp'){
+      this.showInputCurp = true;
+    } else {this.showInputCurp = false;}
+    if(card === 'nss'){
+      this.showInputNss = true;
+    } else {this.showInputNss = false;}
     if (card === this.prevCard) {
       this.viewdoc = !this.viewdoc;
     } else {
@@ -485,9 +493,28 @@ export class ReviewExpedientComponent implements OnInit {
   }
   updateCurp(){
     this.studentProv.updateStudent(this.data.student._id,{curp:this.data.student.curp}).subscribe(up=>{
-      this.notificationsServices.showNotification(eNotificationType.SUCCESS,
-        'Exito', 'CURP actualizada correctamente.');
+      this.swalDialogCurpNss('Curp actualizada correctamente.');
     }, err=>{console.log(err);
+    });
+  }
+
+  updateNss(){
+    this.studentProv.updateStudent(this.data.student._id,{nss:this.data.student.nss}).subscribe(up=>{
+      this.swalDialogCurpNss('NSS actualizado correctamente.');
+    }, err=>{console.log(err);
+    });
+  }
+
+  swalDialogCurpNss(msg) {
+    return Swal.fire({
+      title: 'Exito',
+      type: 'success',
+      text: msg,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {
+      
     });
   }
 
