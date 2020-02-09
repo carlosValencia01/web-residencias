@@ -111,6 +111,7 @@ export class UploadFilesComponent implements OnInit {
   }
 
   onView(file) {
+    this.showLoading = true;
     const type = <eFILES><keyof typeof eFILES>file;
     let pdf: any;
     let isBase64: boolean;
@@ -168,12 +169,15 @@ export class UploadFilesComponent implements OnInit {
     }
     if (!isBase64) {
       if (pdf !== null) {
+        this.showLoading = false;
         this.openView(pdf, isBase64, type);
       }
     } else {
       this.requestProvider.getResource(this.Request._id, type).subscribe(data => {
+        this.showLoading = false;
         this.openView(data, isBase64, type);
       }, error => {
+        this.showLoading = false;
         this.notificationServices.showNotification(eNotificationType.ERROR,
           'Acto recepcional', error);
       });
@@ -223,7 +227,7 @@ export class UploadFilesComponent implements OnInit {
         break;
       }
       case eFILES.CURP: {
-        name = "CURPO";
+        name = "CURP";
         break;
       }
       case eFILES.CERTIFICADO_B: {

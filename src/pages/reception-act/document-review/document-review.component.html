@@ -59,7 +59,7 @@
         (click)="view(document.type)">
         <i *ngIf="document.type!='FOTOS'" class="fa fa-file-pdf-o mx-2"></i>
         <i *ngIf="document.type=='FOTOS'" class="fa fa-file-image-o mx-2"></i>
-        {{document.type}}
+        {{document.type | documentType}}
         <div [ngSwitch]="document.status">
           <div *ngSwitchCase="'Pendiente'"><span mat-line
               class="badge badge-pill badge-process">{{document.status}}</span>

@@ -162,7 +162,7 @@ export class ExpedienteComponent implements OnInit {
         break;
       }
       case eFILES.RELEASED: {
-        name = "CONSTANCIA DE LIBERACION";
+        name = "CONSTANCIA DE LIBERACIÓN";
         break;
       }
       case eFILES.INCONVENIENCE: {
@@ -174,7 +174,7 @@ export class ExpedienteComponent implements OnInit {
         break;
       }
       case eFILES.CURP: {
-        name = "CURPO";
+        name = "CURP";
         break;
       }
       case eFILES.CERTIFICADO_B: {
@@ -295,7 +295,7 @@ export class ExpedienteComponent implements OnInit {
           data: {
             source: data,
             isBase64: true,
-            title: type
+            title: this.documentTitle(type)
           },
           disableClose: true,
           hasBackdrop: true,

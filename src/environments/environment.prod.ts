@@ -21,7 +21,8 @@ export const environment = {
     socialService: { video: 'https://drive.google.com/file/d/1dS90s_sNrs53puRwSxgONnmksG-_9V1A/preview', file: 'https://drive.google.com/file/d/1UdyctEPhR9TOz0YGQP2lCndsfJwzVwsl/preview' },
     constancyOfEnglish: { video: 'https://drive.google.com/file/d/1LNPRphPPo7PiItDz-ndLh18CXqd9p-lW/preview', file: 'https://drive.google.com/file/d/1SjrogJZ8ogGGAZ6UxQy2dUzV2ZPXIeiX/preview' },
     receiptOfPayment: { video: 'https://drive.google.com/file/d/1mCXFuwDLM1ElpolMDXAyoacBbd_QoiV7/preview', file: 'https://drive.google.com/file/d/1O57MjOX6Bhwv--6_8JNl2nLxOzf8k7oz/preview' },
-    revalidation: { video: 'https://drive.google.com/file/d/1a3-ieK15VDLUk6mn590FSmLpyKFSCsxI/preview', file: 'https://drive.google.com/file/d/1USYr2Ev94s3fe6s7caNGPUEWuNiFJ7U1/preview' }
+    revalidation: { video: 'https://drive.google.com/file/d/1a3-ieK15VDLUk6mn590FSmLpyKFSCsxI/preview', file: 'https://drive.google.com/file/d/1USYr2Ev94s3fe6s7caNGPUEWuNiFJ7U1/preview' },
+    ine: { video: 'https://drive.google.com/file/d/1B0F1IJqvlCWKlAZGsjKODuf76QrneaTX/preview', file: 'https://drive.google.com/file/d/16SJRFiL1uZpL8Bk6V788n8971qhU0MK-/preview' }
   },
   apiURL: 'https://api.cideti.com.mx/escolares/credenciales',
   eSignatureURL: 'https://api.cideti.com.mx/firma/v1',

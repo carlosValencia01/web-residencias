@@ -103,7 +103,7 @@ export class UploadFileTitledComponent implements OnInit {
     });
   }
 
-  onView(file) {
+  async onView(file) {
     const type = <eFILES><keyof typeof eFILES>file;
     let pdf: any;
     let isBase64: boolean;
@@ -130,11 +130,17 @@ export class UploadFileTitledComponent implements OnInit {
         this.openView(pdf, isBase64, type);
       }
     } else {
+      this.showLoading = true;
+      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Recuperando Archivo");
+      await this.delay(5000);
       this._RequestProvider.getResource(this.Request._id, type).subscribe(data => {
+        this.showLoading = false;
         this.openView(data, isBase64, type);
-      }, error => {
+
+      }, error => {        
+        this.showLoading = false;
         this._NotificationsServices.showNotification(eNotificationType.ERROR,
-          'Acto Recepcional', error);
+          'Acto Recepcional', 'Archivo no recuperado');
       });
     }
   }
@@ -144,7 +150,7 @@ export class UploadFileTitledComponent implements OnInit {
       data: {
         source: source,
         isBase64: isBase64,
-        title: type
+        title: this.documentTitle(type)
       },
       disableClose: true,
       hasBackdrop: true,
@@ -241,6 +247,31 @@ export class UploadFileTitledComponent implements OnInit {
 
   }
 
+  documentTitle(type: eFILES): string {
+    let name: string;
+    switch (type) {
+      case eFILES.INE: {
+        name = 'INE';
+        break;
+      }
+      case eFILES.XML: {
+        name = 'XML DE CÉDULA';
+        break;
+      }
+      case eFILES.CED_PROFESIONAL: {
+        name = 'CÉDULA PROFESIONAL';
+        break;
+      }
+      default: {
+        name = "DESCONOCIDO";
+      }
+    }
+    return name;
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }
 interface IDocument {
   type?: eFILES;

@@ -84,7 +84,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.INGLES: {
-        this.title = "AYUDA DE LIBERACIÓN DE INGLES";
+        this.title = "AYUDA DE LIBERACIÓN DE INGLÉS";
         this.existsFileHelper = environment.documentHelper.constancyOfEnglish.file !== '';
         this.existsVideoHelper = environment.documentHelper.constancyOfEnglish.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.constancyOfEnglish.file : '';
@@ -105,8 +105,32 @@ export class StepperDocumentComponent implements OnInit {
         this.existsVideoHelper = environment.documentHelper.revalidation.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.revalidation.file : '';
         this.URLVideo = this.existsVideoHelper ? environment.documentHelper.revalidation.video : '';
-      }
         break;
+      }
+      case eFILES.INE: {
+        this.title = "AYUDA DE INE";
+        this.existsFileHelper = environment.documentHelper.ine.file !== '';
+        this.existsVideoHelper = environment.documentHelper.ine.video !== '';
+        this.URLFile = this.existsFileHelper ? environment.documentHelper.ine.file : '';
+        this.URLVideo = this.existsVideoHelper ? environment.documentHelper.ine.video : '';
+        break;
+      }
+      case eFILES.XML: {
+        this.title = "AYUDA DE XML DE CÉDULA";
+        // this.existsFileHelper = environment.documentHelper.revalidation.file !== '';
+        // this.existsVideoHelper = environment.documentHelper.revalidation.video !== '';
+        // this.URLFile = this.existsFileHelper ? environment.documentHelper.revalidation.file : '';
+        // this.URLVideo = this.existsVideoHelper ? environment.documentHelper.revalidation.video : '';
+        break;
+      }
+      case eFILES.CED_PROFESIONAL: {
+        this.title = "AYUDA DE CÉDULA PROFESIONAL";
+        // this.existsFileHelper = environment.documentHelper.revalidation.file !== '';
+        // this.existsVideoHelper = environment.documentHelper.revalidation.video !== '';
+        // this.URLFile = this.existsFileHelper ? environment.documentHelper.revalidation.file : '';
+        // this.URLVideo = this.existsVideoHelper ? environment.documentHelper.revalidation.video : '';
+        break;
+      }
     }
   }
   ngOnInit() {
