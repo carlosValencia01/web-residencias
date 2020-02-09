@@ -31,6 +31,7 @@ import { CurrentPositionService } from 'src/services/shared/current-position.ser
 import { ICareer } from 'src/entities/shared/career.model';
 import { BookComponent } from 'src/modals/reception-act/book/book.component';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
+import { ChangeJuryComponent } from 'src/modals/reception-act/change-jury/change-jury.component';
 
 @Component({
   selector: 'app-progress-page',
@@ -195,6 +196,7 @@ export class ProgressPageComponent implements OnInit {
     tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
     tmp.registry = element.registry;
     tmp.documents = element.documents;
+    tmp.isIntegral = typeof (element.isIntegral) !== 'undefined' ? element.isIntegral : true;
     return tmp;
   }
 
@@ -230,7 +232,7 @@ export class ProgressPageComponent implements OnInit {
       data: { reqId: Identificador }
     });
 
-    ref.afterClosed().subscribe((valor: { response: boolean, data: { QR: any, ESTAMP: any, RESPONSE: boolean } }) => {      
+    ref.afterClosed().subscribe((valor: { response: boolean, data: { QR: any, ESTAMP: any, RESPONSE: boolean } }) => {
       if (typeof (valor) !== 'undefined' && valor.response) {
         this.showLoading = true;
         const data = {
@@ -544,45 +546,120 @@ export class ProgressPageComponent implements OnInit {
     this.showLoading = false;
   }
 
-  generated(Identificador: string, operation: string): void {
-    Swal.fire({
-      title: '¿Está seguro de continuar con la operación?',
-      type: 'question',
-      showCancelButton: true,
-      allowOutsideClick: false,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      cancelButtonText: 'Cancelar',
-      confirmButtonText: 'Aceptar'
-    }).then((result) => {
-      if (result.value) {
-        const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
-        let data = {
-          doer: this._CookiesService.getData().user.name.fullName,
-          observation: '',
-          phase: eRequest.GENERATED,
-          operation: eOperation// eStatusRequest.PROCESS
-        };
-
-        this.requestProvider.updateRequest(Identificador, data).subscribe(async (_) => {
-          if (eOperation === eStatusRequest.PROCESS) {
-            this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Creando Acta de Examen');
-            this.showLoading = true;
-            const _request: iRequest = this.getRequestById(Identificador);
-            const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
-            await this.delay(3000);
-            window.open(oRequest.testReport().output('bloburl'), '_blank');
-            this.showLoading = false;
-            // setTimeout(() => {window.open(oRequest.testReport().output('bloburl'), '_blank');}, 500);
-          }
-          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional',
-            (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : (eOperation === eStatusRequest.PRINTED) ? 'Acta de Examen Impresa' : 'Acta de Examen Entregada'));
-          this.loadRequest();
-        }, error => {
-          let tmpJson = JSON.parse(error._body);
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', tmpJson.message);
+  async generated(Identificador: string, operation: string) {
+    const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
+    if (eOperation === eStatusRequest.PROCESS) {
+      const response = await this.showAlert("¿Hubo un cambio de jurado?", { accept: "Si", cancel: "No" });
+      if (response) {
+        const _Request = this.getRequestById(Identificador);
+        const ref = this.dialog.open(ChangeJuryComponent, {
+          data: {
+            request: _Request
+          },
+          disableClose: true,
+          hasBackdrop: true,
+          width: '45em'
         });
+
+        ref.afterClosed().subscribe(async (result) => {
+          if (typeof (result) !== 'undefined' && result.response) {
+            this.showLoading = true;
+            this._NotificationsServices.showNotification(eNotificationType.INFORMATION,
+              "Acto Recepcional", "Regenerando oficio de jurado");
+            this.loadRequest();
+            const _Request = this.getRequestById(Identificador);
+            let oRequest = new uRequest(_Request, this._ImageToBase64Service, this._CookiesService);
+            this.getFolder(_Request.controlNumber);
+            await this.delay(2000);
+            const data_oficio = {
+              file: {
+                mimetype: "application/pdf",
+                data: oRequest.documentSend(eFILES.OFICIO),
+                name: eFILES.OFICIO + '.pdf',
+              },
+              folderId: this.folderId,
+              isJsPdf: true,
+              Document: eFILES.OFICIO,
+              phase: _Request.phase,
+              IsEdit: 'true'
+            }
+            let response = await new Promise(resolve => {
+              this.requestProvider.uploadFile(Identificador, data_oficio).subscribe((response) => {
+                window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
+                resolve(true);
+              }, error => {
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+                resolve(false);
+              });
+            });
+            this.showLoading = false;
+            if (response) {
+              this.testReportGenerate(Identificador, eOperation);
+            }
+            else {
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Actualización del oficio fallida");
+            }
+          }
+        });
+
+      } else {
+        const response = await this.showAlert("¿Está seguro de crear el Acta de Examen?", { accept: "Si", cancel: "No" });
+        if (response) {
+          this.testReportGenerate(Identificador, eOperation);
+        }
       }
+    }
+    else {
+      const response = await this.showAlert("¿Está seguro de continuar con la operación?", { accept: "Si", cancel: "No" });
+      if (response) {
+        this.testReportGenerate(Identificador, eOperation);
+      }
+    }
+  }
+
+  showAlert(message: string, buttons: { accept: string, cancel: string } = { accept: "Aceptar", cancel: "Cancelar" }) {
+    return new Promise((resolve) => {
+      Swal.fire({
+        title: message,
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: buttons.cancel,
+        confirmButtonText: buttons.accept
+      }).then((result) => {
+        if (result.value)
+          resolve(true);
+        else
+          resolve(false);
+      });
+    });
+  }
+
+  testReportGenerate(Identificador: string, eOperation: eStatusRequest): void {
+    let data = {
+      doer: this._CookiesService.getData().user.name.fullName,
+      observation: '',
+      phase: eRequest.GENERATED,
+      operation: eOperation// eStatusRequest.PROCESS
+    };
+
+    this.requestProvider.updateRequest(Identificador, data).subscribe(async (_) => {
+      if (eOperation === eStatusRequest.PROCESS) {
+        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Creando Acta de Examen');
+        this.showLoading = true;
+        const _request: iRequest = this.getRequestById(Identificador);
+        const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
+        await this.delay(3000);
+        window.open(oRequest.testReport().output('bloburl'), '_blank');
+        this.showLoading = false;
+      }
+      this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : (eOperation === eStatusRequest.PRINTED) ? 'Acta de Examen Impresa' : 'Acta de Examen Entregada'));
+      this.loadRequest();
+    }, error => {
+      let tmpJson = JSON.parse(error._body);
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', tmpJson.message);
     });
   }
 
@@ -652,7 +729,7 @@ export class ProgressPageComponent implements OnInit {
 
   checkReleased(_id: string) {
     const Request = this.getRequestById(_id);
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Procesando Liberacion");
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Procesando Liberación");
     this.showLoading = true;
     this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
       this.showLoading = false;
@@ -765,47 +842,81 @@ export class ProgressPageComponent implements OnInit {
     let _request = this.getRequestById(_id);
     let oRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
     this.getFolder(_request.controlNumber);
-    await this.delay(3000);
-    window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
-    const data = {
+
+    await this.delay(2000);
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando oficio de jurado");
+    const data_oficio = {
       file: {
         mimetype: "application/pdf",
-        data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
-        name: eFILES.JURAMENTO_ETICA + '.pdf',
+        data: oRequest.documentSend(eFILES.OFICIO),
+        name: eFILES.OFICIO + '.pdf',
       },
       folderId: this.folderId,
       isJsPdf: true,
-      Document: eFILES.JURAMENTO_ETICA,
+      Document: eFILES.OFICIO,
       phase: _request.phase,
       IsEdit: 'true'
     }
-    this.requestProvider.uploadFile(_id, data).subscribe((response) => {
-      if (_request.status === 'Pendiente') {
-        let data = {
-          doer: this._CookiesService.getData().user.name.fullName,
-          observation: '',
-          phase: eRequest.REALIZED,
-          operation: eStatusRequest.PROCESS
-        };
-        this.requestProvider.updateRequest(_id, data).subscribe((response) => {
-          window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
-          this.loadRequest();
-          this.showLoading = false;
-        }, error => {
-          this.showLoading = false;
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
-        });
-      }
-      else {
-        window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
-        this.showLoading = false;
-      }
-    }, error => {
-      this.showLoading = false;
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+
+    let response = await new Promise(resolve => {
+      this.requestProvider.uploadFile(_id, data_oficio).subscribe((response) => {
+        if (_request.status === 'Pendiente') {
+          window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
+          resolve(true);
+        }
+        else {
+          window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
+          resolve(true);
+        }
+      }, error => {
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+        resolve(false);
+      });
     });
 
-
+    if (response) {
+      const data = {
+        file: {
+          mimetype: "application/pdf",
+          data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
+          name: eFILES.JURAMENTO_ETICA + '.pdf',
+        },
+        folderId: this.folderId,
+        isJsPdf: true,
+        Document: eFILES.JURAMENTO_ETICA,
+        phase: _request.phase,
+        IsEdit: 'true'
+      }
+      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando código de ética");
+      this.requestProvider.uploadFile(_id, data).subscribe((response) => {
+        if (_request.status === 'Pendiente') {
+          let data = {
+            doer: this._CookiesService.getData().user.name.fullName,
+            observation: '',
+            phase: eRequest.REALIZED,
+            operation: eStatusRequest.PROCESS
+          };
+          this.requestProvider.updateRequest(_id, data).subscribe((response) => {
+            window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+            this.loadRequest();
+            this.showLoading = false;
+          }, error => {
+            this.showLoading = false;
+            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+          });
+        }
+        else {
+          window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+          this.showLoading = false;
+        }
+      }, error => {
+        this.showLoading = false;
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+      });
+    }
+    else {
+      this.showLoading = false;
+    }
   }
 
   delay(ms: number) {
@@ -830,6 +941,7 @@ interface iRequestSource {
   lastModifiedLocal?: string;
   phase?: string;
   status?: string;
+  isIntegral?: boolean;
   action?: string;
 }
 
