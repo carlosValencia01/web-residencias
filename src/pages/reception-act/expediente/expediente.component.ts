@@ -41,6 +41,7 @@ export class ExpedienteComponent implements OnInit {
   public FilePago: iDocument;
   public FileRevalidacion: iDocument;
   public FilePhotos: iDocument;
+  public FileOficio: iDocument;
   private _Request: uRequest;
   public changeDocument: boolean;
   public role: string;
@@ -144,6 +145,7 @@ export class ExpedienteComponent implements OnInit {
     this.FileServicio = this.getDocument(eFILES.SERVICIO);
     this.FilePago = this.getDocument(eFILES.PAGO);
     this.FilePhotos = this.getDocument(eFILES.PHOTOS);
+    this.FileOficio = this.getDocument(eFILES.OFICIO);
   }
 
   documentTitle(type: eFILES): string {
@@ -221,6 +223,10 @@ export class ExpedienteComponent implements OnInit {
         name = "CÉDULA PROFESIONAL";
         break;
       }
+      case eFILES.OFICIO: {
+        name = "OFICIO DE JURADO";
+        break;
+      }
       default: {
         name = "DESCONOCIDO";
       }
@@ -284,6 +290,10 @@ export class ExpedienteComponent implements OnInit {
       }
       case eFILES.CERTIFICADO_R: {
         exists = typeof (this.FileRevalidacion) !== 'undefined';
+        break;
+      }
+      case eFILES.OFICIO: {
+        exists = typeof (this.FileOficio) !== 'undefined';
         break;
       }
     }

@@ -561,7 +561,41 @@
         </div>
 
         <div class="col-3">
-
+          <mat-card
+            [ngClass]="{'accept':whatStatus(FileOficio)==='Accept', 'none':whatStatus(FileOficio)==='None','reject':whatStatus(FileOficio)==='Reject','process':whatStatus(FileOficio)==='Process'}">
+            <mat-card-header>
+              <mat-card-subtitle>
+                <p
+                  [ngClass]="{'acceptText':whatStatus(FileOficio)==='Accept', 'noneText':whatStatus(FileOficio)==='None','rejectText':whatStatus(FileOficio)==='Reject','processText':whatStatus(FileOficio)==='Process'}">
+                  Oficio Jurado
+                </p>
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div [ngSwitch]="whatStatus(FileOficio)">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('OFICIO_JURADO')">
+                  <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                  <p class="card-text">En revision</p>
+                </div>
+                <div *ngSwitchCase="'Omit'" class="text-center">
+                  <img alt="File" src="../../assets/imgs/notfound.png" style="width: 50px; height: 50px">
+                  <p class="card-text">Omitido</p>
+                </div>
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('OFICIO_JURADO')">
+                  <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                  <p class="card-text">Aceptado</p>
+                </div>
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('OFICIO_JURADO')">
+                  <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  <p class="card-text">Rechazado</p>
+                </div>
+                <div *ngSwitchCase="'None'" class="text-center">
+                  <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  <p class="card-text">Sin enviar</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
 
         <div class="col-3">
