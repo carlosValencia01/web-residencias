@@ -24,14 +24,12 @@ export class NewTitleComponent implements OnInit {
   public existWarning: string = '';
   public frmNewTitle: FormGroup;
   public controlNumber: string;
-  public nip: string;
   private juryInfo: Array<{ name: string, title: string, cedula: string }>;
   public options: Array<string>;
   public products: Array<Array<string>>;
   public index: number = 0;
   public title: string;
   public date: Date;
-  public notFound: boolean;
   public showLoading: boolean;
   private event: { appointment: Date, minutes: number, abbreviation: string };
   public request: {
@@ -113,8 +111,6 @@ export class NewTitleComponent implements OnInit {
   }
   onClose() {
     this.controlNumber = '';
-    this.nip = '';
-    this.notFound = false;
     this.existError = '';
     this.existWarning = '';
   }
@@ -122,76 +118,61 @@ export class NewTitleComponent implements OnInit {
   onSearch() {
     this.existError = '';
     this.existWarning = '';
-    this.showLoading=true;
-    if (this.notFound) {
-      this.notFound = false;
-      if (typeof (this.controlNumber) !== 'undefined' && this.controlNumber.trim() !== '' && typeof (this.nip) !== 'undefined' && this.nip.trim() !== '') {
-        this._StudentProvider.getByControlNumberSII({ controlNumber: this.controlNumber, nip: this.nip }).subscribe(
-          student => {
-            this.showLoading=false;
-            this.nip = '';
-            this.controlNumber = '';
-            this.request = {
-              studentId: student._id,
-              student: student.fullName,
-              career: student.career,
-              controlNumber: student.controlNumber,
-              phase: eRequest.REALIZED,
-              status: eStatusRequest.NONE
-            };
-            if (!student.isGraduate || !student.englishApproved) {
-              let errorGraduate = !student.isGraduate ? 'no esta graduado' : '';
-              let errorEnglish = !student.englishApproved ? 'carece de la liberación de ingles' : '';
-              let errorCompleted: 'no esta graduado y carece de la liberación de ingles';
-              this.existWarning = `El estudiante ${!student.isGraduate ?
-                (!student.englishApproved ? errorCompleted : errorGraduate) :
-                (!student.englishApproved ? errorEnglish : '')}`;
-            }
-            this.frmNewTitle.get("student").setValue(this.request.student);
-            this.frmNewTitle.get("career").setValue(this.request.career);
-            this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
-          }, error => {
-            this.showLoading=false;
-            const errorJson = JSON.parse(error._body);
-            this.request = { studentId: '', student: '', career: '', controlNumber: '' };
-            this.frmNewTitle.get("student").setValue(this.request.student);
-            this.frmNewTitle.get("career").setValue(this.request.career);
-            this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
-            this.existError = errorJson.error;
-            this.notFound = true;
-            // this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', errorJson.error);
-          });
-      }
-    }
-    else {
-      if (typeof (this.controlNumber) !== 'undefined' && this.controlNumber.trim() !== '') {
-        this._StudentProvider.getByControlNumber(this.controlNumber).subscribe(students => {
-          this.showLoading=false;
-          if (typeof (students) !== 'undefined' && typeof (students.student) !== 'undefined' && students.student.length > 0) {
-            this.request = {
-              studentId: students.student[0]._id,
-              student: students.student[0].fullName,
-              career: students.student[0].career,
-              controlNumber: students.student[0].controlNumber,
-              phase: eRequest.REALIZED,
-              status: eStatusRequest.NONE
-            };
-            this.frmNewTitle.get("student").setValue(this.request.student);
-            this.frmNewTitle.get("career").setValue(this.request.career);
-            this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
-          } else {            
-            this.existError = "Número de control no encontrado";
-            this.notFound = true;
-            this.request = { studentId: '', student: '', career: '', controlNumber: '' };
-            this.frmNewTitle.get("student").setValue(this.request.student);
-            this.frmNewTitle.get("career").setValue(this.request.career);
-            this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
-          }
-        }, error => {
-          this.showLoading=false;
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
-        });
-      }
+    this.showLoading = true;
+    if (typeof (this.controlNumber) !== 'undefined' && this.controlNumber.trim() !== '') {
+      this._StudentProvider.getByControlNumber(this.controlNumber).subscribe(students => {
+        if (typeof (students) !== 'undefined' && typeof (students.student) !== 'undefined' && students.student.length > 0) {
+          this.showLoading = false;
+          this.request = {
+            studentId: students.student[0]._id,
+            student: students.student[0].fullName,
+            career: students.student[0].career,
+            controlNumber: students.student[0].controlNumber,
+            phase: eRequest.REALIZED,
+            status: eStatusRequest.NONE
+          };
+          this.frmNewTitle.get("student").setValue(this.request.student);
+          this.frmNewTitle.get("career").setValue(this.request.career);
+          this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
+        } else {
+          this._StudentProvider.getByControlNumberSII({ controlNumber: this.controlNumber }).subscribe(
+            student => {
+              this.showLoading = false;
+              this.controlNumber = '';
+              this.request = {
+                studentId: student._id,
+                student: student.fullName,
+                career: student.career,
+                controlNumber: student.controlNumber,
+                phase: eRequest.REALIZED,
+                status: eStatusRequest.NONE
+              };
+              if (!student.isGraduate || !student.englishApproved) {
+                let errorGraduate = !student.isGraduate ? 'no esta graduado' : '';
+                let errorEnglish = !student.englishApproved ? 'carece de la liberación de ingles' : '';
+                let errorCompleted: 'no esta graduado y carece de la liberación de ingles';
+                this.existWarning = `El estudiante ${!student.isGraduate ?
+                  (!student.englishApproved ? errorCompleted : errorGraduate) :
+                  (!student.englishApproved ? errorEnglish : '')}`;
+              }
+              this.frmNewTitle.get("student").setValue(this.request.student);
+              this.frmNewTitle.get("career").setValue(this.request.career);
+              this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
+            }, error => {
+              this.showLoading = false;
+              const errorJson = JSON.parse(error._body);
+              this.request = { studentId: '', student: '', career: '', controlNumber: '' };
+              this.frmNewTitle.get("student").setValue(this.request.student);
+              this.frmNewTitle.get("career").setValue(this.request.career);
+              this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
+              this.existError = errorJson.error;
+              // this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', errorJson.error);
+            });
+        }
+      }, error => {
+        this.showLoading = false;
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
+      });
     }
   }
 

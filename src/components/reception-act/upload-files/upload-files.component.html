@@ -20,7 +20,7 @@
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <input #fileUploadActa type="file" accept="application/pdf" (change)="onUpload($event,'ACTA_NACIMIENTO')"
+            <input #fileUploadActa type="file" accept="application/pdf" (change)="onUpload($event,'2_ACTA_NACIMIENTO')"
               style="display: none">
             <div [ngSwitch]="UploadActa.status">
               <div *ngSwitchCase="'Accept'" class="text-center">
@@ -49,65 +49,65 @@
           <mat-card-actions align="end">
             <div *ngIf="isEditable">
               <div *ngIf="UploadActa.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('ACTA_NACIMIENTO')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('2_ACTA_NACIMIENTO')" data-toggle="tooltip"
                   data-placement="top" title="Enviar documento">send</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('ACTA_NACIMIENTO')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('2_ACTA_NACIMIENTO')" data-toggle="tooltip"
                   data-placement="top" title="Cancelar">close</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('2_ACTA_NACIMIENTO')" data-toggle="tooltip"
                   data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
               <div *ngIf="!UploadActa.file">
                 <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadActa.click()" data-toggle="tooltip"
                           data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('ACTA_NACIMIENTO')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('2_ACTA_NACIMIENTO')"
                   data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('2_ACTA_NACIMIENTO')" data-toggle="tooltip"
                   data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
             </div>
             <div *ngIf="!isEditable">
               <div [ngSwitch]="UploadActa.status">
                 <div *ngSwitchCase="'Accept'">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')" data-toggle="tooltip"
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('2_ACTA_NACIMIENTO')" data-toggle="tooltip"
                     data-placement="top" title="Ver documento">visibility</mat-icon>
                 </div>
                 <div *ngSwitchCase="'Process'" class="text-center">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')" data-toggle="tooltip"
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('2_ACTA_NACIMIENTO')" data-toggle="tooltip"
                     data-placement="top" title="Ver documento">visibility</mat-icon>
                 </div>
                 <div *ngSwitchCase="'Reject'" class="text-center">
                   <div *ngIf="UploadActa.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Enviar documento">send</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                   <div *ngIf="!UploadActa.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadActa.click()" data-toggle="tooltip"
                           data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                 </div>
                 <div *ngSwitchDefault>
                   <div *ngIf="UploadActa.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Enviar documento">send</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                   <div *ngIf="!UploadActa.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadActa.click()" data-toggle="tooltip"
                           data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('ACTA_NACIMIENTO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('2_ACTA_NACIMIENTO')"
                       data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
                   </div>
                 </div>
@@ -132,7 +132,7 @@
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <input #fileUploadCurp type="file" accept="application/pdf" (change)="onUpload($event,'CURP')"
+            <input #fileUploadCurp type="file" accept="application/pdf" (change)="onUpload($event,'1_CURP')"
               style="display: none">
             <div [ngSwitch]="UploadCurp.status">
               <div *ngSwitchCase="'Accept'" class="text-center">
@@ -162,63 +162,63 @@
           <mat-card-actions align="end">
             <div *ngIf="isEditable">
               <div *ngIf="UploadCurp.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CURP')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('1_CURP')" data-toggle="tooltip"
                   data-placement="top" title="Enviar documento">send</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CURP')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('1_CURP')" data-toggle="tooltip"
                   data-placement="top" title="Cancelar">close</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('1_CURP')" data-toggle="tooltip"
                   data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
               <div *ngIf="!UploadCurp.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CURP')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('1_CURP')" data-toggle="tooltip"
                   data-placement="top" title="Subir documento">attach_file</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('1_CURP')" data-toggle="tooltip"
                   data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
             </div>
             <div *ngIf="!isEditable">
               <div [ngSwitch]="UploadCurp.status">
                 <div *ngSwitchCase="'Accept'">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')" data-toggle="tooltip"
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('1_CURP')" data-toggle="tooltip"
                     data-placement="top" title="Ver documento">visibility</mat-icon>
                 </div>
                 <div *ngSwitchCase="'Process'" class="text-center">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')" data-toggle="tooltip"
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('1_CURP')" data-toggle="tooltip"
                     data-placement="top" title="Ver documento">visibility</mat-icon>
                 </div>
                 <div *ngSwitchCase="'Reject'" class="text-center">
                   <div *ngIf="UploadCurp.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Enviar documento">send</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Cancelar">close</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                   <div *ngIf="!UploadCurp.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCurp.click()" data-toggle="tooltip"
                     data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Subir documento">attach_file</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Ver observación">message</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                 </div>
                 <div *ngSwitchDefault>
                   <div *ngIf="UploadCurp.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Enviar documento">send</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Cancelar">close</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                   <div *ngIf="!UploadCurp.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCurp.click()" data-toggle="tooltip"
                     data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CURP')" data-toggle="tooltip"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('1_CURP')" data-toggle="tooltip"
                       data-placement="top" title="Subir documento">attach_file</mat-icon>
                   </div>
                 </div>
@@ -243,7 +243,7 @@
           </mat-card-header>
           <mat-card-content>
             <input #fileUploadCert type="file" accept="application/pdf"
-              (change)="onUpload($event,'CERTIFICADO_BACHILLERATO')" style="display: none">
+              (change)="onUpload($event,'3_CERTIFICADO_BACHILLERATO')" style="display: none">
             <div [ngSwitch]="UploadCertificado.status">
               <div *ngSwitchCase="'Accept'" class="text-center">
                 <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
@@ -272,73 +272,73 @@
           <mat-card-actions align="end">
             <div *ngIf="isEditable">
               <div *ngIf="UploadCertificado.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_BACHILLERATO')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('3_CERTIFICADO_BACHILLERATO')"
                   data-toggle="tooltip" data-placement="top" title="Enviar documento">send</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_BACHILLERATO')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('3_CERTIFICADO_BACHILLERATO')"
                   data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('3_CERTIFICADO_BACHILLERATO')"
                   data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
               <div *ngIf="!UploadCertificado.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CERTIFICADO_BACHILLERATO')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('3_CERTIFICADO_BACHILLERATO')"
                   data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('3_CERTIFICADO_BACHILLERATO')"
                   data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
             </div>
             <div *ngIf="!isEditable">
               <div [ngSwitch]="UploadCertificado.status">
                 <div *ngSwitchCase="'Accept'">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')"
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('3_CERTIFICADO_BACHILLERATO')"
                     data-toggle="tooltip" data-placement="top" title="Ver documento">visibility
                   </mat-icon>
                 </div>
                 <div *ngSwitchCase="'Process'" class="text-center">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')"
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('3_CERTIFICADO_BACHILLERATO')"
                     data-toggle="tooltip" data-placement="top" title="Ver documento">visibility
                   </mat-icon>
                 </div>
                 <div *ngSwitchCase="'Reject'" class="text-center">
                   <div *ngIf="UploadCertificado.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Enviar documento">send
                     </mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close
                     </mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility
                     </mat-icon>
                   </div>
                   <div *ngIf="!UploadCertificado.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCert.click()" data-toggle="tooltip"
                     data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Ver observación">message
                     </mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility
                     </mat-icon>
                   </div>
                 </div>
                 <div *ngSwitchDefault>
                   <div *ngIf="UploadCertificado.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Enviar documento">send
                     </mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close
                     </mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility
                     </mat-icon>
                   </div>
                   <div *ngIf="!UploadCertificado.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCert.click()" data-toggle="tooltip"
                     data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CERTIFICADO_BACHILLERATO')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('3_CERTIFICADO_BACHILLERATO')"
                       data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
                   </div>
                 </div>
@@ -364,7 +364,7 @@
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <input #fileUploadCedula type="file" accept="application/pdf" (change)="onUpload($event,'CEDULA_TECNICA')"
+            <input #fileUploadCedula type="file" accept="application/pdf" (change)="onUpload($event,'4_CEDULA_TECNICA')"
               style="display: none">
             <div [ngSwitch]="UploadCedula.status">
               <div *ngSwitchCase="'Accept'" class="text-center">
@@ -398,71 +398,71 @@
           <mat-card-actions align="end">
             <div *ngIf="isEditable">
               <div *ngIf="UploadCedula.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CEDULA_TECNICA')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('4_CEDULA_TECNICA')" data-toggle="tooltip"
                   data-placement="top" title="Enviar documento">send</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CEDULA_TECNICA')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('4_CEDULA_TECNICA')" data-toggle="tooltip"
                   data-placement="top" title="Cancelar">close</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('4_CEDULA_TECNICA')" data-toggle="tooltip"
                   data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
               <div *ngIf="!UploadCedula.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CEDULA_TECNICA')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('4_CEDULA_TECNICA')"
                   data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('4_CEDULA_TECNICA')" data-toggle="tooltip"
                   data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
             </div>
             <div *ngIf="!isEditable">
               <div [ngSwitch]="UploadCedula.status">
                 <div *ngSwitchCase="'Accept'">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')" data-toggle="tooltip"
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('4_CEDULA_TECNICA')" data-toggle="tooltip"
                     data-placement="top" title="Ver documento">visibility</mat-icon>
                 </div>
                 <div *ngSwitchCase="'Process'" class="text-center">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')" data-toggle="tooltip"
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('4_CEDULA_TECNICA')" data-toggle="tooltip"
                     data-placement="top" title="Ver documento">visibility</mat-icon>
                 </div>
                 <div *ngSwitchCase="'Reject'" class="text-center">
                   <div *ngIf="UploadCedula.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Enviar documento">send</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                   <div *ngIf="!UploadCedula.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCedula.click()" data-toggle="tooltip"
                     data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                 </div>
                 <div *ngSwitchCase="'Omit'" class="text-center">
                   <div *ngIf="Request.phase==='Entregado'">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onReverse('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onReverse('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
                   </div>
                 </div>
                 <div *ngSwitchDefault>
                   <div *ngIf="UploadCedula.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Enviar documento">send</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
                   </div>
                   <div *ngIf="!UploadCedula.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadCedula.click()" data-toggle="tooltip"
                     data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onOmit('CEDULA_TECNICA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onOmit('4_CEDULA_TECNICA')"
                       data-toggle="tooltip" data-placement="top" title="Omitir">not_interested</mat-icon>
                   </div>
                 </div>
@@ -490,7 +490,7 @@
           </mat-card-header>
           <mat-card-content>
             <input #fileUploadLicenciatura type="file" accept="application/pdf"
-              (change)="onUpload($event,'CERTIFICADO_LICENCIATURA')" style="display: none">
+              (change)="onUpload($event,'5_CERTIFICADO_LICENCIATURA')" style="display: none">
             <div [ngSwitch]="UploadLicenciatura.status">
               <div *ngSwitchCase="'Accept'" class="text-center">
                 <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
@@ -518,63 +518,63 @@
           <mat-card-actions align="end">
             <div *ngIf="isEditable">
               <div *ngIf="UploadLicenciatura.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_LICENCIATURA')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('5_CERTIFICADO_LICENCIATURA')"
                   data-toggle="tooltip" data-placement="top" title="Enviar documento">send</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_LICENCIATURA')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('5_CERTIFICADO_LICENCIATURA')"
                   data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('5_CERTIFICADO_LICENCIATURA')"
                   data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
               <div *ngIf="!UploadLicenciatura.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CERTIFICADO_LICENCIATURA')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('5_CERTIFICADO_LICENCIATURA')"
                   data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('5_CERTIFICADO_LICENCIATURA')"
                   data-toggle="tooltip" data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
             </div>
             <div *ngIf="!isEditable">
               <div [ngSwitch]="UploadLicenciatura.status">
                 <div *ngSwitchCase="'Accept'">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('5_CERTIFICADO_LICENCIATURA')">visibility
                   </mat-icon>
                 </div>
                 <div *ngSwitchCase="'Process'" class="text-center">
-                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility
+                  <mat-icon class="mx-1" style="color:#607188" (click)="onView('5_CERTIFICADO_LICENCIATURA')">visibility
                   </mat-icon>
                 </div>
                 <div *ngSwitchCase="'Reject'" class="text-center">
                   <div *ngIf="UploadLicenciatura.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_LICENCIATURA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('5_CERTIFICADO_LICENCIATURA')"
                       data-toggle="tooltip" data-placement="top" title="Enviar documento">send</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_LICENCIATURA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('5_CERTIFICADO_LICENCIATURA')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('5_CERTIFICADO_LICENCIATURA')">visibility
                     </mat-icon>
                   </div>
                   <div *ngIf="!UploadLicenciatura.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadLicenciatura.click()"
                     data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CERTIFICADO_LICENCIATURA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('5_CERTIFICADO_LICENCIATURA')"
                       data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('CERTIFICADO_LICENCIATURA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onMessage('5_CERTIFICADO_LICENCIATURA')"
                       data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('5_CERTIFICADO_LICENCIATURA')">visibility
                     </mat-icon>
                   </div>
                 </div>
                 <div *ngSwitchDefault>
                   <div *ngIf="UploadLicenciatura.file">
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('CERTIFICADO_LICENCIATURA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onSend('5_CERTIFICADO_LICENCIATURA')"
                       data-toggle="tooltip" data-placement="top" title="Enviar documento">send</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('CERTIFICADO_LICENCIATURA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('5_CERTIFICADO_LICENCIATURA')"
                       data-toggle="tooltip" data-placement="top" title="Cancelar">close</mat-icon>
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('CERTIFICADO_LICENCIATURA')">visibility
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onView('5_CERTIFICADO_LICENCIATURA')">visibility
                     </mat-icon>
                   </div>
                   <div *ngIf="!UploadLicenciatura.file">
                     <!-- <mat-icon class="mx-1" style="color:#607188" (click)="fileUploadLicenciatura.click()"
                     data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon> -->
-                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('CERTIFICADO_LICENCIATURA')"
+                    <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('5_CERTIFICADO_LICENCIATURA')"
                       data-toggle="tooltip" data-placement="top" title="Subir documento">attach_file</mat-icon>
                   </div>
                 </div>

@@ -117,18 +117,18 @@ export class StepperDocumentComponent implements OnInit {
       }
       case eFILES.XML: {
         this.title = "AYUDA DE XML DE CÉDULA";
-        // this.existsFileHelper = environment.documentHelper.revalidation.file !== '';
-        // this.existsVideoHelper = environment.documentHelper.revalidation.video !== '';
-        // this.URLFile = this.existsFileHelper ? environment.documentHelper.revalidation.file : '';
-        // this.URLVideo = this.existsVideoHelper ? environment.documentHelper.revalidation.video : '';
+        this.existsFileHelper = environment.documentHelper.xml.file !== '';
+        this.existsVideoHelper = environment.documentHelper.xml.video !== '';
+        this.URLFile = this.existsFileHelper ? environment.documentHelper.xml.file : '';
+        this.URLVideo = this.existsVideoHelper ? environment.documentHelper.xml.video : '';
         break;
       }
       case eFILES.CED_PROFESIONAL: {
         this.title = "AYUDA DE CÉDULA PROFESIONAL";
-        // this.existsFileHelper = environment.documentHelper.revalidation.file !== '';
-        // this.existsVideoHelper = environment.documentHelper.revalidation.video !== '';
-        // this.URLFile = this.existsFileHelper ? environment.documentHelper.revalidation.file : '';
-        // this.URLVideo = this.existsVideoHelper ? environment.documentHelper.revalidation.video : '';
+        this.existsFileHelper = environment.documentHelper.professionalID.file !== '';
+        this.existsVideoHelper = environment.documentHelper.professionalID.video !== '';
+        this.URLFile = this.existsFileHelper ? environment.documentHelper.professionalID.file : '';
+        this.URLVideo = this.existsVideoHelper ? environment.documentHelper.professionalID.video : '';
         break;
       }
     }

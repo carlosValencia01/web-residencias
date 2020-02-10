@@ -46,7 +46,7 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-    getByControlNumberSII(data: { controlNumber: string, nip: string }) {
+    getByControlNumberSII(data: { controlNumber: string }) {
         return this.api.post('user/titled/register', data)
             .pipe(map(student => student.json()));
     }

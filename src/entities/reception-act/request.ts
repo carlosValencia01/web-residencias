@@ -270,8 +270,8 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Bold');
         const observationY = 185 + observationsLines + (nameProjectLines - 5) + integrantsLines;
-        doc.addImage(((typeof (this._qrCode) !== 'undefined') ? this._qrCode : qrCode), 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
-        doc.text(doc.splitTextToSize(((typeof (this._stamp) !== 'undefined') ? this._stamp : eStamp) || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 235);
+        doc.addImage(((typeof (this._qrCode) !== 'undefined') ? this._qrCode : qrCode), 'PNG', this.MARGIN.LEFT - 5, 205, 50, 50);
+        doc.text(doc.splitTextToSize(((typeof (this._stamp) !== 'undefined') ? this._stamp : eStamp) || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 245);
 
         return doc;
     }
@@ -476,7 +476,7 @@ export class uRequest {
         doc.text("PRESENTE", this.MARGIN.LEFT, 82);
         this.addTextRight(doc, `CON AT’N.: ${this.addArroba("COORD. DE TITULACIÓN O EQUIVALENTE")}`, 86);
         doc.setFont(this.FONT, 'Normal');
-        doc.text("Por este medio le informo que ha sido liberado el siguiente proyecto para la Titulación Integral:", this.MARGIN.LEFT, 94);
+        doc.text("Por este medio le informo que ha sido liberado el siguiente proyecto para la Titulación Integral:", this.MARGIN.LEFT, 94);        
         this.addTable(doc, [
             ['a) Nombre del egresado:', this._request.student.fullName],
             ['b) Carrera:', this._request.student.career],
@@ -485,20 +485,24 @@ export class uRequest {
             ['e) Producto:', this._request.product]
         ], 100, this.MARGIN.LEFT, 8, true);
 
+        const rows: Array<string> = doc.splitTextToSize(this._request.projectName, 100);
+        const incremento = (rows.length - 1) * 5;
         // tslint:disable-next-line: max-line-length
-        doc.text("Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional de nuestros egresados.", this.MARGIN.LEFT, 144);
-        doc.setFontSize(9);
-        doc.setFont(this.FONT, 'Bold');
-        doc.text("ATENTAMENTE", this.MARGIN.LEFT, 154);
-        doc.setFontSize(6);
-        doc.text("Excelencia en Educación Tecnológica®", this.MARGIN.LEFT, 158);
-        doc.text("Sabiduría Tecnológica, Pasión de nuestro espíritu®", this.MARGIN.LEFT, 162);
+        doc.text("Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional de nuestros egresados.", this.MARGIN.LEFT, (144 + incremento));
+        // tslint:disable-next-line: max-line-length
 
         doc.setFontSize(9);
         doc.setFont(this.FONT, 'Bold');
-        doc.text(this._request.department.boss, this.MARGIN.LEFT, 170);
+        doc.text("ATENTAMENTE", this.MARGIN.LEFT, (154 + incremento));
+        doc.setFontSize(6);
+        doc.text("Excelencia en Educación Tecnológica®", this.MARGIN.LEFT, (158 + incremento));
+        doc.text("Sabiduría Tecnológica, Pasión de nuestro espíritu®", this.MARGIN.LEFT, (162 + incremento));
+
+        doc.setFontSize(9);
+        doc.setFont(this.FONT, 'Bold');
+        doc.text(this._request.department.boss, this.MARGIN.LEFT, (193 + incremento));
         doc.setFont(this.FONT, 'Normal');
-        doc.text("JEFE DE " + this._request.department.name, this.MARGIN.LEFT, 174);
+        doc.text("JEFE DE " + this._request.department.name, this.MARGIN.LEFT, (197 + incremento));
 
         doc.setDrawColor(0, 0, 0);
         const widthRect: number = (this.WIDTH - (this.MARGIN.RIGHT + this.MARGIN.LEFT));
