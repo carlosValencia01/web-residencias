@@ -1,3 +1,24 @@
-<p>
-  my-graduation works!
-</p>
+<div class="content-general">
+  <div class="card card-shadow">
+     <mat-tab-group>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>Inicio</span>
+       </ng-template>
+       <!--Código aquí-->
+      </mat-tab>
+      <mat-tab *ngIf = "isGraduate">
+        <ng-template matTabLabel>
+          <span>Mis Boletos</span>
+       </ng-template>
+       <!--Código aquí-->
+      </mat-tab>
+      <mat-tab *ngIf = "isGraduate">
+        <ng-template matTabLabel>
+          <span>Notificaciones</span>
+       </ng-template>
+       <!--Código aquí-->
+      </mat-tab>
+     </mat-tab-group>
+  </div>
+</div>
