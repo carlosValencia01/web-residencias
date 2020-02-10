@@ -3,6 +3,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ProgressPageComponent } from 'src/pages/reception-act/progress-page/progress-page.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { StudentProvider } from 'src/providers/shared/student.prov';
+import { BookProvider } from 'src/providers/reception-act/book.prov'
+import { NotificationsServices } from 'src/services/app/notifications.service';
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-book',
@@ -17,13 +20,15 @@ export class BookComponent implements OnInit {
   career;
   date;
   bookNumber;
+  existBook = false;
   
   constructor(
     public dialogRef: MatDialogRef<ProgressPageComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,    
     private studentProv: StudentProvider,
+    private boockProv: BookProvider,
+    private notificationsServices: NotificationsServices,
     ) {
-        console.log(data);
         this.title = this.data.operation === 'edit' ? 'Editar Evento' : this.title; 
         this.getStudentData(data.data);   
      }
@@ -37,18 +42,34 @@ export class BookComponent implements OnInit {
   }
 
   onFormSubmit(book){      
-    console.log(book);
-    //this.dialogRef.close({action:'create',book});    
+    this.dialogRef.close({action:'create',book});    
   }
 
   getStudentData(id) {
     this.studentProv.getStudentById(id).subscribe(res => {
-      console.log(res.student[0].career);
-      this.career = res.student[0].career;
-      this.bookNumber = 1;
-      this.date = new Date();
-      //Obtener Libro Activo y de la carrera correspondiente
-      this.validateForm();
+      const career = res.student[0].career;
+      this.boockProv.getAllActiveBooks().subscribe(res => {
+        const numberBooks = res.map(({number}) => number);
+        const dateBooks = res.map(({registerDate}) => registerDate);
+        const assignCareers = res.map(({careers}) => careers.map(({fullName})=> fullName));
+        assignCareers.forEach((carrera,index) => {
+          if(!this.existBook){
+            if(carrera.includes(career)) {
+              this.career = career;
+              this.existBook = true;
+              this.bookNumber = numberBooks[index];
+              this.date = new Date(dateBooks[index]);
+              this.validateForm();
+              return;
+            }
+          }
+          if(index == assignCareers.length-1){
+            this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Atención', 'No existe libro para la carrera del alumno.');
+            this.onClose();
+          }
+        });
+       
+      });
     });
   }
 
