@@ -19,7 +19,10 @@ export class ElectronicSignatureComponent implements OnInit {
   public currentPosition;
   public eSignatureStatus;
   public formGroupPsw;
+  public formGroupPswChange;
   public isMatchPasswords = false;
+  public isMatchPasswordsChange = false;
+  public update = false;
   private user;
   private docString;
   private employee;
@@ -42,6 +45,17 @@ export class ElectronicSignatureComponent implements OnInit {
           Validators.required
         ])
       });
+      this.formGroupPswChange = new FormGroup({
+        'pswChange': new FormControl(null, [
+          Validators.required
+        ]),
+        'confPswChange': new FormControl(null, [
+          Validators.required
+        ]),
+        'eSigPswChange': new FormControl(null, [
+          Validators.required
+        ])
+      });
   }
 
   ngOnInit() {
@@ -59,9 +73,15 @@ export class ElectronicSignatureComponent implements OnInit {
 
       this.eSignatureProvider.hasESignature(res.employee.rfc, this.currentPosition._id)
         .subscribe( data => {
+          this.update = data.update;
           this.docString = data.docString;
           this.eSignatureStatus = moment(data.expireDate).format('LL');
-          this.formGroupPsw.disable();
+          if (this.update) {
+            this.formGroupPsw.enable();
+            this.formGroupPswChange.disable();
+          } else {
+            this.formGroupPsw.disable();
+          }
         }, error => {
           if (error.status === 404) {
             this.eSignatureStatus = '';
@@ -94,6 +114,28 @@ export class ElectronicSignatureComponent implements OnInit {
     });
   }
 
+  renew() {
+    const passwords = {
+      eSigPsw: this.formGroupPsw.get('loginPsw').value,
+      newPsw: this.formGroupPsw.get('psw').value
+    };
+    this.eSignatureProvider.renewESignature(this.user._id, this.employee.employee._id, this.currentPosition._id, passwords)
+      .subscribe(data => {
+        this.update = false;
+        this.formGroupPsw.reset();
+        this.formGroupPsw.disable();
+        const currentDate = new Date();
+        const year = currentDate.getFullYear() + 2;
+        const month = currentDate.getMonth();
+        const day = currentDate.getDate();
+        const expireDate = new Date(year, month, day);
+        this.eSignatureStatus = moment(expireDate).format('LL');
+        this.notification.showNotification(eNotificationType.SUCCESS, data.message, '');
+    }, error => {
+      this.notification.showNotification(eNotificationType.ERROR, error.message, '');
+    });
+  }
+
   getDocument() {
     this.eSignatureProvider.getDocument(this.employee.employee._id, this.currentPosition._id).subscribe(data => {
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -114,7 +156,32 @@ export class ElectronicSignatureComponent implements OnInit {
     });
   }
 
+  changePassword() {
+    if (this.isMatchPasswordsChange) {
+      this.eSignatureProvider.changeESignaturePassword(this.user._id, this.employee.employee._id, this.currentPosition._id, {
+        eSigPsw: this.formGroupPswChange.get('eSigPswChange').value,
+        newPsw: this.formGroupPswChange.get('pswChange').value,
+      }).subscribe(res => {
+          if (res.status) {
+            this.notification.showNotification(eNotificationType.ERROR, res.message, '');
+          } else {
+            this.notification.showNotification(eNotificationType.SUCCESS, 'Contraseña actualizada correctamente', '');
+            this.formGroupPsw.reset();
+          }
+        }, err => {
+          this.notification.showNotification(eNotificationType.ERROR, 'Ha ocurrido un error', '');
+        }
+      );
+    } else {
+      this.notification.showNotification(eNotificationType.ERROR, 'Las contraseñas no coinciden', '');
+    }
+  }
+
   validateMatchPassword() {
     this.isMatchPasswords = this.formGroupPsw.get('psw').value === this.formGroupPsw.get('confPsw').value ;
+  }
+
+  validateMatchPasswordChange() {
+    this.isMatchPasswordsChange = this.formGroupPswChange.get('pswChange').value === this.formGroupPswChange.get('confPswChange').value ;
   }
 }
