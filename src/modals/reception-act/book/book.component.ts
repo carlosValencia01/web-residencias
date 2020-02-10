@@ -52,10 +52,11 @@ export class BookComponent implements OnInit {
         const numberBooks = res.map(({number}) => number);
         const dateBooks = res.map(({registerDate}) => registerDate);
         const assignCareers = res.map(({careers}) => careers.map(({fullName})=> fullName));
+        const nameBooks = res.map(({name}) => name);
         assignCareers.forEach((carrera,index) => {
           if(!this.existBook){
             if(carrera.includes(career)) {
-              this.career = career;
+              this.career = nameBooks[index];
               this.existBook = true;
               this.bookNumber = numberBooks[index];
               this.date = new Date(dateBooks[index]);
