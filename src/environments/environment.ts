@@ -27,10 +27,10 @@ export const environment = {
     revalidation: { video: 'https://drive.google.com/file/d/1a3-ieK15VDLUk6mn590FSmLpyKFSCsxI/preview', file: 'https://drive.google.com/file/d/1USYr2Ev94s3fe6s7caNGPUEWuNiFJ7U1/preview' }
   },
   // Local
-  apiURL: 'http://localhost:3003/escolares/credenciales',
+  // apiURL: 'http://localhost:3003/escolares/credenciales',
   // eSignatureURL: 'http://localhost:3017/firma/v1',
   // Pruebas
-  // apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
+  apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
   eSignatureURL: 'https://rijimenezesdev.me/escolares/firma',
 };
 

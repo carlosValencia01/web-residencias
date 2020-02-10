@@ -192,6 +192,7 @@ import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/s
 import { SurveyPageComponent } from 'src/pages/graduation/survey-page/survey-page.component';
 import { SurveyQuestionsPageComponent } from 'src/pages/graduation/survey-questions-page/survey-questions-page.component';
 import { SurveyRegisterPageComponent } from 'src/pages/graduation/survey-register-page/survey-register-page.component';
+import { MyGraduationComponent } from 'src/pages/graduation/my-graduation/my-graduation.component';
 // Pipes
 import { FilterPipe } from 'src/pages/graduation/list-graduates-page/filter.pipe';
 // Services
@@ -341,6 +342,7 @@ registerLocaleData(localeEs);
     SurveyPageComponent,
     SurveyQuestionsPageComponent,
     SurveyRegisterPageComponent,
+    MyGraduationComponent,
     // Pipes
     FilterPipe,
     // Modals

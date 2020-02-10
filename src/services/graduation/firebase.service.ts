@@ -19,6 +19,12 @@ export class FirebaseService {
     return this.db.collection(collection).doc(documentId).snapshotChanges();
   }
 
+   // Obtener un alumno por numero de control
+   public getGraduateByControlNumber(controlNumber: string , collection: string) {
+    // console.log({controlNumber, collection});    
+    return this.db.collection(collection, ref => ref.where('nc', '==', controlNumber+'')).snapshotChanges().pipe( map ( student=> student.map( grad=>({id:grad.payload.doc.id,data:grad.payload.doc.data()}))));
+  }
+
   // Obtiene todos los alumnos
   public getGraduates(collection: string) {
     return this.db.collection(collection).snapshotChanges();
@@ -62,6 +68,10 @@ export class FirebaseService {
   // obtiene todos los eventos
   public getAllEvents() {
     return this.db.collection('eventosG', ref => ref.orderBy('estatus', 'asc')).snapshotChanges();
+  }
+
+  public getEventId(nc: string) {
+    return this.db.collection('alumnoPeriodo', ref => ref.where('nc', '==', nc+'')).snapshotChanges().pipe( map ( student=> student.map( grad=>({id:grad.payload.doc.id,event:grad.payload.doc.get('collection'),nc:grad.payload.doc.get('nc')}))));
   }
 
   // cambiar estatus de evento
