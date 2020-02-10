@@ -65,7 +65,7 @@ export class DocumentsAssignPageComponent implements OnInit {
   public getPositions() {
     const departmentId = this._findDepartmentId(this.positionForm.get('department').value);
     if (departmentId) {
-      this.positionProv.getPositionsForDepartment(departmentId)
+      this.positionProv.getPositionsByDepartment(departmentId)
         .subscribe(res => {
           this.positions = res.positions;
           this.positionForm.get('position').reset();
@@ -100,15 +100,13 @@ export class DocumentsAssignPageComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         this.positionProv.updateDocumentAssign(this.currentPosition._id, this.documentsAssigns)
-          .subscribe(res => {
-            if (res.status === 200) {
-              this.notifications
-                .showNotification(eNotificationType.SUCCESS,
-                  'Los documentos se han actualizado con éxito', '');
-            } else {
-              this.notifications
-                .showNotification(eNotificationType.ERROR, 'Error, no se ha podido actualizar', 'Intente de nuevo');
-            }
+          .subscribe(_ => {
+            this.notifications
+              .showNotification(eNotificationType.SUCCESS,
+                'Los documentos se han actualizado con éxito', '');
+          }, _ => {
+            this.notifications
+              .showNotification(eNotificationType.ERROR, 'Error, no se ha podido actualizar', 'Intente de nuevo');
           });
       }
     });
