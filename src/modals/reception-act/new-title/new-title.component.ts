@@ -32,6 +32,7 @@ export class NewTitleComponent implements OnInit {
   public title: string;
   public date: Date;
   public notFound: boolean;
+  public showLoading: boolean;
   private event: { appointment: Date, minutes: number, abbreviation: string };
   public request: {
     studentId: string, student: string, controlNumber: string, career: string,
@@ -121,11 +122,13 @@ export class NewTitleComponent implements OnInit {
   onSearch() {
     this.existError = '';
     this.existWarning = '';
+    this.showLoading=true;
     if (this.notFound) {
       this.notFound = false;
       if (typeof (this.controlNumber) !== 'undefined' && this.controlNumber.trim() !== '' && typeof (this.nip) !== 'undefined' && this.nip.trim() !== '') {
         this._StudentProvider.getByControlNumberSII({ controlNumber: this.controlNumber, nip: this.nip }).subscribe(
           student => {
+            this.showLoading=false;
             this.nip = '';
             this.controlNumber = '';
             this.request = {
@@ -148,17 +151,22 @@ export class NewTitleComponent implements OnInit {
             this.frmNewTitle.get("career").setValue(this.request.career);
             this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
           }, error => {
+            this.showLoading=false;
+            const errorJson = JSON.parse(error._body);
             this.request = { studentId: '', student: '', career: '', controlNumber: '' };
             this.frmNewTitle.get("student").setValue(this.request.student);
             this.frmNewTitle.get("career").setValue(this.request.career);
             this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
+            this.existError = errorJson.error;
+            this.notFound = true;
+            // this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', errorJson.error);
           });
       }
     }
     else {
       if (typeof (this.controlNumber) !== 'undefined' && this.controlNumber.trim() !== '') {
         this._StudentProvider.getByControlNumber(this.controlNumber).subscribe(students => {
+          this.showLoading=false;
           if (typeof (students) !== 'undefined' && typeof (students.student) !== 'undefined' && students.student.length > 0) {
             this.request = {
               studentId: students.student[0]._id,
@@ -171,7 +179,7 @@ export class NewTitleComponent implements OnInit {
             this.frmNewTitle.get("student").setValue(this.request.student);
             this.frmNewTitle.get("career").setValue(this.request.career);
             this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
-          } else {
+          } else {            
             this.existError = "Número de control no encontrado";
             this.notFound = true;
             this.request = { studentId: '', student: '', career: '', controlNumber: '' };
@@ -180,6 +188,7 @@ export class NewTitleComponent implements OnInit {
             this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
           }
         }, error => {
+          this.showLoading=false;
           this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
         });
       }
