@@ -36,3 +36,22 @@ dropzone > .dropzone.dz-wrapper .dz-message{
 .mat-card-header{
     justify-content: center;
 }*/
+canvas,.qrcode{
+    height: 265px !important;
+    width: 265px !important;
+}
+.carousel-indicators .active {
+    background-color:  #ff831b !important;
+}
+@media only screen and (max-width: 782px) {   
+    canvas,.qrcode {
+        height: auto !important;
+        width: auto !important;    
+    }
+}
+@media only screen and (max-width: 395px) {   
+    canvas,.qrcode {
+        height: 160px !important;
+        width: 160px !important;    
+    }
+}

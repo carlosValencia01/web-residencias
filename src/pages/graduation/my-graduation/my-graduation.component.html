@@ -1,4 +1,4 @@
-<div class="content-general">
+<div *ngIf="isGraduate;else nograduated">
   <div class="card card-shadow">
      <mat-tab-group>
       <mat-tab>
@@ -7,11 +7,84 @@
        </ng-template>
        <!--Código aquí-->
       </mat-tab>
-      <mat-tab *ngIf = "isGraduate">
+      <mat-tab *ngIf="student.data.estatus == 'Verificado' || student.data.estatus == 'Pagado' || student.data.estatus == 'Asistió'">
         <ng-template matTabLabel>
           <span>Mis Boletos</span>
        </ng-template>
        <!--Código aquí-->
+       
+        <mat-accordion class="ticket-acordion text-center" *ngIf="student">
+          <mat-expansion-panel>            
+            <mat-expansion-panel-header >
+              <mat-panel-title>
+                Mi Boleto
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+                <div class="btn-save ">
+                  <button type="button" class="btn btn-primary" (click)="saveQR(student.id)">Guardar <mat-icon>save_alt</mat-icon></button>
+                </div>
+                <div class="qr-student" [id] = "student.id">
+                  <!-- <h1>Mi Boleto</h1> -->
+                  <div class="qr-student-middle">
+                    <ngx-qrcode 
+                      [qrc-value] = "qrData"
+                      qrc-element-type = "canvas"
+                      >
+                      </ngx-qrcode>
+                  </div>
+                    <div class="qr-footer-container">
+                      <div class="qr-bottom">
+                        <h6>
+                          <strong> {{titleDegree}} </strong>{{student.data.nombre}}
+                        </h6>
+                      </div>           
+                    </div>
+                    <div class="img-tec">
+                      <img src="assets/imgs/logoITTepic.png" alt="">
+                    </div>
+                </div>
+            <!-- code here -->
+          </mat-expansion-panel>
+          <mat-expansion-panel class="tickects-acordion-panel" *ngIf="guests.length > 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Mis Invitados
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <!-- code here -->
+
+                <ngb-carousel #carousel interval="6000" pauseOnHover="true">
+                  <ng-template ngbSlide *ngFor="let guest of guests">
+                    <div class="btn-save ">
+                      <button type="button" class="btn btn-primary" (click)="saveQR(guest.data)">Guardar <mat-icon>save_alt</mat-icon></button>
+                    </div>
+                    <div [id]="guest.data">
+                      <div class="qr-image">
+                        <ngx-qrcode 
+                          [qrc-value] = "guest.data"
+                          qrc-element-type = "canvas"
+                          >
+                          </ngx-qrcode>
+                      </div>
+                      <div class="qr-footer-container">
+                        <div class="qr-bottom">
+                          <h6>
+                            <strong> {{titleDegree}} </strong>{{student.data.nombre}}
+                          </h6>
+                          <p class="guest">{{guest.ticketFor}}</p>
+                        </div>           
+                      </div>
+                      <div class="img-tec">
+                        <img src="assets/imgs/logoITTepic.png" alt="">
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngb-carousel>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+                                   
+       
       </mat-tab>
       <mat-tab *ngIf = "isGraduate">
         <ng-template matTabLabel>
@@ -22,3 +95,6 @@
      </mat-tab-group>
   </div>
 </div>
+<ng-template #nograduated>
+  <p>No graduated</p>
+</ng-template>
