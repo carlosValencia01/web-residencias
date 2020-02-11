@@ -35,3 +35,83 @@
         color: white;
     }
 }
+.qr-image{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.qr-student{
+    text-align: center;
+}
+.img-tec{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -7px;
+    margin-bottom: 7px;
+}
+.img-tec img{
+    width: 75px;
+}
+.carousel-caption {   
+    z-index: 10;
+    padding-top: 20px;
+    padding-bottom: 20px;    
+    text-align: center;    
+    position: relative !important;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.carousel{
+    background-color: #1e2d49 !important; 
+    padding: 20px;
+}
+
+.qr-bottom{
+    background-color: #1e2d49;
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    width: 300px;
+    padding-bottom: 0;
+}
+.qr-footer-container, .qr-student-middle{
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.tickects-acordion-panel{
+    margin-left: 4%;
+}
+
+.ticket-acordion{
+    display: flex;
+    justify-content: center;
+    width: 97%;
+}
+.btn-save{
+    display: flex;
+    justify-content:center;
+    margin-bottom: 1%;
+}
+.btn-save button{   
+    display: flex;
+    align-items: center;
+}
+.guest{
+    font-size: 11pt;
+}
+.qr-footer{
+    width: 100%;
+}
+@media only screen and (max-width: 782px) {
+    .ticket-acordion{
+        display: block;
+    }
+    .tickects-acordion-panel{
+        margin-left: 0;
+    }
+}

@@ -100,7 +100,7 @@
             </mat-card-content>
 
             <mat-card-content *ngIf="!survey && contQuestion === 7">
-               <textarea matInput [(ngModel)]="recomendations" style="width:400px; border:double 4px black;"
+               <textarea matInput [(ngModel)]="recomendations" style="width:200px; border:double 4px black;"
                   maxlength="200">
                 </textarea><br><br>
                <button mat-raised-button color="primary" [disabled]="!recomendations"

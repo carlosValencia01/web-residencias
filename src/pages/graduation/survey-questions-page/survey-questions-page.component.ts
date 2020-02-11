@@ -63,7 +63,7 @@ export class SurveyQuestionsPageComponent implements OnInit {
               confirmButtonText: 'Aceptar'
             }).then((result) => {     
               if (result.value) {
-                window.location.assign("/surveyFind") //salir de la encuesta
+                window.location.assign("/my-graduation") //salir de la encuesta
               }
             }) 
           }                         
@@ -125,28 +125,28 @@ export class SurveyQuestionsPageComponent implements OnInit {
                 this.firestoreService.saveProfileAnswersQuestions(this.idDocAlumn,this.answersQuestions).then();
                 Swal.fire({
                   title: 'Encuesta Finalizada',
-                  text: "Click en aceptar para finalizar",
+                  text: "Clic en aceptar para finalizar",
                   type: 'info',
                   allowOutsideClick: false,
                   confirmButtonColor: '#3085d6',
                   confirmButtonText: 'Aceptar'
                 }).then((result) => {     
                   if (result.value) {
-                    window.location.assign("/surveyFind") //salir de la encuesta
+                    window.location.assign("/my-graduation") //salir de la encuesta
                   }
                 })
               } else {
                 this.firestoreService.saveProfileAnswersQuestions(this.idDocAlumn,this.answersQuestions).then();
                 Swal.fire({
                   title: 'Encuesta Finalizada',
-                  text: "Click en aceptar para finalizar",
+                  text: "Clic en aceptar para finalizar",
                   type: 'info',
                   allowOutsideClick: false,
                   confirmButtonColor: '#3085d6',
                   confirmButtonText: 'Aceptar'
                 }).then((result) => {     
                   if (result.value) {
-                    window.location.assign("/surveyFind") //salir de la encuesta
+                    window.location.assign("/my-graduation") //salir de la encuesta
                   }
                 })
               }

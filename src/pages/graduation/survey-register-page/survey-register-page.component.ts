@@ -87,7 +87,7 @@ export class SurveyRegisterPageComponent implements OnInit {
                   confirmButtonText: 'Aceptar'
                 }).then((result) => {
                   if (result.value) {
-                    window.location.assign('/surveyFind');
+                    window.location.assign('/my-graduation');
                   }
                 });
               }
@@ -116,7 +116,7 @@ export class SurveyRegisterPageComponent implements OnInit {
                         confirmButtonText: 'Aceptar'
                       }).then((result) => {
                         if (result.value) {
-                          window.location.assign('/surveyFind');
+                          window.location.assign('/my-graduation');
                         }
                       });
                     }
