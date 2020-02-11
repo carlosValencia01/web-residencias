@@ -107,7 +107,16 @@ export class RequestViewComponent implements OnInit {
 
   getProjectCover() {
     // window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.PROYECTO}/${this.request._id}`, '_blank');
-    window.open(`${this.requestProvider.getApiURL()}/request/${this.request._id}/file/${eFILES.PROYECTO}`, '_blank');
+    // window.open(`${this.requestProvider.getApiURL()}/request/${this.request._id}/file/${eFILES.PROYECTO}`, '_blank');
+    this.showLoading = true;
+    this.requestProvider.getResource(this.request._id, eFILES.PROYECTO).subscribe(data => {
+      this.showLoading = false;
+      window.open(URL.createObjectURL(data), '_blank');
+    }, error => {
+      this.showLoading = false;
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'Error al obtener la portada');
+      // window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
+    });
   }
 
   getRequestPDF() {
