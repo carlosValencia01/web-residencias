@@ -155,34 +155,22 @@ export class uRequest {
         // Fecha
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(11);
-        this.addTextRight(doc, `Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LLL')}`, 55);
-        // doc.text(doc.splitTextToSize(`Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LLL')}`, 50),
-        //     this.WIDTH - this.MARGIN.RIGHT, 55, { align: 'right' });
-
+        this.addTextRight(doc, `Tepic, Nayarit, ${moment(sentHistory ? sentHistory.achievementDate : new Date()).format('LLL')}`, 50);
         // Saludos
         doc.setFont(this.FONT, 'Bold');
-        // const jefe = 'Lic. LAURA ELENA CASILLAS CASTAÑEDA';
         const jefe = this.JDeptoDiv.name;
-        // let tmn = doc.getTextWidth(jefe);
-        // doc.text(doc.splitTextToSize(jefe, 150), this.MARGIN.LEFT, 75, { align: 'left' });
-        doc.text(jefe, this.MARGIN.LEFT, 75, { align: 'left' });
-        // doc.text(doc.splitTextToSize('Jefe(a) de la división de estudios profesionales', 150), this.MARGIN.LEFT, 80, { align: 'left' });
+        doc.text(jefe, this.MARGIN.LEFT, 60, { align: 'left' });
         let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
-        doc.text(`${positionGender} DE LA DIVISIÓN DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 80, { align: 'left' });
-        doc.text('P R E S E N T E', this.MARGIN.LEFT, 85, { align: 'left' });
-
-        // doc.text(doc.splitTextToSize('AT´N. ANA GUADALUPE RAMIREZ LOPEZ', 150), (this.WIDTH / 2), 100, { align: 'left' });
-        // doc.text(doc.splitTextToSize('Coordinador(a) de apoyo a la titulación', 100), (this.WIDTH / 2), 105, { align: 'left' });}}
+        doc.text(`${positionGender} DE LA DIVISIÓN DE ESTUDIOS PROFESIONALES`, this.MARGIN.LEFT, 65, { align: 'left' });
+        doc.text('P R E S E N T E', this.MARGIN.LEFT, 70, { align: 'left' });
         doc.setFont(this.FONT, 'Bold');
-        // this.addTextRight(doc, this.addArroba('AT´N. ANA GUADALUPE RAMIREZ LOPEZ'), 100);
-        this.addTextRight(doc, this.addArroba(`AT´N. ${this.CDeptoDiv.name}`), 100);
+        this.addTextRight(doc, this.addArroba(`AT´N. ${this.CDeptoDiv.name}`), 80);
         positionGender = this.CDeptoDiv.gender === 'FEMENINO' ? 'COORDINADORA' : 'COORDINADOR';
-        this.addTextRight(doc, this.addArroba(`${positionGender} DE APOYO A TITULACIÓN O EQUIVALENTE`), 105);
+        this.addTextRight(doc, this.addArroba(`${positionGender} DE APOYO A TITULACIÓN O EQUIVALENTE`), 85);
 
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por medio del presente solicito autorización para iniciar trámite de registro del ' +
-            'proyecto de titulación integral:', 185), this.MARGIN.LEFT, 120, { align: 'left' });
-
+            'proyecto de titulación integral:', 185), this.MARGIN.LEFT, 95, { align: 'left' });
         this.addTable(doc, [
             ['Nombre: ', this._request.student.fullName],
             ['Carrera: ', this._request.student.career],
@@ -190,24 +178,19 @@ export class uRequest {
             ['Nombre del proyecto: ', this._request.projectName],
             ['Opción titulación:', this._request.titulationOption],
             ['Producto: ', this._request.product]
-        ], 130);
-        const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 60);
+        ], 105, undefined, 10, false, {0: { cellWidth: 35 }, 1: { cellWidth: 100 }});
+        const nameProjectRows: Array<string> = doc.splitTextToSize(this._request.projectName, 100);
+        const nameProjectLines = (nameProjectRows ? nameProjectRows.length - 1 : 0) * 4;
         doc.setFont(this.FONT, 'Normal');
         doc.text('En espera de la aceptación de esta solicitud, quedo a sus órdenes.', this.MARGIN.LEFT,
-            186 + nameProjectLines, { align: 'left' });
+            153 + nameProjectLines, { align: 'left' });
         doc.setFont(this.FONT, 'Bold');
-        doc.text('ATENTAMENTE', (this.WIDTH / 2), 213, { align: 'center' });
-
-        doc.text(this._request.student.fullName, (this.WIDTH / 2), 220, { align: 'center' });
-        doc.setFont(this.FONT, 'Normal');
-        // tmn = doc.getTextWidth(this._request.student.fullName);
-        doc.setFont(this.FONT, 'Bold');
-        // this.addLineCenter(doc, 'Nombre y firma del estudiante', 222);
-
-        this.addTable(doc, [
-            ['Teléfono particular o de contacto: ', this._request.telephone],
-            ['Correo electrónico del estudiante: ', this._request.email]
-        ], 235);
+        doc.text(this._request.student.fullName, (this.WIDTH / 2), 250, { align: 'center' });
+        // doc.setFont(this.FONT, 'Normal');
+        // this.addTable(doc, [
+        //     ['Teléfono particular o de contacto: ', this._request.telephone],
+        //     ['Correo electrónico del estudiante: ', this._request.email]
+        // ], 235);
         return doc;
     }
 
@@ -922,7 +905,7 @@ export class uRequest {
     }
 
     // @ts-ignore
-    private addTable(document: jsPDF, data: Array<Object>, startY: number, startX: number = this.MARGIN.LEFT, Size: number = 11, isBold: boolean = false) {
+    private addTable(document: jsPDF, data: Array<Object>, startY: number, startX: number = this.MARGIN.LEFT, Size: number = 11, isBold: boolean = false, columnStyles = {}) {
         // @ts-ignore
         document.autoTable({
             theme: 'grid',
@@ -930,6 +913,7 @@ export class uRequest {
             margin: { left: startX },
             // @ts-ignore
             bodyStyles: { textColor: [0, 0, 0], lineColor: [0, 0, 0], font: this.FONT, fontStyle: (isBold ? 'Bold' : 'Normal'), fontSize: Size },
+            columnStyles: columnStyles,
             body: data
         });
     }
