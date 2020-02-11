@@ -176,7 +176,7 @@
       <tr
         *ngFor="let item of listStudentsPending | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText}; let indice=index">
         <td data-f-sz="12" data-t="n">{{indice+1}}</td>
-        <td data-f-sz="12" data-t="n">{{item.controlNumber}}</td>
+        <td data-f-sz="12" data-t="s">{{item.controlNumber}}</td>
         <td data-f-sz="12" data-t="s">{{item.fullName}}</td>
         <td data-f-sz="12" data-t="s">{{item.career}}</td>
         <td data-f-sz="12" data-fill-color="FCD539" data-f-color="000000"

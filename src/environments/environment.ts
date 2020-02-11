@@ -13,7 +13,7 @@ export const environment = {
     messagingSenderId: '452486540507',
     appId: '1:452486540507:web:214d62ad8c0e0147'
   },
-  // filesURL:'http://localhost:3003/escolares/credenciales/drive/upload/file'
+  //filesURL:'http://localhost:3003/escolares/credenciales/drive/upload/file',
   filesURL: 'https://rijimenezesdev.me/escolares/credenciales/drive/upload/file',
   documentHelper: {
     birthCertificate: { video: 'https://drive.google.com/file/d/1OZNev3eyn5MHwZWIFjM4DxAaqWNNBMek/preview', file: 'https://drive.google.com/file/d/1rYSj38vDqpqrhN7nqpMsnMTq_70WVKaM/preview' },

@@ -539,7 +539,7 @@
                                             <div *ngSwitchCase="'Realizado'">
                                                 <button
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
-                                                    mat-menu-item (click)="approve(row._id)">
+                                                    mat-menu-item (click)="approve(row._id,row.studentId)">
                                                     <mat-icon>gavel</mat-icon>
                                                     Aprobar
                                                 </button>
