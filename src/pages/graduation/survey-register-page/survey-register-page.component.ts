@@ -75,7 +75,7 @@ export class SurveyRegisterPageComponent implements OnInit {
                 this.carreraAlumno = this.data.carreraCompleta;
                 this.egresoAlumno = this.data.fechaEgreso ? this.data.fechaEgreso : '';
                 this.tituloAlumno = (this.data.degree) ? 'Si' : 'No';
-                this.generoAlumno = (this.data.generoAlumno) ? this.data.generoAlumno : '';
+                this.generoAlumno = (this.data.genero) ? this.data.genero : '';
                 this.validateForm();
               } else {
                 Swal.fire({
@@ -144,6 +144,7 @@ export class SurveyRegisterPageComponent implements OnInit {
   }
 
   async saveProfile(idDoc, data) {
+    data.generoAlumno = (data.generoAlumno = 'M') ? 'Masculino':'Femenino' 
     if (idDoc !== 0) {
       this.firestoreService.getProfile(idDoc).subscribe(
         res => {

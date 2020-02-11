@@ -1,0 +1,37 @@
+.div-start-card {
+    text-align: -webkit-center;
+    min-height: 300px;
+    margin-top: 30px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 30px;
+}
+
+.start-card {
+    max-width: 400px;
+    background: #1E2D4A;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.start-card {
+    mat-card-header{
+        mat-card-title{
+            color: #FC831D;
+        }
+    }
+}
+
+.start-card-graduate {
+    max-width: 400px;
+    background: white;
+    color: #1E2D4A;
+    margin-bottom: 5px;
+}
+
+.start-card-graduate {
+    mat-card-header{
+        background: #1E2D4A;
+        color: white;
+    }
+}

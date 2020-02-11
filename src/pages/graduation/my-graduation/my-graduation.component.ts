@@ -20,6 +20,7 @@ export class MyGraduationComponent implements OnInit {
   eventId;
   student;
   isGraduate : boolean = false;
+  graduationDate;
   constructor(
     private notificationsServices: NotificationsServices,
     private cookiesService: CookiesService,
@@ -34,18 +35,17 @@ export class MyGraduationComponent implements OnInit {
    }
 
   ngOnInit() {
-    
+    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     const sr = this.firebaseSrv.getEventId(this.user.email).subscribe(
         ev=>{
-          // console.log(ev[0]);
-          
           sr.unsubscribe();
           if(ev[0]){
             this.isGraduate = true;
             this.eventSub = this.firebaseSrv.getEvent(ev[0].event).subscribe(
-              (event)=>{                         
+              (event)=>{   
                 this.event = event.payload.data();
-                this.eventId = event.payload.id;                          
+                this.eventId = event.payload.id; 
+                this.graduationDate = new Date(this.event.date.seconds*1000).toLocaleDateString("es-MX", dateOptions);                                  
                 this.studentSub = this.firebaseSrv.getGraduateByControlNumber(this.user.email+'',this.eventId).subscribe(
                   (student)=>{
                     this.student = student[0];
@@ -61,23 +61,23 @@ export class MyGraduationComponent implements OnInit {
           }else{      
             this.isGraduate = false;
             const sub1  = this.firebaseSrv.getActivedEvent().subscribe(
-              (event )=>{                 
-                sub1.unsubscribe();
+              (event )=>{  
                 this.event = event[0].payload.doc.data();      
-                this.eventId = event[0].payload.doc.id;      
-                console.log(this.event);
-                               
+                this.eventId = event[0].payload.doc.id;  
+                this.graduationDate = new Date(this.event.date.seconds*1000).toLocaleDateString("es-MX", dateOptions);               
+                sub1.unsubscribe();
               }
             );
           }
         },
         err=>{
           const sub1  = this.firebaseSrv.getActivedEvent().subscribe(
-            (event)=>{                 
+            (event)=>{     
+              this.event = event[0].payload.doc.data();      
+              this.eventId = event[0].payload.doc.id;  
+              this.graduationDate = new Date(this.event.date.seconds*1000).toLocaleDateString("es-MX", dateOptions);               
               sub1.unsubscribe();
               console.log(err);
-              this.event = event[0].payload.doc.data();      
-                this.eventId = event[0].payload.doc.id;                    
             }
           );
         }
