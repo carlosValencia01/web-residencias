@@ -660,7 +660,7 @@ export class uRequest {
         content = content.replace('@NUMERO', this._request.registry.foja + '');
         content = content.replace('@LIBRO', this._request.registry.bookNumber + '');
         this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
-        doc.ellipse(28, 90, 20, 30);
+        doc.ellipse(28, 90, 16, 20);
         // tslint:disable-next-line: max-line-length
         content = 'De acuerdo con el instructivo vigente de Titulación, que no tiene como requisito la sustentación del Examen Profesional para Efecto de obtención de Título, en las opciones VIII, IX y Titulación Integral, el Jurado HACE CONSTAR: que al (la) C. @ESTUDIANTE con número de control @CONTROL egresado(a) del Instituto Tecnológico de Tepic, Clave 18DIT0002Z, que cursó la carrera de: @CARRERA.';
         content = content.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);

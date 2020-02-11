@@ -133,7 +133,7 @@ export class StudentProvider {
     }
 
     addIntegrants(id, data) {
-        return this.api.put(`request/${id}/integrants`, data, true).pipe(map(res => res.json()));
+        return this.api.put(`request/${id}/integrants`, data).pipe(map(res => res.json()));
     }
 
     getRequest(id) {
