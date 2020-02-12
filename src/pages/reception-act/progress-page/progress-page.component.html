@@ -493,7 +493,7 @@
                                                     *ngIf="role==='servicios estudiantiles' || role==='administrador'"
                                                     (click)="checkReleased(row._id)">
                                                     <mat-icon>thumbs_up_down</mat-icon>
-                                                    Validar Liberacion
+                                                    Validar Liberación
                                                 </button>
                                             </div>
                                             <div *ngSwitchCase="'Entregado'">
@@ -543,11 +543,11 @@
                                                     <mat-icon>gavel</mat-icon>
                                                     Aprobar
                                                 </button>
-                                                <button
-                                                    *ngIf="(role==='coordinación de titulación'  || role==='administrador') && (row.status==='Pendiente' || row.status==='Proceso')"
-                                                    mat-menu-item (click)="juryNotification(row._id)">
+                                                <button *ngIf="(role==='coordinación de titulación'  || role==='administrador') && (row.status==='Pendiente' || row.status==='Proceso')
+                                                    && row.isIntegral" mat-menu-item
+                                                    (click)="juryNotification(row._id)">
                                                     <mat-icon>contact_mail</mat-icon>
-                                                    Generar Documentacion
+                                                    Generar Documentación
                                                 </button>
                                             </div>
                                             <div *ngSwitchCase="'Generado'">

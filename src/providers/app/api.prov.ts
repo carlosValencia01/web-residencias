@@ -9,7 +9,7 @@ export class Api {
     urlE = environment.eSignatureURL;
 
     headers: Headers = new Headers();
-
+    FileHeaders: Headers = new Headers();
     constructor(
         private http: Http,
         private cookiesServ: CookiesService,
@@ -24,6 +24,8 @@ export class Api {
     setToken(token) {
         this.headers.delete('Authorization');
         this.headers.append('Authorization', `Bearer ${token}`);
+        this.FileHeaders.delete('Authorization');
+        this.FileHeaders.append('Authorization', `Bearer ${token}`);
     }
 
     get(endpoint: string, params?: any) {
@@ -42,10 +44,16 @@ export class Api {
             // a search field set in options.
             options.search = !options.search && p || options.search;
         }
-
         return this.http.get(this.url + '/' + endpoint, options);
     }
 
+    getFile(endpoint: string) {
+        let options: RequestOptions = new RequestOptions({ headers: this.FileHeaders });
+        // options.headers.append('responseType', 'blob');
+        options.responseType = 3;
+        console.log("options", options);
+        return this.http.get(this.url + '/' + endpoint, options);
+    }
     getE(endpoint: string, params?: any) {
         const options = new RequestOptions({ headers: this.headers });
 
@@ -65,7 +73,8 @@ export class Api {
         if (!isUpload) {
             return this.http.post(this.url + '/' + endpoint, body, options);
         } else {
-            return this.http.post(this.url + '/' + endpoint, body);
+            const options = new RequestOptions({ headers: this.FileHeaders });
+            return this.http.post(this.url + '/' + endpoint, body, options);
         }
     }
 

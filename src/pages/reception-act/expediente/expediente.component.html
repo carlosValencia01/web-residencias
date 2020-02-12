@@ -218,15 +218,15 @@
             </mat-card-header>
             <mat-card-content>
               <div [ngSwitch]="whatStatus(FileActa)">
-                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('ACTA_NACIMIENTO')">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('2_ACTA_NACIMIENTO')">
                   <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                   <p class="card-text">En revision</p>
                 </div>
-                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('ACTA_NACIMIENTO')">
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('2_ACTA_NACIMIENTO')">
                   <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Aceptado</p>
                 </div>
-                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('ACTA_NACIMIENTO')">
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('2_ACTA_NACIMIENTO')">
                   <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Rechazado</p>
                 </div>
@@ -252,19 +252,19 @@
             </mat-card-header>
             <mat-card-content>
               <div [ngSwitch]="whatStatus(FileCurp)">
-                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('CURP')">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('1_CURP')">
                   <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                   <p class="card-text">En revision</p>
                 </div>
-                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('CURP')">
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('1_CURP')">
                   <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Aceptado</p>
                 </div>
-                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('CURP')">
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('1_CURP')">
                   <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Rechazado</p>
                 </div>
-                <div *ngSwitchCase="'None'" class="text-center" (click)="onView('CURP')">
+                <div *ngSwitchCase="'None'" class="text-center" (click)="onView('1_CURP')">
                   <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
                   <p class="card-text">Sin enviar</p>
                 </div>
@@ -286,15 +286,15 @@
             </mat-card-header>
             <mat-card-content>
               <div [ngSwitch]="whatStatus(FileCertificado)">
-                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('CERTIFICADO_BACHILLERATO')">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('3_CERTIFICADO_BACHILLERATO')">
                   <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                   <p class="card-text">En revision</p>
                 </div>
-                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('CERTIFICADO_BACHILLERATO')">
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('3_CERTIFICADO_BACHILLERATO')">
                   <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Aceptado</p>
                 </div>
-                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('CERTIFICADO_BACHILLERATO')">
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('3_CERTIFICADO_BACHILLERATO')">
                   <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Rechazado</p>
                 </div>
@@ -320,15 +320,15 @@
             </mat-card-header>
             <mat-card-content>
               <div [ngSwitch]="whatStatus(FileCedula)">
-                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('CEDULA_TECNICA')">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('4_CEDULA_TECNICA')">
                   <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                   <p class="card-text">En revision</p>
                 </div>
-                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('CEDULA_TECNICA')">
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('4_CEDULA_TECNICA')">
                   <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Aceptado</p>
                 </div>
-                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('CEDULA_TECNICA')">
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('4_CEDULA_TECNICA')">
                   <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Rechazado</p>
                 </div>
@@ -362,19 +362,19 @@
             </mat-card-header>
             <mat-card-content>
               <div [ngSwitch]="whatStatus(FileLicenciatura)">
-                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('CERTIFICADO_LICENCIATURA')">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('5_CERTIFICADO_LICENCIATURA')">
                   <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                   <p class="card-text">En revision</p>
                 </div>
-                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('CERTIFICADO_LICENCIATURA')">
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('5_CERTIFICADO_LICENCIATURA')">
                   <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Aceptado</p>
                 </div>
-                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('CERTIFICADO_LICENCIATURA')">
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('5_CERTIFICADO_LICENCIATURA')">
                   <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
                   <p class="card-text">Rechazado</p>
                 </div>
-                <div *ngSwitchCase="'None'" class="text-center" (click)="onView('CERTIFICADO_LICENCIATURA')">
+                <div *ngSwitchCase="'None'" class="text-center" (click)="onView('5_CERTIFICADO_LICENCIATURA')">
                   <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
                   <p class="card-text">Sin enviar</p>
                 </div>
@@ -424,7 +424,7 @@
               <mat-card-subtitle>
                 <p
                   [ngClass]="{'acceptText':whatStatus(FileIngles)==='Accept', 'noneText':whatStatus(FileIngles)==='None','rejectText':whatStatus(FileIngles)==='Reject','processText':whatStatus(FileIngles)==='Process'}">
-                  Ingles
+                  Inglés
                 </p>
               </mat-card-subtitle>
             </mat-card-header>
@@ -561,7 +561,41 @@
         </div>
 
         <div class="col-3">
-
+          <mat-card
+            [ngClass]="{'accept':whatStatus(FileOficio)==='Accept', 'none':whatStatus(FileOficio)==='None','reject':whatStatus(FileOficio)==='Reject','process':whatStatus(FileOficio)==='Process'}">
+            <mat-card-header>
+              <mat-card-subtitle>
+                <p
+                  [ngClass]="{'acceptText':whatStatus(FileOficio)==='Accept', 'noneText':whatStatus(FileOficio)==='None','rejectText':whatStatus(FileOficio)==='Reject','processText':whatStatus(FileOficio)==='Process'}">
+                  Oficio Jurado
+                </p>
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div [ngSwitch]="whatStatus(FileOficio)">
+                <div *ngSwitchCase="'Process'" class="text-center" (click)="onView('OFICIO_JURADO')">
+                  <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                  <p class="card-text">En revision</p>
+                </div>
+                <div *ngSwitchCase="'Omit'" class="text-center">
+                  <img alt="File" src="../../assets/imgs/notfound.png" style="width: 50px; height: 50px">
+                  <p class="card-text">Omitido</p>
+                </div>
+                <div *ngSwitchCase="'Accept'" class="text-center" (click)="onView('OFICIO_JURADO')">
+                  <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                  <p class="card-text">Aceptado</p>
+                </div>
+                <div *ngSwitchCase="'Reject'" class="text-center" (click)="onView('OFICIO_JURADO')">
+                  <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  <p class="card-text">Rechazado</p>
+                </div>
+                <div *ngSwitchCase="'None'" class="text-center">
+                  <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  <p class="card-text">Sin enviar</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
         </div>
 
         <div class="col-3">

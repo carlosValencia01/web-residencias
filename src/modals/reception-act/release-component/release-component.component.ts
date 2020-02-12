@@ -91,7 +91,7 @@ export class ReleaseComponentComponent implements OnInit {
       this.showLoading = false;
     }, error => {
       this.showLoading = false;
-      this.notifications.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Recuperación Fallidad");
+      this.notifications.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Recuperación Fallida");
     });
   }
   obtenerCarreras(): Array<string> {

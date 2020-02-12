@@ -54,7 +54,13 @@ export class RequestProvider {
     //     return this.http.get(`${this.api.getURL()}/request/${id}/file/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
     // }
     getResource(id: string, resource: string): Observable<Blob> {
-        return this.http.get(`${this.api.getURL()}/request/${id}/file/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
+        // return this.http.get(`${this.api.getURL()}/request/${id}/file/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
+        return this.api.getFile(`request/${id}/file/${resource.toLocaleLowerCase()}`)
+            .pipe(map(res => res.blob()));
+    }
+
+    getResourceWebLink(id: string, resource: string): Observable<Blob> {
+        return this.http.get(`${this.api.getURL()}/request/${id}/weblink/${resource.toLocaleLowerCase()}`, { responseType: 'blob' });
     }
 
     updateFileStatus(_id, data) {
@@ -82,4 +88,9 @@ export class RequestProvider {
         return this.api.get(`request/sendCode/${_requestId}`)
             .pipe(map(res => res.json()));
     }
+
+    updateJury(_id, data) {
+        return this.api.put(`request/${_id}/jury`, data).pipe(map(request => request.json()));
+    }
+
 }

@@ -41,6 +41,7 @@ export class ExpedienteComponent implements OnInit {
   public FilePago: iDocument;
   public FileRevalidacion: iDocument;
   public FilePhotos: iDocument;
+  public FileOficio: iDocument;
   private _Request: uRequest;
   public changeDocument: boolean;
   public role: string;
@@ -144,6 +145,7 @@ export class ExpedienteComponent implements OnInit {
     this.FileServicio = this.getDocument(eFILES.SERVICIO);
     this.FilePago = this.getDocument(eFILES.PAGO);
     this.FilePhotos = this.getDocument(eFILES.PHOTOS);
+    this.FileOficio = this.getDocument(eFILES.OFICIO);
   }
 
   documentTitle(type: eFILES): string {
@@ -162,7 +164,7 @@ export class ExpedienteComponent implements OnInit {
         break;
       }
       case eFILES.RELEASED: {
-        name = "CONSTANCIA DE LIBERACION";
+        name = "CONSTANCIA DE LIBERACIÓN";
         break;
       }
       case eFILES.INCONVENIENCE: {
@@ -174,7 +176,7 @@ export class ExpedienteComponent implements OnInit {
         break;
       }
       case eFILES.CURP: {
-        name = "CURPO";
+        name = "CURP";
         break;
       }
       case eFILES.CERTIFICADO_B: {
@@ -219,6 +221,10 @@ export class ExpedienteComponent implements OnInit {
       }
       case eFILES.CED_PROFESIONAL: {
         name = "CÉDULA PROFESIONAL";
+        break;
+      }
+      case eFILES.OFICIO: {
+        name = "OFICIO DE JURADO";
         break;
       }
       default: {
@@ -286,6 +292,10 @@ export class ExpedienteComponent implements OnInit {
         exists = typeof (this.FileRevalidacion) !== 'undefined';
         break;
       }
+      case eFILES.OFICIO: {
+        exists = typeof (this.FileOficio) !== 'undefined';
+        break;
+      }
     }
 
     if (exists) {
@@ -295,7 +305,7 @@ export class ExpedienteComponent implements OnInit {
           data: {
             source: data,
             isBase64: true,
-            title: type
+            title: this.documentTitle(type)
           },
           disableClose: true,
           hasBackdrop: true,

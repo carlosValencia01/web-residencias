@@ -127,7 +127,12 @@ export class ViewerComponentComponent implements OnInit {
         break;
       }
       case eRequest.RELEASED: {
-        window.open(`${this.requestProvider.getApiURL()}/request/${this._Request._id}/file/${eFILES.RELEASED}`, '_blank');
+        // window.open(`${this.requestProvider.getApiURL()}/request/${this._Request._id}/file/${eFILES.RELEASED}`, '_blank');        
+        this.requestProvider.getResource(this._Request._id, eFILES.RELEASED).subscribe(data => {
+          window.open(URL.createObjectURL(data), '_blank');
+        }, error => {
+          console.log("Error de archivo", error);
+        });
         break;
       }
       case eRequest.REGISTERED: {

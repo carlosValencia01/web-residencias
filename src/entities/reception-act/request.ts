@@ -117,6 +117,11 @@ export class uRequest {
                 binary = this.bufferToBase64(document);
                 break;
             }
+            case eFILES.OFICIO: {
+                document = this.notificationOffice().output('arraybuffer');
+                binary = this.bufferToBase64(document);
+                break;
+            }
             case eFILES.JURAMENTO_ETICA: {
                 document = this.professionalEthicsAndCode().output('arraybuffer');
                 binary = this.bufferToBase64(document);
@@ -248,8 +253,8 @@ export class uRequest {
 
         doc.setFont(this.FONT, 'Bold');
         const observationY = 185 + observationsLines + (nameProjectLines - 5) + integrantsLines;
-        doc.addImage(((typeof (this._qrCode) !== 'undefined') ? this._qrCode : qrCode), 'PNG', this.MARGIN.LEFT - 5, 195, 50, 50);
-        doc.text(doc.splitTextToSize(((typeof (this._stamp) !== 'undefined') ? this._stamp : eStamp) || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 235);
+        doc.addImage(((typeof (this._qrCode) !== 'undefined') ? this._qrCode : qrCode), 'PNG', this.MARGIN.LEFT - 5, 205, 50, 50);
+        doc.text(doc.splitTextToSize(((typeof (this._stamp) !== 'undefined') ? this._stamp : eStamp) || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 245);
 
         return doc;
     }
@@ -454,7 +459,7 @@ export class uRequest {
         doc.text("PRESENTE", this.MARGIN.LEFT, 82);
         this.addTextRight(doc, `CON AT’N.: ${this.addArroba("COORD. DE TITULACIÓN O EQUIVALENTE")}`, 86);
         doc.setFont(this.FONT, 'Normal');
-        doc.text("Por este medio le informo que ha sido liberado el siguiente proyecto para la Titulación Integral:", this.MARGIN.LEFT, 94);
+        doc.text("Por este medio le informo que ha sido liberado el siguiente proyecto para la Titulación Integral:", this.MARGIN.LEFT, 94);        
         this.addTable(doc, [
             ['a) Nombre del egresado:', this._request.student.fullName],
             ['b) Carrera:', this._request.student.career],
@@ -463,20 +468,24 @@ export class uRequest {
             ['e) Producto:', this._request.product]
         ], 100, this.MARGIN.LEFT, 8, true);
 
+        const rows: Array<string> = doc.splitTextToSize(this._request.projectName, 100);
+        const incremento = (rows.length - 1) * 5;
         // tslint:disable-next-line: max-line-length
-        doc.text("Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional de nuestros egresados.", this.MARGIN.LEFT, 144);
-        doc.setFontSize(9);
-        doc.setFont(this.FONT, 'Bold');
-        doc.text("ATENTAMENTE", this.MARGIN.LEFT, 154);
-        doc.setFontSize(6);
-        doc.text("Excelencia en Educación Tecnológica®", this.MARGIN.LEFT, 158);
-        doc.text("Sabiduría Tecnológica, Pasión de nuestro espíritu®", this.MARGIN.LEFT, 162);
+        doc.text("Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional de nuestros egresados.", this.MARGIN.LEFT, (144 + incremento));
+        // tslint:disable-next-line: max-line-length
 
         doc.setFontSize(9);
         doc.setFont(this.FONT, 'Bold');
-        doc.text(this._request.department.boss, this.MARGIN.LEFT, 170);
+        doc.text("ATENTAMENTE", this.MARGIN.LEFT, (154 + incremento));
+        doc.setFontSize(6);
+        doc.text("Excelencia en Educación Tecnológica®", this.MARGIN.LEFT, (158 + incremento));
+        doc.text("Sabiduría Tecnológica, Pasión de nuestro espíritu®", this.MARGIN.LEFT, (162 + incremento));
+
+        doc.setFontSize(9);
+        doc.setFont(this.FONT, 'Bold');
+        doc.text(this._request.department.boss, this.MARGIN.LEFT, (193 + incremento));
         doc.setFont(this.FONT, 'Normal');
-        doc.text("JEFE DE " + this._request.department.name, this.MARGIN.LEFT, 174);
+        doc.text("JEFE DE " + this._request.department.name, this.MARGIN.LEFT, (197 + incremento));
 
         doc.setDrawColor(0, 0, 0);
         const widthRect: number = (this.WIDTH - (this.MARGIN.RIGHT + this.MARGIN.LEFT));
@@ -569,11 +578,13 @@ export class uRequest {
         // tslint:disable-next-line: max-line-length
         // let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACIÓN INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
         let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, @OPCION @PRODUCTO, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs. En la Sala @LUGAR de este Instituto.`;
-        
+
         contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
+        // contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba('AGUSTIN BARAJAS VALDIVIA')} `);
         contenido = contenido.replace('@NUMERO', `${this.addArroba(this._request.student.controlNumber.toUpperCase())} `);
         contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())} `);
         contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())} `);
+        // contenido = contenido.replace('@PROYECTO', `${this.addArroba('MÓDULO DE GENERACIÓN DE FIRMAS ELECTRÓNICAS, VALIDACIÓN DE DOCUMENTOS Y OPTIMIZACIÓN DE PROCEDIMIENTO DE TITULACIÓN')} `);
         contenido = contenido.replace('@OPCION', `${this.addArroba(this._request.titulationOption.toUpperCase())} `);
         contenido = contenido.replace('@PRODUCTO', `${this.addArroba(this._request.product.toUpperCase())} `);
         // tslint:disable-next-line: max-line-length
@@ -649,7 +660,7 @@ export class uRequest {
         content = content.replace('@NUMERO', this._request.registry.foja + '');
         content = content.replace('@LIBRO', this._request.registry.bookNumber + '');
         this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
-        doc.ellipse(28, 90, 20, 30);
+        doc.ellipse(28, 90, 16, 20);
         // tslint:disable-next-line: max-line-length
         content = 'De acuerdo con el instructivo vigente de Titulación, que no tiene como requisito la sustentación del Examen Profesional para Efecto de obtención de Título, en las opciones VIII, IX y Titulación Integral, el Jurado HACE CONSTAR: que al (la) C. @ESTUDIANTE con número de control @CONTROL egresado(a) del Instituto Tecnológico de Tepic, Clave 18DIT0002Z, que cursó la carrera de: @CARRERA.';
         content = content.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
@@ -761,7 +772,7 @@ export class uRequest {
 
         rows.forEach((row, index) => {
             // Cantidad de palabras que tiene la fila
-            let longitud = row.split(/\s+/).length;
+            let longitud = row.trim().split(/\s+/).length;
             // Sumatoria del tamaño total de la frase
             const summation: number = this.summation(Doc, aText.slice(iWord, iWord + longitud));
             // Espacio que se pondrá entre cada palabra
@@ -771,7 +782,7 @@ export class uRequest {
             let tmpIncY = Point.y + (index * lineBreak);
 
             while (longitud > 0) {
-                // Se obtiene la palabra del texto original a escribiri                
+                // Se obtiene la palabra del texto original a escribiri                 
                 let tmpWord = aText[iWord];
 
                 if (typeof (tmpWord) !== 'undefined') {
