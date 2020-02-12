@@ -22,4 +22,9 @@ export class BookProvider {
         return this.api.put(`minuteBook/changeStatus/${id}`, data)
             .pipe(map(book => book.json()));
     }
+
+    getAllActiveBooks() {
+        return this.api.get(`minuteBook/getAllActive`)
+            .pipe(map(books => books.json()));
+    }
 }
