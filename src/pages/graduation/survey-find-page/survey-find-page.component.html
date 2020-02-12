@@ -5,18 +5,14 @@
       </div>
       <div class="card-body">
           <div class="row">
-              <div class="col-3">
-                 <div class="form-group">
-                    <input [(ngModel)]="ncInput" type="text" class="form-control" placeholder="Ingresar número de contról">
-                 </div>
+              <div class="col-md-3">
+                    <input [(ngModel)]="ncInput" type="text" placeholder="Ingresar número de contról" style="width: 250px;">
               </div>
-              <div class="col-2">
-                 <div class="form-group">
-                    <div class="div-img" ngbTooltip="Buscar Alumno" tooltipClass="my-custom-class">
-                        <img src="../../assets/icons/search.svg" class="searchNc" (click)="searchAlumno()">
-                    </div>
-                 </div>
-              </div>
+              <div class="col-md-1">
+                  <div class="div-img" ngbTooltip="Buscar Alumno" tooltipClass="my-custom-class">
+                     <img src="../../assets/icons/search.svg" class="searchNc" (click)="searchAlumno()">
+                  </div>
+               </div>
           </div>
       </div>
     </div> 

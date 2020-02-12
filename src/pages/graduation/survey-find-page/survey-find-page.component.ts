@@ -67,7 +67,9 @@ export class SurveyFindPageComponent implements OnInit {
                 }
               });
               if (this.findProfile) {
-                window.location.assign('/surveyRegister/' + this.docId + '/' + this.ncInput);
+                //window.location.assign('/surveyRegister/' + this.docId + '/' + this.ncInput);
+                this.router.navigate(['/surveyRegister/'+ this.docId + '/' + this.ncInput]);
+
               } else {
                 this.firestoreService.getProfiles().subscribe((profilesSnapshot) => {
                   profilesSnapshot.forEach((profileData: any) => {
@@ -77,9 +79,11 @@ export class SurveyFindPageComponent implements OnInit {
                     }
                   });
                   if (this.findProfile) {
-                    window.location.assign('/surveyRegister/' + this.docId + '/' + this.ncInput);
+                    this.router.navigate(['/surveyRegister/'+ this.docId + '/' + this.ncInput]);
+                    //window.location.assign('/surveyRegister/' + this.docId + '/' + this.ncInput);
                   } else {
-                    window.location.assign('/surveyRegister/' + 0 + '/' + this.ncInput);
+                    this.router.navigate(['/surveyRegister/0/' + this.ncInput]);
+                    //window.location.assign('/surveyRegister/' + 0 + '/' + this.ncInput);
                   }
                 });
               }

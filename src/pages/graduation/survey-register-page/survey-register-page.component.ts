@@ -145,7 +145,7 @@ export class SurveyRegisterPageComponent implements OnInit {
 
   async saveProfile(idDoc, data) {
     data.generoAlumno = (data.generoAlumno = 'M') ? 'Masculino':'Femenino' 
-    if (idDoc !== 0) {
+    if (idDoc != 0) {
       this.firestoreService.getProfile(idDoc).subscribe(
         res => {
             this.firestoreService.createProfile(idDoc, data).then(

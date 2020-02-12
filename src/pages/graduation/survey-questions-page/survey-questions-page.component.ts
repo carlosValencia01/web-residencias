@@ -146,7 +146,7 @@ export class SurveyQuestionsPageComponent implements OnInit {
                   confirmButtonText: 'Aceptar'
                 }).then((result) => {     
                   if (result.value) {
-                    window.location.assign("/my-graduation") //salir de la encuesta
+                    window.location.assign("/surveyFind") //salir de la encuesta
                   }
                 })
               }
