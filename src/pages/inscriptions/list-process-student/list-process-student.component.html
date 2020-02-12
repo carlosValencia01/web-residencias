@@ -53,7 +53,52 @@
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="rolName == 'Administrador'">
+        <tr
+          *ngFor="let item of listStudentsProcess | filter:{documentsModifiedAdmin:searchChanges} | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText} | filter: {observationsAnalysis:searchDictamen} | filter: {warningAnalysis:searchAdvertencia} | paginate: {id: 'pag2', itemsPerPage: pageSize2, currentPage: page2 };">
+          <td>{{item.controlNumber}}</td>
+          <td>{{item.fullName}}</td>
+          <td>{{item.career}}</td>
+          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+            {{item.documentsReviewNumber}}/{{item.totalDocumentsNumber}}</td>
+          <td *ngIf="rolName == 'Médico' && item.observationsAnalysis">Si</td>
+          <td *ngIf="rolName == 'Médico' && !item.observationsAnalysis">No</td>
+          <td *ngIf="rolName == 'Médico' && item.warningAnalysis">Si</td>
+          <td *ngIf="rolName == 'Médico' && !item.warningAnalysis">No</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'En Captura' && rolName == 'Administrador' || item.inscriptionStatus == 'En Captura' && rolName == 'Secretaria escolares'"
+            class="Captura">{{item.inscriptionStatus}}</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'Enviado' && rolName == 'Administrador' || item.inscriptionStatus == 'Enviado' && rolName == 'Secretaria escolares'"
+            class="Enviado">{{item.inscriptionStatus}}</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'En Proceso' && rolName == 'Administrador' || item.inscriptionStatus == 'En Proceso' && rolName == 'Secretaria escolares'"
+            class="Proceso">{{item.inscriptionStatus}}</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'Verificado' && rolName == 'Administrador' || item.inscriptionStatus == 'Verificado' && rolName == 'Secretaria escolares'"
+            class="Verificado">{{item.inscriptionStatus}}</td>
+          <td
+            *ngIf="item.inscriptionStatus == 'Aceptado' && rolName == 'Administrador' || item.inscriptionStatus == 'Aceptado' && rolName == 'Secretaria escolares'"
+            class="Aceptado">{{item.inscriptionStatus}}</td>
+          <td>
+            <div class="div-actions">
+        <tr>
+          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+            <div class="div-img" ngbTooltip="Información General" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/observations.svg" class="action" (click)="updateGI(item)">
+            </div>
+          </td>
+          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+            <div class="div-img" ngbTooltip="Documentos a Dictaminar" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/folder.svg" class="action" (click)="viewExpedient(item)">
+            </div>
+          </td>
+        </tr>
+  </div>
+  </td>
+  </tr>
+  </tbody>
+      <tbody *ngIf="rolName == 'Secretaria escolares'">
         <tr
           *ngFor="let item of listStudentsProcess | filter:{documentsModified:searchChanges} | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText} | filter: {observationsAnalysis:searchDictamen} | filter: {warningAnalysis:searchAdvertencia} | paginate: {id: 'pag2', itemsPerPage: pageSize2, currentPage: page2 };">
           <td>{{item.controlNumber}}</td>
@@ -147,7 +192,7 @@
       <tr
         *ngFor="let item of listStudentsProcess | filter:{documentsModified:searchChanges} | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText}; let indice=index">
         <td data-f-sz="12" data-t="n">{{indice+1}}</td>
-        <td data-f-sz="12" data-t="n">{{item.controlNumber}}</td>
+        <td data-f-sz="12" data-t="s">{{item.controlNumber}}</td>
         <td data-f-sz="12" data-t="s">{{item.fullName}}</td>
         <td data-f-sz="12" data-t="s">{{item.career}}</td>
         <td data-f-sz="12" data-fill-color="FCD539" data-f-color="000000"
