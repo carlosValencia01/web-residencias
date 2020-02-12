@@ -1,0 +1,180 @@
+<div *ngIf="isGraduate">
+  <div class="card card-shadow">
+    <mat-tab-group>
+      <mat-tab>
+        <ng-template matTabLabel>
+          <span>Inicio</span>
+        </ng-template>
+        <div *ngIf="graduationDate && !isGraduate" class="div-start-card">
+          <mat-card class="start-card">
+            <mat-card-header>
+              <div mat-card-avatar>
+                <mat-icon>info</mat-icon>
+              </div>
+              <mat-card-title>Atención</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>
+                No estás registrado en la lista de egresados.<br>
+                La próxima graduación es el día <span style="color: #F27F07;">{{graduationDate}}</span>.
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div *ngIf="graduationDate && isGraduate && student" class="div-start-card">
+          <mat-card class="start-card-graduate"  style="text-align: center;">
+            <mat-card-title style="background: #1E2D4A; color: white;"><h4>¡FELICIDADES!</h4></mat-card-title>
+            <mat-card-content>
+              <h5>{{student.data.nombre}}</h5>
+              <p>Eres egresado(a) de la carrera de</p>
+                <h6>{{student.data.carreraCompleta}}</h6>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="start-card">
+            <mat-card-content>
+              <p>
+                {{event.directorMessage}}<br>
+              </p>
+              <p style="text-align: right; color: #F27F07;">
+                {{event.directorName}}<br>
+                Director
+              </p>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="start-card">
+            <mat-card-content>
+              <h6 style="text-align:left; color: #F27F07;">Recuerda</h6>
+              <p>
+                Te esperamos el día <span style="color: #F27F07;">{{graduationDate}}</span> en el teatro Alí Chumacero a las <span style="color: #F27F07;">{{event.hour}} hrs</span>.
+              </p>
+            </mat-card-content>
+          </mat-card>
+          <mat-card class="start-card" *ngIf="student.data.observations">
+            <mat-card-content>
+              <img src="assets/icons/bestAverage.svg" style="width: 50px;">
+              <h6 style="color: #F27F07;">{{event.observationsMessage}}</h6>
+              <ul style="text-align: left;">
+                <li *ngFor="let item of student.data.observations">
+                  {{item}}
+                </li>
+              </ul>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+      <mat-tab *ngIf="student.data.estatus == 'Verificado' || student.data.estatus == 'Pagado' || student.data.estatus == 'Asistió'">
+        <ng-template matTabLabel>
+          <span>Mis Boletos</span>
+        </ng-template>       
+        <mat-accordion class="ticket-acordion text-center" *ngIf="student && student.data.survey">
+          <mat-expansion-panel>            
+            <mat-expansion-panel-header >
+              <mat-panel-title>
+                Mi Boleto
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+                <div class="btn-save ">
+                  <button type="button" class="btn btn-primary" (click)="saveQR(student.id)">Guardar <mat-icon>save_alt</mat-icon></button>
+                </div>
+                <div class="qr-student" [id] = "student.id">
+                  <!-- <h1>Mi Boleto</h1> -->
+                  <div class="qr-student-middle">
+                    <ngx-qrcode 
+                      [qrc-value] = "qrData"
+                      qrc-element-type = "canvas"
+                      >
+                      </ngx-qrcode>
+                  </div>
+                    <div class="qr-footer-container">
+                      <div class="qr-bottom">
+                        <h6>
+                          <strong> {{titleDegree}} </strong>{{student.data.nombre}}
+                        </h6>
+                      </div>           
+                    </div>
+                    <div class="img-tec">
+                      <img src="assets/imgs/logoITTepic.png" alt="">
+                    </div>
+                </div>
+            <!-- code here -->
+          </mat-expansion-panel>
+          <mat-expansion-panel class="tickects-acordion-panel" *ngIf="guests.length > 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Mis Invitados
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <!-- code here -->
+                <ngb-carousel #carousel interval="6000" pauseOnHover="true">
+                  <ng-template ngbSlide *ngFor="let guest of guests">
+                    <div class="btn-save ">
+                      <button type="button" class="btn btn-primary" (click)="saveQR(guest.data)">Guardar <mat-icon>save_alt</mat-icon></button>
+                    </div>
+                    <div [id]="guest.data">
+                      <div class="qr-image">
+                        <ngx-qrcode 
+                          [qrc-value] = "guest.data"
+                          qrc-element-type = "canvas"
+                          >
+                          </ngx-qrcode>
+                      </div>
+                      <div class="qr-footer-container">
+                        <div class="qr-bottom">
+                          <h6>
+                            <strong> {{titleDegree}} </strong>{{student.data.nombre}}
+                          </h6>
+                          <p class="guest">{{guest.ticketFor}}</p>
+                        </div>           
+                      </div>
+                      <div class="img-tec">
+                        <img src="assets/imgs/logoITTepic.png" alt="">
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngb-carousel>
+          </mat-expansion-panel>
+        </mat-accordion>  
+        <div *ngIf="student && !student.data.survey" class="div-start-card">
+          <mat-card class="start-card">
+            <mat-card-header>
+              <div mat-card-avatar>
+                <mat-icon>info</mat-icon>
+              </div>
+              <mat-card-title>Atención</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>
+                Contesta la siguiente encuesta para activar tus boletos.
+              </p>
+              <button mat-raised-button color="primary" [routerLink]="'/surveyRegister/'+student.id+'/'+student.data.nc">Encuesta</button>
+            </mat-card-content>
+          </mat-card>
+        </div>  
+      </mat-tab>
+
+      <mat-tab *ngIf="student.data.estatus == 'Registrado'">
+        <ng-template matTabLabel>
+          <span>Mis Boletos</span>
+        </ng-template>  
+        <div class="div-start-card">
+          <mat-card class="start-card">
+            <mat-card-header>
+              <div mat-card-avatar>
+                <mat-icon>info</mat-icon>
+              </div>
+              <mat-card-title>Atención</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <h5>
+                Registra tu asistencia en el Departamento de Comunicación y Difusión antes
+                del día {{limitGraduationDate}}
+                <div class="orange" style="display: inline;">
+                </div>
+              </h5>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
