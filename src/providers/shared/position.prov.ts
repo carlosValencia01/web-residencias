@@ -37,12 +37,12 @@ export class PositionProvider {
             .pipe(map(updated => updated.json()));
     }
 
-    getPositionsForDepartment(departmentId) {
+    getPositionsByDepartment(departmentId) {
         return this.api.get(`position/getPositions/${departmentId}`)
             .pipe(map(res => res.json()));
     }
 
-    getAvailablePositionsForDepartment(employeeId, departmentId) {
+    getAvailablePositionsByDepartment(employeeId, departmentId) {
         return this.api.get(`position/getAvailablePositions/${employeeId}/${departmentId}`)
             .pipe(map(res => res.json()));
     }

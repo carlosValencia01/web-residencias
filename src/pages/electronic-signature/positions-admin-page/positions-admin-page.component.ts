@@ -58,7 +58,7 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   public getPositions() {
-    this.positionProv.getPositionsForDepartment(this._getDepartment(this.departmentControl.value)._id)
+    this.positionProv.getPositionsByDepartment(this._getDepartment(this.departmentControl.value)._id)
       .subscribe(res => {
         this.positions = res.positions;
         this.positionsCopy = this.positions;
@@ -82,15 +82,14 @@ export class PositionsAdminPageComponent implements OnInit {
       if (this.isEditing) {
         this.currentPosition.name = position.name;
         this.currentPosition.canSign = position.canSign;
+        this.currentPosition.isUnique = position.isUnique;
         this.positionProv.updatePosition(this.currentPosition)
-          .subscribe(updated => {
-            if (updated.status === 200) {
-              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto modificado correctamente', '');
-              this._updatePosition(this.currentPosition);
-            } else {
-              this.notificationsService.showNotification(eNotificationType.ERROR,
-                'Error, no se pudo modificar el puesto', 'Intente de nuevo');
-            }
+          .subscribe(_ => {
+            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto modificado correctamente', '');
+            this._updatePosition(this.currentPosition);
+          }, _ => {
+            this.notificationsService.showNotification(eNotificationType.ERROR,
+              'Error, no se pudo modificar el puesto', 'Intente de nuevo');
           });
       } else {
         const positionExists = this.positionsCopy.filter(pos => pos.name.toLowerCase().includes(position.name.toLowerCase()))[0];
@@ -156,7 +155,7 @@ export class PositionsAdminPageComponent implements OnInit {
 
   public removePosition(position) {
     Swal.fire({
-      title: 'Ésta acción no se puede revertir',
+      title: 'Esta acción no se puede revertir',
       text: `El puesto ${position.name} adscrito al ${position.ascription.name} se borrará totalmente. ¿Desea borrarlo?`,
       type: 'question',
       allowOutsideClick: false,
@@ -169,17 +168,16 @@ export class PositionsAdminPageComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         this.positionProv.removePosition(position._id)
-          .subscribe(deleted => {
-            if (deleted.status === 200) {
-              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto borrado con éxito', '');
-              if (this.isEditing && this.currentPosition._id === position._id) {
-                this.isEditing = false;
-                this.titleCardForm = 'Creando puesto';
-              }
-              this._removePosition(position);
-            } else {
-              this.notificationsService.showNotification(eNotificationType.ERROR, 'Error al borrar el puesto', deleted.error);
+          .subscribe(_ => {
+            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto borrado con éxito', '');
+            if (this.isEditing && this.currentPosition._id === position._id) {
+              this.isEditing = false;
+              this.titleCardForm = 'Creando puesto';
             }
+            this._removePosition(position);
+          }, err => {
+            const message = JSON.parse(err._body).message;
+            this.notificationsService.showNotification(eNotificationType.ERROR, 'Error al borrar el puesto', message);
           });
       }
     });
@@ -198,6 +196,7 @@ export class PositionsAdminPageComponent implements OnInit {
     this.positionForm = new FormGroup({
       'name': new FormControl({value: ''}, Validators.required),
       'canSign': new FormControl({value: false}),
+      'isUnique': new FormControl({value: false}),
     });
   }
 
@@ -215,21 +214,15 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   private _createPosition(position) {
-    this.positionProv.createPosition({
-      name: position.name,
-      ascription: position.ascription._id,
-      canSign: position.canSign,
-      documents: []
-    })
-      .subscribe(created => {
-        if (created && !created.status) {
-          this.positionForm.reset();
-          this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto creado con éxito', '');
-          this._addPosition(created);
-        } else {
-          this.notificationsService.showNotification(eNotificationType.ERROR,
-            'Ocurrió un error al crear el puesto', 'Intente de nuevo');
-        }
+    position.documents = [];
+    this.positionProv.createPosition(position)
+      .subscribe(createdPosition => {
+        this.positionForm.reset();
+        this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto creado con éxito', '');
+        this._addPosition(createdPosition);
+      }, _ => {
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'Ocurrió un error al crear el puesto', 'Intente de nuevo');
       });
   }
 
@@ -238,6 +231,7 @@ export class PositionsAdminPageComponent implements OnInit {
       name: this.positionForm.get('name').value,
       canSign: Boolean(this.positionForm.get('canSign').value),
       ascription: this._getDepartment(this.departmentControl.value),
+      isUnique: !!this.positionForm.get('isUnique').value
     };
   }
 
@@ -249,6 +243,7 @@ export class PositionsAdminPageComponent implements OnInit {
     this.positionForm.setValue({
       'name': position.name,
       'canSign': position.canSign,
+      'isUnique': !!position.isUnique
     });
   }
 

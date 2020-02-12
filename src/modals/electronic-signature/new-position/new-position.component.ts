@@ -78,7 +78,7 @@ export class NewPositionComponent implements OnInit {
   public getPositions(): void {
     const departmentId = this._findDepartmentId(this.positionForm.get('department').value);
     if (departmentId) {
-      this.positionProv.getAvailablePositionsForDepartment(this.employeeId, departmentId)
+      this.positionProv.getAvailablePositionsByDepartment(this.employeeId, departmentId)
         .subscribe(positions => {
           const activePositions = this.currentPositions.actives.map(({position}) => position.name.toUpperCase());
           this.positions = positions.filter(({name}) => !activePositions.includes(name.toUpperCase()));

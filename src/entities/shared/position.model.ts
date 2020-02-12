@@ -7,4 +7,5 @@ export interface IPosition {
     ascription?: IDepartment;
     canSign?: boolean;
     documents?: Array<IDocument>;
+    isUnique?: boolean;
 }
