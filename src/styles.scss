@@ -9,7 +9,9 @@
 @import "~material-design-icons/iconfont/material-icons.css";
 @import "~ngx-smart-modal/ngx-smart-modal";
 @import '~angular-calendar/css/angular-calendar.css';
-
+@media screen {
+    @import '../node_modules/bootstrap/scss/bootstrap';
+  }
 .mat-menu-item{
     
     display: inline !important;
@@ -36,21 +38,21 @@ dropzone > .dropzone.dz-wrapper .dz-message{
 .mat-card-header{
     justify-content: center;
 }*/
-canvas,.qrcode{
-    height: 265px !important;
-    width: 265px !important;
-}
 .carousel-indicators .active {
     background-color:  #ff831b !important;
 }
+.qr-image canvas,.qr-student-middle canvas, .qrcode{
+    height: 265px !important;
+    width: 265px !important;
+}
 @media only screen and (max-width: 782px) {   
-    canvas,.qrcode {
+   .qr-image canvas,.qr-student-middle canvas,.qrcode {
         height: auto !important;
         width: auto !important;    
     }
 }
 @media only screen and (max-width: 395px) {   
-    canvas,.qrcode {
+ .qr-image canvas,.qr-student-middle canvas,.qrcode {
         height: 160px !important;
         width: 160px !important;    
     }
