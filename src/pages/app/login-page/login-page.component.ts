@@ -164,7 +164,13 @@ export class LoginPageComponent implements OnInit {
     });
   }
   viewVideo() {
-    window.open('https://drive.google.com/file/d/1QlVOPP6_wy89Ld7sJsDKFNNH6gMn3V-B/view?usp=sharing');
+    // Tutorial Nuevo Ingreso
+    window.open('https://drive.google.com/file/d/1QlVOPP6_wy89Ld7sJsDKFNNH6gMn3V-B/view?usp=sharing');    
+  }
+
+  viewVideoReceptionAct() {
+    // Tutorial Acto Recepcional
+    window.open('https://drive.google.com/file/d/1o4WxNZ-RCPuqkb9cnK0ybulchgx8uLVp/view?usp=sharing');
   }
 
 }
