@@ -32,6 +32,7 @@ import { ICareer } from 'src/entities/shared/career.model';
 import { BookComponent } from 'src/modals/reception-act/book/book.component';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 import { ChangeJuryComponent } from 'src/modals/reception-act/change-jury/change-jury.component';
+import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
 
 @Component({
   selector: 'app-progress-page',
@@ -468,7 +469,7 @@ export class ProgressPageComponent implements OnInit {
     }
   }
 
-  approve(Identificador,studentId): void {
+  approve(Identificador, studentId): void {
     Swal.fire({
       title: 'Estatus del Acto Recepcional',
       type: 'question',
@@ -929,6 +930,19 @@ export class ProgressPageComponent implements OnInit {
   getFolder(controlNumber: string): void {
     this._StudentProvider.getDriveFolderId(controlNumber, eFOLDER.TITULACION).subscribe(folder => {
       this.folderId = folder.folderIdInDrive;
+    });
+  }
+
+  generateTrades(Identificador: string): void {
+    const dialogRef = this.dialog.open(ActNotificacionComponent, {
+      data: {
+        Appointment: {
+          id: Identificador
+        }
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '45em'
     });
   }
 }

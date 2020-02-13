@@ -549,6 +549,12 @@
                                                     <mat-icon>contact_mail</mat-icon>
                                                     Generar Documentación
                                                 </button>
+                                                <button
+                                                    *ngIf="role==='secretaria académica' || role==='jefe académico' || role==='administrador' && (row.status==='Pendiente' || row.status==='Proceso' ) && row.isIntegral"
+                                                    mat-menu-item (click)="generateTrades(row._id)">
+                                                    <mat-icon>contact_mail</mat-icon>
+                                                    Generar Oficio
+                                                </button>
                                             </div>
                                             <div *ngSwitchCase="'Generado'">
                                                 <button

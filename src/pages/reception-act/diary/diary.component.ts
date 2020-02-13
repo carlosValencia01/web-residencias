@@ -21,6 +21,11 @@ import { ViewMoreComponent } from 'src/modals/reception-act/view-more/view-more.
 import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
 import { NewTitleComponent } from 'src/modals/reception-act/new-title/new-title.component';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
+import { StudentProvider } from 'src/providers/shared/student.prov';
+import { eFOLDER } from 'src/enumerators/shared/folder.enum';
+import { uRequest } from 'src/entities/reception-act/request';
+import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import { eFILES } from 'src/enumerators/reception-act/document.enum';
 moment.locale('es');
 @Component({
   selector: 'app-diary',
@@ -48,9 +53,10 @@ export class DiaryComponent implements OnInit {
   request: iRequest;
   view: CalendarView = CalendarView.Month;
   locale: string = 'es';
-
+  public showLoading: boolean;
+  private folderId: string;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices, private _RequestService: RequestService,
-    private _CookiesService: CookiesService, private _sourceDataProvider: sourceDataProvider,
+    private _CookiesService: CookiesService, private _sourceDataProvider: sourceDataProvider, private _StudentProvider: StudentProvider, public _ImageToBase64Service: ImageToBase64Service,
     public dialog: MatDialog) {
     const tmpFecha = localStorage.getItem('Appointment');
     if (typeof (tmpFecha) !== 'undefined' && tmpFecha) {
@@ -442,7 +448,6 @@ export class DiaryComponent implements OnInit {
     return tmpAppointment;
   }
 
-
   searchAppointmentInGroup(AppointmentCareer: iAppointmentGroup, date: any, student: string): iAppointment {
     // const tmpCarrera = this.carrers.find(x => x.abbreviation === abbreviation);
     // let AppointmentCareer = this.Appointments.find(x => x._id[0] === tmpCarrera.carrer);
@@ -485,7 +490,6 @@ export class DiaryComponent implements OnInit {
 
   appointmentClicked($event): void {
     let index: { appointment: number, value: number };
-
     // const tmpMinutes: number = value.start.getHours() * 60;
     // let tmpDate: Date = new Date(value.start.getFullYear(), value.start.getMonth(), value.start.getDate(), 0, 0, 0, 0);
     const tmpMinutes: number = $event.start.getHours() * 60;
@@ -542,9 +546,7 @@ export class DiaryComponent implements OnInit {
     }
 
   }
-  eventClicked($event) {
-
-  }
+  eventClicked($event) { }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -558,6 +560,144 @@ export class DiaryComponent implements OnInit {
       }
       this.viewDate = date;
     }
+  }
+
+
+  getFolder(controlNumber: string): void {
+    this._StudentProvider.getDriveFolderId(controlNumber, eFOLDER.TITULACION).subscribe(folder => {
+      this.folderId = folder.folderIdInDrive;
+    });
+  }
+
+  public castRequest(element: any): iRequest {
+    let tmp: iRequest = new Object();//<iRequest>element;
+    tmp._id = element._id;
+    tmp.status = element.status;
+    tmp.controlNumber = element.studentId.controlNumber;
+    tmp.phase = element.phase;
+    tmp.career = element.studentId.career;
+    tmp.fullName = element.studentId.fullName;
+    tmp.student = element.studentId;
+    tmp.studentId = element.studentId._id;
+    tmp.jury = element.jury;
+    tmp.duration = element.duration;
+    tmp.proposedHour = element.proposedHour;
+    tmp.proposedDate = element.proposedDate;
+    tmp.adviser = element.adviser;
+    tmp.history = element.history;
+    tmp.honorificMention = element.honorificMention;
+    tmp.observation = element.observation;
+    tmp.noIntegrants = element.noIntegrants;
+    tmp.projectName = element.projectName;
+    tmp.telephone = element.telephone;
+    tmp.integrants = element.integrants;
+    tmp.email = element.email;
+    tmp.product = element.product;
+    tmp.titulationOption = element.titulationOption;
+    tmp.place = element.place;
+    tmp.grade = element.grade;
+    tmp.department = element.department;
+    tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
+    tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
+    tmp.registry = element.registry;
+    tmp.documents = element.documents;
+    tmp.isIntegral = typeof (element.isIntegral) !== 'undefined' ? element.isIntegral : true;
+    return tmp;
+  }
+
+  async documentation($event: any) {
+    let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
+    const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando documentación");
+    const iRequest: iRequest = await this.getRequestById(tmpAppointment.id);
+    if (iRequest.phase === 'Realizado') {
+      this.showLoading = true;
+      const oRequest = new uRequest(iRequest, this._ImageToBase64Service, this._CookiesService);
+      this.getFolder(iRequest.controlNumber);
+      await this.delay(1000);
+      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando oficio de jurado");
+      const data_oficio = {
+        file: {
+          mimetype: "application/pdf",
+          data: oRequest.documentSend(eFILES.OFICIO),
+          name: eFILES.OFICIO + '.pdf',
+        },
+        folderId: this.folderId,
+        isJsPdf: true,
+        Document: eFILES.OFICIO,
+        phase: iRequest.phase,
+        IsEdit: 'true'
+      }
+      let response = await new Promise(resolve => {
+        this._RequestProvider.uploadFile(tmpAppointment.id, data_oficio).subscribe((response) => {
+          window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
+          resolve(true);
+        }, error => {
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+          resolve(false);
+        });
+      });
+
+      if (response) {
+        const data = {
+          file: {
+            mimetype: "application/pdf",
+            data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
+            name: eFILES.JURAMENTO_ETICA + '.pdf',
+          },
+          folderId: this.folderId,
+          isJsPdf: true,
+          Document: eFILES.JURAMENTO_ETICA,
+          phase: iRequest.phase,
+          IsEdit: 'true'
+        }
+        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando código de ética");
+        this._RequestProvider.uploadFile(iRequest._id, data).subscribe(response => {
+          if (iRequest.status === 'None') {
+            let data = {
+              doer: this._CookiesService.getData().user.name.fullName,
+              observation: '',
+              phase: eRequest.REALIZED,
+              operation: eStatusRequest.PROCESS
+            };
+            this._RequestProvider.updateRequest(iRequest._id, data).subscribe((response) => {
+              this.showLoading = false;
+              window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+            }, error => {
+              console.log("Error");
+              this.showLoading = false;
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+            });
+          }
+          else {
+            this.showLoading = false;
+            window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+          }
+        }, error => {
+          this.showLoading = false;
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+        });
+      }
+      else {
+        this.showLoading = false;
+      }
+    } else {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "La solicitud ya ha pasado de fase");
+    }
+
+  }
+
+  async getRequestById(Identificador) {
+    return new Promise(resolve => {
+      this._RequestProvider.getRequestById(Identificador).subscribe(
+        request => {
+          let tmpRequest: iRequest = this.castRequest(request.request[0]);
+          resolve(tmpRequest);
+        }, error => {
+          resolve(null);
+        }
+      );
+    });
   }
 }
 interface iAppointmentGroup { _id: string[], values: [iAppointment] }

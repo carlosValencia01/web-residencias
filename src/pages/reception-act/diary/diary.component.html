@@ -116,6 +116,12 @@
             class="fa fa-calendar-times-o"></i>
           Cancelar Evento</div>
       </ng-template>
+      <ng-template class="mt-1" contextMenuItem (execute)="documentation($event.item)">
+        <div style=" border-style: solid;
+        border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#353bb5"
+            class="fa fa-book"></i>
+          Documentación</div>
+      </ng-template>
     </context-menu>
 
     <context-menu #basicMenu_2 style="background: grey; color:black">
@@ -243,4 +249,8 @@
     </ng-template> -->
 
   </div>
+</div>
+
+<div class="center">
+  <app-loader [loading]="showLoading"></app-loader>
 </div>
