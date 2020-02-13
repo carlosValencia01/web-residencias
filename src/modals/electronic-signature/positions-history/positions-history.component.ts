@@ -20,6 +20,7 @@ export class PositionsHistoryComponent implements OnInit {
   public positions: Array<any>;
   public dataSource: MatTableDataSource<IPositionsHistoryTable>;
   public displayedColumns: string[];
+  private _employeeId: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: any,
@@ -28,6 +29,7 @@ export class PositionsHistoryComponent implements OnInit {
     private notifications: NotificationsServices,
   ) {
     this.positions = data.positions.slice();
+    this._employeeId = data.employeeId;
   }
 
   ngOnInit() {
@@ -41,7 +43,7 @@ export class PositionsHistoryComponent implements OnInit {
   public reallocatePosition(positionId: string) {
     const position = this._getPositionById(positionId);
     if (position.name.toUpperCase() === 'JEFE DE DEPARTAMENTO' || position.name.toUpperCase() === 'DIRECTOR') {
-      this.employeeProv.canReallocateBossOrDirectorPosition(positionId).
+      this.employeeProv.canReallocatePosition(this._employeeId, positionId).
       subscribe(_ => {
         this.dialogRef.close(position);
       }, err => {

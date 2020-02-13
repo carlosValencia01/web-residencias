@@ -23,6 +23,7 @@ import { SidebarModule } from 'ng-sidebar';
 import { DropzoneModule } from 'ngx-dropzone-wrapper';
 import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { NgxQRCodeModule } from 'ngx-qrcode2';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
@@ -192,6 +193,7 @@ import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/s
 import { SurveyPageComponent } from 'src/pages/graduation/survey-page/survey-page.component';
 import { SurveyQuestionsPageComponent } from 'src/pages/graduation/survey-questions-page/survey-questions-page.component';
 import { SurveyRegisterPageComponent } from 'src/pages/graduation/survey-register-page/survey-register-page.component';
+import { MyGraduationComponent } from 'src/pages/graduation/my-graduation/my-graduation.component';
 // Pipes
 import { FilterPipe } from 'src/pages/graduation/list-graduates-page/filter.pipe';
 // Services
@@ -343,6 +345,7 @@ registerLocaleData(localeEs);
     SurveyPageComponent,
     SurveyQuestionsPageComponent,
     SurveyRegisterPageComponent,
+    MyGraduationComponent,
     // Pipes
     FilterPipe,
     // Modals
@@ -441,6 +444,7 @@ registerLocaleData(localeEs);
     MatSlideToggleModule,
     MatAutocompleteModule,
     MatBadgeModule,
+    MatGridListModule,
 
     // Ngx
     ImageCropperModule,
@@ -448,6 +452,7 @@ registerLocaleData(localeEs);
     NgxPaginationModule,
     NgxSmartModalModule.forRoot(),
     DropzoneModule,
+    NgxQRCodeModule,
 
     // Others
     AngularFontAwesomeModule,

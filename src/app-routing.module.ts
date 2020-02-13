@@ -33,8 +33,9 @@ import { TitulacionPageComponent } from 'src/pages/reception-act/titulacion-page
 import { VinculacionPageComponent } from 'src/pages/reception-act/vinculacion-page/vinculacion-page.component';
 import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
 import { ExpedienteComponent } from 'src/pages/reception-act/expediente/expediente.component';
-import { DocumentsValidComponent } from 'src/pages/reception-act/documents-valid/documents-valid.component';
 import { ListBooksPagesComponent} from 'src/pages/reception-act/list-books-pages/list-books-pages.component';
+import { DiaryComponent } from './pages/reception-act/diary/diary.component';
+import { ViewAppointmentPageComponent } from './pages/reception-act/view-appointment-page/view-appointment-page.component';
 
 // Graduation
 import { RegisterEmailgraduationPageComponent } from 'src/pages/graduation/register-emailgraduation-page/register-emailgraduation-page.component';
@@ -47,10 +48,7 @@ import { SurveyRegisterPageComponent } from 'src/pages/graduation/survey-registe
 import { SurveyFindPageComponent } from 'src/pages/graduation/survey-find-page/survey-find-page.component';
 import { SurveyQuestionsPageComponent } from 'src/pages/graduation/survey-questions-page/survey-questions-page.component';
 import { SurveyListPageComponent } from 'src/pages/graduation/survey-list-page/survey-list-page.component';
-import { DiaryComponent } from './pages/reception-act/diary/diary.component';
-import { RangePageComponent } from './pages/reception-act/range-page/range-page.component';
-import { StepperDocumentComponent } from './modals/reception-act/stepper-document/stepper-document.component';
-import { ViewAppointmentPageComponent } from './pages/reception-act/view-appointment-page/view-appointment-page.component';
+import { MyGraduationComponent } from 'src/pages/graduation/my-graduation/my-graduation.component';
 
 // Electronic signature
 import { DepartmentsAdminPageComponent } from 'src/pages/electronic-signature/departments-admin-page/departments-admin-page.component';
@@ -108,6 +106,7 @@ const appRoutes: Routes = [
   { path: 'surveyGraduates/:id/:nc', component: SurveyGraduatesPageComponent, pathMatch: 'full' },
   { path: 'surveyQuestions/:id/:nc', component: SurveyQuestionsPageComponent, pathMatch: 'full' },
   { path: 'surveyRegister/:id/:nc', component: SurveyRegisterPageComponent, pathMatch: 'full' },
+  { path: 'my-graduation', component: MyGraduationComponent, pathMatch: 'full' },
 
   // Electronic signature
   { path: 'departmentsAdmin', component: DepartmentsAdminPageComponent, pathMatch: 'full' },

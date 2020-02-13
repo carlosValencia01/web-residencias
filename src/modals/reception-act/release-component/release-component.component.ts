@@ -33,6 +33,7 @@ export class ReleaseComponentComponent implements OnInit {
   @ViewChild('time') Time: NgxTimepickerFieldComponent;
   private studentCareer: string;
   public showLoading: boolean = false;
+
   constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
     private notifications: NotificationsServices, public dialog: MatDialog,
     private cookiesService: CookiesService,
@@ -67,7 +68,7 @@ export class ReleaseComponentComponent implements OnInit {
       const hour = this.information.minutes / 60;
       const minutes = this.information.minutes % 60;
       this.Time.writeValue(hour + ":" + minutes);
-      this.activeReleased = this.isReject;
+      this.activeReleased = this.isReject || this.juryInfo.reduce((value, current) => current.name.length > 0 && value, true);
       this.enableUpload = !this.isReject;
       if (this.isReject) {
         this.loadFile();

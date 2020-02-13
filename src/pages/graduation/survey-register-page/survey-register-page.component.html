@@ -1,4 +1,4 @@
-<div class="content-general" *ngIf="ncAlumno">
+<div *ngIf="ncAlumno">
   <div class="card card-shadow">
      <div class="card-header text-white bg-secondary">
         <strong>I. PERFIL DEL EGRESADO</strong>             
@@ -16,8 +16,8 @@
             
             <label class="tituloLabel" id="example-radio-group-label">Género:</label>
             <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" formControlName="generoAlumno">
-              <mat-radio-button value="Masculino">Masculino</mat-radio-button>
-              <mat-radio-button value="Femenino">Femenino</mat-radio-button>
+              <mat-radio-button value="M">M</mat-radio-button>
+              <mat-radio-button value="F">F</mat-radio-button>
             </mat-radio-group>
 
             <mat-form-field class="example-full-width" appearance="outline">
@@ -41,7 +41,7 @@
             <mat-form-field class="example-full-width" appearance="outline">
               <mat-label>Teléfono</mat-label>
               <input matInput formControlName="telefonoAlumno"
-                      [errorStateMatcher]="matcher">
+                      [errorStateMatcher]="matcher" type="number">
               <mat-error>
                 <span *ngIf="!graduateForm.get('telefonoAlumno').valid && graduateForm.get('telefonoAlumno').touched">Ingrese su número telefónico</span>
               </mat-error>

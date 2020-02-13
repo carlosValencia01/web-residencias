@@ -368,6 +368,7 @@ export class EmployeePageComponent implements OnInit {
 
   public showPositionsHistory() {
     const data = {
+      employeeId: this.employee._id,
       positions: this.employee.positions
     };
     const dialogRef = this._openDialog(PositionsHistoryComponent, 'PositionsHistoryModal', data);

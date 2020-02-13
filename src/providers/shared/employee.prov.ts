@@ -139,11 +139,11 @@ export class EmployeeProvider {
             .pipe(map(res => res.json()));
     }
 
-    canReallocateBossOrDirectorPosition(positionId: string) {
-        return this.api.get(`employee/reallocate/${positionId}`)
+    canReallocatePosition(employeeId: string, positionId: string) {
+        return this.api.get(`employee/reallocate/${positionId}/${employeeId}`)
             .pipe(map(res => res.json()));
     }
-    
+
     searchEmployee(data) {
         return this.api.post(`department/search`, data).pipe(map(res => res.json()));
     }

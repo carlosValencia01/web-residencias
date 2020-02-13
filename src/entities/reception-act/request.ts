@@ -46,6 +46,7 @@ export class uRequest {
     private bosses: any;
     private _qrCode: any;
     private _stamp: any;
+
     constructor(public _request: iRequest, public _getImage: ImageToBase64Service, public _CookiesService: CookiesService) {
         this.bosses = this._CookiesService.getBosses();
         this.JDeptoDiv = this.bosses.JDeptoDiv;
@@ -172,15 +173,15 @@ export class uRequest {
         doc.text(doc.splitTextToSize('Por medio del presente solicito autorización para iniciar trámite de registro del ' +
             'proyecto de titulación integral:', 185), this.MARGIN.LEFT, 95, { align: 'left' });
         this.addTable(doc, [
-            ['Nombre: ', this._request.student.fullName],
-            ['Carrera: ', this._request.student.career],
-            ['No. de control: ', this._request.student.controlNumber],
-            ['Nombre del proyecto: ', this._request.projectName],
+            ['Nombre:', this._request.student.fullName],
+            ['Carrera:', this._request.student.career],
+            ['No. de control:', this._request.student.controlNumber],
+            ['Nombre del proyecto:', doc.splitTextToSize(this._request.projectName, 145)],
             ['Opción titulación:', this._request.titulationOption],
-            ['Producto: ', this._request.product]
-        ], 105, undefined, 10, false, {0: { cellWidth: 35 }, 1: { cellWidth: 100 }});
-        const nameProjectRows: Array<string> = doc.splitTextToSize(this._request.projectName, 100);
-        const nameProjectLines = (nameProjectRows ? nameProjectRows.length - 1 : 0) * 4;
+            ['Producto:', this._request.product]
+        ], 105, undefined, 9, false, {0: { cellWidth: 35 }, 1: { cellWidth: 100 }, 2: { cellWidth: 0 }});
+        const nameProjectRows: Array<string> = doc.splitTextToSize(this._request.projectName, 145);
+        const nameProjectLines = (nameProjectRows.length - 1) * 3.6;
         doc.setFont(this.FONT, 'Normal');
         doc.text('En espera de la aceptación de esta solicitud, quedo a sus órdenes.', this.MARGIN.LEFT,
             153 + nameProjectLines, { align: 'left' });
@@ -223,18 +224,20 @@ export class uRequest {
             }`, this.MARGIN.LEFT, 88, { align: 'left' });
 
         this.addTable(doc, [
-            ['Nombre del proyecto: ', this._request.projectName],
-            ['Nombre(s) del (de los) asesores(es): ', this._request.adviser.name],
-            ['Número de estudiantes ', this._request.noIntegrants]
-        ], 93);
+            ['Nombre del proyecto:', doc.splitTextToSize(this._request.projectName, 150)],
+            ['Nombre(s) del (de los) asesor(es):', this._request.adviser.name],
+            ['Número de estudiantes:', this._request.noIntegrants]
+        ], 93, undefined, 9);
 
         const aceptHistory = this._request.history
             .filter(x => x.phase === 'Enviado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
-        const nameProjectLines = 8 * Math.ceil(this._request.projectName.length / 50);
-        const integrantsLines = 10 * (this._request.noIntegrants - 1);
-        const observationsLines = 5 * Math.ceil((aceptHistory ? (aceptHistory.observation || '') : '').length / 60);
+        const nameProjectRows: Array<String> = doc.splitTextToSize(this._request.projectName, 150);
+        const nameProjectLines = 3.6 * (nameProjectRows.length - 1);
+        const integrantsLines = 9 * (this._request.noIntegrants - 1);
+        const observationRows: Array<String> = doc.splitTextToSize(aceptHistory ? (aceptHistory.observation || '') : '', 180);
+        const observationsLines = 5 * observationRows.length;
 
-        doc.text('Datos del (de los) estudiante(s):', this.MARGIN.LEFT, 125 + nameProjectLines, { align: 'left' });
+        doc.text('Datos del (de los) estudiante(s):', this.MARGIN.LEFT, 123 + nameProjectLines, { align: 'left' });
         const students: Array<Object> = [];
         students.push(['Nombre', 'No. de control', 'Carrera']);
         students.push([this._request.student.fullName, this._request.student.controlNumber, this._request.student.career]);
@@ -243,18 +246,21 @@ export class uRequest {
                 students.push([e.name, e.controlNumber, e.career]);
             });
         }
-        this.addTable(doc, students, 127 + nameProjectLines);
+        this.addTable(doc, students, 125 + nameProjectLines, undefined, 9, false,
+            {0: { cellWidth: 80 }, 1: { cellWidth: 20 }, 2: { cellWidth: 80 }});
 
-        doc.rect(this.MARGIN.LEFT, 160 + integrantsLines + nameProjectLines, this.WIDTH
+        doc.setFontSize(9);
+        doc.rect(this.MARGIN.LEFT, 150 + integrantsLines + nameProjectLines, this.WIDTH
             - (this.MARGIN.RIGHT + this.MARGIN.LEFT - 6), 7 + observationsLines);
-        doc.text('Observaciones: ', this.MARGIN.LEFT + 3, 164 + integrantsLines + nameProjectLines, { align: 'left' });
-        doc.text(doc.splitTextToSize(aceptHistory ? (aceptHistory.observation || '') : '', 150), this.MARGIN.LEFT + 3,
-            170 + integrantsLines + nameProjectLines, { align: 'left' });
+        doc.text('Observaciones: ', this.MARGIN.LEFT + 3, 154 + integrantsLines + nameProjectLines, { align: 'left' });
+        doc.text(doc.splitTextToSize(aceptHistory ? (aceptHistory.observation || '') : '', 180), this.MARGIN.LEFT + 3,
+            160 + integrantsLines + nameProjectLines, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
-        const observationY = 185 + observationsLines + (nameProjectLines - 5) + integrantsLines;
+        doc.setFontSize(11);
         doc.addImage(((typeof (this._qrCode) !== 'undefined') ? this._qrCode : qrCode), 'PNG', this.MARGIN.LEFT - 5, 205, 50, 50);
-        doc.text(doc.splitTextToSize(((typeof (this._stamp) !== 'undefined') ? this._stamp : eStamp) || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 245);
+        doc.text(doc.splitTextToSize(((typeof (this._stamp) !== 'undefined') ? this._stamp : eStamp) || '',
+            this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 245);
 
         return doc;
     }
@@ -464,12 +470,12 @@ export class uRequest {
             ['a) Nombre del egresado:', this._request.student.fullName],
             ['b) Carrera:', this._request.student.career],
             ['c) No. Control:', this._request.student.controlNumber],
-            ['d) Nombre del Proyecto:', this._request.projectName],
+            ['d) Nombre del Proyecto:', doc.splitTextToSize(this._request.projectName, 150)],
             ['e) Producto:', this._request.product]
         ], 100, this.MARGIN.LEFT, 8, true);
 
-        const rows: Array<string> = doc.splitTextToSize(this._request.projectName, 100);
-        const incremento = (rows.length - 1) * 5;
+        const rows: Array<string> = doc.splitTextToSize(this._request.projectName, 150);
+        const incremento = (rows.length - 1) * 3.2;
         // tslint:disable-next-line: max-line-length
         doc.text("Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional de nuestros egresados.", this.MARGIN.LEFT, (144 + incremento));
         // tslint:disable-next-line: max-line-length
@@ -483,9 +489,9 @@ export class uRequest {
 
         doc.setFontSize(9);
         doc.setFont(this.FONT, 'Bold');
-        doc.text(this._request.department.boss, this.MARGIN.LEFT, (193 + incremento));
+        doc.text(this._request.department.boss, this.MARGIN.LEFT, (188 + incremento));
         doc.setFont(this.FONT, 'Normal');
-        doc.text("JEFE DE " + this._request.department.name, this.MARGIN.LEFT, (197 + incremento));
+        doc.text("JEFE DE " + this._request.department.name, this.MARGIN.LEFT, (192 + incremento));
 
         doc.setDrawColor(0, 0, 0);
         const widthRect: number = (this.WIDTH - (this.MARGIN.RIGHT + this.MARGIN.LEFT));
@@ -501,10 +507,10 @@ export class uRequest {
             line += "_";
             sizeLine = doc.getTextWidth(line);
         } while (sizeLine < sizeAdvisory);
-        doc.text(`Firma: ${line}`, this.WIDTH / 2, 193 + (heightRect / 2), { align: "center" });
-        doc.text(`Asesor: ${this._request.jury[0].name}`, this.WIDTH / 2, 197 + (heightRect / 2), { align: "center" });
+        doc.text(`Firma: ${line}`, this.WIDTH / 2, 203 + (heightRect / 2), { align: "center" });
+        doc.text(`Asesor: ${this._request.jury[0].name}`, this.WIDTH / 2, 207 + (heightRect / 2), { align: "center" });
         let appointment: Date = new Date(this._request.proposedDate);
-        appointment.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0)
+        appointment.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0);
         doc.setFontSize(9);
         // tslint:disable-next-line: max-line-length
         doc.text(`NOTA: Se le solicita que la fecha del acto sea programado en el horario de las ${moment(appointment).format('HH:mm')} hrs.`, this.MARGIN.LEFT, heightRect + 182);
@@ -905,7 +911,8 @@ export class uRequest {
     }
 
     // @ts-ignore
-    private addTable(document: jsPDF, data: Array<Object>, startY: number, startX: number = this.MARGIN.LEFT, Size: number = 11, isBold: boolean = false, columnStyles = {}) {
+    private addTable(document: jsPDF, data: Array<Object>, startY: number, startX: number = this.MARGIN.LEFT,
+        Size: number = 11, isBold: boolean = false, columnStyles = {0: { cellWidth: 30 }, 1: { cellWidth: 100 }, 2: { cellWidth: 0 }}) {
         // @ts-ignore
         document.autoTable({
             theme: 'grid',

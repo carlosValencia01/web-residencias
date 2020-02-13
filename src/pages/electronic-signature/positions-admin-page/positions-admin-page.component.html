@@ -65,7 +65,8 @@
             </span>
           </mat-error>
         </mat-form-field>
-        <mat-slide-toggle color="primary" formControlName="canSign">¿Puede generar firma electrónica?</mat-slide-toggle>
+        <mat-slide-toggle color="primary" formControlName="canSign">¿Puede generar firma electrónica?</mat-slide-toggle><br><br>
+        <mat-slide-toggle color="primary" formControlName="isUnique">¿Es un puesto único?</mat-slide-toggle>
       </mat-card-content>
       <mat-card-actions *ngIf="!isViewDetails" align="end" style="padding:8px;margin:0px;">
         <button [disabled]="positionForm.invalid || departmentControl.invalid" color="primary" mat-button type="submit">
