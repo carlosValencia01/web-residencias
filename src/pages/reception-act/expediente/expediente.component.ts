@@ -63,7 +63,7 @@ export class ExpedienteComponent implements OnInit {
     private _CookiesService: CookiesService,
     private _StudentProvider: StudentProvider
   ) {
-    this.role = this._CookiesService.getData().user.rol.name;
+    this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
     this.changeDocument = false;
     this.activatedRoute.params.subscribe(
       (params: Params) => {
