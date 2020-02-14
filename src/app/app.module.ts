@@ -144,9 +144,7 @@ import { DocumentsHelpComponent } from 'src/modals/inscriptions/documents-help/d
 
 // Reception act module
 // Pages
-import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
 import { DocumentsValidComponent } from 'src/pages/reception-act/documents-valid/documents-valid.component';
-import { ExpedienteComponent } from 'src/pages/reception-act/expediente/expediente.component';
 import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-page.component';
 import { ProgressPageComponent } from 'src/pages/reception-act/progress-page/progress-page.component';
 import { TitulacionPageComponent } from 'src/pages/reception-act/titulacion-page/titulacion-page.component';
@@ -171,7 +169,8 @@ import { RequestModalComponent } from 'src/modals/reception-act/request-modal/re
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
 import { BookComponent } from 'src/modals/reception-act/book/book.component';
 import { NewBookComponent } from 'src/modals/reception-act/new-book/new-book.component';
-
+import { ExpedientComponent } from 'src/modals/reception-act/expedient/expedient.component';
+import { DocumentReviewComponent } from 'src/modals/reception-act/document-review/document-review.component';
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
 // Providers
@@ -304,14 +303,12 @@ registerLocaleData(localeEs);
 
     DocumentsHelpComponent,
     // Reception act module
-    // Pages
-    DocumentReviewComponent,
+    // Pages    
     GradePageComponent,
     ProgressPageComponent,
     TitulacionPageComponent,
     VinculacionPageComponent,
-    DocumentsValidComponent,
-    ExpedienteComponent,
+    DocumentsValidComponent,    
     ListBooksPagesComponent,
     // Components
     ProcessComponentComponent,
@@ -332,7 +329,8 @@ registerLocaleData(localeEs);
     NewTitleComponent,
     BookComponent,
     NewBookComponent,
-
+    ExpedientComponent,
+    DocumentReviewComponent,
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -371,10 +369,7 @@ registerLocaleData(localeEs);
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
-    LoadCsvDataComponent,
-
-    DocumentReviewComponent,
-    ExpedienteComponent,
+    LoadCsvDataComponent,     
     ReleaseCheckComponent,
     ResumeStudentPageComponent,
     ConfirmationStudentPageComponent,
@@ -530,8 +525,7 @@ registerLocaleData(localeEs);
   ],
   entryComponents: [
     // Reception act module
-    // Pages
-    DocumentReviewComponent,
+    // Pages    
     // Modals
     EmployeeAdviserComponent,
     EmployeeGradeComponent,
@@ -551,6 +545,8 @@ registerLocaleData(localeEs);
     BookComponent,
     NewBookComponent,
     ChangeJuryComponent,
+    ExpedientComponent,
+    DocumentReviewComponent,
     //inscriptions
     //Modals
     NewPeriodComponent,
@@ -577,9 +573,7 @@ registerLocaleData(localeEs);
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
-    LoadCsvDataComponent,
-
-    DocumentReviewComponent,
+    LoadCsvDataComponent,    
     NewEventComponent,
     ViewMoreComponent
   ],

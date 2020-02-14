@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
-import { ActivatedRoute, Params } from '@angular/router';
 import { iRequest } from 'src/entities/reception-act/request.model';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-viewer.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { ObservationsComponentComponent } from 'src/modals/reception-act/observations-component/observations-component.component';
@@ -20,11 +19,12 @@ import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 moment.locale('es');
 
 @Component({
-  selector: 'app-expediente',
-  templateUrl: './expediente.component.html',
-  styleUrls: ['./expediente.component.scss']
+  selector: 'app-expedient',
+  templateUrl: './expedient.component.html',
+  styleUrls: ['./expedient.component.scss']
 })
-export class ExpedienteComponent implements OnInit {
+export class ExpedientComponent implements OnInit {
+
   public Request: iRequest;
   public Documents: Array<iDocument>;
   public FileRequest: iDocument;
@@ -53,64 +53,66 @@ export class ExpedienteComponent implements OnInit {
   public registeredDate: string;
   public folderId: string;
   public showLoading: boolean;
+  
   constructor(
     public requestProvider: RequestProvider,
-    private _NotificationsServices: NotificationsServices,
-    private activatedRoute: ActivatedRoute,
+    private _NotificationsServices: NotificationsServices,    
     public dialog: MatDialog,
     public imgSrv: ImageToBase64Service,
     public _RequestService: RequestService,
     private _CookiesService: CookiesService,
-    private _StudentProvider: StudentProvider
+    private _StudentProvider: StudentProvider,
+    public dialogRef: MatDialogRef<ExpedientComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
     this.role = this._CookiesService.getData().user.rol.name;
-    this.changeDocument = false;
-    this.activatedRoute.params.subscribe(
-      (params: Params) => {
-        this.requestProvider.getRequestById(params.id).subscribe(
-          data => {
-            this.Request = data.request[0];
-            this.registeredDate = moment(new Date(this.Request.applicationDate)).format('LL')
-            this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
-            this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
-            let tmpDate: Date;
-            if (this.existTitledDate) {
-              tmpDate = new Date(this.Request.proposedDate);
-              tmpDate.setHours(0, 0, 0, 0);
-              tmpDate.setHours(this.Request.proposedHour / 60, this.Request.proposedHour % 60, 0, 0);
-            }
-            this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
-            this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
-            this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
-
-            this.Request.student = data.request[0].studentId;
-
-            this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber, eFOLDER.TITULACION).subscribe(
-              (folder) => {
-                this.folderId = folder.folderIdInDrive;
-              },
-              err => {
-                console.log(err);
-                this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-              }
-            );
-
-            this._Request = new uRequest(this.Request, imgSrv, this._CookiesService);
-            this.onLoad(this.Request.documents);
-            (async () => {
-              await this.delay(150);
-            })();
-          },
-          error => {
-            this._NotificationsServices.showNotification(eNotificationType.ERROR,
-              'Acto Recepcional', error);
-          });
-      });
-  }
+    this.changeDocument = false;    
+    this.init();
+   }
 
   ngOnInit() {
   }
 
+  init(){
+    this.requestProvider.getRequestById(this.data.id).subscribe(
+      data => {
+        this.Request = data.request[0];
+        this.registeredDate = moment(new Date(this.Request.applicationDate)).format('LL')
+        this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
+        this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
+        let tmpDate: Date;
+        if (this.existTitledDate) {
+          tmpDate = new Date(this.Request.proposedDate);
+          tmpDate.setHours(0, 0, 0, 0);
+          tmpDate.setHours(this.Request.proposedHour / 60, this.Request.proposedHour % 60, 0, 0);
+        }
+        this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
+        this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
+        this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
+
+        this.Request.student = data.request[0].studentId;
+
+        this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber, eFOLDER.TITULACION).subscribe(
+          (folder) => {
+            this.folderId = folder.folderIdInDrive;
+          },
+          err => {
+            console.log(err);
+            this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+          }
+        );
+
+        this._Request = new uRequest(this.Request, this.imgSrv, this._CookiesService);
+        this.onLoad(this.Request.documents);
+        (async () => {
+          await this.delay(150);
+        })();
+      },
+      error => {
+        this._NotificationsServices.showNotification(eNotificationType.ERROR,
+          'Acto Recepcional', error);
+      });
+  }
   changed(): void {
     if (typeof (this.folderId) !== 'undefined' || this.folderId === '') {
       if (!this.changeDocument) {
@@ -350,9 +352,13 @@ export class ExpedienteComponent implements OnInit {
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+  
+  onClose() {
+    this.dialogRef.close({ action: 'close' });
+  }
+
 }
 
-// tslint:disable-next-line: class-name
 interface iDocument {
   type: string;
   value: any;
