@@ -179,7 +179,7 @@ export class uRequest {
             ['Nombre del proyecto:', doc.splitTextToSize(this._request.projectName, 145)],
             ['Opción titulación:', this._request.titulationOption],
             ['Producto:', this._request.product]
-        ], 105, undefined, 9, false, {0: { cellWidth: 35 }, 1: { cellWidth: 100 }, 2: { cellWidth: 0 }});
+        ], 105, undefined, 9, false, { 0: { cellWidth: 35 }, 1: { cellWidth: 100 }, 2: { cellWidth: 0 } });
         const nameProjectRows: Array<string> = doc.splitTextToSize(this._request.projectName, 145);
         const nameProjectLines = (nameProjectRows.length - 1) * 3.6;
         doc.setFont(this.FONT, 'Normal');
@@ -247,7 +247,7 @@ export class uRequest {
             });
         }
         this.addTable(doc, students, 125 + nameProjectLines, undefined, 9, false,
-            {0: { cellWidth: 80 }, 1: { cellWidth: 20 }, 2: { cellWidth: 80 }});
+            { 0: { cellWidth: 80 }, 1: { cellWidth: 20 }, 2: { cellWidth: 80 } });
 
         doc.setFontSize(9);
         doc.rect(this.MARGIN.LEFT, 150 + integrantsLines + nameProjectLines, this.WIDTH
@@ -465,7 +465,7 @@ export class uRequest {
         doc.text("PRESENTE", this.MARGIN.LEFT, 82);
         this.addTextRight(doc, `CON AT’N.: ${this.addArroba("COORD. DE TITULACIÓN O EQUIVALENTE")}`, 86);
         doc.setFont(this.FONT, 'Normal');
-        doc.text("Por este medio le informo que ha sido liberado el siguiente proyecto para la Titulación Integral:", this.MARGIN.LEFT, 94);        
+        doc.text("Por este medio le informo que ha sido liberado el siguiente proyecto para la Titulación Integral:", this.MARGIN.LEFT, 94);
         this.addTable(doc, [
             ['a) Nombre del egresado:', this._request.student.fullName],
             ['b) Carrera:', this._request.student.career],
@@ -569,17 +569,17 @@ export class uRequest {
         doc.setFontSize(10);
         // doc.text('TEPIC, NAYARIT;', (this.WIDTH / 2), 55, { align: 'center' });
         this.addTextRight(doc, `TEPIC, NAYARIT; ${moment(new Date()).format('LL').toUpperCase()}`, 55)
-        doc.text('ACTO DE RECEPCIÓN PROFESIONAL', (this.WIDTH / 2), 70, { align: 'center' });
-        doc.text('INTEGRANTES DEL JURADO', (this.WIDTH / 2), 85, { align: 'center' });
+        doc.text('ACTO DE RECEPCIÓN PROFESIONAL', (this.WIDTH / 2), 65, { align: 'center' });
+        doc.text('INTEGRANTES DEL JURADO', (this.WIDTH / 2), 75, { align: 'center' });
         doc.setFont(this.FONT, 'Normal');
-        doc.text('PRESIDENTE', this.MARGIN.LEFT, 95);
-        this.addJury(doc, this._request.jury[0], 95); // 100,105,110
-        doc.text('SECRETARIO', this.MARGIN.LEFT, 110);
-        this.addJury(doc, this._request.jury[1], 110); // 115,120,125
-        doc.text('VOCAL', this.MARGIN.LEFT, 125);
-        this.addJury(doc, this._request.jury[2], 125); // 130,135,140
-        doc.text('VOCAL SUPLENTE', this.MARGIN.LEFT, 140);
-        this.addJury(doc, this._request.jury[3], 140); // 145,150,155
+        doc.text('PRESIDENTE', this.MARGIN.LEFT, 85);
+        this.addJury(doc, this._request.jury[0], 85); // 100,105,110
+        doc.text('SECRETARIO', this.MARGIN.LEFT, 100);
+        this.addJury(doc, this._request.jury[1], 100); // 115,120,125
+        doc.text('VOCAL', this.MARGIN.LEFT, 115);
+        this.addJury(doc, this._request.jury[2], 115); // 130,135,140
+        doc.text('VOCAL SUPLENTE', this.MARGIN.LEFT, 130);
+        this.addJury(doc, this._request.jury[3], 130); // 145,150,155
 
         // tslint:disable-next-line: max-line-length
         // let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACIÓN INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
@@ -598,11 +598,14 @@ export class uRequest {
         contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))} `);
         contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())} `);
 
-        this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 160 }, 180);
+        this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 148 }, 180);
 
-        doc.text('Por lo que se le pide su puntual asistencia.', this.MARGIN.LEFT, 210);
+        const rows: Array<string> = doc.splitTextToSize(contenido, 180);
+        const incremento = (rows.length) * 4;
+
+        doc.text('Por lo que se le pide su puntual asistencia.', this.MARGIN.LEFT, (148 + incremento));
         doc.setFont(this.FONT, 'Bold');
-        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 225);
+        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 235);
         // doc.text('L.A. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 240);
         doc.text(`${this.JDeptoDiv.name} `, this.MARGIN.LEFT, 240);
         let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
@@ -912,7 +915,7 @@ export class uRequest {
 
     // @ts-ignore
     private addTable(document: jsPDF, data: Array<Object>, startY: number, startX: number = this.MARGIN.LEFT,
-        Size: number = 11, isBold: boolean = false, columnStyles = {0: { cellWidth: 30 }, 1: { cellWidth: 100 }, 2: { cellWidth: 0 }}) {
+        Size: number = 11, isBold: boolean = false, columnStyles = { 0: { cellWidth: 30 }, 1: { cellWidth: 100 }, 2: { cellWidth: 0 } }) {
         // @ts-ignore
         document.autoTable({
             theme: 'grid',
