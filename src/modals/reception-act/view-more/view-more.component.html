@@ -1,88 +1,99 @@
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">{{Appointment.student[0]}}</h5>
-    <div class="row">
-      <div class="col-6 text-left">
-        <p><strong>Lugar: </strong> {{Appointment.place}}</p>
+<div class="row">
+  <div class="col-10">    
+  </div>
+  <div class="col-2">
+    <button mat-icon-button [mat-dialog-close] class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<div mat-dialog-content>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{Appointment.student[0]}}</h5>
+      <div class="row">
+        <div class="col-6 text-left">
+          <p><strong>Lugar: </strong> {{Appointment.place}}</p>
+        </div>
+        <div class="col-6 text-left">
+          <p><strong>Hora:</strong> {{_Date}}</p>
+        </div>
       </div>
-      <div class="col-6 text-left">
-        <p><strong>Hora:</strong> {{_Date}}</p>
-      </div>
-    </div>
 
 
-    <div class="row">
-      <div class="col-6 text.left">
-        <p><strong>Proyecto</strong></p>
+      <div class="row">
+        <div class="col-6 text.left">
+          <p><strong>Proyecto</strong></p>
+        </div>
+        <div class="col-6 text-left">
+          <p>{{Appointment.project}}</p>
+        </div>
       </div>
-      <div class="col-6 text-left">
-        <p>{{Appointment.project}}</p>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-12 text-center">
-        <p><strong>Titulación</strong></p>
+      <div class="row">
+        <div class="col-12 text-center">
+          <p><strong>Titulación</strong></p>
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-6 text-left">
-        <p><strong>Opción de Titulación</strong></p>
+      <div class="row">
+        <div class="col-6 text-left">
+          <p><strong>Opción de Titulación</strong></p>
+        </div>
+        <div class="col-6 text-left">
+          <p>{{Appointment.option}}</p>
+        </div>
       </div>
-      <div class="col-6 text-left">
-        <p>{{Appointment.option}}</p>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-6 text-left">
-        <p><strong>Producto</strong></p>
+      <div class="row">
+        <div class="col-6 text-left">
+          <p><strong>Producto</strong></p>
+        </div>
+        <div class="col-6 text-left">
+          <p>{{Appointment.product}}</p>
+        </div>
       </div>
-      <div class="col-6 text-left">
-        <p>{{Appointment.product}}</p>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-12 text-center">
-        <p><strong>Jurado</strong></p>
+      <div class="row">
+        <div class="col-12 text-center">
+          <p><strong>Jurado</strong></p>
+        </div>
       </div>
-    </div>
 
-    <div class="row">
-      <div class="col-6 text-left">
-        <p><strong>Presidente</strong></p>
+      <div class="row">
+        <div class="col-6 text-left">
+          <p><strong>Presidente</strong></p>
+        </div>
+        <div class="col-6 text-left">
+          <p>{{Appointment.jury[0].name}}</p>
+        </div>
       </div>
-      <div class="col-6 text-left">
-        <p>{{Appointment.jury[0].name}}</p>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-6 text-left">
-        <p><strong>Secretario</strong></p>
+      <div class="row">
+        <div class="col-6 text-left">
+          <p><strong>Secretario</strong></p>
+        </div>
+        <div class="col-6 text-left">
+          <p>{{Appointment.jury[1].name}}</p>
+        </div>
       </div>
-      <div class="col-6 text-left">
-        <p>{{Appointment.jury[1].name}}</p>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-6 text-left">
-        <p><strong>Vocal</strong></p>
+      <div class="row">
+        <div class="col-6 text-left">
+          <p><strong>Vocal</strong></p>
+        </div>
+        <div class="col-6 text-left">
+          <p>{{Appointment.jury[2].name}}</p>
+        </div>
       </div>
-      <div class="col-6 text-left">
-        <p>{{Appointment.jury[2].name}}</p>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-6 text-left">
-        <p><strong>Suplente</strong></p>
-      </div>
-      <div class="col-6 text-left">
-        <p>{{Appointment.jury[3].name}}</p>
+      <div class="row">
+        <div class="col-6 text-left">
+          <p><strong>Suplente</strong></p>
+        </div>
+        <div class="col-6 text-left">
+          <p>{{Appointment.jury[3].name}}</p>
+        </div>
       </div>
     </div>
   </div>
