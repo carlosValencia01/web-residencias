@@ -28,6 +28,7 @@ export class EmployeeAdviserComponent implements OnInit {
   public isNewEmployee: boolean;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  public showLoading: boolean;
 
   constructor(private employeProvider: EmployeeProvider,
     private notifications: NotificationsServices,
@@ -45,7 +46,7 @@ export class EmployeeAdviserComponent implements OnInit {
       'Titled': new FormControl(null, Validators.required),
       'Cedula': new FormControl(null, Validators.required)
     });
-
+    this.showLoading = true;
     this.employeProvider.getEmployeesByDepto().subscribe(
       data => {
         this.departments = <IDepartment[]>data.departments;
@@ -64,9 +65,11 @@ export class EmployeeAdviserComponent implements OnInit {
         this.departmentInfo.boss = (indice === -1 ? '' : this.departments[indice].boss.name.fullName);
 
         this.refresh();
+        this.showLoading = false;
       },
       error => {
-        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+        this.showLoading = true;
+        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', 'Error al obtener empleados');
       }
     );
   }
@@ -82,6 +85,7 @@ export class EmployeeAdviserComponent implements OnInit {
     this.type = areAll ? 'Todos los empleados' : 'Personal del Área';
     this.refresh();
   }
+
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
     if (this.dataSource.paginator) {
@@ -186,6 +190,7 @@ export class EmployeeAdviserComponent implements OnInit {
         }
     });
   }
+
   addEmploye(): void {
     this.frmAuxiliar.get('Name').setErrors(null);
     this.frmAuxiliar.get('Name').markAsUntouched();

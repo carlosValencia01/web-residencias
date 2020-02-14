@@ -735,7 +735,8 @@ export class uRequest {
     // A una cadena de texto, le añade @ a cada palabra tanto al inicio y al final
     // Esto es para indicar que se le agregará texto en negritas
     private addArroba(Text: string): string {
-        return Text.split(' ').map(word => { return '@' + word + '@'; }).join(' ');
+        const text = Text.trim();
+        return text.split(' ').map(word => { return '@' + word + '@'; }).join(' ');
     }
 
     private letterCapital(text: string): string {

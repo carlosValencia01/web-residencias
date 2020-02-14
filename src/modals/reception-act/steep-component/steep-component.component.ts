@@ -52,6 +52,7 @@ export class SteepComponentComponent implements OnInit {
   private oRequest: uRequest;
   private folderId: string;
   public showLoading: boolean = false;
+
   constructor(
     public dialogRef: MatDialogRef<SteepComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
@@ -84,7 +85,7 @@ export class SteepComponentComponent implements OnInit {
       this.employee = res;
     });
     this.oRequest = new uRequest(this.Request, this._ImageToBase64Service, this.cookiesService);
-    this.getFolder()
+    this.getFolder();
   }
 
   // tslint:disable-next-line: use-life-cycle-interface
@@ -190,14 +191,17 @@ export class SteepComponentComponent implements OnInit {
           documentCode: 'ITT-POS-02-02',
           outDepartmentName: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES'
         };
+        this.showLoading = true;
         this.eSignatureProvider.sign(data).subscribe(signed => {
           if (signed) {
             this.QR = signed.qrData;
             this.EStamp = signed.eStamp;
             this.enableNext = false;
             this.Next(1);
+            this.showLoading = false;
           }
         }, err => {
+          this.showLoading = false;
           const error = JSON.parse(err._body).err;
           this.notificationsServ.showNotification(eNotificationType.ERROR, error, '');
         });

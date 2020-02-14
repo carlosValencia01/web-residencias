@@ -35,6 +35,7 @@ export class RequestModalComponent implements OnInit {
   private oRequest: uRequest;
   private folderId: string;
   public showLoading: boolean;
+
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -65,11 +66,13 @@ export class RequestModalComponent implements OnInit {
         // 'dateProposed': new FormControl({ value: null, disabled: true }, Validators.required),
         'honorific': new FormControl({ value: false, disabled: true }, Validators.required)
       });
-
+    this.showLoading = true;
     this.requestProvider.getRequestById(this.data.Id).subscribe(res => {
       this.loadRequest(res);
       this.getFolder();
+      this.showLoading = false;
     }, error => {
+      this.showLoading = false;
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
     });
   }

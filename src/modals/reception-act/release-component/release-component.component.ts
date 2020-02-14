@@ -69,7 +69,7 @@ export class ReleaseComponentComponent implements OnInit {
       const minutes = this.information.minutes % 60;
       this.Time.writeValue(hour + ":" + minutes);
       this.activeReleased = this.isReject || this.juryInfo.reduce((value, current) => current.name.length > 0 && value, true);
-      this.enableUpload = !this.isReject;
+      this.enableUpload = this.activeReleased;
       if (this.isReject) {
         this.loadFile();
       }

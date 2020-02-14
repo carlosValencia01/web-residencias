@@ -32,6 +32,7 @@ export class ViewerComponentComponent implements OnInit {
   public message: string;
   public Title: String;
   public existTitle: boolean;
+  public showLoading: boolean;
   private oRequest: uRequest;
   private PHASE: eRequest;
 
@@ -107,21 +108,27 @@ export class ViewerComponentComponent implements OnInit {
   }
 
   view(): void {
+    this.showLoading = true;
     switch (this.PHASE) {
       case eRequest.GENERATED: {
+        this.showLoading = false;
         break;
       }
       case eRequest.REALIZED: {
+        this.showLoading = false;
         break;
       }
       case eRequest.ASSIGNED: {
+        this.showLoading = false;
         break;
       }
       case eRequest.VALIDATED: {
         this.oRequest.setRequest(this._Request);
         this.requestProvider.getResource(this._Request._id, eFILES.INCONVENIENCE).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
+          this.showLoading = false;
         }, error => {
+          this.showLoading = false;
           window.open(this.oRequest.noInconvenience().output('bloburl'), '_blank');
         });
         break;
@@ -130,7 +137,9 @@ export class ViewerComponentComponent implements OnInit {
         // window.open(`${this.requestProvider.getApiURL()}/request/${this._Request._id}/file/${eFILES.RELEASED}`, '_blank');        
         this.requestProvider.getResource(this._Request._id, eFILES.RELEASED).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
+          this.showLoading = false;
         }, error => {
+          this.showLoading = false;
           console.log("Error de archivo", error);
         });
         break;
@@ -139,7 +148,9 @@ export class ViewerComponentComponent implements OnInit {
         // window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         this.requestProvider.getResource(this._Request._id, eFILES.REGISTRO).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
+          this.showLoading = false;
         }, error => {
+          this.showLoading = false;
           window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         });
         break;
@@ -149,24 +160,27 @@ export class ViewerComponentComponent implements OnInit {
         this.oRequest.setCode(this.QR, this.EStamp);
         this.requestProvider.getResource(this._Request._id, eFILES.REGISTRO).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
+          this.showLoading = false;
         }, error => {
+          this.showLoading = false;
           window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         });
         break;
       }
       case eRequest.SENT: {
+        this.showLoading = false;
         window.open('../../../assets/Requisitos.pdf', '_blank');
         break;
       }
       case eRequest.CAPTURED: {
         this.requestProvider.getResource(this._Request._id, eFILES.SOLICITUD).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
+          this.showLoading = false;
         }, error => {
           console.log("Error de Viewer", error);
+          this.showLoading = false;
           window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
         });
-
-        // window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
         break;
       }
       default: { }

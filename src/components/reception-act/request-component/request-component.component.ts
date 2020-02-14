@@ -124,6 +124,7 @@ export class RequestComponentComponent implements OnInit {
   }
 
   getRequest() {
+    this.showLoading = true;
     this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {
       if (typeof (res) !== 'undefined' && res.request.length > 0
         && (res.request[0].phase === 'Capturado' && res.request[0].phase !== 'None')
@@ -140,8 +141,10 @@ export class RequestComponentComponent implements OnInit {
       } else {
         this.operationMode = eOperation.NEW;
       }
+      this.showLoading = false;
     }, error => {
       this.operationMode = eOperation.NEW;
+      this.showLoading = false;
     });
   }
 
@@ -287,7 +290,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('adviserTitle', this.adviserInfo.title);
     this.frmData.append('adviserCedula', this.adviserInfo.cedula);
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
-    this.frmData.append('projectName', this.frmRequest.get('project').value);
+    this.frmData.append('projectName', this.frmRequest.get('project').value.trim());
     this.frmData.append('email', this.frmRequest.get('email').value);
     this.frmData.append('status', 'Process');
     this.frmData.append('phase', eRequest.CAPTURED);
@@ -463,6 +466,7 @@ export class RequestComponentComponent implements OnInit {
       confirmButtonText: 'Aceptar',
     })
   }
+
   public verifyEmail() {
     Swal.fire({
       title: 'Verificación de correo',

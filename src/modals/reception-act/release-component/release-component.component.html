@@ -20,19 +20,19 @@
         </div>
     </div>
 
-    <div mat-dialog-content>
-        <form [formGroup]="frmConsejo" (ngSubmit)="onSave()">
+    <form [formGroup]="frmConsejo" (ngSubmit)="onSave()">
+        <div mat-dialog-content>
             <div class="card border-dark mb-3 p-3" style="height: 100%;">
                 <div class="row">
-                    <div class="col-6 text-center">
+                    <div class="col-6 text-center" style="height: auto;">
                         <div *ngIf="!fileData" class="card-body text-dark" style="color: #08a3bc;
                         background-color: rgba(10, 215, 247, 0.2);
                         border-color: #09c6e3; height: 100%; padding-top: 30%;">
                             <img alt="File" src="../../assets/imgs/notfound.png" style="width: 80px; height: 80px">
                             <p class="card-text"> <strong>ARCHIVO NO CARGADO</strong></p>
                         </div>
-                        <div *ngIf="fileData">
-                            <ngx-extended-pdf-viewer [src]="fileData" backgroundColor="#ffffff" [height]="'40vh'"
+                        <div *ngIf="fileData" style="height: auto;">
+                            <ngx-extended-pdf-viewer [src]="fileData" backgroundColor="#ffffff" [height]="'70vh'"
                                 [useBrowserLocale]="true">
                             </ngx-extended-pdf-viewer>
                         </div>
@@ -178,23 +178,22 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="row mt-3 text-right">
-                    <div class="col-8"></div>
-                    <div class="col-4">
-                        <button class="btn btn-outline-success mx-3" [disabled]="frmConsejo.invalid"
-                            type="submit">Guardar</button>
-                        <button class="btn btn-outline-danger" [mat-dialog-close] cdkFocusInitial>Cancelar</button>
-                    </div>
-                </div>
             </div>
             <!-- <div mat-dialog-actions align="end">
                 <button class="btn btn-outline-success mx-3" [disabled]="frmConsejo.invalid"
-                    type="submit">Guardar</button>
+                type="submit">Guardar</button>
                 <button class="btn btn-outline-danger" [mat-dialog-close] cdkFocusInitial>Cancelar</button>
             </div> -->
-        </form>
-    </div>
+        </div>
+        <div mat-dialog-actions class="row mt-3 text-right">
+            <div class="col-8"></div>
+            <div class="col-4">
+                <button class="btn btn-outline-success mx-3" [disabled]="frmConsejo.invalid"
+                    type="submit">Guardar</button>
+                <button class="btn btn-outline-danger" [mat-dialog-close] cdkFocusInitial>Cancelar</button>
+            </div>
+        </div>
+    </form>
 </div>
 
 
