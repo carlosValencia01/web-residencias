@@ -88,7 +88,8 @@ export class Api {
         if (!isUpload) {
             return this.http.put(this.url + '/' + endpoint, body, options);
         } else {
-            return this.http.put(this.url + '/' + endpoint, body);
+            const options = new RequestOptions({ headers: this.FileHeaders });
+            return this.http.put(this.url + '/' + endpoint, body, options);
         }
     }
 
