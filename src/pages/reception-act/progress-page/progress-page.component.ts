@@ -481,7 +481,7 @@ export class ProgressPageComponent implements OnInit {
       confirmButtonText: 'Aprobar'
     }).then(async (result) => {
       let response = await Swal.fire({
-        title: '¿Está seguro de confirmar esta operacion?',
+        title: '¿Está seguro de confirmar esta operación?',
         text: '¡No podrás revertir esto!',
         type: 'question',
         showCancelButton: true,

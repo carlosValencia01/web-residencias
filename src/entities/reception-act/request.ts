@@ -603,7 +603,7 @@ export class uRequest {
         const rows: Array<string> = doc.splitTextToSize(contenido, 180);
         const incremento = (rows.length) * 4;
 
-        doc.text('Por lo que se le pide su puntual asistencia.', this.MARGIN.LEFT, (148 + incremento));
+        doc.text('Por lo que se le pide su puntual asistencia.', this.MARGIN.LEFT, (152 + incremento));
         doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 235);
         // doc.text('L.A. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 240);

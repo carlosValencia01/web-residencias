@@ -537,12 +537,6 @@
                                                 </button>
                                             </div>
                                             <div *ngSwitchCase="'Realizado'">
-                                                <button
-                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
-                                                    mat-menu-item (click)="approve(row._id,row.studentId)">
-                                                    <mat-icon>gavel</mat-icon>
-                                                    Aprobar
-                                                </button>
                                                 <button *ngIf="(role==='coordinación de titulación'  || role==='administrador') && (row.status==='Pendiente' || row.status==='Proceso')
                                                     && row.isIntegral" mat-menu-item
                                                     (click)="juryNotification(row._id)">
@@ -555,6 +549,12 @@
                                                     <mat-icon>contact_mail</mat-icon>
                                                     Generar Oficio
                                                 </button>
+                                                <button
+                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
+                                                    mat-menu-item (click)="approve(row._id,row.studentId)">
+                                                    <mat-icon>gavel</mat-icon>
+                                                    Aprobar
+                                                </button>
                                             </div>
                                             <div *ngSwitchCase="'Generado'">
                                                 <button
@@ -562,6 +562,12 @@
                                                     mat-menu-item (click)="generated(row._id,'Process')">
                                                     <mat-icon>print</mat-icon>
                                                     Generar Acta
+                                                </button>
+                                                <button
+                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador') && (row.status==='Impreso' || row.status==='Aceptado')"
+                                                    mat-menu-item (click)="reImprimir(row._id)">
+                                                    <mat-icon>print</mat-icon>
+                                                    Reimprimir Acta
                                                 </button>
                                                 <button
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Impreso'"
@@ -575,19 +581,13 @@
                                                     <mat-icon>done_all</mat-icon>
                                                     Acta Entregada
                                                 </button>
-                                                <button
-                                                    *ngIf="(role==='servicios estudiantiles' || role==='administrador') && (row.status==='Impreso' || row.status==='Aceptado')"
-                                                    mat-menu-item (click)="reImprimir(row._id)">
-                                                    <mat-icon>print</mat-icon>
-                                                    Reimprimir Acta
-                                                </button>
                                             </div>
                                             <div *ngSwitchCase="'Titulado'">
                                                 <button
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Pendiente'"
                                                     mat-menu-item (click)="titled(row._id,'Process')">
                                                     <mat-icon>contact_phone</mat-icon>
-                                                    Notificar para entrega de titulo
+                                                    Notificar para entrega de título
                                                 </button>
                                                 <button
                                                     *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
