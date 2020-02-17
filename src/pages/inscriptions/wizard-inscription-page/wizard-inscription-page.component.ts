@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
 import {Router, ActivatedRoute } from '@angular/router';
+import { StudentProvider } from 'src/providers/shared/student.prov';
 
 @Component({
   selector: 'app-wizard-inscription-page',
@@ -22,15 +23,17 @@ export class WizardInscriptionPageComponent implements OnInit {
 
   validateStudent: boolean;
   semesterStudent;
-
+  controlNumberStudent: string;
   constructor( 
     private inscriptionsProv: InscriptionsProvider,
     private cookiesServ: CookiesService,
     private router: Router,
     private routeActive: ActivatedRoute,
+    private studentProv: StudentProvider
   ){
     this.init();
-
+    console.log('2');
+    
     if (!this.cookiesServ.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -64,32 +67,45 @@ export class WizardInscriptionPageComponent implements OnInit {
 
   getIdStudent() {
     this.data = this.cookiesServ.getData().user;
+    console.log(this.data);
+    
     this._idStudent = this.data._id;
+    this.controlNumberStudent = this.data.email;
   }
 
   getStudentData(id) {
-    this.inscriptionsProv.getStudent(id).subscribe(res => {
-      this.studentData = res.student[0];
-      this.step = this.studentData.stepWizard ? this.studentData.stepWizard : 0;
-      this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
-      if(this.studentData.inscriptionStatus){
-        if(this.step == 6){
-          //window.location.assign("/profileInscription");
-          this.router.navigate(['/profileInscription']);
-        }else if(this.semesterStudent == 1){
+    this.studentProv.isStudentInscription(this.controlNumberStudent).subscribe(
+      (forInscription)=>{
+        this.inscriptionsProv.getStudent(id).subscribe(res => {
+          this.studentData = res.student[0];
+          this.step = this.studentData.stepWizard ? this.studentData.stepWizard : 0;
+          this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
           this.validateStudent = true;
-        }
-        if(this.step > 0 && this.step < 6){
-          this.validateStudent = true;
-        }
-      } else {
-        // Mostrar wizzard si el semestre es 1, de lo contrario mostrar advertencia.
-        if(this.semesterStudent == 1){
-          this.validateStudent = true;
-        } else{
-          this.validateStudent = false;
-        }
+          // if(this.studentData.inscriptionStatus){
+          //   if(this.step == 6){
+          //     //window.location.assign("/profileInscription");
+          //     this.router.navigate(['/profileInscription']);
+          //   }else if(this.semesterStudent == 1){
+          //     this.validateStudent = true;
+          //   }
+          //   if(this.step > 0 && this.step < 6){
+          //     this.validateStudent = true;
+          //   }
+          // } else {
+          //   this.validateStudent = true;
+          //   // Mostrar wizzard si el semestre es 1, de lo contrario mostrar advertencia.
+          //   if(this.semesterStudent == 1){
+          //     this.validateStudent = true;
+          //   } else{
+          //     this.validateStudent = false;
+          //   }
+          // }
+        });     
+      },
+      (err)=>{        
+        this.validateStudent = false;
       }
-    });
+    );
+    
   }
 }
