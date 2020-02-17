@@ -81,25 +81,12 @@ export class WizardInscriptionPageComponent implements OnInit {
           this.step = this.studentData.stepWizard ? this.studentData.stepWizard : 0;
           this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
           this.validateStudent = true;
-          // if(this.studentData.inscriptionStatus){
-          //   if(this.step == 6){
-          //     //window.location.assign("/profileInscription");
-          //     this.router.navigate(['/profileInscription']);
-          //   }else if(this.semesterStudent == 1){
-          //     this.validateStudent = true;
-          //   }
-          //   if(this.step > 0 && this.step < 6){
-          //     this.validateStudent = true;
-          //   }
-          // } else {
-          //   this.validateStudent = true;
-          //   // Mostrar wizzard si el semestre es 1, de lo contrario mostrar advertencia.
-          //   if(this.semesterStudent == 1){
-          //     this.validateStudent = true;
-          //   } else{
-          //     this.validateStudent = false;
-          //   }
-          // }
+          if(this.studentData.inscriptionStatus){
+             if(this.step == 6){
+               //window.location.assign("/profileInscription");
+               this.router.navigate(['/profileInscription']);
+             }
+           } 
         });     
       },
       (err)=>{        
