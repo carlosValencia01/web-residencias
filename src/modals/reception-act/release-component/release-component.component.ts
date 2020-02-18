@@ -20,26 +20,35 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
   styleUrls: ['./release-component.component.scss']
 })
 export class ReleaseComponentComponent implements OnInit {
+  @ViewChild('time') Time: NgxTimepickerFieldComponent;
   public fileData: any;
   public frmConsejo: FormGroup;
-  private userInformation: any;
   public isReject: boolean;
-  public information: { jury: Array<{ name: string, title: string, cedula: string }>, observation: string, minutes: number, id: string, folder: string, duration: number, request: iRequest };
+  public information: {
+    jury: Array<{ name: string, title: string, cedula: string }>,
+    observation: string,
+    minutes: number,
+    id: string,
+    folder: string,
+    duration: number,
+    request: iRequest
+  };
+  public activeReleased = false;
+  public enableUpload = false;
+  public showLoading = false;
   public folderId;
+  private userInformation: any;
   private juryInfo: Array<{ name: string, title: string, cedula: string }>;
   private oRequest: uRequest;
-  public activeReleased: boolean = false;
-  public enableUpload: boolean = false;
-  @ViewChild('time') Time: NgxTimepickerFieldComponent;
   private studentCareer: string;
-  public showLoading: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
     private notifications: NotificationsServices, public dialog: MatDialog,
     private cookiesService: CookiesService,
     private _RequestProvider: RequestProvider,
     public _ImageToBase64Service: ImageToBase64Service,
-    @Inject(MAT_DIALOG_DATA) public data: any) {
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) {
     this.information = data;
     this.isReject = typeof (this.information.observation) !== 'undefined' && this.information.observation.length > 0;
     this.userInformation = this.cookiesService.getData().user;
@@ -55,7 +64,7 @@ export class ReleaseComponentComponent implements OnInit {
       'substitute': new FormControl(null, Validators.required),
       'duration': new FormControl('60', Validators.required)
     });
-
+    this.Time.format = 24;
     if (this.isReject || this.information.jury.length > 0) {
       this.juryInfo = this.information.jury;
       this.frmConsejo.setValue({
@@ -67,7 +76,7 @@ export class ReleaseComponentComponent implements OnInit {
       });
       const hour = this.information.minutes / 60;
       const minutes = this.information.minutes % 60;
-      this.Time.writeValue(hour + ":" + minutes);
+      this.Time.writeValue(hour + ':' + minutes);
       this.activeReleased = this.isReject || this.juryInfo.reduce((value, current) => current.name.length > 0 && value, true);
       this.enableUpload = this.activeReleased;
       if (this.isReject) {
@@ -80,7 +89,7 @@ export class ReleaseComponentComponent implements OnInit {
         { name: '', title: '', cedula: '' },
         { name: '', title: '', cedula: '' }
       ];
-      this.Time.writeValue("7:00");
+      this.Time.writeValue('7:00');
     }
 
   }
@@ -95,6 +104,7 @@ export class ReleaseComponentComponent implements OnInit {
       this.notifications.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Recuperación Fallida");
     });
   }
+
   obtenerCarreras(): Array<string> {
     let tmpArray: Array<string> = [];
     if (typeof (this.cookiesService.getPosition()) !== 'undefined') {

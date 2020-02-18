@@ -172,15 +172,15 @@ export class uRequest {
         doc.setFont(this.FONT, 'Normal');
         doc.text(doc.splitTextToSize('Por medio del presente solicito autorización para iniciar trámite de registro del ' +
             'proyecto de titulación integral:', 185), this.MARGIN.LEFT, 95, { align: 'left' });
+        const nameProjectRows: Array<string> = doc.splitTextToSize(this._request.projectName, 145);
         this.addTable(doc, [
             ['Nombre:', this._request.student.fullName],
             ['Carrera:', this._request.student.career],
             ['No. de control:', this._request.student.controlNumber],
-            ['Nombre del proyecto:', doc.splitTextToSize(this._request.projectName, 145)],
+            ['Nombre del proyecto:', nameProjectRows.join(' ')],
             ['Opción titulación:', this._request.titulationOption],
             ['Producto:', this._request.product]
         ], 105, undefined, 9, false, { 0: { cellWidth: 35 }, 1: { cellWidth: 100 }, 2: { cellWidth: 0 } });
-        const nameProjectRows: Array<string> = doc.splitTextToSize(this._request.projectName, 145);
         const nameProjectLines = (nameProjectRows.length - 1) * 3.6;
         doc.setFont(this.FONT, 'Normal');
         doc.text('En espera de la aceptación de esta solicitud, quedo a sus órdenes.', this.MARGIN.LEFT,
@@ -222,16 +222,15 @@ export class uRequest {
         doc.text(`Lugar: Tepic, Nayarit  Fecha: ${
             moment(registerHistory ? (registerHistory.achievementDate || new Date()) : new Date()).format('LL')
             }`, this.MARGIN.LEFT, 88, { align: 'left' });
-
+        const nameProjectRows: Array<String> = doc.splitTextToSize(this._request.projectName, 150);
         this.addTable(doc, [
-            ['Nombre del proyecto:', doc.splitTextToSize(this._request.projectName, 150)],
+            ['Nombre del proyecto:', nameProjectRows.join(' ')],
             ['Nombre(s) del (de los) asesor(es):', this._request.adviser.name],
             ['Número de estudiantes:', this._request.noIntegrants]
         ], 93, undefined, 9);
 
         const aceptHistory = this._request.history
             .filter(x => x.phase === 'Enviado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
-        const nameProjectRows: Array<String> = doc.splitTextToSize(this._request.projectName, 150);
         const nameProjectLines = 3.6 * (nameProjectRows.length - 1);
         const integrantsLines = 9 * (this._request.noIntegrants - 1);
         const observationRows: Array<String> = doc.splitTextToSize(aceptHistory ? (aceptHistory.observation || '') : '', 180);
@@ -264,7 +263,7 @@ export class uRequest {
 
         return doc;
     }
-
+    // Deprecated
     projectRelease(): jsPDF {
         const doc = this.newDocumentTec();
         doc.setTextColor(0, 0, 0);
@@ -466,15 +465,15 @@ export class uRequest {
         this.addTextRight(doc, `CON AT’N.: ${this.addArroba("COORD. DE TITULACIÓN O EQUIVALENTE")}`, 86);
         doc.setFont(this.FONT, 'Normal');
         doc.text("Por este medio le informo que ha sido liberado el siguiente proyecto para la Titulación Integral:", this.MARGIN.LEFT, 94);
+        const rows: Array<string> = doc.splitTextToSize(this._request.projectName, 150);
         this.addTable(doc, [
             ['a) Nombre del egresado:', this._request.student.fullName],
             ['b) Carrera:', this._request.student.career],
             ['c) No. Control:', this._request.student.controlNumber],
-            ['d) Nombre del Proyecto:', doc.splitTextToSize(this._request.projectName, 150)],
+            ['d) Nombre del Proyecto:', rows.join(' ')],
             ['e) Producto:', this._request.product]
         ], 100, this.MARGIN.LEFT, 8, true);
 
-        const rows: Array<string> = doc.splitTextToSize(this._request.projectName, 150);
         const incremento = (rows.length - 1) * 3.2;
         // tslint:disable-next-line: max-line-length
         doc.text("Agradezco de antemano su valioso apoyo en esta importante actividad para la formación profesional de nuestros egresados.", this.MARGIN.LEFT, (144 + incremento));
@@ -513,7 +512,7 @@ export class uRequest {
         appointment.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0);
         doc.setFontSize(9);
         // tslint:disable-next-line: max-line-length
-        doc.text(`NOTA: Se le solicita que la fecha del acto sea programado en el horario de las ${moment(appointment).format('HH:mm')} hrs.`, this.MARGIN.LEFT, heightRect + 182);
+        doc.text(`NOTA: Se le solicita que la fecha del acto sea programado en el horario de las ${moment(appointment).format('LT')} hrs.`, this.MARGIN.LEFT, heightRect + 182);
         return doc;
     }
 
@@ -766,9 +765,9 @@ export class uRequest {
         });
         // doc.text(text, this.WIDTH - (this.MARGIN.RIGHT + tmpCount), positionY);
     }
-    // Justifica un texto 
-    //Doc: Instancia JSPDF, Text: Texto a justificar, Point: Coordenada (X,Y) de dibujo
-    //Size: Anchura en la que se dividirá, lineaBreak: Salto de linea    
+    // Justifica un texto
+    // Doc: Instancia JSPDF, Text: Texto a justificar, Point: Coordenada (X,Y) de dibujo
+    // Size: Anchura en la que se dividirá, lineaBreak: Salto de linea
     private justifyText(Doc: jsPDF, Text: string, Point: { x: number, y: number }, Size: number, lineBreak: number = 5) {
         // Texto sin @ (Negritas) para conocer más adelante las filas en las que será dividido
         const tmpText: string = Text.split('@').join('');
