@@ -582,18 +582,18 @@ export class uRequest {
 
         // tslint:disable-next-line: max-line-length
         // let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACIÓN INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
-        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, @OPCION @PRODUCTO, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs. En la Sala @LUGAR de este Instituto.`;
+        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, @OPCION @PRODUCTO, con el proyecto @PROYECTO. El cual se realizará el día @FECHA, a las @HORA Hrs. En la Sala @LUGAR de este Instituto.`;
 
         contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
         // contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba('AGUSTIN BARAJAS VALDIVIA')} `);
         contenido = contenido.replace('@NUMERO', `${this.addArroba(this._request.student.controlNumber.toUpperCase())} `);
         contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())} `);
-        contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())} `);
+        contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())}`);
         // contenido = contenido.replace('@PROYECTO', `${this.addArroba('MÓDULO DE GENERACIÓN DE FIRMAS ELECTRÓNICAS, VALIDACIÓN DE DOCUMENTOS Y OPTIMIZACIÓN DE PROCEDIMIENTO DE TITULACIÓN')} `);
-        contenido = contenido.replace('@OPCION', `${this.addArroba(this._request.titulationOption.toUpperCase())} `);
+        contenido = contenido.replace('@OPCION', `${this.addArroba(this._request.titulationOption.toUpperCase())}`);
         contenido = contenido.replace('@PRODUCTO', `${this.addArroba(this._request.product.toUpperCase())} `);
         // tslint:disable-next-line: max-line-length
-        contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)} `);
+        contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)}`);
         contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))} `);
         contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())} `);
 

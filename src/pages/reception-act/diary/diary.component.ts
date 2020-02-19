@@ -349,9 +349,9 @@ export class DiaryComponent implements OnInit {
       data: {
         Appointment: tmpAppointment
       },
-      disableClose: true,
+      disableClose: false,
       hasBackdrop: true,
-      width: '50em'
+      width: '60em'
     });
   }
   cancelledEvent($event): void {

@@ -1,5 +1,6 @@
 <div class="row">
-  <div class="col-10">    
+  <div class="col-10">  
+    <h5>{{Appointment.student[0]}}</h5>  
   </div>
   <div class="col-2">
     <button mat-icon-button [mat-dialog-close] class="float-right">
@@ -10,22 +11,19 @@
 <div mat-dialog-content>
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title">{{Appointment.student[0]}}</h5>
       <div class="row">
         <div class="col-6 text-left">
           <p><strong>Lugar: </strong> {{Appointment.place}}</p>
         </div>
         <div class="col-6 text-left">
-          <p><strong>Hora:</strong> {{_Date}}</p>
+          <p><strong>Fecha:</strong> {{_Date}} ({{Appointment.duration}} mins.)</p>
         </div>
       </div>
-
-
       <div class="row">
-        <div class="col-6 text.left">
+        <div class="col-4 text.left">
           <p><strong>Proyecto</strong></p>
         </div>
-        <div class="col-6 text-left">
+        <div class="col-8 text-left">
           <p>{{Appointment.project}}</p>
         </div>
       </div>
@@ -38,7 +36,7 @@
 
       <div class="row">
         <div class="col-6 text-left">
-          <p><strong>Opción de Titulación</strong></p>
+          <p><strong>Opción de titulación</strong></p>
         </div>
         <div class="col-6 text-left">
           <p>{{Appointment.option}}</p>
@@ -98,6 +96,6 @@
     </div>
   </div>
 </div>
-<div mat-dialog-actions align="end">
+<!-- <div mat-dialog-actions align="end">
   <button mat-button [mat-dialog-close] cdkFocusInitial>Cerrar</button>
-</div>
+</div> -->
