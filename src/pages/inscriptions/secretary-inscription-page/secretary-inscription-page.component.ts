@@ -439,10 +439,10 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         case "LICENCIATURA EN ADMINISTRACIÓN":
           doc.text('LA',pageWidth-15,(pageHeight/2)+1.5)
           break;
-        case "MAESTRÍA EN CIENCIAS DE LOS ALIMENTOS":
+        case "MAESTRÍA EN CIENCIAS DE ALIMENTOS":
           doc.text('MCA',pageWidth-15,(pageHeight/2)+1.5)
           break;
-        case "DOCTORADO EN CIENCIAS DE LOS ALIMENTOS":
+        case "DOCTORADO EN CIENCIAS DE ALIMENTOS":
           doc.text('DCA',pageWidth-15,(pageHeight/2)+1.5)
           break;
         default:

@@ -1634,10 +1634,13 @@ generateLabels() {
           case "LICENCIATURA EN ADMINISTRACIÓN":
             titulo = 'LIC.'
             break;
-          case "MAESTRÍA EN CIENCIAS DE LOS ALIMENTOS":
+          case "MAESTRIA EN CIENCIAS DE ALIMENTOS":
             titulo = 'MCA.'
             break;
-          case "DOCTORADO EN CIENCIAS DE LOS ALIMENTOS":
+          case "MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN":
+            titulo = 'MTI.'
+            break;
+          case "DOCTORADO EN CIENCIAS DE ALIMENTOS":
             titulo = 'DCA.'
             break;
           default:
