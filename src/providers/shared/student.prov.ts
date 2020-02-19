@@ -180,6 +180,9 @@ export class StudentProvider {
     getDocumentsUpload(_id: string): Observable<any> {
         return this.api.get(`student/get/documents/status/${_id}`).pipe(map(res => res.json()));
     }
+    isStudentInscription(controlNumber: string): Observable<any> {
+        return this.api.get(`student/get/inscription/ready/${controlNumber}`).pipe(map(res => res.json()));
+    }
 
     sendNotification(data) {
         return this.api.post(`student/notify`, data, true).pipe(map(res => res.json()));

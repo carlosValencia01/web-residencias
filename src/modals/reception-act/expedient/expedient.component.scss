@@ -48,3 +48,12 @@
 img:hover {
     cursor: pointer;
 }
+.sticky{
+	z-index: 100;
+	position: -webkit-sticky;
+	position: sticky;
+	top: -30px;
+	background:white;
+	padding: 20px;
+	box-shadow: 0px 4px 1px rgba(0,0,0,0.2);
+}

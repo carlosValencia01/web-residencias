@@ -19,7 +19,7 @@ import { ReleaseComponentComponent } from 'src/modals/reception-act/release-comp
 import { RequestService } from 'src/services/reception-act/request.service';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
-import { DocumentReviewComponent } from 'src/pages/reception-act/document-review/document-review.component';
+import { DocumentReviewComponent } from 'src/modals/reception-act/document-review/document-review.component';
 import { ObservationsComponentComponent } from 'src/modals/reception-act/observations-component/observations-component.component';
 import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/release-check.component';
 import Swal from 'sweetalert2';
@@ -33,6 +33,7 @@ import { BookComponent } from 'src/modals/reception-act/book/book.component';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 import { ChangeJuryComponent } from 'src/modals/reception-act/change-jury/change-jury.component';
 import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
+import { ExpedientComponent } from 'src/modals/reception-act/expedient/expedient.component';
 
 @Component({
   selector: 'app-progress-page',
@@ -705,8 +706,17 @@ export class ProgressPageComponent implements OnInit {
       }
       case eStatusRequest.ACCEPT: {
         let index = tmpRequest.documents.findIndex(x => x.type === eFILES.XML || x.type === eFILES.INE || x.type === eFILES.CED_PROFESIONAL)
-        if (index !== -1)
-          this.router.navigate([Identificador + '/titled'], { relativeTo: this._ActivatedRoute });
+        if (index !== -1){
+          const dialogRef = this.dialog.open(DocumentReviewComponent, {
+            data: { id: Identificador, isTitled:true },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '90em',
+            height: '800px'
+          });
+        }
+        
+          // this.router.navigate([Identificador + '/titled'], { relativeTo: this._ActivatedRoute });
         else
           this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "El estudiante no ha registrado ningún archivo");
         break;
@@ -715,11 +725,25 @@ export class ProgressPageComponent implements OnInit {
   }
 
   Review(Identificador): void {
-    this.router.navigate([Identificador], { relativeTo: this._ActivatedRoute });
+    // this.router.navigate([Identificador], { relativeTo: this._ActivatedRoute });
+    const dialogRef = this.dialog.open(DocumentReviewComponent, {
+      data: { id: Identificador, isTitled:false },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90em',
+      height: '800px'
+    });
   }
 
   seeRecord(Identificador): void {
-    this.router.navigate([Identificador + '/expediente'], { relativeTo: this._ActivatedRoute });
+    // this.router.navigate([Identificador + '/expediente'], { relativeTo: this._ActivatedRoute });
+    const dialogRef = this.dialog.open(ExpedientComponent, {
+      data: { id: Identificador },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90em',
+      height: '800px'
+    });
   }
 
   seeRequestPDF(_id: string): void {

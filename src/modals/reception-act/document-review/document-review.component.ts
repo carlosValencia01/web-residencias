@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
-import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatSidenav, MatDrawer } from '@angular/material';
+import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDrawer } from '@angular/material';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
@@ -11,62 +11,62 @@ import Swal from 'sweetalert2';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { CookiesService } from 'src/services/app/cookie.service';
-
-
-
 @Component({
   selector: 'app-document-review',
   templateUrl: './document-review.component.html',
   styleUrls: ['./document-review.component.scss']
 })
 export class DocumentReviewComponent implements OnInit {
+
   displayedColumns: string[];
   opened = true;
   pdf: any;
   existFile: boolean;
-  dataSource: MatTableDataSource<IDocument>;
-  @ViewChild('drawer') drawer: MatDrawer;
+  dataSource: MatTableDataSource<IDocument>;  
   @ViewChild(MatSort) sort: MatSort;
   isTitled: boolean;
   documents: Array<IDocument>;
   request: iRequest;
+  student;  
   uRequest: uRequest;
+  showLoading: boolean = false;
+  documentDisplayed;
   constructor(
-    // public dialogRef: MatDialogRef<DocumentReviewComponent>,
-    // @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<DocumentReviewComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     public requestProvider: RequestProvider,
-    private notificationService: NotificationsServices,
-    private activatedRoute: ActivatedRoute,
+    private notificationService: NotificationsServices,    
     public imgSrv: ImageToBase64Service,
-    public _CookiesService: CookiesService) {
-    if (typeof (this.activatedRoute.snapshot.url[2]) !== 'undefined')
-      this.isTitled = this.activatedRoute.snapshot.url[2].path === 'titled';
-    this.activatedRoute.params.subscribe(
-      (params: Params) => {
-        this.requestProvider.getRequestById(params.id).subscribe(
-          data => {
-            this.request = data.request[0];
-            this.request.phase = "Registrado";
-            this.request.student = data.request[0].studentId;
-            this.uRequest = new uRequest(this.request, imgSrv, _CookiesService);
-            this.refresh();
-            this.drawer.toggle();
-          },
-          error => {
-            this.notificationService.showNotification(eNotificationType.ERROR,
-              "Titulación App", error);
-          }
-        );
+    public _CookiesService: CookiesService
+  ) {
+    this.isTitled = this.data.isTitled;
+    this.init();
+   }
+
+  ngOnInit() {    
+    this.displayedColumns = ['Icon', 'Archivo', 'Fecha', 'Estatus', 'View', 'Action'];
+  }
+  init(){
+    this.requestProvider.getRequestById(this.data.id).subscribe(
+      data => {
+        this.request = data.request[0];        
+        this.request.phase = "Registrado";
+        this.student = data.request[0].studentId;
+        this.request.student = data.request[0].studentId;
+        this.uRequest = new uRequest(this.request, this.imgSrv, this._CookiesService);
+        this.refresh();
+        
+      },
+      error => {
+        this.notificationService.showNotification(eNotificationType.ERROR,
+          "Titulación App", error);
       }
     );
-
-  }
-
-  ngOnInit() {
-    this.displayedColumns = ['Icon', 'Archivo', 'Fecha', 'Estatus', 'View', 'Action'];
   }
 
   refresh(): void {
+    
+    
     this.documents = [];
     if (this.isTitled) {
       this.request.documents.forEach(element => {
@@ -89,6 +89,15 @@ export class DocumentReviewComponent implements OnInit {
           });
       });
     }
+    this.documentDisplayed = this.getDocument(this.documentDisplayed.type);
+    
+    if(this.documentDisplayed){      
+      setTimeout(() => {        
+        const li = document.getElementById(this.documentDisplayed.type);
+        li.classList.add('clicked');
+      }, 100);
+    }
+    
     // this.dataSource = new MatTableDataSource(this.documents);
     // this.dataSource.sort = this.sort;
   }
@@ -97,31 +106,42 @@ export class DocumentReviewComponent implements OnInit {
     return this.documents.find(e => e.type === fileType);
   }
 
-  view(file): void {
-    const type = <eFILES><keyof typeof eFILES>file;
-    if (type === eFILES.PHOTOS) {
-      this.existFile = false;
-      return;
-    }
-    this.existFile = true;
-    const archivo = this.getDocument(type);
-    if (archivo.status !== 'Omitido') {
-      switch (type) {
-        case eFILES.SOLICITUD: {
-          this.pdf = this.uRequest.protocolActRequest().output('bloburl');
-          break;
-        }
-        case eFILES.REGISTRO: {
-          this.pdf = this.uRequest.projectRegistrationOffice().output('bloburl');
-          break;
-        }
-        default: {
-          this.requestProvider.getResource(this.request._id, type).subscribe(data => {
-            this.pdf = data;
-          }, error => {
-            this.notificationService.showNotification(eNotificationType.ERROR,
-              "Titulación App", error);
-          });
+  view(file,status): void {
+    if(status !== 'Omitido'){
+      const type = <eFILES><keyof typeof eFILES>file;            
+      const li = document.getElementById(file);
+      const lis = document.getElementsByClassName('clicked');
+      for(let i=0;i< lis.length;i++){
+        lis.item(i).classList.remove('clicked');
+      }
+      li.classList.add('clicked');
+      if (type === eFILES.PHOTOS) {
+        this.existFile = false;
+        return;
+      }
+      this.existFile = true;
+      const archivo = this.getDocument(type);
+      this.documentDisplayed = archivo;
+      this.showLoading = true;
+      if (archivo.status !== 'Omitido') {
+        switch (type) {
+          case eFILES.SOLICITUD: {
+            this.pdf = this.uRequest.protocolActRequest().output('bloburl');          
+            
+            break;
+          }
+          case eFILES.REGISTRO: {
+            this.pdf = this.uRequest.projectRegistrationOffice().output('bloburl');
+            break;
+          }
+          default: {
+            this.requestProvider.getResource(this.request._id, type).subscribe(data => {
+              this.pdf = data;
+            }, error => {
+              this.notificationService.showNotification(eNotificationType.ERROR,
+                "Titulación App", error);
+            });
+          }
         }
       }
     }
@@ -159,6 +179,7 @@ export class DocumentReviewComponent implements OnInit {
       Observation: '',
       Doer: this._CookiesService.getData().user.name.fullName
     };
+    
     if (status === eStatusRequest.REJECT) {
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -209,8 +230,13 @@ export class DocumentReviewComponent implements OnInit {
       });
 
     }
-
-
+  }
+  onClose() {
+    this.dialogRef.close({ action: 'close' });
+  }
+  disableLoading(pdf){    
+    this.showLoading=false;
+    
   }
 }
 
