@@ -13,8 +13,7 @@ export const environment = {
     messagingSenderId: '452486540507',
     appId: '1:452486540507:web:214d62ad8c0e0147'
   },
-  //filesURL:'http://localhost:3003/escolares/credenciales/drive/upload/file',
-  filesURL: 'https://rijimenezesdev.me/escolares/credenciales/drive/upload/file',
+  
   documentHelper: {
     birthCertificate: { video: 'https://drive.google.com/file/d/1OZNev3eyn5MHwZWIFjM4DxAaqWNNBMek/preview', file: 'https://drive.google.com/file/d/1rYSj38vDqpqrhN7nqpMsnMTq_70WVKaM/preview' },
     curp: { video: 'https://drive.google.com/file/d/1vJ2wrbI_rwv5yObst3O_3uYJeH7OuXEp/preview', file: 'https://drive.google.com/file/d/1UVHPCBpSFlXBJFcC6SLcpVd3zkeeHnq0/preview' },
@@ -30,11 +29,13 @@ export const environment = {
     professionalID: { video: 'https://drive.google.com/file/d/1zGMcltxpHDiws9gnvfSDrBuXZ-M36OHA/preview', file: 'https://drive.google.com/file/d/1gQFiul1eFSat-FLv8mPVX2wrABfzt1FT/preview' }
   },
   // Local
-  apiURL: 'http://localhost:3003/escolares/credenciales',
+  // apiURL: 'http://localhost:3003/escolares/credenciales',
   // eSignatureURL: 'http://localhost:3017/firma/v1',
   // Pruebas
-  // apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
+  apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
   // apiURL: 'https://api.cideti.com.mx/escolares/credenciales',
+  //filesURL:'http://localhost:3003/escolares/credenciales/drive/upload/file',
+  filesURL: 'https://rijimenezesdev.me/escolares/credenciales/drive/upload/file',
   eSignatureURL: 'https://rijimenezesdev.me/firma/v1',
 };
 

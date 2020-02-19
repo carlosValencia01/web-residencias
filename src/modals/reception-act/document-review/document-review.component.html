@@ -44,7 +44,7 @@
         <div class="inline"  *ngIf="document.type !== 'FOTOS'">
 
           <button *ngIf="document.type != 'PROYECTO' && document.type != 'LIBERACION'
-          && document.type!='SOLICITUD' && document.type!='REGISTRO'
+          && document.type!='SOLICITUD' && document.type!='REGISTRO' && document.status != 'Omitido'
           " mat-icon-button [matMenuTriggerFor]="menu">
             <mat-icon>more_vert</mat-icon>
           </button>
@@ -64,7 +64,7 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="check(document.type,'Accept')" *ngIf="document.status === 'Pendiente'">
+              <button mat-menu-item (click)="check(document.type,'Accept')" *ngIf="document.status !== 'Aceptado'">
                 <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
                 <span>Aceptar</span>
               </button>
