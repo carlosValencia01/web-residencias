@@ -324,8 +324,9 @@ export class InscriptionsMainPageComponent implements OnInit {
       {fullName:'INGENIERÍA EN SISTEMAS COMPUTACIONALES',shortName:'ING. EN SISTEMAS COMPUTACIONALES',acronym:'ISC'},
       {fullName:'INGENIERÍA INDUSTRIAL',shortName:'ING. INDUSTRIAL',acronym:'II'},
       {fullName:'LICENCIATURA EN ADMINISTRACIÓN',shortName:'LIC. ADMINISTRACIÓN',acronym:'LA'},
-      {fullName:'MAESTRÍA EN CIENCIAS DE LOS ALIMENTOS',shortName:'M. CIENCIAS DE LOS ALIMENTOS',acronym:'MCA'},
-      {fullName:'DOCTORADO EN CIENCIAS DE LOS ALIMENTOS',shortName:'D. CIENCIAS DE LOS ALIMENTOS',acronym:'DCA'},
+      {fullName:'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN',shortName:'M. EN TECNOLOGÍAS DE LA INFORMACIÓN',acronym:'MTI'},
+      {fullName:'MAESTRÍA EN CIENCIAS DE ALIMENTOS',shortName:'M. CIENCIAS DE ALIMENTOS',acronym:'MCA'},
+      {fullName:'DOCTORADO EN CIENCIAS DE ALIMENTOS',shortName:'D. CIENCIAS DE ALIMENTOS',acronym:'DCA'},
     ];
     this.careerProv.newCareer({careers:careers}).subscribe(
       res=>{
