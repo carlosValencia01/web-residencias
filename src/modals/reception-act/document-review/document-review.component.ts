@@ -5,12 +5,12 @@ import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDrawer }
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
-import { ActivatedRoute, Params } from '@angular/router';
 import { iRequest } from 'src/entities/reception-act/request.model';
 import Swal from 'sweetalert2';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { CookiesService } from 'src/services/app/cookie.service';
+
 @Component({
   selector: 'app-document-review',
   templateUrl: './document-review.component.html',
@@ -22,20 +22,21 @@ export class DocumentReviewComponent implements OnInit {
   opened = true;
   pdf: any;
   existFile: boolean;
-  dataSource: MatTableDataSource<IDocument>;  
+  dataSource: MatTableDataSource<IDocument>;
   @ViewChild(MatSort) sort: MatSort;
   isTitled: boolean;
   documents: Array<IDocument>;
   request: iRequest;
-  student;  
+  student;
   uRequest: uRequest;
   showLoading: boolean = false;
   documentDisplayed;
+
   constructor(
     public dialogRef: MatDialogRef<DocumentReviewComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public requestProvider: RequestProvider,
-    private notificationService: NotificationsServices,    
+    private notificationService: NotificationsServices,
     public imgSrv: ImageToBase64Service,
     public _CookiesService: CookiesService
   ) {
@@ -43,63 +44,58 @@ export class DocumentReviewComponent implements OnInit {
     this.init();
    }
 
-  ngOnInit() {    
+  ngOnInit() {
     this.displayedColumns = ['Icon', 'Archivo', 'Fecha', 'Estatus', 'View', 'Action'];
   }
-  init(){
+
+  init() {
     this.requestProvider.getRequestById(this.data.id).subscribe(
       data => {
-        this.request = data.request[0];        
-        this.request.phase = "Registrado";
+        this.request = data.request[0];
+        this.request.phase = 'Registrado';
         this.student = data.request[0].studentId;
         this.request.student = data.request[0].studentId;
         this.uRequest = new uRequest(this.request, this.imgSrv, this._CookiesService);
         this.refresh();
-        
       },
       error => {
         this.notificationService.showNotification(eNotificationType.ERROR,
-          "Titulación App", error);
+          'Titulación App', error);
       }
     );
   }
 
   refresh(): void {
-    
-    
     this.documents = [];
     if (this.isTitled) {
       this.request.documents.forEach(element => {
-        if (element.type === eFILES.INE || element.type === eFILES.XML || element.type === eFILES.CED_PROFESIONAL)
+        if (element.type === eFILES.INE || element.type === eFILES.XML || element.type === eFILES.CED_PROFESIONAL) {
           this.documents.push({
             type: element.type, dateRegistered: element.dateRegister,
             status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
           });
+        }
       });
-    }
-    else {
+    } else {
       this.request.documents.forEach(element => {
         if (element.type !== eFILES.PROYECTO && element.type !== eFILES.RELEASED
           && element.type !== eFILES.SOLICITUD && element.type !== eFILES.REGISTRO
           && element.type !== eFILES.INCONVENIENCE
-        )
+        ) {
           this.documents.push({
             type: element.type, dateRegistered: element.dateRegister,
             status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
           });
+        }
       });
     }
-    this.documentDisplayed = this.getDocument(this.documentDisplayed.type);
-    
-    if(this.documentDisplayed){      
-      setTimeout(() => {        
+    if (this.documentDisplayed) {
+      this.documentDisplayed = this.getDocument(this.documentDisplayed.type);
+      setTimeout(() => {
         const li = document.getElementById(this.documentDisplayed.type);
         li.classList.add('clicked');
       }, 100);
     }
-    
-    // this.dataSource = new MatTableDataSource(this.documents);
-    // this.dataSource.sort = this.sort;
   }
 
   getDocument(fileType: eFILES): IDocument {
@@ -108,17 +104,17 @@ export class DocumentReviewComponent implements OnInit {
 
   view(file,status): void {
     if(status !== 'Omitido'){
-      const type = <eFILES><keyof typeof eFILES>file;            
+      const type = <eFILES><keyof typeof eFILES>file;
+      if (type === eFILES.PHOTOS) {
+        this.existFile = false;
+        return;
+      }
       const li = document.getElementById(file);
       const lis = document.getElementsByClassName('clicked');
       for(let i=0;i< lis.length;i++){
         lis.item(i).classList.remove('clicked');
       }
       li.classList.add('clicked');
-      if (type === eFILES.PHOTOS) {
-        this.existFile = false;
-        return;
-      }
       this.existFile = true;
       const archivo = this.getDocument(type);
       this.documentDisplayed = archivo;
@@ -127,7 +123,6 @@ export class DocumentReviewComponent implements OnInit {
         switch (type) {
           case eFILES.SOLICITUD: {
             this.pdf = this.uRequest.protocolActRequest().output('bloburl');          
-            
             break;
           }
           case eFILES.REGISTRO: {

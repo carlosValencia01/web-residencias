@@ -1,5 +1,5 @@
 <div class="row sticky">
-  <div class="col-11">
+  <div class="col-11" *ngIf="Request">
     <div class="row text-center">
       <div class="col-11">
         <h1 mat-dialog-title>
@@ -507,11 +507,11 @@
         <div class="row mt-3">
           <div class="col-3">
             <mat-card
-              [ngClass]="{'accept':whatStatus(FileRevalidacion)==='Accept', 'none':whatStatus(FileRevalidacion)==='None','reject':whatStatus(FileRevalidacion)==='Reject','process':whatStatus(FileRevalidacion)==='Process','omit':whatStatus(FileCedula)==='Omit'}">
+              [ngClass]="{'accept':whatStatus(FileRevalidacion)==='Accept', 'none':whatStatus(FileRevalidacion)==='None','reject':whatStatus(FileRevalidacion)==='Reject','process':whatStatus(FileRevalidacion)==='Process','omit':whatStatus(FileRevalidacion)==='Omit'}">
               <mat-card-header>
                 <mat-card-subtitle>
                   <p
-                    [ngClass]="{'acceptText':whatStatus(FileRevalidacion)==='Accept', 'noneText':whatStatus(FileRevalidacion)==='None','rejectText':whatStatus(FileRevalidacion)==='Reject','processText':whatStatus(FileRevalidacion)==='Process','omitText':whatStatus(FileCedula)==='Omit'}">
+                    [ngClass]="{'acceptText':whatStatus(FileRevalidacion)==='Accept', 'noneText':whatStatus(FileRevalidacion)==='None','rejectText':whatStatus(FileRevalidacion)==='Reject','processText':whatStatus(FileRevalidacion)==='Process','omitText':whatStatus(FileRevalidacion)==='Omit'}">
                     Revalidación
                   </p>
                 </mat-card-subtitle>
