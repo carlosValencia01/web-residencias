@@ -140,8 +140,9 @@ export class GradePageComponent implements OnInit {
           employeeResult._id = data._id;
           this.employees.push(this.castEmployeeRow(employeeResult));
           this.router.navigate([employeeResult._id], {relativeTo: this.routeActive});
-        }, error => {
-          this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
+        }, err => {
+          const message = JSON.parse(err._body).error;
+          this.notificationServ.showNotification(eNotificationType.ERROR, message, '');
           this.loading = false;
         });
       }
