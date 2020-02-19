@@ -29,11 +29,11 @@ export const environment = {
     professionalID: { video: 'https://drive.google.com/file/d/1zGMcltxpHDiws9gnvfSDrBuXZ-M36OHA/preview', file: 'https://drive.google.com/file/d/1gQFiul1eFSat-FLv8mPVX2wrABfzt1FT/preview' }
   },
   // Local
-  // apiURL: 'http://localhost:3003/escolares/credenciales',
+  apiURL: 'http://localhost:3003/escolares/credenciales',
   // eSignatureURL: 'http://localhost:3017/firma/v1',
   filesURL: 'http://localhost:3003/escolares/credenciales/drive/upload/file',
   // Pruebas
-  apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
+  // apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
   eSignatureURL: 'https://rijimenezesdev.me/firma/v1',
   // filesURL: 'https://rijimenezesdev.me/escolares/credenciales/drive/upload/file',
 };
