@@ -139,8 +139,8 @@
             </div>
           </div>
         </div>
-        <!--Columna 1: CERTIFICADO-->
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <!--Columna 1: CERTIFICADO BACHILLER-->
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="!doctorate && !mastersDegree">
           <div class="card cd">
             <div
               class="card-header c-header"
@@ -316,6 +316,663 @@
             </div>
           </div>
         </div>
+
+        <!--CERTIFICADO MAESTRIA-->
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate">
+          <div class="card cd">
+            <div
+              class="card-header c-header"
+              [class.cheaderrequired]="!certificateMDoc && !cccertificateMDoc"
+              [class.cheaderok]="certificateMDoc || cccertificateMDoc"
+              [class.isDisabled]="certificateMDoc !== undefined ? true : false"
+            >
+              <div class="row">
+                <div class="col-12">
+                  <div
+                    class="row"
+                    (click)="
+                      collapse(
+                        'collapseCERTMAE',
+                        certificateMDoc !== undefined ? true : false
+                      )
+                    "
+                  >
+                    <div class="col-12">
+                      <p>
+                        <b>
+                          <span class="text-warning"> * </span>
+                          CERTIFICADO DE MAESTRIA
+                        </b>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row text-center">
+                <div class="col-12">
+                  <div *ngIf="certificateMDoc && !cccertificateMDoc">
+                    <span
+                      *ngIf="certificateMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="certificateMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="certificateMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="certificateMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <div *ngIf="cccertificateMDoc && !certificateMDoc">
+                    <span
+                      *ngIf="cccertificateMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="cccertificateMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="cccertificateMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="cccertificateMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <div *ngIf="cccertificateMDoc && certificateMDoc">
+                    <span
+                      *ngIf="certificateMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="certificateMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="certificateMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="certificateMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <span
+                    *ngIf="!cccertificateMDoc && !certificateMDoc"
+                    class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="card-body c-body" id="collapseCERTMAE">
+              <div class="row text-center" *ngIf="!certificateMDoc && !cccertificateMDoc">
+                <div class="col-12">
+                  <mat-slide-toggle
+                    (change)="hasCertificateM($event)"
+                    color="primary"
+                    >No tengo certificado</mat-slide-toggle
+                  >
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="!hasCerM && !cccertificateMDoc || certificateMDoc"
+              >
+                <div class="col-12">
+                  <dropzone
+                    id="dz16"
+                    [config]="config16"
+                    [message]="'Subir (certificado)'"
+                    (error)="onErrorCommon($event)"
+                    (success)="onUploadSuccess($event)"
+                  ></dropzone>
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="hasCerM && !certificateMDoc || cccertificateMDoc"
+              >
+                <div class="col-12">
+                  <div class="row text-center">
+                    <div class="col-12">
+                      <dropzone
+                        id="dz20"
+                        [config]="config20"
+                        [message]="'Subir (carta)'"
+                        (error)="onErrorCommon($event)"
+                        (success)="onUploadSuccess($event)"
+                      ></dropzone>
+                    </div>
+                  </div>
+                  <div class="row text-center">
+                    <div class="col-12 download">
+                      <a
+                        ngbTooltip="Descargar carta compromiso"
+                        tooltipClass="my-custom-class"
+                        (click)="generateCommitmentLetter('Certificado de Maestría')"
+                        style="color: red;"
+                        >Descargar</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--TITULO MAESTRIA-->
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate">
+          <div class="card cd">
+            <div
+              class="card-header c-header"
+              [class.cheaderrequired]="!titledMDoc && !cctitledMDoc"
+              [class.cheaderok]="titledMDoc || cctitledMDoc"
+              [class.isDisabled]="titledMDoc !== undefined ? true : false"
+            >
+              <div class="row">
+                <div class="col-12">
+                  <div
+                    class="row"
+                    (click)="
+                      collapse(
+                        'collapseTITMAE',
+                        titledMDoc !== undefined ? true : false
+                      )
+                    "
+                  >
+                    <div class="col-12">
+                      <p>
+                        <b>
+                          <span class="text-warning"> * </span>
+                          TÍTULO DE MAESTRIA
+                        </b>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row text-center">
+                <div class="col-12">
+                  <div *ngIf="titledMDoc && !cctitledMDoc">
+                    <span
+                      *ngIf="titledMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="titledMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="titledMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="titledMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <div *ngIf="cctitledMDoc && !titledMDoc">
+                    <span
+                      *ngIf="cctitledMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="cctitledMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="cctitledMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="cctitledMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <div *ngIf="cctitledMDoc && titledMDoc">
+                    <span
+                      *ngIf="titledMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="titledMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="titledMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="titledMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <span
+                    *ngIf="!cctitledMDoc && !titledMDoc"
+                    class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="card-body c-body" id="collapseTITMAE">
+              <div class="row text-center" *ngIf="!titledMDoc && !cctitledMDoc">
+                <div class="col-12">
+                  <mat-slide-toggle
+                    (change)="hasTitledM($event)"
+                    color="primary"
+                    >No tengo título</mat-slide-toggle
+                  >
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="!hasTM && !cctitledMDoc || titledMDoc"
+              >
+                <div class="col-12">
+                  <dropzone
+                    id="dz17"
+                    [config]="config17"
+                    [message]="'Subir (título)'"
+                    (error)="onErrorCommon($event)"
+                    (success)="onUploadSuccess($event)"
+                  ></dropzone>
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="hasTM && !titledMDoc || cctitledMDoc"
+              >
+                <div class="col-12">
+                  <div class="row text-center">
+                    <div class="col-12">
+                      <dropzone
+                        id="dz21"
+                        [config]="config21"
+                        [message]="'Subir (carta)'"
+                        (error)="onErrorCommon($event)"
+                        (success)="onUploadSuccess($event)"
+                      ></dropzone>
+                    </div>
+                  </div>
+                  <div class="row text-center">
+                    <div class="col-12 download">
+                      <a
+                        ngbTooltip="Descargar carta compromiso"
+                        tooltipClass="my-custom-class"
+                        (click)="generateCommitmentLetter('Título de Maestría')"
+                        style="color: red;"
+                        >Descargar</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--CEDULA MAESTRIA-->
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate">
+          <div class="card cd">
+            <div
+              class="card-header c-header"
+              [class.cheaderrequired]="!cedulaMDoc && !cccedulaMDoc"
+              [class.cheaderok]="cedulaMDoc || cccedulaMDoc"
+              [class.isDisabled]="cedulaMDoc !== undefined ? true : false"
+            >
+              <div class="row">
+                <div class="col-12">
+                  <div
+                    class="row"
+                    (click)="
+                      collapse(
+                        'collapseCEDMAE',
+                        cedulaMDoc !== undefined ? true : false
+                      )
+                    "
+                  >
+                    <div class="col-12">
+                      <p>
+                        <b>
+                          <span class="text-warning"> * </span>
+                          CÉDULA DE MAESTRIA
+                        </b>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row text-center">
+                <div class="col-12">
+                  <div *ngIf="cedulaMDoc && !cccedulaMDoc">
+                    <span
+                      *ngIf="cedulaMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="cedulaMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="cedulaMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="cedulaMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <div *ngIf="cccedulaMDoc && !cedulaMDoc">
+                    <span
+                      *ngIf="cccedulaMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="cccedulaMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="cccedulaMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="cccedulaMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <div *ngIf="cccedulaMDoc && cedulaMDoc">
+                    <span
+                      *ngIf="cedulaMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="cedulaMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="cedulaMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="cedulaMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <span
+                    *ngIf="!cccedulaMDoc && !cedulaMDoc"
+                    class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="card-body c-body" id="collapseCEDMAE">
+              <div class="row text-center" *ngIf="!cedulaMDoc && !cccedulaMDoc">
+                <div class="col-12">
+                  <mat-slide-toggle
+                    (change)="hasCedulaM($event)"
+                    color="primary"
+                    >No tengo cédula</mat-slide-toggle
+                  >
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="!hasCedM && !cccedulaMDoc || cedulaMDoc"
+              >
+                <div class="col-12">
+                  <dropzone
+                    id="dz18"
+                    [config]="config18"
+                    [message]="'Subir (cédula)'"
+                    (error)="onErrorCommon($event)"
+                    (success)="onUploadSuccess($event)"
+                  ></dropzone>
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="hasCedM && !cedulaMDoc || cccedulaMDoc"
+              >
+                <div class="col-12">
+                  <div class="row text-center">
+                    <div class="col-12">
+                      <dropzone
+                        id="dz22"
+                        [config]="config22"
+                        [message]="'Subir (carta)'"
+                        (error)="onErrorCommon($event)"
+                        (success)="onUploadSuccess($event)"
+                      ></dropzone>
+                    </div>
+                  </div>
+                  <div class="row text-center">
+                    <div class="col-12 download">
+                      <a
+                        ngbTooltip="Descargar carta compromiso"
+                        tooltipClass="my-custom-class"
+                        (click)="generateCommitmentLetter('Cédula de Maestría')"
+                        style="color: red;"
+                        >Descargar</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--EXAMEN MAESTRIA-->
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate">
+          <div class="card cd">
+            <div
+              class="card-header c-header"
+              [class.cheaderrequired]="!examActMDoc && !ccexamActMDoc"
+              [class.cheaderok]="examActMDoc || ccexamActMDoc"
+              [class.isDisabled]="examActMDoc !== undefined ? true : false"
+            >
+              <div class="row">
+                <div class="col-12">
+                  <div
+                    class="row"
+                    (click)="
+                      collapse(
+                        'collapseEXAMAE',
+                        examActMDoc !== undefined ? true : false
+                      )
+                    "
+                  >
+                    <div class="col-12">
+                      <p>
+                        <b>
+                          <span class="text-warning"> * </span>
+                          ACTA EXAMEN MAESTRIA
+                        </b>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row text-center">
+                <div class="col-12">
+                  <div *ngIf="examActMDoc && !ccexamActMDoc">
+                    <span
+                      *ngIf="examActMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="examActMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="examActMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="examActMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <div *ngIf="ccexamActMDoc && !examActMDoc">
+                    <span
+                      *ngIf="ccexamActMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="ccexamActMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="ccexamActMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="ccexamActMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <div *ngIf="ccexamActMDoc && examActMDoc">
+                    <span
+                      *ngIf="examActMDoc.status === 'EN PROCESO'"
+                      class="badge badge-info"
+                      >EN PROCESO</span
+                    >
+                    <span
+                      *ngIf="examActMDoc.status === 'VALIDADO'"
+                      class="badge badge-primary"
+                      >VALIDADO</span
+                    >
+                    <span
+                      *ngIf="examActMDoc.status === 'ACEPTADO'"
+                      class="badge badge-success"
+                      >ACEPTADO</span
+                    >
+                    <span
+                      *ngIf="examActMDoc.status === 'RECHAZADO'"
+                      class="badge badge-danger"
+                      >RECHAZADO</span
+                    >
+                  </div>
+                  <span
+                    *ngIf="!ccexamActMDoc && !examActMDoc"
+                    class="badge badge-warning"
+                    >SIN ENVIO</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="card-body c-body" id="collapseEXAMAE">
+              <div class="row text-center" *ngIf="!examActMDoc && !ccexamActMDoc">
+                <div class="col-12">
+                  <mat-slide-toggle
+                    (change)="hasExamM($event)"
+                    color="primary"
+                    >No tengo acta</mat-slide-toggle
+                  >
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="!hasEM && !ccexamActMDoc || examActMDoc"
+              >
+                <div class="col-12">
+                  <dropzone
+                    id="dz19"
+                    [config]="config19"
+                    [message]="'Subir (acta)'"
+                    (error)="onErrorCommon($event)"
+                    (success)="onUploadSuccess($event)"
+                  ></dropzone>
+                </div>
+              </div>
+              <div
+                class="row text-center"
+                *ngIf="hasEM && !examActMDoc || ccexamActMDoc"
+              >
+                <div class="col-12">
+                  <div class="row text-center">
+                    <div class="col-12">
+                      <dropzone
+                        id="dz23"
+                        [config]="config23"
+                        [message]="'Subir (carta)'"
+                        (error)="onErrorCommon($event)"
+                        (success)="onUploadSuccess($event)"
+                      ></dropzone>
+                    </div>
+                  </div>
+                  <div class="row text-center">
+                    <div class="col-12 download">
+                      <a
+                        ngbTooltip="Descargar carta compromiso"
+                        tooltipClass="my-custom-class"
+                        (click)="generateCommitmentLetter('Acta de Examen de Maestría')"
+                        style="color: red;"
+                        >Descargar</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!--Columna 1: CURP-->
         <div class="col-sm-6 col-md-4 col-lg-3">
           <div class="card cd">
@@ -730,9 +1387,28 @@
           (click)="continue()"
           class="btn btn-success"
           [disabled]="(!payDoc || !certificateDoc) && (!payDoc || !ccDoc)"
+          *ngIf="!doctorate && !mastersDegree"
         >
           Continuar
         </button>
+        <button
+        type="submit"
+        (click)="continue()"
+        class="btn btn-success"
+        [disabled]="((!payDoc || !certificateLDoc) && (!payDoc || !cccertificateLDoc)) || ((!payDoc || !titledLDoc) && (!payDoc || !cctitledLDoc)) || ((!payDoc || !cedulaLDoc) && (!payDoc || !cccedulaLDoc)) || ((!payDoc || !examActLDoc) && (!payDoc || !ccexamActLDoc))"
+        *ngIf="mastersDegree"
+      >
+        Continuar
+      </button>
+      <button
+        type="submit"
+        (click)="continue()"
+        class="btn btn-success"
+        [disabled]="((!payDoc || !certificateMDoc) && (!payDoc || !cccertificateMDoc)) || ((!payDoc || !titledMDoc) && (!payDoc || !cctitledMDoc)) || ((!payDoc || !cedulaMDoc) && (!payDoc || !cccedulaMDoc)) || ((!payDoc || !examActMDoc) && (!payDoc || !ccexamActMDoc))"
+        *ngIf="doctorate"
+      >
+        Continuar
+      </button>
       </div>
     </div>
   </div>
