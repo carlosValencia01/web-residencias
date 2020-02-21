@@ -7,6 +7,7 @@ export interface iRequest {
     student?: IStudent;
     controlNumber?: string;
     career?: string;
+    careerAcronym?: string;
     fullName?: string;
     applicationDate?: Date;
     applicationDateLocal?: string;

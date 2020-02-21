@@ -1,3 +1,5 @@
+import { ICareer } from './career.model';
+
 export interface IStudent {
     _id?: string;
     controlNumber: string;
@@ -5,6 +7,7 @@ export interface IStudent {
     name?: string;
     lastName?: string;
     career: string;
+    careerId?: ICareer;
     nss?: string;
     nip?: string;
     english?: string;
