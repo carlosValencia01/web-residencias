@@ -723,7 +723,8 @@ export class ProgressPageComponent implements OnInit {
             (value)=>{
               // console.log(value);
               
-              this.refresh();
+              // this.refresh();
+              this.reload();
             }
           );
         }
@@ -748,7 +749,7 @@ export class ProgressPageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(
       (value)=>{
         // console.log(value);
-        this.refresh();
+        this.reload();
       }
     );
   }
@@ -764,7 +765,7 @@ export class ProgressPageComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(
       (value)=>{
-        this.refresh();
+        this.reload();
       }
     );
   }
