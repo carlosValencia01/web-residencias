@@ -29,10 +29,10 @@ export const environment = {
     professionalID: { video: 'https://drive.google.com/file/d/1zGMcltxpHDiws9gnvfSDrBuXZ-M36OHA/preview', file: 'https://drive.google.com/file/d/1gQFiul1eFSat-FLv8mPVX2wrABfzt1FT/preview' }
   },
   // Local
-  // apiURL: 'http://localhost:3003/escolares/credenciales',
+  apiURL: 'http://localhost:3003/escolares/credenciales',
   // eSignatureURL: 'http://localhost:3017/firma/v1',
   // Pruebas
-  apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
+  // apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
   // apiURL: 'https://api.cideti.com.mx/escolares/credenciales',
   //filesURL:'http://localhost:3003/escolares/credenciales/drive/upload/file',
   filesURL: 'https://rijimenezesdev.me/escolares/credenciales/drive/upload/file',

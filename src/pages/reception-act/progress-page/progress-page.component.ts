@@ -205,6 +205,12 @@ export class ProgressPageComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.requestFilter);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    const inputFilter : any = document.getElementById('myfilter');
+    // console.log(inputFilter.value !== '');
+    
+    if(inputFilter.value !== ''){
+      this.dataSource.filter = inputFilter.value.trim().toLowerCase()
+    }
   }
 
   filter(carrers: string[], phases: string[]): Array<iRequest> {
@@ -713,6 +719,13 @@ export class ProgressPageComponent implements OnInit {
             width: '90em',
             height: '800px'
           });
+          dialogRef.afterClosed().subscribe(
+            (value)=>{
+              // console.log(value);
+              
+              this.refresh();
+            }
+          );
         }
         
           // this.router.navigate([Identificador + '/titled'], { relativeTo: this._ActivatedRoute });
@@ -732,6 +745,12 @@ export class ProgressPageComponent implements OnInit {
       width: '90em',
       height: '800px'
     });
+    dialogRef.afterClosed().subscribe(
+      (value)=>{
+        // console.log(value);
+        this.refresh();
+      }
+    );
   }
 
   seeRecord(Identificador): void {
@@ -743,6 +762,11 @@ export class ProgressPageComponent implements OnInit {
       width: '90em',
       height: '800px'
     });
+    dialogRef.afterClosed().subscribe(
+      (value)=>{
+        this.refresh();
+      }
+    );
   }
 
   seeRequestPDF(_id: string): void {
