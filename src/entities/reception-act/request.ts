@@ -847,8 +847,8 @@ export class uRequest {
         const lineWidth = doc.getTextWidth(text);
         const align = textAlign.toLowerCase();
         const lineStart = this._selectStartLineByAlign(align, lineWidth);
-        doc.text(text, align === 'center' ? lineStart + (lineWidth / 2) : lineStart, y, { align: align });
-        doc.rect(align === 'right' ? lineStart - lineWidth : lineStart, y + 1, lineWidth, 0.5, 'F');
+        doc.text(text, align === 'center' ? lineStart + (lineWidth / 2) : lineStart, y,
+            { align: align, maxWidth: (this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT)) });
     }
 
     private _selectStartLineByAlign(align, lineWidth): number {
