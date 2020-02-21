@@ -290,7 +290,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('adviserTitle', this.adviserInfo.title);
     this.frmData.append('adviserCedula', this.adviserInfo.cedula);
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
-    this.frmData.append('projectName', this.frmRequest.get('project').value.trim());
+    this.frmData.append('projectName', this.frmRequest.get('project').value.trim().replace(/\s+/g, ' '));
     this.frmData.append('email', this.frmRequest.get('email').value);
     this.frmData.append('status', 'Process');
     this.frmData.append('phase', eRequest.CAPTURED);
@@ -316,9 +316,12 @@ export class RequestComponentComponent implements OnInit {
           });
           this.showLoading = false;
           if (data.code && data.code !== 200) {
-            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+            this.notificationsServ
+              .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
           } else {
-            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
+            this.notificationsServ
+              .showNotification(eNotificationType.INFORMATION, 'Acto recepcional',
+                'Su código de verificación ha sido enviado al correo ingresado');
           }
         }, error => {
           this.showLoading = false;
@@ -346,9 +349,12 @@ export class RequestComponentComponent implements OnInit {
             this.showLoading = false;
             if (isEmailChanged) {
               if (data.code && data.code !== 200) {
-                this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+                this.notificationsServ
+                  .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
               } else {
-                this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Su código de verificación ha sido enviado al correo ingresado');
+                this.notificationsServ
+                  .showNotification(eNotificationType.INFORMATION, 'Acto recepcional',
+                    'Su código de verificación ha sido enviado al correo ingresado');
               }
             }
             this.getRequest();

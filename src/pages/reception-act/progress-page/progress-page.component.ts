@@ -10,7 +10,6 @@ import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { MatDialog } from '@angular/material/dialog';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
-// import { ConfirmDialogComponent } from 'src/modals/shared/confirm-dialog/confirm-dialog.component';
 import { eRole } from 'src/enumerators/app/role.enum';
 import { SteepComponentComponent } from 'src/modals/reception-act/steep-component/steep-component.component';
 import { uRequest } from 'src/entities/reception-act/request';
@@ -24,10 +23,8 @@ import { ObservationsComponentComponent } from 'src/modals/reception-act/observa
 import { ReleaseCheckComponent } from 'src/modals/reception-act/release-check/release-check.component';
 import Swal from 'sweetalert2';
 import { eCAREER } from 'src/enumerators/shared/career.enum';
-import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
 import { UploadDeliveredComponent } from 'src/modals/reception-act/upload-delivered/upload-delivered.component';
 import { StudentProvider } from 'src/providers/shared/student.prov';
-import { CurrentPositionService } from 'src/services/shared/current-position.service';
 import { ICareer } from 'src/entities/shared/career.model';
 import { BookComponent } from 'src/modals/reception-act/book/book.component';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
@@ -48,17 +45,17 @@ export class ProgressPageComponent implements OnInit {
   displayedColumns: string[];
   statusOptions: { icon: string, option: string }[];
   dataSource: MatTableDataSource<iRequestSource>;
-  careers: Array<string>; //Ca
+  careers: Array<string>;
   allCarrers: Array<string>;
   allPhases: Array<string>;
-  isAllCarrers: boolean; //Variable para indicar que se marco el toggle de Todas las carreras
-  isAllPhases: boolean; //Variable para indicar que se marco el toggle de Todas las fases
+  isAllCarrers: boolean; // Variable para indicar que se marco el toggle de Todas las carreras
+  isAllPhases: boolean; // Variable para indicar que se marco el toggle de Todas las fases
   reset: boolean;
   phases: Array<string>;
   search: string;
   role: string;
   public showLoading: boolean
-  departmentCareers: Array<ICareer>; //Carreras del puesto
+  departmentCareers: Array<ICareer>; // Carreras del puesto
   private folderId: string;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -83,7 +80,7 @@ export class ProgressPageComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
-    //Asigno las carreras asociadas al puesto
+    // Asigno las carreras asociadas al puesto
     this.departmentCareers = this._CookiesService.getPosition().ascription.careers;
   }
 
@@ -140,14 +137,15 @@ export class ProgressPageComponent implements OnInit {
       res => {
         this.request = [];
         res.request.forEach(element => {
-          let tmpRequest: iRequest = this.castRequest(element);
+          const tmpRequest: iRequest = this.castRequest(element);
           if (this.role !== 'jefe académico' && this.role !== 'secretaria académica') {
             this.request.push(tmpRequest);
           } else {
-            //Verifico si la carrera de la solicitud pertenece a las carreras asociadas al departamento del empleado se asigna            
-            let index = this.departmentCareers.findIndex(x => x.fullName === tmpRequest.career);
-            if (index !== -1)
+            // Verifico si la carrera de la solicitud pertenece a las carreras asociadas al departamento del empleado se asigna            
+            const index = this.departmentCareers.findIndex(x => x.fullName === tmpRequest.career);
+            if (index !== -1) {
               this.request.push(tmpRequest);
+            }
           }
         });
         this.requestFilter = this.request.slice(0);
@@ -167,12 +165,13 @@ export class ProgressPageComponent implements OnInit {
   }
 
   public castRequest(element: any): iRequest {
-    let tmp: iRequest = new Object();//<iRequest>element;
+    let tmp: iRequest = new Object(); // <iRequest>element;
     tmp._id = element._id;
     tmp.status = this.convertStatus(element.status);
     tmp.controlNumber = element.studentId.controlNumber;
     tmp.phase = element.phase;
     tmp.career = element.studentId.career;
+    tmp.careerAcronym = element.studentId.careerId.acronym;
     tmp.fullName = element.studentId.fullName;
     tmp.student = element.studentId;
     tmp.studentId = element.studentId._id;
@@ -315,6 +314,7 @@ export class ProgressPageComponent implements OnInit {
     this.requestFilter = this.filter(this.careers, this.phases).slice(0);
     this.refresh();
   }
+
   convertStatus(status: string): string {
     let value = '';
     switch (status) {
@@ -399,7 +399,6 @@ export class ProgressPageComponent implements OnInit {
       this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
     });
   }
-
 
   async releasedRequest(Identificador) {
     let lJury: Array<string> = [];
@@ -975,7 +974,6 @@ export class ProgressPageComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-
   getFolder(controlNumber: string): void {
     this._StudentProvider.getDriveFolderId(controlNumber, eFOLDER.TITULACION).subscribe(folder => {
       this.folderId = folder.folderIdInDrive;
@@ -1009,68 +1007,3 @@ interface iRequestSource {
   isIntegral?: boolean;
   action?: string;
 }
-
-
-
-
-
-
-// acceptRequest(Identificador): void {
-  //   const data = {
-  //     doer: this.cookiesService.getData().user.name.fullName,
-  //     observation: 'No es viable',
-  //     operation: eStatusRequest.ACCEPT
-  //   };
-
-  //   Swal.fire({
-  //     title: '¿Está seguro de confirma esta solicitud?',
-  //     type: 'question',
-  //     showCancelButton: true,
-  //     allowOutsideClick: false,
-  //     confirmButtonColor: '#3085d6',
-  //     cancelButtonColor: '#d33',
-  //     cancelButtonText: 'Cancelar',
-  //     confirmButtonText: 'Aceptar'
-  //   }).then((result) => {
-  //     if (result.value) {
-  //       this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-  //         this.notifications.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud Actualizada');
-  //         this.loadRequest();
-  //       }, error => {
-  //         this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
-  //       });
-  //     } else {
-  //       data.operation = eStatusRequest.REJECT;
-  //       this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-  //         this.notifications.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud Actualizada');
-  //         this.loadRequest();
-  //       }, error => {
-  //         this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
-  //       });
-  //     }
-  //   })
-  //   // const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-  //   //   width: '350px',
-  //   //   disableClose: true,
-  //   //   hasBackdrop: true,
-  //   //   data: '¿Está seguro de confirma esta solicitud?\''
-  //   // });
-  //   // dialogRef.afterClosed().subscribe(result => {
-  //   //   if (result) {
-  //   //     this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-  //   //       this.notifications.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud Actualizada');
-  //   //       this.loadRequest();
-  //   //     }, error => {
-  //   //       this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
-  //   //     });
-  //   //   } else {
-  //   //     data.operation = eStatusRequest.REJECT;
-  //   //     this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-  //   //       this.notifications.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud Actualizada');
-  //   //       this.loadRequest();
-  //   //     }, error => {
-  //   //       this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
-  //   //     });
-  //   //   }
-  //   // });
-  // }
