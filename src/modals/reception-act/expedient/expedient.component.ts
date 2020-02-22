@@ -74,44 +74,38 @@ export class ExpedientComponent implements OnInit {
   }
 
   init(){
-    this.requestProvider.getRequestById(this.data.id).subscribe(
-      data => {
-        this.Request = data.request[0];
-        this.registeredDate = moment(new Date(this.Request.applicationDate)).format('LL')
-        this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
-        this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
-        let tmpDate: Date;
-        if (this.existTitledDate) {
-          tmpDate = new Date(this.Request.proposedDate);
-          tmpDate.setHours(0, 0, 0, 0);
-          tmpDate.setHours(this.Request.proposedHour / 60, this.Request.proposedHour % 60, 0, 0);
-        }
-        this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
-        this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
-        this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
-
-        this.Request.student = data.request[0].studentId;
-
-        this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber, eFOLDER.TITULACION).subscribe(
-          (folder) => {
-            this.folderId = folder.folderIdInDrive;
-          },
-          err => {
-            console.log(err);
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-          }
-        );
-
-        this._Request = new uRequest(this.Request, this.imgSrv, this._CookiesService);
-        this.onLoad(this.Request.documents);
-        (async () => {
-          await this.delay(150);
-        })();
+    console.log(this.data.request);
+    this.Request = this.data.request;
+    this.registeredDate = moment(new Date(this.Request.applicationDateLocal)).format('LL')
+    this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
+    this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
+    let tmpDate: Date;
+    if (this.existTitledDate) {
+      tmpDate = new Date(this.Request.proposedDate);
+      tmpDate.setHours(0, 0, 0, 0);
+      tmpDate.setHours(this.Request.proposedHour / 60, this.Request.proposedHour % 60, 0, 0);
+    }
+    this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
+    this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
+    this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : this.Request.status == 'Finalizado' ? 'Si' : 'No';
+    
+    this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber, eFOLDER.TITULACION).subscribe(
+      (folder) => {
+        this.folderId = folder.folderIdInDrive;
       },
-      error => {
-        this._NotificationsServices.showNotification(eNotificationType.ERROR,
-          'Acto Recepcional', error);
-      });
+      err => {
+        console.log(err);
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+      }
+    );
+
+    this._Request = new uRequest(this.Request, this.imgSrv, this._CookiesService);
+    this.onLoad(this.Request.documents);
+    (async () => {
+      await this.delay(150);
+    })();
+
+    
   }
   changed(): void {
     if (typeof (this.folderId) !== 'undefined' || this.folderId === '') {

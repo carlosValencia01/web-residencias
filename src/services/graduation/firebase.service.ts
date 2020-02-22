@@ -30,7 +30,7 @@ export class FirebaseService {
     return this.db.collection(collection).snapshotChanges();
   }
 
-  // Actualiza un alumno
+  // Actualiza un alumno *ocupa todo los datos
   public updateGraduate(documentId: string, data: any , collection: string) {
     return this.db.collection(collection).doc(documentId).set(data);
   }

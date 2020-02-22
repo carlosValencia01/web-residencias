@@ -49,20 +49,13 @@ export class DocumentReviewComponent implements OnInit {
   }
 
   init() {
-    this.requestProvider.getRequestById(this.data.id).subscribe(
-      data => {
-        this.request = data.request[0];
-        this.request.phase = 'Registrado';
-        this.student = data.request[0].studentId;
-        this.request.student = data.request[0].studentId;
-        this.uRequest = new uRequest(this.request, this.imgSrv, this._CookiesService);
-        this.refresh();
-      },
-      error => {
-        this.notificationService.showNotification(eNotificationType.ERROR,
-          'Titulación App', error);
-      }
-    );
+    this.request = this.data.request;
+    this.request.phase = 'Registrado';
+    this.student = this.data.request.student;
+    this.student['career'] = this.data.request.careerAcronym;
+    this.request.student = this.data.request.student;
+    this.uRequest = new uRequest(this.request, this.imgSrv, this._CookiesService);
+    this.refresh();
   }
 
   refresh(): void {

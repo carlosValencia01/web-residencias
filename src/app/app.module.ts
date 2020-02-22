@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MatFileUploadModule } from 'mat-file-upload';
+// for HttpClient import:
+import { LoadingBarModule,LoadingBarService } from 'ngx-loading-bar';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
@@ -156,6 +158,7 @@ import { RequestComponentComponent } from 'src/components/reception-act/request-
 import { RequestViewComponent } from 'src/components/reception-act/request-view/request-view.component';
 import { UploadFilesComponent } from 'src/components/reception-act/upload-files/upload-files.component';
 import { ViewerComponentComponent } from 'src/components/reception-act/viewer-component/viewer-component.component';
+import { ProgessComponent } from 'src/components/reception-act/progess/progess.component';
 // Modals
 import { EmployeeAdviserComponent } from 'src/modals/reception-act/employee-adviser/employee-adviser.component';
 import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
@@ -316,6 +319,7 @@ registerLocaleData(localeEs);
     RequestViewComponent,
     UploadFilesComponent,
     ViewerComponentComponent,
+    ProgessComponent,
     // Modals
     EmployeeAdviserComponent,
     EmployeeGradeComponent,
@@ -462,6 +466,7 @@ registerLocaleData(localeEs);
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
+    LoadingBarModule
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -522,6 +527,7 @@ registerLocaleData(localeEs);
     // Services
     CurrentPositionService,
     ErrorMatcher,
+    // LoadingBarService
   ],
   entryComponents: [
     // Reception act module
