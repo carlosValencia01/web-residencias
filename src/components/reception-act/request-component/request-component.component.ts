@@ -55,7 +55,7 @@ export class RequestComponentComponent implements OnInit {
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
   private oRequest: uRequest;
-  private adviserInfo: { name: string, title: string, cedula: string };
+  private adviserInfo: { name: string, title: string, cedula: string, email?: string };
   private product = 'INFORME TÉCNICO DE RESIDENCIA PROFESIONAL';
   private titulationOption = 'XI - TITULACIÓN INTEGRAL';
 
@@ -100,26 +100,26 @@ export class RequestComponentComponent implements OnInit {
   private firstName(fullName: string): string {
     const name: String[] = fullName.split(/\s+/);
     const longitud = name.length;
-    let firstName: string = "";
+    let firstName: string = '';
     if (longitud > 2) {
       for (let i = 0; i < longitud - 2; i++)
-        firstName += name[i] + " ";
+        firstName += name[i] + ' ';
     }
     else
-      firstName = "Sin Capturar ";
+      firstName = 'Sin Capturar ';
     return firstName.substr(0, firstName.length - 1);
   }
 
   private lastName(fullName: string): string {
     const name: String[] = fullName.split(/\s+/).reverse();
     const longitud = name.length;
-    let lastName: string = "";
+    let lastName: string = '';
     if (longitud > 2) {
       for (let i = 0; i < 2; i++)
-        lastName += name[i] + " ";
+        lastName += name[i] + ' ';
     }
     else
-      lastName = "Sin Capturar ";
+      lastName = 'Sin Capturar ';
     return lastName.substr(0, lastName.length - 1);
   }
 
@@ -289,6 +289,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('adviserName', this.adviserInfo.name);
     this.frmData.append('adviserTitle', this.adviserInfo.title);
     this.frmData.append('adviserCedula', this.adviserInfo.cedula);
+    this.frmData.append('adviserEmail', this.adviserInfo.email);
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
     this.frmData.append('projectName', this.frmRequest.get('project').value.trim().replace(/\s+/g, ' '));
     this.frmData.append('email', this.frmRequest.get('email').value);
@@ -331,7 +332,7 @@ export class RequestComponentComponent implements OnInit {
         break;
       }
       case eOperation.EDIT: {
-        console.log("EDITADO");
+        console.log('EDITADO');
         const value = this.request.documents.find(x => x.nameFile === eFILES.PROYECTO);
         let isEmailChanged = false;
         this.frmData.append('fileId', value.driveId);

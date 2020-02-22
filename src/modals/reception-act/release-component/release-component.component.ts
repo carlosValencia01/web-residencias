@@ -12,7 +12,6 @@ import { iRequest } from 'src/entities/reception-act/request.model';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import Swal from 'sweetalert2';
-import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 @Component({
   selector: 'app-release-component',
@@ -25,7 +24,7 @@ export class ReleaseComponentComponent implements OnInit {
   public frmConsejo: FormGroup;
   public isReject: boolean;
   public information: {
-    jury: Array<{ name: string, title: string, cedula: string }>,
+    jury: Array<{ name: string, title: string, cedula: string, email: string }>,
     observation: string,
     minutes: number,
     id: string,
@@ -38,9 +37,10 @@ export class ReleaseComponentComponent implements OnInit {
   public showLoading = false;
   public folderId;
   private userInformation: any;
-  private juryInfo: Array<{ name: string, title: string, cedula: string }>;
+  private juryInfo: Array<{ name: string, title: string, cedula: string, email?: string }>;
   private oRequest: uRequest;
   private studentCareer: string;
+  private studentCareerAcronym: string;
 
   constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
     private notifications: NotificationsServices, public dialog: MatDialog,
@@ -53,6 +53,7 @@ export class ReleaseComponentComponent implements OnInit {
     this.isReject = typeof (this.information.observation) !== 'undefined' && this.information.observation.length > 0;
     this.userInformation = this.cookiesService.getData().user;
     this.studentCareer = this.information.request.career;
+    this.studentCareerAcronym = this.information.request.careerAcronym;
     this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
   }
 
@@ -84,10 +85,15 @@ export class ReleaseComponentComponent implements OnInit {
       }
     } else {
       this.juryInfo = [
-        { name: this.information.request.adviser.name, title: this.information.request.adviser.title, cedula: this.information.request.adviser.cedula },
-        { name: '', title: '', cedula: '' },
-        { name: '', title: '', cedula: '' },
-        { name: '', title: '', cedula: '' }
+        {
+          name: this.information.request.adviser.name,
+          title: this.information.request.adviser.title,
+          cedula: this.information.request.adviser.cedula,
+          email: this.information.request.adviser.email
+        },
+        { name: '', title: '', cedula: '', email: '' },
+        { name: '', title: '', cedula: '', email: '' },
+        { name: '', title: '', cedula: '', email: '' }
       ];
       this.Time.writeValue('7:00');
     }
@@ -101,7 +107,7 @@ export class ReleaseComponentComponent implements OnInit {
       this.showLoading = false;
     }, error => {
       this.showLoading = false;
-      this.notifications.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Recuperación Fallida");
+      this.notifications.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'Recuperación Fallida');
     });
   }
 
@@ -152,7 +158,9 @@ export class ReleaseComponentComponent implements OnInit {
 
     const ref = this.dialog.open(EmployeeAdviserComponent, {
       data: {
-        carrer: this.studentCareer
+        carrer: this.studentCareer,
+        careerAcronym: this.studentCareerAcronym,
+        synodal: button,
       },
       disableClose: true,
       hasBackdrop: true,
@@ -161,39 +169,42 @@ export class ReleaseComponentComponent implements OnInit {
 
     ref.afterClosed().subscribe((result) => {
 
-      if (typeof (result) != "undefined") {
+      if (typeof (result) != 'undefined') {
         this.enableUpload = false;
         if (this.juryInfo.findIndex(x => x.name === result.ExtraInfo.name) !== -1) {
-          this.notifications.showNotification(eNotificationType.ERROR, "Acto recepcional", "Empleado ya asignado");
+          this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Empleado ya asignado');
         } else {
           switch (button) {
-            case "president": {
-              this.frmConsejo.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : "" });
+            case 'president': {
+              this.frmConsejo.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : '' });
               this.juryInfo[0].name = result.ExtraInfo.name;
               this.juryInfo[0].title = result.ExtraInfo.title;
               this.juryInfo[0].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[0].email = result.ExtraInfo.email;
               break;
             }
-            case "secretary": {
-
-              this.frmConsejo.patchValue({ 'secretary': typeof (result) !== 'undefined' ? result.Employee : "" });
+            case 'secretary': {
+              this.frmConsejo.patchValue({ 'secretary': typeof (result) !== 'undefined' ? result.Employee : '' });
               this.juryInfo[1].name = result.ExtraInfo.name;
               this.juryInfo[1].title = result.ExtraInfo.title;
               this.juryInfo[1].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[1].email = result.ExtraInfo.email;
               break;
             }
-            case "vocal": {
-              this.frmConsejo.patchValue({ 'vocal': typeof (result) !== 'undefined' ? result.Employee : "" });
+            case 'vocal': {
+              this.frmConsejo.patchValue({ 'vocal': typeof (result) !== 'undefined' ? result.Employee : '' });
               this.juryInfo[2].name = result.ExtraInfo.name;
               this.juryInfo[2].title = result.ExtraInfo.title;
               this.juryInfo[2].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[2].email = result.ExtraInfo.email;
               break;
             }
-            case "substitute": {
-              this.frmConsejo.patchValue({ 'substitute': typeof (result) !== 'undefined' ? result.Employee : "" });
+            case 'substitute': {
+              this.frmConsejo.patchValue({ 'substitute': typeof (result) !== 'undefined' ? result.Employee : '' });
               this.juryInfo[3].name = result.ExtraInfo.name;
               this.juryInfo[3].title = result.ExtraInfo.title;
               this.juryInfo[3].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[3].email = result.ExtraInfo.email;
               break;
             }
           }
@@ -202,7 +213,7 @@ export class ReleaseComponentComponent implements OnInit {
         if (isCompleted) {
           this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
         }
-        this.activeReleased = isCompleted;//this.juryInfo.length === 4;
+        this.activeReleased = isCompleted; // this.juryInfo.length === 4;
       }
     });
     // const time: number = Number(this.Time.hour * 60) + Number(this.Time.minute);
@@ -224,7 +235,7 @@ export class ReleaseComponentComponent implements OnInit {
           this.showLoading = false;
         }, error => {
           this.notifications.showNotification(eNotificationType.ERROR,
-            "Acto recepcional", error);
+            'Acto recepcional', error);
           this.showLoading = false;
         });
 

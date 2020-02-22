@@ -20,7 +20,7 @@ export interface iRequest {
     actDate?: Date;
     honorificMention?: boolean;
     adviserId?: string;
-    adviser?: { name: string, title: string, cedula: string };
+    adviser?: { name: string, title: string, cedula: string, email?: string };
     place?: string;
     noIntegrants?: number;
     integrants?: Array<iIntegrant>;

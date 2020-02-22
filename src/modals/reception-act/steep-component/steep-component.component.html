@@ -27,11 +27,11 @@
         </mat-card-header>
         <div>
           <input type='file' (change)="fileChanged($event)" style="margin-bottom: 10px">
-          <input type="password" placeholder="Contraseña"  [(ngModel)]="password">
+          <input type="password" placeholder="Contraseña" [(ngModel)]="password">
         </div>
         <mat-card-actions align="end">
-          <button type="button" class="btn btn-primary" (click)="uploadDocument()"
-          [disabled]="!fileFlag || !password">Firmar</button>
+          <button type="button" class="btn btn-primary" (click)="signProjectRegister()"
+            [disabled]="!fileFlag || !password">Firmar</button>
         </mat-card-actions>
       </mat-card>
     </div>
@@ -48,7 +48,8 @@
     <div class="row">
       <div class="col-3 col-sm-3 col-md-3 col-lg-3"></div>
       <div class="col-6 col-sm-6 col-md-6 col-lg-6">
-        <app-viewer-component [Request]="Request" [Phase]="'Verificado'" [Title]="''" [Type]="'None'" [QR]="QR" [EStamp]="EStamp">
+        <app-viewer-component [Request]="Request" [Phase]="'Verificado'" [Title]="''" [Type]="'None'" [QR]="QR"
+          [EStamp]="EStamp">
         </app-viewer-component>
       </div>
       <div class="col-3 col-sm-3 col-md-3 col-lg-3"></div>
@@ -64,6 +65,7 @@
     </div>
   </mat-step>
 </mat-horizontal-stepper>
+
 <div class="center">
   <app-loader [loading]="showLoading"></app-loader>
 </div>
