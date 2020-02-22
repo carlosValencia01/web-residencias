@@ -26,6 +26,7 @@ import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
+import { DepartmentProvider } from 'src/providers/shared/department.prov';
 moment.locale('es');
 @Component({
   selector: 'app-diary',
@@ -46,6 +47,7 @@ export class DiaryComponent implements OnInit {
   events: CalendarEvent[];
   hour: string;
   excludeDays: number[] = [0, 6];
+  employees;
   // Appointments: Array<{ _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, }] }> = []
   Appointments: Array<iAppointmentGroup> = []
   Ranges: Array<{ start: Date, end: Date, quantity: number, careers: string[] }> = [];
@@ -57,7 +59,7 @@ export class DiaryComponent implements OnInit {
   private folderId: string;
   constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices, private _RequestService: RequestService,
     private _CookiesService: CookiesService, private _sourceDataProvider: sourceDataProvider, private _StudentProvider: StudentProvider, public _ImageToBase64Service: ImageToBase64Service,
-    public dialog: MatDialog) {
+    public dialog: MatDialog, private _DepartmentProvider: DepartmentProvider) {
     const tmpFecha = localStorage.getItem('Appointment');
     if (typeof (tmpFecha) !== 'undefined' && tmpFecha) {
       this.viewDate = new Date(tmpFecha);
@@ -494,6 +496,7 @@ export class DiaryComponent implements OnInit {
     // let tmpDate: Date = new Date(value.start.getFullYear(), value.start.getMonth(), value.start.getDate(), 0, 0, 0, 0);
     const tmpMinutes: number = $event.start.getHours() * 60;
     let tmpDate: Date = new Date($event.start.getFullYear(), $event.start.getMonth(), $event.start.getDate(), 0, 0, 0, 0);
+    let tmpStudentData;
     //Obtencion de datos del evento
     let student = $event.title.split(' ').slice(2).join(' ');
     let abbreviation = $event.title.split(' ')[1];
@@ -509,7 +512,50 @@ export class DiaryComponent implements OnInit {
           && this.Appointments[i].values[j].student[0].trim() === student.trim() && this.Appointments[i]._id[0].trim() === career.carrer.trim()
         ) {
           tmpValor = this.Appointments[i].values[j];
+          tmpStudentData = this.Appointments[i].values[j];
           index = { appointment: i, value: j };
+          var departamento;
+          switch(career.carrer){
+            case "ARQUITECTURA" :
+              departamento = 'DEPARTAMENTO DE CIENCIAS DE LA TIERRA';
+              break;
+            case "INGENIERÍA CIVIL" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA CIVIL';
+              break;
+            case "INGENIERÍA BIOQUÍMICA" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA QUÍMICA Y BIOQUÍMICA';
+              break;
+            case "INGENIERÍA EN GESTIÓN EMPRESARIAL" :
+              departamento = 'DEPARTAMENTO DE CIENCIAS ECONÓMICO ADMINISTRATIVAS';
+              break;
+            case "INGENIERÍA QUÍMICA" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA QUÍMICA Y BIOQUÍMICA';
+              break;
+            case "INGENIERÍA MECATRÓNICA" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA ELÉCTRICA Y ELECTRÓNICA';
+              break;
+            case "INGENIERÍA ELÉCTRICA" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA ELÉCTRICA Y ELECTRÓNICA';
+              break;
+            case "INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES" :
+              departamento = 'DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN'
+              break;
+            case "INGENIERÍA EN SISTEMAS COMPUTACIONALES" :
+              departamento = 'DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN'
+              break;
+            case "INGENIERÍA INDUSTRIAL" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA INDUSTRIAL';
+              break;
+            case "LICENCIATURA EN ADMINISTRACIÓN" :
+              departamento = 'DEPARTAMENTO DE CIENCIAS ECONÓMICO ADMINISTRATIVAS';
+              break;
+            case "LICENCIATURA EN INFORMÁTICA" :
+              departamento = 'DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN';
+              break;
+         }
+          this._DepartmentProvider.getDepartmentBossSecretary(departamento).subscribe(res => {
+            this.employees = res.department[0];
+          });
           break;
         }
       }
@@ -527,11 +573,27 @@ export class DiaryComponent implements OnInit {
         confirmButtonText: 'Aceptar'
       }).then((result) => {
         if (result.value) {
+          let hours = tmpStudentData.proposedHour / 60;
+          let minutes = tmpStudentData.proposedHour % 60;
+          let hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
+          let date = moment(tmpStudentData.proposedDate).format('LLL');
+
           const data = {
             operation: eStatusRequest.ACCEPT,
             doer: this._CookiesService.getData().user.name.fullName,
-            phase: eRequest.ASSIGNED
-          };
+            phase: eRequest.ASSIGNED,
+            jurado: tmpStudentData.jury,
+            fechaEvento: date.slice(0,date.length-5),
+            horaEvento: hour,
+            lugarEvento: tmpStudentData.place,
+            duracionEvento: tmpStudentData.duration,
+            nombreAlumno: tmpStudentData.student[0],
+            carreraAlumno: career.carrer,
+            nombreProyecto: tmpStudentData.project,
+            opcionTitulacion: tmpStudentData.product,
+            jefeDepartamento: this.employees.boss,
+            secretariaDepartamento : this.employees.secretary
+          };          
           this._RequestProvider.updateRequest(tmpValor.id, data).subscribe(_ => {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Fecha Propuesta Aceptada');
             // tmpValor.phase = "Realizado";
