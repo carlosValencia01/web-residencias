@@ -1,63 +1,61 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import { StudentProvider } from 'src/providers/shared/student.prov';
+import Swal from 'sweetalert2';
+import * as moment from 'moment';
+
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
-import Swal from 'sweetalert2';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eOperation } from 'src/enumerators/reception-act/operation.enum';
-import * as moment from 'moment';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
+
 moment.locale('es');
+
 @Component({
   selector: 'app-new-event',
   templateUrl: './new-event.component.html',
   styleUrls: ['./new-event.component.scss']
 })
 export class NewEventComponent implements OnInit {
-  frmNewEvent: FormGroup;
-  dataSource: MatTableDataSource<IRowStudent>;
-  dataStudent: Array<IRowStudent>;
-  search: string = '';
-  selectRow: IRowStudent;
-  // dataExist: boolean = true;
-  event: { appointment: Date, minutes: number, abbreviation: string };
-  displayedColumns: Array<string>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  title: string;
-  constructor(public dialogRef: MatDialogRef<NewEventComponent>,
+  public frmNewEvent: FormGroup;
+  public dataSource: MatTableDataSource<IRowStudent>;
+  public dataStudent: Array<IRowStudent>;
+  public search: string = '';
+  public displayedColumns: Array<string>;
+  public title: string;
+  private selectRow: IRowStudent;
+  private event: { appointment: Date, minutes: number, abbreviation: string };
+
+  constructor(
+    public dialogRef: MatDialogRef<NewEventComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private _StudentProvider: StudentProvider,
     private _NotificationsServices: NotificationsServices,
     private _sourceDataProvider: sourceDataProvider,
     private _RequestProvider: RequestProvider,
-    private _CookiesService: CookiesService) {
+    private _CookiesService: CookiesService,
+  ) {
     this.dataStudent = [];
-    // let tmpDate: Date;
-    // if (data.operation === eOperation.NEW) {
-    //   tmpDate = new Date(data.date);
-    //   this.event = { appointment: tmpDate, minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()), abbreviation: 'None' };
-    // } else {
-    //   tmpDate = new Date(data.event.start);
-    //   this.event = { appointment: tmpDate, minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()), abbreviation: data.event.title.split(' ')[1] };
-    // }
     const tmpDate = data.operation === eOperation.NEW ? data.date : new Date(data.event.start);
-    this.event = { appointment: tmpDate, minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()), abbreviation: data.operation === eOperation.NEW ? '' : data.event.title.split(' ')[1] };
+    this.event = {
+      appointment: tmpDate,
+      minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()),
+      abbreviation: data.operation === eOperation.NEW ? '' : data.event.title.split(' ')[1]
+    };
     this.displayedColumns = ['controlNumber', 'fullName', 'career', 'select']
-    this.title = "NUEVO EVENTO A LAS " + moment(tmpDate).format('LT');
-    // this.onRefresh();
+    this.title = 'NUEVO EVENTO A LAS ' + moment(tmpDate).format('LT');
   }
 
   ngOnInit() {
     this.frmNewEvent = new FormGroup({
       'place': new FormControl(null, Validators.required),
       'student': new FormControl(null, Validators.required),
-      'duration': new FormControl('60', Validators.required)
+      'duration': new FormControl('60', [Validators.required, Validators.min(30), Validators.max(120)])
     });
     this.onSearch();
   }
@@ -76,23 +74,26 @@ export class NewEventComponent implements OnInit {
   }
 
   onSearch(): void {
-    // this.dataExist = false;
-    // if (this.search.trim() !== '') {
-    // this._StudentProvider.searchStudents(this.search).subscribe(res => {
     this._RequestProvider.StudentsToSchedule().subscribe(res => {
       const tmpData: Array<any> = res.Students;
       this.dataStudent = [];
       if (tmpData.length != 0) {
-        // this.dataExist = true;
         tmpData.forEach(e => {
-          this.dataStudent.push({ _id: e.Student[0]._id, fullName: e.Student[0].fullName, career: e.Student[0].career, controlNumber: e.Student[0].controlNumber, select: '', request: e._id })
+          this.dataStudent.push({
+            _id: e.Student[0]._id,
+            fullName: e.Student[0].fullName,
+            career: e.Student[0].career,
+            controlNumber: e.Student[0].controlNumber,
+            select: '',
+            request: e._id
+          });
         });
       }
       this.onRefresh();
-    }, err => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulación App", err);
+    }, _ => {
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Titulación App', 'Ocurrió un error al buscar solicitudes');
     });
-    // }
   }
 
   applyFilter(filterValue: string) {
@@ -101,6 +102,7 @@ export class NewEventComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
+
   onSubmit(): void {
     const tmpSearch = this._sourceDataProvider.getCareerAbbreviation().find(x => x.carrer === this.selectRow.career);
     if (this.data.operation === eOperation.NEW) {
@@ -149,9 +151,9 @@ export class NewEventComponent implements OnInit {
           this.addEvent(this.selectRow.request, this.event);
         }
 
-      }
-      else {
-        this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Carrera no encontrada, reporte el problema a coordinación");
+      } else {
+        this._NotificationsServices
+          .showNotification(eNotificationType.ERROR, 'Titulacion App', 'Carrera no encontrada, reporte el problema a coordinación');
       }
     }
   }
@@ -168,13 +170,13 @@ export class NewEventComponent implements OnInit {
     };
     this._RequestProvider.updateRequest(request, data).subscribe(data => {
       if (typeof (data) !== 'undefined') {
-        this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento Asignado');
+        this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento asignado');
         this.dialogRef.close({
           career: this.selectRow.career,
           value: {
             id: data.request._id,
             student: [this.selectRow.fullName],
-            phase: "Realizado",
+            phase: 'Realizado',
             proposedDate: this.event.appointment,
             proposedHour: this.event.minutes,
             jury: data.request.jury,
@@ -186,12 +188,17 @@ export class NewEventComponent implements OnInit {
           }
         });
       }
-    }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+    }, _ => {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Ocurrió un error al asignar evento');
     });
   }
 }
 
 interface IRowStudent {
-  _id: string, controlNumber: string, fullName: string, career: string, select: string, request?: string
+  _id: string;
+  controlNumber: string;
+  fullName: string;
+  career: string;
+  select: string;
+  request?: string;
 }

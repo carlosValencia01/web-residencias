@@ -27,6 +27,7 @@ import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 moment.locale('es');
+
 @Component({
   selector: 'app-diary',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,9 +56,17 @@ export class DiaryComponent implements OnInit {
   locale: string = 'es';
   public showLoading: boolean;
   private folderId: string;
-  constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices, private _RequestService: RequestService,
-    private _CookiesService: CookiesService, private _sourceDataProvider: sourceDataProvider, private _StudentProvider: StudentProvider, public _ImageToBase64Service: ImageToBase64Service,
-    public dialog: MatDialog) {
+
+  constructor(
+    public _RequestProvider: RequestProvider,
+    public _NotificationsServices: NotificationsServices,
+    private _RequestService: RequestService,
+    private _CookiesService: CookiesService,
+    private _sourceDataProvider: sourceDataProvider,
+    private _StudentProvider: StudentProvider,
+    public _ImageToBase64Service: ImageToBase64Service,
+    public dialog: MatDialog,
+  ) {
     const tmpFecha = localStorage.getItem('Appointment');
     if (typeof (tmpFecha) !== 'undefined' && tmpFecha) {
       this.viewDate = new Date(tmpFecha);
@@ -68,6 +77,7 @@ export class DiaryComponent implements OnInit {
     //   this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1);
     // }
   }
+
   ngOnInit() {
     this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
     this.carrers = this._sourceDataProvider.getCareerAbbreviation();
@@ -85,6 +95,7 @@ export class DiaryComponent implements OnInit {
       color: { primary: '#57c7d4', secondary: '#ace3ea' }
     });
   }
+
   diary(month: number, year: number): void {
     this.Appointments = [];
     // let nowDate = new Date(this.viewDate.getTime());
@@ -99,7 +110,7 @@ export class DiaryComponent implements OnInit {
       min: minDate,
       max: maxDate
     }).subscribe(data => {
-      if (typeof (data.Diary) !== "undefined") {
+      if (typeof (data.Diary) !== 'undefined') {
         this.Appointments = data.Diary;
         this.Ranges = data.Ranges;
         // this.generateAppointment(month, year);
@@ -107,7 +118,7 @@ export class DiaryComponent implements OnInit {
         this.refresh.next();
       }
     }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulación App",
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App',
         error);
     });
   }
@@ -127,11 +138,11 @@ export class DiaryComponent implements OnInit {
             for (let k = 0; k < quantity; k++) {
               let Carrera: string[] = [];
               let Student: string[] = [];
-              Student.push("");
+              Student.push('');
               const AppointmentCareer = this.Appointments.find(x => x._id[0] === c.carrer);
               if (typeof (AppointmentCareer) !== 'undefined') {
                 // AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--" });
-                AppointmentCareer.values.push({ id: '-1', student: Student, project: '', proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '', duration: 60, option: '', product: '' });
+                AppointmentCareer.values.push({ id: '-1', student: Student, project: '', proposedDate: onlyDate, proposedHour: j, phase: '--', jury: [], place: '', duration: 60, option: '', product: '' });
               }
               // _id: string[], values: [{ id: number, student: string[], proposedDate: Date, proposedHour: number }]
               // Carrera.push(c.carrer);
@@ -196,7 +207,7 @@ export class DiaryComponent implements OnInit {
             // let hours = element.proposedHour / 60;
             // let minutes = element.proposedHour % 60;
             // let hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
-            let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];
+            let title = moment(tmpStart).format('LT') + ' ' + career.abbreviation + ' ' + element.student[0];
             this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
           });
         }
@@ -204,7 +215,6 @@ export class DiaryComponent implements OnInit {
     });
     this.refresh.next();
   }
-
 
   beforeMonthViewRender(renderEvent: CalendarMonthViewBeforeRenderEvent): void {
     renderEvent.body.forEach(day => {
@@ -244,7 +254,7 @@ export class DiaryComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '45em'
+        width: '70vw'
       });
     } else {
       dialogRef = this.dialog.open(NewEventComponent, {
@@ -254,7 +264,7 @@ export class DiaryComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '45em'
+        width: '60vw'
       });
     }
 
@@ -293,7 +303,7 @@ export class DiaryComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '55em'
+        width: '70vw'
       });
     } else {
       dialogRef = this.dialog.open(
@@ -304,7 +314,7 @@ export class DiaryComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '45em'
+        width: '60vw'
       });
     }
 
@@ -535,7 +545,7 @@ export class DiaryComponent implements OnInit {
           this._RequestProvider.updateRequest(tmpValor.id, data).subscribe(_ => {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Fecha Propuesta Aceptada');
             // tmpValor.phase = "Realizado";
-            this.Appointments[index.appointment].values[index.value].phase = "Realizado";
+            this.Appointments[index.appointment].values[index.value].phase = 'Realizado';
             this.loadAppointment();
             // this.refresh.next();
           }, error => {
@@ -608,17 +618,17 @@ export class DiaryComponent implements OnInit {
   async documentation($event: any) {
     let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
     const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando documentación");
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto Recepcional', 'Generando documentación');
     const iRequest: iRequest = await this.getRequestById(tmpAppointment.id);
     if (iRequest.phase === 'Realizado') {
       this.showLoading = true;
       const oRequest = new uRequest(iRequest, this._ImageToBase64Service, this._CookiesService);
       this.getFolder(iRequest.controlNumber);
       await this.delay(1000);
-      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando oficio de jurado");
+      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto Recepcional', 'Generando oficio de jurado');
       const data_oficio = {
         file: {
-          mimetype: "application/pdf",
+          mimetype: 'application/pdf',
           data: oRequest.documentSend(eFILES.OFICIO),
           name: eFILES.OFICIO + '.pdf',
         },
@@ -641,7 +651,7 @@ export class DiaryComponent implements OnInit {
       if (response) {
         const data = {
           file: {
-            mimetype: "application/pdf",
+            mimetype: 'application/pdf',
             data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
             name: eFILES.JURAMENTO_ETICA + '.pdf',
           },
@@ -651,7 +661,7 @@ export class DiaryComponent implements OnInit {
           phase: iRequest.phase,
           IsEdit: 'true'
         }
-        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando código de ética");
+        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto Recepcional', 'Generando código de ética');
         this._RequestProvider.uploadFile(iRequest._id, data).subscribe(response => {
           if (iRequest.status === 'None') {
             let data = {
@@ -664,7 +674,7 @@ export class DiaryComponent implements OnInit {
               this.showLoading = false;
               window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
             }, error => {
-              console.log("Error");
+              console.log('Error');
               this.showLoading = false;
               this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
             });
@@ -682,7 +692,7 @@ export class DiaryComponent implements OnInit {
         this.showLoading = false;
       }
     } else {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "La solicitud ya ha pasado de fase");
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'La solicitud ya ha pasado de fase');
     }
 
   }

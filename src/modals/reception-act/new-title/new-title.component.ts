@@ -14,6 +14,7 @@ import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum
 import Swal from 'sweetalert2';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 moment.locale('es');
+
 @Component({
   selector: 'app-new-title',
   templateUrl: './new-title.component.html',
@@ -24,18 +25,19 @@ export class NewTitleComponent implements OnInit {
   public existWarning: string = '';
   public frmNewTitle: FormGroup;
   public controlNumber: string;
-  private juryInfo: Array<{ name: string, title: string, cedula: string }>;
   public options: Array<string>;
   public products: Array<Array<string>>;
   public index: number = 0;
   public title: string;
   public date: Date;
   public showLoading: boolean;
+  private juryInfo: Array<{ name: string, title: string, cedula: string, email?: string }>;
   private event: { appointment: Date, minutes: number, abbreviation: string };
+
   public request: {
     studentId: string, student: string, controlNumber: string, career: string,
     projectName?: string, phase?: string, status?: string, proposedDate?: Date, proposedHour?: number,
-    duration?: number, place?: string, jury?: Array<{ name: string, title: string, cedula: string }>,
+    duration?: number, place?: string, jury?: Array<{ name: string, title: string, cedula: string, email?: string }>,
     titulationOption?: string, product?: string, isIntegral?: boolean
   };
   constructor(
@@ -50,7 +52,7 @@ export class NewTitleComponent implements OnInit {
   ) {
     this.date = data.operation === eOperation.NEW ? data.date : new Date(data.event.start);
     this.event = { appointment: this.date, minutes: (this.date.getHours() * 60 + this.date.getMinutes()), abbreviation: data.operation === eOperation.NEW ? '' : data.event.title.split(' ')[1] };
-    this.title = "NUEVA TITULACIÓN A LAS " + moment(this.date).format('LT');
+    this.title = 'NUEVA TITULACIÓN A LAS ' + moment(this.date).format('LT');
     this.options = [
       'I - TESIS PROFESIONAL',
       'II - ELABORACIÓN DE TEXTOS, PROTOTIPOS O INSTRUCTIVOS PARA PRÁCTICAS DE LABORATORIO O TALLER',
@@ -80,13 +82,13 @@ export class NewTitleComponent implements OnInit {
         'PROYECTO DE EMPRENDEDURISMO', 'PROYECTO INTEGRAL DE EDUCACIÓN DUAL', 'ESTANCIA',
         'TESIS PROFESIONAL', 'PARTICIPACIÓN EN PROYECTOS DE INVESTIGACIÓN',
         'EXAMEN GLOBAL POR ÁREAS DE CONOCIMIENTO', 'INFORME TÉCNICO DE RESIDENCIA PROFESIONAL'],
-    ]
+    ];
 
     this.juryInfo = [
-      { name: '', title: '', cedula: '' },
-      { name: '', title: '', cedula: '' },
-      { name: '', title: '', cedula: '' },
-      { name: '', title: '', cedula: '' }
+      { name: '', title: '', cedula: '', email: '' },
+      { name: '', title: '', cedula: '', email: '' },
+      { name: '', title: '', cedula: '', email: '' },
+      { name: '', title: '', cedula: '', email: '' }
     ];
   }
 
@@ -95,7 +97,8 @@ export class NewTitleComponent implements OnInit {
       'student': new FormControl(null, Validators.required),
       'career': new FormControl(null, Validators.required),
       'controlNumber': new FormControl(null, Validators.required),
-      'duration': new FormControl('60', Validators.required),
+      'duration': new FormControl('60',
+        [Validators.required, Validators.min(30), Validators.max(120)]),
       'place': new FormControl('Magna de Titulación (J3)', Validators.required),
       'option': new FormControl(0, Validators.required),
       'product': new FormControl('ELABORAR TESIS', Validators.required),
@@ -131,9 +134,9 @@ export class NewTitleComponent implements OnInit {
             phase: eRequest.REALIZED,
             status: eStatusRequest.NONE
           };
-          this.frmNewTitle.get("student").setValue(this.request.student);
-          this.frmNewTitle.get("career").setValue(this.request.career);
-          this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
+          this.frmNewTitle.get('student').setValue(this.request.student);
+          this.frmNewTitle.get('career').setValue(this.request.career);
+          this.frmNewTitle.get('controlNumber').setValue(this.request.controlNumber);
         } else {
           this._StudentProvider.getByControlNumberSII({ controlNumber: this.controlNumber }).subscribe(
             student => {
@@ -155,16 +158,16 @@ export class NewTitleComponent implements OnInit {
                   (!student.englishApproved ? errorCompleted : errorGraduate) :
                   (!student.englishApproved ? errorEnglish : '')}`;
               }
-              this.frmNewTitle.get("student").setValue(this.request.student);
-              this.frmNewTitle.get("career").setValue(this.request.career);
-              this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
+              this.frmNewTitle.get('student').setValue(this.request.student);
+              this.frmNewTitle.get('career').setValue(this.request.career);
+              this.frmNewTitle.get('controlNumber').setValue(this.request.controlNumber);
             }, error => {
               this.showLoading = false;
               const errorJson = JSON.parse(error._body);
               this.request = { studentId: '', student: '', career: '', controlNumber: '' };
-              this.frmNewTitle.get("student").setValue(this.request.student);
-              this.frmNewTitle.get("career").setValue(this.request.career);
-              this.frmNewTitle.get("controlNumber").setValue(this.request.controlNumber);
+              this.frmNewTitle.get('student').setValue(this.request.student);
+              this.frmNewTitle.get('career').setValue(this.request.career);
+              this.frmNewTitle.get('controlNumber').setValue(this.request.controlNumber);
               this.existError = errorJson.error;
               // this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional', errorJson.error);
             });
@@ -182,7 +185,8 @@ export class NewTitleComponent implements OnInit {
     this.existError = '';
     const ref = this.dialog.open(EmployeeAdviserComponent, {
       data: {
-        carrer: this._CookiesService.getPosition().ascription.careers.length > 0 ? this._CookiesService.getPosition().ascription.careers[0].fullName : ''
+        carrer: this.frmNewTitle.get('career').value,
+        synodal: button
       },
       disableClose: true,
       hasBackdrop: true,
@@ -190,47 +194,48 @@ export class NewTitleComponent implements OnInit {
     });
 
     ref.afterClosed().subscribe((result) => {
-
-      if (typeof (result) != "undefined") {
+      if (typeof (result) != 'undefined') {
         if (this.juryInfo.findIndex(x => x.name === result.ExtraInfo.name) !== -1) {
           // this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Empleado ya asignado");
-          this.existError = "Empleado ya asignado";
+          this.existError = 'Empleado ya asignado';
         } else {
           switch (button) {
-            case "president": {
-              this.frmNewTitle.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : "" });
+            case 'president': {
+              this.frmNewTitle.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : '' });
               this.juryInfo[0].name = result.ExtraInfo.name;
               this.juryInfo[0].title = result.ExtraInfo.title;
               this.juryInfo[0].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[0].email = result.ExtraInfo.email;
               break;
             }
-            case "secretary": {
-
-              this.frmNewTitle.patchValue({ 'secretary': typeof (result) !== 'undefined' ? result.Employee : "" });
+            case 'secretary': {
+              this.frmNewTitle.patchValue({ 'secretary': typeof (result) !== 'undefined' ? result.Employee : '' });
               this.juryInfo[1].name = result.ExtraInfo.name;
               this.juryInfo[1].title = result.ExtraInfo.title;
               this.juryInfo[1].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[1].email = result.ExtraInfo.email;
               break;
             }
-            case "vocal": {
-              this.frmNewTitle.patchValue({ 'vocal': typeof (result) !== 'undefined' ? result.Employee : "" });
+            case 'vocal': {
+              this.frmNewTitle.patchValue({ 'vocal': typeof (result) !== 'undefined' ? result.Employee : '' });
               this.juryInfo[2].name = result.ExtraInfo.name;
               this.juryInfo[2].title = result.ExtraInfo.title;
               this.juryInfo[2].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[2].email = result.ExtraInfo.email;
               break;
             }
-            case "substitute": {
-              this.frmNewTitle.patchValue({ 'substitute': typeof (result) !== 'undefined' ? result.Employee : "" });
+            case 'substitute': {
+              this.frmNewTitle.patchValue({ 'substitute': typeof (result) !== 'undefined' ? result.Employee : '' });
               this.juryInfo[3].name = result.ExtraInfo.name;
               this.juryInfo[3].title = result.ExtraInfo.title;
               this.juryInfo[3].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[3].email = result.ExtraInfo.email;
               break;
             }
           }
         }
       }
     });
-
   }
 
   onSubmit() {
@@ -294,7 +299,7 @@ export class NewTitleComponent implements OnInit {
 
       }
       else {
-        this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Carrera no encontrada, reporte el problema a coordinación");
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulacion App', 'Carrera no encontrada, reporte el problema a coordinación');
       }
     }
   }
@@ -310,7 +315,7 @@ export class NewTitleComponent implements OnInit {
             id: data.request._id,
             student: [this.request.student],
             project: this.request.projectName,
-            phase: "Realizado",
+            phase: 'Realizado',
             proposedDate: this.event.appointment,
             proposedHour: this.event.minutes,
             jury: this.request.jury,

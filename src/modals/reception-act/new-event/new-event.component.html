@@ -9,21 +9,20 @@
   </div>
 </div>
 
-<div class="form-group row">
-  <label for="txtSearch" class="col-sm-2 col-form-label">Buscar</label>
-  <div class="col-sm-10 input-group input-group-sm">
-    <input type="text" id="txtSearch" class="form-control" placeholder="Nombre o Número de Control"
-      (keyup)="applyFilter($event.target.value)">
-    <div class="input-group-append">
-      <span class="input-group-text" (click)="onSearch()"><i class="fa fa-search"></i></span>
-    </div>
-  </div>
+<div class="row">
+  <mat-form-field class="col-sm-12 col-lg-12" appearance="outline">
+    <mat-label>Nombre o número de control</mat-label>
+    <input matInput type="text" id="txtSearch" placeholder="Nombre o número de control"
+      (keyup)="applyFilter($event.target.value)" oninput="this.value = this.value.toUpperCase()" required>
+    <button matSuffix mat-icon-button (click)="onSearch()">
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
 </div>
 
 <form [formGroup]="frmNewEvent" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
-    <!-- <div class="row" *ngIf="dataExist"> -->
-    <table mat-table [dataSource]="dataSource" matSort>
+    <table class="col-12" mat-table [dataSource]="dataSource" matSort>
       <ng-container matColumnDef="_id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
         <td mat-cell *matCellDef="let row"> {{row._id}} </td>
@@ -47,7 +46,7 @@
       <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
         <td mat-cell *matCellDef="let row" (click)="onSelect(row)" style="width:5%">
-          <span><i class="fa fa-hand-pointer-o"></i></span>
+          <span class="btn"><i class="fa fa-check-square-o"></i></span>
         </td>
       </ng-container>
 
@@ -56,52 +55,48 @@
 
     </table>
     <mat-paginator [pageSizeOptions]="[3,6,9]"></mat-paginator>
-    <!-- </div> -->
-    <div class="form-group row mt-3">
-      <label for="inpEstudiante" class="col-sm-2 col-form-label">Estudiante</label>
-      <div class="col-sm-10">
-        <input type="text" readonly
-          [ngClass]="(!frmNewEvent.get('student').valid && frmNewEvent.get('student').touched)?'form-control is-invalid':'form-control'"
-          id="inpEstudiante" placeholder="Estudiante" formControlName="student">
-        <div class="invalid-feedback" *ngIf="!frmNewEvent.get('student').valid && frmNewEvent.get('student').touched">
+    <div class="row">
+      <mat-form-field class="col-sm-12 col-lg-12" appearance="outline">
+        <mat-label>Estudiante</mat-label>
+        <input matInput type="text" id="inpEstudiante" placeholder="Nombre del estudiante" formControlName="student"
+          readonly required>
+        <mat-error *ngIf="!frmNewEvent.get('student').valid && frmNewEvent.get('student').touched">
           <span *ngIf="frmNewEvent.get('student').errors['required']">
-            ¡Por favor ingrese un estudiante!
+            ¡Ingrese un estudiante!
           </span>
-        </div>
-      </div>
+        </mat-error>
+      </mat-form-field>
     </div>
-    <div class="form-group row">
-      <label for="inpLugar" class="col-sm-2 col-form-label">Lugar</label>
-      <div class="col-sm-10">
-        <input type="text"
-          [ngClass]="(!frmNewEvent.get('place').valid && frmNewEvent.get('place').touched)?'form-control is-invalid':'form-control'"
-          id="inpLugar" placeholder="Lugar" formControlName="place">
-        <div class="invalid-feedback" *ngIf="!frmNewEvent.get('place').valid && frmNewEvent.get('place').touched">
+    <div class="row">
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Lugar</mat-label>
+        <input matInput type="text" id="inpLugar" placeholder="Lugar" formControlName="place" required>
+        <mat-error *ngIf="!frmNewEvent.get('place').valid && frmNewEvent.get('place').touched">
           <span *ngIf="frmNewEvent.get('place').errors['required']">
             ¡Por favor ingrese un lugar!
           </span>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group row">
-      <label for="inpDuration" class="col-sm-2 col-form-label">Duración</label>
-      <div class="col-sm-10">
-        <input type="number"
-          [ngClass]="(!frmNewEvent.get('duration').valid && frmNewEvent.get('duration').touched)?'form-control is-invalid':'form-control'"
-          id="inpDuration" placeholder="Duración" formControlName="duration">
-        <div class="invalid-feedback" *ngIf="!frmNewEvent.get('duration').valid && frmNewEvent.get('duration').touched">
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Duración (Minutos)</mat-label>
+        <input matInput type="number" id="inpDuration" placeholder="Duración" formControlName="duration" required
+          min="30" max="120" required>
+        <mat-error class="invalid-feedback"
+          *ngIf="!frmNewEvent.get('duration').valid && frmNewEvent.get('duration').touched">
           <span *ngIf="frmNewEvent.get('duration').errors['required']">
-            ¡Por favor ingrese una duración!
+            ¡Ingrese la duración del acto!
           </span>
-        </div>
-      </div>
+          <span *ngIf="frmNewEvent.get('duration').errors['min']">
+            ¡Duración mínima es de 30 minutos!
+          </span>
+          <span *ngIf="frmNewEvent.get('duration').errors['max']">
+            ¡Duración máxima es de 120 minutos!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <!-- <button mat-button mat-dialog-close  mat-stroked-button >Cancel</button>
-    <button mat-button [mat-dialog-close]="true" cdkFocusInitial  mat-stroked-button color="primary">Install</button> -->
     <button mat-stroked-button color="primary" type="submit" [disabled]="!frmNewEvent.valid">Guardar</button>
-    <button mat-stroked-button color="warn" type="button" mat-dialog-close>Cancelar</button>
   </mat-dialog-actions>
 </form>
