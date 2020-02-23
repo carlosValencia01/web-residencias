@@ -59,50 +59,84 @@ dropzone > .dropzone.dz-wrapper .dz-message{
 }
 
 /* SCROLL BAR */
-/* width */
 ::-webkit-scrollbar {
-    width: 15px;
-    background:rgba(0,0,0,0.2);
-  }
-  
-  /* Track */
-  ::-webkit-scrollbar-track { 
-    border-radius: 10px;
-  }
-   
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: rgb(24, 57, 105); 
-    border-radius: 10px;
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(24, 57, 105,0.9); 
-  }
-  /* Buttons */
-  ::-webkit-scrollbar-button:single-button {
-  
-    display: block;
-    border-style: solid;
-    height: 16px;
-    width: 16px;
-  }
-  /* Up */
-  ::-webkit-scrollbar-button:single-button:vertical:decrement {
-    border-width: 0 8px 8px 8px;
-    border-color: transparent transparent #555555 transparent;
-  }
-  
-  ::-webkit-scrollbar-button:single-button:vertical:decrement:hover {
-    border-color: transparent transparent #777777 transparent;
-  }
-  /* Down */
-  ::-webkit-scrollbar-button:single-button:vertical:increment {
-    border-width: 8px 8px 0 8px;
-    border-color: #555555 transparent transparent transparent;
-  }
-  
-  ::-webkit-scrollbar-button:vertical:single-button:increment:hover {
-    border-color: #777777 transparent transparent transparent;
-  }
+  width: 13px;
+  height: 13px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(24, 57, 105);
+  border: 0px none #fff;
+  border-radius: 44px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(24, 57, 105, 0.9);
+}
+::-webkit-scrollbar-thumb:active {
+  background: rgba(24, 57, 105, 0.9);
+}
+::-webkit-scrollbar-track {
+  background: #ccc;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+::-webkit-scrollbar-track:hover {
+  background: #ccc;
+}
+::-webkit-scrollbar-track:active {
+  background: #ccc;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* Buttons */
+::-webkit-scrollbar-button:single-button {
+  display: block;
+  border-style: solid;
+  height: 16px;
+  width: 16px;
+}
+/* vertical*/
+/* Up */
+::-webkit-scrollbar-button:single-button:vertical:decrement {
+  border-width: 0 8px 8px 8px;
+  border-color: transparent transparent #555555 transparent;
+}
+
+::-webkit-scrollbar-button:single-button:vertical:decrement:hover {
+  border-color: transparent transparent #777777 transparent;
+}
+/* Down */
+::-webkit-scrollbar-button:single-button:vertical:increment {
+  border-width: 8px 8px 0 8px;
+  border-color: #555555 transparent transparent transparent;
+}
+
+::-webkit-scrollbar-button:vertical:single-button:increment:hover {
+  border-color: #777777 transparent transparent transparent;
+}
+/* horizontal*/
+/* left */
+::-webkit-scrollbar-button:single-button:horizontal:decrement {
+  border-width: 8px 8px 8px 0px;
+  border-color: transparent #555 transparent transparent;
+}
+
+::-webkit-scrollbar-button:single-button:horizontal:decrement:hover {
+  border-color: transparent #777 transparent transparent;
+}
+/* right */
+::-webkit-scrollbar-button:single-button:horizontal:increment {
+  border-left: 8px solid #555;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 0px transparent;
+  border-width: 8px 0px 8px 8px;
+  border-color: transparent transparent transparent #555;
+}
+::-webkit-scrollbar-button:horizontal:single-button:increment:hover {
+  border-color: transparent transparent transparent #777;
+}
+/*END SCROLLBAR*/
+.mat-tab-group{
+    z-index: 0;
+}

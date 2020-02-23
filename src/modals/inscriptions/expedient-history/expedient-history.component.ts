@@ -1,8 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
-import { StudentProvider } from 'src/providers/shared/student.prov';
-
 import Swal from 'sweetalert2';
 @Component({
   selector: 'app-expedient-history',
@@ -15,12 +13,11 @@ export class ExpedientHistoryComponent implements OnInit {
   status = [];
   constructor(
     public dialogRef: MatDialogRef<ExpedientHistoryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private studentProv: StudentProvider,    
+    @Inject(MAT_DIALOG_DATA) public data: any   
   ) {
     
     this.title+=this.data.filename;
-    this.getDocuments();
+    this.status = this.data.status;
    }
 
   ngOnInit() {
@@ -28,14 +25,6 @@ export class ExpedientHistoryComponent implements OnInit {
 
   onClose(){
     this.dialogRef.close({action:'close'});
-  }
-  getDocuments(){
-    this.studentProv.getDriveDocuments(this.data.student).subscribe(
-      docs=>{
-        let documents = docs.documents;
-        this.status = documents.filter( docc => docc.filename.indexOf(this.data.filename === 'NÚMERO DE SEGURO SOCIAL' ? 'NSS' : this.data.filename === 'CARTA COMPROMISO' ? 'COMPROMISO' : this.data.filename) !== -1)[0].status;          
-      }
-    );
   }
 
   swalDialog(msg,){
