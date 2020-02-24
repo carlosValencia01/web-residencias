@@ -53,10 +53,10 @@ export class ExpedientComponent implements OnInit {
   public registeredDate: string;
   public folderId: string;
   public showLoading: boolean;
-  
+
   constructor(
     public requestProvider: RequestProvider,
-    private _NotificationsServices: NotificationsServices,    
+    private _NotificationsServices: NotificationsServices,
     public dialog: MatDialog,
     public imgSrv: ImageToBase64Service,
     public _RequestService: RequestService,
@@ -73,11 +73,11 @@ export class ExpedientComponent implements OnInit {
   ngOnInit() {
   }
 
-  init(){
+  init() {
     this.requestProvider.getRequestById(this.data.id).subscribe(
       data => {
         this.Request = data.request[0];
-        this.registeredDate = moment(new Date(this.Request.applicationDate)).format('LL')
+        this.registeredDate = moment(new Date(this.Request.applicationDate)).format('LL');
         this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
         this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
         let tmpDate: Date;
@@ -88,17 +88,19 @@ export class ExpedientComponent implements OnInit {
         }
         this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
         this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
-        this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED) ? 'Si' : 'No';
+        this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED
+          && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED)
+          ? 'Si' : 'No';
 
         this.Request.student = data.request[0].studentId;
 
         this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber, eFOLDER.TITULACION).subscribe(
           (folder) => {
             this.folderId = folder.folderIdInDrive;
-          },
-          err => {
+          }, err => {
             console.log(err);
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
+            this._NotificationsServices
+              .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener folder del estudiante');
           }
         );
 
@@ -107,12 +109,12 @@ export class ExpedientComponent implements OnInit {
         (async () => {
           await this.delay(150);
         })();
-      },
-      error => {
-        this._NotificationsServices.showNotification(eNotificationType.ERROR,
-          'Acto Recepcional', error);
+      }, _ => {
+        this._NotificationsServices
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitud');
       });
   }
+
   changed(): void {
     if (typeof (this.folderId) !== 'undefined' || this.folderId === '') {
       if (!this.changeDocument) {
@@ -121,13 +123,14 @@ export class ExpedientComponent implements OnInit {
       }
       this.changeDocument = !this.changeDocument;
     } else {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Folder del estudiante no encontrado");
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Folder del estudiante no encontrado');
     }
 
     // if (this.changeDocument) {
     //   this._RequestService.AddRequest(this.Request, <eRequest><keyof typeof eRequest>this.Request.phase);
     // }
   }
+
   onLoad(documents): void {
     this.Documents = [];
     documents.forEach(element => {
@@ -154,83 +157,83 @@ export class ExpedientComponent implements OnInit {
     let name: string;
     switch (type) {
       case eFILES.PROYECTO: {
-        name = "PORTADA DE PROYECTO";
+        name = 'PORTADA DE PROYECTO';
         break;
       }
       case eFILES.SOLICITUD: {
-        name = "SOLICITUD DE PROYECTO";
+        name = 'SOLICITUD DE PROYECTO';
         break;
       }
       case eFILES.REGISTRO: {
-        name = "REGISTRO DE PROYECTO";
+        name = 'REGISTRO DE PROYECTO';
         break;
       }
       case eFILES.RELEASED: {
-        name = "CONSTANCIA DE LIBERACIÓN";
+        name = 'CONSTANCIA DE LIBERACIÓN';
         break;
       }
       case eFILES.INCONVENIENCE: {
-        name = "CONSTANCIA DE NO INCONVENIENCIA"
+        name = 'CONSTANCIA DE NO INCONVENIENCIA'
         break;
       }
       case eFILES.ACTA_NACIMIENTO: {
-        name = "ACTA DE NACIMIENTO";
+        name = 'ACTA DE NACIMIENTO';
         break;
       }
       case eFILES.CURP: {
-        name = "CURP";
+        name = 'CURP';
         break;
       }
       case eFILES.CERTIFICADO_B: {
-        name = "CERTIFICADO DE BACHILLERATO";
+        name = 'CERTIFICADO DE BACHILLERATO';
         break;
       }
       case eFILES.CEDULA: {
-        name = "CÉDULA TÉCNICA";
+        name = 'CÉDULA TÉCNICA';
         break;
       }
       case eFILES.CERTIFICADO_L: {
-        name = "CERTIFICADO PROFESIONAL";
+        name = 'CERTIFICADO PROFESIONAL';
         break;
       }
       case eFILES.SERVICIO: {
-        name = "CONSTANCIA DE SERVICIO SOCIAL";
+        name = 'CONSTANCIA DE SERVICIO SOCIAL';
         break;
       }
       case eFILES.INGLES: {
-        name = "CONSTANCIA DE SEGUNDA LENGUA";
+        name = 'CONSTANCIA DE SEGUNDA LENGUA';
         break;
       }
       case eFILES.PAGO: {
-        name = "COMPROBANTE DE PAGO";
+        name = 'COMPROBANTE DE PAGO';
         break;
       }
       case eFILES.CERTIFICADO_R: {
-        name = "CERTIFICADO DE REVALIDACIÓN";
+        name = 'CERTIFICADO DE REVALIDACIÓN';
         break;
       }
       case eFILES.PHOTOS: {
-        name = "FOTOGRAFÍAS";
+        name = 'FOTOGRAFÍAS';
         break;
       }
       case eFILES.ACTA_EXAMEN: {
-        name = "ACTA DE EXAMEN";
+        name = 'ACTA DE EXAMEN';
         break;
       }
       case eFILES.INE: {
-        name = "CREDENCIAL DE ELECTOR";
+        name = 'CREDENCIAL DE ELECTOR';
         break;
       }
       case eFILES.CED_PROFESIONAL: {
-        name = "CÉDULA PROFESIONAL";
+        name = 'CÉDULA PROFESIONAL';
         break;
       }
       case eFILES.OFICIO: {
-        name = "OFICIO DE JURADO";
+        name = 'OFICIO DE JURADO';
         break;
       }
       default: {
-        name = "DESCONOCIDO";
+        name = 'DESCONOCIDO';
       }
     }
     return name;
@@ -239,7 +242,7 @@ export class ExpedientComponent implements OnInit {
   onView(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let exists = false;
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Recuperando Archivo");
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Recuperando archivo');
     this.showLoading = true;
     switch (type) {
       case eFILES.SOLICITUD: {
@@ -314,13 +317,12 @@ export class ExpedientComponent implements OnInit {
           width: '60em',
           height: '600px'
         });
-      }, error => {
+      }, _ => {
         this.showLoading = false;
         this._NotificationsServices.showNotification(eNotificationType.ERROR,
-          'Acto Recepcional', 'Documento no encontrado');
+          'Acto recepcional', 'Documento no encontrado');
       });
-    }
-    else {
+    } else {
       this.showLoading = false;
     }
   }
@@ -336,15 +338,18 @@ export class ExpedientComponent implements OnInit {
       width: '45em',
     });
   }
+
   isUndefined(value): boolean {
     return typeof (value) === 'undefined';
   }
+
   whatStatus(value): eStatusRequest {
     if (typeof (value) === 'undefined') {
       return eStatusRequest.NONE;
     }
     return <eStatusRequest><keyof typeof eStatusRequest>value.status;
   }
+
   getDocument(fileType: eFILES): iDocument {
     return this.Documents.find(e => e.type === fileType);
   }
@@ -352,11 +357,10 @@ export class ExpedientComponent implements OnInit {
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
-  
+
   onClose() {
     this.dialogRef.close({ action: 'close' });
   }
-
 }
 
 interface iDocument {

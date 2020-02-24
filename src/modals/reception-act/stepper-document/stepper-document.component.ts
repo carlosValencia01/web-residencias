@@ -24,11 +24,13 @@ export class StepperDocumentComponent implements OnInit {
   public URLFile: string;
   public URLVideo: string;
   public title: string;
-  private MAX_SIZE_FILE: number = 2097152;
-  constructor(public dialogRef: MatDialogRef<StepperDocumentComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private _NotificationsServices: NotificationsServices) {
-    // this.fileData = `../../assets/docs/${data.Documento}.pdf`;
-    // this.tmpFileData = `../../assets/docs/${data.Documento}.pdf`;
+  private MAX_SIZE_FILE = 2097152;
+
+  constructor(
+    public dialogRef: MatDialogRef<StepperDocumentComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private _NotificationsServices: NotificationsServices,
+  ) {
     this.onLoad(data.Documento);
   }
 
@@ -36,7 +38,7 @@ export class StepperDocumentComponent implements OnInit {
     const type = <eFILES><keyof typeof eFILES>document;
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
-        this.title = "AYUDA DE ACTA DE NACIMIENTO";
+        this.title = 'AYUDA DE ACTA DE NACIMIENTO';
         this.existsFileHelper = environment.documentHelper.birthCertificate.file !== '';
         this.existsVideoHelper = environment.documentHelper.birthCertificate.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.birthCertificate.file : '';
@@ -44,7 +46,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.CURP: {
-        this.title = "AYUDA DE CURP";
+        this.title = 'AYUDA DE CURP';
         this.existsFileHelper = environment.documentHelper.curp.file !== '';
         this.existsVideoHelper = environment.documentHelper.curp.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.curp.file : '';
@@ -52,7 +54,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.CERTIFICADO_B: {
-        this.title = "AYUDA DE CERTIFICADO DE BACHILLERATO";
+        this.title = 'AYUDA DE CERTIFICADO DE BACHILLERATO';
         this.existsFileHelper = environment.documentHelper.bachlersDegree.file !== '';
         this.existsVideoHelper = environment.documentHelper.bachlersDegree.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.bachlersDegree.file : '';
@@ -60,7 +62,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.CEDULA: {
-        this.title = "AYUDA DE CÉDULA TÉCNICA";
+        this.title = 'AYUDA DE CÉDULA TÉCNICA';
         this.existsFileHelper = environment.documentHelper.technicalID.file !== '';
         this.existsVideoHelper = environment.documentHelper.technicalID.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.technicalID.file : '';
@@ -68,7 +70,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.CERTIFICADO_L: {
-        this.title = "AYUDA DE CERTIFICADO DE LICENCIATURA";
+        this.title = 'AYUDA DE CERTIFICADO DE LICENCIATURA';
         this.existsFileHelper = environment.documentHelper.degreeCertificate.file !== '';
         this.existsVideoHelper = environment.documentHelper.degreeCertificate.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.degreeCertificate.file : '';
@@ -76,7 +78,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.SERVICIO: {
-        this.title = "AYUDA DE SERVICIO SOCIAL";
+        this.title = 'AYUDA DE SERVICIO SOCIAL';
         this.existsFileHelper = environment.documentHelper.socialService.file !== '';
         this.existsVideoHelper = environment.documentHelper.socialService.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.socialService.file : '';
@@ -84,7 +86,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.INGLES: {
-        this.title = "AYUDA DE LIBERACIÓN DE INGLÉS";
+        this.title = 'AYUDA DE LIBERACIÓN DE INGLÉS';
         this.existsFileHelper = environment.documentHelper.constancyOfEnglish.file !== '';
         this.existsVideoHelper = environment.documentHelper.constancyOfEnglish.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.constancyOfEnglish.file : '';
@@ -92,7 +94,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.PAGO: {
-        this.title = "AYUDA DE RECIBO DE PAGO";
+        this.title = 'AYUDA DE RECIBO DE PAGO';
         this.existsFileHelper = environment.documentHelper.receiptOfPayment.file !== '';
         this.existsVideoHelper = environment.documentHelper.receiptOfPayment.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.receiptOfPayment.file : '';
@@ -100,7 +102,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.CERTIFICADO_R: {
-        this.title = "AYUDA DE REVALIDACIÓN";
+        this.title = 'AYUDA DE REVALIDACIÓN';
         this.existsFileHelper = environment.documentHelper.revalidation.file !== '';
         this.existsVideoHelper = environment.documentHelper.revalidation.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.revalidation.file : '';
@@ -108,7 +110,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.INE: {
-        this.title = "AYUDA DE INE";
+        this.title = 'AYUDA DE INE';
         this.existsFileHelper = environment.documentHelper.ine.file !== '';
         this.existsVideoHelper = environment.documentHelper.ine.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.ine.file : '';
@@ -116,7 +118,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.XML: {
-        this.title = "AYUDA DE XML DE CÉDULA";
+        this.title = 'AYUDA DE XML DE CÉDULA';
         this.existsFileHelper = environment.documentHelper.xml.file !== '';
         this.existsVideoHelper = environment.documentHelper.xml.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.xml.file : '';
@@ -124,7 +126,7 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case eFILES.CED_PROFESIONAL: {
-        this.title = "AYUDA DE CÉDULA PROFESIONAL";
+        this.title = 'AYUDA DE CÉDULA PROFESIONAL';
         this.existsFileHelper = environment.documentHelper.professionalID.file !== '';
         this.existsVideoHelper = environment.documentHelper.professionalID.video !== '';
         this.URLFile = this.existsFileHelper ? environment.documentHelper.professionalID.file : '';
@@ -138,20 +140,19 @@ export class StepperDocumentComponent implements OnInit {
 
 
   onUpload(event): void {
-    // [src]="'../../assets/Requisitos.pdf'"
     this.fileUpload = null;
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
         if (event.target.files[0].size > this.MAX_SIZE_FILE) {
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional',
-            'Error, su archivo debe ser inferior a 2MB');
+          this._NotificationsServices
+            .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, su archivo debe ser inferior a 2MB');
         } else {
           this.fileUpload = event.target.files[0];
           this.pdf = URL.createObjectURL(this.fileUpload);
         }
       } else {
-        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto Recepcional',
-          'Error, su archivo debe ser de tipo PDF');
+        this._NotificationsServices
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, su archivo debe ser de tipo PDF');
       }
     }
   }

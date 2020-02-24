@@ -42,8 +42,10 @@ export class ReleaseComponentComponent implements OnInit {
   private studentCareer: string;
   private studentCareerAcronym: string;
 
-  constructor(public dialogRef: MatDialogRef<ReleaseComponentComponent>,
-    private notifications: NotificationsServices, public dialog: MatDialog,
+  constructor(
+    public dialogRef: MatDialogRef<ReleaseComponentComponent>,
+    private notifications: NotificationsServices,
+    public dialog: MatDialog,
     private cookiesService: CookiesService,
     private _RequestProvider: RequestProvider,
     public _ImageToBase64Service: ImageToBase64Service,
@@ -105,14 +107,14 @@ export class ReleaseComponentComponent implements OnInit {
     this._RequestProvider.getResource(this.information.request._id, eFILES.RELEASED).subscribe(data => {
       this.fileData = data;
       this.showLoading = false;
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this.notifications.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'Recuperación Fallida');
+      this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al recuperar recurso');
     });
   }
 
   obtenerCarreras(): Array<string> {
-    let tmpArray: Array<string> = [];
+    const tmpArray: Array<string> = [];
     if (typeof (this.cookiesService.getPosition()) !== 'undefined') {
       this.cookiesService.getPosition().ascription.careers.forEach(e => {
         tmpArray.push(e.fullName);
@@ -139,7 +141,7 @@ export class ReleaseComponentComponent implements OnInit {
       showCancelButton: true,
       inputValidator: (value) => {
         if (!value) {
-          return 'Número de oficio obligatorio'
+          return 'Número de oficio obligatorio';
         }
       }
     }).then((result) => {
@@ -209,22 +211,20 @@ export class ReleaseComponentComponent implements OnInit {
             }
           }
         }
-        const isCompleted = this.juryInfo.reduce((value, current) => { return current.name.length > 0 && value; }, true);
+        const isCompleted = this.juryInfo.reduce((value, current) => current.name.length > 0 && value, true);
         if (isCompleted) {
           this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
         }
         this.activeReleased = isCompleted; // this.juryInfo.length === 4;
       }
     });
-    // const time: number = Number(this.Time.hour * 60) + Number(this.Time.minute);
   }
 
   onUpload(event): void {
     this.showLoading = true;
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
-        // this.fileData = event.target.files[0];
-        let frmData = new FormData();
+        const frmData = new FormData();
         frmData.append('file', event.target.files[0]);
         frmData.append('folderId', this.information.folder);
         frmData.append('Document', eFILES.RELEASED);
@@ -233,22 +233,21 @@ export class ReleaseComponentComponent implements OnInit {
         this._RequestProvider.uploadFile(this.information.id, frmData).subscribe(data => {
           this.fileData = event.target.files[0];
           this.showLoading = false;
-        }, error => {
-          this.notifications.showNotification(eNotificationType.ERROR,
-            'Acto recepcional', error);
+        }, _ => {
+          this.notifications
+            .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
           this.showLoading = false;
         });
 
       } else {
-        this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional',
-          'Error, su archivo debe ser de tipo PDF');
+        this.notifications
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, su archivo debe ser de tipo PDF');
         this.showLoading = false;
       }
     }
   }
 
   onSave(): void {
-    // if (typeof (this.fileData) !== 'undefined') {
     const time: number = Number(this.Time.hour * 60) + Number(this.Time.minute);
     this.dialogRef.close(
       {
@@ -258,24 +257,14 @@ export class ReleaseComponentComponent implements OnInit {
         upload: typeof (this.fileData) !== 'undefined',
         duration: this.frmConsejo.get('duration').value
       });
-    // }
-    // else {
-    //   this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional',
-    //     'Error, archivo no cargado');
-    // }
   }
 
   async releaseGenerate() {
     this.information.request.jury = this.juryInfo;
     this.information.request.proposedDate = new Date();
     this.information.request.proposedHour = Number(this.Time.hour * 60) + Number(this.Time.minute);
-    // await this.delay(1000);
     window.open(this.oRequest.projectReleaseNew().output('bloburl'), '_blank');
     this.enableUpload = true;
-    // async () => {
-    //   await this.delay(400);
-    //   window.open(this.oRequest.projectReleaseNew().output('bloburl'), '_blank');
-    // }
   }
 
   delay(ms: number) {

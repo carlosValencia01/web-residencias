@@ -18,8 +18,9 @@ export class ActNotificacionComponent implements OnInit {
   public jury: any;
   public oficio: string;
   public existError: boolean;
-  public oRequest: uRequest
+  public oRequest: uRequest;
   private _Request: iRequest;
+
   constructor(
     public _ImageToBase64Service: ImageToBase64Service,
     public _RequestProvider: RequestProvider,
@@ -28,20 +29,19 @@ export class ActNotificacionComponent implements OnInit {
     public _CookiesService: CookiesService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.jury = "Presidente";
-    this.oficio = "";
+    this.jury = 'Presidente';
+    this.oficio = '';
     this._RequestProvider.getRequestById(data.Appointment.id).subscribe(
       request => {
         this._Request = request.request[0];
         this._Request.student = <IStudent>request.request[0].studentId;
         this._Request.studentId = this._Request.student._id;
         this.oRequest = new uRequest(request.request[0], _ImageToBase64Service, this._CookiesService);
-      },
-      error => {
-        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Solicitud no encontrada');
+      }, _ => {
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Solicitud no encontrada');
         this.dialogRef.close();
       }
-    )
+    );
   }
 
   ngOnInit() {

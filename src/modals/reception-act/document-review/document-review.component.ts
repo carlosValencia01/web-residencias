@@ -29,7 +29,7 @@ export class DocumentReviewComponent implements OnInit {
   request: iRequest;
   student;
   uRequest: uRequest;
-  showLoading: boolean = false;
+  showLoading = false;
   documentDisplayed;
 
   constructor(
@@ -57,10 +57,9 @@ export class DocumentReviewComponent implements OnInit {
         this.request.student = data.request[0].studentId;
         this.uRequest = new uRequest(this.request, this.imgSrv, this._CookiesService);
         this.refresh();
-      },
-      error => {
-        this.notificationService.showNotification(eNotificationType.ERROR,
-          'Titulación App', error);
+      }, _ => {
+        this.notificationService
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al buscar solicitud');
       }
     );
   }
@@ -102,8 +101,8 @@ export class DocumentReviewComponent implements OnInit {
     return this.documents.find(e => e.type === fileType);
   }
 
-  view(file,status): void {
-    if(status !== 'Omitido'){
+  view(file, status): void {
+    if (status !== 'Omitido') {
       const type = <eFILES><keyof typeof eFILES>file;
       if (type === eFILES.PHOTOS) {
         this.existFile = false;
@@ -111,7 +110,7 @@ export class DocumentReviewComponent implements OnInit {
       }
       const li = document.getElementById(file);
       const lis = document.getElementsByClassName('clicked');
-      for(let i=0;i< lis.length;i++){
+      for (let i = 0; i < lis.length; i++) {
         lis.item(i).classList.remove('clicked');
       }
       li.classList.add('clicked');
@@ -122,7 +121,7 @@ export class DocumentReviewComponent implements OnInit {
       if (archivo.status !== 'Omitido') {
         switch (type) {
           case eFILES.SOLICITUD: {
-            this.pdf = this.uRequest.protocolActRequest().output('bloburl');          
+            this.pdf = this.uRequest.protocolActRequest().output('bloburl');
             break;
           }
           case eFILES.REGISTRO: {
@@ -133,14 +132,16 @@ export class DocumentReviewComponent implements OnInit {
             this.requestProvider.getResource(this.request._id, type).subscribe(data => {
               this.pdf = data;
             }, error => {
-              this.notificationService.showNotification(eNotificationType.ERROR,
-                "Titulación App", error);
+              const message = JSON.parse(error._body).message || 'Error al buscar recurso';
+              this.notificationService
+                .showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
             });
           }
         }
       }
     }
   }
+
   getStatus(eStatus: string): string {
     let status = '';
     switch (eStatus) {
@@ -162,19 +163,20 @@ export class DocumentReviewComponent implements OnInit {
         break;
       }
       default: {
-        status = 'Desconocido'
+        status = 'Desconocido';
       }
     }
     return status;
   }
+
   check(type: eFILES, status: string): void {
-    let update = {
+    const update = {
       Document: type,
       Status: status,
       Observation: '',
       Doer: this._CookiesService.getData().user.name.fullName
     };
-    
+
     if (status === eStatusRequest.REJECT) {
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
@@ -193,7 +195,7 @@ export class DocumentReviewComponent implements OnInit {
         showCancelButton: true,
         inputValidator: (value) => {
           if (!value) {
-            return 'Motivo obligatorio'
+            return 'Motivo obligatorio';
           }
         }
       }).then((result) => {
@@ -202,45 +204,45 @@ export class DocumentReviewComponent implements OnInit {
           this.requestProvider.updateFileStatus(
             this.request._id,
             update
-          ).subscribe(result => {
-            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Documento rechazado', '');
-            this.request = result.request;
+          ).subscribe(data => {
+            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Documento rechazado');
+            this.request = data.request;
             this.refresh();
-          }, error => {
-            this.notificationService.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
+          }, _ => {
+            this.notificationService.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al rechazar documento');
           });
         }
       });
-    }
-    else {
+    } else {
       this.requestProvider.updateFileStatus(
         this.request._id,
         update
       ).subscribe(result => {
-        this.notificationService.showNotification(eNotificationType.SUCCESS, 'Documento aceptado', '');
+        this.notificationService.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Documento aceptado');
         this.request = result.request;
         this.refresh();
-      }, error => {
-        this.notificationService.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
+      }, _ => {
+        this.notificationService.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al aceptar documento');
       });
 
     }
   }
+
   onClose() {
     this.dialogRef.close({ action: 'close' });
   }
-  disableLoading(pdf){    
-    this.showLoading=false;
-    
+
+  disableLoading(pdf) {
+    this.showLoading = false;
   }
 }
 
 interface IDocument {
-  type?: string,
-  dateRegistered?: Date,
-  status?: string,
-  file?: any,
-  view?: string,
-  action?: string,
-  icon?: string
+  type?: string;
+  dateRegistered?: Date;
+  status?: string;
+  file?: any;
+  view?: string;
+  action?: string;
+  icon?: string;
 }

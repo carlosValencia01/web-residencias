@@ -26,7 +26,7 @@ export class NewEventComponent implements OnInit {
   public frmNewEvent: FormGroup;
   public dataSource: MatTableDataSource<IRowStudent>;
   public dataStudent: Array<IRowStudent>;
-  public search: string = '';
+  public search = '';
   public displayedColumns: Array<string>;
   public title: string;
   private selectRow: IRowStudent;
@@ -47,7 +47,7 @@ export class NewEventComponent implements OnInit {
       minutes: (tmpDate.getHours() * 60 + tmpDate.getMinutes()),
       abbreviation: data.operation === eOperation.NEW ? '' : data.event.title.split(' ')[1]
     };
-    this.displayedColumns = ['controlNumber', 'fullName', 'career', 'select']
+    this.displayedColumns = ['controlNumber', 'fullName', 'career', 'select'];
     this.title = 'NUEVO EVENTO A LAS ' + moment(tmpDate).format('LT');
   }
 
@@ -77,7 +77,7 @@ export class NewEventComponent implements OnInit {
     this._RequestProvider.StudentsToSchedule().subscribe(res => {
       const tmpData: Array<any> = res.Students;
       this.dataStudent = [];
-      if (tmpData.length != 0) {
+      if (tmpData.length !== 0) {
         tmpData.forEach(e => {
           this.dataStudent.push({
             _id: e.Student[0]._id,
@@ -92,7 +92,7 @@ export class NewEventComponent implements OnInit {
       this.onRefresh();
     }, _ => {
       this._NotificationsServices
-        .showNotification(eNotificationType.ERROR, 'Titulación App', 'Ocurrió un error al buscar solicitudes');
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error al buscar solicitudes');
     });
   }
 
@@ -109,7 +109,7 @@ export class NewEventComponent implements OnInit {
       this.event.abbreviation = tmpSearch.abbreviation;
       this.addEvent(this.selectRow.request, this.event);
     } else {
-      let existsEvent: boolean = false;
+      let existsEvent = false;
       if (typeof (tmpSearch) !== 'undefined') {
         if (tmpSearch.abbreviation === this.event.abbreviation) {
           existsEvent = true;
@@ -121,6 +121,7 @@ export class NewEventComponent implements OnInit {
             }
             case 'ITIC': {
               existsEvent = this.event.abbreviation === 'ITIC';
+              break;
             }
             case 'IQUI': {
               existsEvent = this.event.abbreviation === 'IBQA';
@@ -153,13 +154,13 @@ export class NewEventComponent implements OnInit {
 
       } else {
         this._NotificationsServices
-          .showNotification(eNotificationType.ERROR, 'Titulacion App', 'Carrera no encontrada, reporte el problema a coordinación');
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Carrera no encontrada, reporte el problema a coordinación');
       }
     }
   }
 
   addEvent(request: string, appointment: { appointment: Date, minutes: number, abbreviation: string }): void {
-    const data = {
+    const eventData = {
       operation: eStatusRequest.ASSIGN,
       phase: eRequest.ASSIGNED,
       appointment: appointment.appointment,
@@ -168,9 +169,9 @@ export class NewEventComponent implements OnInit {
       doer: this._CookiesService.getData().user.name.fullName,
       duration: this.frmNewEvent.get('duration').value
     };
-    this._RequestProvider.updateRequest(request, data).subscribe(data => {
+    this._RequestProvider.updateRequest(request, eventData).subscribe(data => {
       if (typeof (data) !== 'undefined') {
-        this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Evento asignado');
+        this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Evento asignado');
         this.dialogRef.close({
           career: this.selectRow.career,
           value: {
@@ -189,7 +190,7 @@ export class NewEventComponent implements OnInit {
         });
       }
     }, _ => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Ocurrió un error al asignar evento');
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error al asignar evento');
     });
   }
 }

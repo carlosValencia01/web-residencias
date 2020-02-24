@@ -1,17 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { eNotificationType } from '../../../enumerators/app/notificationType.enum';
+import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 import { CurrentPositionService } from 'src/services/shared/current-position.service';
 import { NotificationsServices } from 'src/services/app/notifications.service';
-import { CookiesService } from '../../../services/app/cookie.service';
+import { CookiesService } from 'src/services/app/cookie.service';
 import { uRequest } from 'src/entities/reception-act/request';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
-import { eRequest } from '../../../enumerators/reception-act/request.enum';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
-
-
 
 @Component({
   selector: 'app-upload-delivered',
@@ -32,15 +29,16 @@ export class UploadDeliveredComponent implements OnInit {
   private request;
 
   constructor(
-    public dialogRef: MatDialogRef<UploadDeliveredComponent>,
     @Inject(MAT_DIALOG_DATA) private data,
+    public dialogRef: MatDialogRef<UploadDeliveredComponent>,
     private employeeProvider: EmployeeProvider,
     private eSignatureProvider: ESignatureProvider,
     private currentPositionService: CurrentPositionService,
     private notificationsServ: NotificationsServices,
     private cookiesService: CookiesService,
     private requestProvider: RequestProvider,
-    private imgService: ImageToBase64Service, ) {
+    private imgService: ImageToBase64Service,
+  ) {
     this.reqId = this.data.reqId;
   }
 
@@ -83,25 +81,27 @@ export class UploadDeliveredComponent implements OnInit {
           documentCode: 'ITT-POS-03-02',
           outDepartmentName: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES'
         };
+        this.notificationsServ
+          .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Firmando constancia de no inconveniencia');
         this.eSignatureProvider.sign(data).subscribe(signed => {
           if (signed) {
+            this.notificationsServ
+              .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Constancia de no inconveniencia firmada con éxito');
             this.QR = signed.qrData;
             this.EStamp = signed.eStamp;
             const req = this.request.request[0];
             req.student = req.studentId;
-            this.oRequest.setRequest(req);            
+            this.oRequest.setRequest(req);
             this.dialogRef.close({ response: true, data: { QR: this.QR, ESTAMP: this.EStamp, RESPONSE: true } });
-            // window.open(this.oRequest.noInconvenience(this.QR, this.EStamp).output('bloburl'), '_blank');            
           }
         }, err => {
           const error = JSON.parse(err._body).err;
-          this.notificationsServ.showNotification(eNotificationType.ERROR, error, '');
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
         });
       } else {
-        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Archivo incorrecto', '');
+        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Archivo incorrecto');
       }
     };
     fileReader.readAsText(this.file);
   }
-
 }

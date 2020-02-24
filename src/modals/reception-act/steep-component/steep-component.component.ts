@@ -53,7 +53,7 @@ export class SteepComponentComponent implements OnInit {
     private eSignatureProvider: ESignatureProvider,
     private currentPositionService: CurrentPositionService,
     private _ImageToBase64Service: ImageToBase64Service,
-    public _StudentProvider: StudentProvider
+    public _StudentProvider: StudentProvider,
   ) {
     this.Request = data.Request;
     this.enableNext = true;
@@ -155,12 +155,13 @@ export class SteepComponentComponent implements OnInit {
           outDepartmentName: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES'
         };
         this.showLoading = true;
+        this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Firmando registro de proyecto');
         this.eSignatureProvider.sign(dataSign).subscribe(signed => {
           if (signed) {
             this.QR = signed.qrData;
             this.EStamp = signed.eStamp;
             this.enableNext = false;
-            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto Recepcional', 'Guardando solicitud');
+            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Registro de proyecto firmado');
             const data = {
               doer: this.cookiesService.getData().user.name.fullName,
               observation: '',
@@ -173,23 +174,24 @@ export class SteepComponentComponent implements OnInit {
                 name: eFILES.REGISTRO + '.pdf'
               }
             };
+            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Actualizando solicitud');
             this._RequestProvider.updateRequest(this.Request._id, data)
               .subscribe(_ => {
-                this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud actualizada');
+                this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
                 this.showLoading = false;
                 this.Next(1);
-              }, error => {
-                this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'Error al actualizar solicitud');
+              }, _ => {
+                this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
                 this.showLoading = false;
               });
           }
         }, err => {
           this.showLoading = false;
           const error = JSON.parse(err._body).err;
-          this.notificationsServ.showNotification(eNotificationType.ERROR, error, '');
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
         });
       } else {
-        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Archivo incorrecto', '');
+        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Archivo incorrecto');
       }
     };
     fileReader.readAsText(this.file);

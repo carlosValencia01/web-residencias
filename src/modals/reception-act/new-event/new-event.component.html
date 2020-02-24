@@ -13,7 +13,7 @@
   <mat-form-field class="col-sm-12 col-lg-12" appearance="outline">
     <mat-label>Nombre o número de control</mat-label>
     <input matInput type="text" id="txtSearch" placeholder="Nombre o número de control"
-      (keyup)="applyFilter($event.target.value)" oninput="this.value = this.value.toUpperCase()" required>
+      (keyup)="applyFilter($event.target.value)" oninput="this.value = this.value.toUpperCase()">
     <button matSuffix mat-icon-button (click)="onSearch()">
       <mat-icon>search</mat-icon>
     </button>

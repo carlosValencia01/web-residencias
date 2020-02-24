@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { RequestComponentComponent } from 'src/components/reception-act/request-component/request-component.component';
 import { ContextState } from 'src/providers/reception-act/State/ContextState';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
@@ -16,10 +15,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { RequestService } from 'src/services/reception-act/request.service';
-import { RequestProvider } from 'src/providers/reception-act/request.prov';
-import * as moment from 'moment';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
+import * as moment from 'moment';
+
 moment.locale('es');
 
 @Component({
@@ -45,6 +44,7 @@ export class TitulacionPageComponent implements OnInit {
   SteepNineCompleted: boolean;
   SteepTenCompleted: boolean;
   SteepElevenCompleted: boolean;
+
   // Variables globales
   Steeps: ContextState; // Estado donde se encuentra la solicitud
   Request: iRequest;  // Objeto Solicitud
@@ -54,15 +54,16 @@ export class TitulacionPageComponent implements OnInit {
   public isGraduate: boolean;
   public isApprovedEnglish: boolean;
   public titrationHour: string;
-  public isActive: boolean = true;
+  public isActive = true;
+
   // Mensajes
   ProcessSentMessage: String = 'En espera de que tu solicitud sea aceptada';
-  CompletedSentMessage: String = 'TU SOLICITUD HA SIDO ACEPTADA'; //'Tú solicitud ha sido aceptada';  
+  CompletedSentMessage: String = 'TU SOLICITUD HA SIDO ACEPTADA'; // 'Tú solicitud ha sido aceptada';
   ProcessRegistreVerifiedMessage: String = 'Procesando registro de tu proyecto';
-  CompletedVerifiedMessage: String = 'TU PROYECTO HA SIDO REGISTRADO'; //'Tú proyecto ha sido registrado';
+  CompletedVerifiedMessage: String = 'TU PROYECTO HA SIDO REGISTRADO'; // 'Tú proyecto ha sido registrado';
   NoneReleasedMessage: String = 'En espera de la liberación del proyecto';
   ProcessReleasesMessage: String = 'Procesando liberación de tu proyecto';
-  CompletedReleasedMessage: String = 'TU PROYECTO HA SIDO LIBERADO';//'Tú proyecto ha sido liberado';
+  CompletedReleasedMessage: String = 'TU PROYECTO HA SIDO LIBERADO'; // 'Tú proyecto ha sido liberado';
   ProcessReleasedValidMessage: String = 'EN ESPERA DE LA VALIDACIÓN';
   CompletedReleasedValidMessage: String = 'LIBERACIÓN APROBADA';
   ProcessValidatedMessage: String = 'EN ESPERA DE LA HOJA DE NO INCONVENIENCIA';
@@ -83,20 +84,19 @@ export class TitulacionPageComponent implements OnInit {
     PARA LA ENTREGA DE TU TÍTULO`;
   AcceptTitledMessage: String = 'TÍTULO PROFESIONAL LISTO PARA SER ENTREGADO';
   FinalizedTitledMessage: String = 'TÍTULO PROFESIONAL ENTREGADO';
+
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
 
   constructor(private studentProv: StudentProvider,
-    private _formBuilder: FormBuilder,
     private cookiesService: CookiesService,
     private imgService: ImageToBase64Service,
     private router: Router,
     private routeActive: ActivatedRoute,
     private srvNotifications: NotificationsServices,
     private requestService: RequestService,
-    public _InscriptionsProvider: InscriptionsProvider
-    // ,private requestProvider: RequestProvider
+    public _InscriptionsProvider: InscriptionsProvider,
   ) {
     const user = this.cookiesService.getData().user;
     this.isApprovedEnglish = user.english;
@@ -124,32 +124,19 @@ export class TitulacionPageComponent implements OnInit {
         } else {
           this.isActive = false;
         }
-      }, error => {
+      }, _ => {
         this.isActive = false;
       });
   }
 
   getFolderId(): void {
-    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email,eFOLDER.TITULACION).subscribe(
-      (folder)=>{
+    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email, eFOLDER.TITULACION).subscribe(
+      (folder) => {
          this.cookiesService.saveFolder(folder.folderIdInDrive);
        },
-       err=>{console.log(err);
+       err => {console.log(err);
        }
        );
-    // this.studentProv.getFolderId(this.cookiesService.getData().user._id).subscribe(
-    //   student => {
-    //     if (student.folder) {// folder exists
-    //       if (student.folder.idFolderInDrive) {
-    //         this.cookiesService.saveFolder(student.folder.idFolderInDrive);
-    //       }
-    //       else {
-    //         this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-    //       }
-    //     } else {
-    //       this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-    //     }
-    //   });
   }
 
   loadRequest() {
@@ -168,8 +155,9 @@ export class TitulacionPageComponent implements OnInit {
           };
         }
         this.SelectItem();
-      }, error => {
-        this.srvNotifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+      }, _ => {
+        this.srvNotifications
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitud');
       });
   }
 
@@ -216,9 +204,9 @@ export class TitulacionPageComponent implements OnInit {
       }
       case eRequest.ASSIGNED: {
         this.SteepEightCompleted = (phase === eRequest.ASSIGNED ? false : true);
-        let hours = this.Request.proposedHour / 60;
-        let minutes = this.Request.proposedHour % 60;
-        let tmpFecha = new Date(this.Request.proposedDate);
+        const hours = this.Request.proposedHour / 60;
+        const minutes = this.Request.proposedHour % 60;
+        const tmpFecha = new Date(this.Request.proposedDate);
         tmpFecha.setHours(hours, minutes, 0, 0);
         this.titrationHour = moment(tmpFecha).format('llll');
         // ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
@@ -270,22 +258,4 @@ export class TitulacionPageComponent implements OnInit {
   viewRequeriments() {
     window.open('../../../assets/Requisitos.pdf', '_blank');
   }
-  // documentsLoad() {
-  //   const data = {
-  //     doer: this.cookiesService.getData().user.name.fullName,
-  //     observation: '',
-  //     operation: eStatusRequest.ACCEPT,
-  //     phase: this.Request.phase
-  //   };
-
-  //   this.requestProvider.updateRequest(this.Request._id, data).subscribe(
-  //     data => {
-  //       this.srvNotifications.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
-  //       this.loadRequest();
-  //     },
-  //     error => {
-  //       this.srvNotifications.showNotification(eNotificationType.ERROR, 'Titulación App', error);
-  //     }
-  //   )
-  // }
 }

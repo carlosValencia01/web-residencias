@@ -11,7 +11,7 @@ import { ExtendViewerComponent } from 'src/modals/shared/extend-viewer/extend-vi
 import Swal from 'sweetalert2';
 import { StepperDocumentComponent } from 'src/modals/reception-act/stepper-document/stepper-document.component';
 import { CookiesService } from 'src/services/app/cookie.service';
-import { eRequest } from 'src/enumerators/reception-act/request.enum';
+
 @Component({
   selector: 'app-upload-file-titled',
   templateUrl: './upload-file-titled.component.html',
@@ -23,9 +23,15 @@ export class UploadFileTitledComponent implements OnInit {
   public UploadINE: IDocument;
   public UploadCedula: IDocument;
   public UploadXML: IDocument;
-  public showLoading: boolean = false;
-  constructor(private _RequestService: RequestService, public _RequestProvider: RequestProvider,
-    public dialog: MatDialog, public _NotificationsServices: NotificationsServices, private _CookiesService: CookiesService) { }
+  public showLoading = false;
+
+  constructor(
+    private _RequestService: RequestService,
+    public _RequestProvider: RequestProvider,
+    public dialog: MatDialog,
+    public _NotificationsServices: NotificationsServices,
+    private _CookiesService: CookiesService,
+  ) { }
 
   ngOnInit() {
     this.UploadINE = { type: eFILES.INE, status: eStatusRequest.NONE, file: null, isBase64: false };
@@ -43,7 +49,14 @@ export class UploadFileTitledComponent implements OnInit {
     this.Documents = [];
     if (typeof (documents) !== 'undefined') {
       documents.forEach(element => {
-        this.Documents.push({ type: element.type, dateRegistered: element.dateRegistered, path: element.nameFile, status: element.status, isBase64: true, observation: element.observation });
+        this.Documents.push({
+          type: element.type,
+          dateRegistered: element.dateRegistered,
+          path: element.nameFile,
+          status: element.status,
+          isBase64: true,
+          observation: element.observation
+        });
       });
 
       const isINE = this.getDocument(eFILES.INE);
@@ -77,7 +90,14 @@ export class UploadFileTitledComponent implements OnInit {
         const type = <eFILES><keyof typeof eFILES>file;
         const archivo = this.getDocument(type);
         if (typeof (archivo) === 'undefined') {
-          this.Documents.push({ type: type, dateRegistered: new Date(), path: '', status: eStatusRequest.NONE, file: fileUpload.file, isBase64: false });
+          this.Documents.push({
+            type: type,
+            dateRegistered: new Date(),
+            path: '',
+            status: eStatusRequest.NONE,
+            file: fileUpload.file,
+            isBase64: false
+          });
         } else {
           archivo.file = fileUpload.file;
           archivo.isBase64 = false;
@@ -131,16 +151,16 @@ export class UploadFileTitledComponent implements OnInit {
       }
     } else {
       this.showLoading = true;
-      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Recuperando Archivo");
+      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Recuperando archivo');
       await this.delay(5000);
       this._RequestProvider.getResource(this.Request._id, type).subscribe(data => {
         this.showLoading = false;
         this.openView(data, isBase64, type);
 
-      }, error => {        
+      }, _ => {
         this.showLoading = false;
-        this._NotificationsServices.showNotification(eNotificationType.ERROR,
-          'Acto Recepcional', 'Archivo no recuperado');
+        this._NotificationsServices
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Archivo no recuperado');
       });
     }
   }
@@ -185,7 +205,7 @@ export class UploadFileTitledComponent implements OnInit {
     const frmData = new FormData();
     frmData.append('Document', type);
     frmData.append('folderId', this._CookiesService.getFolder());
-    frmData.append('IsEdit', "false");
+    frmData.append('IsEdit', 'false');
     switch (type) {
       case eFILES.INE: {
         frmData.append('file', this.UploadINE.file);
@@ -204,17 +224,17 @@ export class UploadFileTitledComponent implements OnInit {
       }
     }
     frmData.append('phase', this.Request.phase);
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Cargando Archivo");
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Cargando archivo');
     this.showLoading = true;
     this._RequestProvider.uploadFile(this.Request._id, frmData).subscribe(data => {
       const doc = this.getDocument(type);
       doc.status = eStatusRequest.PROCESS;
-      document.status = eStatusRequest.PROCESS;//eStatusRequest.PROCESS;      
+      document.status = eStatusRequest.PROCESS; // eStatusRequest.PROCESS;
       this.showLoading = false;
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this._NotificationsServices.showNotification(eNotificationType.ERROR,
-        "Acto Recepcional", error);
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
     });
   }
 
@@ -237,7 +257,7 @@ export class UploadFileTitledComponent implements OnInit {
     }
     Swal.fire({
       type: 'error',
-      title: 'Oops...',
+      title: '¡Observaciones!',
       text: message,
       showCloseButton: true,
     });
@@ -263,7 +283,7 @@ export class UploadFileTitledComponent implements OnInit {
         break;
       }
       default: {
-        name = "DESCONOCIDO";
+        name = 'DESCONOCIDO';
       }
     }
     return name;
@@ -273,6 +293,7 @@ export class UploadFileTitledComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 }
+
 interface IDocument {
   type?: eFILES;
   dateRegistered?: Date;

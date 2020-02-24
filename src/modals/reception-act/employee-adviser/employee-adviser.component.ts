@@ -75,10 +75,9 @@ export class EmployeeAdviserComponent implements OnInit {
 
         this.refresh();
         this.showLoading = false;
-      },
-      error => {
+      }, _ => {
         this.showLoading = true;
-        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', 'Error al obtener empleados');
+        this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener empleados');
       }
     );
   }
@@ -219,5 +218,7 @@ export class EmployeeAdviserComponent implements OnInit {
 }
 
 interface IAdviserTable {
-  name?: string; position?: string; action?: string;
+  name?: string;
+  position?: string;
+  action?: string;
 }

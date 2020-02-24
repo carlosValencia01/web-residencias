@@ -54,7 +54,7 @@ export class ProgressPageComponent implements OnInit {
   phases: Array<string>;
   search: string;
   role: string;
-  public showLoading: boolean
+  public showLoading: boolean;
   departmentCareers: Array<ICareer>; // Carreras del puesto
   private folderId: string;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -74,8 +74,11 @@ export class ProgressPageComponent implements OnInit {
     this.careers = [];
     this.phases = [];
     this.allCarrers = ['ARQUITECTURA', 'INGENIERÍA CIVIL', 'INGENIERÍA ELÉCTRICA', 'INGENIERÍA INDUSTRIAL',
-      'INGENIERÍA EN SISTEMAS COMPUTACIONALES', 'INGENIERÍA BIOQUÍMICA', 'INGENIERÍA QUÍMICA', 'LICENCIATURA EN ADMINISTRACIÓN', 'INGENIERÍA EN GESTIÓN EMPRESARIAL', 'INGENIERÍA MECATRÓNICA', 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES'];
-    this.allPhases = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado', 'Realizado', 'Generado', 'Finalized', 'Titulado'];
+      'INGENIERÍA EN SISTEMAS COMPUTACIONALES', 'INGENIERÍA BIOQUÍMICA', 'INGENIERÍA QUÍMICA',
+      'LICENCIATURA EN ADMINISTRACIÓN', 'INGENIERÍA EN GESTIÓN EMPRESARIAL', 'INGENIERÍA MECATRÓNICA',
+      'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES'];
+    this.allPhases = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado',
+      'Realizado', 'Generado', 'Finalized', 'Titulado'];
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -86,7 +89,8 @@ export class ProgressPageComponent implements OnInit {
 
   ngOnInit() {
     this.loadRequest(true);
-    this.displayedColumns = ['controlNumber', 'fullName', 'career', 'phase', 'status', 'applicationDateLocal', 'lastModifiedLocal', 'action'];
+    this.displayedColumns = ['controlNumber', 'fullName', 'career', 'phase', 'status',
+      'applicationDateLocal', 'lastModifiedLocal', 'action'];
     this.statusOptions = [
       { icon: 'accessibility_new', option: 'Todos' },
       { icon: 'mail', option: 'Solicitado' },
@@ -141,7 +145,7 @@ export class ProgressPageComponent implements OnInit {
           if (this.role !== 'jefe académico' && this.role !== 'secretaria académica') {
             this.request.push(tmpRequest);
           } else {
-            // Verifico si la carrera de la solicitud pertenece a las carreras asociadas al departamento del empleado se asigna            
+            // Verifico si la carrera de la solicitud pertenece a las carreras asociadas al departamento del empleado se asigna
             const index = this.departmentCareers.findIndex(x => x.fullName === tmpRequest.career);
             if (index !== -1) {
               this.request.push(tmpRequest);
@@ -158,14 +162,13 @@ export class ProgressPageComponent implements OnInit {
         this.reset = true;
         this.requestFilter = this.filter(this.careers, this.phases).slice(0);
         this.refresh();
-      },
-      error => {
-        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+      }, _ => {
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitudes');
       });
   }
 
   public castRequest(element: any): iRequest {
-    let tmp: iRequest = new Object(); // <iRequest>element;
+    const tmp: iRequest = new Object(); // <iRequest>element;
     tmp._id = element._id;
     tmp.status = this.convertStatus(element.status);
     tmp.controlNumber = element.studentId.controlNumber;
@@ -205,22 +208,21 @@ export class ProgressPageComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.requestFilter);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    const inputFilter : any = document.getElementById('myfilter');
+    const inputFilter: any = document.getElementById('myfilter');
     // console.log(inputFilter.value !== '');
-    
-    if(inputFilter.value !== ''){
-      this.dataSource.filter = inputFilter.value.trim().toLowerCase()
+
+    if (inputFilter.value !== '') {
+      this.dataSource.filter = inputFilter.value.trim().toLowerCase();
     }
   }
 
   filter(carrers: string[], phases: string[]): Array<iRequest> {
-    //Filtro las solicitudes de acuerdo a los filtros de los toggle button
+    // Filtro las solicitudes de acuerdo a los filtros de los toggle button
     return this.request.filter(function (element) {
       if (phases.length === 0) {
-        //Si no hay una fase
+        // Si no hay una fase
         return carrers.findIndex(x => x === element.career) !== -1;
-      }
-      else {
+      } else {
         return carrers.findIndex(x => x === element.career) !== -1 &&
           phases.findIndex(x => x === element.phase) !== -1;
       }
@@ -247,7 +249,7 @@ export class ProgressPageComponent implements OnInit {
           observation: '',
           operation: eStatusRequest.ACCEPT,
           file: {
-            mimetype: "application/pdf",
+            mimetype: 'application/pdf',
             data: oRequest.documentSend(eFILES.INCONVENIENCE, valor.data.QR, valor.data.ESTAMP),
             name: eFILES.INCONVENIENCE + '.pdf'
           },
@@ -257,18 +259,18 @@ export class ProgressPageComponent implements OnInit {
 
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
           this.showLoading = false;
-          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud Actualizada');
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
           this.loadRequest();
 
-        }, error => {
+        }, _ => {
           this.showLoading = false;
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
         });
 
 
       }
-    }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+    }, _ => {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error');
     });
   }
 
@@ -279,18 +281,18 @@ export class ProgressPageComponent implements OnInit {
       this.requestFilter = this.filter(this.careers, this.phases).slice(0);
     } else {
       const key = <eRequest><keyof typeof eRequest>event.value;
-      let value = eRequest[key];
+      const value = eRequest[key];
       const isCedula = eRequest[key] === eRequest.CEDULA;
       const checked = event.event.checked;
       const index = this.phases.findIndex(x => x === value);
       if (index !== -1 && !checked) {
         this.phases.splice(index, 1);
       }
-      if (index == -1 && checked) {
+      if (index === -1 && checked) {
         this.phases.push(value);
       }
-      let tmpRequest = this.requestFilter = this.filter(this.careers, this.phases).slice(0);
-      this.requestFilter = tmpRequest;//(value === eRequest.TITLED) ? this.filterCedula(tmpRequest, isCedula) : tmpRequest;
+      const tmpRequest = this.requestFilter = this.filter(this.careers, this.phases).slice(0);
+      this.requestFilter = tmpRequest; // (value === eRequest.TITLED) ? this.filterCedula(tmpRequest, isCedula) : tmpRequest;
     }
     this.refresh();
   }
@@ -307,7 +309,7 @@ export class ProgressPageComponent implements OnInit {
       if (index !== -1 && !checked) {
         this.careers.splice(index, 1);
       }
-      if (index == -1 && checked) {
+      if (index === -1 && checked) {
         this.careers.push(value);
       }
     }
@@ -356,7 +358,7 @@ export class ProgressPageComponent implements OnInit {
   openDiary(Identificador: string) {
     const lRequest = this.getRequestById(Identificador);
     if (typeof (lRequest.proposedDate) !== 'undefined') {
-      localStorage.setItem("Appointment", new Date(lRequest.proposedDate).toDateString());
+      localStorage.setItem('Appointment', new Date(lRequest.proposedDate).toDateString());
     }
     this.router.navigate(['diary']);
   }
@@ -376,8 +378,8 @@ export class ProgressPageComponent implements OnInit {
       if (valor) {
         this.loadRequest();
       }
-    }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+    }, _ => {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un problema');
     });
   }
 
@@ -395,16 +397,16 @@ export class ProgressPageComponent implements OnInit {
       if (valor) {
         this.loadRequest();
       }
-    }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+    }, _ => {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un problema');
     });
   }
 
   async releasedRequest(Identificador) {
     let lJury: Array<string> = [];
     let lObservation: string;
-    let lMinutes: number = 420;
-    let lDuration: number = 60;
+    let lMinutes = 420;
+    let lDuration = 60;
 
     const tmpRequest = this.getRequestById(Identificador);
     if (tmpRequest.status === 'Rechazado' || tmpRequest.jury.length > 0) {
@@ -416,23 +418,24 @@ export class ProgressPageComponent implements OnInit {
         }
       );
       lJury = tmpRequest.jury;
-      lObservation = tmpRequest.status === 'Rechazado' ? value[0].observation : "";
+      lObservation = tmpRequest.status === 'Rechazado' ? value[0].observation : '';
       lMinutes = tmpRequest.proposedHour;
       lDuration = tmpRequest.duration;
     }
 
-    let folder = await new Promise(resolve => {
-      this._StudentProvider.getDriveFolderId(tmpRequest.controlNumber, eFOLDER.TITULACION).subscribe(folder => {
-        if (folder) {
-          if (typeof (folder.folderIdInDrive) !== 'undefined' || folder.folderIdInDrive !== '')
-            resolve(folder.folderIdInDrive);
-          else {
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "El folder del estudiante ha desaparecido");
+    const folder = await new Promise(resolve => {
+      this._StudentProvider.getDriveFolderId(tmpRequest.controlNumber, eFOLDER.TITULACION).subscribe(folderData => {
+        if (folderData) {
+          if (typeof (folderData.folderIdInDrive) !== 'undefined' || folderData.folderIdInDrive !== '') {
+            resolve(folderData.folderIdInDrive);
+          } else {
+            this._NotificationsServices
+              .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'No se pudo encontrar el folder del estudiante');
             resolve('');
           }
-        }
-        else {
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "El folder del estudiante ha desaparecido");
+        } else {
+          this._NotificationsServices
+            .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'No se encontró el folder del estudiante');
           resolve('');
         }
       });
@@ -465,8 +468,9 @@ export class ProgressPageComponent implements OnInit {
             jury: result.jury
           }).subscribe(data => {
             this.loadRequest();
-          }, error => {
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+          }, _ => {
+            this._NotificationsServices
+              .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error al liberar proyecto');
           });
         } else {
           this.loadRequest();
@@ -477,7 +481,7 @@ export class ProgressPageComponent implements OnInit {
 
   approve(Identificador, studentId): void {
     Swal.fire({
-      title: 'Estatus del Acto Recepcional',
+      title: 'Estatus del Acto recepcional',
       type: 'question',
       showCancelButton: true,
       allowOutsideClick: false,
@@ -486,7 +490,7 @@ export class ProgressPageComponent implements OnInit {
       cancelButtonText: 'Reprobar',
       confirmButtonText: 'Aprobar'
     }).then(async (result) => {
-      let response = await Swal.fire({
+      const response = await Swal.fire({
         title: '¿Está seguro de confirmar esta operación?',
         text: '¡No podrás revertir esto!',
         type: 'question',
@@ -510,7 +514,7 @@ export class ProgressPageComponent implements OnInit {
         });
         linkModal.afterClosed().subscribe(
           (book) => {
-            let data = {
+            const data = {
               doer: this._CookiesService.getData().user.name.fullName,
               observation: '',
               operation: eStatusRequest.ACCEPT,
@@ -519,8 +523,7 @@ export class ProgressPageComponent implements OnInit {
             };
             if (typeof (result.value) !== 'undefined') {
               data.observation = '';
-            }
-            else {
+            } else {
               data.observation = 'Acto recepcional no aprobado';
               data.operation = eStatusRequest.REJECT;
             }
@@ -528,11 +531,11 @@ export class ProgressPageComponent implements OnInit {
               data.registry = book.book;
               console.log(book.book);
               this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
                 this.loadRequest();
               }, error => {
-                let tmpJson = JSON.parse(error._body);
-                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+                const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
               });
             }
           },
@@ -542,11 +545,11 @@ export class ProgressPageComponent implements OnInit {
 
       }
 
-    })
+    });
   }
 
   async reImprimir(Identificador: string) {
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Reimprimiendo Acta de Examen');
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Reimprimiendo acta de examen');
     this.showLoading = true;
     const _request: iRequest = this.getRequestById(Identificador);
     const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
@@ -558,7 +561,7 @@ export class ProgressPageComponent implements OnInit {
   async generated(Identificador: string, operation: string) {
     const eOperation = <eStatusRequest><keyof typeof eStatusRequest>operation;
     if (eOperation === eStatusRequest.PROCESS) {
-      const response = await this.showAlert("¿Hubo un cambio de jurado?", { accept: "Si", cancel: "No" });
+      const response = await this.showAlert('¿Hubo un cambio de jurado?', { accept: 'Si', cancel: 'No' });
       if (response) {
         const _Request = this.getRequestById(Identificador);
         const ref = this.dialog.open(ChangeJuryComponent, {
@@ -573,16 +576,16 @@ export class ProgressPageComponent implements OnInit {
         ref.afterClosed().subscribe(async (result) => {
           if (typeof (result) !== 'undefined' && result.response) {
             this.showLoading = true;
-            this._NotificationsServices.showNotification(eNotificationType.INFORMATION,
-              "Acto Recepcional", "Regenerando oficio de jurado");
+            this._NotificationsServices
+              .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Regenerando oficio de jurado');
             this.loadRequest();
             const _Request = this.getRequestById(Identificador);
-            let oRequest = new uRequest(_Request, this._ImageToBase64Service, this._CookiesService);
+            const oRequest = new uRequest(_Request, this._ImageToBase64Service, this._CookiesService);
             this.getFolder(_Request.controlNumber);
             await this.delay(2000);
             const data_oficio = {
               file: {
-                mimetype: "application/pdf",
+                mimetype: 'application/pdf',
                 data: oRequest.documentSend(eFILES.OFICIO),
                 name: eFILES.OFICIO + '.pdf',
               },
@@ -591,42 +594,40 @@ export class ProgressPageComponent implements OnInit {
               Document: eFILES.OFICIO,
               phase: _Request.phase,
               IsEdit: 'true'
-            }
-            let response = await new Promise(resolve => {
-              this.requestProvider.uploadFile(Identificador, data_oficio).subscribe((response) => {
+            };
+            const response = await new Promise(resolve => {
+              this.requestProvider.uploadFile(Identificador, data_oficio).subscribe(_ => {
                 window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
                 resolve(true);
-              }, error => {
-                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+              }, _ => {
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
                 resolve(false);
               });
             });
             this.showLoading = false;
             if (response) {
               this.testReportGenerate(Identificador, eOperation);
-            }
-            else {
-              this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "Actualización del oficio fallida");
+            } else {
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Actualización del oficio fallida');
             }
           }
         });
 
       } else {
-        const response = await this.showAlert("¿Está seguro de crear el Acta de Examen?", { accept: "Si", cancel: "No" });
+        const response = await this.showAlert('¿Está seguro de crear el Acta de Examen?', { accept: 'Si', cancel: 'No' });
         if (response) {
           this.testReportGenerate(Identificador, eOperation);
         }
       }
-    }
-    else {
-      const response = await this.showAlert("¿Está seguro de continuar con la operación?", { accept: "Si", cancel: "No" });
+    } else {
+      const response = await this.showAlert('¿Está seguro de continuar con la operación?', { accept: 'Si', cancel: 'No' });
       if (response) {
         this.testReportGenerate(Identificador, eOperation);
       }
     }
   }
 
-  showAlert(message: string, buttons: { accept: string, cancel: string } = { accept: "Aceptar", cancel: "Cancelar" }) {
+  showAlert(message: string, buttons: { accept: string, cancel: string } = { accept: 'Aceptar', cancel: 'Cancelar' }) {
     return new Promise((resolve) => {
       Swal.fire({
         title: message,
@@ -638,16 +639,17 @@ export class ProgressPageComponent implements OnInit {
         cancelButtonText: buttons.cancel,
         confirmButtonText: buttons.accept
       }).then((result) => {
-        if (result.value)
+        if (result.value) {
           resolve(true);
-        else
+        } else {
           resolve(false);
+        }
       });
     });
   }
 
   testReportGenerate(Identificador: string, eOperation: eStatusRequest): void {
-    let data = {
+    const data = {
       doer: this._CookiesService.getData().user.name.fullName,
       observation: '',
       phase: eRequest.GENERATED,
@@ -656,7 +658,7 @@ export class ProgressPageComponent implements OnInit {
 
     this.requestProvider.updateRequest(Identificador, data).subscribe(async (_) => {
       if (eOperation === eStatusRequest.PROCESS) {
-        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Creando Acta de Examen');
+        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Creando acta de examen');
         this.showLoading = true;
         const _request: iRequest = this.getRequestById(Identificador);
         const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
@@ -664,11 +666,17 @@ export class ProgressPageComponent implements OnInit {
         window.open(oRequest.testReport().output('bloburl'), '_blank');
         this.showLoading = false;
       }
-      this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', (eOperation === eStatusRequest.PROCESS ? 'Acta de Examen Generada' : (eOperation === eStatusRequest.PRINTED) ? 'Acta de Examen Impresa' : 'Acta de Examen Entregada'));
+      this._NotificationsServices
+        .showNotification(eNotificationType.SUCCESS, 'Acto recepcional',
+          (eOperation === eStatusRequest.PROCESS
+            ? 'Acta de examen generada'
+            : (eOperation === eStatusRequest.PRINTED)
+            ? 'Acta de examen impresa'
+            : 'Acta de examen entregada'));
       this.loadRequest();
     }, error => {
-      let tmpJson = JSON.parse(error._body);
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', tmpJson.message);
+      const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
     });
   }
 
@@ -691,7 +699,7 @@ export class ProgressPageComponent implements OnInit {
           confirmButtonText: 'Aceptar'
         }).then((result) => {
           if (result.value) {
-            let data = {
+            const data = {
               doer: this._CookiesService.getData().user.name.fullName,
               observation: '',
               phase: eRequest.TITLED,
@@ -699,39 +707,35 @@ export class ProgressPageComponent implements OnInit {
             };
             this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
               this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional',
-                (eOperation === eStatusRequest.PROCESS ? 'Alumno notificado' : 'Título Profesional Entregado'));
+                (eOperation === eStatusRequest.PROCESS ? 'Alumno notificado' : 'Título profesional entregado'));
               this.loadRequest();
             }, error => {
-              let tmpJson = JSON.parse(error._body);
-              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', tmpJson.message);
+              const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
             });
           }
-        })
+        });
         break;
       }
       case eStatusRequest.ACCEPT: {
-        let index = tmpRequest.documents.findIndex(x => x.type === eFILES.XML || x.type === eFILES.INE || x.type === eFILES.CED_PROFESIONAL)
-        if (index !== -1){
+        const index = tmpRequest.documents
+          .findIndex(x => x.type === eFILES.XML || x.type === eFILES.INE || x.type === eFILES.CED_PROFESIONAL);
+        if (index !== -1) {
           const dialogRef = this.dialog.open(DocumentReviewComponent, {
-            data: { id: Identificador, isTitled:true },
+            data: { id: Identificador, isTitled: true },
             disableClose: true,
             hasBackdrop: true,
             width: '90em',
             height: '800px'
           });
-          dialogRef.afterClosed().subscribe(
-            (value)=>{
-              // console.log(value);
-              
-              // this.refresh();
+          dialogRef.afterClosed().subscribe(_ => {
               this.reload();
             }
           );
+        } else {
+          this._NotificationsServices
+            .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'El estudiante no ha registrado ningún archivo');
         }
-        
-          // this.router.navigate([Identificador + '/titled'], { relativeTo: this._ActivatedRoute });
-        else
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "El estudiante no ha registrado ningún archivo");
         break;
       }
     }
@@ -740,14 +744,14 @@ export class ProgressPageComponent implements OnInit {
   Review(Identificador): void {
     // this.router.navigate([Identificador], { relativeTo: this._ActivatedRoute });
     const dialogRef = this.dialog.open(DocumentReviewComponent, {
-      data: { id: Identificador, isTitled:false },
+      data: { id: Identificador, isTitled: false },
       disableClose: true,
       hasBackdrop: true,
       width: '90em',
       height: '800px'
     });
     dialogRef.afterClosed().subscribe(
-      (value)=>{
+      (value) => {
         // console.log(value);
         this.reload();
       }
@@ -764,7 +768,7 @@ export class ProgressPageComponent implements OnInit {
       height: '800px'
     });
     dialogRef.afterClosed().subscribe(
-      (value)=>{
+      (value) => {
         this.reload();
       }
     );
@@ -780,7 +784,7 @@ export class ProgressPageComponent implements OnInit {
 
   checkReleased(_id: string) {
     const Request = this.getRequestById(_id);
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Procesando Liberación");
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Procesando liberación');
     this.showLoading = true;
     this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
       this.showLoading = false;
@@ -799,15 +803,14 @@ export class ProgressPageComponent implements OnInit {
               doer: this._CookiesService.getData().user.name.fullName,
               observation: '',
               operation: eStatusRequest.ACCEPT,
-              phase: 'Liberado'//Request.phase
+              phase: 'Liberado'// Request.phase
             };
             this.requestProvider.updateRequest(Request._id, data).subscribe(
-              data => {
-                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud Actualizada');
+              _ => {
+                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
                 this.loadRequest();
-              },
-              error => {
-                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+              }, _ => {
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
               }
             );
           } else {
@@ -829,7 +832,7 @@ export class ProgressPageComponent implements OnInit {
               showCancelButton: true,
               inputValidator: (value) => {
                 if (!value) {
-                  return 'Motivo obligatorio'
+                  return 'Motivo obligatorio';
                 }
               }
             }).then((result) => {
@@ -841,27 +844,26 @@ export class ProgressPageComponent implements OnInit {
                   phase: Request.phase
                 };
                 this.requestProvider.updateRequest(Request._id, data).subscribe(
-                  data => {
-                    this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud Actualizada');
+                  _ => {
+                    this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
                     this.loadRequest();
-                  },
-                  error => {
-                    this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+                  }, _ => {
+                    this._NotificationsServices
+                      .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
                   }
                 );
               }
             });
           }
         }
-      },
-        error => {
-          this._NotificationsServices.showNotification(eNotificationType.ERROR,
-            'Acto recepcional', error);
+      }, _ => {
+          this._NotificationsServices
+            .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error');
         });
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this._NotificationsServices.showNotification(eNotificationType.ERROR,
-        'Acto recepcional', error);
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener archivo');
     });
   }
 
@@ -888,17 +890,17 @@ export class ProgressPageComponent implements OnInit {
   }
 
   async juryNotification(_id: string) {
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando documentación");
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando documentación');
     this.showLoading = true;
-    let _request = this.getRequestById(_id);
-    let oRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
+    const _request = this.getRequestById(_id);
+    const oRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
     this.getFolder(_request.controlNumber);
 
     await this.delay(2000);
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando oficio de jurado");
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando oficio de jurado');
     const data_oficio = {
       file: {
-        mimetype: "application/pdf",
+        mimetype: 'application/pdf',
         data: oRequest.documentSend(eFILES.OFICIO),
         name: eFILES.OFICIO + '.pdf',
       },
@@ -907,20 +909,20 @@ export class ProgressPageComponent implements OnInit {
       Document: eFILES.OFICIO,
       phase: _request.phase,
       IsEdit: 'true'
-    }
+    };
 
-    let response = await new Promise(resolve => {
-      this.requestProvider.uploadFile(_id, data_oficio).subscribe((response) => {
+    const response = await new Promise(resolve => {
+      this.requestProvider.uploadFile(_id, data_oficio).subscribe(_ => {
         if (_request.status === 'Pendiente') {
           window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
           resolve(true);
-        }
-        else {
+        } else {
           window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
           resolve(true);
         }
-      }, error => {
-        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+      }, _ => {
+        this._NotificationsServices
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
         resolve(false);
       });
     });
@@ -928,7 +930,7 @@ export class ProgressPageComponent implements OnInit {
     if (response) {
       const data = {
         file: {
-          mimetype: "application/pdf",
+          mimetype: 'application/pdf',
           data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
           name: eFILES.JURAMENTO_ETICA + '.pdf',
         },
@@ -937,35 +939,35 @@ export class ProgressPageComponent implements OnInit {
         Document: eFILES.JURAMENTO_ETICA,
         phase: _request.phase,
         IsEdit: 'true'
-      }
-      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando código de ética");
-      this.requestProvider.uploadFile(_id, data).subscribe((response) => {
+      };
+      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando código de ética');
+      this.requestProvider.uploadFile(_id, data).subscribe(_ => {
         if (_request.status === 'Pendiente') {
-          let data = {
+          const data = {
             doer: this._CookiesService.getData().user.name.fullName,
             observation: '',
             phase: eRequest.REALIZED,
             operation: eStatusRequest.PROCESS
           };
-          this.requestProvider.updateRequest(_id, data).subscribe((response) => {
+          this.requestProvider.updateRequest(_id, data).subscribe(__ => {
             window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
             this.loadRequest();
             this.showLoading = false;
-          }, error => {
+          }, __ => {
             this.showLoading = false;
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+            this._NotificationsServices
+              .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
           });
-        }
-        else {
+        } else {
           window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
           this.showLoading = false;
         }
-      }, error => {
+      }, _ => {
         this.showLoading = false;
-        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+        this._NotificationsServices
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
       });
-    }
-    else {
+    } else {
       this.showLoading = false;
     }
   }
