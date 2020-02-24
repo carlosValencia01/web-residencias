@@ -123,7 +123,7 @@
                            <th>Número de Control</th>
                            <th>Nombre del Alumno</th>
                            <th>Carrera</th>
-                           <th>Boletos</th>
+                           <th *ngIf="role === 'administration' || role === 'comunication'">Boletos</th>
                            <th>Estatus</th>
                            <th *ngIf="role === 'administration' || role === 'comunication'">Acciones</th>
                         </tr>
@@ -148,7 +148,7 @@
                               {{item.name}}</td>
                            <td (click)="observationsModal(item)" *ngIf="!item.degree">{{item.name}}</td>
                            <td (click)="observationsModal(item)">{{item.carreer}}</td>
-                           <td>
+                           <td *ngIf="role === 'administration' || role === 'comunication'">
                               <div *ngIf="item.status == 'Verificado'" class="div-actions">
                                  <tr>
                                     <td>
