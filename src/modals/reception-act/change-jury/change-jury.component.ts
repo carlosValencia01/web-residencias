@@ -19,7 +19,7 @@ export class ChangeJuryComponent implements OnInit {
   public frmConsejo: FormGroup;
   public _Request: iRequest;
   @ViewChild('time') Time: NgxTimepickerFieldComponent;
-  private juryInfo: Array<{ name: string, title: string, cedula: string }>;
+  private juryInfo: Array<{ name: string, title: string, cedula: string, email?: string }>;
 
   constructor(
     public dialogRef: MatDialogRef<ChangeJuryComponent>,
@@ -38,8 +38,10 @@ export class ChangeJuryComponent implements OnInit {
       'secretary': new FormControl(this._Request.jury[1].name, Validators.required),
       'vocal': new FormControl(this._Request.jury[2].name, Validators.required),
       'substitute': new FormControl(this._Request.jury[3].name, Validators.required),
-      'duration': new FormControl(this._Request.duration, Validators.required)
+      'duration': new FormControl(this._Request.duration,
+        [Validators.required, Validators.min(30), Validators.max(120)])
     });
+    this.Time.format = 24;
     this.juryInfo = this._Request.jury;
     const hour = this._Request.proposedHour / 60;
     const minutes = this._Request.proposedHour % 60;
@@ -54,15 +56,15 @@ export class ChangeJuryComponent implements OnInit {
     this.frmConsejo.get(button).setErrors(null);
     const ref = this.dialog.open(EmployeeAdviserComponent, {
       data: {
-        carrer: this._Request.student.career
+        carrer: this._Request.student.career,
+        synodal: button
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '50em'
+      width: '60vw'
     });
 
     ref.afterClosed().subscribe((result) => {
-
       if (typeof (result) != 'undefined') {
         if (this.juryInfo.findIndex(x => x.name === result.ExtraInfo.name) !== -1) {
           this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Empleado ya asignado');
@@ -73,6 +75,7 @@ export class ChangeJuryComponent implements OnInit {
               this.juryInfo[0].name = result.ExtraInfo.name;
               this.juryInfo[0].title = result.ExtraInfo.title;
               this.juryInfo[0].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[0].email = result.ExtraInfo.email;
               break;
             }
             case 'secretary': {
@@ -81,6 +84,7 @@ export class ChangeJuryComponent implements OnInit {
               this.juryInfo[1].name = result.ExtraInfo.name;
               this.juryInfo[1].title = result.ExtraInfo.title;
               this.juryInfo[1].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[1].email = result.ExtraInfo.email;
               break;
             }
             case 'vocal': {
@@ -88,6 +92,7 @@ export class ChangeJuryComponent implements OnInit {
               this.juryInfo[2].name = result.ExtraInfo.name;
               this.juryInfo[2].title = result.ExtraInfo.title;
               this.juryInfo[2].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[2].email = result.ExtraInfo.email;
               break;
             }
             case 'substitute': {
@@ -95,6 +100,7 @@ export class ChangeJuryComponent implements OnInit {
               this.juryInfo[3].name = result.ExtraInfo.name;
               this.juryInfo[3].title = result.ExtraInfo.title;
               this.juryInfo[3].cedula = result.ExtraInfo.cedula;
+              this.juryInfo[3].email = result.ExtraInfo.email;
               break;
             }
           }

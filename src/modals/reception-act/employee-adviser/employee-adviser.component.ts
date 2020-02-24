@@ -33,6 +33,7 @@ export class EmployeeAdviserComponent implements OnInit {
   public showLoading: boolean;
   public role: string;
   public synodal: string;
+  public title: string;
 
   constructor(
     private employeProvider: EmployeeProvider,
@@ -47,6 +48,7 @@ export class EmployeeAdviserComponent implements OnInit {
     this.displayedColumns = ['name', 'position', 'action'];
     this.role = (this.cookiesServ.getData().user.rol.name || '').toLowerCase();
     this.synodal = (this.data.synodal || '').toLowerCase();
+    this.title = this._setModalTitle(this.role, this.synodal);
   }
 
   ngOnInit() {
@@ -214,6 +216,20 @@ export class EmployeeAdviserComponent implements OnInit {
     this.frmAuxiliar.get('email').markAsUntouched();
     this.frmAuxiliar.setValue({ 'Name': '', 'Titled': '', 'Cedula': '', 'email': '' });
     this.isNewEmployee = !this.isNewEmployee;
+  }
+
+  private _setModalTitle(role: string, synodal?: string): string {
+    if (role === 'estudiante') {
+      return 'Asesor interno';
+    } else {
+      switch (synodal) {
+        case 'president': return 'Seleccione presidenta/e';
+        case 'secretary': return 'Seleccione secretario/a';
+        case 'vocal': return 'Seleccione vocal';
+        case 'substitute': return 'Seleccione suplente';
+        default: return 'Seleccione empleada/o';
+      }
+    }
   }
 }
 
