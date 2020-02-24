@@ -243,7 +243,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
       this.alumnosReport = this.alumnos;      
       this.totalAlumnos = this.alumnosReport.length;
-      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, '');
+      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
       this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation,'');
       this.alumnosReportDocumentation = this.alumnos;
       this.eventFilterReport();
@@ -529,7 +529,7 @@ export class ListGraduatesPageComponent implements OnInit {
         this.alumnosReport = this.alumnos;
       }
     }
-    this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, '');
+    this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
   }
 
   eventFilterReportDocumentation(){
@@ -673,7 +673,7 @@ export class ListGraduatesPageComponent implements OnInit {
   generateBallotPaper() {
     if (this.alumnosBallotPaper.length !== 0) {
       // Obtener alumnos cuyo estatus sea 'Verificado' && Carrera = al filtro seleccionado
-      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, '');
+      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
 
       // Dividir total de alumnos verificados en segmentos de 4
       let divAlumnosBallotPaper = [];
@@ -698,7 +698,7 @@ export class ListGraduatesPageComponent implements OnInit {
         for (var j = 0; j < divAlumnosBallotPaper[i].length; j++) { // Recorrer los alumnos del segmento actual
           if (j == 0) {
             doc.addImage(this.logoSep, 'PNG', 5, 2, 60, 14); // Logo Sep
-            doc.addImage(this.logoTecNM, 'PNG', pageWidth - 58, 2, 53, 14); // Logo TecNM
+            doc.addImage(this.logoTecNM, 'PNG', pageWidth - 58, 2, 52, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 7.5, divLine - 20, 15, 15); // Logo TecTepic
 
             // Numero de alumno
@@ -794,7 +794,7 @@ export class ListGraduatesPageComponent implements OnInit {
       }
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
-      this.notificationsServices.showNotification(2, 'Error', 'No hay alumnos  en estatus Verificado');
+      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos en estatus Verificado de la carrera '+this.searchCarreer);
     }
   }
 
