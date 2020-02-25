@@ -245,7 +245,7 @@
     </mat-step>
     <mat-step [completed]="SteepSixCompleted">
       <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
-      <app-upload-files></app-upload-files>
+      <app-upload-files (onResponse)="Files($event)"></app-upload-files>
       <!-- <div *ngIf="SteepSixCompleted">
         <app-upload-files></app-upload-files>
       </div>

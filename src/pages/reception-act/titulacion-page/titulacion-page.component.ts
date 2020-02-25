@@ -137,19 +137,7 @@ export class TitulacionPageComponent implements OnInit {
        err=>{console.log(err);
        }
        );
-    // this.studentProv.getFolderId(this.cookiesService.getData().user._id).subscribe(
-    //   student => {
-    //     if (student.folder) {// folder exists
-    //       if (student.folder.idFolderInDrive) {
-    //         this.cookiesService.saveFolder(student.folder.idFolderInDrive);
-    //       }
-    //       else {
-    //         this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-    //       }
-    //     } else {
-    //       this.srvNotifications.showNotification(eNotificationType.ERROR, "Titulacion App", "Su folder ha desaparecido");
-    //     }
-    //   });
+
   }
 
   loadRequest() {
@@ -180,6 +168,11 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   Schedule($event): void {
+    if ($event) {
+      this.loadRequest();
+    }
+  }
+  Files($event): void {
     if ($event) {
       this.loadRequest();
     }

@@ -571,7 +571,7 @@ export class ProgessComponent implements OnInit {
                               sub2.unsubscribe();
                               if(student[0]){
                                 this.firebaseService.updateFieldGraduate(student[0].id,{degree:true},collectionName).then((updated)=>{
-                                  this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Solicitud Actualizada');
+                                  this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Se actualizo el estatus en el SII.');
                                 });
                               }
                             }

@@ -50,9 +50,11 @@ export class ScheduleComponent implements OnInit {
     this._RequestService.requestUpdate.subscribe(
       (result) => {
         this.request = result.Request;
-        let hours = this.request.proposedHour / 60;
-        let minutes = this.request.proposedHour % 60;
-        this.hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
+        if(this.request.proposedHour){
+          let hours = this.request.proposedHour / 60;
+          let minutes = this.request.proposedHour % 60;
+          this.hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
+        }
       }
     );
 
@@ -102,14 +104,11 @@ export class ScheduleComponent implements OnInit {
     }).subscribe(data => {
       if (typeof (data.Schedule) !== "undefined") {
         this.getRanges(data.Ranges);
-        const diary = this.getEvents(data.Schedule)
+        const diary = this.getEvents(data.Schedule);
+        console.log(diary);
+        
         diary.forEach(e => {
-          // const sDate: string[] = e.date.toString().split('-');
-          // let tmpDate: Date = new Date(
-          //   Number(sDate[0]),
-          //   Number(sDate[1]),
-          //   Number(sDate[2]),
-          //   0, 0, 0, 0);
+
           let tmpDate: Date = new Date(e.date);
           tmpDate.setHours(0, 0, 0, 0);
           tmpDate.setHours(e.minutes / 60);
@@ -119,14 +118,7 @@ export class ScheduleComponent implements OnInit {
           tmpDate.setHours(0, 0, 0, 0);
           this.appointments.push({ date: tmpDate, count: e.count });
         });
-        // data.Schedule.forEach(element => {
-        //   for (let i = 0; i < element.count; i++) {
-        //     this.events.push({ title: '', start: element._id });
-        //   }
-        //   let tmpDate: Date = new Date(element._id);
-        //   tmpDate.setHours(0, 0, 0, 0);
-        //   this.appointments.push({ date: tmpDate, count: element.count });
-        // });
+
         this.refresh.next();
       }
     }, error => {

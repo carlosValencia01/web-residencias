@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,EventEmitter, Output } from '@angular/core';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { iRequest } from 'src/entities/reception-act/request.model';
@@ -19,6 +19,7 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
   styleUrls: ['./upload-files.component.scss']
 })
 export class UploadFilesComponent implements OnInit {
+  @Output('onResponse') eventResponse = new EventEmitter<boolean>();
   public Request: iRequest;
   public Documents: Array<IDocument>;
   public UploadActa: IDocument;
@@ -657,6 +658,10 @@ export class UploadFilesComponent implements OnInit {
     }
     this.requestProvider.omitFile(this.Request._id, data).subscribe(data => {
       document.status = eStatusRequest.OMIT;
+      if(data.request.phase === eRequest.VALIDATED){
+        this.eventResponse.emit(true);
+      }
+      
     }, error => {
       this.notificationServices.showNotification(eNotificationType.ERROR,
         "Acto recepcional", error);
