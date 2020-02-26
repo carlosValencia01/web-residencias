@@ -28,7 +28,7 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
   ]
 })
 export class ScheduleComponent implements OnInit {
-  // @Input('Request') size;
+  // tslint:disable-next-line: no-output-rename
   @Output('onResponse') eventResponse = new EventEmitter<boolean>();
   maxDate: Date;
   excludeDays: number[] = [0, 6];
@@ -39,8 +39,11 @@ export class ScheduleComponent implements OnInit {
   ranges: Array<{ start: Date, end: Date, quantity: number }> = [];
   refresh: Subject<any> = new Subject();
   request: iRequest;
-  // diary: Array<ISchedule>;
   career: String;
+  view: CalendarView = CalendarView.Month;
+  locale = 'es';
+  weekStartsOn: number = DAYS_OF_WEEK.MONDAY;
+  weekendDays: number[] = [DAYS_OF_WEEK.FRIDAY, DAYS_OF_WEEK.SATURDAY];
 
   constructor(
     public _RequestProvider: RequestProvider,
@@ -57,9 +60,11 @@ export class ScheduleComponent implements OnInit {
     this._RequestService.requestUpdate.subscribe(
       (result) => {
         this.request = result.Request;
-        let hours = this.request.proposedHour / 60;
-        let minutes = this.request.proposedHour % 60;
-        this.hour = ((hours > 9) ? (hours + '') : ('0' + hours)) + ':' + ((minutes > 9) ? (minutes + '') : ('0' + minutes));
+        if (this.request.proposedHour) {
+          const hours = this.request.proposedHour / 60;
+          const minutes = this.request.proposedHour % 60;
+          this.hour = ((hours > 9) ? (hours + '') : ('0' + hours)) + ':' + ((minutes > 9) ? (minutes + '') : ('0' + minutes));
+        }
       }
     );
 
@@ -73,7 +78,7 @@ export class ScheduleComponent implements OnInit {
   }
   // Retorna los eventos que estan en la misma hora que el estudiante
   getEvents(Schedule: any): Array<ISchedule> {
-    let diary: Array<ISchedule> = [];
+    const diary: Array<ISchedule> = [];
     Schedule.forEach(element => {
       //  Para agregar los eventos de acuerdo a la hora y por carrera, se quita para tomar en cuenta todas los eventos
       // if (element._id.career[0] === this.career && this.request.proposedHour === element._id.minutes)
@@ -90,8 +95,7 @@ export class ScheduleComponent implements OnInit {
     Ranges.forEach(element => {
       const value = element.careers.find(x => x === this.career);
       if (typeof (value) !== 'undefined') {
-        let tmp: { start: Date, end: Date, quantity: number } =
-        {
+        const tmp: { start: Date, end: Date, quantity: number } = {
           end: new Date(element.end), start: new Date(element.start), quantity: element.quantity
         };
         this.ranges.push(tmp);
@@ -111,12 +115,7 @@ export class ScheduleComponent implements OnInit {
         this.getRanges(data.Ranges);
         const diary = this.getEvents(data.Schedule);
         diary.forEach(e => {
-          // const sDate: string[] = e.date.toString().split('-');
-          // let tmpDate: Date = new Date(
-          //   Number(sDate[0]),
-          //   Number(sDate[1]),
-          //   Number(sDate[2]),
-          //   0, 0, 0, 0);
+
           let tmpDate: Date = new Date(e.date);
           tmpDate.setHours(0, 0, 0, 0);
           tmpDate.setHours(e.minutes / 60);
@@ -126,14 +125,7 @@ export class ScheduleComponent implements OnInit {
           tmpDate.setHours(0, 0, 0, 0);
           this.appointments.push({ date: tmpDate, count: e.count });
         });
-        // data.Schedule.forEach(element => {
-        //   for (let i = 0; i < element.count; i++) {
-        //     this.events.push({ title: '', start: element._id });
-        //   }
-        //   let tmpDate: Date = new Date(element._id);
-        //   tmpDate.setHours(0, 0, 0, 0);
-        //   this.appointments.push({ date: tmpDate, count: element.count });
-        // });
+
         this.refresh.next();
       }
     }, error => {
@@ -142,30 +134,23 @@ export class ScheduleComponent implements OnInit {
     });
   }
 
-  view: CalendarView = CalendarView.Month;
-  locale: string = 'es';
-  // activeDayIsOpen: boolean = true;
-  // limite: number = 1;
-  weekStartsOn: number = DAYS_OF_WEEK.MONDAY;
-  weekendDays: number[] = [DAYS_OF_WEEK.FRIDAY, DAYS_OF_WEEK.SATURDAY];
-
   beforeMonthViewRender(renderEvent: CalendarMonthViewBeforeRenderEvent): void {
     renderEvent.body.forEach(day => {
       if (typeof (this.appointments) !== 'undefined') {
         if ((day.isPast && !day.isToday) || day.date > this.maxDate) {
           day.cssClass = 'disable-days';
         } else {
-          let lDate: Date = new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate());
+          const lDate: Date = new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate());
           lDate.setHours(0, 0, 0, 0);
           // let tmp: { fecha: Date, count: Number } = this.citas.find(x => x.fecha.getTime() === lDate.getTime());
 
-          let tmp: { date: Date, count: Number } = this.appointments.find(x => x.date.getTime() === lDate.getTime());
-          let tmpRange = this.ranges.find(x => x.start.getTime() <= lDate.getTime() && lDate.getTime() <= x.end.getTime());
+          const tmp: { date: Date, count: Number } = this.appointments.find(x => x.date.getTime() === lDate.getTime());
+          const tmpRange = this.ranges.find(x => x.start.getTime() <= lDate.getTime() && lDate.getTime() <= x.end.getTime());
           if (typeof (tmp) === 'undefined') {
             day.cssClass = 'free';
           } else {
             // Descomentar para usar rangos
-            let limite = 1; // typeof (tmpRange) !== 'undefined' ? tmpRange.quantity : 1;
+            const limite = 1; // typeof (tmpRange) !== 'undefined' ? tmpRange.quantity : 1;
             if (tmp.count >= limite) {
               day.cssClass = 'complete';
             } else {
@@ -201,7 +186,7 @@ export class ScheduleComponent implements OnInit {
         confirmButtonText: 'Aceptar'
       }).then((result) => {
         if (result.value) {
-          let tmpAppointment: Date = new Date(events.day.date);
+          const tmpAppointment: Date = new Date(events.day.date);
           tmpAppointment.setHours(0, 0, 0, 0);
           tmpAppointment.setMinutes(this.request.proposedHour);
           const data = {

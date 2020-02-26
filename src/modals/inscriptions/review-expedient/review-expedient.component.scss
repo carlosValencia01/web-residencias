@@ -71,31 +71,34 @@
 }
 
 .adjustcard{
-    width: 150px !important;
-	height: 60px !important;
-	box-sizing: unset;
+    width: 160px !important;
+	min-height: 70px;
+	display: flex;
+	justify-content: center;
 }
 
-.mat-card-header{
-    position: absolute !important;
-    width: 100% !important;
-    left: 0px !important;
-    top: 38% !important;
-	justify-content: center;
+.mat-card-header{    	
 	align-items: center !important;
 }
 
 .cardini{
     width: 200px;
-    height: 200px;
+	height: 200px;
+	display: flex;
+    justify-content: center;
 }
 
 .viewdoc{
     border: 2px solid steelblue;
     border-radius: 6px;
 	box-shadow: -1px 1px 10px rgba(0,0,0,0.2);
-	overflow-y: scroll;
-	height: 650px;
+	// overflow-y: scroll;
+	// height: 650px;
+}
+.item-maxh{
+	height: 77vh;
+	overflow-y: auto;
+	overflow-x: hidden;	
 }
 
 .viewdocheader{
@@ -110,7 +113,12 @@
 	position: sticky;
 	top: 0px;
 }
-
+.doc-card-header{
+	cursor: pointer;
+	width: 100%;              
+	display: flex;
+	justify-content: center;
+}
 .imgProfile{
     width: 50%;
     text-align: center;
@@ -193,6 +201,7 @@ hr{
 .btn-rounded-danger:hover{
 	background-color: rgba(255,0,0,0.8);	
 }
+
 
 /* DOC LOAD ANIMATION */
 

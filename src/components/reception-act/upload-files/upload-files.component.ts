@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { iRequest } from 'src/entities/reception-act/request.model';
@@ -11,6 +11,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import Swal from 'sweetalert2';
 import { StepperDocumentComponent } from 'src/modals/reception-act/stepper-document/stepper-document.component';
 import { CookiesService } from 'src/services/app/cookie.service';
+import { eRequest } from 'src/enumerators/reception-act/request.enum';
 
 @Component({
   selector: 'app-upload-files',
@@ -18,6 +19,8 @@ import { CookiesService } from 'src/services/app/cookie.service';
   styleUrls: ['./upload-files.component.scss']
 })
 export class UploadFilesComponent implements OnInit {
+  // tslint:disable-next-line: no-output-rename
+  @Output('onResponse') eventResponse = new EventEmitter<boolean>();
   public Request: iRequest;
   public Documents: Array<IDocument>;
   public UploadActa: IDocument;
@@ -201,7 +204,6 @@ export class UploadFilesComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '45em',
-      height: '600px'
     });
   }
 
@@ -484,7 +486,6 @@ export class UploadFilesComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '60em',
-      height: '650px'
     });
 
     dialogRef.afterClosed().subscribe((fileUpload: any) => {
@@ -555,8 +556,8 @@ export class UploadFilesComponent implements OnInit {
         }
       }
     });
-
   }
+
   onUpload(event, file): void {
     if (typeof (event.target.files) !== 'undefined' && event.target.files.length > 0) {
       const type = <eFILES><keyof typeof eFILES>file;
@@ -623,7 +624,7 @@ export class UploadFilesComponent implements OnInit {
 
   onOmit(file) {
     const type = <eFILES><keyof typeof eFILES>file;
-    const data = { 'Document': type, 'Status': eStatusRequest.OMIT };
+    const dataDocument = { 'Document': type, 'Status': eStatusRequest.OMIT };
     let document: any;
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
@@ -663,8 +664,11 @@ export class UploadFilesComponent implements OnInit {
         break;
       }
     }
-    this.requestProvider.omitFile(this.Request._id, data).subscribe(_ => {
+    this.requestProvider.omitFile(this.Request._id, dataDocument).subscribe(data => {
       document.status = eStatusRequest.OMIT;
+      if (data.request.phase === eRequest.VALIDATED) {
+        this.eventResponse.emit(true);
+      }
     }, _ => {
       this.notificationServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al omitir archivo');

@@ -49,19 +49,13 @@ export class DocumentReviewComponent implements OnInit {
   }
 
   init() {
-    this.requestProvider.getRequestById(this.data.id).subscribe(
-      data => {
-        this.request = data.request[0];
-        this.request.phase = 'Registrado';
-        this.student = data.request[0].studentId;
-        this.request.student = data.request[0].studentId;
-        this.uRequest = new uRequest(this.request, this.imgSrv, this._CookiesService);
-        this.refresh();
-      }, _ => {
-        this.notificationService
-          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al buscar solicitud');
-      }
-    );
+    this.request = this.data.request;
+    this.request.phase = 'Registrado';
+    this.student = this.data.request.student;
+    this.student['career'] = this.data.request.careerAcronym;
+    this.request.student = this.data.request.student;
+    this.uRequest = new uRequest(this.request, this.imgSrv, this._CookiesService);
+    this.refresh();
   }
 
   refresh(): void {
@@ -224,7 +218,6 @@ export class DocumentReviewComponent implements OnInit {
       }, _ => {
         this.notificationService.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al aceptar documento');
       });
-
     }
   }
 

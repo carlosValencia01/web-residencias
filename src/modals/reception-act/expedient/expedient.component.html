@@ -3,7 +3,7 @@
     <div class="row text-center">
       <div class="col-11">
         <h1 mat-dialog-title>
-          {{ Request.studentId.fullName}} - {{ Request.studentId.controlNumber }}
+          {{ Request.fullName}} - {{ Request.controlNumber }}
         </h1>
       </div>     
     </div>
@@ -46,16 +46,16 @@
           </div>
           <div class="row">
             <div class="col-6 text-left">
-              <p><strong>Número Control:</strong> {{Request.studentId.controlNumber}}</p>
-              <p><strong>Carrera:</strong> {{Request.studentId.career}}</p>
+              <p><strong>Número Control:</strong> {{Request.controlNumber}}</p>
+              <p><strong>Carrera:</strong> {{Request.career}}</p>
               <p><strong>Correo:</strong> {{Request.email}}</p>
               <p><strong>Teléfono:</strong> {{Request.telephone}}</p>
             </div>
             <div class="col-6 text-left">
               <p><strong>Registro:</strong> {{registeredDate}}</p>
-              <p><strong>Fecha Titulación:</strong> {{titledDate}}</p>
+              <p><strong>Fecha de acto recepcional:</strong> {{titledDate}}</p>
               <p><strong>Hora:</strong> {{titledHour}}</p>
-              <p><strong>Titulado:</strong> {{isTitled}}</p>
+              <p><strong>Título entregado:</strong> {{isTitled}}</p>
             </div>
           </div>
           <div class="row" *ngIf="existJury">

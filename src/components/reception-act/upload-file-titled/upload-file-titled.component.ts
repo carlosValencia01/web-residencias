@@ -82,7 +82,6 @@ export class UploadFileTitledComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '45em',
-      height: '550px'
     });
 
     dialogRef.afterClosed().subscribe((fileUpload: any) => {
@@ -175,7 +174,6 @@ export class UploadFileTitledComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '45em',
-      height: '600px'
     });
   }
 

@@ -130,13 +130,10 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   getFolderId(): void {
-    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email, eFOLDER.TITULACION).subscribe(
-      (folder) => {
+    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email, eFOLDER.TITULACION)
+      .subscribe(folder => {
          this.cookiesService.saveFolder(folder.folderIdInDrive);
-       },
-       err => {console.log(err);
-       }
-       );
+       }, err => console.log(err));
   }
 
   loadRequest() {
@@ -173,6 +170,12 @@ export class TitulacionPageComponent implements OnInit {
     }
   }
 
+  Files($event): void {
+    if ($event) {
+      this.loadRequest();
+    }
+  }
+
   SelectItem(): void {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
@@ -194,7 +197,6 @@ export class TitulacionPageComponent implements OnInit {
     switch (phase) {
       case eRequest.TITLED: {
         this.SteepElevenCompleted = (this.StatusComponent === eStatusRequest.FINALIZED ? true : false);
-        // this.SteepElevenCompleted = (phase === eRequest.TITLED ? false : true);
       }
       case eRequest.GENERATED: {
         this.SteepTenCompleted = (phase === eRequest.GENERATED ? false : true);
@@ -209,7 +211,6 @@ export class TitulacionPageComponent implements OnInit {
         const tmpFecha = new Date(this.Request.proposedDate);
         tmpFecha.setHours(hours, minutes, 0, 0);
         this.titrationHour = moment(tmpFecha).format('llll');
-        // ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
         this.CancelledAssignedMessage = this.StatusComponent === eStatusRequest.CANCELLED ? this.Request.observation : '';
         this.RejectAssignedMessage = this.StatusComponent === eStatusRequest.REJECT ? this.Request.observation : '';
       }

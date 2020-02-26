@@ -12,7 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { MatFileUploadModule } from 'mat-file-upload';
-
+// for HttpClient import:
+import { LoadingBarModule, LoadingBarService } from 'ngx-loading-bar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgModule } from '@angular/core';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -24,6 +25,11 @@ import { DropzoneModule } from 'ngx-dropzone-wrapper';
 import { DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { ContextMenuModule } from 'ngx-contextmenu';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   // Change this to your upload POST address:
@@ -34,16 +40,13 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   maxFiles: 1
 };
 
-import { CalendarModule, DateAdapter } from 'angular-calendar';
-import { ContextMenuModule } from 'ngx-contextmenu';
-import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-
 // Firestore
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment';
+
 // Material
 import {
   ErrorStateMatcher,
@@ -80,6 +83,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+
 // App module
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
@@ -114,32 +118,33 @@ import { StudentPageComponent } from 'src/pages/credentials/student-page/student
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
 import { InscriptionsMainPageComponent } from 'src/pages/inscriptions/inscriptions-main-page/inscriptions-main-page.component';
 import { RegisterStudentPageComponent } from 'src/pages/inscriptions/register-student-page/register-student-page.component';
-import { WizardInscriptionPageComponent } from '../pages/inscriptions/wizard-inscription-page/wizard-inscription-page.component';
-import { ContractStudentPageComponent } from '../pages/inscriptions/contract-student-page/contract-student-page.component';
-import { ResumeStudentPageComponent } from '../pages/inscriptions/resume-student-page/resume-student-page.component';
-import { ConfirmationStudentPageComponent } from '../pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
-import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
-import { ProfileInscriptionPageComponent } from '../pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
-import { SecretaryInscriptionPageComponent } from '../pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
-import { ListProcessStudentComponent } from '../pages/inscriptions/list-process-student/list-process-student.component';
-import { ListPendingStudentComponent } from '../pages/inscriptions/list-pending-student/list-pending-student.component';
-import { ListAceptStudentComponent } from '../pages/inscriptions/list-acept-student/list-acept-student.component';
+import { WizardInscriptionPageComponent } from 'src/pages/inscriptions/wizard-inscription-page/wizard-inscription-page.component';
+import { ContractStudentPageComponent } from 'src/pages/inscriptions/contract-student-page/contract-student-page.component';
+import { ResumeStudentPageComponent } from 'src/pages/inscriptions/resume-student-page/resume-student-page.component';
+import { ConfirmationStudentPageComponent } from 'src/pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
+import {
+  InscriptionsUploadFilesPageComponent
+} from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
+import { ProfileInscriptionPageComponent } from 'src/pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
+import { SecretaryInscriptionPageComponent } from 'src/pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
+import { ListProcessStudentComponent } from 'src/pages/inscriptions/list-process-student/list-process-student.component';
+import { ListPendingStudentComponent } from 'src/pages/inscriptions/list-pending-student/list-pending-student.component';
+import { ListAceptStudentComponent } from 'src/pages/inscriptions/list-acept-student/list-acept-student.component';
 // Providers
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 // Pipes
 import { FilterPipe as FilterPipeInscriptions } from 'src/pages/inscriptions/secretary-inscription-page/filter.pipe';
-//services
+// Services
 import { WizardService } from 'src/services/inscriptions/wizard.service';
 import { UploadFilesService } from 'src/services/inscriptions/upload-files.service';
-//modals
+// Modals
 import { NewPeriodComponent } from 'src/modals/inscriptions/new-period/new-period.component';
 import { ReviewExpedientComponent } from 'src/modals/inscriptions/review-expedient/review-expedient.component';
 import { ExpedientHistoryComponent } from 'src/modals/inscriptions/expedient-history/expedient-history.component';
-import { StudentInformationComponent } from '../modals/inscriptions/student-information/student-information.component';
-import { ReviewAnalysisComponent } from '../modals/inscriptions/review-analysis/review-analysis.component';
-import { SecretaryAssignmentComponent } from '../modals/inscriptions/secretary-assignment/secretary-assignment.component';
-import { ReviewCredentialsComponent } from '../modals/inscriptions/review-credentials/review-credentials.component';
-
+import { StudentInformationComponent } from 'src/modals/inscriptions/student-information/student-information.component';
+import { ReviewAnalysisComponent } from 'src/modals/inscriptions/review-analysis/review-analysis.component';
+import { SecretaryAssignmentComponent } from 'src/modals/inscriptions/secretary-assignment/secretary-assignment.component';
+import { ReviewCredentialsComponent } from 'src/modals/inscriptions/review-credentials/review-credentials.component';
 import { DocumentsHelpComponent } from 'src/modals/inscriptions/documents-help/documents-help.component';
 
 // Reception act module
@@ -149,13 +154,19 @@ import { GradePageComponent } from 'src/pages/reception-act/grade-page/grade-pag
 import { ProgressPageComponent } from 'src/pages/reception-act/progress-page/progress-page.component';
 import { TitulacionPageComponent } from 'src/pages/reception-act/titulacion-page/titulacion-page.component';
 import { VinculacionPageComponent } from 'src/pages/reception-act/vinculacion-page/vinculacion-page.component';
-import { ListBooksPagesComponent } from '../pages/reception-act/list-books-pages/list-books-pages.component';
+import { ListBooksPagesComponent } from 'src/pages/reception-act/list-books-pages/list-books-pages.component';
+import { DiaryComponent } from 'src/pages/reception-act/diary/diary.component';
+import { RangePageComponent } from 'src/pages/reception-act/range-page/range-page.component';
+import { ViewAppointmentPageComponent } from 'src/pages/reception-act/view-appointment-page/view-appointment-page.component';
 // Components
 import { ProcessComponentComponent } from 'src/components/reception-act/process-component/process-component.component';
 import { RequestComponentComponent } from 'src/components/reception-act/request-component/request-component.component';
 import { RequestViewComponent } from 'src/components/reception-act/request-view/request-view.component';
 import { UploadFilesComponent } from 'src/components/reception-act/upload-files/upload-files.component';
 import { ViewerComponentComponent } from 'src/components/reception-act/viewer-component/viewer-component.component';
+import { TitulationProgressComponent } from 'src/components/reception-act/titulation-progress/titulation-progress.component';
+import { ScheduleComponent } from 'src/components/reception-act/schedule/schedule.component';
+import { UploadFileTitledComponent } from 'src/components/reception-act/upload-file-titled/upload-file-titled.component';
 // Modals
 import { EmployeeAdviserComponent } from 'src/modals/reception-act/employee-adviser/employee-adviser.component';
 import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
@@ -171,12 +182,22 @@ import { BookComponent } from 'src/modals/reception-act/book/book.component';
 import { NewBookComponent } from 'src/modals/reception-act/new-book/new-book.component';
 import { ExpedientComponent } from 'src/modals/reception-act/expedient/expedient.component';
 import { DocumentReviewComponent } from 'src/modals/reception-act/document-review/document-review.component';
+import { RangeModalComponent } from 'src/modals/reception-act/range-modal/range-modal.component';
+import { NewEventComponent } from 'src/modals/reception-act/new-event/new-event.component';
+import { ViewMoreComponent } from 'src/modals/reception-act/view-more/view-more.component';
+import { StepperDocumentComponent } from 'src/modals/reception-act/stepper-document/stepper-document.component';
+import { UploadDeliveredComponent } from 'src/modals/reception-act/upload-delivered/upload-delivered.component';
+import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
+import { NewTitleComponent } from 'src/modals/reception-act/new-title/new-title.component';
+import { ChangeJuryComponent } from 'src/modals/reception-act/change-jury/change-jury.component';
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
 // Providers
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
 import { BookProvider } from 'src/providers/reception-act/book.prov';
+import { CustomDateFormatter } from 'src/providers/reception-act/custom-date-formatter.provider';
+import { RangeProvider } from 'src/providers/reception-act/range.prov';
 
 // Graduation module
 // Pages
@@ -235,26 +256,10 @@ import { CareerProvider } from 'src/providers/shared/career.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
 import { CurrentPositionService } from 'src/services/shared/current-position.service';
-
-import { ScheduleComponent } from '../components/reception-act/schedule/schedule.component';
-import { registerLocaleData } from '@angular/common';
-import localeEs from '@angular/common/locales/es';
-import { CustomDateFormatter } from 'src/providers/reception-act/custom-date-formatter.provider';
-import { DiaryComponent } from '../pages/reception-act/diary/diary.component';
-import { RangePageComponent } from '../pages/reception-act/range-page/range-page.component';
-import { RangeModalComponent } from '../modals/reception-act/range-modal/range-modal.component';
-import { RangeProvider } from 'src/providers/reception-act/range.prov';
-import { NewEventComponent } from '../modals/reception-act/new-event/new-event.component';
-import { ViewMoreComponent } from '../modals/reception-act/view-more/view-more.component';
-import { StepperDocumentComponent } from '../modals/reception-act/stepper-document/stepper-document.component';
-import { UploadDeliveredComponent } from '../modals/reception-act/upload-delivered/upload-delivered.component';
-import { ViewAppointmentPageComponent } from '../pages/reception-act/view-appointment-page/view-appointment-page.component';
-import { UploadFileTitledComponent } from '../components/reception-act/upload-file-titled/upload-file-titled.component';
-import { ActNotificacionComponent } from '../modals/reception-act/act-notificacion/act-notificacion.component';
-import { NewTitleComponent } from '../modals/reception-act/new-title/new-title.component';
+// Pipes
 import { SafePipe } from 'src/pipes/safePipe.pipe';
-import { ChangeJuryComponent } from 'src/modals/reception-act/change-jury/change-jury.component';
 import { DocumentTypePipe } from 'src/pipes/doumentType.pipe';
+
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -290,7 +295,9 @@ registerLocaleData(localeEs);
     ListProcessStudentComponent,
     ListPendingStudentComponent,
     ListAceptStudentComponent,
-    //Modals
+    ResumeStudentPageComponent,
+    ConfirmationStudentPageComponent,
+    // Modals
     NewPeriodComponent,
     ReviewExpedientComponent,
     ExpedientHistoryComponent,
@@ -298,24 +305,30 @@ registerLocaleData(localeEs);
     ReviewAnalysisComponent,
     SecretaryAssignmentComponent,
     ReviewCredentialsComponent,
-    //Pipes
+    DocumentsHelpComponent,
+    // Pipes
     FilterPipeInscriptions,
 
-    DocumentsHelpComponent,
     // Reception act module
-    // Pages    
+    // Pages
     GradePageComponent,
     ProgressPageComponent,
     TitulacionPageComponent,
     VinculacionPageComponent,
-    DocumentsValidComponent,    
+    DocumentsValidComponent,
     ListBooksPagesComponent,
+    DiaryComponent,
+    RangePageComponent,
+    ViewAppointmentPageComponent,
     // Components
     ProcessComponentComponent,
     RequestComponentComponent,
     RequestViewComponent,
     UploadFilesComponent,
     ViewerComponentComponent,
+    TitulationProgressComponent,
+    ScheduleComponent,
+    UploadFileTitledComponent,
     // Modals
     EmployeeAdviserComponent,
     EmployeeGradeComponent,
@@ -331,6 +344,15 @@ registerLocaleData(localeEs);
     NewBookComponent,
     ExpedientComponent,
     DocumentReviewComponent,
+    ActNotificacionComponent,
+    UploadDeliveredComponent,
+    StepperDocumentComponent,
+    ViewMoreComponent,
+    NewEventComponent,
+    RangeModalComponent,
+    ChangeJuryComponent,
+    ReleaseCheckComponent,
+
     // Graduation module
     // Pages
     GraduationEventsPageComponent,
@@ -369,26 +391,11 @@ registerLocaleData(localeEs);
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
-    LoadCsvDataComponent,     
-    ReleaseCheckComponent,
-    ResumeStudentPageComponent,
-    ConfirmationStudentPageComponent,
-    ScheduleComponent,
-    DiaryComponent,
-    RangePageComponent,
-    RangeModalComponent,
-    NewEventComponent,
-    ViewMoreComponent,
-    StepperDocumentComponent,
-    UploadDeliveredComponent,
-    ViewAppointmentPageComponent,
-    UploadFileTitledComponent,
-    ActNotificacionComponent,
+    LoadCsvDataComponent,
 
-    //Pipes
+    // Pipes
     SafePipe,
     DocumentTypePipe,
-    ChangeJuryComponent,
   ],
   imports: [
     // Angular
@@ -462,6 +469,7 @@ registerLocaleData(localeEs);
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
+    LoadingBarModule
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -482,7 +490,7 @@ registerLocaleData(localeEs);
     // Inscriptions
     // Providers
     InscriptionsProvider,
-    //services
+    // Services
     WizardService,
     UploadFilesService,
 
@@ -522,10 +530,11 @@ registerLocaleData(localeEs);
     // Services
     CurrentPositionService,
     ErrorMatcher,
+    // LoadingBarService
   ],
   entryComponents: [
     // Reception act module
-    // Pages    
+    // Pages
     // Modals
     EmployeeAdviserComponent,
     EmployeeGradeComponent,
@@ -547,8 +556,11 @@ registerLocaleData(localeEs);
     ChangeJuryComponent,
     ExpedientComponent,
     DocumentReviewComponent,
-    //inscriptions
-    //Modals
+    ViewMoreComponent,
+    NewEventComponent,
+
+    // Inscriptions
+    // Modals
     NewPeriodComponent,
     ReviewExpedientComponent,
     ExpedientHistoryComponent,
@@ -573,9 +585,7 @@ registerLocaleData(localeEs);
     // Modals
     ConfirmDialogComponent,
     ExtendViewerComponent,
-    LoadCsvDataComponent,    
-    NewEventComponent,
-    ViewMoreComponent
+    LoadCsvDataComponent,
   ],
   bootstrap: [AppComponent]
 })

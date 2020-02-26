@@ -16,6 +16,7 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
+
 moment.locale('es');
 
 @Component({
@@ -74,45 +75,37 @@ export class ExpedientComponent implements OnInit {
   }
 
   init() {
-    this.requestProvider.getRequestById(this.data.id).subscribe(
-      data => {
-        this.Request = data.request[0];
-        this.registeredDate = moment(new Date(this.Request.applicationDate)).format('LL');
-        this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
-        this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
-        let tmpDate: Date;
-        if (this.existTitledDate) {
-          tmpDate = new Date(this.Request.proposedDate);
-          tmpDate.setHours(0, 0, 0, 0);
-          tmpDate.setHours(this.Request.proposedHour / 60, this.Request.proposedHour % 60, 0, 0);
-        }
-        this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
-        this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
-        this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED
-          && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED)
-          ? 'Si' : 'No';
+    this.Request = this.data.request;
+    this.registeredDate = moment(new Date(this.Request.applicationDateLocal)).format('LL');
+    this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
+    this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
+    let tmpDate: Date;
+    if (this.existTitledDate) {
+      tmpDate = new Date(this.Request.proposedDate);
+      tmpDate.setHours(0, 0, 0, 0);
+      tmpDate.setHours(this.Request.proposedHour / 60, this.Request.proposedHour % 60, 0, 0);
+    }
+    this.titledDate = this.existTitledDate ? moment(tmpDate).format('LL') : 'SIN DEFINIR';
+    this.titledHour = this.existTitledDate ? moment(tmpDate).format('LT') : 'SIN DEFINIR';
+    this.isTitled = ((<eRequest><keyof typeof eRequest>this.Request.phase) === eRequest.TITLED
+      && (<eStatusRequest><keyof typeof eStatusRequest>this.Request.status) === eStatusRequest.FINALIZED)
+      ? 'Si' : this.Request.status === 'Finalizado' ? 'Si' : 'No';
 
-        this.Request.student = data.request[0].studentId;
-
-        this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber, eFOLDER.TITULACION).subscribe(
-          (folder) => {
-            this.folderId = folder.folderIdInDrive;
-          }, err => {
-            console.log(err);
-            this._NotificationsServices
-              .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener folder del estudiante');
-          }
-        );
-
-        this._Request = new uRequest(this.Request, this.imgSrv, this._CookiesService);
-        this.onLoad(this.Request.documents);
-        (async () => {
-          await this.delay(150);
-        })();
-      }, _ => {
+    this._StudentProvider.getDriveFolderId(this.Request.student.controlNumber, eFOLDER.TITULACION)
+      .subscribe(folder => {
+        this.folderId = folder.folderIdInDrive;
+      }, err => {
+        console.log(err);
         this._NotificationsServices
-          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitud');
-      });
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener folder del estudiante');
+      }
+    );
+
+    this._Request = new uRequest(this.Request, this.imgSrv, this._CookiesService);
+    this.onLoad(this.Request.documents);
+    (async () => {
+      await this.delay(150);
+    })();
   }
 
   changed(): void {
@@ -123,12 +116,9 @@ export class ExpedientComponent implements OnInit {
       }
       this.changeDocument = !this.changeDocument;
     } else {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Folder del estudiante no encontrado');
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Folder del estudiante no encontrado');
     }
-
-    // if (this.changeDocument) {
-    //   this._RequestService.AddRequest(this.Request, <eRequest><keyof typeof eRequest>this.Request.phase);
-    // }
   }
 
   onLoad(documents): void {
@@ -173,7 +163,7 @@ export class ExpedientComponent implements OnInit {
         break;
       }
       case eFILES.INCONVENIENCE: {
-        name = 'CONSTANCIA DE NO INCONVENIENCIA'
+        name = 'CONSTANCIA DE NO INCONVENIENCIA';
         break;
       }
       case eFILES.ACTA_NACIMIENTO: {
@@ -315,12 +305,11 @@ export class ExpedientComponent implements OnInit {
           disableClose: true,
           hasBackdrop: true,
           width: '60em',
-          height: '600px'
         });
       }, _ => {
         this.showLoading = false;
-        this._NotificationsServices.showNotification(eNotificationType.ERROR,
-          'Acto recepcional', 'Documento no encontrado');
+        this._NotificationsServices
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Documento no encontrado');
       });
     } else {
       this.showLoading = false;
@@ -363,6 +352,7 @@ export class ExpedientComponent implements OnInit {
   }
 }
 
+// tslint:disable-next-line: class-name
 interface iDocument {
   type: string;
   value: any;

@@ -97,19 +97,18 @@ export class ListGraduatesPageComponent implements OnInit {
 
   loading = false;
 
-  //Font Montserrat
+  // Font Montserrat
   montserratNormal: any;
   montserratBold: any;
 
   dateGraduation;
-  
 
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
     private graduationProv: GraduationProvider,
     private cookiesService: CookiesService,
-    private router: Router,    
+    private router: Router,
     private imageToBase64Serv: ImageToBase64Service,
     private studentProv: StudentProvider
   ) {
@@ -121,9 +120,9 @@ export class ListGraduatesPageComponent implements OnInit {
     }
     this.collection = this.router.url.split('/')[2];
     const sub = this.firestoreService.getEvent(this.collection).subscribe(
-      ev => { 
-        sub.unsubscribe(); 
-        this.status = ev.payload.get('estatus'); 
+      ev => {
+        sub.unsubscribe();
+        this.status = ev.payload.get('estatus');
         this.dateGraduation = ev.payload.get('date');
         this.boletosTotales = ev.payload.get('totalTickets');
         this.boletosXAlumno = ev.payload.get('studentTickets');
@@ -134,8 +133,7 @@ export class ListGraduatesPageComponent implements OnInit {
       (alumnos) => {
         const sub = this.firestoreService.getCareers().subscribe(
           (carreras) => {
-            sub.unsubscribe();            
-            
+            sub.unsubscribe();
             this.careersPosition = carreras.map((carrera: any) => {
               return { carrera: carrera.nombre, posicion: carrera.posicion };
             });
@@ -156,7 +154,6 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    
     switch (this.cookiesService.getData().user.role) {
       case 0:
         this.role = 'administration';
@@ -241,37 +238,36 @@ export class ListGraduatesPageComponent implements OnInit {
         return a.nameLastName.localeCompare(b.nameLastName);
       });
 
-      this.alumnosReport = this.alumnos;      
+      this.alumnosReport = this.alumnos;
       this.totalAlumnos = this.alumnosReport.length;
       this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
-      this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation,'');
+      this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation, '');
       this.alumnosReportDocumentation = this.alumnos;
       this.eventFilterReport();
       // Contar total de alumnos
       this.totalEgresados = this.alumnos.length;
-      this.totalEgresadosH = this.alumnos.filter( st=> st.genero =='M').length;
-      this.totalEgresadosM = this.alumnos.filter( st=> st.genero =='F').length;
+      this.totalEgresadosH = this.alumnos.filter( st => st.genero === 'M').length;
+      this.totalEgresadosM = this.alumnos.filter( st => st.genero === 'F').length;
       this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
       this.certificadosListos = this.filterCountItemsStatus('Listo').length;
       this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
       this.certificadosPendientes = this.filterCountItemsStatus('Fotos y Recibo').length;
-      // this.certificadosPendientes = [this.totalEgresados-(this.certificadosImpresos+this.certificadosEntregados+this.certificadosListos)];
 
       this.totalVerificados = this.filterCountItemsVerified().length;
-      this.boletosRestantes = (this.boletosTotales-this.boletosRegistrados);
+      this.boletosRestantes = (this.boletosTotales - this.boletosRegistrados);
     });
   }
 
-  getTicketsRegistered(){
+  getTicketsRegistered() {
     this.boletosRegistrados = 0;
-    for(var i = 0 ; i < this.alumnos.length; i++){
-      this.boletosRegistrados = (this.boletosRegistrados+this.alumnos[i].numInvitados);
+    for (let i = 0 ; i < this.alumnos.length; i++) {
+      this.boletosRegistrados = (this.boletosRegistrados + this.alumnos[i].numInvitados);
     }
   }
 
   // Cambias estatus a Registrado
   removePaidEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Registrado'},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Registrado'}, this.collection).then(() => {
       this.eventFilterReport();
       this.notificationsServices.showNotification(0, 'Pago removido para:', item.nc);
     });
@@ -279,7 +275,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Asistió
   asistenceEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Asistió'},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Asistió'}, this.collection).then(() => {
       this.eventFilterReport();
       this.notificationsServices.showNotification(0, 'Asistencia registrada para:', item.nc);
     });
@@ -287,15 +283,16 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Cambias estatus a Verificado
   verifyEvent(item) {
-      const invitados = [];
-      for(var i = 0; i < this.boletosXAlumno; i++){
-        invitados.push({['invitado'+(i+1)]:'verificado'})
-      }
-      this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Verificado',numInvitados:this.boletosXAlumno,invitados},this.collection).then(() =>{
+    const invitados = [];
+    for (let i = 0; i < this.boletosXAlumno; i++) {
+      invitados.push({['invitado' + (i + 1)]: 'verificado'});
+    }
+    this.firestoreService
+      .updateFieldGraduate(item.id, {estatus: 'Verificado', numInvitados: this.boletosXAlumno, invitados}, this.collection)
+      .then(() => {
         this.eventFilterReport();
         this.notificationsServices.showNotification(0, 'Verificación registrada para:', item.nc);
       });
-      //this.sendSurveyGraduate(item);
   }
 
   // Enviar encuesta al verificar alumno desde la web
@@ -532,7 +529,7 @@ export class ListGraduatesPageComponent implements OnInit {
     this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
   }
 
-  eventFilterReportDocumentation(){
+  eventFilterReportDocumentation() {
     this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation, '');
   }
 
@@ -568,7 +565,10 @@ export class ListGraduatesPageComponent implements OnInit {
 
   filterCountItemsVerified() {
     return this.alumnos.filter(function (alumno) {
-      return alumno.status.toLowerCase().indexOf(('Verificado').toLocaleLowerCase()) > -1 || alumno.status.toLowerCase().indexOf(('Asistió').toLocaleLowerCase()) > -1 || alumno.status.toLowerCase().indexOf(('Mencionado').toLocaleLowerCase()) > -1;
+      return alumno.status.toLowerCase()
+        .indexOf(('Verificado').toLocaleLowerCase()) > -1
+          || alumno.status.toLowerCase().indexOf(('Asistió').toLocaleLowerCase()) > -1
+          || alumno.status.toLowerCase().indexOf(('Mencionado').toLocaleLowerCase()) > -1;
     });
   }
 
@@ -654,7 +654,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(7);
     doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
     window.open(doc.output('bloburl'), '_blank');
-    this.loading=false;
+    this.loading = false;
     // doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
 
@@ -794,7 +794,7 @@ export class ListGraduatesPageComponent implements OnInit {
       }
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
-      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos en estatus Verificado de la carrera '+this.searchCarreer);
+      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos en estatus Verificado de la carrera ' + this.searchCarreer);
     }
   }
 
@@ -842,7 +842,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Asignar titulo
   degreeEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id,{degree: true},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {degree: true}, this.collection).then(() => {
       this.eventFilterReport();
       Swal.fire('Título Asignado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -852,7 +852,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Remover titulo
   degreeRemoveEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id,{degree: false},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {degree: false}, this.collection).then(() => {
       this.eventFilterReport();
       Swal.fire('Título Removido', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -912,7 +912,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Guardar observaciones
   saveObservations(item, newObservations) {
-    this.firestoreService.updateFieldGraduate(item.id,{observations: newObservations},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {observations: newObservations}, this.collection).then(() => {
       this.eventFilterReport();
       Swal.fire('Observaciones Guardadas', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -971,7 +971,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   asignBestAverage(item, average) {
-    this.firestoreService.updateFieldGraduate(item.id,{mejorPromedio: true,promedio: average},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {mejorPromedio: true, promedio: average}, this.collection).then(() => {
       this.eventFilterReport();
       Swal.fire('Promedio Asignado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -979,10 +979,10 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
-  async generateReportBestAverage() {    
+  async generateReportBestAverage() {
     this.loading = true;
-    await this.getBestAvgs();    
-    
+    await this.getBestAvgs();
+
     var doc = new jsPDF('p', 'pt');
 
     // Header
@@ -1031,7 +1031,7 @@ export class ListGraduatesPageComponent implements OnInit {
           2: { cellWidth: 60, halign: 'center' }
         }
       });
-  
+
       // FOOTER
       var today = new Date();
       var m = today.getMonth() + 1;
@@ -1044,7 +1044,7 @@ export class ListGraduatesPageComponent implements OnInit {
       doc.setFontStyle('bold');
       doc.setFontSize(7);
       doc.text(footer, pageWidth / 2, pageHeight - 12, 'center');
-  
+
       // Hour PDF
       let hour = today.getDate() + '/' + mes + '/' + today.getFullYear() + ' - ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
       doc.setTextColor(100);
@@ -1129,7 +1129,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   returnAsistenceEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Asistió'},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Asistió'}, this.collection).then(() => {
       this.eventFilterReport();
     }, (error) => {
       console.log(error);
@@ -1187,7 +1187,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   saveEmail(item, newEmail) {
-    this.firestoreService.updateFieldGraduate(item.id,{correo: newEmail},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {correo: newEmail}, this.collection).then(() => {
       this.eventFilterReport();
       Swal.fire('Correo Actualizado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
@@ -1233,14 +1233,14 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   returnVerifiedEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Verificado'},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Verificado'}, this.collection).then(() => {
       this.eventFilterReport();
     }, (error) => {
       console.log(error);
     });
   }
   returnRegisterEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id,{estatus: 'Registrado',invitados:[],numInvitados:0},this.collection).then(() =>{
+    this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Registrado', invitados: [], numInvitados: 0}, this.collection).then(() => {
       this.eventFilterReport();
     }, (error) => {
       console.log(error);
@@ -1311,48 +1311,48 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
-  changeStatusDocumentation(student,status){
-    switch (status){
-      case "Fotos y Recibo":
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);        
+  changeStatusDocumentation(student, status) {
+    switch (status) {
+      case 'Fotos y Recibo':
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status}, this.collection);
 
-        this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
+        this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas', student.nc);
 
         break;
-      case "Impreso":
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+      case 'Impreso':
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status}, this.collection);
 
         // this.sendNotification('Certificado', 'Tus certificado ha sido impreso',student.nc);
         break;
-      case "Listo":
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+      case 'Listo':
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status}, this.collection);
 
-        this.sendNotification('Certificado', 'Tu certificado ya está listo',student.nc);
+        this.sendNotification('Certificado', 'Tu certificado ya está listo', student.nc);
         break;
-      case "Entregado":
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:status}, this.collection);
+      case 'Entregado':
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status}, this.collection);
 
-        this.sendNotification('Certificado', 'Tu certificado fue entregado',student.nc);
+        this.sendNotification('Certificado', 'Tu certificado fue entregado', student.nc);
         break;
-      case "Regresar":
-        switch (student.documentationStatus){
-          case "Fotos y Recibo":
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:' '}, this.collection);
+      case 'Regresar':
+        switch (student.documentationStatus) {
+          case 'Fotos y Recibo':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: ' '}, this.collection);
 
             // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
-          case "Impreso":
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Fotos y Recibo'}, this.collection);
+          case 'Impreso':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Fotos y Recibo'}, this.collection);
 
             // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
-          case "Listo":
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Impreso'}, this.collection);
+          case 'Listo':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Impreso'}, this.collection);
 
             // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
-          case "Entregado":
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus:'Listo'}, this.collection);
+          case 'Entregado':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Listo'}, this.collection);
 
             // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
@@ -1360,12 +1360,12 @@ export class ListGraduatesPageComponent implements OnInit {
     }
   }
 
-  generateConstancy(student){
+  generateConstancy(student) {
     this.loading = true;
     let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
     var doc = new jsPDF();
-    
+
     // @ts-ignore
     doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
     // @ts-ignore
@@ -1375,8 +1375,8 @@ export class ListGraduatesPageComponent implements OnInit {
 
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    
-    //Nombre
+
+    // Nombre
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(18);
@@ -1385,9 +1385,9 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(14);
-    doc.text("Por haber concluído íntegramente la especialidad de:", pageWidth / 2, 140, 'center');
-    
-    //Especialidad
+    doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 140, 'center');
+
+    // Especialidad
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(16);
@@ -1396,9 +1396,9 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(14);
-    doc.text("En la carrera de: ", pageWidth / 2, 180, 'center');
+    doc.text('En la carrera de: ', pageWidth / 2, 180, 'center');
 
-    //Carrera
+    // Carrera
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(16);
@@ -1407,20 +1407,20 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(13);
-    doc.text("Tepic, Nayarit., "+new Date(this.dateGraduation.seconds*1000).toLocaleDateString("es-MX", dateOptions), pageWidth / 2, 220, 'center');
+    doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions), pageWidth / 2, 220, 'center');
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(16);
-    doc.text("LIC. MANUEL ANGEL URIBE VÁZQUEZ", pageWidth / 2, 240, 'center');
-    doc.text("DIRECTOR", pageWidth / 2, 247, 'center');
+    doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 240, 'center');
+    doc.text('DIRECTOR', pageWidth / 2, 247, 'center');
 
-    doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2)-50, 197, 100, 53.75);
+    doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 197, 100, 53.75);
     this.loading = false;
     window.open(doc.output('bloburl'), '_blank');
   }
 
-  generateConstancys(){
+  generateConstancys() {
     if (this.alumnosConstancia.length !== 0) {
       this.loading = true;
       var doc = new jsPDF();
@@ -1434,9 +1434,9 @@ export class ListGraduatesPageComponent implements OnInit {
 
       var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
       var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-      
-      for(var i = 0; i < this.alumnosConstancia.length; i++){
-        //Nombre
+
+      for (var i = 0; i < this.alumnosConstancia.length; i++) {
+        // Nombre
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(18);
@@ -1445,9 +1445,9 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text("Por haber concluído íntegramente la especialidad de:", pageWidth / 2, 140, 'center');
-        
-        //Especialidad
+        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 140, 'center');
+
+        // Especialidad
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
@@ -1456,9 +1456,9 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text("En la carrera de: ", pageWidth / 2, 180, 'center');
+        doc.text('En la carrera de: ', pageWidth / 2, 180, 'center');
 
-        //Carrera
+        // Carrera
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
@@ -1467,20 +1467,20 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
-        doc.text("Tepic, Nayarit., "+new Date(this.dateGraduation.seconds*1000).toLocaleDateString("es-MX", dateOptions), pageWidth / 2, 220, 'center');
+        doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions), pageWidth / 2, 220, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text("LIC. MANUEL ANGEL URIBE VÁZQUEZ", pageWidth / 2, 240, 'center');
-        doc.text("DIRECTOR", pageWidth / 2, 247, 'center');
-        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2)-50, 197, 100, 53.75);
+        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 240, 'center');
+        doc.text('DIRECTOR', pageWidth / 2, 247, 'center');
+        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 197, 100, 53.75);
 
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(9);
-        doc.text((i+1)+'',10,pageHeight-10, 'center');
+        doc.text((i + 1) + '', 10, pageHeight - 10, 'center');
         if (i < this.alumnosConstancia.length - 1) {
           doc.addPage();
         }
@@ -1492,76 +1492,76 @@ export class ListGraduatesPageComponent implements OnInit {
     }
   }
 
-  addTicket(item){
-    if(this.boletosRestantes > 0){
-      this.firestoreService.updateFieldGraduate(item.id, { numInvitados:(item.numInvitados+1),invitados: firebase.firestore.FieldValue.arrayUnion({['invitado'+(item.numInvitados+1)]:'verificado'})},this.collection);
-    } else{
+  addTicket(item) {
+    if (this.boletosRestantes > 0) {
+      this.firestoreService.updateFieldGraduate(item.id, { numInvitados: (item.numInvitados + 1), invitados: firebase.firestore.FieldValue.arrayUnion({['invitado' + (item.numInvitados + 1)]: 'verificado'})}, this.collection);
+    } else {
       this.notificationsServices.showNotification(2, 'Atención', 'Se Terminaron los Boletos.');
     }
   }
 
-  delTicket(item){
-    if(item.numInvitados == 0){
+  delTicket(item) {
+    if (item.numInvitados == 0) {
       this.notificationsServices.showNotification(2, 'Atención', 'El número de boletos no debe ser menor a 0.');
     } else {
       const invitados = item.invitados;
       invitados.pop();
-      this.firestoreService.updateFieldGraduate(item.id, { numInvitados:(item.numInvitados-1),invitados},this.collection);
+      this.firestoreService.updateFieldGraduate(item.id, { numInvitados: (item.numInvitados - 1), invitados}, this.collection);
     }
   }
 
-  assignTicketsStudent(){
+  assignTicketsStudent() {
 
   }
 
-  sendNotification(title: string, body: string, nc: string){
+  sendNotification(title: string, body: string, nc: string) {
     const subTok = this.firestoreService.getStudentToken(nc).subscribe(
-      (token)=>{
-        subTok.unsubscribe();        
+      (token) => {
+        subTok.unsubscribe();
         const infoToken = token[0];
         const notification = {
-          "titulo":title,
-          "descripcion": body,
-          "fecha": new Date()
+          'titulo': title,
+          'descripcion': body,
+          'fecha': new Date()
         };
-        if(infoToken){
+        if (infoToken) {
           // student device exist
-          if(infoToken.token){
+          if (infoToken.token) {
             // student has token device
             // send notification
-            this.firestoreService.sendNotification(infoToken.id,notification).then(
-              (sended)=>{
-                this.studentProv.sendNotification({title,body,token:infoToken.token, screen:'graduation'}).subscribe(
-                  (send)=>{
-                    this.notificationsServices.showNotification(eNotificationType.SUCCESS,'Notificación enviada','');
+            this.firestoreService.sendNotification(infoToken.id, notification).then(
+              (sended) => {
+                this.studentProv.sendNotification({title, body, token: infoToken.token, screen: 'graduation'}).subscribe(
+                  (send) => {
+                    this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Notificación enviada', '');
                   }
                 );
               }
             );
-          }else{
+          } else {
             // only save notification in firebase
-            this.firestoreService.sendNotification(infoToken.id,notification).then(
-              (sended)=>{
+            this.firestoreService.sendNotification(infoToken.id, notification).then(
+              (sended) => {
                 console.log('Enviado');
               }
             );
           }
-          this.firestoreService.updateDeviceStudent(infoToken.id,{pendientes:(infoToken.pendientes+1)}).then(
-            (updated)=>{}
+          this.firestoreService.updateDeviceStudent(infoToken.id, {pendientes: (infoToken.pendientes + 1)}).then(
+            (updated) => {}
           );
-        }else{
+        } else {
           // create register for notifications
-          //only save notification in firebase
+          // only save notification in firebase
           this.firestoreService.createDeviceToken(nc).then(
-            (created)=>{
+            (created) => {
               const subST = this.firestoreService.getStudentToken(nc).subscribe(
-                (token)=>{
+                (token) => {
                   subST.unsubscribe();
-                  this.firestoreService.sendNotification(infoToken.id,notification).then(
-                    (sended)=>{
+                  this.firestoreService.sendNotification(infoToken.id, notification).then(
+                    (sended) => {
                       console.log('Enviado');
-                      this.firestoreService.updateDeviceStudent(infoToken.id,{pendientes:(infoToken.pendientes+1)}).then(
-                        (updated)=>{}
+                      this.firestoreService.updateDeviceStudent(infoToken.id, {pendientes: (infoToken.pendientes + 1)}).then(
+                        (updated) => {}
                       );
                     }
                   );
@@ -1588,77 +1588,77 @@ generateLabels() {
 
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-    
-    for(var i = 0; i < this.alumnosConstancia.length; i++){
+
+    for (var i = 0; i < this.alumnosConstancia.length; i++) {
       var titulo = '';
       doc.setFontSize(10);
       doc.setFontType('bold');
-      //Identificador
-      doc.text((i+1)+'',2.5,(pageHeight/2)+1.5);
+      // Identificador
+      doc.text((i + 1) + '', 2.5, (pageHeight / 2) + 1.5);
       doc.setFontSize(9.5);
       doc.setFontType('bold');
 
-      //Titulo
-      if(this.alumnosConstancia[i].degree == true){
-        switch(this.alumnosConstancia[i].carreerComplete){
-          case "ARQUITECTURA":
-            titulo = 'ARQ.'
+      // Titulo
+      if (this.alumnosConstancia[i].degree == true) {
+        switch (this.alumnosConstancia[i].carreerComplete) {
+          case 'ARQUITECTURA':
+            titulo = 'ARQ.';
             break;
-          case "INGENIERÍA CIVIL":
-            titulo = 'ING.'
+          case 'INGENIERÍA CIVIL':
+            titulo = 'ING.';
             break;
-          case "INGENIERÍA BIOQUÍMICA":
-            titulo = 'ING.'
+          case 'INGENIERÍA BIOQUÍMICA':
+            titulo = 'ING.';
             break;
-          case "INGENIERÍA EN GESTIÓN EMPRESARIAL":
-            titulo = 'ING.'
+          case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
+            titulo = 'ING.';
             break;
-          case "INGENIERÍA QUÍMICA":
-            titulo = 'ING.'
+          case 'INGENIERÍA QUÍMICA':
+            titulo = 'ING.';
             break;
-          case "INGENIERÍA MECATRÓNICA":
-            titulo = 'ING.'
+          case 'INGENIERÍA MECATRÓNICA':
+            titulo = 'ING.';
             break;
-          case "INGENIERÍA ELÉCTRICA":
-            titulo = 'ING.'
+          case 'INGENIERÍA ELÉCTRICA':
+            titulo = 'ING.';
             break;
-          case "INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES":
-            titulo = 'ING.'
+          case 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES':
+            titulo = 'ING.';
             break;
-          case "INGENIERÍA EN SISTEMAS COMPUTACIONALES":
-            titulo = 'ING.'
+          case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
+            titulo = 'ING.';
             break;
-          case "INGENIERÍA INDUSTRIAL":
-            titulo = 'ING.'
+          case 'INGENIERÍA INDUSTRIAL':
+            titulo = 'ING.';
             break;
-          case "LICENCIATURA EN ADMINISTRACIÓN":
-            titulo = 'LIC.'
+          case 'LICENCIATURA EN ADMINISTRACIÓN':
+            titulo = 'LIC.';
             break;
-          case "MAESTRIA EN CIENCIAS DE ALIMENTOS":
-            titulo = 'MCA.'
+          case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+            titulo = 'MCA.';
             break;
-          case "MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN":
-            titulo = 'MTI.'
+          case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+            titulo = 'MTI.';
             break;
-          case "DOCTORADO EN CIENCIAS DE ALIMENTOS":
-            titulo = 'DCA.'
+          case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
+            titulo = 'DCA.';
             break;
           default:
-            titulo = ''
-            break; 
+            titulo = '';
+            break;
           }
-          doc.text(titulo,23,(pageHeight/2)+1.5);
+          doc.text(titulo, 23, (pageHeight / 2) + 1.5);
       }
 
-      //Nombre
-      doc.text(this.alumnosConstancia[i].name,35,(pageHeight/2)+1.5);
+      // Nombre
+      doc.text(this.alumnosConstancia[i].name, 35, (pageHeight / 2) + 1.5);
 
-      //Carrera
-      doc.text(this.alumnosConstancia[i].carreer,150,(pageHeight/2)+1.5);
+      // Carrera
+      doc.text(this.alumnosConstancia[i].carreer, 150, (pageHeight / 2) + 1.5);
 
       doc.setFontSize(10);
       doc.setFontType('bold');
-      
+
       if (i < this.alumnosConstancia.length - 1) {
         doc.addPage();
       }
@@ -1670,65 +1670,65 @@ generateLabels() {
     }
   }
 
-  getBestAvgs(){
+  getBestAvgs() {
     this.bestStudents = [];
 
-    
-    return new Promise( (resolve)=>{
 
-      
-      const femaleAvgs  = this.alumnosReport.filter((std)=>std.genero == 'F').map( (st)=> ({id:st.id,avg:parseFloat(st.average),career:st.carreerComplete,name:st.name, careerS:st.carreer,degree:st.degree}));
-      const maleAvgs = this.alumnosReport.filter((std)=>std.genero == 'M').map( (st)=> ({id:st.id,avg:parseFloat(st.average),career:st.carreerComplete,name:st.name, careerS:st.carreer,degree:st.degree}));
-      let bestMaleAvg ={
-        id:'',
-        avg:0,
-        name:'',
-        career:'',
-        degree:false,
-        careerS:''
-      }, bestFemaleAvg ={
-        id:'',
-        avg:0,
-        name:'',
-        career:'',
-        degree:false,
-        careerS:''
+    return new Promise( (resolve) => {
+
+
+      const femaleAvgs  = this.alumnosReport.filter((std) => std.genero == 'F').map( (st) => ({id: st.id, avg: parseFloat(st.average), career: st.carreerComplete, name: st.name, careerS: st.carreer, degree: st.degree}));
+      const maleAvgs = this.alumnosReport.filter((std) => std.genero == 'M').map( (st) => ({id: st.id, avg: parseFloat(st.average), career: st.carreerComplete, name: st.name, careerS: st.carreer, degree: st.degree}));
+      let bestMaleAvg = {
+        id: '',
+        avg: 0,
+        name: '',
+        career: '',
+        degree: false,
+        careerS: ''
+      }, bestFemaleAvg = {
+        id: '',
+        avg: 0,
+        name: '',
+        career: '',
+        degree: false,
+        careerS: ''
       };
       const sub = this.firestoreService.getGraduates(this.collection).subscribe(
-        (gr)=>{
-          
+        (gr) => {
+
           sub.unsubscribe();
-          const graduates = gr.map( (st)=>({id:st.payload.doc.id,avg:st.payload.doc.get('promedio'),bestAvgM:st.payload.doc.get('mejorPromedioM'),bestAvgFM:st.payload.doc.get('mejorPromedioF')}));
-          const bestAvgM = graduates.filter((st)=> st.bestAvgM == true)[0];
-          const bestAvgFM = graduates.filter((st)=> st.bestAvgFM == true)[0];
-          for( const stu of femaleAvgs){
-            if(stu.avg > bestFemaleAvg.avg){
+          const graduates = gr.map( (st) => ({id: st.payload.doc.id, avg: st.payload.doc.get('promedio'), bestAvgM: st.payload.doc.get('mejorPromedioM'), bestAvgFM: st.payload.doc.get('mejorPromedioF')}));
+          const bestAvgM = graduates.filter((st) => st.bestAvgM == true)[0];
+          const bestAvgFM = graduates.filter((st) => st.bestAvgFM == true)[0];
+          for ( const stu of femaleAvgs) {
+            if (stu.avg > bestFemaleAvg.avg) {
               bestFemaleAvg = stu;
             }
           }
-          for( const stu of maleAvgs){
-            if(stu.avg > bestMaleAvg.avg){
+          for ( const stu of maleAvgs) {
+            if (stu.avg > bestMaleAvg.avg) {
               bestMaleAvg = stu;
             }
           }
-          if(bestAvgM){
-            if(bestAvgM.id !== bestMaleAvg.id){
-              this.firestoreService.updateFieldGraduate(bestAvgM.id,{mejorPromedioM:false},this.collection).then((upd)=>{});
-              this.firestoreService.updateFieldGraduate(bestMaleAvg.id,{mejorPromedioM:true},this.collection).then((up)=>{                
+          if (bestAvgM) {
+            if (bestAvgM.id !== bestMaleAvg.id) {
+              this.firestoreService.updateFieldGraduate(bestAvgM.id, {mejorPromedioM: false}, this.collection).then((upd) => {});
+              this.firestoreService.updateFieldGraduate(bestMaleAvg.id, {mejorPromedioM: true}, this.collection).then((up) => {
               });
             }
-          }else{
-            this.firestoreService.updateFieldGraduate(bestMaleAvg.id,{mejorPromedioM:true},this.collection).then((up)=>{                
+          } else {
+            this.firestoreService.updateFieldGraduate(bestMaleAvg.id, {mejorPromedioM: true}, this.collection).then((up) => {
             });
           }
-          if(bestAvgFM){
-            if(bestAvgFM.id !== bestFemaleAvg.id){
-              this.firestoreService.updateFieldGraduate(bestAvgFM.id,{mejorPromedioF:false},this.collection).then((upd)=>{});
-              this.firestoreService.updateFieldGraduate(bestFemaleAvg.id,{mejorPromedioF:true},this.collection).then((up)=>{                
+          if (bestAvgFM) {
+            if (bestAvgFM.id !== bestFemaleAvg.id) {
+              this.firestoreService.updateFieldGraduate(bestAvgFM.id, {mejorPromedioF: false}, this.collection).then((upd) => {});
+              this.firestoreService.updateFieldGraduate(bestFemaleAvg.id, {mejorPromedioF: true}, this.collection).then((up) => {
               });
             }
-          }else{
-            this.firestoreService.updateFieldGraduate(bestFemaleAvg.id,{mejorPromedioF:true},this.collection).then((up)=>{                
+          } else {
+            this.firestoreService.updateFieldGraduate(bestFemaleAvg.id, {mejorPromedioF: true}, this.collection).then((up) => {
             });
           }
           this.bestStudents.push(bestFemaleAvg);
