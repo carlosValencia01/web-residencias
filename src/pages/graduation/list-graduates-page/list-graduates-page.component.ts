@@ -1643,7 +1643,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(9);
-        // doc.text((i + 1) + '', 10, pageHeight - 10, 'center');
+        doc.text((i + 1) + '', 10, pageHeight - 10, 'center');
         if (i < this.alumnosConstanciaVerificados.length - 1) {
           doc.addPage();
         }
@@ -1946,7 +1946,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.setFontType('bold');
         // Identificador
-        // doc.text((i + 1) + '', 2.5, (pageHeight / 2) + 1.5);
+        doc.text((i + 1) + '', 2.5, (pageHeight / 2) + 1.5);
         doc.setFontSize(9.5);
         doc.setFontType('bold');
 
