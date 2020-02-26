@@ -10,7 +10,8 @@ import { CookiesService } from 'src/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import * as firebase from 'firebase/app';
-
+import * as crypto from "crypto-js";
+import { eQR } from 'src/enumerators/graduation/e-qr.enum';
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -103,6 +104,12 @@ export class ListGraduatesPageComponent implements OnInit {
   montserratBold: any;
 
   dateGraduation;
+  
+  // Bucar boletos alumno
+  public findStudentTickets = '';
+  studentsTickets;
+  guests = [];
+  phoneStudent = null;
 
   constructor(
     private firestoreService: FirebaseService,
@@ -116,7 +123,7 @@ export class ListGraduatesPageComponent implements OnInit {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
     if (rol !== 0 && rol !== 1 && rol !== 5 && rol !== 6 &&
-      rol !== 9) {
+      rol !== 9 && rol !== 20) {
       this.router.navigate(['/']);
     }
     this.collection = this.router.url.split('/')[2];
@@ -179,6 +186,9 @@ export class ListGraduatesPageComponent implements OnInit {
         break;
       case 9:
         this.role = 'recfinancieros';
+        break;
+      case 20:
+        this.role = 'asistenciaInvitados';
         break;
     }
     this.readEmail();
@@ -2105,5 +2115,59 @@ export class ListGraduatesPageComponent implements OnInit {
         }
       );
     });
+  }
+
+  searchStudent() {
+    if(this.findStudentTickets !== ''){
+      this.studentsTickets = this.alumnosReport.filter(student => student.nc.indexOf(this.findStudentTickets) !== -1 || student.name.indexOf(this.findStudentTickets) !== -1);
+    }
+  }
+
+  viewTickets(student){
+    this.guests = [];
+    const invitados = student.invitados;
+    invitados.forEach((invitado) => {
+      const ticketFor = Object.keys(invitado)[0];
+      if (invitado[ticketFor] == 'verificado') {
+        this.guests.push(
+          {
+            data: crypto.AES.encrypt(student.id + '&' + ticketFor, eQR.KEY).toString(),
+            ticketFor,
+            student
+          });
+      }
+    });
+    if(this.guests.length === 0){
+      this.notificationsServices.showNotification(eNotificationType.INFORMATION,'No tiene boletos disponibles','');
+    }
+  }
+
+  changeStatusTicket(ticket){
+    const alumno = ticket.student;
+    ticket.student.invitados.forEach((boleto,index) => {
+      if(ticket.ticketFor === Object.keys(boleto)[0]){
+        alumno.invitados[index] = {[Object.keys(boleto)[0]]:'asistió'};
+      }
+    });
+    const invitadosMod = alumno.invitados;
+    this.firestoreService.updateFieldGraduate(alumno.id,{invitados:invitadosMod},this.collection).then(
+      (update) => {
+        this.notificationsServices.showNotification(eNotificationType.SUCCESS,'Asistencia registrada','');
+      }
+    );
+    this.viewTickets(alumno);
+  }
+
+  callStudent(alumno){
+    this.firestoreService.getProfile(alumno.id).subscribe(
+      res=>{
+        this.phoneStudent = res.payload.data();
+        if(this.phoneStudent) {
+          location.href = "tel:"+this.phoneStudent.telefonoAlumno;
+        } else {
+          this.notificationsServices.showNotification(eNotificationType.INFORMATION,'No tiene número registrado','');
+        }
+      }
+    );
   }
 }
