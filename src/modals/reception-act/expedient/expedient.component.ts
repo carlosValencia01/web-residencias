@@ -76,7 +76,8 @@ export class ExpedientComponent implements OnInit {
 
   init() {
     this.Request = this.data.request;
-    this.registeredDate = moment(new Date(this.Request.applicationDateLocal)).format('LL');
+    const [registerDay, registerMonth, registerYear] = this.Request.applicationDateLocal.split('/');
+    this.registeredDate = moment(new Date(`${registerMonth}/${registerDay}/${registerYear}`)).format('LL');
     this.existTitledDate = typeof (this.Request.proposedDate) !== 'undefined';
     this.existJury = typeof (this.Request.jury) !== 'undefined' && this.Request.jury.length === 4;
     let tmpDate: Date;

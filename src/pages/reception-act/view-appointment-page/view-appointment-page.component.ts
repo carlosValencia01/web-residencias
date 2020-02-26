@@ -325,7 +325,7 @@ export class ViewAppointmentPageComponent implements OnInit {
           const maped = filtered.
             map((st) => ({
               date: moment(st.proposedDate).format('LL'),
-              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
+              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('LT'),
               student: st.student,
               place: st.place,
               jury: st.jury
