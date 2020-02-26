@@ -11,7 +11,6 @@ import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import * as firebase from 'firebase/app';
 
-
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -75,6 +74,8 @@ export class ListGraduatesPageComponent implements OnInit {
   // Variable para almacenar los alumnos verificados e imprimir papeletas
   public alumnosBallotPaper = [];
   public alumnosConstancia = [];
+  public alumnosConstanciaRegistrados = [];
+  public alumnosConstanciaVerificados = [];
   bestStudents = [];
 
   public role: string;
@@ -110,7 +111,7 @@ export class ListGraduatesPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     private imageToBase64Serv: ImageToBase64Service,
-    private studentProv: StudentProvider
+    private studentProv: StudentProvider,
   ) {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
@@ -126,7 +127,7 @@ export class ListGraduatesPageComponent implements OnInit {
         this.dateGraduation = ev.payload.get('date');
         this.boletosTotales = ev.payload.get('totalTickets');
         this.boletosXAlumno = ev.payload.get('studentTickets');
-     }
+      }
     );
 
     this.firestoreService.getBestAverages(this.collection).subscribe(
@@ -192,18 +193,18 @@ export class ListGraduatesPageComponent implements OnInit {
     this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
       this.logoTecTepic = res3;
     });
-    this.imageToBase64Serv.getBase64('assets/imgs/firmaDirector.png').then(res4 => {
+    this.imageToBase64Serv.getBase64('assets/imgs/firms/director.png').then(res4 => {
       this.firmaDirector = res4;
     });
   }
 
   getFonts() {
     this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
-        this.montserratNormal = base64.toString().split(',')[1];
+      this.montserratNormal = base64.toString().split(',')[1];
     });
 
     this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
-        this.montserratBold = base64.toString().split(',')[1];
+      this.montserratBold = base64.toString().split(',')[1];
     });
   }
 
@@ -242,12 +243,14 @@ export class ListGraduatesPageComponent implements OnInit {
       this.totalAlumnos = this.alumnosReport.length;
       this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
       this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation, '');
+      this.alumnosConstanciaRegistrados = this.filterItemsVerified(this.searchCarreerDocumentation, 'Registrado');
+      this.alumnosConstanciaVerificados = this.filterItemsVerifiedForward(this.searchCarreerDocumentation);
       this.alumnosReportDocumentation = this.alumnos;
       this.eventFilterReport();
       // Contar total de alumnos
       this.totalEgresados = this.alumnos.length;
-      this.totalEgresadosH = this.alumnos.filter( st => st.genero === 'M').length;
-      this.totalEgresadosM = this.alumnos.filter( st => st.genero === 'F').length;
+      this.totalEgresadosH = this.alumnos.filter(st => st.genero === 'M').length;
+      this.totalEgresadosM = this.alumnos.filter(st => st.genero === 'F').length;
       this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
       this.certificadosListos = this.filterCountItemsStatus('Listo').length;
       this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
@@ -298,10 +301,10 @@ export class ListGraduatesPageComponent implements OnInit {
   // Enviar encuesta al verificar alumno desde la web
   sendSurveyGraduate(item) {
     this.graduationProv.sendSurvey(item.email, item.id, item.name, item.nc, item.carreerComplete).subscribe(
-      res => {
+      _ => {
         this.notificationsServices.showNotification(0, 'Encuesta enviada a:', item.nc);
       },
-      err => {
+      _ => {
         this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:', item.nc);
       }
     );
@@ -531,6 +534,8 @@ export class ListGraduatesPageComponent implements OnInit {
 
   eventFilterReportDocumentation() {
     this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation, '');
+    this.alumnosConstanciaRegistrados = this.filterItemsVerified(this.searchCarreerDocumentation, 'Registrado');
+    this.alumnosConstanciaVerificados = this.filterItemsVerifiedForward(this.searchCarreerDocumentation);
   }
 
   // FILTRADO POR CARRERA O ESTATUS
@@ -554,6 +559,17 @@ export class ListGraduatesPageComponent implements OnInit {
     return this.alumnos.filter(function (alumno) {
       return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 &&
         alumno.status.toLowerCase().indexOf(status.toLowerCase()) > -1;
+    });
+  }
+
+  filterItemsVerifiedForward(carreer) {
+    return this.alumnos.filter(function (alumno) {
+      return (alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1
+        && alumno.status.toLowerCase().indexOf('Verificado'.toLowerCase()) > -1)
+        || (alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1
+         && alumno.status.toLowerCase().indexOf('Asistió'.toLowerCase()) > -1)
+        || (alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1
+        && alumno.status.toLowerCase().indexOf('Mencionado'.toLowerCase()) > -1);
     });
   }
 
@@ -648,7 +664,8 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.text(footer, pageWidth / 2, pageHeight - 12, 'center');
 
     // Hour PDF
-    let hour = today.getDate() + '/' + mes + '/' + today.getFullYear() + ' - ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+    let hour = today.getDate() + '/' + mes + '/' + today.getFullYear()
+      + ' - ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
     doc.setTextColor(100);
     doc.setFontStyle('bold');
     doc.setFontSize(7);
@@ -694,9 +711,9 @@ export class ListGraduatesPageComponent implements OnInit {
       // Dividir Alto de hoja entre 4 para dibujar recta divisora
       var divLine = pageHeight / 4;
       var cont = 1;
-      for (var i = 0; i < divAlumnosBallotPaper.length; i++) { // Recorrer cada segmento de alumnos
-        for (var j = 0; j < divAlumnosBallotPaper[i].length; j++) { // Recorrer los alumnos del segmento actual
-          if (j == 0) {
+      for (let i = 0; i < divAlumnosBallotPaper.length; i++) { // Recorrer cada segmento de alumnos
+        for (let j = 0; j < divAlumnosBallotPaper[i].length; j++) { // Recorrer los alumnos del segmento actual
+          if (j === 0) {
             doc.addImage(this.logoSep, 'PNG', 5, 2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth - 58, 2, 52, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 7.5, divLine - 20, 15, 15); // Logo TecTepic
@@ -719,7 +736,7 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2, 45, 'center');
             doc.line(0, divLine, pageWidth, divLine);
           }
-          if (j == 1) {
+          if (j === 1) {
             doc.addImage(this.logoSep, 'PNG', 5, (divLine) + 2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth - 58, (divLine) + 2, 53, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 7.5, (divLine * 2) - 20, 15, 15); // Logo TecTepic
@@ -742,7 +759,7 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2, 119.25, 'center');
             doc.line(0, divLine * 2, pageWidth, divLine * 2);
           }
-          if (j == 2) {
+          if (j === 2) {
             doc.addImage(this.logoSep, 'PNG', 5, (divLine * 2) + 2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth - 58, (divLine * 2) + 2, 53, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 7.5, (divLine * 3) - 20, 15, 15); // Logo TecTepic
@@ -765,7 +782,7 @@ export class ListGraduatesPageComponent implements OnInit {
             doc.text(divAlumnosBallotPaper[i][j].carreerComplete, pageWidth / 2, 193.5, 'center');
             doc.line(0, divLine * 3, pageWidth, divLine * 3);
           }
-          if (j == 3) {
+          if (j === 3) {
             doc.addImage(this.logoSep, 'PNG', 5, (divLine * 3) + 2, 60, 14); // Logo Sep
             doc.addImage(this.logoTecNM, 'PNG', pageWidth - 58, (divLine * 3) + 2, 53, 14); // Logo TecNM
             doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 7.5, (divLine * 4) - 20, 15, 15); // Logo TecTepic
@@ -794,7 +811,8 @@ export class ListGraduatesPageComponent implements OnInit {
       }
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
-      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos en estatus Verificado de la carrera ' + this.searchCarreer);
+      this.notificationsServices
+        .showNotification(2, 'Atención', 'No hay alumnos en estatus Verificado de la carrera ' + this.searchCarreer);
     }
   }
 
@@ -929,7 +947,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   eventFilter(item) {
-    if (item != '') {
+    if (item !== '') {
       this.showTotal = false;
       const total = this.getNumberFilterItems(item).length;
       this.totalAlumnosFilter = total;
@@ -1013,7 +1031,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.autoTable({
       html: '#tableReportBestAverageOut',
       theme: 'striped',
-      headStyles: { fillColor:  [218, 12, 12], halign: 'center' },
+      headStyles: { fillColor: [218, 12, 12], halign: 'center' },
       columnStyles: {
         0: { cellWidth: 150 },
         1: { cellWidth: 200 },
@@ -1024,7 +1042,7 @@ export class ListGraduatesPageComponent implements OnInit {
       doc.autoTable({
         html: '#tableReportBestAverage',
         theme: 'striped',
-        headStyles: { fillColor: [24, 57, 105] , halign: 'center' },
+        headStyles: { fillColor: [24, 57, 105], halign: 'center' },
         columnStyles: {
           0: { cellWidth: 150 },
           1: { cellWidth: 200 },
@@ -1046,7 +1064,8 @@ export class ListGraduatesPageComponent implements OnInit {
       doc.text(footer, pageWidth / 2, pageHeight - 12, 'center');
 
       // Hour PDF
-      let hour = today.getDate() + '/' + mes + '/' + today.getFullYear() + ' - ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+      let hour = today.getDate() + '/' + mes + '/' + today.getFullYear()
+        + ' - ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
       doc.setTextColor(100);
       doc.setFontStyle('bold');
       doc.setFontSize(7);
@@ -1062,7 +1081,7 @@ export class ListGraduatesPageComponent implements OnInit {
     let graduatesSorted = [];
     for (let i = 0; i < this.careersPosition.length; i++) {
       for (let j = 0; j < graduates.length; j++) {
-        if (graduates[j].data.carrera == this.careersPosition[i].carrera) {
+        if (graduates[j].data.carrera === this.careersPosition[i].carrera) {
           graduatesSorted.push(graduates[j]);
           this.careersPosition.filter((graduate: any) => graduate.carrera !== graduates[j].data.carrera);
           break;
@@ -1114,7 +1133,6 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   asistenceEventCarreer() {
-
     let changeStatus = false;
     this.alumnos.forEach(async student => {
       if (student.carreer === this.searchCarreer) {
@@ -1124,8 +1142,6 @@ export class ListGraduatesPageComponent implements OnInit {
         }
       }
     });
-    // this.firestoreService.resetActiveCareer();
-
   }
 
   returnAsistenceEvent(item) {
@@ -1240,7 +1256,8 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
   returnRegisterEvent(item) {
-    this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Registrado', invitados: [], numInvitados: 0}, this.collection).then(() => {
+    this.firestoreService
+      .updateFieldGraduate(item.id, {estatus: 'Registrado', invitados: [], numInvitados: 0}, this.collection).then(() => {
       this.eventFilterReport();
     }, (error) => {
       console.log(error);
@@ -1314,45 +1331,43 @@ export class ListGraduatesPageComponent implements OnInit {
   changeStatusDocumentation(student, status) {
     switch (status) {
       case 'Fotos y Recibo':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status}, this.collection);
-
+        this.firestoreService.updateFieldGraduate(student.id, {documentationStatus: status}, this.collection);
         this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas', student.nc);
-
         break;
       case 'Impreso':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status}, this.collection);
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
 
         // this.sendNotification('Certificado', 'Tus certificado ha sido impreso',student.nc);
         break;
       case 'Listo':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status}, this.collection);
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
 
         this.sendNotification('Certificado', 'Tu certificado ya está listo', student.nc);
         break;
       case 'Entregado':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status}, this.collection);
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
 
         this.sendNotification('Certificado', 'Tu certificado fue entregado', student.nc);
         break;
       case 'Regresar':
         switch (student.documentationStatus) {
           case 'Fotos y Recibo':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: ' '}, this.collection);
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: ' ' }, this.collection);
 
             // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case 'Impreso':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Fotos y Recibo'}, this.collection);
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Fotos y Recibo' }, this.collection);
 
             // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case 'Listo':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Impreso'}, this.collection);
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Impreso' }, this.collection);
 
             // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
           case 'Entregado':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Listo'}, this.collection);
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Listo' }, this.collection);
 
             // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
@@ -1407,7 +1422,8 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(13);
-    doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions), pageWidth / 2, 220, 'center');
+    doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions),
+      pageWidth / 2, 220, 'center');
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
@@ -1420,7 +1436,7 @@ export class ListGraduatesPageComponent implements OnInit {
     window.open(doc.output('bloburl'), '_blank');
   }
 
-  generateConstancys() {
+  generateAllConstancys() {
     if (this.alumnosConstancia.length !== 0) {
       this.loading = true;
       var doc = new jsPDF();
@@ -1467,7 +1483,8 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
-        doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions), pageWidth / 2, 220, 'center');
+        doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions),
+          pageWidth / 2, 220, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
@@ -1480,8 +1497,154 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(9);
-        doc.text((i + 1) + '', 10, pageHeight - 10, 'center');
+        // doc.text((i + 1) + '', 10, pageHeight - 10, 'center');
         if (i < this.alumnosConstancia.length - 1) {
+          doc.addPage();
+        }
+      }
+      this.loading = false;
+      window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+    } else {
+      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
+    }
+  }
+
+  generateRegisteredConstancys() {
+    if (this.alumnosConstanciaRegistrados.length !== 0) {
+      this.loading = true;
+      var doc = new jsPDF();
+      let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+      doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+      doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+      for (var i = 0; i < this.alumnosConstanciaRegistrados.length; i++) {
+        // Nombre
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(18);
+        doc.text(this.alumnosConstanciaRegistrados[i].name, pageWidth / 2, 120, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(14);
+        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 140, 'center');
+
+        // Especialidad
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text(this.alumnosConstanciaRegistrados[i].specialty, pageWidth / 2, 160, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(14);
+        doc.text('En la carrera de: ', pageWidth / 2, 180, 'center');
+
+        // Carrera
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text(this.alumnosConstanciaRegistrados[i].carreerComplete, pageWidth / 2, 200, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(13);
+        doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions),
+          pageWidth / 2, 220, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 240, 'center');
+        doc.text('DIRECTOR', pageWidth / 2, 247, 'center');
+        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 197, 100, 53.75);
+
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(9);
+        // doc.text((i + 1) + '', 10, pageHeight - 10, 'center');
+        if (i < this.alumnosConstanciaRegistrados.length - 1) {
+          doc.addPage();
+        }
+      }
+      this.loading = false;
+      window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+    } else {
+      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
+    }
+  }
+
+  generateVerifiedConstancys() {
+    if (this.alumnosConstanciaVerificados.length !== 0) {
+      this.loading = true;
+      var doc = new jsPDF();
+      let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+      doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+      doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+      for (var i = 0; i < this.alumnosConstanciaVerificados.length; i++) {
+        // Nombre
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(18);
+        doc.text(this.alumnosConstanciaVerificados[i].name, pageWidth / 2, 120, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(14);
+        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 140, 'center');
+
+        // Especialidad
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text(this.alumnosConstanciaVerificados[i].specialty, pageWidth / 2, 160, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(14);
+        doc.text('En la carrera de: ', pageWidth / 2, 180, 'center');
+
+        // Carrera
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text(this.alumnosConstanciaVerificados[i].carreerComplete, pageWidth / 2, 200, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(13);
+        doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions),
+          pageWidth / 2, 220, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(16);
+        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 240, 'center');
+        doc.text('DIRECTOR', pageWidth / 2, 247, 'center');
+        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 197, 100, 53.75);
+
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(9);
+        // doc.text((i + 1) + '', 10, pageHeight - 10, 'center');
+        if (i < this.alumnosConstanciaVerificados.length - 1) {
           doc.addPage();
         }
       }
@@ -1494,19 +1657,20 @@ export class ListGraduatesPageComponent implements OnInit {
 
   addTicket(item) {
     if (this.boletosRestantes > 0) {
-      this.firestoreService.updateFieldGraduate(item.id, { numInvitados: (item.numInvitados + 1), invitados: firebase.firestore.FieldValue.arrayUnion({['invitado' + (item.numInvitados + 1)]: 'verificado'})}, this.collection);
+      this.firestoreService.updateFieldGraduate(item.id, { numInvitados: (item.numInvitados + 1),
+        invitados: firebase.firestore.FieldValue.arrayUnion({ ['invitado' + (item.numInvitados + 1)]: 'verificado' }) }, this.collection);
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'Se Terminaron los Boletos.');
     }
   }
 
   delTicket(item) {
-    if (item.numInvitados == 0) {
+    if (item.numInvitados === 0) {
       this.notificationsServices.showNotification(2, 'Atención', 'El número de boletos no debe ser menor a 0.');
     } else {
       const invitados = item.invitados;
       invitados.pop();
-      this.firestoreService.updateFieldGraduate(item.id, { numInvitados: (item.numInvitados - 1), invitados}, this.collection);
+      this.firestoreService.updateFieldGraduate(item.id, {numInvitados: (item.numInvitados - 1), invitados}, this.collection);
     }
   }
 
@@ -1530,9 +1694,9 @@ export class ListGraduatesPageComponent implements OnInit {
             // student has token device
             // send notification
             this.firestoreService.sendNotification(infoToken.id, notification).then(
-              (sended) => {
+              _ => {
                 this.studentProv.sendNotification({title, body, token: infoToken.token, screen: 'graduation'}).subscribe(
-                  (send) => {
+                  __ => {
                     this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Notificación enviada', '');
                   }
                 );
@@ -1540,29 +1704,27 @@ export class ListGraduatesPageComponent implements OnInit {
             );
           } else {
             // only save notification in firebase
-            this.firestoreService.sendNotification(infoToken.id, notification).then(
-              (sended) => {
-                console.log('Enviado');
-              }
-            );
+            this.firestoreService
+              .sendNotification(infoToken.id, notification)
+              .then(_ => console.log('Enviado'));
           }
-          this.firestoreService.updateDeviceStudent(infoToken.id, {pendientes: (infoToken.pendientes + 1)}).then(
-            (updated) => {}
-          );
+          this.firestoreService
+            .updateDeviceStudent(infoToken.id, {pendientes: (infoToken.pendientes + 1)})
+            .then(_ => {});
         } else {
           // create register for notifications
           // only save notification in firebase
           this.firestoreService.createDeviceToken(nc).then(
             (created) => {
               const subST = this.firestoreService.getStudentToken(nc).subscribe(
-                (token) => {
+                _ => {
                   subST.unsubscribe();
                   this.firestoreService.sendNotification(infoToken.id, notification).then(
-                    (sended) => {
+                    __ => {
                       console.log('Enviado');
-                      this.firestoreService.updateDeviceStudent(infoToken.id, {pendientes: (infoToken.pendientes + 1)}).then(
-                        (updated) => {}
-                      );
+                      this.firestoreService
+                        .updateDeviceStudent(infoToken.id, {pendientes: (infoToken.pendientes + 1)})
+                        .then(___ => {});
                     }
                   );
                 }
@@ -1575,96 +1737,286 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   // Generar Pestañas
-generateLabels() {
-  if (this.alumnosConstancia.length !== 0) {
-    this.loading = true;
-    const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
-    // @ts-ignore
-    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
-    // @ts-ignore
-    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
-    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
-    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+  generateAllLabels() {
+    if (this.alumnosConstancia.length !== 0) {
+      this.loading = true;
+      const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+      doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+      doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
 
-    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
-    for (var i = 0; i < this.alumnosConstancia.length; i++) {
-      var titulo = '';
-      doc.setFontSize(10);
-      doc.setFontType('bold');
-      // Identificador
-      doc.text((i + 1) + '', 2.5, (pageHeight / 2) + 1.5);
-      doc.setFontSize(9.5);
-      doc.setFontType('bold');
+      for (var i = 0; i < this.alumnosConstancia.length; i++) {
+        var titulo = '';
+        doc.setFontSize(10);
+        doc.setFontType('bold');
+        // Identificador
+        // doc.text((i + 1) + '', 2.5, (pageHeight / 2) + 1.5);
+        doc.setFontSize(9.5);
+        doc.setFontType('bold');
 
-      // Titulo
-      if (this.alumnosConstancia[i].degree == true) {
-        switch (this.alumnosConstancia[i].carreerComplete) {
-          case 'ARQUITECTURA':
-            titulo = 'ARQ.';
-            break;
-          case 'INGENIERÍA CIVIL':
-            titulo = 'ING.';
-            break;
-          case 'INGENIERÍA BIOQUÍMICA':
-            titulo = 'ING.';
-            break;
-          case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
-            titulo = 'ING.';
-            break;
-          case 'INGENIERÍA QUÍMICA':
-            titulo = 'ING.';
-            break;
-          case 'INGENIERÍA MECATRÓNICA':
-            titulo = 'ING.';
-            break;
-          case 'INGENIERÍA ELÉCTRICA':
-            titulo = 'ING.';
-            break;
-          case 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES':
-            titulo = 'ING.';
-            break;
-          case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
-            titulo = 'ING.';
-            break;
-          case 'INGENIERÍA INDUSTRIAL':
-            titulo = 'ING.';
-            break;
-          case 'LICENCIATURA EN ADMINISTRACIÓN':
-            titulo = 'LIC.';
-            break;
-          case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
-            titulo = 'MCA.';
-            break;
-          case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
-            titulo = 'MTI.';
-            break;
-          case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
-            titulo = 'DCA.';
-            break;
-          default:
-            titulo = '';
-            break;
+        // Titulo
+        if (this.alumnosConstancia[i].degree === true) {
+          switch (this.alumnosConstancia[i].carreerComplete) {
+            case 'ARQUITECTURA':
+              titulo = 'ARQ.';
+              break;
+            case 'INGENIERÍA CIVIL':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA BIOQUÍMICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA QUÍMICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA MECATRÓNICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA ELÉCTRICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA INDUSTRIAL':
+              titulo = 'ING.';
+              break;
+            case 'LICENCIATURA EN ADMINISTRACIÓN':
+              titulo = 'LIC.';
+              break;
+            case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+              titulo = 'MCA.';
+              break;
+            case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+              titulo = 'MTI.';
+              break;
+            case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
+              titulo = 'DCA.';
+              break;
+            default:
+              titulo = '';
+              break;
           }
           doc.text(titulo, 23, (pageHeight / 2) + 1.5);
+        }
+
+        // Nombre
+        doc.text(this.alumnosConstancia[i].name, 35, (pageHeight / 2) + 1.5);
+
+        // Carrera
+        doc.text(this.alumnosConstancia[i].carreer, 150, (pageHeight / 2) + 1.5);
+
+        doc.setFontSize(10);
+        doc.setFontType('bold');
+
+        if (i < this.alumnosConstancia.length - 1) {
+          doc.addPage();
+        }
       }
-
-      // Nombre
-      doc.text(this.alumnosConstancia[i].name, 35, (pageHeight / 2) + 1.5);
-
-      // Carrera
-      doc.text(this.alumnosConstancia[i].carreer, 150, (pageHeight / 2) + 1.5);
-
-      doc.setFontSize(10);
-      doc.setFontType('bold');
-
-      if (i < this.alumnosConstancia.length - 1) {
-        doc.addPage();
-      }
+      this.loading = false;
+      window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+    } else {
+      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
     }
-    this.loading = false;
-    window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+  }
+
+  generateRegisteredLabels() {
+    if (this.alumnosConstanciaRegistrados.length !== 0) {
+      this.loading = true;
+      const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+      doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+      doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+      for (let i = 0; i < this.alumnosConstanciaRegistrados.length; i++) {
+        var titulo = '';
+        doc.setFontSize(10);
+        doc.setFontType('bold');
+        // Identificador
+        // doc.text((i + 1) + '', 2.5, (pageHeight / 2) + 1.5);
+        doc.setFontSize(9.5);
+        doc.setFontType('bold');
+
+        // Titulo
+        if (this.alumnosConstanciaRegistrados[i].degree === true) {
+          switch (this.alumnosConstanciaRegistrados[i].carreerComplete) {
+            case 'ARQUITECTURA':
+              titulo = 'ARQ.';
+              break;
+            case 'INGENIERÍA CIVIL':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA BIOQUÍMICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA QUÍMICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA MECATRÓNICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA ELÉCTRICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA INDUSTRIAL':
+              titulo = 'ING.';
+              break;
+            case 'LICENCIATURA EN ADMINISTRACIÓN':
+              titulo = 'LIC.';
+              break;
+            case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+              titulo = 'MCA.';
+              break;
+            case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+              titulo = 'MTI.';
+              break;
+            case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
+              titulo = 'DCA.';
+              break;
+            default:
+              titulo = '';
+              break;
+          }
+          doc.text(titulo, 23, (pageHeight / 2) + 1.5);
+        }
+
+        // Nombre
+        doc.text(this.alumnosConstanciaRegistrados[i].name, 35, (pageHeight / 2) + 1.5);
+
+        // Carrera
+        doc.text(this.alumnosConstanciaRegistrados[i].carreer, 150, (pageHeight / 2) + 1.5);
+
+        doc.setFontSize(10);
+        doc.setFontType('bold');
+
+        if (i < this.alumnosConstanciaRegistrados.length - 1) {
+          doc.addPage();
+        }
+      }
+      this.loading = false;
+      window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
+    } else {
+      this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
+    }
+  }
+
+  generateVerifiedLabels() {
+    if (this.alumnosConstanciaVerificados.length !== 0) {
+      this.loading = true;
+      const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+      // @ts-ignore
+      doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+      doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+      doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+      var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+      var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+      for (var i = 0; i < this.alumnosConstanciaVerificados.length; i++) {
+        var titulo = '';
+        doc.setFontSize(10);
+        doc.setFontType('bold');
+        // Identificador
+        // doc.text((i + 1) + '', 2.5, (pageHeight / 2) + 1.5);
+        doc.setFontSize(9.5);
+        doc.setFontType('bold');
+
+        // Titulo
+        if (this.alumnosConstanciaVerificados[i].degree === true) {
+          switch (this.alumnosConstanciaVerificados[i].carreerComplete) {
+            case 'ARQUITECTURA':
+              titulo = 'ARQ.';
+              break;
+            case 'INGENIERÍA CIVIL':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA BIOQUÍMICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA QUÍMICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA MECATRÓNICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA ELÉCTRICA':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
+              titulo = 'ING.';
+              break;
+            case 'INGENIERÍA INDUSTRIAL':
+              titulo = 'ING.';
+              break;
+            case 'LICENCIATURA EN ADMINISTRACIÓN':
+              titulo = 'LIC.';
+              break;
+            case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+              titulo = 'MCA.';
+              break;
+            case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+              titulo = 'MTI.';
+              break;
+            case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
+              titulo = 'DCA.';
+              break;
+            default:
+              titulo = '';
+              break;
+          }
+          doc.text(titulo, 23, (pageHeight / 2) + 1.5);
+        }
+
+        // Nombre
+        doc.text(this.alumnosConstanciaVerificados[i].name, 35, (pageHeight / 2) + 1.5);
+
+        // Carrera
+        doc.text(this.alumnosConstanciaVerificados[i].carreer, 150, (pageHeight / 2) + 1.5);
+
+        doc.setFontSize(10);
+        doc.setFontType('bold');
+
+        if (i < this.alumnosConstanciaVerificados.length - 1) {
+          doc.addPage();
+        }
+      }
+      this.loading = false;
+      window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
     }
@@ -1672,13 +2024,27 @@ generateLabels() {
 
   getBestAvgs() {
     this.bestStudents = [];
-
-
-    return new Promise( (resolve) => {
-
-
-      const femaleAvgs  = this.alumnosReport.filter((std) => std.genero == 'F').map( (st) => ({id: st.id, avg: parseFloat(st.average), career: st.carreerComplete, name: st.name, careerS: st.carreer, degree: st.degree}));
-      const maleAvgs = this.alumnosReport.filter((std) => std.genero == 'M').map( (st) => ({id: st.id, avg: parseFloat(st.average), career: st.carreerComplete, name: st.name, careerS: st.carreer, degree: st.degree}));
+    return new Promise((resolve) => {
+      const femaleAvgs = this.alumnosReport
+        .filter((std) => std.genero === 'F')
+        .map((st) => ({
+          id: st.id,
+          avg: parseFloat(st.average),
+          career: st.carreerComplete,
+          name: st.name,
+          careerS: st.carreer,
+          degree: st.degree
+        }));
+      const maleAvgs = this.alumnosReport
+        .filter((std) => std.genero === 'M')
+        .map((st) => ({
+          id: st.id,
+          avg: parseFloat(st.average),
+          career: st.carreerComplete,
+          name: st.name,
+          careerS: st.carreer,
+          degree: st.degree
+        }));
       let bestMaleAvg = {
         id: '',
         avg: 0,
@@ -1698,15 +2064,18 @@ generateLabels() {
         (gr) => {
 
           sub.unsubscribe();
-          const graduates = gr.map( (st) => ({id: st.payload.doc.id, avg: st.payload.doc.get('promedio'), bestAvgM: st.payload.doc.get('mejorPromedioM'), bestAvgFM: st.payload.doc.get('mejorPromedioF')}));
-          const bestAvgM = graduates.filter((st) => st.bestAvgM == true)[0];
-          const bestAvgFM = graduates.filter((st) => st.bestAvgFM == true)[0];
-          for ( const stu of femaleAvgs) {
+          const graduates = gr.map(st =>
+            ({id: st.payload.doc.id, avg: st.payload.doc.get('promedio'),
+              bestAvgM: st.payload.doc.get('mejorPromedioM'),
+              bestAvgFM: st.payload.doc.get('mejorPromedioF')}));
+          const bestAvgM = graduates.filter(st => st.bestAvgM === true)[0];
+          const bestAvgFM = graduates.filter(st => st.bestAvgFM === true)[0];
+          for (const stu of femaleAvgs) {
             if (stu.avg > bestFemaleAvg.avg) {
               bestFemaleAvg = stu;
             }
           }
-          for ( const stu of maleAvgs) {
+          for (const stu of maleAvgs) {
             if (stu.avg > bestMaleAvg.avg) {
               bestMaleAvg = stu;
             }
@@ -1714,8 +2083,7 @@ generateLabels() {
           if (bestAvgM) {
             if (bestAvgM.id !== bestMaleAvg.id) {
               this.firestoreService.updateFieldGraduate(bestAvgM.id, {mejorPromedioM: false}, this.collection).then((upd) => {});
-              this.firestoreService.updateFieldGraduate(bestMaleAvg.id, {mejorPromedioM: true}, this.collection).then((up) => {
-              });
+              this.firestoreService.updateFieldGraduate(bestMaleAvg.id, {mejorPromedioM: true}, this.collection).then((up) => {});
             }
           } else {
             this.firestoreService.updateFieldGraduate(bestMaleAvg.id, {mejorPromedioM: true}, this.collection).then((up) => {
@@ -1738,5 +2106,4 @@ generateLabels() {
       );
     });
   }
-
 }
