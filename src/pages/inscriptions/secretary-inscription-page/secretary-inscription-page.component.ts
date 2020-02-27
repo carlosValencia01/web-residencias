@@ -1384,5 +1384,16 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       }
     });
   }
+  excelExportDebts(){
+    this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
+    this.loading = true;
+    TableToExcel.convert(document.getElementById('tableReportExcelDebts'), {
+      name: 'Reporte Adeudos Alumnos Inscripcion.xlsx',
+      sheet: {
+        name: 'Alumnos'
+      }
+    });
+    this.loading = false;
+  }
   
 }
