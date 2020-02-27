@@ -92,4 +92,12 @@ export class InscriptionsProvider {
         return this.api.post('inscription/notificationMail', { to_email: [email], title: titulo, name: nombre, message: mensaje, subject: asunto, sender: remitente })
         .pipe(map(data => data.json()));
     }
+
+    getIntegratedExpedient(){
+        return this.api.get('inscription/getIntegratedExpedient/').pipe(map( res=>res.json()));
+    }
+
+    getArchivedExpedient(){
+        return this.api.get('inscription/getArchivedExpedient/').pipe(map( res=>res.json()));
+    }
 }

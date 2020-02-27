@@ -39,6 +39,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   cantListStudentsAcept = 0;
   cantListStudents = 0;
   cantListStudentsLogged = 0;
+  cantIntegratedExpedient = 0;
+  cantArchivedExpedient = 0;
   periods = [];
   activPeriod;
   loading = false;
@@ -176,6 +178,16 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.inscriptionsProv.getStudentsAcept().subscribe(res => {
       this.cantListStudentsAcept = res.students.length;
     });
+
+    // Cantidad Expedientes Integrados
+    this.inscriptionsProv.getIntegratedExpedient().subscribe(res => {
+      this.cantIntegratedExpedient = res.expedients.length;
+    });
+
+    // Cantidad Expedientes Archivados
+    this.inscriptionsProv.getArchivedExpedient().subscribe(res => {
+      this.cantArchivedExpedient = res.expedients.length;
+    });
     
   }
 
@@ -203,6 +215,16 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     // Cantidad Alumnos Logueados
     this.inscriptionsProv.getStudentsLogged().subscribe(res => {
       this.cantListStudentsLogged = res.students.length;
+    });
+
+    // Cantidad Expedientes Integrados
+    this.inscriptionsProv.getIntegratedExpedient().subscribe(res => {
+      this.cantIntegratedExpedient = res.expedients.length;
+    });
+
+    // Cantidad Expedientes Archivados
+    this.inscriptionsProv.getArchivedExpedient().subscribe(res => {
+      this.cantArchivedExpedient = res.expedients.length;
     });
   }
 
@@ -1315,6 +1337,52 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.getStudents();
       this.countStudents();
     }
+  }
+
+  integratedExpedient(student){
+    Swal.fire({
+      title: 'Integrar Expediente',
+      text: 'Para ' + student.controlNumber,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        this.inscriptionsProv.updateStudent({expStatus:"Integrado"},student._id).subscribe(res => {
+        }, err=>{},
+        ()=>{
+          this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Expediente Integrado.');
+          this.getStudents();
+        });
+      }
+    });
+  }
+
+  archivedExpedient(student){
+    Swal.fire({
+      title: 'Archivar Expediente',
+      text: 'Para ' + student.controlNumber,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        this.inscriptionsProv.updateStudent({expStatus:"Archivado"},student._id).subscribe(res => {
+        }, err=>{},
+        ()=>{
+          this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Expediente Archivado.');
+          this.getStudents();
+        });
+      }
+    });
   }
   
 }
