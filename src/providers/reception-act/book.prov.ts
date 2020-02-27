@@ -27,4 +27,9 @@ export class BookProvider {
         return this.api.get(`minuteBook/getAllActive`)
             .pipe(map(books => books.json()));
     }
+
+    getActiveBookByCareer(careerId: string) {
+        return this.api.get(`minuteBook/active/${careerId}`)
+            .pipe(map(res => res.json()));
+    }
 }
