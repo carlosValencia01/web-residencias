@@ -65,4 +65,10 @@ export interface iRequest {
         career: string
     };
     isIntegral?: boolean;
+    period?: {
+        periodName: string,
+        _id:string,
+        year:string,
+        active:boolean
+    }
 }

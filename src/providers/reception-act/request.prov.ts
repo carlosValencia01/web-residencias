@@ -92,5 +92,8 @@ export class RequestProvider {
     updateJury(_id, data) {
         return this.api.put(`request/${_id}/jury`, data).pipe(map(request => request.json()));
     }
+    getPeriods() {
+        return this.api.get(`request/periods`).pipe(map(request => request.json()));
+    }
 
 }

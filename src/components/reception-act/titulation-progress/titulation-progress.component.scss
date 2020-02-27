@@ -81,6 +81,16 @@ table {
   mat-list-item:hover {
     background: #e0e0e0;
 }
+
+.mat-chip.mat-standard-chip {
+  background-color: rgb(27,57,106);
+  color: rgb(255, 255, 255);
+}
+
+.mat-chip.mat-standard-chip .mat-chip-remove {
+  color: rgb(205, 205, 225);
+  opacity: 1 !important;
+}
 // td, th {
 //   width: 30%;
 // }

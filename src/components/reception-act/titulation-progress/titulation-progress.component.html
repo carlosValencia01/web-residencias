@@ -327,17 +327,38 @@
                   </div>
               </div>
               <div class="row mx-1" *ngIf="tabNumber == 1 || tabNumber == 4">
-                  <div class="col-6">
-                      <div class="input-group input-group-sm mb-3">
-                          <div class="input-group-prepend">
-                              <span class="input-group-text">Buscar</span>
-                          </div>
-                          <input type="text" class="form-control" placeholder="Número de control">
-                          <div class="input-group-append">
-                              <button class="btn btn-outline-primary" type="button"><i
-                                      class="fa fa-search"></i></button>
-                          </div>
-                      </div>
+                  <div class="col-6">                      
+                    <mat-form-field *ngIf="periods">
+                    <mat-chip-list #chipList aria-label="Period selection">
+                        <mat-chip
+                            *ngFor="let p of usedPeriods"
+                            selectable="true"
+                            removable="true"
+                            (removed)="remove(p)">
+                            {{p.periodName}}-{{p.year}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>              
+                        <input
+                            placeholder="Buscar periodo..."
+                            #periodInput
+                            [formControl]="periodCtrl"
+                            [matAutocomplete]="auto"
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            matChipInputAddOnBlur="true"
+                            (matChipInputTokenEnd)="addPeriod($event)"
+                                                            
+                            (ngModelChange) = "filterPeriod($event)"
+                            matInput
+                            
+                            >
+                        </mat-chip-list>
+                        <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
+                        {{period.periodName}}-{{period.year}}
+                        </mat-option>
+                    </mat-autocomplete>
+                    </mat-form-field>                                         
                   </div>
                   <div class="col-6">
                       <!-- <mat-form-field>

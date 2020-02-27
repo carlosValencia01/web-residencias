@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
 import { IStudent } from 'src/entities/shared/student.model';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { iRequest } from 'src/entities/reception-act/request.model';
@@ -7,7 +7,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort, MatChipInputEvent } from '@angular/material';
 import { MatDialog } from '@angular/material/dialog';
 import { RequestModalComponent } from 'src/modals/reception-act/request-modal/request-modal.component';
 import { eRole } from 'src/enumerators/app/role.enum';
@@ -32,8 +32,10 @@ import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificac
 import { ExpedientComponent } from 'src/modals/reception-act/expedient/expedient.component';
 import { LoadingBarService } from 'ngx-loading-bar';
 import { FirebaseService } from 'src/services/graduation/firebase.service';
+import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
 import Swal from 'sweetalert2';
-
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { FormControl } from '@angular/forms';
 @Component({
   selector: 'app-titulation-progress',
   templateUrl: './titulation-progress.component.html',
@@ -65,7 +67,14 @@ export class TitulationProgressComponent implements OnInit {
   public showLoading: boolean;
   departmentCareers: Array<ICareer>; // Carreras del puesto
   private folderId: string;
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
+  @ViewChild('periodInput') periodInput: ElementRef<HTMLInputElement>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
 
+  periods;
+  periodCtrl = new FormControl();
+  filteredPeriods;
+  usedPeriods = [];
   constructor(
     private requestProvider: RequestProvider,
     public dialog: MatDialog,
@@ -110,6 +119,13 @@ export class TitulationProgressComponent implements OnInit {
       { icon: 'gavel', option: 'Realizado' },
       { icon: 'school', option: 'Aprobado' }
     ];
+    this.requestProvider.getPeriods().subscribe(
+      (periods)=>{
+        
+        this.periods = periods.periods;   
+        this.filteredPeriods = periods.periods;     
+      }
+    );
   }
 
   reload(): void {
@@ -119,6 +135,7 @@ export class TitulationProgressComponent implements OnInit {
 
   loadRequest(isInit: boolean = false): void {
     let filter = '';
+    
     switch (this.role) {
       case eRole.CHIEFACADEMIC.toLowerCase(): {
         filter = 'jefe';
@@ -166,6 +183,8 @@ export class TitulationProgressComponent implements OnInit {
             }
           }
         });
+        console.log(this.request);
+        
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
@@ -182,6 +201,8 @@ export class TitulationProgressComponent implements OnInit {
       }, _ => {
         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitudes');
       });
+
+     
   }
 
   public castRequest(element: any): iRequest {
@@ -1024,6 +1045,52 @@ export class TitulationProgressComponent implements OnInit {
       hasBackdrop: true,
       width: '45em'
     });
+  }
+  slectedPeriod(period){    
+    this.updatePeriods(period,'insert');
+  }
+  addPeriod(event: MatChipInputEvent): void {
+    // Add fruit only when MatAutocomplete is not open
+    // To make sure this does not conflict with OptionSelected Event
+
+    if (!this.matAutocomplete.isOpen) {
+      const input = event.input;
+      const value = event.value;
+      // Reset the input value
+
+      if (input) {
+        input.value = '';
+      }
+
+      this.periodCtrl.setValue(null);
+    }
+  } 
+  updatePeriods(period,action){
+    console.log(this.filteredPeriods);
+    
+     if(action === 'delete'){
+      this.filteredPeriods.push(period);
+       
+       this.usedPeriods = this.usedPeriods.filter( per=> per._id !== period._id);
+     }
+     if(action === 'insert'){
+      
+      this.usedPeriods.push(period);      
+      
+      this.filteredPeriods = this.filteredPeriods.filter(per=> per._id !== period._id);
+     }
+     this.periods = this.filteredPeriods;
+  }
+
+  remove(period): void {
+    this.updatePeriods(period,'delete');
+  }
+  
+  filterPeriod(value){         
+    
+    if(value){
+      this.periods = this.periods.filter( period=> (period.periodName+'-'+period.year).toLowerCase().trim().indexOf(value) !== -1);
+    }
   }
 }
 
