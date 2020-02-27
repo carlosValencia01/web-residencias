@@ -18,6 +18,7 @@ import { RequestService } from 'src/services/reception-act/request.service';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 import * as moment from 'moment';
+import {eStatus} from '../../../enumerators/reception-act/status.enum';
 
 moment.locale('es');
 
@@ -55,7 +56,7 @@ export class TitulacionPageComponent implements OnInit {
   public isApprovedEnglish: boolean;
   public titrationHour: string;
   public isActive = true;
-
+  public status: string;
   // Mensajes
   ProcessSentMessage: String = 'En espera de que tu solicitud sea aceptada';
   CompletedSentMessage: String = 'TU SOLICITUD HA SIDO ACEPTADA'; // 'Tú solicitud ha sido aceptada';
@@ -116,17 +117,24 @@ export class TitulacionPageComponent implements OnInit {
 
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
-    this._InscriptionsProvider.getActivePeriod().subscribe(
-      periodo => {
-        if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
-          this.loadRequest();
-          this.isActive = true;
-        } else {
-          this.isActive = false;
-        }
-      }, _ => {
-        this.isActive = false;
-      });
+    this.studentProv.getStatus(this.cookiesService.getData().user._id).subscribe( data => {
+      this.isGraduate = data.status === 'EGR';
+      this.isApprovedEnglish = data.english;
+      this.isOkTitulation = this.isGraduate && this.isApprovedEnglish;
+      if (this.isOkTitulation) {
+        this._InscriptionsProvider.getActivePeriod().subscribe(
+          periodo => {
+            if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
+              this.loadRequest();
+              this.isActive = true;
+            } else {
+              this.isActive = false;
+            }
+          }, error => {
+            this.isActive = false;
+          });
+      }
+    });
   }
 
   getFolderId(): void {
