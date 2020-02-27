@@ -239,6 +239,11 @@ import { UploadEmployeesCsvComponent } from 'src/modals/electronic-signature/upl
 // Providers
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
+
+// Vinculation module
+// Pages
+import { IndustrialVisitsPageComponent } from 'src/pages/vinculation/industrial-visits-page/industrial-visits-page.component';
+
 // Shared
 // Components
 import { LoaderComponent } from 'src/components/shared/loader/loader.component';
@@ -384,6 +389,9 @@ registerLocaleData(localeEs);
     PositionsHistoryComponent,
     SelectPositionComponent,
     UploadEmployeesCsvComponent,
+    
+    // Vinculation
+    IndustrialVisitsPageComponent,
 
     // Shared
     // Components

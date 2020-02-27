@@ -1,0 +1,135 @@
+<mat-card class="row m-1 p-4">
+  <mat-card-content>
+
+    <div class="row text-center justify-content-end">
+      <div class="col-2">
+        <input #fileUpload type="file" accept=".csv" (change)="onUpload($event)" style="display: none">
+        <span>Cargar archivo csv</span>
+        <button mat-mini-fab class="mr-3" color="primary" (click)="fileUpload.click()" data-toggle="tooltip"
+          title="Cargar archivo csv">
+          <mat-icon>attachment</mat-icon>
+        </button>
+        
+      </div>
+      <div class="col-2">
+        <span>Guardar plantilla</span>
+        <button mat-mini-fab class="mr-3" color="primary" (click)="downloadPlantilla()" data-toggle="tooltip"
+            title="Guardar">
+            <mat-icon>cloud_download</mat-icon>
+          </button>
+      </div>
+    </div>
+
+    <div *ngIf="formatedStudents.length>0">
+
+      <mat-form-field style="width: 50%;">
+        <mat-label>Buscar...</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Ej. 14400001">
+      </mat-form-field>
+      
+      <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" matSort>
+      
+          <!-- # Column -->
+          <ng-container matColumnDef="no">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> # </th>
+            <td mat-cell *matCellDef="let row"> {{row.no}} </td>
+          </ng-container>
+          <!-- Número de control -->
+          <ng-container matColumnDef="controlNumber">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">  Número de control </th>
+            <td mat-cell *matCellDef="let row"> {{row.controlNumber}} </td>
+          </ng-container>
+      
+          <!-- Nombre -->
+          <ng-container matColumnDef="fullName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Nombre </th>
+            <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>
+          </ng-container>
+      
+      
+          <!-- Carrera -->
+          <ng-container matColumnDef="career">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Carrera </th>
+            <td mat-cell *matCellDef="let row"> {{row.career}} </td>
+          </ng-container>
+          
+          <!-- Semestre -->
+          <ng-container matColumnDef="semester">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Semestre </th>
+            <td mat-cell *matCellDef="let row"> {{row.semester}} </td>
+          </ng-container>
+  
+          <!-- Número de Seguro Social -->
+          <ng-container matColumnDef="nss">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Número de Seguro Social </th>
+            <td mat-cell *matCellDef="let row"> {{row.nss}} </td>
+          </ng-container>
+  
+          <!-- Estatus -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Estatus </th>
+            <td mat-cell *matCellDef="let row"> {{row.status}} </td>
+          </ng-container>
+      
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+          </tr>
+        </table>
+      
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
+      <div class="row text-center mt-2">
+        <div class="col-12">
+          <p>Guardar Excel</p>
+          <button mat-mini-fab class="mr-3" color="primary" (click)="excelExport()" data-toggle="tooltip"
+            title="Guardar">
+            <mat-icon>cloud_download</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<!-- Tabla reporte alumnos Excel-->
+<table class="table table-bordered" id="tableReportExcel"
+data-cols-width="9,21,46,66,10,25,15" *ngIf="formatedStudents.length>0">
+<thead>
+   <tr>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de
+         Control
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del
+         Alumno
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Semestre</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Seguro Social</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Estatus</th>
+<!-- BAEDF9 -->
+   </tr>
+</thead>
+<tbody>
+   <tr
+      *ngFor="let alumno of dataSource.filteredData"
+      [class.table-primary]="alumno.no%2==0"
+      [class.table-light]="alumno.no%2!==0"
+      
+      >
+      <td data-f-sz="12">{{alumno.no}}</td>
+      <td data-f-sz="12">{{alumno.controlNumber}} </td>
+      <td data-f-sz="12" >
+         {{alumno.fullName}}
+      </td>      
+      <td data-f-sz="12">{{alumno.career}}</td>
+      <td data-f-sz="12">{{alumno.semester}}</td>
+      <td data-f-sz="12" >{{alumno.nss}}</td>
+      <td data-f-sz="12">{{alumno.status}}</td>      
+   </tr>
+</tbody>
+</table>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
+</div>
