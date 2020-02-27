@@ -31,6 +31,9 @@
               <div *ngSwitchCase="'Omitido'">
                 <span mat-line class="badge badge-pill badge-omit">{{document.status}}</span>
               </div>
+              <div *ngSwitchCase="'Sin Envío'">
+                <span mat-line class="badge badge-pill badge-without-shipping">{{document.status}}</span>
+              </div>
               <div *ngSwitchCase="'Rechazado'">
                 <span mat-line class="badge badge-pill badge-reject">{{document.status}}</span>
               </div>
@@ -48,8 +51,8 @@
           </div>
           <div class="inline" *ngIf="document.type !== 'FOTOS'" class="col-2 p-1 text-center">
             <button *ngIf="document.type != 'PROYECTO' && document.type != 'LIBERACION'
-            && document.type!='SOLICITUD' && document.type!='REGISTRO' && document.status != 'Omitido'
-            " mat-icon-button [matMenuTriggerFor]="menu">
+              && document.type!='SOLICITUD' && document.type!='REGISTRO' && document.status != 'Omitido'
+              && document.status != 'No Enviado'" mat-icon-button [matMenuTriggerFor]="menu">
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">

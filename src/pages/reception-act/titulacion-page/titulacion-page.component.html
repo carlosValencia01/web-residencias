@@ -1,502 +1,497 @@
-<div *ngIf="!isActive">
-  <div class="row">
-    <div class="col-4"></div>
-    <div class="col-4">
-      <div class="card" style=" border: 3px solid #dc5251;color: #b64443;">
-        <div class="row no-gutters">
-          <div class="col-4">
-            <div class="card-body text-center">
-              <img alt="File" src="assets/imgs/sorry.png" style="width: 80px; height: 80px;">
+<div *ngIf="loaded">
+  <div *ngIf="!isActive">
+    <div class="row">
+      <div class="col-4"></div>
+      <div class="col-4">
+        <div class="card" style=" border: 3px solid #dc5251;color: #b64443;">
+          <div class="row no-gutters">
+            <div class="col-4">
+              <div class="card-body text-center">
+                <img alt="File" src="assets/imgs/sorry.png" style="width: 80px; height: 80px;">
+              </div>
             </div>
-          </div>
-          <div class="col-8">
-            <div class="card-body">
-              <h4 class="card-title text-center display-1">404</h4>
-              <div class="text-center">
-                <p class="card-text">ACTO RECEPCIONAL CERRADO</p>
+            <div class="col-8">
+              <div class="card-body">
+                <h4 class="card-title text-center display-1">404</h4>
+                <div class="text-center">
+                  <p class="card-text">ACTO RECEPCIONAL CERRADO</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-4"></div>
-  </div>
-</div>
-<div *ngIf="isActive">
-  <div *ngIf="!isOkTitulation; else requestForm">
-    <div class="title">
-      <h2>¡Aviso, acto recepcional!</h2>
-    </div>
-    <div class="message">
-      <span>Aún no cumples con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
-      <span>Los requisitos son:</span>
-      <div class="row" style="justify-content:center;">
-        <mat-card [ngClass]="isApprovedEnglish ? 'requirement-card card-green': 'requirement-card card-red'">
-          <mat-card-header>
-            <mat-card-subtitle>INGLÉS</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <img mat-card-image style="width:70px;margin:5px;"
-              [src]="isApprovedEnglish ? 'assets/imgs/approved.png' : 'assets/imgs/notApproved.png'">
-          </mat-card-content>
-          <mat-card-footer>
-            <div *ngIf="isApprovedEnglish; else notApprovedEnglish">
-              <p>Ya cuentas con el inglés liberado</p>
-            </div>
-            <ng-template #notApprovedEnglish>
-              <p>Nota: Aún no tienes el inglés liberado,
-                favor de comunicarte a la Coordinación 
-                de lenguas extranjeras</p>
-            </ng-template>
-          </mat-card-footer>
-        </mat-card>
-        <mat-card [ngClass]="isGraduate ? 'requirement-card card-green' : 'requirement-card card-red'">
-          <mat-card-header>
-            <mat-card-subtitle>EGRESADO</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <img mat-card-image style="width:70px;margin:5px;"
-              [src]="isGraduate ? 'assets/imgs/approved.png' : 'assets/imgs/notApproved.png'">
-          </mat-card-content>
-          <mat-card-footer>
-            <div *ngIf="isGraduate; else notGraduate">
-              <p>Ya cuentas con el estatus de egresado</p>
-            </div>
-            <ng-template #notGraduate>
-              <p>Nota: Aún no tienes estatus de egresado,
-                favor de asistir al departamento de servicios escolares</p>
-            </ng-template>
-          </mat-card-footer>
-        </mat-card>
-      </div><br>
-      <span>Si ya cuenta con los requisitos anteriores, es necesario esperar a que sea liberado en el sistema.</span>
+      <div class="col-4"></div>
     </div>
   </div>
-</div>
-
-
-<ng-template #requestForm>
-  <mat-vertical-stepper [linear]="true" #stepper>
-    <mat-step [completed]="SteepOneCompleted">
-      <ng-template matStepLabel>SOLICITUD DE TITULACIÓN</ng-template>
-      <div *ngIf="SteepOneCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-4"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-            <app-viewer-component [Request]="Request" [Phase]="'Capturado'" [Title]="''" [Type]="'Accept'">
-            </app-viewer-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-4"></div>
+  <div *ngIf="isActive">
+    <div *ngIf="!isOkTitulation; else requestForm">
+      <div *ngIf="!isTitled; else titled">
+        <div class="title">
+          <h2>¡Aviso, acto recepcional!</h2>
         </div>
-      </div>
-      <div *ngIf="!SteepOneCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <app-request-component *ngSwitchCase="'Process'" (onSubmit)=" RequestEvent($event)" [request]="Request">
-          </app-request-component>
-          <app-request-component *ngSwitchDefault (onSubmit)=" RequestEvent($event)"></app-request-component>
-        </div>
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepTwoCompleted" class="text-center">
-      <ng-template matStepLabel>ACEPTACIÓN DE SOLICITUD</ng-template>
-      <div *ngIf="SteepTwoCompleted" class="text-center">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-viewer-component [Request]="Request" [Phase]="'Enviado'" [Title]="CompletedSentMessage"
-              [Type]="'Accept'">
-            </app-viewer-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-        <!-- <app-process-component [Message]="CompletedSentMessage"></app-process-component> -->
-        <!-- <app-viewer-component [Request]="Request" [Phase]="'Enviado'" [Title]="'dd'"></app-viewer-component> -->
-      </div>
-      <div *ngIf="!SteepTwoCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <div class="row" *ngSwitchCase="'None'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="ProcessSentMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-        </div>
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepThreeCompleted">
-      <ng-template matStepLabel>REGISTRO DE PROYECTO</ng-template>
-      <div *ngIf="SteepThreeCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-viewer-component [Request]="Request" [Phase]="'Registrado'" [Title]="CompletedVerifiedMessage"
-              [Type]="'Accept'">
-            </app-viewer-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-        <!-- <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component> -->
-      </div>
-      <div *ngIf="!SteepThreeCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <!-- <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessVerifiedMessage"></app-process-component> -->
-          <div class="row" *ngSwitchCase="'None'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="ProcessRegistreVerifiedMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-        </div>
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepFourCompleted">
-      <ng-template matStepLabel>LIBERACIÓN DE PROYECTO</ng-template>
-      <div *ngIf="SteepFourCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-viewer-component [Request]="Request" [Phase]="'Liberado'" [Title]="CompletedReleasedMessage"
-              [Type]="'Accept'">
-            </app-viewer-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-        <!-- <app-process-component [Message]="CompletedReleasedMessage"></app-process-component> -->
-      </div>
-      <div *ngIf="!SteepFourCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <div class="row" *ngSwitchCase="'None'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="NoneReleasedMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-          <div class="row" *ngSwitchCase="'Process'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="ProcessReleasesMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-          <div class="row" *ngSwitchCase="'Reject'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="ProcessReleasesMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-          <!-- <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component> -->
-          <!-- <app-process-component *ngSwitchCase="'Reject'" [Message]="ProcessReleasedMessage"></app-process-component> -->
-        </div>
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepFiveCompleted">
-      <ng-template matStepLabel>VALIDACIÓN DE LIBERACIÓN </ng-template>
-      <div *ngIf="SteepFiveCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-process-component [Message]="CompletedReleasedValidMessage" [Type]="'Accept'" [Title]="''">
-            </app-process-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-        <!-- <div class="d-flex justify-content-center">
-          <a (click)="viewRequeriments()" style=" cursor: pointer">
-            <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 100px; height: 100px">
-          </a>
-        </div>
-        <div class="d-flex justify-content-center">
-          <small>Requisitos</small>
-        </div> -->
-      </div>
-      <div *ngIf="!SteepFiveCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-process-component [Message]="ProcessReleasedValidMessage" [Type]="'Process'" [Title]="''">
-            </app-process-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-        <!-- <div class="d-flex justify-content-center">
-          <a (click)="viewRequeriments()" style=" cursor: pointer">
-            <img alt="File" src="../../../assets/imgs/fileView.png" style="width: 100px; height: 100px">
-          </a>
-        </div>
-        <div class="d-flex justify-content-center">
-          <small>Requisitos</small>
-        </div> -->
-        <!-- <div class="d-flex justify-content-center">
-        <button type="button" class="btn btn-outline-success btn-sm" (click)="documentsLoad()">
-          <small>Cargar Archivos</small>
-        </button>
-      </div> -->
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepSixCompleted">
-      <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
-      <app-upload-files (onResponse)="Files($event)"></app-upload-files>
-      <!-- <div *ngIf="SteepSixCompleted">
-        <app-upload-files></app-upload-files>
-      </div>
-      <div *ngIf="!SteepSixCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <div class="row" *ngSwitchCase="'Accept'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="CompletedDeliveredMessage" [Type]="'Process'"></app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-          <div class="row" *ngSwitchDefault>
-            <div class="col-12">
-              <app-upload-files></app-upload-files>
-            </div>
-          </div>
-        </div>
-      </div> -->
-    </mat-step>
-    <mat-step [completed]="SteepSevenCompleted">
-      <ng-template matStepLabel>CONSTANCIA DE NO INCONVENIENCIA</ng-template>
-      <div *ngIf="SteepSevenCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-4"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-            <app-viewer-component [Request]="Request" [Phase]="'Validado'" [Title]="''" [Type]="'Accept'">
-            </app-viewer-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-4"></div>
-        </div>
-        <!-- <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component> -->
-      </div>
-      <div *ngIf="!SteepSevenCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-process-component [Message]="ProcessValidatedMessage" [Type]="'Process'" [Title]="''">
-            </app-process-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-        <!-- <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-process-component [Message]="'Proceso no válido reportelo'" [Type]="'Error'"></app-process-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div> -->
-
-        <!-- <div [ngSwitch]="StatusComponent">
-        <app-upload-files *ngSwitchCase="'None'"></app-upload-files>
-        <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
-      </div> -->
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepEightCompleted">
-      <ng-template matStepLabel>PROGRAMACIÓN</ng-template>
-      <div *ngIf="SteepEightCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <div class="card" style=" border: 3px solid #0cc9aa;color: #0aa68d;">
-              <div class="row no-gutters">
-                <div class="col-4">
-                  <div class="card-body text-center">
-                    <img alt="File" src="../../../assets/imgs/aprobado.png" style="width: 80px; height: 80px;">
-                  </div>
+        <div class="message">
+          <span>Aún no cumples con los requisitos para iniciar el trámite de acto recepcional</span><br><br>
+          <span>Los requisitos son:</span>
+          <div class="row" style="justify-content:center;">
+            <mat-card [ngClass]="isApprovedEnglish ? 'requirement-card card-green': 'requirement-card card-red'">
+              <mat-card-header>
+                <mat-card-subtitle>INGLÉS</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <img mat-card-image style="width:70px;margin:5px;"
+                  [src]="isApprovedEnglish ? 'assets/imgs/approved.png' : 'assets/imgs/notApproved.png'">
+              </mat-card-content>
+              <mat-card-footer>
+                <div *ngIf="isApprovedEnglish; else notApprovedEnglish">
+                  <p>Ya cuentas con el inglés liberado</p>
                 </div>
-                <div class="col-8">
-                  <div class="card-body">
-                    <h4 class="card-title text-left">¡Éxito!</h4>
-                    <div class="text-center">
-                      <h6 class="card-title" *ngIf="existTitle">Titulación</h6>
-                      <p class="card-text">Lugar: {{Request.place}}</p>
-                      <p class="card-text">Fecha/Hora: {{titrationHour}}</p>
+                <ng-template #notApprovedEnglish>
+                  <p>Nota: Aún no tienes el inglés liberado,
+                    favor de comunicarte a la Coordinación 
+                    de lenguas extranjeras</p>
+                </ng-template>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card [ngClass]="isGraduate ? 'requirement-card card-green' : 'requirement-card card-red'">
+              <mat-card-header>
+                <mat-card-subtitle>EGRESADO</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <img mat-card-image style="width:70px;margin:5px;"
+                  [src]="isGraduate ? 'assets/imgs/approved.png' : 'assets/imgs/notApproved.png'">
+              </mat-card-content>
+              <mat-card-footer>
+                <div *ngIf="isGraduate; else notGraduate">
+                  <p>Ya cuentas con el estatus de egresado</p>
+                </div>
+                <ng-template #notGraduate>
+                  <p>Nota: Aún no tienes estatus de egresado,
+                    favor de asistir al departamento de servicios escolares</p>
+                </ng-template>
+              </mat-card-footer>
+            </mat-card>
+          </div><br>
+          <span>Si ya cuenta con los requisitos anteriores, es necesario esperar a que sea liberado en el sistema.</span>
+        </div>
+      </div>
+      <ng-template #titled>
+        <!-- mostrar mensaje de titulado sin usar la app web -->
+        <div *ngIf="!hasPhase; else profile">
+          <div class="title">
+            <h2>¡Aviso, acto recepcional!</h2>
+          </div>
+          <div class="message">
+            <span>Ya eres un estudiante títulado</span><br>        
+            <div class="row" style="justify-content:center;">
+              <mat-card [ngClass]="'requirement-card card-green'">
+                <mat-card-header>
+                  <mat-card-subtitle>                    
+                    <b>{{degree}}</b> {{user.name.fullName}}
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-footer>
+                  <div>
+                    <p>
+                      Este módulo permitirá a los estudiantes egresados realizar el proceso de acto recepcional.
+                    </p>
+                  </div>
+                </mat-card-footer>
+              </mat-card>          
+            </div><br>
+          </div>
+        </div>
+        <ng-template #profile>
+          <!-- mostrar el expediente -->
+          <app-expedient-documents [request]="Request" [degree]="degree" [role]="'Estudiante'"></app-expedient-documents>
+        </ng-template>
+      </ng-template>
+    </div>
+  </div>
+  
+  
+  <ng-template #requestForm>
+    <mat-vertical-stepper [linear]="true" #stepper>
+      <mat-step [completed]="SteepOneCompleted">
+        <ng-template matStepLabel>SOLICITUD DE TITULACIÓN</ng-template>
+        <div *ngIf="SteepOneCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-4"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+              <app-viewer-component [Request]="Request" [Phase]="'Capturado'" [Title]="''" [Type]="'Accept'">
+              </app-viewer-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-4"></div>
+          </div>
+        </div>
+        <div *ngIf="!SteepOneCompleted">
+          <div [ngSwitch]="StatusComponent">
+            <app-request-component *ngSwitchCase="'Process'" (onSubmit)=" RequestEvent($event)" [request]="Request">
+            </app-request-component>
+            <app-request-component *ngSwitchDefault (onSubmit)=" RequestEvent($event)"></app-request-component>
+          </div>
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepTwoCompleted" class="text-center">
+        <ng-template matStepLabel>ACEPTACIÓN DE SOLICITUD</ng-template>
+        <div *ngIf="SteepTwoCompleted" class="text-center">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-viewer-component [Request]="Request" [Phase]="'Enviado'" [Title]="CompletedSentMessage"
+                [Type]="'Accept'">
+              </app-viewer-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+  
+        </div>
+        <div *ngIf="!SteepTwoCompleted">
+          <div [ngSwitch]="StatusComponent">
+            <div class="row" *ngSwitchCase="'None'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="ProcessSentMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+          </div>
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepThreeCompleted">
+        <ng-template matStepLabel>REGISTRO DE PROYECTO</ng-template>
+        <div *ngIf="SteepThreeCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-viewer-component [Request]="Request" [Phase]="'Registrado'" [Title]="CompletedVerifiedMessage"
+                [Type]="'Accept'">
+              </app-viewer-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+  
+        </div>
+        <div *ngIf="!SteepThreeCompleted">
+          <div [ngSwitch]="StatusComponent">
+  
+            <div class="row" *ngSwitchCase="'None'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="ProcessRegistreVerifiedMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+          </div>
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepFourCompleted">
+        <ng-template matStepLabel>LIBERACIÓN DE PROYECTO</ng-template>
+        <div *ngIf="SteepFourCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-viewer-component [Request]="Request" [Phase]="'Liberado'" [Title]="CompletedReleasedMessage"
+                [Type]="'Accept'">
+              </app-viewer-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+  
+        </div>
+        <div *ngIf="!SteepFourCompleted">
+          <div [ngSwitch]="StatusComponent">
+            <div class="row" *ngSwitchCase="'None'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="NoneReleasedMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+            <div class="row" *ngSwitchCase="'Process'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="ProcessReleasesMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+            <div class="row" *ngSwitchCase="'Reject'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="ProcessReleasesMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+  
+          </div>
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepFiveCompleted">
+        <ng-template matStepLabel>VALIDACIÓN DE LIBERACIÓN </ng-template>
+        <div *ngIf="SteepFiveCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-process-component [Message]="CompletedReleasedValidMessage" [Type]="'Accept'" [Title]="''">
+              </app-process-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+  
+        </div>
+        <div *ngIf="!SteepFiveCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-process-component [Message]="ProcessReleasedValidMessage" [Type]="'Process'" [Title]="''">
+              </app-process-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+  
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepSixCompleted">
+        <ng-template matStepLabel>ENTREGA Y VALIDACIÓN DE DOCUMENTOS</ng-template>
+        <app-upload-files (onResponse)="Files($event)"></app-upload-files>
+      </mat-step>
+      <mat-step [completed]="SteepSevenCompleted">
+        <ng-template matStepLabel>CONSTANCIA DE NO INCONVENIENCIA</ng-template>
+        <div *ngIf="SteepSevenCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-4"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+              <app-viewer-component [Request]="Request" [Phase]="'Validado'" [Title]="''" [Type]="'Accept'">
+              </app-viewer-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-4"></div>
+          </div>
+          <!-- <app-process-component [Message]="CompletedVerifiedMessage"></app-process-component> -->
+        </div>
+        <div *ngIf="!SteepSevenCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-process-component [Message]="ProcessValidatedMessage" [Type]="'Process'" [Title]="''">
+              </app-process-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+          <!-- <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-process-component [Message]="'Proceso no válido reportelo'" [Type]="'Error'"></app-process-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div> -->
+  
+          <!-- <div [ngSwitch]="StatusComponent">
+          <app-upload-files *ngSwitchCase="'None'"></app-upload-files>
+          <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
+        </div> -->
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepEightCompleted">
+        <ng-template matStepLabel>PROGRAMACIÓN</ng-template>
+        <div *ngIf="SteepEightCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <div class="card" style=" border: 3px solid #0cc9aa;color: #0aa68d;">
+                <div class="row no-gutters">
+                  <div class="col-4">
+                    <div class="card-body text-center">
+                      <img alt="File" src="../../../assets/imgs/aprobado.png" style="width: 80px; height: 80px;">
+                    </div>
+                  </div>
+                  <div class="col-8">
+                    <div class="card-body">
+                      <h4 class="card-title text-left">¡Éxito!</h4>
+                      <div class="text-center">
+                        <h6 class="card-title" *ngIf="existTitle">Titulación</h6>
+                        <p class="card-text">Lugar: {{Request.place}}</p>
+                        <p class="card-text">Fecha/Hora: {{titrationHour}}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
           </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
         </div>
-      </div>
-      <div *ngIf="!SteepEightCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <div *ngSwitchCase="'None'">
-            <app-schedule (onResponse)="Schedule($event)"></app-schedule>
+        <div *ngIf="!SteepEightCompleted">
+          <div [ngSwitch]="StatusComponent">
+            <div *ngSwitchCase="'None'">
+              <app-schedule (onResponse)="Schedule($event)"></app-schedule>
+            </div>
+            <div *ngSwitchCase="'Process'" class="text-center">
+              <div class="row">
+                <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+                <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                  <app-process-component [Message]="ProcessAssignedMessage" [Type]="'Process'" [Title]="''">
+                  </app-process-component>
+                </div>
+                <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              </div>
+  
+              <!-- <img alt="File" src="../../assets/imgs/reloj.png" style="width: 50px; height: 50px">
+              <p>
+                {{ProcessAssignedMessage}}
+              </p> -->
+            </div>
+            <div *ngSwitchCase="'Accept'"></div>
+            <!-- <div *ngSwitchCase="'Wait'">
+              <app-process-component [Message]="WaitAssignedMessage"></app-process-component>
+            </div> -->
+            <div *ngSwitchCase="'Reject'">
+              <div class="alert alert-danger text-center">
+                {{RejectAssignedMessage}}
+              </div>
+              <app-schedule (onResponse)="Schedule($event)"></app-schedule>
+            </div>
+            <div *ngSwitchCase="'Cancelled'">
+              <div class="alert alert-danger text-center">
+                {{CancelledAssignedMessage}}
+              </div>
+              <app-schedule (onResponse)="Schedule($event)"></app-schedule>
+            </div>
           </div>
-          <div *ngSwitchCase="'Process'" class="text-center">
-            <div class="row">
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepNineCompleted">
+        <ng-template matStepLabel>ACTO RECEPCIONAL</ng-template>
+        <div *ngIf="SteepNineCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-process-component [Message]="CompletedRealizedMessage" [Type]="'Accept'" [Title]="''">
+              </app-process-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+        </div>
+        <div *ngIf="!SteepNineCompleted">
+          <div [ngSwitch]="StatusComponent">
+            <div class="row" *ngSwitchCase="'Reject'">
               <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
               <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-                <app-process-component [Message]="ProcessAssignedMessage" [Type]="'Process'" [Title]="''">
+                <app-process-component [Message]="RejectRealizedMessage" [Type]="'Error'" [Title]="''">
                 </app-process-component>
               </div>
               <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
             </div>
-
-            <!-- <img alt="File" src="../../assets/imgs/reloj.png" style="width: 50px; height: 50px">
-            <p>
-              {{ProcessAssignedMessage}}
-            </p> -->
-          </div>
-          <div *ngSwitchCase="'Accept'"></div>
-          <!-- <div *ngSwitchCase="'Wait'">
-            <app-process-component [Message]="WaitAssignedMessage"></app-process-component>
-          </div> -->
-          <div *ngSwitchCase="'Reject'">
-            <div class="alert alert-danger text-center">
-              {{RejectAssignedMessage}}
-            </div>
-            <app-schedule (onResponse)="Schedule($event)"></app-schedule>
-          </div>
-          <div *ngSwitchCase="'Cancelled'">
-            <div class="alert alert-danger text-center">
-              {{CancelledAssignedMessage}}
-            </div>
-            <app-schedule (onResponse)="Schedule($event)"></app-schedule>
-          </div>
-        </div>
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepNineCompleted">
-      <ng-template matStepLabel>ACTO RECEPCIONAL</ng-template>
-      <div *ngIf="SteepNineCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-process-component [Message]="CompletedRealizedMessage" [Type]="'Accept'" [Title]="''">
-            </app-process-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-      </div>
-      <div *ngIf="!SteepNineCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <div class="row" *ngSwitchCase="'Reject'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="RejectRealizedMessage" [Type]="'Error'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-          <div class="row" *ngSwitchDefault>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="ProcessRealizedMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-        </div>
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepTenCompleted">
-      <ng-template matStepLabel>ACTA DE EXAMEN</ng-template>
-      <div *ngIf="SteepTenCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-process-component [Message]="CompletedGeneratedMessage" [Type]="'Accept'" [Title]="''">
-            </app-process-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-      </div>
-      <div *ngIf="!SteepTenCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <div class="row" *ngSwitchCase="'None'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="ProcessGeneratedMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-          <div class="row" *ngSwitchCase="'Printed'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="ProcessGeneratedMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-          <div class="row" *ngSwitchCase="'Accept'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="AcceptGeneratedMessageSubtitle" [Type]="'Accept'"
-                [Title]="AcceptGeneratedMessage">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-        </div>
-      </div>
-    </mat-step>
-    <mat-step [completed]="SteepTenCompleted">
-      <ng-template matStepLabel>TÍTULO</ng-template>
-      <div *ngIf="SteepElevenCompleted">
-        <div class="row">
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-            <app-process-component [Message]="FinalizedTitledMessage" [Type]="'Accept'" [Title]="''">
-            </app-process-component>
-          </div>
-          <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-        </div>
-      </div>
-      <div *ngIf="!SteepElevenCompleted">
-        <div [ngSwitch]="StatusComponent">
-          <div class="row" *ngSwitchCase="'None'">
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="ProcessTitledMessage" [Type]="'Process'" [Title]="''">
-              </app-process-component>
-            </div>
-            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
-          </div>
-          <div class="row" *ngSwitchCase="'Process'">
-            <div class="col-12 text-center">
-              <div class="alert alert-info">
-                {{ProcessTitledMessageSubtitle}}
+            <div class="row" *ngSwitchDefault>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="ProcessRealizedMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
               </div>
-              <img src="assets/imgs/tramite_cedula.png" alt="Trámite de cédula electrónica"
-                style="width:50%;margin:10px;">
-              <br><a
-                href="https://www.sat.gob.mx/tramites/16703/obten-tu-certificado-de-e.firma-(antes-firma-electronica)"
-                target="_blank">Genera tu e-firma</a>
-              <br><a href="https://www.gob.mx/tramites/ficha/expedicion-de-cedula-profesional-electronica/SEP6534"
-                target="_blank">Tramita tu cédula electrónica</a>
-              <app-upload-file-titled></app-upload-file-titled>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
             </div>
           </div>
-          <div class="row" *ngSwitchCase="'Accept'">
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepTenCompleted">
+        <ng-template matStepLabel>ACTA DE EXAMEN</ng-template>
+        <div *ngIf="SteepTenCompleted">
+          <div class="row">
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
             <div class="col-10 col-sm-8 col-md-6 col-lg-6">
-              <app-process-component [Message]="AcceptTitledMessage" [Type]="'Accept'" [Title]="''">
+              <app-process-component [Message]="CompletedGeneratedMessage" [Type]="'Accept'" [Title]="''">
               </app-process-component>
-              <p class="sub align-center"
-                style="box-sizing: border-box; color: #AEAEAE; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 1.5em; margin-top: 0;"
-                align="center">
-                <img src="https://i.ibb.co/nwG8LSP/tabla-Requisitos-Titulo.png" width="100%">
-              </p>
             </div>
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
           </div>
         </div>
-      </div>
-    </mat-step>
-  </mat-vertical-stepper>
-</ng-template>
+        <div *ngIf="!SteepTenCompleted">
+          <div [ngSwitch]="StatusComponent">
+            <div class="row" *ngSwitchCase="'None'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="ProcessGeneratedMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+            <div class="row" *ngSwitchCase="'Printed'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="ProcessGeneratedMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+            <div class="row" *ngSwitchCase="'Accept'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="AcceptGeneratedMessageSubtitle" [Type]="'Accept'"
+                  [Title]="AcceptGeneratedMessage">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+          </div>
+        </div>
+      </mat-step>
+      <mat-step [completed]="SteepTenCompleted">
+        <ng-template matStepLabel>TÍTULO</ng-template>
+        <div *ngIf="SteepElevenCompleted">
+          <div class="row">
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+              <app-process-component [Message]="FinalizedTitledMessage" [Type]="'Accept'" [Title]="''">
+              </app-process-component>
+            </div>
+            <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+          </div>
+        </div>
+        <div *ngIf="!SteepElevenCompleted">
+          <div [ngSwitch]="StatusComponent">
+            <div class="row" *ngSwitchCase="'None'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="ProcessTitledMessage" [Type]="'Process'" [Title]="''">
+                </app-process-component>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+            <div class="row" *ngSwitchCase="'Process'">
+              <div class="col-12 text-center">
+                <div class="alert alert-info">
+                  {{ProcessTitledMessageSubtitle}}
+                </div>
+                <img src="assets/imgs/tramite_cedula.png" alt="Trámite de cédula electrónica"
+                  style="width:50%;margin:10px;">
+                <br><a
+                  href="https://www.sat.gob.mx/tramites/16703/obten-tu-certificado-de-e.firma-(antes-firma-electronica)"
+                  target="_blank">Genera tu e-firma</a>
+                <br><a href="https://www.gob.mx/tramites/ficha/expedicion-de-cedula-profesional-electronica/SEP6534"
+                  target="_blank">Tramita tu cédula electrónica</a>
+                <app-upload-file-titled></app-upload-file-titled>
+              </div>
+            </div>
+            <div class="row" *ngSwitchCase="'Accept'">
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+              <div class="col-10 col-sm-8 col-md-6 col-lg-6">
+                <app-process-component [Message]="AcceptTitledMessage" [Type]="'Accept'" [Title]="''">
+                </app-process-component>
+                <p class="sub align-center"
+                  style="box-sizing: border-box; color: #AEAEAE; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; font-size: 12px; line-height: 1.5em; margin-top: 0;"
+                  align="center">
+                  <img src="https://i.ibb.co/nwG8LSP/tabla-Requisitos-Titulo.png" width="100%">
+                </p>
+              </div>
+              <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
+            </div>
+          </div>
+        </div>
+      </mat-step>
+    </mat-vertical-stepper>
+  </ng-template>
+</div>

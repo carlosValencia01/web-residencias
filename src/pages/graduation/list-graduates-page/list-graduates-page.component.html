@@ -1,4 +1,4 @@
-<div class="content-general">
+<div class="content-general" *ngIf = "role !== 'asistenciaInvitados'">
    <div class="card card-shadow">
       <mat-tab-group>
          <mat-tab *ngIf="role === 'administration' || role === 'comunication' || role === 'coordinator'">
@@ -726,6 +726,70 @@
 </mat-tab>
 </mat-tab-group>
 </div>
+</div>
+<div *ngIf = "role === 'asistenciaInvitados'">
+   <div class="card card-shadow" style="padding: 5px;">
+      <div class="container">
+         <div class="row justify-content-md-center">
+               <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+                  <mat-label>Nombre o número de control</mat-label>
+                  <input matInput [(ngModel)]="findStudentTickets" oninput="this.value = this.value.toUpperCase()">
+                  <button matSuffix mat-icon-button (click)="searchStudent()">
+                     <mat-icon>search</mat-icon>
+                  </button>
+               </mat-form-field>
+         </div>
+       </div>
+   </div>
+   <div class="row justify-content-md-center" *ngIf = "findStudentTickets !== '' || guests">
+      <mat-selection-list class="student-list">
+         <mat-list-item *ngFor="let alumno of studentsTickets" class="student-card">
+           <mat-card *ngIf = "alumno.status !== 'Registrado'">
+             <mat-card-header>
+               <mat-card-title>
+                  <span class = "badge badge-pill" style="text-align: center; background-color:  rgb(202,0,10); color: white; width: 90px;">{{alumno.status}}</span><br>
+                  {{ alumno.name }}<br>
+                  {{ alumno.nc }}<br>
+                  {{ alumno.carreerComplete}}<br><br>
+               </mat-card-title>
+             </mat-card-header>
+             <mat-card-actions align="center">
+               <button mat-button color="warn" (click)="callStudent(alumno)" mat-button>Llamar</button>
+               <button mat-button color="primary" (click)="viewTickets(alumno)" mat-button>Ver boletos</button>
+             </mat-card-actions>
+           </mat-card>
+           <mat-card *ngIf = "alumno.status === 'Registrado'">
+            <mat-card-header>
+              <mat-card-title>
+                  <span class = "badge badge-pill" style="text-align: center; background-color:  rgb(71,178,218); color: white; width: 90px;">{{alumno.status}}</span><br>
+                  {{ alumno.name }}<br>
+                  {{ alumno.nc }}<br>
+                  {{ alumno.carreerComplete}}<br><br>
+               </mat-card-title>
+            </mat-card-header>
+            <mat-card-actions align="center">
+               <button mat-button color="warn" (click)="callStudent(alumno)" mat-button>Llamar</button>
+             </mat-card-actions>
+          </mat-card>
+         </mat-list-item>
+       </mat-selection-list>
+   </div>
+   <div *ngIf="guests">
+      <div class="row justify-content-md-center">
+         <mat-selection-list class="ticket-list">
+            <mat-list-item *ngFor="let guest of guests; let indice = index;" class="ticket-card">
+              <mat-card>
+                <mat-card-header style="text-align: center;">
+                  <mat-card-title>Invitado - {{guest.ticketFor.slice(8,guest.ticketFor.length)}}</mat-card-title>
+                </mat-card-header>
+                <mat-card-actions align="center">
+                  <button mat-button color="accent" (click)="changeStatusTicket(guest)" mat-button>Registrar asistencia</button>
+                </mat-card-actions>
+              </mat-card>
+            </mat-list-item>
+          </mat-selection-list>
+      </div>
+   </div>
 </div>
 <div class="center">
    <app-loader [loading]="loading"></app-loader>

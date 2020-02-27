@@ -169,7 +169,7 @@ export class ViewerComponentComponent implements OnInit {
       }
       case eRequest.SENT: {
         this.showLoading = false;
-        window.open('../../../assets/Requisitos.pdf', '_blank');
+        window.open('https://drive.google.com/open?id=1fOItfyeVGiItdDHXvSNifvtABt6goe3I', '_blank');
         break;
       }
       case eRequest.CAPTURED: {

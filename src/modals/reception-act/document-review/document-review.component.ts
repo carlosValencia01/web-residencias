@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
-import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDrawer } from '@angular/material';
+import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
@@ -26,6 +26,9 @@ export class DocumentReviewComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   isTitled: boolean;
   documents: Array<IDocument>;
+  allDocuments = ['1_CURP', '2_ACTA_NACIMIENTO', '3_CERTIFICADO_BACHILLERATO', '4_CEDULA_TECNICA',
+    '5_CERTIFICADO_LICENCIATURA', 'SERVICIO_SOCIAL', 'LIBERACION_INGLES', 'RECIBO', 'FOTOS', 'REVALIDACION'];
+  allDocuments2 = ['INE', 'CEDULA_PROFESIONAL', 'XML'];
   request: iRequest;
   student;
   uRequest: uRequest;
@@ -60,27 +63,52 @@ export class DocumentReviewComponent implements OnInit {
 
   refresh(): void {
     this.documents = [];
+    let findDoc = false;
     if (this.isTitled) {
-      this.request.documents.forEach(element => {
-        if (element.type === eFILES.INE || element.type === eFILES.XML || element.type === eFILES.CED_PROFESIONAL) {
+      for (let i = 0; i < this.allDocuments2.length; i++ ) {
+        this.request.documents.forEach(element => {
+          if (element.type === eFILES.INE || element.type === eFILES.XML || element.type === eFILES.CED_PROFESIONAL) {
+            if (this.allDocuments2[i] === element.type) {
+              findDoc = true;
+              this.documents.push({
+                type: element.type, dateRegistered: element.dateRegister,
+                status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
+              });
+            }
+
+          }
+        });
+        if (!findDoc) {
           this.documents.push({
-            type: element.type, dateRegistered: element.dateRegister,
-            status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
+            type: this.allDocuments2[i], status: 'No Enviado', file: null, view: '', action: '', icon: ''
           });
         }
-      });
+        findDoc = false;
+      }
+
     } else {
-      this.request.documents.forEach(element => {
-        if (element.type !== eFILES.PROYECTO && element.type !== eFILES.RELEASED
-          && element.type !== eFILES.SOLICITUD && element.type !== eFILES.REGISTRO
-          && element.type !== eFILES.INCONVENIENCE
-        ) {
+      for (let i = 0; i < this.allDocuments.length; i++ ) {
+        this.request.documents.forEach((element) => {
+          if (element.type !== eFILES.PROYECTO && element.type !== eFILES.RELEASED
+            && element.type !== eFILES.SOLICITUD && element.type !== eFILES.REGISTRO
+            && element.type !== eFILES.INCONVENIENCE
+          ) {
+            if (this.allDocuments[i] === element.type) {
+              findDoc = true;
+              this.documents.push({
+                type: element.type, dateRegistered: element.dateRegister,
+                status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
+              });
+            }
+          }
+        });
+        if (!findDoc) {
           this.documents.push({
-            type: element.type, dateRegistered: element.dateRegister,
-            status: this.getStatus(element.status), file: null, view: '', action: '', icon: ''
+            type: this.allDocuments[i], status: 'No Enviado', file: null, view: '', action: '', icon: ''
           });
         }
-      });
+        findDoc = false;
+      }
     }
     if (this.documentDisplayed) {
       this.documentDisplayed = this.getDocument(this.documentDisplayed.type);
@@ -96,7 +124,7 @@ export class DocumentReviewComponent implements OnInit {
   }
 
   view(file, status): void {
-    if (status !== 'Omitido') {
+    if (status !== 'Omitido' && status !== 'No Enviado') {
       const type = <eFILES><keyof typeof eFILES>file;
       if (type === eFILES.PHOTOS) {
         this.existFile = false;
@@ -112,7 +140,7 @@ export class DocumentReviewComponent implements OnInit {
       const archivo = this.getDocument(type);
       this.documentDisplayed = archivo;
       this.showLoading = true;
-      if (archivo.status !== 'Omitido') {
+      if (archivo.status !== 'Omitido' && archivo.status !== 'No Enviado') {
         switch (type) {
           case eFILES.SOLICITUD: {
             this.pdf = this.uRequest.protocolActRequest().output('bloburl');

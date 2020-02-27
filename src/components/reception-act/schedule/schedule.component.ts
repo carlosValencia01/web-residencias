@@ -81,10 +81,12 @@ export class ScheduleComponent implements OnInit {
     const diary: Array<ISchedule> = [];
     Schedule.forEach(element => {
       //  Para agregar los eventos de acuerdo a la hora y por carrera, se quita para tomar en cuenta todas los eventos
-      // if (element._id.career[0] === this.career && this.request.proposedHour === element._id.minutes)
-      if (this.request.proposedHour === element._id.minutes) {
-        diary.push({ career: element._id.career[0], date: element._id.date, minutes: element._id.minutes, count: element.count });
-      }
+      // if (element._id.career[0] === this.career && this.request.proposedHour === element._id.minutes) 
+      // if (this.request.proposedHour === element._id.minutes)
+      diary.push({ career: element._id.career[0], date: element._id.date, minutes: element._id.minutes, count: element.count });      
+      
+      // if (this.request.proposedHour === element._id.minutes) {
+      // }
     });
     return diary;
   }
@@ -93,6 +95,8 @@ export class ScheduleComponent implements OnInit {
   getRanges(Ranges: any): void {
     this.ranges = [];
     Ranges.forEach(element => {
+      console.log('element',element);
+      
       const value = element.careers.find(x => x === this.career);
       if (typeof (value) !== 'undefined') {
         const tmp: { start: Date, end: Date, quantity: number } = {
@@ -107,13 +111,17 @@ export class ScheduleComponent implements OnInit {
   schedule(month: number, year: number): void {
     this.events = [];
     this.appointments = [];
+    console.log('b',month,year);
+    
     this._RequestProvider.getAvailableSpaces({
       month: month,
       year: year
     }).subscribe(data => {
       if (typeof (data.Schedule) !== 'undefined') {
         this.getRanges(data.Ranges);
+        
         const diary = this.getEvents(data.Schedule);
+        
         diary.forEach(e => {
 
           let tmpDate: Date = new Date(e.date);
@@ -125,7 +133,7 @@ export class ScheduleComponent implements OnInit {
           tmpDate.setHours(0, 0, 0, 0);
           this.appointments.push({ date: tmpDate, count: e.count });
         });
-
+        console.log(this.appointments,'ap');
         this.refresh.next();
       }
     }, error => {

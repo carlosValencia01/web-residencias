@@ -167,6 +167,7 @@ import { ViewerComponentComponent } from 'src/components/reception-act/viewer-co
 import { TitulationProgressComponent } from 'src/components/reception-act/titulation-progress/titulation-progress.component';
 import { ScheduleComponent } from 'src/components/reception-act/schedule/schedule.component';
 import { UploadFileTitledComponent } from 'src/components/reception-act/upload-file-titled/upload-file-titled.component';
+import { ExpedientDocumentsComponent } from 'src/components/reception-act/expedient/expedient.component';
 // Modals
 import { EmployeeAdviserComponent } from 'src/modals/reception-act/employee-adviser/employee-adviser.component';
 import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
@@ -332,6 +333,7 @@ registerLocaleData(localeEs);
     UploadFilesComponent,
     ViewerComponentComponent,
     TitulationProgressComponent,
+    ExpedientDocumentsComponent,
     ScheduleComponent,
     UploadFileTitledComponent,
     // Modals
