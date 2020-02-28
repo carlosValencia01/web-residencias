@@ -1,11 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ProgressPageComponent } from 'src/pages/reception-act/progress-page/progress-page.component';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { StudentProvider } from 'src/providers/shared/student.prov';
-import { BookProvider } from 'src/providers/reception-act/book.prov';
-import { NotificationsServices } from 'src/services/app/notifications.service';
-import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-book',
@@ -13,24 +8,23 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
   styleUrls: ['./book.component.scss']
 })
 export class BookComponent implements OnInit {
-
-  title = '';
-  form: FormGroup;
-  minDate: Date;
-  career;
-  date;
-  bookNumber;
-  existBook = false;
+  public title: string;
+  public formMinuteBook: FormGroup;
+  private book: IBook;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<ProgressPageComponent>,
-    private studentProv: StudentProvider,
-    private boockProv: BookProvider,
-    private notificationsServices: NotificationsServices,
+    public dialogRef: MatDialogRef<BookComponent>,
   ) {
-    this.title = this.data.operation === 'edit' ? 'Editar Evento' : this.title;
-    this.getStudentData(data.data);
+    this.title = this.data.operation === 'edit' ? 'Editar datos del libro' : 'Datos del libro';
+    const { name, number, registerDate } = this.data.book;
+    this.book = {
+      date: new Date(registerDate),
+      bookNumber: number,
+      foja: '',
+      career: name
+    };
+    this._initializeForm(this.book);
   }
 
   ngOnInit() {
@@ -41,46 +35,24 @@ export class BookComponent implements OnInit {
     this.dialogRef.close({action: 'close'});
   }
 
-  onFormSubmit(book) {
-    this.dialogRef.close({action: 'create', book});
+  onFormSubmit() {
+    this.book.foja = this.formMinuteBook.get('foja').value.trim();
+    this.dialogRef.close({action: 'create', data: this.book});
   }
 
-  getStudentData(id) {
-    this.studentProv.getStudentById(id).subscribe(data => {
-      const career = data.student[0].career;
-      this.boockProv.getAllActiveBooks().subscribe(res => {
-        const numberBooks = res.map(({number}) => number);
-        const dateBooks = res.map(({registerDate}) => registerDate);
-        const assignCareers = res.map(({careers}) => careers.map(({fullName}) => fullName));
-        const nameBooks = res.map(({name}) => name);
-        assignCareers.forEach((carrera, index) => {
-          if (!this.existBook) {
-            if (carrera.includes(career)) {
-              this.career = nameBooks[index];
-              this.existBook = true;
-              this.bookNumber = numberBooks[index];
-              this.date = new Date(dateBooks[index]);
-              this.validateForm();
-              return;
-            }
-          }
-          if (index === assignCareers.length - 1) {
-            this.notificationsServices
-              .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'No existe libro para la carrera del alumno.');
-            this.onClose();
-          }
-        });
-
-      });
+  private _initializeForm(book: IBook) {
+    this.formMinuteBook = new FormGroup({
+      'date': new FormControl({ value: book.date, disabled: true }, [Validators.required]),
+      'bookNumber': new FormControl({ value: book.bookNumber, disabled: true }, [Validators.required]),
+      'foja': new FormControl({ value: book.foja, disabled: false }, [Validators.required]),
+      'name': new FormControl({ value: book.career, disabled: true }, [Validators.required]),
     });
   }
+}
 
-  validateForm() {
-    this.form = new FormGroup({
-      'date': new FormControl(this.date, [Validators.required]),
-      'bookNumber': new FormControl(this.bookNumber, [Validators.required]),
-      'foja': new FormControl(null, [Validators.required]),
-      'career': new FormControl(this.career, [Validators.required]),
-    });
-  }
+interface IBook {
+  date: Date;
+  bookNumber: string;
+  foja: string;
+  career: string;
 }
