@@ -1,0 +1,86 @@
+tr:nth-child(even) {
+    background-color: #f2f2f2
+  }
+  
+
+
+.breadcrumb {
+  background: #fff;
+  height: 40px;
+  padding: 10px;
+  border: 1px solid #2f323e;
+  border-radius: 5px;
+}
+
+.breadcrumb li{
+  color:#000;  
+  height: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.badge-captured {    
+    background-color: #fffde7;
+    color:#000000
+  }
+
+  .badge-sent {    
+    background-color: #fff9c4;
+    color:#000000;
+  }
+
+  .badge-verified {    
+    background-color: #fff59d;
+    color: #000000;
+  }
+
+  .badge-registered {    
+    background-color: #fff176;
+    color:#000000;
+  }
+
+  .badge-released {    
+    background-color: #ffee58;
+    color:#000000;
+  }
+
+  .badge-delivered {    
+    background-color: #ffeb3b;
+    color:#000000;
+  }
+
+  .badge-validated {    
+    background-color: #fdd835;
+    color:#000000;
+  }
+
+  .badge-assigned {    
+    background-color: #fbc02d;
+    color:#000000;
+  }
+
+  .badge-realized {    
+    background-color: #f9a825;
+    color:#ffffff;
+  }
+
+  .badge-generated {    
+    background-color: #f57f17;
+    color:#ffffff;
+  }
+  badge-gray {    
+    background-color: #CFCFCF;
+  }
+  mat-list-item:hover {
+    background: #e0e0e0;
+}
+// td, th {
+//   width: 30%;
+// }

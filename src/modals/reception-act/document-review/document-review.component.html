@@ -3,9 +3,9 @@
     <div class="row text-center">
       <div class="col-11" *ngIf="request">
         <h1 mat-dialog-title>
-          {{ student.fullName}} - {{ student.controlNumber }}
+          {{ student.fullName}} - {{ student.controlNumber }} - {{student.career}}
         </h1>
-      </div>     
+      </div>
     </div>
   </div>
   <div class="col-1">
@@ -14,52 +14,59 @@
     </button>
   </div>
 </div>
-<div class="content noScroll">
+<div class="content" mat-dialog-content>
   <div class="row" *ngIf="documents">
-    <div class="col-md-3 menu-scroll-y">
-      <ul class="list-group">
-        <li *ngFor="let document of documents" class="list-group-item d-flex justify-content-between align-items-center" [id]="document.type"
-          >
-          <div (click)="view(document.type,document.status)" class="inline document-name"> 
-
-            <i *ngIf="document.type!='FOTOS'" class="fa fa-file-pdf-o mx-2"></i>
-            <i *ngIf="document.type=='FOTOS'" class="fa fa-file-image-o mx-2"></i>
-            {{document.type | documentType}}
+    <div class="col-md-3 menu-scroll-y m-0">
+      <ul class="list-group m-0">
+        <li *ngFor="let document of documents" class="list-group-item d-flex justify-content-between align-items-center p-1"
+          [id]="document.type">
+          <div (click)="view(document.type,document.status)" class="col-10 p-1">
             <div [ngSwitch]="document.status">
-              <div *ngSwitchCase="'Pendiente'"><span mat-line
-                  class="badge badge-pill badge-process">{{document.status}}</span>
+              <div *ngSwitchCase="'Pendiente'">
+                <span mat-line class="badge badge-pill badge-process">{{document.status}}</span>
               </div>
-              <div *ngSwitchCase="'Aceptado'"><span mat-line class="badge badge-pill badge-accept">{{document.status}}
-                </span></div>
-              <div *ngSwitchCase="'Omitido'"><span mat-line class="badge badge-pill badge-omit">{{document.status}}
-                </span></div>
-              <div *ngSwitchCase="'Rechazado'"><span mat-line class="badge badge-pill badge-reject">{{document.status}}
-                </span></div>
-              <div *ngSwitchDefault><span mat-line class="badge badge-pill badge-none">{{document.status}} </span></div>
+              <div *ngSwitchCase="'Aceptado'">
+                <span mat-line class="badge badge-pill badge-accept">{{document.status}}</span>
+              </div>
+              <div *ngSwitchCase="'Omitido'">
+                <span mat-line class="badge badge-pill badge-omit">{{document.status}}</span>
+              </div>
+              <div *ngSwitchCase="'Sin Envío'">
+                <span mat-line class="badge badge-pill badge-without-shipping">{{document.status}}</span>
+              </div>
+              <div *ngSwitchCase="'Rechazado'">
+                <span mat-line class="badge badge-pill badge-reject">{{document.status}}</span>
+              </div>
+              <div *ngSwitchDefault>
+                <span mat-line class="badge badge-pill badge-none">{{document.status}} </span>
+              </div>
             </div>
-            <div
-              *ngIf="(document.status==='Pendiente' || document.status==='Aceptado') && document.type!='FOTOS'">
+            <div class="document-name">
+              <i *ngIf="document.type!='FOTOS'" class="fa fa-file-pdf-o mx-2"></i>
+              <i *ngIf="document.type=='FOTOS'" class="fa fa-file-image-o mx-2"></i>
+              {{document.type | documentType}}
+            </div>
+            <div *ngIf="(document.status==='Pendiente' || document.status==='Aceptado') && document.type!='FOTOS'">
+            </div>
           </div>
-        </div>
-        <div class="inline"  *ngIf="document.type !== 'FOTOS'">
-
-          <button *ngIf="document.type != 'PROYECTO' && document.type != 'LIBERACION'
-          && document.type!='SOLICITUD' && document.type!='REGISTRO' && document.status != 'Omitido'
-          " mat-icon-button [matMenuTriggerFor]="menu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button *ngIf="document.status === 'Pendiente'" mat-menu-item (click)="check(document.type,'Accept')">
-              <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
-              <span>Aceptar</span>
+          <div class="inline" *ngIf="document.type !== 'FOTOS'" class="col-2 p-1 text-center">
+            <button *ngIf="document.type != 'PROYECTO' && document.type != 'LIBERACION'
+              && document.type!='SOLICITUD' && document.type!='REGISTRO' && document.status != 'Omitido'
+              && document.status != 'No Enviado'" mat-icon-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
             </button>
-            <button mat-menu-item (click)="check(document.type,'Reject')" *ngIf="document.status !== 'Rechazado'">
-              <mat-icon [ngStyle]="{'color':'#dc3545'}">thumb_down</mat-icon>
-              <span>Rechazar</span>
-            </button>
-          </mat-menu>
-        </div>
-          <div *ngIf="document.type === 'FOTOS'">
+            <mat-menu #menu="matMenu">
+              <button *ngIf="document.status === 'Pendiente'" mat-menu-item (click)="check(document.type,'Accept')">
+                <mat-icon [ngStyle]="{'color':'#28a745'}">thumb_up</mat-icon>
+                <span>Aceptar</span>
+              </button>
+              <button mat-menu-item (click)="check(document.type,'Reject')" *ngIf="document.status !== 'Rechazado'">
+                <mat-icon [ngStyle]="{'color':'#dc3545'}">thumb_down</mat-icon>
+                <span>Rechazar</span>
+              </button>
+            </mat-menu>
+          </div>
+          <div *ngIf="document.type === 'FOTOS'" class="col-2 p-1 text-center">
             <button mat-icon-button [matMenuTriggerFor]="menu">
               <mat-icon>more_vert</mat-icon>
             </button>
@@ -78,20 +85,15 @@
       </ul>
     </div>
     <div class="col-md-9">
-      <div class="row text-center viewdocheader" *ngIf="documentDisplayed && (documentDisplayed.status === 'Pendiente' || documentDisplayed.status === 'Aceptado') && documentDisplayed.status !== 'Rechazado'">
+      <div class="row text-center viewdocheader"
+        *ngIf="documentDisplayed && (documentDisplayed.status === 'Pendiente' || documentDisplayed.status === 'Aceptado') && documentDisplayed.status !== 'Rechazado'">
         <div class="col-6" *ngIf="documentDisplayed.status === 'Pendiente'">
-          <div
-            (click)="check(documentDisplayed.type,'Accept')"
-            class="btn-rounded btn-rounded-success"            
-          >
+          <div (click)="check(documentDisplayed.type,'Accept')" class="btn-rounded btn-rounded-success">
             <mat-icon>done</mat-icon> Aceptar
           </div>
         </div>
-        <div class="col-6"  *ngIf="documentDisplayed.status !== 'Rechazado'">
-          <div
-            (click)="check(documentDisplayed.type,'Reject')"
-            class="btn-rounded btn-rounded-danger"
-          >
+        <div class="col-6" *ngIf="documentDisplayed.status !== 'Rechazado'">
+          <div (click)="check(documentDisplayed.type,'Reject')" class="btn-rounded btn-rounded-danger">
             <mat-icon>close</mat-icon> Rechazar
           </div>
         </div>
@@ -99,8 +101,7 @@
       <div class="row text-center">
         <div class="col-12">
           <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'80vh'" [useBrowserLocale]="true"
-          (pdfLoaded)="disableLoading($event)"
-          >
+            (pdfLoaded)="disableLoading($event)">
           </ngx-extended-pdf-viewer>
         </div>
       </div>

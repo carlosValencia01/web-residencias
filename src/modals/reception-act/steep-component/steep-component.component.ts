@@ -11,12 +11,6 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
 import { EmployeeProvider } from 'src/providers/shared/employee.prov';
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 import { CurrentPositionService } from 'src/services/shared/current-position.service';
-import * as moment from 'moment';
-import { FormControl, Validators } from '@angular/forms';
-import { map, startWith } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import { IDepartment } from '../../../entities/shared/department.model';
-import { DepartmentProvider } from 'src/providers/shared/department.prov';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
@@ -31,8 +25,6 @@ import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 export class SteepComponentComponent implements OnInit {
   @ViewChild('stepper') stepperComponent: MatStepper;
   Request: iRequest;
-  ObjectRequestTmp: iRequest;
-  ObjectRequest: iRequest;
   SteepOneCompleted: boolean;
   SteepTwoCompleted: boolean;
   SteepThreeCompleted: boolean;
@@ -40,18 +32,15 @@ export class SteepComponentComponent implements OnInit {
   public password;
   public QR;
   public EStamp;
-  private cookies;
-  private employee;
   public currentPosition;
-  public departmentControl: FormControl;
-  public filteredDepartments: Observable<Array<IDepartment>>;
-  private departments: Array<IDepartment>;
   public enableNext;
   public fileFlag;
   public passwordFlag;
+  public showLoading = false;
+  private cookies;
+  private employee;
   private oRequest: uRequest;
   private folderId: string;
-  public showLoading: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<SteepComponentComponent>,
@@ -64,7 +53,7 @@ export class SteepComponentComponent implements OnInit {
     private eSignatureProvider: ESignatureProvider,
     private currentPositionService: CurrentPositionService,
     private _ImageToBase64Service: ImageToBase64Service,
-    public _StudentProvider: StudentProvider
+    public _StudentProvider: StudentProvider,
   ) {
     this.Request = data.Request;
     this.enableNext = true;
@@ -91,7 +80,6 @@ export class SteepComponentComponent implements OnInit {
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
     this.updateRequest(this.Request);
-    // this._RequestService.AddRequest(this.Request, eRequest.VERIFIED);
   }
 
   async updateRequest(request) {
@@ -105,44 +93,23 @@ export class SteepComponentComponent implements OnInit {
     });
   }
 
-
   Next(index: number): void {
+    this.showLoading = true;
     switch (index) {
-      case 0:
-        {
-          this.SteepOneCompleted = true;
-          this.updateSteeps(1);
-          break;
-        }
+      case 0: {
+        this.SteepOneCompleted = true;
+        this.updateSteeps(1);
+        this.showLoading = false;
+        break;
+      }
       case 1: {
         this.SteepTwoCompleted = true;
         this.updateSteeps(2);
+        this.showLoading = false;
         break;
       }
       case 2: {
-        this.notificationsServ.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Guardando Solicitud");
-        this.showLoading = true;
-        const data = {
-          doer: this.cookiesService.getData().user.name.fullName,
-          observation: '',
-          operation: eStatusRequest.ACCEPT,
-          phase: eRequest.VERIFIED,
-          folderId: this.folderId,
-          file: {
-            mimetype: "application/pdf",
-            data: this.oRequest.documentSend(eFILES.REGISTRO, this.QR, this.EStamp),
-            name: eFILES.REGISTRO + '.pdf'
-          }
-        };
-        this._RequestProvider.updateRequest(this.Request._id, data).subscribe(data => {
-          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Actualizada');
-          this.showLoading = false;
-          this.dialogRef.close(true);
-        }, error => {
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
-          this.showLoading = false;
-          this.dialogRef.close(false);
-        });
+        this.dialogRef.close(true);
         break;
       }
     }
@@ -151,15 +118,11 @@ export class SteepComponentComponent implements OnInit {
   Back(index: number): void {
     switch (index) {
       case 1: {
-        // this.stepperComponent.selectedIndex = 0;
-        // this.SteepOneCompleted = false;
         this.updateSteeps(0);
         break;
       }
       case 2: {
         this.updateSteeps(1);
-        // this.stepperComponent.selectedIndex = 1;
-        // this.SteepTwoCompleted = false;
         break;
       }
     }
@@ -179,11 +142,11 @@ export class SteepComponentComponent implements OnInit {
     this.fileFlag = true;
   }
 
-  uploadDocument() {
+  signProjectRegister() {
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
       if (this.file.name.substring(this.file.name.length - 3) === 'itt') {
-        const data = {
+        const dataSign = {
           password: this.password,
           encrDocString: fileReader.result,
           employeeId: this.employee.employee._id,
@@ -192,21 +155,43 @@ export class SteepComponentComponent implements OnInit {
           outDepartmentName: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES'
         };
         this.showLoading = true;
-        this.eSignatureProvider.sign(data).subscribe(signed => {
+        this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Firmando registro de proyecto');
+        this.eSignatureProvider.sign(dataSign).subscribe(signed => {
           if (signed) {
             this.QR = signed.qrData;
             this.EStamp = signed.eStamp;
             this.enableNext = false;
-            this.Next(1);
-            this.showLoading = false;
+            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Registro de proyecto firmado');
+            const data = {
+              doer: this.cookiesService.getData().user.name.fullName,
+              observation: '',
+              operation: eStatusRequest.ACCEPT,
+              phase: eRequest.VERIFIED,
+              folderId: this.folderId,
+              file: {
+                mimetype: 'application/pdf',
+                data: this.oRequest.documentSend(eFILES.REGISTRO, this.QR, this.EStamp),
+                name: eFILES.REGISTRO + '.pdf'
+              }
+            };
+            this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Actualizando solicitud');
+            this._RequestProvider.updateRequest(this.Request._id, data)
+              .subscribe(_ => {
+                this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
+                this.showLoading = false;
+                this.Next(1);
+              }, _ => {
+                this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
+                this.showLoading = false;
+              });
           }
         }, err => {
           this.showLoading = false;
           const error = JSON.parse(err._body).err;
-          this.notificationsServ.showNotification(eNotificationType.ERROR, error, '');
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
         });
       } else {
-        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Archivo incorrecto', '');
+        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Archivo incorrecto');
       }
     };
     fileReader.readAsText(this.file);

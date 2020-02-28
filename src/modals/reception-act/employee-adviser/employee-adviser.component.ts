@@ -8,6 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { IGrade } from 'src/entities/reception-act/grade.model';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { CookiesService } from 'src/services/app/cookie.service';
 
 @Component({
   selector: 'app-employee-adviser',
@@ -21,6 +22,7 @@ export class EmployeeAdviserComponent implements OnInit {
   public frmAuxiliar: FormGroup;
   private onlyEmployees: IAdviserTable[];
   private career: String;
+  private careerAcronym: String;
   private departmentInfo: { name: String, boss: String } = { name: '', boss: '' };
   public dataSource: MatTableDataSource<IAdviserTable>;
   public displayedColumns: string[];
@@ -29,29 +31,40 @@ export class EmployeeAdviserComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   public showLoading: boolean;
+  public role: string;
+  public synodal: string;
+  public title: string;
 
-  constructor(private employeProvider: EmployeeProvider,
+  constructor(
+    private employeProvider: EmployeeProvider,
     private notifications: NotificationsServices,
     public dialogRef: MatDialogRef<EmployeeAdviserComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private cookiesServ: CookiesService,
   ) {
     this.isNewEmployee = false;
     this.career = this.data.carrer;
+    this.careerAcronym = this.data.careerAcronym;
     this.displayedColumns = ['name', 'position', 'action'];
+    this.role = (this.cookiesServ.getData().user.rol.name || '').toLowerCase();
+    this.synodal = (this.data.synodal || '').toLowerCase();
+    this.title = this._setModalTitle(this.role, this.synodal);
   }
 
   ngOnInit() {
     this.frmAuxiliar = new FormGroup({
       'Name': new FormControl(null, Validators.required),
       'Titled': new FormControl(null, Validators.required),
-      'Cedula': new FormControl(null, Validators.required)
+      'Cedula': new FormControl(null, Validators.required),
+      'email': new FormControl(null, [Validators.required, Validators.email])
     });
     this.showLoading = true;
     this.employeProvider.getEmployeesByDepto().subscribe(
       data => {
         this.departments = <IDepartment[]>data.departments;
         const indice = this.departments.findIndex((department) => {
-          return department.careers.findIndex(career => career.acronym === this.career) !== -1;
+          return department.careers.findIndex(career =>
+            career.acronym === this.career || career.acronym === this.careerAcronym || career.fullName === this.career) !== -1;
         });
         this.getAllEmployees(indice);
 
@@ -60,16 +73,13 @@ export class EmployeeAdviserComponent implements OnInit {
         this.type = 'Empleado Carrera';
         this.departmentInfo.name = (indice === -1 ? '' : this.departments[indice].name);
 
-        // const boss = this.departments[indice].boss;
-        // this.departmentInfo.boss = (indice === -1 ? '' : boss.name.fullName);
         this.departmentInfo.boss = (indice === -1 ? '' : this.departments[indice].boss.name.fullName);
 
         this.refresh();
         this.showLoading = false;
-      },
-      error => {
+      }, _ => {
         this.showLoading = true;
-        this.notifications.showNotification(eNotificationType.ERROR, 'Titulación App', 'Error al obtener empleados');
+        this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener empleados');
       }
     );
   }
@@ -107,7 +117,8 @@ export class EmployeeAdviserComponent implements OnInit {
             title: typeof (gradeInfo) !== 'undefined' ? gradeInfo.title : '',
             abbreviation: typeof (gradeInfo) !== 'undefined' ? gradeInfo.abbreviation : '',
             cedula: typeof (gradeInfo) !== 'undefined' ? gradeInfo.cedula : '',
-            name: employee.name.firstName + ' ' + employee.name.lastName
+            name: employee.name.firstName + ' ' + employee.name.lastName,
+            email: employee.email ? employee.email : ''
           }
         };
         this.onlyEmployees.push(Adviser);
@@ -124,7 +135,8 @@ export class EmployeeAdviserComponent implements OnInit {
             title: typeof (gradeInfo) !== 'undefined' ? gradeInfo.title : '',
             abbreviation: typeof (gradeInfo) !== 'undefined' ? gradeInfo.abbreviation : '',
             cedula: typeof (gradeInfo) !== 'undefined' ? gradeInfo.cedula : '',
-            name: employee.name.firstName + ' ' + employee.name.lastName
+            name: employee.name.firstName + ' ' + employee.name.lastName,
+            email: employee.email ? employee.email : ''
           }
         };
         this.allEmployees.push(Adviser);
@@ -182,27 +194,47 @@ export class EmployeeAdviserComponent implements OnInit {
 
   onSave() {
     this.dialogRef.close({
-      Employee:
-        this.frmAuxiliar.get('Name').value, Depto: null, ExtraInfo: {
-          name: this.frmAuxiliar.get('Name').value,
-          title: this.frmAuxiliar.get('Titled').value,
-          cedula: this.frmAuxiliar.get('Cedula').value
-        }
+      Employee: this.frmAuxiliar.get('Name').value,
+      Depto: null,
+      ExtraInfo: {
+        name: this.frmAuxiliar.get('Name').value,
+        title: this.frmAuxiliar.get('Titled').value,
+        cedula: this.frmAuxiliar.get('Cedula').value,
+        email: this.frmAuxiliar.get('email').value
+      }
     });
   }
 
-  addEmploye(): void {
+  toggleAddEmploye(): void {
     this.frmAuxiliar.get('Name').setErrors(null);
     this.frmAuxiliar.get('Name').markAsUntouched();
     this.frmAuxiliar.get('Titled').setErrors(null);
     this.frmAuxiliar.get('Titled').markAsUntouched();
     this.frmAuxiliar.get('Cedula').setErrors(null);
     this.frmAuxiliar.get('Cedula').markAsUntouched();
-    this.frmAuxiliar.setValue({ 'Name': '', 'Titled': '', 'Cedula': '' });
+    this.frmAuxiliar.get('email').setErrors(null);
+    this.frmAuxiliar.get('email').markAsUntouched();
+    this.frmAuxiliar.setValue({ 'Name': '', 'Titled': '', 'Cedula': '', 'email': '' });
     this.isNewEmployee = !this.isNewEmployee;
+  }
+
+  private _setModalTitle(role: string, synodal?: string): string {
+    if (role === 'estudiante') {
+      return 'Asesor interno';
+    } else {
+      switch (synodal) {
+        case 'president': return 'Seleccione presidenta/e';
+        case 'secretary': return 'Seleccione secretario/a';
+        case 'vocal': return 'Seleccione vocal';
+        case 'substitute': return 'Seleccione suplente';
+        default: return 'Seleccione empleada/o';
+      }
+    }
   }
 }
 
 interface IAdviserTable {
-  name?: string; position?: string; action?: string;
+  name?: string;
+  position?: string;
+  action?: string;
 }

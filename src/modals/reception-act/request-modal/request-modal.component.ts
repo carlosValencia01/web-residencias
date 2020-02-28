@@ -14,9 +14,9 @@ import { iIntegrant } from 'src/entities/reception-act/integrant.model';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
-import Swal from 'sweetalert2';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 import { eRequest } from 'src/enumerators/reception-act/request.enum';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-request-modal',
@@ -71,9 +71,9 @@ export class RequestModalComponent implements OnInit {
       this.loadRequest(res);
       this.getFolder();
       this.showLoading = false;
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitud');
     });
   }
 
@@ -132,7 +132,7 @@ export class RequestModalComponent implements OnInit {
       if (result.value) {
         const data = {
           file: {
-            mimetype: "application/pdf",
+            mimetype: 'application/pdf',
             data: this.oRequest.documentSend(eFILES.SOLICITUD),
             name: eFILES.SOLICITUD + '.pdf'
           },
@@ -152,7 +152,7 @@ export class RequestModalComponent implements OnInit {
     if (typeof (observation) === 'undefined' || observation === '') {
       Swal.fire({
         type: 'error',
-        title: 'Oops...',
+        title: '¡Acto recepcional!',
         text: 'Es necesario agregar una observación',
         showCloseButton: true,
       });
@@ -180,20 +180,18 @@ export class RequestModalComponent implements OnInit {
         this.updateRequest(data);
       }
     });
-
-
   }
 
   updateRequest(data: any) {
     this.showLoading = true;
-    this.notificationsServ.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Procesando Solicitud");
+    this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Procesando solicitud');
     this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
-      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Actualizada');
+      this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
       this.showLoading = false;
       this.dialogRef.close(true);
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
       this.dialogRef.close(false);
     });
   }
@@ -211,15 +209,13 @@ export class RequestModalComponent implements OnInit {
   }
 
   getProjectCover() {
-    // window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.PROYECTO}/${this.request._id}`, '_blank');
-    // window.open(`${this.requestProvider.getApiURL()}/request/${this.request._id}/file/${eFILES.PROYECTO}`, '_blank');
     this.showLoading = true;
     this.requestProvider.getResource(this.request._id, eFILES.PROYECTO).subscribe(data => {
       this.showLoading = false;
       window.open(URL.createObjectURL(data), '_blank');
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'Error al obtener la portada');
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener la portada');
     });
   }
 

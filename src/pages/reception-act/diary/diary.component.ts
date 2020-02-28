@@ -1,18 +1,13 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit, Input, ViewChild } from '@angular/core';
-import { CalendarEvent, DAYS_OF_WEEK, CalendarDateFormatter, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView, CalendarMonthViewBeforeRenderEvent, CalendarDayViewBeforeRenderEvent, CalendarWeekViewBeforeRenderEvent } from 'angular-calendar';
-import { CustomDateFormatter } from 'src/providers/reception-act/custom-date-formatter.provider';
+import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit, ViewChild } from '@angular/core';
+import { CalendarEvent, CalendarView, CalendarMonthViewBeforeRenderEvent } from 'angular-calendar';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
-import { Subject } from 'rxjs';
-import Swal from 'sweetalert2';
 import { iRequest } from 'src/entities/reception-act/request.model';
-import { RequestService } from 'src/services/reception-act/request.service';
 import { eStatusRequest } from 'src/enumerators/reception-act/statusRequest.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { sourceDataProvider } from 'src/providers/reception-act/sourceData.prov';
-import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours, getYear } from 'date-fns';
-import * as moment from 'moment';
+import { isSameDay, isSameMonth } from 'date-fns';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { MatDialog } from '@angular/material';
 import { NewEventComponent } from 'src/modals/reception-act/new-event/new-event.component';
@@ -27,7 +22,12 @@ import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { DepartmentProvider } from 'src/providers/shared/department.prov';
+import { Subject } from 'rxjs';
+import * as moment from 'moment';
+import Swal from 'sweetalert2';
+
 moment.locale('es');
+
 @Component({
   selector: 'app-diary',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,9 +39,8 @@ moment.locale('es');
 export class DiaryComponent implements OnInit {
   @ViewChild('basicMenu') public basicMenu: ContextMenuComponent;
   @ViewChild('basicMenu_2') public basicMenu_2: ContextMenuComponent;
-  // carrers: { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }[];
   carrers: iCarrera[];
-  activeDayIsOpen: boolean = true;
+  activeDayIsOpen = true;
   maxDate: Date = new Date(2019, 11, 15);
   viewDate = new Date();
   events: CalendarEvent[];
@@ -54,10 +53,10 @@ export class DiaryComponent implements OnInit {
   refresh: Subject<any> = new Subject();
   request: iRequest;
   view: CalendarView = CalendarView.Month;
-  locale: string = 'es';
+  locale = 'es';
   public showLoading: boolean;
   private folderId: string;
-  constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices, private _RequestService: RequestService,
+  constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices,
     private _CookiesService: CookiesService, private _sourceDataProvider: sourceDataProvider, private _StudentProvider: StudentProvider, public _ImageToBase64Service: ImageToBase64Service,
     public dialog: MatDialog, private _DepartmentProvider: DepartmentProvider) {
     const tmpFecha = localStorage.getItem('Appointment');
@@ -66,10 +65,8 @@ export class DiaryComponent implements OnInit {
       this.view = CalendarView.Week;
       localStorage.removeItem('Appointment');
     }
-    // else {
-    //   this.viewDate = new Date(this.viewDate.getFullYear(), this.viewDate.getMonth(), 1);
-    // }
   }
+
   ngOnInit() {
     this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
     this.carrers = this._sourceDataProvider.getCareerAbbreviation();
@@ -87,11 +84,12 @@ export class DiaryComponent implements OnInit {
       color: { primary: '#57c7d4', secondary: '#ace3ea' }
     });
   }
+
   diary(month: number, year: number): void {
     this.Appointments = [];
     // let nowDate = new Date(this.viewDate.getTime());
-    let minDate = new Date(this.viewDate.getTime());
-    let maxDate = new Date(this.viewDate.getTime());
+    const minDate = new Date(this.viewDate.getTime());
+    const maxDate = new Date(this.viewDate.getTime());
     minDate.setDate(minDate.getDate() - minDate.getDay());
     maxDate.setDate(maxDate.getDate() + (6 - maxDate.getDay()));
     this._RequestProvider.getDiary({
@@ -101,16 +99,16 @@ export class DiaryComponent implements OnInit {
       min: minDate,
       max: maxDate
     }).subscribe(data => {
-      if (typeof (data.Diary) !== "undefined") {
+      if (typeof (data.Diary) !== 'undefined') {
         this.Appointments = data.Diary;
         this.Ranges = data.Ranges;
         // this.generateAppointment(month, year);
         this.loadAppointment();
         this.refresh.next();
       }
-    }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulación App",
-        error);
+    }, _ => {
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener eventos');
     });
   }
 
@@ -127,20 +125,28 @@ export class DiaryComponent implements OnInit {
             const countAppointment = this.getCountAppointment(c.carrer, tmpDate);
             const quantity = countRange - countAppointment;
             for (let k = 0; k < quantity; k++) {
-              let Carrera: string[] = [];
-              let Student: string[] = [];
-              Student.push("");
+              const Carrera: string[] = [];
+              const Student: string[] = [];
+              Student.push('');
               const AppointmentCareer = this.Appointments.find(x => x._id[0] === c.carrer);
               if (typeof (AppointmentCareer) !== 'undefined') {
-                // AppointmentCareer.values.push({ id: '-1', student: Student, proposedDate: onlyDate, proposedHour: j, phase: "--" });
-                AppointmentCareer.values.push({ id: '-1', student: Student, project: '', proposedDate: onlyDate, proposedHour: j, phase: "--", jury: [], place: '', duration: 60, option: '', product: '' });
+                AppointmentCareer.values.push({
+                  id: '-1',
+                  student: Student,
+                  project: '',
+                  proposedDate: onlyDate,
+                  proposedHour: j,
+                  phase: '--',
+                  jury: [],
+                  place: '',
+                  duration: 60,
+                  option: '',
+                  product: ''
+                });
               }
-              // _id: string[], values: [{ id: number, student: string[], proposedDate: Date, proposedHour: number }]
-              // Carrera.push(c.carrer);
-              // Student.push('');
             }
           }
-        )
+        );
 
       }
     }
@@ -152,7 +158,7 @@ export class DiaryComponent implements OnInit {
       const minutes = Appointment.getHours() * 60;
       Appointment.setHours(0, 0, 0, 0);
       const countAppointment = AppointmentCareer.values.filter(x => {
-        let date = new Date(x.proposedDate);
+        const date = new Date(x.proposedDate);
         date.setHours(0, 0, 0, 0);
         return date.getTime() === Appointment.getTime() && x.proposedHour === minutes;
       });
@@ -169,8 +175,9 @@ export class DiaryComponent implements OnInit {
       if (typeof (value) !== 'undefined') {
         const endDate: Date = new Date(element.end);
         const startDate: Date = new Date(element.start);
-        if (startDate.getTime() < Appointment.getTime() && Appointment.getTime() < endDate.getTime())
-          quantity = element.quantity
+        if (startDate.getTime() < Appointment.getTime() && Appointment.getTime() < endDate.getTime()) {
+          quantity = element.quantity;
+        }
       }
     });
     return quantity;
@@ -181,32 +188,48 @@ export class DiaryComponent implements OnInit {
     this.events = [];
     this.carrers.forEach(career => {
       if (career.status) {
-        let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
+        let tmp: {
+          _id: string[],
+          values: [{
+            id: string,
+            student: string[],
+            proposedDate: Date,
+            proposedHour: number,
+            phase: string,
+            duration: number
+          }]
+        };
         tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
         if (typeof (tmp) != 'undefined') {
           tmp.values.forEach(element => {
             const vFecha = element.proposedDate.toString().split('T')[0].split('-');
-            let tmpStart = new Date(element.proposedDate);
-            let tmpEnd = new Date(element.proposedDate);
+            const tmpStart = new Date(element.proposedDate);
+            const tmpEnd = new Date(element.proposedDate);
             tmpStart.setHours(0, 0, 0, 0);
             tmpEnd.setHours(0, 0, 0, 0);
             tmpStart.setMinutes(element.proposedHour);
             tmpEnd.setMinutes(element.proposedHour + element.duration);
             // let tmpStart = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);
-            // let tmpEnd = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);            
+            // let tmpEnd = new Date(Number(vFecha[0]), Number(vFecha[1]), Number(vFecha[2]), 0, 0, 0, 0);
 
             // let hours = element.proposedHour / 60;
             // let minutes = element.proposedHour % 60;
             // let hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
-            let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];
-            this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
+            const title = moment(tmpStart).format('LT') + ' ' + career.abbreviation + ' ' + element.student[0];
+            this.events.push({
+              title: title,
+              start: tmpStart,
+              end: tmpEnd,
+              color: (element.phase === 'Asignado'
+                ? career.color
+                : { primary: '#00c853', secondary: '#69f0ae' })
+              });
           });
         }
       }
     });
     this.refresh.next();
   }
-
 
   beforeMonthViewRender(renderEvent: CalendarMonthViewBeforeRenderEvent): void {
     renderEvent.body.forEach(day => {
@@ -246,7 +269,7 @@ export class DiaryComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '45em'
+        width: '70vw'
       });
     } else {
       dialogRef = this.dialog.open(NewEventComponent, {
@@ -256,28 +279,43 @@ export class DiaryComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '45em'
+        width: '60vw'
       });
     }
 
-
-    dialogRef.afterClosed().subscribe((response: { career: string, value: { id: string, student: string[], project: string, phase: string, proposedDate: Date, proposedHour: number, jury: string[], place: string, duration: number, option: string, product: string } }) => {
-      // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
-      //Para no llamar a la bd
-      if (typeof (response) !== 'undefined') {
-        const index = this.Appointments.findIndex(x => x._id[0] === response.career);
-        if (index != -1) {
-          this.Appointments[index].values.push(response.value);
-        } else {
-          // const tmpAppointment: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] } = { _id: [response.career], values: [response.value] }
-          const tmpAppointment: iAppointmentGroup = { _id: [response.career], values: [response.value] }
-          this.Appointments.push(tmpAppointment);
+    dialogRef.afterClosed()
+      .subscribe((
+        response: {
+          career: string,
+          value: {
+            id: string,
+            student: string[],
+            project: string,
+            phase: string,
+            proposedDate: Date,
+            proposedHour: number,
+            jury: string[],
+            place: string,
+            duration: number,
+            option: string,
+            product: string
+          }
         }
-        this.loadAppointment();
-      }
-    }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Ocurrió un problema ' + error);
-    })
+      ) => {
+        // Para no llamar a la bd
+        if (typeof (response) !== 'undefined') {
+          const index = this.Appointments.findIndex(x => x._id[0] === response.career);
+          if (index !== -1) {
+            this.Appointments[index].values.push(response.value);
+          } else {
+            const tmpAppointment: iAppointmentGroup = { _id: [response.career], values: [response.value] };
+            this.Appointments.push(tmpAppointment);
+          }
+          this.loadAppointment();
+        }
+    }, _ => {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un problema');
+    });
   }
 
   addTitled($event) {
@@ -295,7 +333,7 @@ export class DiaryComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '55em'
+        width: '70vw'
       });
     } else {
       dialogRef = this.dialog.open(
@@ -306,7 +344,7 @@ export class DiaryComponent implements OnInit {
         },
         disableClose: true,
         hasBackdrop: true,
-        width: '45em'
+        width: '60vw'
       });
     }
 
@@ -327,26 +365,25 @@ export class DiaryComponent implements OnInit {
           product: string
         }
       }) => {
-      // this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
-      //Para no llamar a la bd
+      // Para no llamar a la bd
       if (typeof (response) !== 'undefined') {
         const index = this.Appointments.findIndex(x => x._id[0] === response.career);
-        if (index != -1) {
+        if (index !== -1) {
           this.Appointments[index].values.push(response.value);
         } else {
-          // const tmpAppointment: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string }] } = { _id: [response.career], values: [response.value] }
-          const tmpAppointment: iAppointmentGroup = { _id: [response.career], values: [response.value] }
+          const tmpAppointment: iAppointmentGroup = { _id: [response.career], values: [response.value] };
           this.Appointments.push(tmpAppointment);
         }
         this.loadAppointment();
       }
-    }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Ocurrió un problema ' + error);
-    })
+    }, _ => {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un problema');
+    });
   }
 
   viewEvent($event): void {
-    const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+    const tmpAppointment: iAppointment =
+      this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
     const dialogRef = this.dialog.open(ViewMoreComponent, {
       data: {
         Appointment: tmpAppointment
@@ -356,17 +393,19 @@ export class DiaryComponent implements OnInit {
       width: '60em'
     });
   }
+
   cancelledEvent($event): void {
     this.confirmDenial($event, eStatusRequest.CANCELLED);
   }
 
   confirmDenial($event: any, operation: eStatusRequest): void {
-    let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
-    const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
+    const AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
+    const tmpAppointment: iAppointment =
+      this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
     if (typeof (tmpAppointment) !== 'undefined') {
       if (tmpAppointment.option === 'XI - TITULACIÓN INTEGRAL') {
         const msnCancel = `¿ESTÁ SEGURO DE CANCELAR EL ESPACIO DE ${tmpAppointment.student}?`;
-        const msnReject = `¿ESTÁ SEGURO DE RECHAZAR EL ESPACIO DE ${tmpAppointment.student}?`
+        const msnReject = `¿ESTÁ SEGURO DE RECHAZAR EL ESPACIO DE ${tmpAppointment.student}?`;
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
           data: {
             Configuration: {
@@ -393,12 +432,14 @@ export class DiaryComponent implements OnInit {
                 phase: operation === eStatusRequest.CANCELLED ? eRequest.REALIZED : eRequest.ASSIGNED
               };
               this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
-                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
+                this._NotificationsServices
+                  .showNotification(eNotificationType.SUCCESS, 'Acto recepcional',
+                    operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
                 AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
                 this.loadAppointment();
               }, error => {
-                let tmpJson = JSON.parse(error._body);
-                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+                const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
+                this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
               });
             }
           }
@@ -417,29 +458,30 @@ export class DiaryComponent implements OnInit {
         }).then((result) => {
           if (result.value) {
             this._RequestProvider.removeTitle(tmpAppointment.id).subscribe(_ => {
-              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Titulación removida');
+              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Titulación removida');
               AppointmentCareer.values.splice(AppointmentCareer.values.findIndex(x => x === tmpAppointment), 1);
               this.loadAppointment();
             }, error => {
-              let tmpJson = JSON.parse(error._body);
-              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', tmpJson.message);
+              const tmpJson = JSON.parse(error._body);
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', tmpJson.message);
             });
           }
         });
       }
     } else {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', 'Evento no encontrado, reporte el problema');
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Evento no encontrado, reporte el problema');
     }
   }
 
   searchAppointment(abbreviation: string, date: any, student: string): iAppointment {
-    let AppointmentCareer = this.searchAppointmentByCareer(abbreviation);
+    const AppointmentCareer = this.searchAppointmentByCareer(abbreviation);
     const size = AppointmentCareer.values.length;
     let tmpAppointment: iAppointment;
     const Student: string = student;
     for (let i = 0; i < size; i++) {
-      let eventDate = new Date(date);
-      let appointmentDate = new Date(AppointmentCareer.values[i].proposedDate);
+      const eventDate = new Date(date);
+      const appointmentDate = new Date(AppointmentCareer.values[i].proposedDate);
       appointmentDate.setHours(0, 0, 0, 0);
       appointmentDate.setMinutes(AppointmentCareer.values[i].proposedHour);
       if (AppointmentCareer.values[i].student[0].trim() === Student.trim() && appointmentDate.getTime() === eventDate.getTime()) {
@@ -457,8 +499,8 @@ export class DiaryComponent implements OnInit {
     let tmpAppointment: iAppointment;
     const Student: string = student;
     for (let i = 0; i < size; i++) {
-      let eventDate = new Date(date);
-      let appointmentDate = new Date(AppointmentCareer.values[i].proposedDate);
+      const eventDate = new Date(date);
+      const appointmentDate = new Date(AppointmentCareer.values[i].proposedDate);
       appointmentDate.setHours(0, 0, 0, 0);
       appointmentDate.setMinutes(AppointmentCareer.values[i].proposedHour);
       if (AppointmentCareer.values[i].student[0].trim() === Student.trim() && appointmentDate.getTime() === eventDate.getTime()) {
@@ -471,7 +513,7 @@ export class DiaryComponent implements OnInit {
 
   searchAppointmentByCareer(abbreviation: string): iAppointmentGroup {
     const tmpCarrera = this.carrers.find(x => x.abbreviation === abbreviation);
-    let AppointmentCareer = this.Appointments.find(x => x._id[0] === tmpCarrera.carrer);
+    const AppointmentCareer = this.Appointments.find(x => x._id[0] === tmpCarrera.carrer);
     return AppointmentCareer;
   }
 
@@ -484,7 +526,7 @@ export class DiaryComponent implements OnInit {
     if (carrer.carrer === 'Todos') {
       this.carrers.forEach(x => {
         x.status = carrer.status;
-      })
+      });
     }
     this.loadAppointment();
     this.refresh.next();
@@ -502,14 +544,16 @@ export class DiaryComponent implements OnInit {
     let abbreviation = $event.title.split(' ')[1];
     let career = this.carrers.find(x => x.abbreviation === abbreviation);
 
-    //Busqueda del evento
+    // Busqueda del evento
     let tmpValor: { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string };
     for (let i = 0; i < this.Appointments.length; i++) {
       for (let j = 0; j < this.Appointments[i].values.length; j++) {
-        let tmpFecha: Date = new Date(this.Appointments[i].values[j].proposedDate);
+        const tmpFecha: Date = new Date(this.Appointments[i].values[j].proposedDate);
         tmpFecha.setHours(0, 0, 0, 0);
-        if (tmpFecha.getTime() === tmpDate.getTime() && this.Appointments[i].values[j].proposedHour === tmpMinutes
-          && this.Appointments[i].values[j].student[0].trim() === student.trim() && this.Appointments[i]._id[0].trim() === career.carrer.trim()
+        if (tmpFecha.getTime() === tmpDate.getTime()
+          && this.Appointments[i].values[j].proposedHour === tmpMinutes
+          && this.Appointments[i].values[j].student[0].trim() === student.trim()
+          && this.Appointments[i]._id[0].trim() === career.carrer.trim()
         ) {
           tmpValor = this.Appointments[i].values[j];
           tmpStudentData = this.Appointments[i].values[j];
@@ -554,7 +598,7 @@ export class DiaryComponent implements OnInit {
               break;
          }
           this._DepartmentProvider.getDepartmentBossSecretary(departamento).subscribe(res => {
-            this.employees = res.department[0];
+            this.employees = res.department;
           });
           break;
         }
@@ -591,23 +635,23 @@ export class DiaryComponent implements OnInit {
             carreraAlumno: career.carrer,
             nombreProyecto: tmpStudentData.project,
             opcionTitulacion: tmpStudentData.product,
-            jefeDepartamento: this.employees.boss,
-            secretariaDepartamento : this.employees.secretary
-          };          
+            departamentoEmail: this.employees
+          };       
           this._RequestProvider.updateRequest(tmpValor.id, data).subscribe(_ => {
-            this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Titulación App', 'Fecha Propuesta Aceptada');
+            this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Fecha propuesta aceptada');
             // tmpValor.phase = "Realizado";
-            this.Appointments[index.appointment].values[index.value].phase = "Realizado";
+            this.Appointments[index.appointment].values[index.value].phase = 'Realizado';
             this.loadAppointment();
             // this.refresh.next();
-          }, error => {
-            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Titulación App', error);
+          }, _ => {
+            this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
           });
         }
       });
     }
 
   }
+
   eventClicked($event) { }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -624,7 +668,6 @@ export class DiaryComponent implements OnInit {
     }
   }
 
-
   getFolder(controlNumber: string): void {
     this._StudentProvider.getDriveFolderId(controlNumber, eFOLDER.TITULACION).subscribe(folder => {
       this.folderId = folder.folderIdInDrive;
@@ -632,7 +675,7 @@ export class DiaryComponent implements OnInit {
   }
 
   public castRequest(element: any): iRequest {
-    let tmp: iRequest = new Object();//<iRequest>element;
+    const tmp: iRequest = new Object(); // <iRequest>element;
     tmp._id = element._id;
     tmp.status = element.status;
     tmp.controlNumber = element.studentId.controlNumber;
@@ -668,19 +711,20 @@ export class DiaryComponent implements OnInit {
   }
 
   async documentation($event: any) {
-    let AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
-    const tmpAppointment: iAppointment = this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando documentación");
+    const AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
+    const tmpAppointment: iAppointment =
+      this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando documentación');
     const iRequest: iRequest = await this.getRequestById(tmpAppointment.id);
     if (iRequest.phase === 'Realizado') {
       this.showLoading = true;
       const oRequest = new uRequest(iRequest, this._ImageToBase64Service, this._CookiesService);
       this.getFolder(iRequest.controlNumber);
       await this.delay(1000);
-      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando oficio de jurado");
+      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando oficio de jurado');
       const data_oficio = {
         file: {
-          mimetype: "application/pdf",
+          mimetype: 'application/pdf',
           data: oRequest.documentSend(eFILES.OFICIO),
           name: eFILES.OFICIO + '.pdf',
         },
@@ -689,21 +733,21 @@ export class DiaryComponent implements OnInit {
         Document: eFILES.OFICIO,
         phase: iRequest.phase,
         IsEdit: 'true'
-      }
-      let response = await new Promise(resolve => {
-        this._RequestProvider.uploadFile(tmpAppointment.id, data_oficio).subscribe((response) => {
+      };
+      const response = await new Promise(resolve => {
+        this._RequestProvider.uploadFile(tmpAppointment.id, data_oficio).subscribe(_ => {
           window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
           resolve(true);
-        }, error => {
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+        }, _ => {
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
           resolve(false);
         });
       });
 
       if (response) {
-        const data = {
+        const fileData = {
           file: {
-            mimetype: "application/pdf",
+            mimetype: 'application/pdf',
             data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
             name: eFILES.JURAMENTO_ETICA + '.pdf',
           },
@@ -712,48 +756,46 @@ export class DiaryComponent implements OnInit {
           Document: eFILES.JURAMENTO_ETICA,
           phase: iRequest.phase,
           IsEdit: 'true'
-        }
-        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Generando código de ética");
-        this._RequestProvider.uploadFile(iRequest._id, data).subscribe(response => {
+        };
+        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando código de ética');
+        this._RequestProvider.uploadFile(iRequest._id, fileData).subscribe(_ => {
           if (iRequest.status === 'None') {
-            let data = {
+            const data = {
               doer: this._CookiesService.getData().user.name.fullName,
               observation: '',
               phase: eRequest.REALIZED,
               operation: eStatusRequest.PROCESS
             };
-            this._RequestProvider.updateRequest(iRequest._id, data).subscribe((response) => {
+            this._RequestProvider.updateRequest(iRequest._id, data).subscribe(__ => {
               this.showLoading = false;
               window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
             }, error => {
-              console.log("Error");
+              console.log('Error', error);
               this.showLoading = false;
-              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+              this._NotificationsServices
+                .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
             });
-          }
-          else {
+          } else {
             this.showLoading = false;
             window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
           }
-        }, error => {
+        }, _ => {
           this.showLoading = false;
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
         });
-      }
-      else {
+      } else {
         this.showLoading = false;
       }
     } else {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Acto Recepcional", "La solicitud ya ha pasado de fase");
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'La solicitud ya ha pasado de fase');
     }
-
   }
 
   async getRequestById(Identificador) {
     return new Promise(resolve => {
       this._RequestProvider.getRequestById(Identificador).subscribe(
         request => {
-          let tmpRequest: iRequest = this.castRequest(request.request[0]);
+          const tmpRequest: iRequest = this.castRequest(request.request[0]);
           resolve(tmpRequest);
         }, error => {
           resolve(null);
@@ -762,6 +804,34 @@ export class DiaryComponent implements OnInit {
     });
   }
 }
-interface iAppointmentGroup { _id: string[], values: [iAppointment] }
-interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }
-interface iAppointment { id: string, student: string[], project: string, proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, duration: number, option: string, product: string }
+
+interface iAppointmentGroup {
+  _id: string[];
+  values: [iAppointment];
+}
+
+interface iCarrera {
+  carrer: string;
+  class: string;
+  abbreviation: string;
+  icon: string;
+  status: boolean;
+  color: {
+    primary: string;
+    secondary: string;
+  };
+}
+
+interface iAppointment {
+  id: string;
+  student: string[];
+  project: string;
+  proposedDate: Date;
+  proposedHour: number;
+  phase: string;
+  jury: Array<string>;
+  place: string;
+  duration: number;
+  option: string;
+  product: string;
+}

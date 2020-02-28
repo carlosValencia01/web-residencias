@@ -14,133 +14,93 @@
     <div mat-dialog-content>
       <div class="card border-dark mb-3 p-3" style="height: 100%;">
         <div class="row">
-          <div class="col-12">
-            <div class="form-group row">
-              <label for="president" class="col-sm-4 col-form-label col-form-label-sm mb-3">Presidente</label>
-              <div class="col-sm-8">
-                <div class="input-group input-group-sm mb-3">
-                  <input type="text" class="form-control" id="president" formControlName="president"
-                    placeholder="Presidente" readonly
-                    [ngClass]="(!frmConsejo.get('president').valid && frmConsejo.get('president').touched)?'form-control is-invalid':'form-control'">
-                  <div class="input-group-append" (click)="selectEmployee('president')">
-                    <span class="input-group-text btn">...</span>
-                  </div>
-                  <div class="invalid-feedback"
-                    *ngIf="!frmConsejo.get('president').valid && frmConsejo.get('president').touched">
-                    <span *ngIf="frmConsejo.get('president').errors['required']">
-                      ¡Campo obligatorio!
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="secretary" class="col-sm-4 col-form-label col-form-label-sm mb-3">Secretario</label>
-              <div class="col-sm-8">
-                <div class="input-group input-group-sm mb-3">
-                  <input type="text" class="form-control" id="secretary" formControlName="secretary"
-                    placeholder="Secretario" readonly
-                    [ngClass]="(!frmConsejo.get('secretary').valid &&
-                                                  frmConsejo.get('secretary').touched)?'form-control is-invalid':'form-control'">
-                  <div class="input-group-append" (click)="selectEmployee('secretary')">
-                    <span class="input-group-text btn">...</span>
-                  </div>
-                  <div class="invalid-feedback"
-                    *ngIf="!frmConsejo.get('secretary').valid && frmConsejo.get('secretary').touched">
-                    <span *ngIf="frmConsejo.get('secretary').errors['required']">
-                      ¡Campo obligatorio!
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="vocal" class="col-sm-4 col-form-label col-form-label-sm mb-3">Vocal</label>
-              <div class="col-sm-8">
-                <div class="input-group input-group-sm mb-3">
-                  <input type="text" class="form-control" id="vocal" formControlName="vocal" placeholder="Vocal"
-                    readonly
-                    [ngClass]="(!frmConsejo.get('vocal').valid && frmConsejo.get('vocal').touched)?'form-control is-invalid':'form-control'">
-                  <div class="input-group-append" (click)="selectEmployee('vocal')">
-                    <span class="input-group-text btn">...</span>
-                  </div>
-                  <div class="invalid-feedback"
-                    *ngIf="!frmConsejo.get('vocal').valid && frmConsejo.get('vocal').touched">
-                    <span *ngIf="frmConsejo.get('vocal').errors['required']">
-                      ¡Campo obligatorio!
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="substitute" class="col-sm-4 col-form-label col-form-label-sm mb-3">Suplente</label>
-              <div class="col-sm-8">
-                <div class="input-group input-group-sm mb-3">
-                  <input type="text" class="form-control" id="substitute" formControlName="substitute"
-                    placeholder="Suplente" readonly
-                    [ngClass]="(!frmConsejo.get('substitute').valid && frmConsejo.get('substitute').touched)?'form-control is-invalid':'form-control'">
-
-                  <div class="input-group-append" (click)="selectEmployee('substitute')">
-                    <span class="input-group-text btn">...</span>
-                  </div>
-                  <div class="invalid-feedback"
-                    *ngIf="!frmConsejo.get('substitute').valid && frmConsejo.get('substitute').touched">
-                    <span *ngIf="frmConsejo.get('substitute').errors['required']">
-                      ¡Campo obligatorio!
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="substitute" class="col-sm-4 col-form-label col-form-label-sm mb-3">Hora del
-                Acto</label>
-              <div class="col-sm-8">
-                <div class="ngx-timepicker-field-example">
-                  <ngx-timepicker-field #time [format]="24">
-                  </ngx-timepicker-field>
-                </div>
-              </div>
-            </div>
-            <div class="form-group row">
-              <label for="substitute" class="col-sm-4 col-form-label col-form-label-sm mb-3">Duración</label>
-              <div class="col-sm-8">
-                <div class="input-group input-group-sm mb-3">
-                  <input type="number" class="form-control" id="duration" formControlName="duration"
-                    placeholder="Duración" min="30" max="120"
-                    [ngClass]="(!frmConsejo.get('duration').valid && frmConsejo.get('duration').touched)?'form-control is-invalid':'form-control'">
-                  <div class="input-group-append">
-                    <span class="input-group-text">Minutos</span>
-                  </div>
-                  <div class="invalid-feedback"
-                    *ngIf="!frmConsejo.get('duration').valid && frmConsejo.get('duration').touched">
-                    <span *ngIf="frmConsejo.get('duration').errors['required']">
-                      ¡Campo obligatorio!
-                    </span>
-                    <span *ngIf="frmConsejo.get('duration').errors['min']">
-                      Valor mínimo 30
-                    </span>
-                    <span *ngIf="frmConsejo.get('duration').errors['max']">
-                      Valor máximo 120
-                    </span>
-                  </div>
-                </div>
-              </div>
+          <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+            <mat-label>Presidenta/e</mat-label>
+            <input matInput type="text" id="president" formControlName="president" placeholder="Presidente" readonly
+              required>
+            <button matSuffix mat-icon-button type="button" (click)="selectEmployee('president')">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+            <mat-error *ngIf="!frmConsejo.get('president').valid && frmConsejo.get('president').touched">
+              <span *ngIf="frmConsejo.get('president').errors['required']">
+                ¡Campo obligatorio!
+              </span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+            <mat-label>Secretario/a</mat-label>
+            <input matInput type="text" id="secretary" formControlName="secretary" placeholder="Secretario" readonly
+              required>
+            <button matSuffix mat-icon-button type="button" (click)="selectEmployee('secretary')">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+            <mat-error *ngIf="!frmConsejo.get('secretary').valid && frmConsejo.get('secretary').touched">
+              <span *ngIf="frmConsejo.get('secretary').errors['required']">
+                ¡Campo obligatorio!
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+            <mat-label>Vocal</mat-label>
+            <input matInput type="text" id="vocal" formControlName="vocal" placeholder="Vocal" readonly required>
+            <button matSuffix mat-icon-button type="button" (click)="selectEmployee('vocal')">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+            <mat-error *ngIf="!frmConsejo.get('vocal').valid && frmConsejo.get('vocal').touched">
+              <span *ngIf="frmConsejo.get('vocal').errors['required']">
+                ¡Campo obligatorio!
+              </span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+            <mat-label>Suplente</mat-label>
+            <input matInput type="text" id="substitute" formControlName="substitute" placeholder="Suplente" readonly
+              required>
+            <button matSuffix mat-icon-button type="button" (click)="selectEmployee('substitute')">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+            <mat-error *ngIf="!frmConsejo.get('substitute').valid && frmConsejo.get('substitute').touched">
+              <span *ngIf="frmConsejo.get('substitute').errors['required']">
+                ¡Campo obligatorio!
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="row">
+          <div class="form-group col-sm-12 col-lg-6">
+            <label for="substitute" class="col-form-label col-form-label-sm">Hora del Acto</label><br>
+            <div class="ngx-timepicker-field-example">
+              <ngx-timepicker-field #time [format]="24">
+              </ngx-timepicker-field>
             </div>
           </div>
+          <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+            <mat-label>Duración (Minutos)</mat-label>
+            <input matInput type="number" id="duration" formControlName="duration" placeholder="Duración" min="30"
+              max="120" required>
+            <mat-error *ngIf="!frmConsejo.get('duration').valid && frmConsejo.get('duration').touched">
+              <span *ngIf="frmConsejo.get('duration').errors['required']">
+                ¡Campo obligatorio!
+              </span>
+              <span *ngIf="frmConsejo.get('duration').errors['min']">
+                Valor mínimo 30 minutos
+              </span>
+              <span *ngIf="frmConsejo.get('duration').errors['max']">
+                Valor máximo 120 minutos
+              </span>
+            </mat-error>
+          </mat-form-field>
         </div>
       </div>
     </div>
 
     <div mat-dialog-actions align="end">
-      <div class="row mt-3 text-right">
-        <!-- <div class="col-4"></div> -->
+      <div class="row text-right">
         <div class="col-12">
           <button class="btn btn-outline-success btn-sm mx-3" [disabled]="frmConsejo.invalid"
             type="submit">Guardar</button>
-          <button class="btn btn-outline-danger btn-sm" [mat-dialog-close]="{response:false}"
-            cdkFocusInitial>Cancelar</button>
         </div>
       </div>
     </div>

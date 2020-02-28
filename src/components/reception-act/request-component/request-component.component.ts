@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
@@ -8,7 +8,6 @@ import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { eOperation } from 'src/enumerators/reception-act/operation.enum';
-import { DatePipe } from '@angular/common';
 import { iRequest } from 'src/entities/reception-act/request.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeAdviserComponent } from 'src/modals/reception-act/employee-adviser/employee-adviser.component';
@@ -33,7 +32,7 @@ export class RequestComponentComponent implements OnInit {
   @Input('request') _request: iRequest;
   // tslint:disable-next-line: no-output-rename
   @Output('onSubmit') btnSubmitRequest = new EventEmitter<boolean>();
-  private MAX_SIZE_FILE: number = 3145728;
+  private MAX_SIZE_FILE = 3145728;
 
   public frmRequest: FormGroup;
   public fileData: any;
@@ -55,7 +54,7 @@ export class RequestComponentComponent implements OnInit {
   private deptoInfo: { name: string, boss: string };
   private integrants: Array<iIntegrant> = [];
   private oRequest: uRequest;
-  private adviserInfo: { name: string, title: string, cedula: string };
+  private adviserInfo: { name: string, title: string, cedula: string, email?: string };
   private product = 'INFORME TÉCNICO DE RESIDENCIA PROFESIONAL';
   private titulationOption = 'XI - TITULACIÓN INTEGRAL';
 
@@ -64,7 +63,6 @@ export class RequestComponentComponent implements OnInit {
     private cookiesService: CookiesService,
     private notificationsServ: NotificationsServices,
     private requestProvider: RequestProvider,
-    private dateFormat: DatePipe,
     private router: Router,
     private routeActive: ActivatedRoute,
     public dialog: MatDialog,
@@ -97,33 +95,7 @@ export class RequestComponentComponent implements OnInit {
     this.getRequest();
   }
 
-  private firstName(fullName: string): string {
-    const name: String[] = fullName.split(/\s+/);
-    const longitud = name.length;
-    let firstName: string = "";
-    if (longitud > 2) {
-      for (let i = 0; i < longitud - 2; i++)
-        firstName += name[i] + " ";
-    }
-    else
-      firstName = "Sin Capturar ";
-    return firstName.substr(0, firstName.length - 1);
-  }
-
-  private lastName(fullName: string): string {
-    const name: String[] = fullName.split(/\s+/).reverse();
-    const longitud = name.length;
-    let lastName: string = "";
-    if (longitud > 2) {
-      for (let i = 0; i < 2; i++)
-        lastName += name[i] + " ";
-    }
-    else
-      lastName = "Sin Capturar ";
-    return lastName.substr(0, lastName.length - 1);
-  }
-
-  getRequest() {
+  private getRequest() {
     this.showLoading = true;
     this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {
       if (typeof (res) !== 'undefined' && res.request.length > 0
@@ -148,18 +120,7 @@ export class RequestComponentComponent implements OnInit {
     });
   }
 
-  assignName(): void {
-    const nameArray = this.request.student.fullName.split(/\s*\s\s*/);
-    let name = '';
-    const maxIteration = nameArray.length - 2;
-    for (let i = 0; i < maxIteration; i++) {
-      name += nameArray[i] + ' ';
-    }
-    this.request.student.name = name;
-    this.request.student.lastName = nameArray[nameArray.length - 2] + ' ' + nameArray[nameArray.length - 1];
-  }
-
-  loadRequest(request: any): void {
+  private loadRequest(request: any): void {
     this.request = <iRequest>request.request[0];
     this.request.student = request.request[0].studentId;
     this.request.studentId = this.request.student._id;
@@ -189,7 +150,7 @@ export class RequestComponentComponent implements OnInit {
       this.request.sentVerificationCode : this._request.sentVerificationCode;
   }
 
-  Edit(): void {
+  public Edit(): void {
     this.isEdit = !this.isEdit;
     if (this.operationMode === eOperation.VERIFICATION) {
       this.operationMode = eOperation.EDIT;
@@ -197,7 +158,7 @@ export class RequestComponentComponent implements OnInit {
     this.disabledControl();
   }
 
-  disabledControl(): void {
+  private disabledControl(): void {
     this.frmRequest.get('name').markAsUntouched();
     this.frmRequest.get('lastname').markAsUntouched();
     this.frmRequest.get('telephone').markAsUntouched();
@@ -230,35 +191,35 @@ export class RequestComponentComponent implements OnInit {
     }
   }
 
-  onUpload(event): void {
+  public onUpload(event): void {
     this.isLoadFile = false;
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
         if (event.target.files[0].size > this.MAX_SIZE_FILE) {
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional',
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional',
             'Error, su archivo debe ser inferior a 3MB');
         } else {
           this.fileData = event.target.files[0];
-          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional',
+          this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional',
             'Archivo ' + this.fileData.name + ' cargado correctamente');
           this.isLoadFile = true;
         }
       } else {
-        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional',
+        this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional',
           'Error, su archivo debe ser de tipo PDF');
       }
     }
   }
 
-  onToggle(): void {
+  public onToggle(): void {
     this.isToggle = !this.isToggle;
     this.frmRequest.patchValue({ 'honorific': this.isToggle });
   }
 
-  onSave(): void {
+  public onSave(): void {
     let errorExists = false;
     if (!this.isLoadFile && this.operationMode === eOperation.NEW) {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, '', 'No se ha cargado archivo de portada');
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'No se ha cargado archivo de portada');
       errorExists = true;
     }
 
@@ -269,7 +230,7 @@ export class RequestComponentComponent implements OnInit {
     }
 
     if (typeof (this.frmRequest.get('adviser').value) === 'undefined' || !this.frmRequest.get('adviser').value || !this.adviserInfo) {
-      this.notificationsServ.showNotification(eNotificationType.ERROR, '', 'No se ha seleccionado asesor');
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'No se ha seleccionado asesor');
       this.frmRequest.get('adviser').setErrors({ required: true });
       this.frmRequest.get('adviser').markAsTouched();
       errorExists = true;
@@ -289,6 +250,7 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('adviserName', this.adviserInfo.name);
     this.frmData.append('adviserTitle', this.adviserInfo.title);
     this.frmData.append('adviserCedula', this.adviserInfo.cedula);
+    this.frmData.append('adviserEmail', this.adviserInfo.email);
     this.frmData.append('noIntegrants', this.frmRequest.get('noIntegrants').value);
     this.frmData.append('projectName', this.frmRequest.get('project').value.trim().replace(/\s+/g, ' '));
     this.frmData.append('email', this.frmRequest.get('email').value);
@@ -309,7 +271,7 @@ export class RequestComponentComponent implements OnInit {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud guardada correctamente');
             this.showLoading = false;
             this.btnSubmitRequest.emit(true);
-          }, error => {
+          }, _ => {
             this.showLoading = false;
             this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar integrantes');
             this.btnSubmitRequest.emit(false);
@@ -317,13 +279,13 @@ export class RequestComponentComponent implements OnInit {
           this.showLoading = false;
           if (data.code && data.code !== 200) {
             this.notificationsServ
-              .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+              .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al enviar código de verificación');
           } else {
             this.notificationsServ
               .showNotification(eNotificationType.INFORMATION, 'Acto recepcional',
                 'Su código de verificación ha sido enviado al correo ingresado');
           }
-        }, error => {
+        }, _ => {
           this.showLoading = false;
           this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar solicitud');
           this.btnSubmitRequest.emit(false);
@@ -331,7 +293,7 @@ export class RequestComponentComponent implements OnInit {
         break;
       }
       case eOperation.EDIT: {
-        console.log("EDITADO");
+        console.log('EDITADO');
         const value = this.request.documents.find(x => x.nameFile === eFILES.PROYECTO);
         let isEmailChanged = false;
         this.frmData.append('fileId', value.driveId);
@@ -343,14 +305,14 @@ export class RequestComponentComponent implements OnInit {
         }
         this.studentProvider.updateRequest(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(this.request._id, this.integrants).subscribe(_ => {
-            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Editada Correctamente');
+            this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud editada correctamente');
             this.isEdit = false;
             this.viewObservation = false;
             this.showLoading = false;
             if (isEmailChanged) {
               if (data.code && data.code !== 200) {
                 this.notificationsServ
-                  .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Error al enviar código de verificación');
+                  .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al enviar código de verificación');
               } else {
                 this.notificationsServ
                   .showNotification(eNotificationType.INFORMATION, 'Acto recepcional',
@@ -359,14 +321,15 @@ export class RequestComponentComponent implements OnInit {
             }
             this.getRequest();
             this.btnSubmitRequest.emit(true);
-          }, error => {
+          }, _ => {
             this.showLoading = false;
-            this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
+            this.notificationsServ
+              .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error al agregar integrantes');
             this.btnSubmitRequest.emit(false);
           });
-        }, error => {
+        }, _ => {
           this.showLoading = false;
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
           this.btnSubmitRequest.emit(false);
         });
         break;
@@ -374,7 +337,7 @@ export class RequestComponentComponent implements OnInit {
     }
   }
 
-  Send(): void {
+  public Send(): void {
     this.showLoading = true;
     const data = {
       operation: eStatusRequest.ACCEPT,
@@ -394,7 +357,7 @@ export class RequestComponentComponent implements OnInit {
     });
   }
 
-  selectAdviser(): void {
+  public selectAdviser(): void {
     if (this.frmRequest.disabled) {
       return;
     }
@@ -418,7 +381,7 @@ export class RequestComponentComponent implements OnInit {
     });
   }
 
-  addIntegrants(): void {
+  public addIntegrants(): void {
     if (this.frmRequest.disabled) {
       return;
     }
@@ -446,23 +409,17 @@ export class RequestComponentComponent implements OnInit {
     });
   }
 
-  generateRequestPDF() {
+  public generateRequestPDF() {
     window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
   }
 
-  getFolderId() {
+  private getFolderId() {
     this.studentProvider.getDriveFolderId(this.userInformation.email, eFOLDER.TITULACION).subscribe(folder => {
       this.folderId = folder.folderIdInDrive;
     });
   }
 
-  createFolder() {
-    this.studentProvider.getDriveFolderId(this.userInformation.email, eFOLDER.TITULACION).subscribe(folder => {
-      this.folderId = folder.folderIdInDrive;
-    });
-  }
-
-  showHelp(): void {
+  public showHelp(): void {
     Swal.fire({
       type: 'info',
       title: '¡Ayuda!',
@@ -470,7 +427,7 @@ export class RequestComponentComponent implements OnInit {
       allowOutsideClick: false,
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Aceptar',
-    })
+    });
   }
 
   public verifyEmail() {

@@ -1,68 +1,82 @@
 <div class="row">
   <div class="col-10">
-    <h1 mat-dialog-title>Asesor</h1>
+    <h1 mat-dialog-title>{{title}}</h1>
   </div>
-  <div class="col-2">
+  <div class="col-2" *ngIf="!isNewEmployee">
     <button mat-icon-button [mat-dialog-close] class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div class="col-2" *ngIf="isNewEmployee">
+    <button mat-icon-button class="float-right" (click)="toggleAddEmploye()">
       <mat-icon>close</mat-icon>
     </button>
   </div>
 </div>
 
 <mat-dialog-content>
-  <!-- <div class="row mb-2">
+  <div class="row mb-2" *ngIf="(role==='secretaria académica' || role==='jefe académico'
+      || role==='coordinación de titulación' || role==='servicios estudiantiles') && synodal === 'vocal'">
     <div class="col-10"></div>
-    <div class="col-2" style="clear: both;">
+    <div class="col-2" style="clear: both;" *ngIf="!isNewEmployee">
       <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
-        (click)="addEmploye()" data-toggle="tooltip">
-        <mat-icon *ngIf="!isNewEmployee">add</mat-icon>
-        <mat-icon *ngIf="isNewEmployee">clear</mat-icon>
+        (click)="toggleAddEmploye()" data-toggle="tooltip" title="Agregar nuevo">
+        <mat-icon>add</mat-icon>
       </button>
     </div>
-  </div> -->
+  </div>
 
   <div *ngIf="isNewEmployee" (ngSubmit)="onSave()">
     <form [formGroup]="frmAuxiliar" (ngSubmit)="onSave()">
-      <mat-form-field appearance="outline">
-        <mat-label>Nombre Completo</mat-label>
-        <input matInput placeholder="Nombre Completo" formControlName="Name">
-        <mat-icon matSuffix>sentiment_satisfied_alt</mat-icon>
-        <div *ngIf="!frmAuxiliar.get('Name').valid && frmAuxiliar.get('Name').touched">
-          <mat-error *ngIf="frmAuxiliar.get('Name').errors['required']">
-            ¡Nombre Obligatorio!
+      <div class="row">
+        <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+          <mat-label>Nombre Completo</mat-label>
+          <input matInput placeholder="Nombre Completo" formControlName="Name"
+            oninput="this.value = this.value.toUpperCase()" type="text" required>
+          <mat-error *ngIf="!frmAuxiliar.get('Name').valid && frmAuxiliar.get('Name').touched">
+            <span *ngIf="frmAuxiliar.get('Name').errors['required']">
+              ¡Nombre Obligatorio!
+            </span>
           </mat-error>
-        </div>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Título</mat-label>
-        <input matInput placeholder="Título" formControlName="Titled">
-        <mat-icon matSuffix>assignment</mat-icon>
-        <div *ngIf="!frmAuxiliar.get('Titled').valid && frmAuxiliar.get('Titled').touched">
-          <mat-error *ngIf="frmAuxiliar.get('Titled').errors['required']">
-            ¡Título Obligatorio!
+        </mat-form-field>
+        <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput placeholder="Email" formControlName="email" type="email" required>
+          <mat-error *ngIf="!frmAuxiliar.get('email').valid && frmAuxiliar.get('email').touched">
+            <span *ngIf="frmAuxiliar.get('email').errors['required']">
+              ¡Email obligatorio!
+            </span>
+            <span *ngIf="frmAuxiliar.get('email').errors['email']">
+              ¡Ingrese un email válido!
+            </span>
           </mat-error>
-        </div>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-
-        <mat-label>Cédula</mat-label>
-        <input matInput placeholder="Cédula Profesional" formControlName="Cedula">
-        <mat-icon matSuffix>account_box</mat-icon>
-        <div *ngIf="!frmAuxiliar.get('Cedula').valid && frmAuxiliar.get('Cedula').touched">
-          <mat-error *ngIf="frmAuxiliar.get('Cedula').errors['required']">
-            ¡Cédula Profesional Obligatoria!
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+          <mat-label>Título</mat-label>
+          <input matInput placeholder="Título" formControlName="Titled" oninput="this.value = this.value.toUpperCase()"
+            required type="text" required>
+          <mat-error *ngIf="!frmAuxiliar.get('Titled').valid && frmAuxiliar.get('Titled').touched">
+            <span *ngIf="frmAuxiliar.get('Titled').errors['required']">
+              ¡Título Obligatorio!
+            </span>
           </mat-error>
-        </div>
-      </mat-form-field>
-
-      <div class="row mt-3 text-right">
-        <div class="col-8"></div>
-        <div class="col-4">
+        </mat-form-field>
+        <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+          <mat-label>Cédula</mat-label>
+          <input matInput placeholder="Cédula Profesional" formControlName="Cedula" required>
+          <mat-error *ngIf="!frmAuxiliar.get('Cedula').valid && frmAuxiliar.get('Cedula').touched">
+            <span *ngIf="frmAuxiliar.get('Cedula').errors['required']">
+              ¡Cédula Profesional Obligatoria!
+            </span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="row text-right">
+        <div class="col-12">
           <button class="btn btn-outline-success btn-sm mx-3" [disabled]="frmAuxiliar.invalid"
             type="submit">Guardar</button>
-          <button class="btn btn-outline-danger btn-sm" [mat-dialog-close] cdkFocusInitial>Cancelar</button>
         </div>
       </div>
     </form>
@@ -81,7 +95,8 @@
       </div>
       <div class="col-8">
         <mat-form-field>
-          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro"
+            oninput="this.value = this.value.toUpperCase()">
         </mat-form-field>
       </div>
     </div>
@@ -89,14 +104,14 @@
       <table mat-table [dataSource]="dataSource" matSort>
 
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:50%"> Nombre </th>
-          <td mat-cell *matCellDef="let row" style="width:50%"> {{row.name}} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:65%"> Nombre </th>
+          <td mat-cell *matCellDef="let row" style="width:65%"> {{row.name}} </td>
         </ng-container>
 
 
         <ng-container matColumnDef="position">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:45%"> Puesto </th>
-          <td mat-cell *matCellDef="let row" style="width:45%"> {{row.position}} </td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:30%"> Puesto </th>
+          <td mat-cell *matCellDef="let row" style="width:30%"> {{row.position}} </td>
         </ng-container>
 
         <ng-container matColumnDef="action">

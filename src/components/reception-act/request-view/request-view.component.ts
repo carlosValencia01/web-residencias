@@ -5,7 +5,6 @@ import { iIntegrant } from 'src/entities/reception-act/integrant.model';
 import { StudentProvider } from 'src/providers/shared/student.prov';
 import { CookiesService } from 'src/services/app/cookie.service';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
-import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
@@ -27,13 +26,13 @@ export class RequestViewComponent implements OnInit {
   public isToggle = false;
   private integrants: Array<iIntegrant> = [];
   private oRequest: uRequest;
-  public showLoading: boolean = false;
+  public showLoading = false;
+
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
     private notificationsServ: NotificationsServices,
     private requestProvider: RequestProvider,
-    private dateFormat: DatePipe,
     public dialog: MatDialog,
     public _RequestService: RequestService,
     private imgService: ImageToBase64Service,
@@ -61,7 +60,7 @@ export class RequestViewComponent implements OnInit {
       });
   }
 
-  assignName(): void {
+  private assignName(): void {
     const nameArray = this.request.student.fullName.split(/\s*\s\s*/);
     let name = '';
     const maxIteration = nameArray.length - 2;
@@ -72,7 +71,7 @@ export class RequestViewComponent implements OnInit {
     this.request.student.lastName = nameArray[nameArray.length - 2] + ' ' + nameArray[nameArray.length - 1];
   }
 
-  loadRequest(request: iRequest): void {
+  private loadRequest(request: iRequest): void {
     this.request = request;
     this.integrants = this.request.integrants;
     this.assignName();
@@ -93,7 +92,7 @@ export class RequestViewComponent implements OnInit {
     this.oRequest = new uRequest(this.request, this.imgService, this.cookiesService);
   }
 
-  watchObservations(): void {
+  public watchObservations(): void {
     const ref = this.dialog.open(ObservationsComponentComponent, {
       data: {
         phase: 'Solicitado',
@@ -105,29 +104,25 @@ export class RequestViewComponent implements OnInit {
     });
   }
 
-  getProjectCover() {
-    // window.open(`${this.requestProvider.getApiURL()}/student/document/${eFILES.PROYECTO}/${this.request._id}`, '_blank');
-    // window.open(`${this.requestProvider.getApiURL()}/request/${this.request._id}/file/${eFILES.PROYECTO}`, '_blank');
+  public getProjectCover() {
     this.showLoading = true;
     this.requestProvider.getResource(this.request._id, eFILES.PROYECTO).subscribe(data => {
       this.showLoading = false;
       window.open(URL.createObjectURL(data), '_blank');
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'Error al obtener la portada');
-      // window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener la portada');
     });
   }
 
-  getRequestPDF() {
+  public getRequestPDF() {
     this.showLoading = true;
     this.requestProvider.getResource(this.request._id, eFILES.SOLICITUD).subscribe(data => {
       this.showLoading = false;
       window.open(URL.createObjectURL(data), '_blank');
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', 'Error al obtener la solicitud');
-      // window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
+      this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener la solicitud');
     });
 
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { NotificationsServices } from 'src/services/app/notifications.service';
@@ -7,8 +7,6 @@ import { ICareer } from 'src/entities/shared/career.model';
 import { CareerProvider } from 'src/providers/shared/career.prov';
 import { BookProvider } from 'src/providers/reception-act/book.prov';
 import Swal from 'sweetalert2';
-
-const years = require('ye-ars');
 
 @Component({
   selector: 'app-new-book',
@@ -43,7 +41,7 @@ export class NewBookComponent implements OnInit {
     private formBuilder: FormBuilder,
     private notificationsServices: NotificationsServices,
     private careerProvider: CareerProvider,
-    private bookProvider: BookProvider
+    private bookProvider: BookProvider,
   ) {
     this.validateForm();
   }
@@ -74,13 +72,13 @@ export class NewBookComponent implements OnInit {
 
   async createBook(data) {
     data.careers = this.assignedCareers;
-    this.assignCareers.forEach((carreraA,index) => {
-      if(!this.existCareer){
+    this.assignCareers.forEach((carreraA, index) => {
+      if (!this.existCareer) {
         data.careers.forEach((carrera) => {
-          if(!this.existCareer) {
-            if(carreraA.includes(carrera.fullName)) {
-              if(this.titulationBook[index] == data.titleOption){
-                if(this.numberBooks[index] == data.number){
+          if (!this.existCareer) {
+            if (carreraA.includes(carrera.fullName)) {
+              if (this.titulationBook[index] === data.titleOption) {
+                if (this.numberBooks[index] === data.number) {
                   this.carreraRepetida = carrera.shortName;
                   this.indexNumberBook = data.number;
                   this.titulationOption = data.titleOption;
@@ -89,7 +87,7 @@ export class NewBookComponent implements OnInit {
                   return;
                 }
               } else {
-                return
+                return;
               }
             }
           } else {
@@ -98,30 +96,30 @@ export class NewBookComponent implements OnInit {
         });
       }
     });
-    if(this.existCareer){
+    if (this.existCareer) {
       this.existCareer = false;
       Swal.fire({
         title: 'Ya existe un libro con la siguiente información',
         type: 'info',
         html:
-          '<p>Carrera: <b>'+this.carreraRepetida+'</b><p/>'+
-          '<p>Típo de Titulación: <b>'+this.titulationOption+'</b><p/>'+
-          '<p>Número de Libro: <b>'+this.indexNumberBook+'</b><p/>',
+          '<p>Carrera: <b>' + this.carreraRepetida + '</b><p/>' +
+          '<p>Típo de Titulación: <b>' + this.titulationOption + '</b><p/>' +
+          '<p>Número de Libro: <b>' + this.indexNumberBook + '</b><p/>',
         allowOutsideClick: false,
         confirmButtonColor: '#3085d6',
         confirmButtonText: 'Aceptar'
       });
 
     } else {
-        //Guardar elemento
+        // Guardar elemento
         this.existCareer = false;
         this.bookProvider.newBook(data).subscribe(res => {});
         this.onClose();
-        this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Libro Creado.');
+        this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Libro creado con éxito');
     }
     this.loading = false;
   }
-  
+
   public isCareerAssigned(career: ICareer): boolean {
     return this.assignedCareers.findIndex(_career => _career._id === career._id) !== -1;
   }
@@ -133,15 +131,15 @@ export class NewBookComponent implements OnInit {
 
     this.nombreLibro = '';
     for (let i = 0; i < this.assignedCareers.length; i++) {
-      if (this.assignedCareers.length == 1) {
+      if (this.assignedCareers.length === 1) {
         this.nombreLibro = this.assignedCareers[i].fullName;
-      } else if (i == this.assignedCareers.length - 1) {
-        if(this.assignedCareers[i].shortName.indexOf('ING.')){
+      } else if (i === this.assignedCareers.length - 1) {
+        if (this.assignedCareers[i].shortName.indexOf('ING.')) {
           this.nombreLibro += ' Y ' + this.assignedCareers[i].fullName;
         } else {
           this.nombreLibro += ' E ' + this.assignedCareers[i].fullName;
         }
-      } else if (i == this.assignedCareers.length - 2) {
+      } else if (i === this.assignedCareers.length - 2) {
         this.nombreLibro += this.assignedCareers[i].fullName;
       } else {
         this.nombreLibro += this.assignedCareers[i].fullName + ', ';
@@ -153,18 +151,18 @@ export class NewBookComponent implements OnInit {
     this.assignedCareers.push(career);
     const index = this.unassignedCareers.findIndex(_career => _career._id === career._id);
     this.unassignedCareers.splice(index, 1);
-    
+
     this.nombreLibro = '';
     for (let i = 0; i < this.assignedCareers.length; i++) {
-      if (this.assignedCareers.length == 1) {
+      if (this.assignedCareers.length === 1) {
         this.nombreLibro = this.assignedCareers[i].fullName;
-      } else if (i == this.assignedCareers.length - 1) {
-        if(this.assignedCareers[i].shortName.indexOf('ING.')){
+      } else if (i === this.assignedCareers.length - 1) {
+        if (this.assignedCareers[i].shortName.indexOf('ING.')) {
           this.nombreLibro += ' Y ' + this.assignedCareers[i].fullName;
         } else {
           this.nombreLibro += ' E ' + this.assignedCareers[i].fullName;
         }
-      } else if (i == this.assignedCareers.length - 2) {
+      } else if (i === this.assignedCareers.length - 2) {
         this.nombreLibro += this.assignedCareers[i].fullName;
       } else {
         this.nombreLibro += this.assignedCareers[i].fullName + ', ';
@@ -184,13 +182,13 @@ export class NewBookComponent implements OnInit {
     this.unassignedCareers = [];
   }
 
-  editName(){
+  editName() {
     this.enabledName = !this.enabledName;
   }
 
-  getActiveBooks(){
+  getActiveBooks() {
     this.bookProvider.getAllBooks().subscribe(res => {
-      this.assignCareers = res.map(({careers}) => careers.map(({fullName})=> fullName));
+      this.assignCareers = res.map(({careers}) => careers.map(({fullName}) => fullName));
       this.numberBooks = res.map(({number}) => number);
       this.titulationBook = res.map(({titleOption}) => titleOption);
 

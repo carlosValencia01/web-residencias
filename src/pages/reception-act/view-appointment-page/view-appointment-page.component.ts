@@ -9,24 +9,24 @@ import { CookiesService } from 'src/services/app/cookie.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { isSameMonth, isSameDay } from 'date-fns';
 import { MatDialog } from '@angular/material';
-import * as moment from 'moment';
-import { ViewMoreComponent } from '../../../modals/reception-act/view-more/view-more.component';
-import { eRole } from 'src/enumerators/app/role.enum';
+import { ViewMoreComponent } from 'src/modals/reception-act/view-more/view-more.component';
 import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
-
-const jsPDF = require('jspdf');
-require('jspdf-autotable');
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
+import * as moment from 'moment';
+
+require('jspdf-autotable');
+const jsPDF = require('jspdf');
+
 moment.locale('es');
+
 @Component({
   selector: 'app-view-appointment-page',
   templateUrl: './view-appointment-page.component.html',
   styleUrls: ['./view-appointment-page.component.scss']
 })
 export class ViewAppointmentPageComponent implements OnInit {
-
-  loading: boolean = false;
+  loading = false;
   private WIDTH = 286;
   private HEIGHT = 239;
   private FONT = 'Montserrat';
@@ -50,35 +50,41 @@ export class ViewAppointmentPageComponent implements OnInit {
 
   carrers: iCarrera[];
   allCarrers: iCarrera[];
-  activeDayIsOpen: boolean = true;
+  activeDayIsOpen = true;
   maxDate: Date = new Date(2019, 11, 15);
   viewDate = new Date();
   events: CalendarEvent[];
   excludeDays: number[] = [0, 6];
-  Appointments: Array<iAppointmentGroup> = []
+  Appointments: Array<iAppointmentGroup> = [];
   refresh: Subject<any> = new Subject();
   request: iRequest;
   view: CalendarView = CalendarView.Month;
-  locale: string = 'es';
+  locale = 'es';
   role: string;
-  constructor(public _RequestProvider: RequestProvider, public _NotificationsServices: NotificationsServices,
-    private _sourceDataProvider: sourceDataProvider, public _InscriptionsProvider: InscriptionsProvider,
-    public dialog: MatDialog, private _CookiesService: CookiesService,
-    public _getImage: ImageToBase64Service
+
+  constructor(
+    public _RequestProvider: RequestProvider,
+    public _NotificationsServices: NotificationsServices,
+    private _sourceDataProvider: sourceDataProvider,
+    public _InscriptionsProvider: InscriptionsProvider,
+    public dialog: MatDialog,
+    private _CookiesService: CookiesService,
+    public _getImage: ImageToBase64Service,
   ) {
     this.carrers = [];
     this._getImageToPdf();
   }
 
   async ngOnInit() {
-    // let currentPosition: any = await this.currentPositionService.getCurrentPosition();    
+    // let currentPosition: any = await this.currentPositionService.getCurrentPosition();
     // let tmpCarrers = currentPosition.ascription.careers;
-    let tmpCarrers = this._CookiesService.getPosition().ascription.careers;
-    this.allCarrers = this._sourceDataProvider.getCareerAbbreviation();// this.carrers.slice(0);
+    const tmpCarrers = this._CookiesService.getPosition().ascription.careers;
+    this.allCarrers = this._sourceDataProvider.getCareerAbbreviation(); // this.carrers.slice(0);
     this.allCarrers.forEach(element => {
-      let i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
-      if (i !== -1)
+      const i = tmpCarrers.findIndex(x => x.fullName == element.carrer);
+      if (i !== -1) {
         this.carrers.push(element);
+      }
     });
 
     this._InscriptionsProvider.getActivePeriod().subscribe(
@@ -111,8 +117,8 @@ export class ViewAppointmentPageComponent implements OnInit {
 
   diary(month: number, year: number): void {
     this.Appointments = [];
-    let minDate = new Date(this.viewDate.getTime());
-    let maxDate = new Date(this.viewDate.getTime());
+    const minDate = new Date(this.viewDate.getTime());
+    const maxDate = new Date(this.viewDate.getTime());
     minDate.setDate(minDate.getDate() - minDate.getDay());
     maxDate.setDate(maxDate.getDate() + (6 - maxDate.getDay()));
     this._RequestProvider.getDiary({
@@ -122,50 +128,71 @@ export class ViewAppointmentPageComponent implements OnInit {
       min: minDate,
       max: maxDate
     }).subscribe(data => {
-      if (typeof (data.Diary) !== "undefined") {
+      if (typeof (data.Diary) !== 'undefined') {
         this.Appointments = data.Diary;
         this.loadAppointment();
         this.refresh.next();
       }
-    }, error => {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, "Titulación App",
-        error);
+    }, _ => {
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener eventos');
     });
   }
+
   loadAppointment(): void {
     this.events = [];
     this.allCarrers.forEach(career => {
-      // if (career.status) {
-      let tmp: { _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, duration: number }] };
-      // tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);      
+      let tmp: {
+        _id: string[],
+        values: [{
+          id: string,
+          student: string[],
+          proposedDate: Date,
+          proposedHour: number,
+          phase: string,
+          duration: number
+        }]
+      };
       tmp = this.Appointments.find(x => x._id[0] === career.carrer);
       if (typeof (tmp) != 'undefined') {
         tmp.values.forEach(element => {
           const vFecha = element.proposedDate.toString().split('T')[0].split('-');
-          let tmpStart = new Date(element.proposedDate);
-          let tmpEnd = new Date(element.proposedDate);
+          const tmpStart = new Date(element.proposedDate);
+          const tmpEnd = new Date(element.proposedDate);
           tmpStart.setHours(0, 0, 0, 0);
           tmpEnd.setHours(0, 0, 0, 0);
           tmpStart.setMinutes(element.proposedHour);
           tmpEnd.setMinutes(element.proposedHour + element.duration);
-          let title = "";
-          let index = this.carrers.findIndex(x => x.carrer === career.carrer);
-          if (index != -1 && this.carrers[index].status) {
-            title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];
-            this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? career.color : { primary: '#00c853', secondary: '#69f0ae' }) });
+          let title = '';
+          const index = this.carrers.findIndex(x => x.carrer === career.carrer);
+          if (index !== -1 && this.carrers[index].status) {
+            title = moment(tmpStart).format('LT') + ' ' + career.abbreviation + ' ' + element.student[0];
+            this.events.push({
+              title: title,
+              start: tmpStart,
+              end: tmpEnd,
+              color: (element.phase === 'Asignado'
+                ? career.color
+                : { primary: '#00c853', secondary: '#69f0ae' }
+              )
+            });
+          } else {
+            title = element.phase === 'Asignado' ? ' Evento Solicitado' : ' Evento Reservado';
+            this.events.push({
+              title: title,
+              start: tmpStart,
+              end: tmpEnd,
+              color: (element.phase == 'Asignado'
+                ? { primary: '#b64443', secondary: '#dcdcdc' }
+                : { primary: '#b64443', secondary: '#e5bab9' }
+              )
+            });
           }
-          else {
-            title = element.phase == 'Asignado' ? " Evento Solicitado" : " Evento Reservado";
-            this.events.push({ title: title, start: tmpStart, end: tmpEnd, color: (element.phase == 'Asignado' ? { primary: '#b64443', secondary: '#dcdcdc' } : { primary: '#b64443', secondary: '#e5bab9' }) });
-          }
-          // let title = moment(tmpStart).format('LT') + " " + career.abbreviation + " " + element.student[0];          
         });
-        // }
       }
     });
     this.refresh.next();
   }
-
 
   beforeMonthViewRender(renderEvent: CalendarMonthViewBeforeRenderEvent): void {
     renderEvent.body.forEach(day => {
@@ -190,9 +217,10 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
 
   viewEvent($event): void {
-    let title: string = $event.title;
+    const title: string = $event.title;
     if (!title.includes('Evento')) {
-      const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+      const tmpAppointment: iAppointment =
+        this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
       const dialogRef = this.dialog.open(ViewMoreComponent, {
         data: {
           Appointment: tmpAppointment
@@ -207,10 +235,12 @@ export class ViewAppointmentPageComponent implements OnInit {
   reload(): void {
     this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
   }
+
   genTrades($event): void {
-    let title: string = $event.title;
+    const title: string = $event.title;
     if (!title.includes('Evento')) {
-      const tmpAppointment: iAppointment = this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
+      const tmpAppointment: iAppointment =
+        this.searchAppointment($event.title.split(' ')[1], $event.start, $event.title.split(' ').slice(2).join(' '));
       const dialogRef = this.dialog.open(ActNotificacionComponent, {
         data: {
           Appointment: tmpAppointment
@@ -223,13 +253,13 @@ export class ViewAppointmentPageComponent implements OnInit {
   }
 
   searchAppointment(abbreviation: string, date: any, student: string): iAppointment {
-    let AppointmentCareer = this.searchAppointmentByCareer(abbreviation);
+    const AppointmentCareer = this.searchAppointmentByCareer(abbreviation);
     const size = AppointmentCareer.values.length;
     let tmpAppointment: iAppointment;
     const Student: string = student;
     for (let i = 0; i < size; i++) {
-      let eventDate = new Date(date);
-      let appointmentDate = new Date(AppointmentCareer.values[i].proposedDate);
+      const eventDate = new Date(date);
+      const appointmentDate = new Date(AppointmentCareer.values[i].proposedDate);
       appointmentDate.setHours(0, 0, 0, 0);
       appointmentDate.setMinutes(AppointmentCareer.values[i].proposedHour);
       if (AppointmentCareer.values[i].student[0].trim() === Student.trim() && appointmentDate.getTime() === eventDate.getTime()) {
@@ -242,7 +272,7 @@ export class ViewAppointmentPageComponent implements OnInit {
 
   searchAppointmentByCareer(abbreviation: string): iAppointmentGroup {
     const tmpCarrera = this.carrers.find(x => x.abbreviation === abbreviation);
-    let AppointmentCareer = this.Appointments.find(x => x._id[0] === tmpCarrera.carrer);
+    const AppointmentCareer = this.Appointments.find(x => x._id[0] === tmpCarrera.carrer);
     return AppointmentCareer;
   }
 
@@ -270,12 +300,13 @@ export class ViewAppointmentPageComponent implements OnInit {
       this.viewDate = date;
     }
   }
+
   excelExport() {
     const filteredCareers = this.carrers.filter((ca) => ca.status == true);
     this.mapedStudents = [];
     if (filteredCareers.length > 0) {
       this.loading = true;
-      let y = 60;
+      const y = 60;
 
       const doc = this.newDocumentTec(true, false);
       doc.setTextColor(0, 0, 0);
@@ -294,10 +325,19 @@ export class ViewAppointmentPageComponent implements OnInit {
           const maped = filtered.
             map((st) => ({
               date: moment(st.proposedDate).format('LL'),
-              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH'),
+              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('LT'),
               student: st.student,
               place: st.place,
-              jury: st.jury.map((jr: any, index: number) => index == 0 ? 'PRESIDENTE: ' + jr.name : index == 1 ? 'SECRETARIO: ' + jr.name : index == 2 ? 'VOCAL ' + jr.name : 'VOCAL SUPLENTE: ' + jr.name).join('\r\n')
+              jury: st.jury
+                .map((jr: any, index: number) =>
+                  index === 0
+                  ? 'PRESIDENTE: ' + jr.name
+                  : index === 1
+                  ? 'SECRETARIO: ' + jr.name
+                  : index === 2
+                  ? 'VOCAL ' + jr.name
+                  : 'VOCAL SUPLENTE: ' + jr.name
+                ).join('\r\n')
             }));
 
           maped.forEach(maped => {
@@ -331,6 +371,7 @@ export class ViewAppointmentPageComponent implements OnInit {
 
     }
   }
+
   private newDocumentTec(header = true, footer = true) {
     const doc = new jsPDF({
       unit: 'mm',
@@ -351,6 +392,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     }
     return doc;
   }
+
   private addHeaderTec(document) {
     const tecnmHeight = 15;
     const sepHeight = tecnmHeight * 100 / 53;
@@ -375,8 +417,8 @@ export class ViewAppointmentPageComponent implements OnInit {
       (this.WIDTH / 2), 265, { align: 'center' });
     document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
   }
-  private _getImageToPdf() {
 
+  private _getImageToPdf() {
     this._getImage.getBase64('assets/imgs/sep.png').then(logo => {
       this.sepLogo = logo;
     });
@@ -396,16 +438,33 @@ export class ViewAppointmentPageComponent implements OnInit {
     this._getImage.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
       this.montserratBold = base64.toString().split(',')[1];
     });
-
-    // this._getImage.getBase64('assets/imgs/firms/director.png').then(firm => {
-    //     this.directorFirm = firm;
-    // });
-
-    // this._getImage.getBase64('assets/imgs/firms/servicios.png').then(firm => {
-    //     this.serviceFirm = firm;
-    // });
   }
 }
-interface iAppointmentGroup { _id: string[], values: [iAppointment] }
-interface iCarrera { carrer: string, class: string, abbreviation: string, icon: string, status: boolean, color: { primary: string; secondary: string; } }
-interface iAppointment { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, duration: number }
+
+interface iAppointmentGroup {
+  _id: string[],
+  values: [iAppointment]
+}
+
+interface iCarrera {
+  carrer: string;
+  class: string;
+  abbreviation: string;
+  icon: string;
+  status: boolean;
+  color: {
+    primary: string;
+    secondary: string;
+  };
+}
+
+interface iAppointment {
+  id: string;
+  student: string[];
+  proposedDate: Date;
+  proposedHour: number;
+  phase: string;
+  jury: Array<string>;
+  place: string;
+  duration: number;
+}

@@ -183,6 +183,9 @@ export class StudentProvider {
     isStudentInscription(controlNumber: string): Observable<any> {
         return this.api.get(`student/get/inscription/ready/${controlNumber}`).pipe(map(res => res.json()));
     }
+    getDocumentsInscription(controlNumber: string, degree: string): Observable<any> {
+        return this.api.get(`student/inscription/docs/${controlNumber}/${degree}`).pipe(map(res => res.json()));
+    }
 
     sendNotification(data) {
         return this.api.post(`student/notify`, data, true).pipe(map(res => res.json()));

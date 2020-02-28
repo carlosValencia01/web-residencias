@@ -21,236 +21,187 @@
   </div>
 </div>
 
-
-<div class="form-group row">
-  <label for="txtSearch" class="col-sm-2 col-form-label">Buscar</label>
-  <div class="col-sm-10 input-group input-group-sm">
-    <input type="text" id="txtSearch" [(ngModel)]="controlNumber" class="form-control" placeholder="Número de Control">
-    <div class="input-group-append">
-      <span class="input-group-text" (click)="onSearch()"><i class="fa fa-search" data-toggle="tooltip"
-          title="Buscar"></i></span>
-    </div>
-  </div>
+<div class="row">
+  <mat-form-field class="col-12" appearance="outline">
+    <mat-label>Número de control</mat-label>
+    <input matInput type="text" id="textSearch" [(ngModel)]="controlNumber" placeholder="Número de Control">
+    <button matSuffix mat-icon-button (click)="onSearch()">
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
 </div>
 
 <form [formGroup]="frmNewTitle" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
-    <h6 class="text-center">Datos generales</h6>
-    <div class="form-group row mt-3">
-      <label for="txtEstudiante" class="col-sm-2 col-form-label">Estudiante</label>
-      <div class="col-sm-10">
-        <input type="text" readonly
-          [ngClass]="(!frmNewTitle.get('student').valid && frmNewTitle.get('student').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-          id="txtEstudiante" placeholder="Estudiante" formControlName="student">
-        <div class="invalid-feedback" *ngIf="!frmNewTitle.get('student').valid && frmNewTitle.get('student').touched">
+    <h6 class="text-center">DATOS GENERALES</h6>
+    <div class="row">
+      <mat-form-field class="col-sm-12 col-lg-8" appearance="outline">
+        <mat-label>Estudiante</mat-label>
+        <input matInput type="text" id="txtEstudiante" placeholder="Nombre estudiante" formControlName="student"
+          readonly required>
+        <mat-error *ngIf="!frmNewTitle.get('student').valid && frmNewTitle.get('student').touched">
           <span *ngIf="frmNewTitle.get('student').errors['required']">
-            ¡Por favor ingrese un estudiante!
+            ¡Ingrese el nombre del estudiante!
           </span>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group row mt-3">
-      <label for="txtCareer" class="col-sm-2 col-form-label">Carrera</label>
-      <div class="col-sm-10">
-        <input type="text" readonly
-          [ngClass]="(!frmNewTitle.get('career').valid && frmNewTitle.get('career').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-          id="txtCareer" placeholder="Carrera" formControlName="career">
-        <div class="invalid-feedback" *ngIf="!frmNewTitle.get('career').valid && frmNewTitle.get('career').touched">
-          <span *ngIf="frmNewTitle.get('career').errors['required']">
-            ¡Por favor ingrese una carrera!
-          </span>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group row mt-3">
-      <label for="txtControlNumber" class="col-sm-2 col-form-label">No. Control</label>
-      <div class="col-sm-10">
-        <input type="text" readonly
-          [ngClass]="(!frmNewTitle.get('controlNumber').valid && frmNewTitle.get('controlNumber').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-          id="txtControlNumber" placeholder="No. Control" formControlName="controlNumber">
-        <div class="invalid-feedback"
-          *ngIf="!frmNewTitle.get('controlNumber').valid && frmNewTitle.get('controlNumber').touched">
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-lg-4" appearance="outline">
+        <mat-label>Número de control</mat-label>
+        <input matInput type="text" id="txtControlNumber" placeholder="No. Control" formControlName="controlNumber"
+          readonly required>
+        <mat-error *ngIf="!frmNewTitle.get('controlNumber').valid && frmNewTitle.get('controlNumber').touched">
           <span *ngIf="frmNewTitle.get('controlNumber').errors['required']">
-            ¡Por favor ingrese número de control!
+            ¡Ingrese el número de control!
           </span>
-        </div>
-      </div>
+        </mat-error>
+      </mat-form-field>
     </div>
-
-    <div class="form-group row mt-3">
-      <label for="txtProject" class="col-sm-2 col-form-label">Proyecto</label>
-      <div class="col-sm-10">
-        <input type="text"
-          [ngClass]="(!frmNewTitle.get('project').valid && frmNewTitle.get('project').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-          id="txtProject" placeholder="Proyecto" formControlName="project">
-        <div class="invalid-feedback" *ngIf="!frmNewTitle.get('project').valid && frmNewTitle.get('project').touched">
+    <div class="row">
+      <mat-form-field class="col-sm-12 col-lg-8" appearance="outline">
+        <mat-label>Carrera</mat-label>
+        <input matInput type="text" id="txtCareer" placeholder="Carrera" formControlName="career" readonly required>
+        <mat-error *ngIf="!frmNewTitle.get('career').valid && frmNewTitle.get('career').touched">
+          <span *ngIf="frmNewTitle.get('career').errors['required']">
+            ¡Ingrese el nombre de la carrera!
+          </span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field class="col-12" appearance="outline">
+        <mat-label>Nombre de proyecto</mat-label>
+        <input matInput type="text" id="txtProject" placeholder="Proyecto" formControlName="project"
+          oninput="this.value = this.value.toUpperCase()" required>
+        <mat-error *ngIf="!frmNewTitle.get('project').valid && frmNewTitle.get('project').touched">
           <span *ngIf="frmNewTitle.get('project').errors['required']">
-            ¡Por favor ingrese el nombre del proyecto!
+            ¡Ingrese el nombre del proyecto!
           </span>
-        </div>
-      </div>
+        </mat-error>
+      </mat-form-field>
     </div>
-
-    <h6 class="text-center">Titulación</h6>
+    <h6 class="text-center">TITULACIÓN</h6>
     <div class="row">
-      <div class="col-6">
-        <div class="form-group row">
-          <label for="txtOpcion" class="col-sm-4 col-form-label">Opción</label>
-          <div class="col-sm-8">
-            <select class="custom-select custom-select-sm" formControlName="option"
-              (change)="changedItem($event.target.value)">
-              <option *ngFor="let option of options; index as i" [value]="i">{{option}}</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="form-group row">
-          <label for="txtProduct" class="col-sm-4 col-form-label">Producto</label>
-          <div class="col-sm-8">
-            <select class="custom-select custom-select-sm" formControlName="product">
-              <option *ngFor="let product of products[index]" [value]="product">{{product}}</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Opción de titulación</mat-label>
+        <mat-select formControlName="option" (selectionChange)="changedItem($event.value)" required>
+          <mat-option *ngFor="let option of options; index as i" [value]="i">
+            {{option}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="!frmNewTitle.get('option').valid && frmNewTitle.get('option').touched">
+          <span *ngIf="frmNewTitle.get('option').errors['required']">
+            ¡Ingrese una opción de titulación!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Producto</mat-label>
+        <mat-select formControlName="product" required>
+          <mat-option *ngFor="let product of products[index]" [value]="product">
+            {{product}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="!frmNewTitle.get('product').valid && frmNewTitle.get('product').touched">
+          <span *ngIf="frmNewTitle.get('product').errors['required']">
+            ¡Ingrese un producto!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
-
-    <h6 class="text-center">Evento</h6>
+    <h6 class="text-center">EVENTO</h6>
     <div class="row">
-      <div class="col-6">
-        <div class="form-group row">
-          <label for="txtLugar" class="col-sm-4 col-form-label">Lugar</label>
-          <div class="col-sm-8">
-            <input type="text"
-              [ngClass]="(!frmNewTitle.get('place').valid && frmNewTitle.get('place').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-              id="txtLugar" placeholder="Lugar" formControlName="place">
-            <div class="invalid-feedback" *ngIf="!frmNewTitle.get('place').valid && frmNewTitle.get('place').touched">
-              <span *ngIf="frmNewTitle.get('place').errors['required']">
-                ¡Por favor ingrese un lugar!
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="form-group row">
-          <label for="txtDuracion" class="col-sm-4 col-form-label">Duración</label>
-          <div class="col-sm-8">
-            <input type="number"
-              [ngClass]="(!frmNewTitle.get('duration').valid && frmNewTitle.get('duration').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-              id="txtDuracion" placeholder="Duración" formControlName="duration" min="30" max="120">
-            <div class="invalid-feedback"
-              *ngIf="!frmNewTitle.get('duration').valid && frmNewTitle.get('duration').touched">
-              <span *ngIf="frmNewTitle.get('duration').errors['required']">
-                ¡Por favor ingrese una duración!
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Lugar</mat-label>
+        <input matInput type="text" id="txtLugar" placeholder="Lugar" formControlName="place" required>
+        <mat-error *ngIf="!frmNewTitle.get('place').valid && frmNewTitle.get('place').touched">
+          <span *ngIf="frmNewTitle.get('place').errors['required']">
+            ¡Por favor ingrese un lugar!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Duración (Minutos)</mat-label>
+        <input matInput type="number" id="txtDuracion" placeholder="Duración" formControlName="duration" min="30"
+          max="120" required>
+        <mat-error *ngIf="!frmNewTitle.get('duration').valid && frmNewTitle.get('duration').touched">
+          <span *ngIf="frmNewTitle.get('duration').errors['required']">
+            ¡Ingrese la duración del acto!
+          </span>
+          <span *ngIf="frmNewTitle.get('duration').errors['min']">
+            ¡Duración mínima es de 30 minutos!
+          </span>
+          <span *ngIf="frmNewTitle.get('duration').errors['max']">
+            ¡Duración máxima es de 120 minutos!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
-
-    <h6 class="text-center">Jurado</h6>
+    <h6 class="text-center">SINODALES</h6>
     <div class="row">
-      <div class="col-6">
-        <div class="form-group row">
-          <label for="txtPresidente" class="col-sm-4 col-form-label">Presidente</label>
-          <div class="col-sm-8">
-            <div class="input-group input-group-sm mb-3">
-              <input type="text"
-                [ngClass]="(!frmNewTitle.get('president').valid && frmNewTitle.get('president').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-                id="txtPresidente" placeholder="Presidente" formControlName="president">
-              <div class="input-group-append" (click)="selectEmployee('president')">
-                <span class="input-group-text btn">...</span>
-              </div>
-              <div class="invalid-feedback"
-                *ngIf="!frmNewTitle.get('president').valid && frmNewTitle.get('president').touched">
-                <span *ngIf="frmNewTitle.get('president').errors['required']">
-                  ¡Campo obligatorio!
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="form-group row">
-          <label for="txtSecretario" class="col-sm-4 col-form-label">Secretario</label>
-          <div class="col-sm-8">
-            <div class="input-group input-group-sm mb-3">
-              <input type="text"
-                [ngClass]="(!frmNewTitle.get('secretary').valid && frmNewTitle.get('secretary').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-                id="txtSecretario" placeholder="Secretario" formControlName="secretary">
-              <div class="input-group-append" (click)="selectEmployee('secretary')">
-                <span class="input-group-text btn">...</span>
-              </div>
-              <div class="invalid-feedback"
-                *ngIf="!frmNewTitle.get('secretary').valid && frmNewTitle.get('secretary').touched">
-                <span *ngIf="frmNewTitle.get('secretary').errors['required']">
-                  ¡Campo obligatorio!
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Presidenta/e</mat-label>
+        <input matInput type="text" id="txtPresidente" placeholder="Presidente" formControlName="president" readonly
+          required>
+        <button type="button" matSuffix mat-icon-button (click)="selectEmployee('president')">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+        <mat-error *ngIf="!frmNewTitle.get('president').valid && frmNewTitle.get('president').touched">
+          <span *ngIf="frmNewTitle.get('president').errors['required']">
+            ¡Campo obligatorio!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Secretario/a</mat-label>
+        <input matInput type="text" id="txtSecretario" placeholder="Secretario" formControlName="secretary" readonly
+          required>
+        <button type="button" matSuffix mat-icon-button (click)="selectEmployee('secretary')">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+        <mat-error *ngIf="!frmNewTitle.get('secretary').valid && frmNewTitle.get('secretary').touched">
+          <span *ngIf="frmNewTitle.get('secretary').errors['required']">
+            ¡Campo obligatorio!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
-
     <div class="row">
-      <div class="col-6">
-        <div class="form-group row">
-          <label for="txtVocal" class="col-sm-4 col-form-label">Vocal</label>
-          <div class="col-sm-8">
-            <div class="input-group input-group-sm mb-3">
-              <input type="text"
-                [ngClass]="(!frmNewTitle.get('vocal').valid && frmNewTitle.get('vocal').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-                id="txtVocal" placeholder="Vocal" formControlName="vocal">
-              <div class="input-group-append" (click)="selectEmployee('vocal')">
-                <span class="input-group-text btn">...</span>
-              </div>
-              <div class="invalid-feedback" *ngIf="!frmNewTitle.get('vocal').valid && frmNewTitle.get('vocal').touched">
-                <span *ngIf="frmNewTitle.get('vocal').errors['required']">
-                  ¡Campo obligatorio!
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="form-group row">
-          <label for="txtSuplente" class="col-sm-4 col-form-label">Suplente</label>
-          <div class="col-sm-8">
-            <div class="input-group input-group-sm mb-3">
-              <input type="text"
-                [ngClass]="(!frmNewTitle.get('substitute').valid && frmNewTitle.get('substitute').touched)?'form-control form-control-sm is-invalid':'form-control form-control-sm'"
-                id="txtSuplente" placeholder="Suplente" formControlName="substitute">
-              <div class="input-group-append" (click)="selectEmployee('substitute')">
-                <span class="input-group-text btn">...</span>
-              </div>
-              <div class="invalid-feedback"
-                *ngIf="!frmNewTitle.get('substitute').valid && frmNewTitle.get('substitute').touched">
-                <span *ngIf="frmNewTitle.get('substitute').errors['required']">
-                  ¡Campo obligatorio!
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Vocal</mat-label>
+        <input matInput type="text" id="txtVocal" placeholder="Vocal" formControlName="vocal" readonly required>
+        <button type="button" matSuffix mat-icon-button (click)="selectEmployee('vocal')">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+        <mat-error *ngIf="!frmNewTitle.get('vocal').valid && frmNewTitle.get('vocal').touched">
+          <span *ngIf="frmNewTitle.get('vocal').errors['required']">
+            ¡Campo obligatorio!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+        <mat-label>Suplente</mat-label>
+        <input matInput type="text" id="txtSuplente" placeholder="Suplente" formControlName="substitute" readonly
+          required>
+        <button type="button" matSuffix mat-icon-button (click)="selectEmployee('substitute')">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+        <mat-error *ngIf="!frmNewTitle.get('substitute').valid && frmNewTitle.get('substitute').touched">
+          <span *ngIf="frmNewTitle.get('substitute').errors['required']">
+            ¡Campo obligatorio!
+          </span>
+        </mat-error>
+      </mat-form-field>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <div class="col-8"></div>
     <div class="col-4">
       <button class="btn btn-outline-success btn-sm mx-3" type="submit" [disabled]="!frmNewTitle.valid">Guardar</button>
-      <button class="btn btn-outline-danger btn-sm" type="button" mat-dialog-close>Cancelar</button>
+      <!-- <button class="btn btn-outline-danger btn-sm" type="button" mat-dialog-close>Cancelar</button> -->
     </div>
   </mat-dialog-actions>
 </form>
+
 <div class="center">
   <app-loader [loading]="showLoading"></app-loader>
 </div>

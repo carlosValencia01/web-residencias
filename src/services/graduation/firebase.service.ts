@@ -30,7 +30,7 @@ export class FirebaseService {
     return this.db.collection(collection).snapshotChanges();
   }
 
-  // Actualiza un alumno
+  // Actualiza un alumno *ocupa todo los datos
   public updateGraduate(documentId: string, data: any , collection: string) {
     return this.db.collection(collection).doc(documentId).set(data);
   }
@@ -195,5 +195,21 @@ export class FirebaseService {
 
   public updateDeviceStudent( id: string, data){
     return this.db.collection('alumnoDispositivo').doc(id).update(data);
+  }
+
+  // guardar respuestas Encuesta
+  public saveProfileAnswersQuestions2(idProfile: string, data: any,email,celular, ncAlumno,generoAlumno, carreraAlumno, nombreAlumno, tituloAlumno,egresoAlumno) {
+    return this.db.collection('perfilAlumno').doc(idProfile).set({respuestas: data, survey: true, fechaEncuesta: new Date(), egresoAlumno,correoAlumno:email,telefonoAlumno:celular, ncAlumno,generoAlumno,carreraAlumno,nombreAlumno,tituloAlumno});
+  }
+
+  //delete profile
+  public deleteProfile(idProfile: string){
+    return this.db.collection('perfilAlumno').doc(idProfile).delete();
+  }
+
+  public getProfiles2(){
+    return this.db.collection('perfilAlumno').snapshotChanges().pipe( map( prof=>prof.map(
+      (profi)=>({id:profi.payload.doc.id,data:profi.payload.doc.data()})
+    )));
   }
 }

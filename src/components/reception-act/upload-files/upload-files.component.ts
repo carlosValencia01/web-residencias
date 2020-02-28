@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { iRequest } from 'src/entities/reception-act/request.model';
@@ -19,6 +19,8 @@ import { eRequest } from 'src/enumerators/reception-act/request.enum';
   styleUrls: ['./upload-files.component.scss']
 })
 export class UploadFilesComponent implements OnInit {
+  // tslint:disable-next-line: no-output-rename
+  @Output('onResponse') eventResponse = new EventEmitter<boolean>();
   public Request: iRequest;
   public Documents: Array<IDocument>;
   public UploadActa: IDocument;
@@ -33,13 +35,16 @@ export class UploadFilesComponent implements OnInit {
   public UploadPhotos: IDocument;
   public UploadActaExamen: IDocument;
   public isEditable: boolean;
-  public showLoading: boolean = false;
+  public showLoading = false;
+
   constructor(
     private requestService: RequestService,
     public dialog: MatDialog,
     public requestProvider: RequestProvider,
     private _CookiesService: CookiesService,
-    public notificationServices: NotificationsServices) { }
+    public notificationServices: NotificationsServices,
+  ) { }
+
   ngOnInit() {
     this.UploadActa = { type: eFILES.ACTA_NACIMIENTO, status: eStatusRequest.NONE, file: null, isBase64: false };
     this.UploadCurp = { type: eFILES.CURP, status: eStatusRequest.NONE, file: null, isBase64: false };
@@ -65,7 +70,14 @@ export class UploadFilesComponent implements OnInit {
     this.Documents = [];
     if (typeof (documents) !== 'undefined') {
       documents.forEach(element => {
-        this.Documents.push({ type: element.type, dateRegistered: element.dateRegistered, path: element.nameFile, status: element.status, isBase64: true, observation: element.observation });
+        this.Documents.push({
+          type: element.type,
+          dateRegistered: element.dateRegistered,
+          path: element.nameFile,
+          status: element.status,
+          isBase64: true,
+          observation: element.observation
+        });
       });
 
       const isActa = this.getDocument(eFILES.ACTA_NACIMIENTO);
@@ -104,10 +116,7 @@ export class UploadFilesComponent implements OnInit {
   }
 
   getDocument(fileType: eFILES): IDocument {
-    // if(typeof(this.Documents)!=='undefined' && this.Documents!==null)
     return this.Documents.find(e => e.type === fileType);
-    // else
-    //   return undefined;
   }
 
   onView(file) {
@@ -176,10 +185,10 @@ export class UploadFilesComponent implements OnInit {
       this.requestProvider.getResource(this.Request._id, type).subscribe(data => {
         this.showLoading = false;
         this.openView(data, isBase64, type);
-      }, error => {
+      }, _ => {
         this.showLoading = false;
-        this.notificationServices.showNotification(eNotificationType.ERROR,
-          'Acto recepcional', error);
+        this.notificationServices
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener archivo');
       });
     }
 
@@ -195,7 +204,6 @@ export class UploadFilesComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '45em',
-      height: '600px'
     });
   }
 
@@ -203,83 +211,84 @@ export class UploadFilesComponent implements OnInit {
     let name: string;
     switch (type) {
       case eFILES.PROYECTO: {
-        name = "PORTADA DE PROYECTO";
+        name = 'PORTADA DE PROYECTO';
         break;
       }
       case eFILES.SOLICITUD: {
-        name = "SOLICITUD DE PROYECTO";
+        name = 'SOLICITUD DE PROYECTO';
         break;
       }
       case eFILES.REGISTRO: {
-        name = "REGISTRO DE PROYECTO";
+        name = 'REGISTRO DE PROYECTO';
         break;
       }
       case eFILES.RELEASED: {
-        name = "CONSTANCIA DE LIBERACION";
+        name = 'CONSTANCIA DE LIBERACION';
         break;
       }
       case eFILES.INCONVENIENCE: {
-        name = "CONSTANCIA DE NO INCONVENIENCIA"
+        name = 'CONSTANCIA DE NO INCONVENIENCIA';
         break;
       }
       case eFILES.ACTA_NACIMIENTO: {
-        name = "ACTA DE NACIMIENTO";
+        name = 'ACTA DE NACIMIENTO';
         break;
       }
       case eFILES.CURP: {
-        name = "CURP";
+        name = 'CURP';
         break;
       }
       case eFILES.CERTIFICADO_B: {
-        name = "CERTIFICADO DE BACHILLERATO";
+        name = 'CERTIFICADO DE BACHILLERATO';
         break;
       }
       case eFILES.CEDULA: {
-        name = "CÉDULA TÉCNICA";
+        name = 'CÉDULA TÉCNICA';
         break;
       }
       case eFILES.CERTIFICADO_L: {
-        name = "CERTIFICADO PROFESIONAL";
+        name = 'CERTIFICADO PROFESIONAL';
         break;
       }
       case eFILES.SERVICIO: {
-        name = "CONSTANCIA DE SERVICIO SOCIAL";
+        name = 'CONSTANCIA DE SERVICIO SOCIAL';
         break;
       }
       case eFILES.INGLES: {
-        name = "CONSTANCIA DE SEGUNDA LENGUA";
+        name = 'CONSTANCIA DE SEGUNDA LENGUA';
         break;
       }
       case eFILES.PAGO: {
-        name = "COMPROBANTE DE PAGO";
+        name = 'COMPROBANTE DE PAGO';
         break;
       }
       case eFILES.CERTIFICADO_R: {
-        name = "CERTIFICADO DE REVALIDACIÓN";
+        name = 'CERTIFICADO DE REVALIDACIÓN';
         break;
       }
       case eFILES.PHOTOS: {
-        name = "FOTOGRAFÍAS";
+        name = 'FOTOGRAFÍAS';
         break;
       }
       case eFILES.ACTA_EXAMEN: {
-        name = "ACTA DE EXAMEN";
+        name = 'ACTA DE EXAMEN';
         break;
       }
       case eFILES.INE: {
-        name = "CREDENCIAL DE ELECTOR";
+        name = 'CREDENCIAL DE ELECTOR';
         break;
       }
       case eFILES.CED_PROFESIONAL: {
-        name = "CÉDULA PROFESIONAL";
+        name = 'CÉDULA PROFESIONAL';
         break;
       }
       default: {
-        name = "DESCONOCIDO";
+        name = 'DESCONOCIDO';
       }
     }
     return name;
   }
+
   onMessage(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     let message = '';
@@ -327,7 +336,7 @@ export class UploadFilesComponent implements OnInit {
     }
     Swal.fire({
       type: 'error',
-      title: 'Oops...',
+      title: '¡Observaciones!',
       text: message,
       showCloseButton: true,
     });
@@ -335,13 +344,13 @@ export class UploadFilesComponent implements OnInit {
 
   onSend(file): void {
     this.showLoading = true;
-    this.notificationServices.showNotification(eNotificationType.INFORMATION, "Acto Recepcional", "Cargando Archivo");
+    this.notificationServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Cargando archivo');
     const type = <eFILES><keyof typeof eFILES>file;
     let document: any;
     const frmData = new FormData();
     frmData.append('folderId', this.isEditable ? this.Request.folder : this._CookiesService.getFolder());
     frmData.append('Document', type);
-    frmData.append('IsEdit', this.isEditable ? "true" : "false");
+    frmData.append('IsEdit', this.isEditable ? 'true' : 'false');
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
         frmData.append('file', this.UploadActa.file);
@@ -395,21 +404,22 @@ export class UploadFilesComponent implements OnInit {
       }
     }
     frmData.append('phase', this.Request.phase);
-    this.requestProvider.uploadFile(this.Request._id, frmData).subscribe(data => {
+    this.requestProvider.uploadFile(this.Request._id, frmData).subscribe(_ => {
       const doc = this.getDocument(type);
       doc.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;
-      document.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;//eStatusRequest.PROCESS;
+      document.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS; // eStatusRequest.PROCESS;
       this.showLoading = false;
       if (this.isEditable) {
         this.onRemove(file);
-        this.notificationServices.showNotification(eNotificationType.SUCCESS, "Acto recepcional", "Documento cambiado");
+        this.notificationServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Documento cambiado');
       }
-    }, error => {
+    }, _ => {
       this.showLoading = false;
-      this.notificationServices.showNotification(eNotificationType.ERROR,
-        "Acto recepcional", error);
+      this.notificationServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
     });
   }
+
   onRemove(file): void {
     const type = <eFILES><keyof typeof eFILES>file;
     const archivo = this.getDocument(type);
@@ -476,7 +486,6 @@ export class UploadFilesComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '60em',
-      height: '650px'
     });
 
     dialogRef.afterClosed().subscribe((fileUpload: any) => {
@@ -547,8 +556,8 @@ export class UploadFilesComponent implements OnInit {
         }
       }
     });
-
   }
+
   onUpload(event, file): void {
     if (typeof (event.target.files) !== 'undefined' && event.target.files.length > 0) {
       const type = <eFILES><keyof typeof eFILES>file;
@@ -615,7 +624,7 @@ export class UploadFilesComponent implements OnInit {
 
   onOmit(file) {
     const type = <eFILES><keyof typeof eFILES>file;
-    let data = { "Document": type, "Status": eStatusRequest.OMIT };
+    const dataDocument = { 'Document': type, 'Status': eStatusRequest.OMIT };
     let document: any;
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
@@ -655,17 +664,20 @@ export class UploadFilesComponent implements OnInit {
         break;
       }
     }
-    this.requestProvider.omitFile(this.Request._id, data).subscribe(data => {
+    this.requestProvider.omitFile(this.Request._id, dataDocument).subscribe(data => {
       document.status = eStatusRequest.OMIT;
-    }, error => {
-      this.notificationServices.showNotification(eNotificationType.ERROR,
-        "Acto recepcional", error);
+      if (data.request.phase === eRequest.VALIDATED) {
+        this.eventResponse.emit(true);
+      }
+    }, _ => {
+      this.notificationServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al omitir archivo');
     });
   }
 
   onReverse(file) {
     const type = <eFILES><keyof typeof eFILES>file;
-    let data = { "Document": type, "Status": eStatusRequest.NONE };
+    const data = { 'Document': type, 'Status': eStatusRequest.NONE };
     let document: any;
     switch (type) {
       case eFILES.ACTA_NACIMIENTO: {
@@ -705,11 +717,11 @@ export class UploadFilesComponent implements OnInit {
         break;
       }
     }
-    this.requestProvider.omitFile(this.Request._id, data).subscribe(data => {
+    this.requestProvider.omitFile(this.Request._id, data).subscribe(_ => {
       document.status = eStatusRequest.NONE;
-    }, error => {
-      this.notificationServices.showNotification(eNotificationType.ERROR,
-        "Acto recepcional", error);
+    }, _ => {
+      this.notificationServices
+      .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al cancelar omisión del archivo');
     });
   }
 }

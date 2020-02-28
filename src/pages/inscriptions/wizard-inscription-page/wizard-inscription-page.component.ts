@@ -67,7 +67,6 @@ export class WizardInscriptionPageComponent implements OnInit {
 
   getIdStudent() {
     this.data = this.cookiesServ.getData().user;
-    console.log(this.data);
     
     this._idStudent = this.data._id;
     this.controlNumberStudent = this.data.email;

@@ -56,6 +56,9 @@ import { ElectronicSignatureComponent } from 'src/pages/electronic-signature/ele
 import { EmployeePageComponent } from 'src/pages/electronic-signature/employee-page/employee-page.component';
 import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
 
+// Vinculation 
+import { IndustrialVisitsPageComponent } from 'src/pages/vinculation/industrial-visits-page/industrial-visits-page.component';
+
 const appRoutes: Routes = [
   // App
   { path: '', component: HomePageComponent, pathMatch: 'full' },
@@ -110,6 +113,10 @@ const appRoutes: Routes = [
   { path: 'electronicSignature', component: ElectronicSignatureComponent, pathMatch: 'full' },
   { path: 'grades/:id', component: EmployeePageComponent, pathMatch: 'full' },
   { path: 'positionsAdmin', component: PositionsAdminPageComponent, pathMatch: 'full' },
+  
+  // Vinculation
+  { path: 'visits', component: IndustrialVisitsPageComponent, pathMatch: 'full' },
+
 ];
 
 @NgModule({

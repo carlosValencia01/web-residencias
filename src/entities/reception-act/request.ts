@@ -716,10 +716,10 @@ export class uRequest {
         let positionGender = 'JEFE';
         // this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
         doc.text(`${this.letterCapital(positionGender)} del Departamento de Servicios Escolares`, this.MARGIN.LEFT + 32, 220, { maxWidth: 50, align: 'left' });
-        doc.text(servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
+        doc.text(this.gradeMax(this.JDeptoEsc)+' '+servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
 
         // doc.addImage(this.directorFirm, 'PNG', this.WIDTH / 2, 221, 60, 25);
-        doc.text(`${director} `, this.WIDTH / 2, 240, { align: 'left' });
+        doc.text(this.gradeMax(this.Director)+' '+director, this.WIDTH / 2, 240, { align: 'left' });
         doc.text(`Director`, (this.WIDTH / 2) + ((doc.getStringUnitWidth(director) * 72 / 25.6) / 2), 244, { maxWidth: 50, align: 'left' });
         return doc;
     }
@@ -928,5 +928,26 @@ export class uRequest {
         });
     }
 
+    gradeMax(employee): String {
+        if (typeof (employee.grade) === 'undefined' || employee.grade.length === 0) {
+          return '';
+        }
+        let isGrade = employee.grade.find(x => x.level === 'DOCTORADO');
+    
+        if (typeof (isGrade) !== 'undefined') {
+          return isGrade.abbreviation;
+        }
+    
+        isGrade = employee.grade.find(x => x.level === 'MAESTRÍA');
+        if (typeof (isGrade) !== 'undefined') {
+          return isGrade.abbreviation;
+        }
+    
+        isGrade = employee.grade.find(x => x.level === 'LICENCIATURA');
+        if (typeof (isGrade) !== 'undefined') {
+          return isGrade.abbreviation;
+        }
+        return '';
+      }
 
 }
