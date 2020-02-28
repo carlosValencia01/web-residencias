@@ -1405,43 +1405,43 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(18);
-    doc.text(student.name, pageWidth / 2, 120, 'center');
+    doc.text(student.name, pageWidth / 2, 140, 'center');
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(14);
-    doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 140, 'center');
+    doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 160, 'center');
 
     // Especialidad
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(16);
-    doc.text(student.specialty, pageWidth / 2, 160, 'center');
+    doc.text(student.specialty, pageWidth / 2, 180, 'center');
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(14);
-    doc.text('En la carrera de: ', pageWidth / 2, 180, 'center');
+    doc.text('En la carrera de: ', pageWidth / 2, 200, 'center');
 
     // Carrera
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(16);
-    doc.text(student.carreerComplete, pageWidth / 2, 200, 'center');
+    doc.text(student.carreerComplete, pageWidth / 2, 220, 'center');
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
     doc.setFontSize(13);
     doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions),
-      pageWidth / 2, 220, 'center');
+      pageWidth / 2, 240, 'center');
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(16);
-    doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 240, 'center');
-    doc.text('DIRECTOR', pageWidth / 2, 247, 'center');
+    doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 260, 'center');
+    doc.text('DIRECTOR', pageWidth / 2, 267, 'center');
 
-    doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 197, 100, 53.75);
+    doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 217, 100, 53.75);
     this.loading = false;
     window.open(doc.output('bloburl'), '_blank');
   }
@@ -1466,42 +1466,42 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(18);
-        doc.text(this.alumnosConstancia[i].name, pageWidth / 2, 120, 'center');
+        doc.text(this.alumnosConstancia[i].name, pageWidth / 2, 140, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 140, 'center');
+        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 160, 'center');
 
         // Especialidad
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstancia[i].specialty, pageWidth / 2, 160, 'center');
+        doc.text(this.alumnosConstancia[i].specialty, pageWidth / 2, 180, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text('En la carrera de: ', pageWidth / 2, 180, 'center');
+        doc.text('En la carrera de: ', pageWidth / 2, 200, 'center');
 
         // Carrera
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstancia[i].carreerComplete, pageWidth / 2, 200, 'center');
+        doc.text(this.alumnosConstancia[i].carreerComplete, pageWidth / 2, 220, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions),
-          pageWidth / 2, 220, 'center');
+          pageWidth / 2, 240, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 240, 'center');
-        doc.text('DIRECTOR', pageWidth / 2, 247, 'center');
-        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 197, 100, 53.75);
+        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 260, 'center');
+        doc.text('DIRECTOR', pageWidth / 2, 267, 'center');
+        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 217, 100, 53.75);
 
 
         doc.setTextColor(0, 0, 0);
@@ -1539,42 +1539,42 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(18);
-        doc.text(this.alumnosConstanciaRegistrados[i].name, pageWidth / 2, 120, 'center');
+        doc.text(this.alumnosConstanciaRegistrados[i].name, pageWidth / 2, 140, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 140, 'center');
+        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 160, 'center');
 
         // Especialidad
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstanciaRegistrados[i].specialty, pageWidth / 2, 160, 'center');
+        doc.text(this.alumnosConstanciaRegistrados[i].specialty, pageWidth / 2, 180, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text('En la carrera de: ', pageWidth / 2, 180, 'center');
+        doc.text('En la carrera de: ', pageWidth / 2, 200, 'center');
 
         // Carrera
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstanciaRegistrados[i].carreerComplete, pageWidth / 2, 200, 'center');
+        doc.text(this.alumnosConstanciaRegistrados[i].carreerComplete, pageWidth / 2, 220, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions),
-          pageWidth / 2, 220, 'center');
+          pageWidth / 2, 240, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 240, 'center');
-        doc.text('DIRECTOR', pageWidth / 2, 247, 'center');
-        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 197, 100, 53.75);
+        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 260, 'center');
+        doc.text('DIRECTOR', pageWidth / 2, 267, 'center');
+        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 217, 100, 53.75);
 
 
         doc.setTextColor(0, 0, 0);
@@ -1612,48 +1612,48 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(18);
-        doc.text(this.alumnosConstanciaVerificados[i].name, pageWidth / 2, 120, 'center');
+        doc.text(this.alumnosConstanciaVerificados[i].name, pageWidth / 2, 140, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 140, 'center');
+        doc.text('Por haber concluído íntegramente la especialidad de:', pageWidth / 2, 160, 'center');
 
         // Especialidad
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstanciaVerificados[i].specialty, pageWidth / 2, 160, 'center');
+        doc.text(this.alumnosConstanciaVerificados[i].specialty, pageWidth / 2, 180, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(14);
-        doc.text('En la carrera de: ', pageWidth / 2, 180, 'center');
+        doc.text('En la carrera de: ', pageWidth / 2, 200, 'center');
 
         // Carrera
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstanciaVerificados[i].carreerComplete, pageWidth / 2, 200, 'center');
+        doc.text(this.alumnosConstanciaVerificados[i].carreerComplete, pageWidth / 2, 220, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text('Tepic, Nayarit., ' + new Date(this.dateGraduation.seconds * 1000).toLocaleDateString('es-MX', dateOptions),
-          pageWidth / 2, 220, 'center');
+          pageWidth / 2, 240, 'center');
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 240, 'center');
-        doc.text('DIRECTOR', pageWidth / 2, 247, 'center');
-        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 197, 100, 53.75);
+        doc.text('LIC. MANUEL ANGEL URIBE VÁZQUEZ', pageWidth / 2, 260, 'center');
+        doc.text('DIRECTOR', pageWidth / 2, 267, 'center');
+        doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 217, 100, 53.75);
 
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(9);
-        doc.text((i + 1) + '', 10, pageHeight - 10, 'center');
+        doc.text((i + 1) + '', 5, pageHeight - 5, 'center');
         if (i < this.alumnosConstanciaVerificados.length - 1) {
           doc.addPage();
         }
