@@ -32,10 +32,12 @@ import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificac
 import { ExpedientComponent } from 'src/modals/reception-act/expedient/expedient.component';
 import { LoadingBarService } from 'ngx-loading-bar';
 import { FirebaseService } from 'src/services/graduation/firebase.service';
-import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { BookProvider } from 'src/providers/reception-act/book.prov';
 import Swal from 'sweetalert2';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
+
 @Component({
   selector: 'app-titulation-progress',
   templateUrl: './titulation-progress.component.html',
@@ -75,6 +77,7 @@ export class TitulationProgressComponent implements OnInit {
   periodCtrl = new FormControl();
   filteredPeriods;
   usedPeriods = [];
+
   constructor(
     private requestProvider: RequestProvider,
     public dialog: MatDialog,
@@ -87,6 +90,7 @@ export class TitulationProgressComponent implements OnInit {
     public _RequestService: RequestService,
     private loadingBar: LoadingBarService,
     private firebaseService: FirebaseService,
+    private _bookProvider: BookProvider,
   ) {
     this.careers = [];
     this.phases = [];
@@ -120,11 +124,10 @@ export class TitulationProgressComponent implements OnInit {
       { icon: 'school', option: 'Aprobado' }
     ];
     this.requestProvider.getPeriods().subscribe(
-      (periods)=>{
-        
-        this.periods = periods.periods;   
+      (periods) => {
+        this.periods = periods.periods;
         this.filteredPeriods = periods.periods;
-        this.updatePeriods(this.filteredPeriods.filter(per=> per.active===true)[0],'insert');
+        this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
       }
     );
   }
@@ -136,7 +139,7 @@ export class TitulationProgressComponent implements OnInit {
 
   loadRequest(isInit: boolean = false): void {
     let filter = '';
-    
+
     switch (this.role) {
       case eRole.CHIEFACADEMIC.toLowerCase(): {
         filter = 'jefe';
@@ -183,7 +186,7 @@ export class TitulationProgressComponent implements OnInit {
               }
             }
           }
-        });        
+        });
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
@@ -201,7 +204,7 @@ export class TitulationProgressComponent implements OnInit {
         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitudes');
       });
 
-     
+
   }
 
   public castRequest(element: any): iRequest {
@@ -243,19 +246,20 @@ export class TitulationProgressComponent implements OnInit {
   }
 
   refresh() {
-    this.dataSource = new MatTableDataSource(this.requestFilter);    
-    this.filterRequests(this.usedPeriods);     
+    this.dataSource = new MatTableDataSource(this.requestFilter);
+    this.filterRequests(this.usedPeriods);
   }
-  filterRequests(periods: Array<any>){        
-    if(this.dataSource){      
-      if(periods.length>0){
+
+  filterRequests(periods: Array<any>) {
+    if (this.dataSource) {
+      if (periods.length > 0) {
         this.dataSource.data = this.dataSource.data.filter(
-          (req:any)=> periods.map( per=> (per.periodName+'-'+per.year)).includes((req.period.periodName+'-'+req.period.year))
+          (req: any) => periods.map( per => (per.periodName + '-' + per.year)).includes((req.period.periodName + '-' + req.period.year))
         );
-      }else{
+      } else {
         this.dataSource.data = this.dataSource.data;
-      }     
-      
+      }
+
       const inputFilter: any = document.getElementById('myfilter');
       this.dataSource.filter = inputFilter ?  inputFilter.value !== '' ? inputFilter.value.trim().toLowerCase() : '' : '';
       if (this.tabNumber === 2) {
@@ -263,11 +267,11 @@ export class TitulationProgressComponent implements OnInit {
       }
       if (this.tabNumber === 3) {
         this.dataSource.filter = 'proceso';
-      }        
-      this.dataSource.paginator = this.paginator;        
+      }
+      this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
-    this.loadingBar.complete();   
+    this.loadingBar.complete();
   }
 
   filter(carrers: string[], phases: string[]): Array<iRequest> {
@@ -533,7 +537,8 @@ export class TitulationProgressComponent implements OnInit {
     }
   }
 
-  approve(Identificador, studentId, controlNumber): void {
+  approve(row): void {
+    const {_id, controlNumber, student} = row;
     Swal.fire({
       title: 'Estatus del Acto Recepcional',
       type: 'question',
@@ -559,64 +564,91 @@ export class TitulationProgressComponent implements OnInit {
           confirmButtonText: 'Aceptar'
         });
         if (typeof (response.value) !== 'undefined') {
-          const linkModal = this.dialog.open(BookComponent, {
-            data: {
-              operation: 'create',
-              data: studentId
-            },
-            disableClose: true,
-            hasBackdrop: true,
-            width: '50em',
-          });
-          linkModal.afterClosed().subscribe(
-            (book) => {
-              const data = {
-                doer: this._CookiesService.getData().user.name.fullName,
-                observation: '',
-                operation: eStatusRequest.ACCEPT,
-                registry: {},
-                phase: eRequest.REALIZED,
-                controlNumber
-              };
-              if (typeof (result.value) !== 'undefined') {
-                data.observation = '';
-              } else {
-                data.observation = 'Acto recepcional no aprobado';
-                data.operation = eStatusRequest.REJECT;
-              }
-              if (book.action === 'create') {
-                data.registry = book.book;
-                this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-                  if (data.operation === eStatusRequest.ACCEPT) {
-                    const sub1 = this.firebaseService.getActivedEvent().subscribe(
-                      (event) => {
-                        sub1.unsubscribe();
-                        if (event[0]) {
-                          const collectionName = event[0].payload.doc.id;
-                          const sub2 = this.firebaseService.getGraduateByControlNumber(controlNumber, collectionName).subscribe(
-                            (student) => {
-                              sub2.unsubscribe();
-                              if (student[0]) {
-                                this.firebaseService.updateFieldGraduate(student[0].id, {degree: true}, collectionName)
-                                  .then(__ => {
-                                    this._NotificationsServices
-                                      .showNotification(eNotificationType.SUCCESS,
-                                        'Acto recepcional', 'Se actualizó la solicitud y el estatus en el SII');
-                                  });
+          const minuteBook = await this._getActiveBookByCareer(student.careerId._id);
+          if (minuteBook) {
+            const linkModal = this.dialog.open(BookComponent, {
+              data: {
+                operation: 'create',
+                book: minuteBook
+              },
+              disableClose: true,
+              hasBackdrop: true,
+              width: '50em',
+            });
+            linkModal.afterClosed().subscribe(
+              (book) => {
+                const data = {
+                  doer: this._CookiesService.getData().user.name.fullName,
+                  observation: '',
+                  operation: eStatusRequest.ACCEPT,
+                  registry: {},
+                  phase: eRequest.REALIZED,
+                  controlNumber
+                };
+                if (typeof (result.value) !== 'undefined') {
+                  data.observation = '';
+                } else {
+                  data.observation = 'Acto recepcional no aprobado';
+                  data.operation = eStatusRequest.REJECT;
+                }
+                if (book.action === 'create') {
+                  this.showLoading = true;
+                  data.registry = book.data;
+                  this.requestProvider.updateRequest(_id, data).subscribe(_ => {
+                    if (data.operation === eStatusRequest.ACCEPT) {
+                      this.showLoading = true;
+                      const sub1 = this.firebaseService.getActivedEvent().subscribe(
+                        (event) => {
+                          this.showLoading = false;
+                          sub1.unsubscribe();
+                          if (event[0]) {
+                            this.showLoading = true;
+                            const collectionName = event[0].payload.doc.id;
+                            const sub2 = this.firebaseService.getGraduateByControlNumber(controlNumber, collectionName).subscribe(
+                              (studentData) => {
+                                this.showLoading = false;
+                                sub2.unsubscribe();
+                                if (studentData[0]) {
+                                  this.showLoading = true;
+                                  this.firebaseService.updateFieldGraduate(studentData[0].id, {degree: true}, collectionName)
+                                    .then(__ => {
+                                      this.showLoading = false;
+                                      this._NotificationsServices
+                                        .showNotification(eNotificationType.SUCCESS,
+                                          'Acto recepcional', 'Se actualizó el acrónimo del egresado para graduación');
+                                    }, __ => {
+                                      this.showLoading = false;
+                                    });
+                                }
+                              }, __ => {
+                                this.showLoading = false;
                               }
-                            }
-                          );
+                            );
+                          } else {
+                            this.showLoading = false;
+                          }
+                        }, __ => {
+                          this.showLoading = false;
                         }
-                      }
-                    );
-                  }
-                  this.loadRequest();
-                }, error => {
-                  const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
-                  this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
-                });
-              }
-            }, err => console.log(err));
+                      );
+                    }
+                    this.showLoading = false;
+                    this._NotificationsServices
+                      .showNotification(eNotificationType.SUCCESS,
+                        'Acto recepcional', 'Se actualizó la solicitud y el estatus en el SII');
+                    this.loadRequest();
+                  }, error => {
+                    this.showLoading = false;
+                    const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
+                    this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
+                  });
+                }
+              }, err => console.log(err));
+          } else {
+            this._NotificationsServices
+              .showNotification(eNotificationType.ERROR,
+                'Acto recepcional', 'No existe libro activo para la carrera del alumno');
+          }
         }
       }
     });
@@ -1058,9 +1090,11 @@ export class TitulationProgressComponent implements OnInit {
       width: '45em'
     });
   }
-  slectedPeriod(period){    
-    this.updatePeriods(period,'insert');
+
+  slectedPeriod(period) {
+    this.updatePeriods(period, 'insert');
   }
+
   addPeriod(event: MatChipInputEvent): void {
     // Add fruit only when MatAutocomplete is not open
     // To make sure this does not conflict with OptionSelected Event
@@ -1076,33 +1110,42 @@ export class TitulationProgressComponent implements OnInit {
 
       this.periodCtrl.setValue(null);
     }
-  } 
-  updatePeriods(period,action){        
-     if(action === 'delete'){
+  }
+
+  updatePeriods(period, action) {
+     if (action === 'delete') {
       this.filteredPeriods.push(period);
-       
-       this.usedPeriods = this.usedPeriods.filter( per=> per._id !== period._id);
+
+       this.usedPeriods = this.usedPeriods.filter( per => per._id !== period._id);
      }
-     if(action === 'insert'){
-      
-      this.usedPeriods.push(period);      
-      
-      this.filteredPeriods = this.filteredPeriods.filter(per=> per._id !== period._id);
+     if (action === 'insert') {
+
+      this.usedPeriods.push(period);
+
+      this.filteredPeriods = this.filteredPeriods.filter(per => per._id !== period._id);
      }
-     this.periods = this.filteredPeriods;    
-     
+     this.periods = this.filteredPeriods;
+
      this.refresh();
   }
 
   remove(period): void {
-    this.updatePeriods(period,'delete');
+    this.updatePeriods(period, 'delete');
   }
-  
-  filterPeriod(value){         
-    
-    if(value){
-      this.periods = this.periods.filter( period=> (period.periodName+'-'+period.year).toLowerCase().trim().indexOf(value) !== -1);
+
+  filterPeriod(value) {
+    if (value) {
+      this.periods = this.periods.filter( period => (period.periodName + '-' + period.year).toLowerCase().trim().indexOf(value) !== -1);
     }
+  }
+
+  private _getActiveBookByCareer(careerId: string) {
+    return new Promise(resolve => {
+      this._bookProvider.getActiveBookByCareer(careerId)
+        .subscribe(
+          book => resolve(book),
+          _ => resolve(null));
+    });
   }
 }
 
