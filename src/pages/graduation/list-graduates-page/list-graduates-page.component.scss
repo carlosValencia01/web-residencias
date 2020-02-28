@@ -225,3 +225,84 @@ td {
     border-left-color: rgb(202,0,10);
     ;
 }
+
+
+.student-list {
+    max-height: 60vh;
+    overflow: hidden scroll;
+    margin: 10px 0px !important;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .student-list::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .student-card {
+    height: auto !important;
+    margin: 5px 0px !important;
+    mat-card {
+      min-width: 100%;
+      max-width: 100%;
+      padding: 5px;
+      mat-card-title {
+        font-size: 14px;
+      }
+      mat-card-subtitle {
+        margin: 0px;
+      }
+      mat-card-actions {
+        padding: 8px;
+      }
+    }
+    label {
+      margin: 0px;
+    }
+    mat-icon {
+      margin: 0px 3px;
+      cursor: pointer;
+    }
+  }
+
+  .ticket-list {
+    max-height: 60vh;
+    overflow: hidden scroll;
+    margin: 10px 0px !important;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .ticket-list::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .ticket-card {
+    height: auto !important;
+    margin: 5px 0px !important;
+    mat-card {
+      min-width: 100%;
+      max-width: 100%;
+      padding: 5px;
+      mat-card-title {
+        font-size: 14px;
+      }
+      mat-card-subtitle {
+        margin: 0px;
+      }
+      mat-card-actions {
+        padding: 8px;
+      }
+    }
+    label {
+      margin: 0px;
+    }
+    mat-icon {
+      margin: 0px 3px;
+      cursor: pointer;
+    }
+  }
+
+  .mat-card-header{
+      display: block !important;
+  }
