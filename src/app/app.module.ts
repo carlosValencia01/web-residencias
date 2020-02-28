@@ -167,6 +167,7 @@ import { ViewerComponentComponent } from 'src/components/reception-act/viewer-co
 import { TitulationProgressComponent } from 'src/components/reception-act/titulation-progress/titulation-progress.component';
 import { ScheduleComponent } from 'src/components/reception-act/schedule/schedule.component';
 import { UploadFileTitledComponent } from 'src/components/reception-act/upload-file-titled/upload-file-titled.component';
+import { ExpedientDocumentsComponent } from 'src/components/reception-act/expedient/expedient.component';
 // Modals
 import { EmployeeAdviserComponent } from 'src/modals/reception-act/employee-adviser/employee-adviser.component';
 import { EmployeeGradeComponent } from 'src/modals/reception-act/employee-grade/employee-grade.component';
@@ -238,6 +239,11 @@ import { SelectPositionComponent } from 'src/modals/electronic-signature/select-
 import { UploadEmployeesCsvComponent } from 'src/modals/electronic-signature/upload-employees-csv/upload-employees-csv.component';
 // Providers
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
+
+
+// Vinculation module
+// Pages
+import { IndustrialVisitsPageComponent } from 'src/pages/vinculation/industrial-visits-page/industrial-visits-page.component';
 
 // Shared
 // Components
@@ -327,6 +333,7 @@ registerLocaleData(localeEs);
     UploadFilesComponent,
     ViewerComponentComponent,
     TitulationProgressComponent,
+    ExpedientDocumentsComponent,
     ScheduleComponent,
     UploadFileTitledComponent,
     // Modals
@@ -384,6 +391,9 @@ registerLocaleData(localeEs);
     PositionsHistoryComponent,
     SelectPositionComponent,
     UploadEmployeesCsvComponent,
+    
+    // Vinculation
+    IndustrialVisitsPageComponent,
 
     // Shared
     // Components
