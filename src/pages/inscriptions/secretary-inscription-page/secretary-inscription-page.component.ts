@@ -95,6 +95,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   pagL;
   pageSizeL = 10;
 
+  listStudentsDebts = [];
+
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
     private inscriptionsProv: InscriptionsProvider,
@@ -151,6 +153,11 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         return a.fatherLastName.localeCompare(b.fatherLastName);
       });
       this.listStudents = this.students;
+      this.listStudents.forEach(element => {
+        if((this.filterDocuments('Comprobante',element) != 'EN PROCESO' && this.filterDocuments('Comprobante',element) != 'VALIDADO' && this.filterDocuments('Comprobante',element) != 'ACEPTADO') || (this.filterDocuments('Certificado',element) != 'EN PROCESO' && this.filterDocuments('Certificado',element) != 'VALIDADO' && this.filterDocuments('Certificado',element) != 'ACEPTADO')){
+          this.listStudentsDebts.push(element);
+        }
+      });
       this.cantListStudents = this.listStudents.length;
       this.listCovers = this.listStudents;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
