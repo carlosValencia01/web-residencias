@@ -557,33 +557,53 @@ export class TitulationProgressComponent implements OnInit {
                   data.operation = eStatusRequest.REJECT;
                 }
                 if (book.action === 'create') {
+                  this.showLoading = true;
                   data.registry = book.data;
                   this.requestProvider.updateRequest(_id, data).subscribe(_ => {
                     if (data.operation === eStatusRequest.ACCEPT) {
+                      this.showLoading = true;
                       const sub1 = this.firebaseService.getActivedEvent().subscribe(
                         (event) => {
+                          this.showLoading = false;
                           sub1.unsubscribe();
                           if (event[0]) {
+                            this.showLoading = true;
                             const collectionName = event[0].payload.doc.id;
                             const sub2 = this.firebaseService.getGraduateByControlNumber(controlNumber, collectionName).subscribe(
                               (studentData) => {
+                                this.showLoading = false;
                                 sub2.unsubscribe();
                                 if (studentData[0]) {
+                                  this.showLoading = true;
                                   this.firebaseService.updateFieldGraduate(studentData[0].id, {degree: true}, collectionName)
                                     .then(__ => {
+                                      this.showLoading = false;
                                       this._NotificationsServices
                                         .showNotification(eNotificationType.SUCCESS,
-                                          'Acto recepcional', 'Se actualizó la solicitud y el estatus en el SII');
+                                          'Acto recepcional', 'Se actualizó el acrónimo del egresado para graduación');
+                                    }, __ => {
+                                      this.showLoading = false;
                                     });
                                 }
+                              }, __ => {
+                                this.showLoading = false;
                               }
                             );
+                          } else {
+                            this.showLoading = false;
                           }
+                        }, __ => {
+                          this.showLoading = false;
                         }
                       );
                     }
+                    this.showLoading = false;
+                    this._NotificationsServices
+                      .showNotification(eNotificationType.SUCCESS,
+                        'Acto recepcional', 'Se actualizó la solicitud y el estatus en el SII');
                     this.loadRequest();
                   }, error => {
+                    this.showLoading = false;
                     const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
                     this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
                   });
