@@ -81,6 +81,9 @@ td, th {
     -webkit-hyphens: auto;
     hyphens: auto;
 }
+.mat-column-career, .mat-column-status {    
+    text-align: center;
+}
 
 #tableReportExcel{
     display: none;

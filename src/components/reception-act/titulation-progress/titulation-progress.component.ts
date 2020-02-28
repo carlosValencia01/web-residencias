@@ -123,7 +123,8 @@ export class TitulationProgressComponent implements OnInit {
       (periods)=>{
         
         this.periods = periods.periods;   
-        this.filteredPeriods = periods.periods;     
+        this.filteredPeriods = periods.periods;
+        this.updatePeriods(this.filteredPeriods.filter(per=> per.active===true)[0],'insert');
       }
     );
   }
@@ -182,9 +183,7 @@ export class TitulationProgressComponent implements OnInit {
               }
             }
           }
-        });
-        console.log(this.request);
-        
+        });        
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
@@ -208,6 +207,7 @@ export class TitulationProgressComponent implements OnInit {
   public castRequest(element: any): iRequest {
     const tmp: iRequest = new Object(); // <iRequest>element;
     tmp._id = element._id;
+    tmp.period = element.periodId;
     tmp.status = this.convertStatus(element.status);
     tmp.controlNumber = element.studentId.controlNumber;
     tmp.phase = element.phase;
@@ -243,19 +243,31 @@ export class TitulationProgressComponent implements OnInit {
   }
 
   refresh() {
-    this.dataSource = new MatTableDataSource(this.requestFilter);
-    this.dataSource.paginator = this.paginator;
-    const inputFilter: any = document.getElementById('myfilter');
-    this.dataSource.filter = inputFilter ?  inputFilter.value !== '' ? inputFilter.value.trim().toLowerCase() : '' : '';
-    if (this.tabNumber === 2) {
-      this.dataSource.filter = 'pendiente';
+    this.dataSource = new MatTableDataSource(this.requestFilter);    
+    this.filterRequests(this.usedPeriods);     
+  }
+  filterRequests(periods: Array<any>){        
+    if(this.dataSource){      
+      if(periods.length>0){
+        this.dataSource.data = this.dataSource.data.filter(
+          (req:any)=> periods.map( per=> (per.periodName+'-'+per.year)).includes((req.period.periodName+'-'+req.period.year))
+        );
+      }else{
+        this.dataSource.data = this.dataSource.data;
+      }     
+      
+      const inputFilter: any = document.getElementById('myfilter');
+      this.dataSource.filter = inputFilter ?  inputFilter.value !== '' ? inputFilter.value.trim().toLowerCase() : '' : '';
+      if (this.tabNumber === 2) {
+        this.dataSource.filter = 'pendiente';
+      }
+      if (this.tabNumber === 3) {
+        this.dataSource.filter = 'proceso';
+      }        
+      this.dataSource.paginator = this.paginator;        
+      this.dataSource.sort = this.sort;
     }
-    if (this.tabNumber === 3) {
-      this.dataSource.filter = 'proceso';
-    }
-    this.dataSource.sort = this.sort;
-    this.loadingBar.complete();
-    this.loadingBar.stop();
+    this.loadingBar.complete();   
   }
 
   filter(carrers: string[], phases: string[]): Array<iRequest> {
@@ -1065,9 +1077,7 @@ export class TitulationProgressComponent implements OnInit {
       this.periodCtrl.setValue(null);
     }
   } 
-  updatePeriods(period,action){
-    console.log(this.filteredPeriods);
-    
+  updatePeriods(period,action){        
      if(action === 'delete'){
       this.filteredPeriods.push(period);
        
@@ -1079,7 +1089,9 @@ export class TitulationProgressComponent implements OnInit {
       
       this.filteredPeriods = this.filteredPeriods.filter(per=> per._id !== period._id);
      }
-     this.periods = this.filteredPeriods;
+     this.periods = this.filteredPeriods;    
+     
+     this.refresh();
   }
 
   remove(period): void {

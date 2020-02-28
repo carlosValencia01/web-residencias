@@ -2,8 +2,41 @@
 <div class="row w-100 m-0 p-0" *ngIf="tabNumber">
   <div class="col-12 p-0">
       <div class="card">
-          <div class="row text-right p-2 m-0">              
-              <div class="col-12" style="clear: both;">
+          <div class="row text-center p-4 m-0 mt-2">              
+              <div class="col-11">
+                <mat-form-field *ngIf="periods">
+                    <mat-chip-list #chipList aria-label="Period selection">
+                        <mat-chip
+                            *ngFor="let p of usedPeriods"
+                            selectable="true"
+                            removable="true"
+                            (removed)="remove(p)">
+                            {{p.periodName}}-{{p.year}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>              
+                        <input
+                            placeholder="Filtrar por periodo..."
+                            #periodInput
+                            [formControl]="periodCtrl"
+                            [matAutocomplete]="auto"
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            matChipInputAddOnBlur="true"
+                            (matChipInputTokenEnd)="addPeriod($event)"
+                                                            
+                            (ngModelChange) = "filterPeriod($event)"
+                            matInput
+                            
+                            >
+                        </mat-chip-list>
+                        <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
+                        {{period.periodName}}-{{period.year}}
+                        </mat-option>
+                    </mat-autocomplete>
+                    </mat-form-field> 
+              </div>
+              <div class="col-1" style="clear: both;">
                   <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
                       (click)="reload()" data-toggle="tooltip" title="Actualizar">
                       <mat-icon>cached</mat-icon>
@@ -129,7 +162,7 @@
                       <div class="card" style="border-color: #0cc9aa; background-color: rgba(13, 219, 185, 0.2);">
                           <div class="card-body">
                               <!-- <h6>Solicitudes</h6> -->
-                              <div class="row">
+                              <div class="row text-left">
                                   <div class="col-4" data-toggle="tooltip" title="Todas">
                                       <mat-slide-toggle [ngModel]="isAllPhases"
                                           (change)="changedPhase({event:$event, value:'ALL'})">
@@ -154,7 +187,7 @@
                                   </div>
                               </div>
 
-                              <div class="row">
+                              <div class="row text-left">
                                   <div class="col-4" data-toggle="tooltip" title="Registradas">
                                       <mat-slide-toggle [ngModel]="isAllPhases"
                                           (change)="changedPhase({event:$event, value:'REGISTERED'})">
@@ -178,7 +211,7 @@
                                   </div>
 
                               </div>
-                              <div class="row">
+                              <div class="row text-left">
                                   <div class="col-4" data-toggle="tooltip" title="Validadas">
                                       <mat-slide-toggle [ngModel]="isAllPhases"
                                           (change)="changedPhase({event:$event, value:'VALIDATED'})">
@@ -201,7 +234,7 @@
                                       </mat-slide-toggle>
                                   </div>
                               </div>
-                              <div class="row">
+                              <div class="row text-left">
                                   <div class="col-4" data-toggle="tooltip" title="Acta Generada">
                                       <mat-slide-toggle [ngModel]="isAllPhases"
                                           (change)="changedPhase({event:$event, value:'GENERATED'})">
@@ -328,37 +361,7 @@
               </div>
               <div class="row mx-1" *ngIf="tabNumber == 1 || tabNumber == 4">
                   <div class="col-6">                      
-                    <mat-form-field *ngIf="periods">
-                    <mat-chip-list #chipList aria-label="Period selection">
-                        <mat-chip
-                            *ngFor="let p of usedPeriods"
-                            selectable="true"
-                            removable="true"
-                            (removed)="remove(p)">
-                            {{p.periodName}}-{{p.year}}
-                            <mat-icon matChipRemove>cancel</mat-icon>
-                        </mat-chip>              
-                        <input
-                            placeholder="Buscar periodo..."
-                            #periodInput
-                            [formControl]="periodCtrl"
-                            [matAutocomplete]="auto"
-                            [matChipInputFor]="chipList"
-                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                            matChipInputAddOnBlur="true"
-                            (matChipInputTokenEnd)="addPeriod($event)"
                                                             
-                            (ngModelChange) = "filterPeriod($event)"
-                            matInput
-                            
-                            >
-                        </mat-chip-list>
-                        <mat-autocomplete #auto="matAutocomplete">
-                        <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
-                        {{period.periodName}}-{{period.year}}
-                        </mat-option>
-                    </mat-autocomplete>
-                    </mat-form-field>                                         
                   </div>
                   <div class="col-6">
                       <!-- <mat-form-field>

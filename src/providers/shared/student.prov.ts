@@ -190,4 +190,11 @@ export class StudentProvider {
     sendNotification(data) {
         return this.api.post(`student/notify`, data, true).pipe(map(res => res.json()));
     }
+
+    getStatus(controlNumber: string): Observable<any> {
+        return this.api.get(`student/get/status/${controlNumber}`).pipe(map(res => res.json()));
+    }
+    createFromSii(controlNumber: string) {
+        return this.api.post(`student/create/sii/${controlNumber}`, {}, true).pipe(map(res => res.json()));
+    }
 }

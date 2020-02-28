@@ -4,15 +4,14 @@
     <div class="row text-center justify-content-end">
       <div class="col-2">
         <input #fileUpload type="file" accept=".csv" (change)="onUpload($event)" style="display: none">
-        <span>Cargar archivo csv</span>
+        <p>Cargar archivo csv</p>
         <button mat-mini-fab class="mr-3" color="primary" (click)="fileUpload.click()" data-toggle="tooltip"
           title="Cargar archivo csv">
           <mat-icon>attachment</mat-icon>
-        </button>
-        
+        </button>        
       </div>
       <div class="col-2">
-        <span>Guardar plantilla</span>
+        <p>Guardar plantilla</p>
         <button mat-mini-fab class="mr-3" color="primary" (click)="downloadPlantilla()" data-toggle="tooltip"
             title="Guardar">
             <mat-icon>cloud_download</mat-icon>
@@ -20,7 +19,7 @@
       </div>
     </div>
 
-    <div *ngIf="formatedStudents.length>0">
+    <div *ngIf="showTable">
 
       <mat-form-field style="width: 50%;">
         <mat-label>Buscar...</mat-label>
@@ -94,7 +93,7 @@
 
 <!-- Tabla reporte alumnos Excel-->
 <table class="table table-bordered" id="tableReportExcel"
-data-cols-width="9,21,46,66,10,25,15" *ngIf="formatedStudents.length>0">
+data-cols-width="9,21,46,66,10,25,15" *ngIf="showTable">
 <thead>
    <tr>
       <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>

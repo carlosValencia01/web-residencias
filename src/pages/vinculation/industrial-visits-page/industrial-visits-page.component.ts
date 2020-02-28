@@ -26,6 +26,7 @@ export class IndustrialVisitsPageComponent implements OnInit {
   };
 
   loading: boolean = false;
+  showTable: boolean = false;
   formatedStudents: Array<ListData>  = [];
 
   plantilla = [
@@ -54,6 +55,7 @@ export class IndustrialVisitsPageComponent implements OnInit {
 
   public async onUpload(event) {
     this.loading=true;    
+    this.showTable = false;
     let localStudents;
     this.formatedStudents = [];
     await this.studentProv.getAllStudents().toPromise().then(
@@ -66,9 +68,13 @@ export class IndustrialVisitsPageComponent implements OnInit {
       Papa.parse(event.target.files[0], {
         complete: (results) => {
           if (results.data.length > 0) {
-            results.data.slice(1).forEach((st,index) => {
-              const tmpSt = localStudents.filter( stu=> stu.controlNumber == st[0])[0];
+            results.data.slice(1).forEach(async (st,index) => {
+              const tmpSt = localStudents.filter( stu=> stu.controlNumber.trim() == st[0].trim())[0];
               if(tmpSt){
+                // let status;
+                // await this.studentProv.getStatus(tmpSt.controlNumber).toPromise().then(
+                //   (stat)=> status = stat.status
+                // );
                 if(tmpSt.careerId){
                   this.formatedStudents.push(
                     {
@@ -78,7 +84,7 @@ export class IndustrialVisitsPageComponent implements OnInit {
                       career: tmpSt.careerId.acronym,
                       semester: tmpSt.semester,
                       nss: tmpSt.nss ? tmpSt.nss : '------',
-                      status:'-------'
+                      status:'------'
                     }
                   );
                 }else{
@@ -90,7 +96,7 @@ export class IndustrialVisitsPageComponent implements OnInit {
                       career: tmpSt.career,
                       semester: tmpSt.semester,
                       nss: tmpSt.nss ? tmpSt.nss : '------',
-                      status:'-------'
+                      status:'------'
                     }
                   );
                 }
@@ -102,8 +108,8 @@ export class IndustrialVisitsPageComponent implements OnInit {
                     controlNumber: st[0],
                     career: st[2],
                     semester: st[3],
-                    nss: '------',
-                    status:'-------'
+                    nss: 'NO REGISTRADO',
+                    status:'NO REGISTRADO'
                   }
                 );
               }
@@ -112,9 +118,11 @@ export class IndustrialVisitsPageComponent implements OnInit {
             this.dataSource = new MatTableDataSource(this.formatedStudents);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
+            console.log(this.formatedStudents);
             
             
             this.loading = false;
+            this.showTable = true;
           }
         }
       });
