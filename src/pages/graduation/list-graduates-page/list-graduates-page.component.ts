@@ -53,7 +53,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   public totalVerificados;
   public boletosTotales;
-  public boletosRestantes;
+  public boletosRestantes = 0;
   public boletosRegistrados;
   public boletosXAlumno;
 
@@ -241,6 +241,7 @@ export class ListGraduatesPageComponent implements OnInit {
           specialty: alumno.payload.doc.get('especialidad') ? alumno.payload.doc.get('especialidad') : '<<Especialidad>>',
           numInvitados: alumno.payload.doc.get('numInvitados') ? alumno.payload.doc.get('numInvitados') : 0,
           invitados: alumno.payload.doc.get('invitados') ? alumno.payload.doc.get('invitados') : [{}],
+          nss: alumno.payload.doc.get('nss') ? alumno.payload.doc.get('nss') : ''
         };
       });
       this.getTicketsRegistered();

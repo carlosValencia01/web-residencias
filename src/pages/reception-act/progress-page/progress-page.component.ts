@@ -10,7 +10,9 @@ import { eRole } from 'src/enumerators/app/role.enum';
 export class ProgressPageComponent implements OnInit {
   phasesLiberation = ['Liberado'];
   phasesDocuments = ['Entregado'];
-  phasesContinue = ['Realizado', 'Generado', 'Titulado'];
+  phasesApprove = ['Realizado'];
+  phasesExamAct = ['Generado','Titulado'];
+  phasesContinue = ['Generado', 'Titulado'];
   role: string;
 
   constructor(

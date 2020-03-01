@@ -16,6 +16,7 @@ export interface iRequest {
     duration?: number;
     proposedHour?: number;
     proposedDate?: Date;
+    proposedDateLocal?: string;
     email?: string;
     actDate?: Date;
     honorificMention?: boolean;

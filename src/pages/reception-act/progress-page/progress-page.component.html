@@ -9,6 +9,8 @@
     <mat-tab label="Todos"> <app-titulation-progress [tab]="1" [phases]="[]"></app-titulation-progress></mat-tab>
     <mat-tab label="Por validar liberación"> <app-titulation-progress [tab]="2" [phases]="phasesLiberation"></app-titulation-progress></mat-tab>
     <mat-tab label="Dictaminar"> <app-titulation-progress [tab]="3" [phases]="phasesDocuments"></app-titulation-progress></mat-tab>
-    <mat-tab label="Gestión del título"> <app-titulation-progress [tab]="4" [phases]="phasesContinue"></app-titulation-progress></mat-tab>
+    <mat-tab label="Por aprobar"> <app-titulation-progress [tab]="4" [phases]="phasesApprove"></app-titulation-progress></mat-tab>
+    <mat-tab label="Actas examen"> <app-titulation-progress [tab]="5" [phases]="phasesExamAct"></app-titulation-progress></mat-tab>
+    <mat-tab label="Gestión del título"> <app-titulation-progress [tab]="6" [phases]="phasesContinue"></app-titulation-progress></mat-tab>
 </mat-tab-group>
 <app-titulation-progress [tab]="1" [phases]="[]"  *ngIf="role !== 'administrator' && role !=='services'"></app-titulation-progress>
