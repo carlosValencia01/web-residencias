@@ -238,10 +238,10 @@ export class StudentPageComponent implements OnInit {
       case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
         return 'ING. EN SISTEMAS COMPUTACIONALES';
 
-      case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+      case 'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN':
         return 'MAESTRÍA EN TEC. DE LA INFORMACIÓN';
 
-      case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+      case 'MAESTRÍA EN CIENCIAS DE ALIMENTOS':
         return 'MAEST. EN CIENCIAS DE ALIMENTOS';
 
       default:
