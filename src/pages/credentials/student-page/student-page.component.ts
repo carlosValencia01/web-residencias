@@ -352,7 +352,8 @@ export class StudentPageComponent implements OnInit {
             firstName:data.firstName,
             fatherLastName:data.fatherLastName,
             motherLastName:data.motherLastName,
-            careerId: data.careerId
+            careerId: data.careerId,
+            insured: (data.documents || []).some(doc => doc.type.toUpperCase() === 'IMSS') ? 'Si' : 'No'
           }
         }else{
           return data;
