@@ -1400,12 +1400,14 @@ export class ListGraduatesPageComponent implements OnInit {
 
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    const MARGIN_LEFT = 20;
+    const MARGIN_RIGHT = 20;
 
     // Nombre
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(18);
-    doc.text(student.name, pageWidth / 2, 140, 'center');
+    doc.text(student.name, pageWidth / 2, 140, { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
@@ -1416,7 +1418,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(16);
-    doc.text(student.specialty, pageWidth / 2, 180, 'center');
+    doc.text(student.specialty, pageWidth / 2, 180, { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
@@ -1427,7 +1429,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(16);
-    doc.text(student.carreerComplete, pageWidth / 2, 220, 'center');
+    doc.text(student.carreerComplete, pageWidth / 2, 220, { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('Montserrat', 'Normal');
@@ -1460,13 +1462,15 @@ export class ListGraduatesPageComponent implements OnInit {
 
       var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
       var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+      const MARGIN_LEFT = 20;
+      const MARGIN_RIGHT = 20;
 
       for (var i = 0; i < this.alumnosConstancia.length; i++) {
         // Nombre
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(18);
-        doc.text(this.alumnosConstancia[i].name, pageWidth / 2, 140, 'center');
+        doc.text(this.alumnosConstancia[i].name, pageWidth / 2, 140, { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
@@ -1477,7 +1481,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstancia[i].specialty, pageWidth / 2, 180, 'center');
+        doc.text(this.alumnosConstancia[i].specialty, pageWidth / 2, 180, { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
@@ -1488,7 +1492,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstancia[i].carreerComplete, pageWidth / 2, 220, 'center');
+        doc.text(this.alumnosConstancia[i].carreerComplete, pageWidth / 2, 220, { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
@@ -1533,13 +1537,15 @@ export class ListGraduatesPageComponent implements OnInit {
 
       var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
       var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+      const MARGIN_LEFT = 20;
+      const MARGIN_RIGHT = 20;
 
       for (var i = 0; i < this.alumnosConstanciaRegistrados.length; i++) {
         // Nombre
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(18);
-        doc.text(this.alumnosConstanciaRegistrados[i].name, pageWidth / 2, 140, 'center');
+        doc.text(this.alumnosConstanciaRegistrados[i].name, pageWidth / 2, 140, { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
@@ -1550,7 +1556,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstanciaRegistrados[i].specialty, pageWidth / 2, 180, 'center');
+        doc.text(this.alumnosConstanciaRegistrados[i].specialty, pageWidth / 2, 180, { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
@@ -1561,7 +1567,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstanciaRegistrados[i].carreerComplete, pageWidth / 2, 220, 'center');
+        doc.text(this.alumnosConstanciaRegistrados[i].carreerComplete, pageWidth / 2, 220,  { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
@@ -1606,13 +1612,15 @@ export class ListGraduatesPageComponent implements OnInit {
 
       var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
       var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+      const MARGIN_LEFT = 20;
+      const MARGIN_RIGHT = 20;
 
       for (var i = 0; i < this.alumnosConstanciaVerificados.length; i++) {
         // Nombre
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(18);
-        doc.text(this.alumnosConstanciaVerificados[i].name, pageWidth / 2, 140, 'center');
+        doc.text(this.alumnosConstanciaVerificados[i].name, pageWidth / 2, 140,{ align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
@@ -1623,7 +1631,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstanciaVerificados[i].specialty, pageWidth / 2, 180, 'center');
+        doc.text(this.alumnosConstanciaVerificados[i].specialty, pageWidth / 2, 180,{ align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
@@ -1634,7 +1642,7 @@ export class ListGraduatesPageComponent implements OnInit {
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(16);
-        doc.text(this.alumnosConstanciaVerificados[i].carreerComplete, pageWidth / 2, 220, 'center');
+        doc.text(this.alumnosConstanciaVerificados[i].carreerComplete, pageWidth / 2, 220,  { align: 'center', maxWidth: (pageWidth - (MARGIN_LEFT + MARGIN_RIGHT)) });
 
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
