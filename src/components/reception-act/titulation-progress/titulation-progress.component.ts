@@ -32,11 +32,11 @@ import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificac
 import { ExpedientComponent } from 'src/modals/reception-act/expedient/expedient.component';
 import { LoadingBarService } from 'ngx-loading-bar';
 import { FirebaseService } from 'src/services/graduation/firebase.service';
-import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/autocomplete';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { BookProvider } from 'src/providers/reception-act/book.prov';
 import Swal from 'sweetalert2';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
-import { BookProvider } from 'src/providers/reception-act/book.prov';
 @Component({
   selector: 'app-titulation-progress',
   templateUrl: './titulation-progress.component.html',
@@ -76,6 +76,7 @@ export class TitulationProgressComponent implements OnInit {
   periodCtrl = new FormControl();
   filteredPeriods;
   usedPeriods = [];
+
   constructor(
     private requestProvider: RequestProvider,
     public dialog: MatDialog,
@@ -122,11 +123,10 @@ export class TitulationProgressComponent implements OnInit {
       { icon: 'school', option: 'Aprobado' }
     ];
     this.requestProvider.getPeriods().subscribe(
-      (periods)=>{
-        
-        this.periods = periods.periods;   
+      (periods) => {
+        this.periods = periods.periods;
         this.filteredPeriods = periods.periods;
-        this.updatePeriods(this.filteredPeriods.filter(per=> per.active===true)[0],'insert');
+        this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
       }
     );
   }
@@ -138,7 +138,7 @@ export class TitulationProgressComponent implements OnInit {
 
   loadRequest(isInit: boolean = false): void {
     let filter = '';
-    
+
     switch (this.role) {
       case eRole.CHIEFACADEMIC.toLowerCase(): {
         filter = 'jefe';
@@ -185,7 +185,7 @@ export class TitulationProgressComponent implements OnInit {
               }
             }
           }
-        });        
+        });
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
@@ -203,7 +203,7 @@ export class TitulationProgressComponent implements OnInit {
         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitudes');
       });
 
-     
+
   }
 
   public castRequest(element: any): iRequest {
@@ -245,19 +245,20 @@ export class TitulationProgressComponent implements OnInit {
   }
 
   refresh() {
-    this.dataSource = new MatTableDataSource(this.requestFilter);    
-    this.filterRequests(this.usedPeriods);     
+    this.dataSource = new MatTableDataSource(this.requestFilter);
+    this.filterRequests(this.usedPeriods);
   }
-  filterRequests(periods: Array<any>){        
-    if(this.dataSource){      
-      if(periods.length>0){
+
+  filterRequests(periods: Array<any>) {
+    if (this.dataSource) {
+      if (periods.length > 0) {
         this.dataSource.data = this.dataSource.data.filter(
-          (req:any)=> periods.map( per=> (per.periodName+'-'+per.year)).includes((req.period.periodName+'-'+req.period.year))
+          (req: any) => periods.map( per => (per.periodName + '-' + per.year)).includes((req.period.periodName + '-' + req.period.year))
         );
-      }else{
+      } else {
         this.dataSource.data = this.dataSource.data;
-      }     
-      
+      }
+
       const inputFilter: any = document.getElementById('myfilter');
       this.dataSource.filter = inputFilter ?  inputFilter.value !== '' ? inputFilter.value.trim().toLowerCase() : '' : '';
       if (this.tabNumber === 2) {
@@ -265,11 +266,11 @@ export class TitulationProgressComponent implements OnInit {
       }
       if (this.tabNumber === 3) {
         this.dataSource.filter = 'proceso';
-      }        
-      this.dataSource.paginator = this.paginator;        
+      }
+      this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
-    this.loadingBar.complete();   
+    this.loadingBar.complete();
   }
 
   filter(carrers: string[], phases: string[]): Array<iRequest> {
@@ -1088,18 +1089,11 @@ export class TitulationProgressComponent implements OnInit {
       width: '45em'
     });
   }
-
-  private _getActiveBookByCareer(careerId: string,titulationOption: string) {
-    return new Promise(resolve => {
-      this._bookProvider.getActiveBookByCareer(careerId, titulationOption)
-        .subscribe(
-          book => resolve(book),
-          _ => resolve(null));
-    });
-  }
+  
   slectedPeriod(period){    
-    this.updatePeriods(period,'insert');
+    this.updatePeriods(period,'insert'); 
   }
+
   addPeriod(event: MatChipInputEvent): void {
     // Add fruit only when MatAutocomplete is not open
     // To make sure this does not conflict with OptionSelected Event
@@ -1115,33 +1109,42 @@ export class TitulationProgressComponent implements OnInit {
 
       this.periodCtrl.setValue(null);
     }
-  } 
-  updatePeriods(period,action){        
-     if(action === 'delete'){
+  }
+
+  updatePeriods(period, action) {
+     if (action === 'delete') {
       this.filteredPeriods.push(period);
-       
-       this.usedPeriods = this.usedPeriods.filter( per=> per._id !== period._id);
+
+       this.usedPeriods = this.usedPeriods.filter( per => per._id !== period._id);
      }
-     if(action === 'insert'){
-      
-      this.usedPeriods.push(period);      
-      
-      this.filteredPeriods = this.filteredPeriods.filter(per=> per._id !== period._id);
+     if (action === 'insert') {
+
+      this.usedPeriods.push(period);
+
+      this.filteredPeriods = this.filteredPeriods.filter(per => per._id !== period._id);
      }
-     this.periods = this.filteredPeriods;    
-     
+     this.periods = this.filteredPeriods;
+
      this.refresh();
   }
 
   remove(period): void {
-    this.updatePeriods(period,'delete');
+    this.updatePeriods(period, 'delete');
   }
-  
-  filterPeriod(value){         
-    
-    if(value){
-      this.periods = this.periods.filter( period=> (period.periodName+'-'+period.year).toLowerCase().trim().indexOf(value) !== -1);
+
+  filterPeriod(value) {
+    if (value) {
+      this.periods = this.periods.filter( period => (period.periodName + '-' + period.year).toLowerCase().trim().indexOf(value) !== -1);
     }
+  }
+
+  private _getActiveBookByCareer(careerId: string,titulationOption: string) {
+    return new Promise(resolve => {
+      this._bookProvider.getActiveBookByCareer(careerId, titulationOption)
+        .subscribe(
+          book => resolve(book),
+          _ => resolve(null));
+    });
   }
 }
 

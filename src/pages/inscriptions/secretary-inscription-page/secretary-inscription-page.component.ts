@@ -39,6 +39,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   cantListStudentsAcept = 0;
   cantListStudents = 0;
   cantListStudentsLogged = 0;
+  cantIntegratedExpedient = 0;
+  cantArchivedExpedient = 0;
   periods = [];
   activPeriod;
   loading = false;
@@ -92,6 +94,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   pageL = 1;
   pagL;
   pageSizeL = 10;
+
+  listStudentsDebts = [];
 
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
@@ -149,6 +153,11 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         return a.fatherLastName.localeCompare(b.fatherLastName);
       });
       this.listStudents = this.students;
+      this.listStudents.forEach(element => {
+        if((this.filterDocuments('Comprobante',element) != 'EN PROCESO' && this.filterDocuments('Comprobante',element) != 'VALIDADO' && this.filterDocuments('Comprobante',element) != 'ACEPTADO') || (this.filterDocuments('Certificado',element) != 'EN PROCESO' && this.filterDocuments('Certificado',element) != 'VALIDADO' && this.filterDocuments('Certificado',element) != 'ACEPTADO')){
+          this.listStudentsDebts.push(element);
+        }
+      });
       this.cantListStudents = this.listStudents.length;
       this.listCovers = this.listStudents;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
@@ -175,6 +184,16 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     // Cantidad Alumnos Aceptados
     this.inscriptionsProv.getStudentsAcept().subscribe(res => {
       this.cantListStudentsAcept = res.students.length;
+    });
+
+    // Cantidad Expedientes Integrados
+    this.inscriptionsProv.getIntegratedExpedient().subscribe(res => {
+      this.cantIntegratedExpedient = res.expedients.length;
+    });
+
+    // Cantidad Expedientes Archivados
+    this.inscriptionsProv.getArchivedExpedient().subscribe(res => {
+      this.cantArchivedExpedient = res.expedients.length;
     });
     
   }
@@ -203,6 +222,16 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     // Cantidad Alumnos Logueados
     this.inscriptionsProv.getStudentsLogged().subscribe(res => {
       this.cantListStudentsLogged = res.students.length;
+    });
+
+    // Cantidad Expedientes Integrados
+    this.inscriptionsProv.getIntegratedExpedient().subscribe(res => {
+      this.cantIntegratedExpedient = res.expedients.length;
+    });
+
+    // Cantidad Expedientes Archivados
+    this.inscriptionsProv.getArchivedExpedient().subscribe(res => {
+      this.cantArchivedExpedient = res.expedients.length;
     });
   }
 
@@ -1315,6 +1344,63 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.getStudents();
       this.countStudents();
     }
+  }
+
+  integratedExpedient(student){
+    Swal.fire({
+      title: 'Integrar Expediente',
+      text: 'Para ' + student.controlNumber,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        this.inscriptionsProv.updateStudent({expStatus:"Integrado"},student._id).subscribe(res => {
+        }, err=>{},
+        ()=>{
+          this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Expediente Integrado.');
+          this.getStudents();
+        });
+      }
+    });
+  }
+
+  archivedExpedient(student){
+    Swal.fire({
+      title: 'Archivar Expediente',
+      text: 'Para ' + student.controlNumber,
+      type: 'question',
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar'
+    }).then((result) => {
+      if (result.value) {
+        this.inscriptionsProv.updateStudent({expStatus:"Archivado"},student._id).subscribe(res => {
+        }, err=>{},
+        ()=>{
+          this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Expediente Archivado.');
+          this.getStudents();
+        });
+      }
+    });
+  }
+  excelExportDebts(){
+    this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
+    this.loading = true;
+    TableToExcel.convert(document.getElementById('tableReportExcelDebts'), {
+      name: 'Reporte Adeudos Alumnos Inscripcion.xlsx',
+      sheet: {
+        name: 'Alumnos'
+      }
+    });
+    this.loading = false;
   }
   
 }
