@@ -145,6 +145,8 @@ export class uRequest {
 
     protocolActRequest(isPreview: boolean = true): jsPDF {
         const doc = this.newDocumentTec();
+        console.log(this._request,'p');
+        
         const sentHistory = this._request.history.filter(x => x.phase === (isPreview ? 'Capturado' : 'Enviado') && x.status === (isPreview ? 'Accept' : 'None')).reverse()[0];
         doc.setTextColor(0, 0, 0);
         // Title
@@ -197,6 +199,7 @@ export class uRequest {
 
     projectRegistrationOffice(qrCode?, eStamp?): jsPDF {
         const doc = this.newDocumentTec();
+        console.log(this._request,'r');
         const registerHistory = this._request.history
             .filter(x => x.phase === 'Verificado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         doc.setTextColor(0, 0, 0);
@@ -266,6 +269,7 @@ export class uRequest {
     // Deprecated
     projectRelease(): jsPDF {
         const doc = this.newDocumentTec();
+        console.log(this._request,'pr');
         doc.setTextColor(0, 0, 0);
         // Title
         doc.setFont(this.FONT, 'Bold');
@@ -614,6 +618,7 @@ export class uRequest {
 
     public juryDuty(duty: string, position: string, employee: string): jsPDF {
         const doc = this.newDocumentTec();
+        console.log(this._request,'d');
         let tmpDate = new Date(this._request.proposedDate);
         tmpDate.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0);
         doc.setTextColor(0, 0, 0);

@@ -35,10 +35,21 @@ export class NewTitleComponent implements OnInit {
   private event: { appointment: Date, minutes: number, abbreviation: string };
 
   public request: {
-    studentId: string, student: string, controlNumber: string, career: string,
+    studentId?: string, student?: string, controlNumber?: string, career?: string,
     projectName?: string, phase?: string, status?: string, proposedDate?: Date, proposedHour?: number,
     duration?: number, place?: string, jury?: Array<{ name: string, title: string, cedula: string, email?: string }>,
-    titulationOption?: string, product?: string, isIntegral?: boolean
+    titulationOption?: string, product?: string, isIntegral?: boolean,
+    department?: {
+      name:string,
+      boss:string
+    },
+    doer?:string,
+    noIntegrants?:number,
+    adviser?:{
+      name:string,
+      title:string,
+      cedula:string
+    }
   };
 
   constructor(
@@ -55,7 +66,7 @@ export class NewTitleComponent implements OnInit {
       appointment: this.date,
       minutes: (this.date.getHours() * 60 + this.date.getMinutes()),
       abbreviation: data.operation === eOperation.NEW ? '' : data.event.title.split(' ')[1]
-    };
+    };   
     this.title = 'NUEVA TITULACIÓN A LAS ' + moment(this.date).format('LT');
     this.options = [
       'I - TESIS PROFESIONAL',
@@ -131,15 +142,19 @@ export class NewTitleComponent implements OnInit {
     if (typeof (this.controlNumber) !== 'undefined' && this.controlNumber.trim() !== '') {
       this._StudentProvider.getByControlNumber(this.controlNumber).subscribe(students => {
         if (typeof (students) !== 'undefined' && typeof (students.student) !== 'undefined' && students.student.length > 0) {
-          this.showLoading = false;
+          this.showLoading = false;          
+          
           this.request = {
             studentId: students.student[0]._id,
             student: students.student[0].fullName,
             career: students.student[0].career,
             controlNumber: students.student[0].controlNumber,
             phase: eRequest.REALIZED,
-            status: eStatusRequest.NONE
+            status: eStatusRequest.NONE,
+            doer:this.data.doer,
+            noIntegrants:1
           };
+          
           this.frmNewTitle.get('student').setValue(this.request.student);
           this.frmNewTitle.get('career').setValue(this.request.career);
           this.frmNewTitle.get('controlNumber').setValue(this.request.controlNumber);
@@ -200,12 +215,18 @@ export class NewTitleComponent implements OnInit {
 
     ref.afterClosed().subscribe((result) => {
       if (typeof (result) != 'undefined') {
+        this.request.department = this.request.department ? this.request.department : result.Depto;      
         if (this.juryInfo.findIndex(x => x.name === result.ExtraInfo.name) !== -1) {
           this.existError = 'Empleado ya asignado';
         } else {
           switch (button) {
             case 'president': {
               this.frmNewTitle.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : '' });
+              this.request.adviser = {                
+                  name:result.ExtraInfo.name,
+                  title: result.ExtraInfo.title,
+                  cedula:result.ExtraInfo.cedula                
+              };
               this.juryInfo[0].name = result.ExtraInfo.name;
               this.juryInfo[0].title = result.ExtraInfo.title;
               this.juryInfo[0].cedula = result.ExtraInfo.cedula;
@@ -254,7 +275,8 @@ export class NewTitleComponent implements OnInit {
     this.request.product = this.frmNewTitle.get('product').value;
     this.request.isIntegral = false;
     const tmpSearch = this._sourceDataProvider.getCareerAbbreviation().find(x => x.carrer === this.request.career);
-    if (this.data.operation === eOperation.NEW) {
+    if (this.data.operation === eOperation.NEW) {     
+      
       this.event.abbreviation = tmpSearch.abbreviation;
       this.addEvent();
     } else {
@@ -308,6 +330,8 @@ export class NewTitleComponent implements OnInit {
   }
 
   addEvent(): void {
+    this.request.noIntegrants = 1;    
+    
     this._RequestProvider.titled(this.request).subscribe(data => {
       if (typeof (data) !== 'undefined') {
         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Evento asignado');

@@ -10,7 +10,7 @@
   <hr>
   <div>
     <div *ngFor="let item of menu">
-      <div *ngIf="!isUndefined(item.items) || item.items.length > 0; else noSubmenu">
+      <div *ngIf="item.items ? item.items.length > 0 : false; else noSubmenu">
         <button mat-menu-item [matMenuTriggerFor]="sub_menu">
           <img class="menu-item-img" src="assets/icons/{{item.icon}}.svg" alt="">
           <span>{{item.label}}</span>

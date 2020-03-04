@@ -36,6 +36,7 @@ import {MatAutocompleteSelectedEvent, MatAutocomplete} from '@angular/material/a
 import Swal from 'sweetalert2';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
+import { BookProvider } from 'src/providers/reception-act/book.prov';
 @Component({
   selector: 'app-titulation-progress',
   templateUrl: './titulation-progress.component.html',
@@ -87,6 +88,7 @@ export class TitulationProgressComponent implements OnInit {
     public _RequestService: RequestService,
     private loadingBar: LoadingBarService,
     private firebaseService: FirebaseService,
+    private _bookProvider: BookProvider,
   ) {
     this.careers = [];
     this.phases = [];
@@ -533,7 +535,8 @@ export class TitulationProgressComponent implements OnInit {
     }
   }
 
-  approve(Identificador, studentId, controlNumber): void {
+  approve(row): void {
+    const {_id, controlNumber, student, titulationOption} = row;
     Swal.fire({
       title: 'Estatus del Acto Recepcional',
       type: 'question',
@@ -559,68 +562,95 @@ export class TitulationProgressComponent implements OnInit {
           confirmButtonText: 'Aceptar'
         });
         if (typeof (response.value) !== 'undefined') {
-          const linkModal = this.dialog.open(BookComponent, {
-            data: {
-              operation: 'create',
-              data: studentId
-            },
-            disableClose: true,
-            hasBackdrop: true,
-            width: '50em',
-          });
-          linkModal.afterClosed().subscribe(
-            (book) => {
-              const data = {
-                doer: this._CookiesService.getData().user.name.fullName,
-                observation: '',
-                operation: eStatusRequest.ACCEPT,
-                registry: {},
-                phase: eRequest.REALIZED,
-                controlNumber
-              };
-              if (typeof (result.value) !== 'undefined') {
-                data.observation = '';
-              } else {
-                data.observation = 'Acto recepcional no aprobado';
-                data.operation = eStatusRequest.REJECT;
-              }
-              if (book.action === 'create') {
-                data.registry = book.book;
-                this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-                  if (data.operation === eStatusRequest.ACCEPT) {
-                    const sub1 = this.firebaseService.getActivedEvent().subscribe(
-                      (event) => {
-                        sub1.unsubscribe();
-                        if (event[0]) {
-                          const collectionName = event[0].payload.doc.id;
-                          const sub2 = this.firebaseService.getGraduateByControlNumber(controlNumber, collectionName).subscribe(
-                            (student) => {
-                              sub2.unsubscribe();
-                              if (student[0]) {
-                                this.firebaseService.updateFieldGraduate(student[0].id, {degree: true}, collectionName)
-                                  .then(__ => {
-                                    this._NotificationsServices
-                                      .showNotification(eNotificationType.SUCCESS,
-                                        'Acto recepcional', 'Se actualizó la solicitud y el estatus en el SII');
-                                  });
+          const minuteBook = await this._getActiveBookByCareer(student.careerId._id,titulationOption.split('-')[1].trim());
+          if (minuteBook) {
+            const linkModal = this.dialog.open(BookComponent, {
+              data: {
+                operation: 'create',
+                book: minuteBook
+              },
+              disableClose: true,
+              hasBackdrop: true,
+              width: '50em',
+            });
+            linkModal.afterClosed().subscribe(
+              (book) => {
+                const data = {
+                  doer: this._CookiesService.getData().user.name.fullName,
+                  observation: '',
+                  operation: eStatusRequest.ACCEPT,
+                  registry: {},
+                  phase: eRequest.REALIZED,
+                  controlNumber
+                };
+                if (typeof (result.value) !== 'undefined') {
+                  data.observation = '';
+                } else {
+                  data.observation = 'Acto recepcional no aprobado';
+                  data.operation = eStatusRequest.REJECT;
+                }
+                if (book.action === 'create') {
+                  this.showLoading = true;
+                  data.registry = book.data;
+                  this.requestProvider.updateRequest(_id, data).subscribe(_ => {
+                    if (data.operation === eStatusRequest.ACCEPT) {
+                      this.showLoading = true;
+                      const sub1 = this.firebaseService.getActivedEvent().subscribe(
+                        (event) => {
+                          this.showLoading = false;
+                          sub1.unsubscribe();
+                          if (event[0]) {
+                            this.showLoading = true;
+                            const collectionName = event[0].payload.doc.id;
+                            const sub2 = this.firebaseService.getGraduateByControlNumber(controlNumber, collectionName).subscribe(
+                              (studentData) => {
+                                this.showLoading = false;
+                                sub2.unsubscribe();
+                                if (studentData[0]) {
+                                  this.showLoading = true;
+                                  this.firebaseService.updateFieldGraduate(studentData[0].id, {degree: true}, collectionName)
+                                    .then(__ => {
+                                      this.showLoading = false;
+                                      this._NotificationsServices
+                                        .showNotification(eNotificationType.SUCCESS,
+                                          'Acto recepcional', 'Se actualizó el acrónimo del egresado para graduación');
+                                    }, __ => {
+                                      this.showLoading = false;
+                                    });
+                                }
+                              }, __ => {
+                                this.showLoading = false;
                               }
-                            }
-                          );
+                            );
+                          } else {
+                            this.showLoading = false;
+                          }
+                        }, __ => {
+                          this.showLoading = false;
                         }
-                      }
-                    );
-                  }
-                  this.loadRequest();
-                }, error => {
-                  const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
-                  this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
-                });
-              }
-            }, err => console.log(err));
+                      );
+                    }
+                    this.showLoading = false;
+                    this._NotificationsServices
+                      .showNotification(eNotificationType.SUCCESS,
+                        'Acto recepcional', 'Se actualizó la solicitud y el estatus en el SII');
+                    this.loadRequest();
+                  }, error => {
+                    this.showLoading = false;
+                    const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
+                    this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
+                  });
+                }
+              }, err => console.log(err));
+          } else {
+            this._NotificationsServices
+              .showNotification(eNotificationType.ERROR,
+                'Acto recepcional', 'No existe libro activo para la carrera del alumno');
+          }
         }
       }
     });
-  }
+  }  
 
   async reImprimir(Identificador: string) {
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Reimprimiendo acta de examen');
@@ -1056,6 +1086,15 @@ export class TitulationProgressComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '45em'
+    });
+  }
+
+  private _getActiveBookByCareer(careerId: string,titulationOption: string) {
+    return new Promise(resolve => {
+      this._bookProvider.getActiveBookByCareer(careerId, titulationOption)
+        .subscribe(
+          book => resolve(book),
+          _ => resolve(null));
     });
   }
   slectedPeriod(period){    
