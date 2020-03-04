@@ -680,8 +680,9 @@ export class uRequest {
 
         // tslint:disable-next-line: max-line-length
         content = 'El presidente (a) del jurado le hizo saber a el (la) el resultado obtenido, el Código de Ética Profesional y le tomó la Protesta de Ley, una vez escrita, leída la firmaron las personas que en el acto protocolario intervinieron, para los efectos legales a que haya lugar, se asienta la presente en la ciudad de Tepic Nayarit el @dia@ @HOY';
+        const titulationDate = new Date(this._request.proposedDate);
         // tslint:disable-next-line: max-line-length
-        content = content.replace('@HOY', `@${String(tmpDate.getDate())}@ @del@ @mes@ @${this.letterCapital(moment(tmpDate).format('MMMM'))}@ @del@ @Año@ @${tmpDate.getFullYear()}@`);
+        content = content.replace('@HOY', `@${String(titulationDate.getDate())}@ @del@ @mes@ @${this.letterCapital(moment(titulationDate).format('MMMM'))}@ @del@ @Año@ @${titulationDate.getFullYear()}@`);
         this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 116 }, 138, 4);
 
         doc.setFont(this.FONT, 'Normal');
