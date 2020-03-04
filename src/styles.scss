@@ -4,6 +4,10 @@
     margin: 20px 25px;
 }
 
+.simple-notification-wrapper {
+  z-index: 9999 !important;
+}
+
 @import url('https://fonts.googleapis.com/css?family=PT+Sans');
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "~material-design-icons/iconfont/material-icons.css";

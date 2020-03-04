@@ -12,7 +12,7 @@
             </label>
             <input (input)="errorUsernameInput = false" (keyup.enter)="login()" formControlName="usernameInput"
               [ngClass]="{'is-invalid': (formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorUsernameInput }"
-              type="text" class="form-control" #loginInputUser aria-describedby="emailHelp" placeholder="Usuario o número de control">
+              type="text" class="form-control" #loginInputUser aria-describedby="emailHelp" placeholder="Usuario o número de control" id="loginInputUser">
             <div *ngIf="(formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorForm">
               <div class="invalid-feedback" *ngIf="formLogin.get('usernameInput').hasError('required') || errorUsernameInput">
                 Campo obligatorio
