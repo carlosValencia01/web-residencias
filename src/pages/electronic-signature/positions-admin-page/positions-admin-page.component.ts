@@ -61,6 +61,7 @@ export class PositionsAdminPageComponent implements OnInit {
     this.positionProv.getPositionsByDepartment(this._getDepartment(this.departmentControl.value)._id)
       .subscribe(res => {
         this.positions = res.positions;
+        console.log(this.positions);
         this.positionsCopy = this.positions;
         if (this.searchText) {
           this.searchPosition();
@@ -81,6 +82,7 @@ export class PositionsAdminPageComponent implements OnInit {
     if (position.ascription) {
       if (this.isEditing) {
         this.currentPosition.name = position.name;
+        this.currentPosition.gender = position.gender;
         this.currentPosition.canSign = position.canSign;
         this.currentPosition.isUnique = position.isUnique;
         this.positionProv.updatePosition(this.currentPosition)
@@ -197,6 +199,8 @@ export class PositionsAdminPageComponent implements OnInit {
       'name': new FormControl({value: ''}, Validators.required),
       'canSign': new FormControl({value: false}),
       'isUnique': new FormControl({value: false}),
+      'nameMale': new FormControl({value: ''}),
+      'nameFemale': new FormControl({value: ''})
     });
   }
 
@@ -231,7 +235,11 @@ export class PositionsAdminPageComponent implements OnInit {
       name: this.positionForm.get('name').value,
       canSign: Boolean(this.positionForm.get('canSign').value),
       ascription: this._getDepartment(this.departmentControl.value),
-      isUnique: !!this.positionForm.get('isUnique').value
+      isUnique: !!this.positionForm.get('isUnique').value,
+      gender: {
+        male: this.positionForm.get('nameMale').value,
+        female: this.positionForm.get('nameFemale').value
+      }
     };
   }
 
@@ -243,7 +251,9 @@ export class PositionsAdminPageComponent implements OnInit {
     this.positionForm.setValue({
       'name': position.name,
       'canSign': position.canSign,
-      'isUnique': !!position.isUnique
+      'isUnique': !!position.isUnique,
+      'nameMale': position.gender ? position.gender.male : '',
+      'nameFemale': position.gender ? position.gender.female : ''
     });
   }
 

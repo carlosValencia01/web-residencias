@@ -65,6 +65,26 @@
             </span>
           </mat-error>
         </mat-form-field>
+          <mat-form-field class="col-12">
+            <mat-label>Nombre del puesto masculino</mat-label>
+            <input matInput [formControl]="positionForm.get('nameMale')" oninput="this.value = this.value.toUpperCase()" type="text">
+            <mat-error *ngIf="!positionForm.get('nameMale').valid && positionForm.get('nameMale').touched"
+                       class="invalid-feedback">
+            <span *ngIf="positionForm.get('nameMale').errors['required']">
+              ¡Por favor describa el nombre del puesto!
+            </span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="col-12">
+            <mat-label>Nombre del puesto femenino</mat-label>
+            <input matInput [formControl]="positionForm.get('nameFemale')" oninput="this.value = this.value.toUpperCase()" type="text">
+            <mat-error *ngIf="!positionForm.get('nameFemale').valid && positionForm.get('nameFemale').touched"
+                       class="invalid-feedback">
+            <span *ngIf="positionForm.get('nameFemale').errors['required']">
+              ¡Por favor describa el nombre del puesto femenino!
+            </span>
+            </mat-error>
+          </mat-form-field>
         <mat-slide-toggle color="primary" formControlName="canSign">¿Puede generar firma electrónica?</mat-slide-toggle><br><br>
         <mat-slide-toggle color="primary" formControlName="isUnique">¿Es un puesto único?</mat-slide-toggle>
       </mat-card-content>

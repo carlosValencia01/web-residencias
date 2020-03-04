@@ -55,7 +55,7 @@ export class TitulacionPageComponent implements OnInit {
   public isApprovedEnglish: boolean;
   public titrationHour: string;
   public isActive = true;
-
+  public status: string;
   // Mensajes
   ProcessSentMessage: String = 'En espera de que tu solicitud sea aceptada';
   CompletedSentMessage: String = 'TU SOLICITUD HA SIDO ACEPTADA'; // 'Tú solicitud ha sido aceptada';
@@ -85,15 +85,9 @@ export class TitulacionPageComponent implements OnInit {
   AcceptTitledMessage: String = 'TÍTULO PROFESIONAL LISTO PARA SER ENTREGADO';
   FinalizedTitledMessage: String = 'TÍTULO PROFESIONAL ENTREGADO';
 
-  isTitled: boolean = false;
-  hasPhase: boolean = false;
-  loaded: boolean = false;
-  degree: string = '';
-  user;
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
-
 
   constructor(private studentProv: StudentProvider,
     private cookiesService: CookiesService,
@@ -104,13 +98,10 @@ export class TitulacionPageComponent implements OnInit {
     private requestService: RequestService,
     public _InscriptionsProvider: InscriptionsProvider,
   ) {
-    this.user = this.cookiesService.getData().user;        
-    
-    this.isApprovedEnglish = this.user.english;
-    this.isGraduate = this.user.graduate;
-    this.isTitled = this.user.titled;
-    this.degree = this.isTitled ? this.user.career != 'LA' && this.user.career != 'ARQ' && this.user.career != 'MCA' && this.user.career != 'DCA' ? 'ING.' : this.user.career == 'LA' ? 'LIC.' : this.user.career == 'ARQ' ? 'ARQ.' : this.user.career == 'MCA' ? 'M.C.A.' : this.user.career == 'MTI' ? 'M.T.I.' : this.user.career == 'DCA' ? 'D.C.A.' :'' : '';
-    this.isOkTitulation = this.user.english && this.user.graduate;
+    const user = this.cookiesService.getData().user;
+    this.isApprovedEnglish = user.english;
+    this.isGraduate = user.graduate;
+    this.isOkTitulation = user.english && user.graduate;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -125,20 +116,24 @@ export class TitulacionPageComponent implements OnInit {
 
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
-    this._InscriptionsProvider.getActivePeriod().subscribe(
-      periodo => {
-                
-        if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
-          this.loadRequest();
-          this.isActive = true;
-        } else {
-          this.loaded = true;
-          this.isActive = false;
-        }
-      }, _ => {
-        this.loaded = true;
-        this.isActive = false;
-      });
+    this.studentProv.getStatus(this.cookiesService.getData().user._id).subscribe( data => {
+      this.isGraduate = data.status === 'EGR';
+      this.isApprovedEnglish = data.english;
+      this.isOkTitulation = this.isGraduate && this.isApprovedEnglish;
+      if (this.isOkTitulation) {
+        this._InscriptionsProvider.getActivePeriod().subscribe(
+          periodo => {
+            if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
+              this.loadRequest();
+              this.isActive = true;
+            } else {
+              this.isActive = false;
+            }
+          }, error => {
+            this.isActive = false;
+          });
+      }
+    });
   }
 
   getFolderId(): void {
@@ -148,23 +143,16 @@ export class TitulacionPageComponent implements OnInit {
        }, err => console.log(err));
   }
 
-  loadRequest() {  
-    
+  loadRequest() {
     this.studentProv.getRequest(this.cookiesService.getData().user._id)
-      .subscribe(res => {        
-        
+      .subscribe(res => {
         if (res.request.length > 0) {
           this.Request = <iRequest>res.request[0];
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
           this.oRequest = new uRequest(this.Request, this.imgService, this.cookiesService);
-          this.isOkTitulation = this.Request.phase !== eRequest.TITLED && this.Request.status !== eStatusRequest.FINALIZED;
-          this.hasPhase = true;
-          this.loaded = true;
-          // Titulado	-	Finalized
           this.getFolderId();
         } else {
-          this.loaded = true;
           this.Request = {
             phase: eRequest.NONE,
             status: eStatusRequest.NONE
@@ -199,11 +187,9 @@ export class TitulacionPageComponent implements OnInit {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
     this.requestService.AddRequest(this.Request, phase);
-    if(this.isOkTitulation){
-      this.Steeps = new ContextState(phase, status);
-      this.StatusComponent = this.Steeps.state.status;
-      this.enableSteps(phase);
-    }
+    this.Steeps = new ContextState(phase, status);
+    this.StatusComponent = this.Steeps.state.status;
+    this.enableSteps(phase);
   }
 
   // Visualiza el componente donde colocarse
