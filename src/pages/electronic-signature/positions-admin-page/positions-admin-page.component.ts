@@ -21,15 +21,15 @@ import {PositionProvider} from 'src/providers/shared/position.prov';
 export class PositionsAdminPageComponent implements OnInit {
   @ViewChild('departmentElement') departmentElement: ElementRef;
   public positionForm: FormGroup;
-  public departmentControl: FormControl;
-  public positions: Array<IPosition>;
-  public filteredDepartments: Observable<Array<IDepartment>>;
+  public departmentControl = new FormControl();
+  public positions: IPosition[];
+  public filteredDepartments: Observable<IDepartment[]>;
   public titleCardForm: string;
   public searchText: string;
   public showFormPanel = false;
   public isViewDetails = false;
-  private departments: Array<IDepartment>;
-  private positionsCopy: Array<IPosition>;
+  private departments: IDepartment[];
+  private positionsCopy: IPosition[];
   private currentPosition: IPosition;
   private isEditing = false;
 
@@ -44,17 +44,11 @@ export class PositionsAdminPageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.activatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+    this._getAllDepartments();
   }
 
   ngOnInit() {
     this._initializeForm();
-    this._getAllDepartments();
-
-    this.filteredDepartments = this.departmentControl.valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filterDepartments(value))
-      );
   }
 
   public getPositions() {
@@ -192,7 +186,6 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   private _initializeForm() {
-    this.departmentControl = new FormControl(null, Validators.required);
     this.positionForm = new FormGroup({
       'name': new FormControl({value: ''}, Validators.required),
       'canSign': new FormControl({value: false}),
@@ -204,13 +197,18 @@ export class PositionsAdminPageComponent implements OnInit {
     this.departmentProv.getAllDepartments()
       .subscribe(data => {
         this.departments = data.departments;
+
+        this.filteredDepartments = this.departmentControl.valueChanges
+        .pipe(
+          startWith(''),
+          map(value => value ? this._filterDepartments(value) : [...data.departments])
+        );
       });
   }
 
   private _filterDepartments(value: string): IDepartment[] {
-    const filterValue = value ? value.toLowerCase() : '';
-    return (this.departments && filterValue) ? this.departments.filter(department =>
-      department.name.toLowerCase().includes(filterValue)) : null;
+    const filterValue = (value || '').toLowerCase();
+    return this.departments.filter(department => department.name.toLowerCase().includes(filterValue));
   }
 
   private _createPosition(position) {

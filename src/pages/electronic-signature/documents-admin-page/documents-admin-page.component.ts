@@ -16,12 +16,12 @@ import {NotificationsServices} from 'src/services/app/notifications.service';
 })
 export class DocumentsAdminPageComponent implements OnInit {
   public documentForm: FormGroup;
-  public documents: Array<IDocument>;
+  public documents: IDocument[];
   public titleCardForm: string;
   public searchText: string;
   public showFormPanel = false;
   public isViewDetails = false;
-  private documentsCopy: Array<IDocument>;
+  private documentsCopy: IDocument[];
   private currentDocument: IDocument;
   private isEditing = false;
 
@@ -35,10 +35,10 @@ export class DocumentsAdminPageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.activatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+    this._initializeForm();
   }
 
   ngOnInit() {
-    this._initializeForm();
     this._getAllDocuments();
   }
 

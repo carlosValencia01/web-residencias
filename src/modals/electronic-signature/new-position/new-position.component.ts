@@ -18,11 +18,11 @@ import {PositionProvider} from 'src/providers/shared/position.prov';
 })
 export class NewPositionComponent implements OnInit {
   public positionForm: FormGroup;
-  public filteredDepartments: Observable<Array<IDepartment>>;
-  public filteredPositions: Observable<Array<IPosition>>;
+  public filteredDepartments: Observable<IDepartment[]>;
+  public filteredPositions: Observable<IPosition[]>;
   public title: string;
-  private departments: Array<IDepartment>;
-  private positions: Array<IPosition>;
+  private departments: IDepartment[];
+  private positions: IPosition[];
   private operationMode: eOperation;
   private position: IPosition;
   private employeeId: string;
@@ -41,22 +41,11 @@ export class NewPositionComponent implements OnInit {
     if (this.operationMode === eOperation.EDIT) {
       this.position = <IPosition>this.data.position;
     }
+    this._initializeForm();
   }
 
   ngOnInit() {
-    this._initializeForm();
     this._getAllDepartments();
-
-    this.filteredDepartments = this.positionForm.get('department').valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filterAutocomplete(this.departments, value))
-      );
-    this.filteredPositions = this.positionForm.get('position').valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filterAutocomplete(this.positions, value))
-      );
   }
 
   private _initializeForm(): void {
@@ -72,6 +61,11 @@ export class NewPositionComponent implements OnInit {
     this.departmentProv.getAllDepartments()
       .subscribe(res => {
         this.departments = res.departments;
+        this.filteredDepartments = this.positionForm.get('department').valueChanges
+          .pipe(
+            startWith(''),
+            map(value => value ? this._filterAutocomplete(this.departments, value) : res.departments)
+          );
       });
   }
 
@@ -80,28 +74,32 @@ export class NewPositionComponent implements OnInit {
     if (departmentId) {
       this.positionProv.getAvailablePositionsByDepartment(this.employeeId, departmentId)
         .subscribe(positions => {
-          const activePositions = this.currentPositions.actives.map(({position}) => position.name.toUpperCase());
-          this.positions = positions.filter(({name}) => !activePositions.includes(name.toUpperCase()));
+          this.positions = positions
+            .filter(({name}) => !this.currentPositions.actives.some(({position}) => position.name.toUpperCase() === name.toUpperCase()));
           this.positionForm.get('position').reset();
+
+          this.filteredPositions = this.positionForm.get('position').valueChanges
+            .pipe(
+              startWith(''),
+              map(value => value ? this._filterAutocomplete(this.positions, value) : this.positions)
+            );
         });
     }
   }
 
-  private _filterAutocomplete(array: Array<any>, value: string): Array<any> {
+  private _filterAutocomplete(array: any[], value: string): any[] {
     const filterValue = (value || '').toLowerCase();
-    return (array && filterValue) ? array.filter(data => data.name.toLowerCase().includes(filterValue)) : null;
+    return (array || []).filter(data => data.name.toLowerCase().includes(filterValue));
   }
 
-  private _findDepartmentId(departmentName): string {
-    return departmentName
-      ? this.departments.filter(department => department.name.toLowerCase() === departmentName.toLowerCase())[0]._id
-      : null;
+  private _findDepartmentId(departmentName: string): string {
+    const name = (departmentName || '').toLowerCase();
+    return (this.departments || []).filter(department => department.name.toLowerCase() === name)[0]._id;
   }
 
-  private _findPosition(positionName): IPosition {
-    return positionName
-      ? this.positions.filter(position => position.name.toLowerCase() === positionName.toLowerCase())[0]
-      : null;
+  private _findPosition(positionName: string): IPosition {
+    const name = (positionName || '').toLowerCase();
+    return (this.positions || []).filter(position => position.name.toLowerCase() === name)[0];
   }
 
   onSubmit(): void {

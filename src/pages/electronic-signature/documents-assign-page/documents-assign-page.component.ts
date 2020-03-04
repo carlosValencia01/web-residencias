@@ -22,14 +22,14 @@ import {PositionProvider} from 'src/providers/shared/position.prov';
 })
 export class DocumentsAssignPageComponent implements OnInit {
   public positionForm: FormGroup;
-  public documentsAssigns: Array<IDocument>;
-  public documentsNotAssigns: Array<IDocument>;
-  public filteredDepartments: Observable<Array<IDepartment>>;
-  public filteredPositions: Observable<Array<IPosition>>;
+  public documentsAssigns: IDocument[];
+  public documentsNotAssigns: IDocument[];
+  public filteredDepartments: Observable<IDepartment[]>;
+  public filteredPositions: Observable<IPosition[]>;
   public showDocumentsPanel = false;
-  private departments: Array<IDepartment>;
-  private positions: Array<IPosition>;
-  private documents: Array<IDocument>;
+  private departments: IDepartment[];
+  private positions: IPosition[];
+  private documents: IDocument[];
   private currentPosition: IPosition;
 
   constructor(
@@ -44,22 +44,11 @@ export class DocumentsAssignPageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.activatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+    this._initializeForm();
   }
 
   ngOnInit() {
-    this._initializeForm();
     this._getAllDepartments();
-
-    this.filteredDepartments = this.positionForm.get('department').valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filterAutocomplete(this.departments, value))
-      );
-    this.filteredPositions = this.positionForm.get('position').valueChanges
-      .pipe(
-        startWith(''),
-        map(value => this._filterAutocomplete(this.positions, value))
-      );
   }
 
   public getPositions() {
@@ -70,6 +59,12 @@ export class DocumentsAssignPageComponent implements OnInit {
           this.positions = res.positions;
           this.positionForm.get('position').reset();
           this.showDocumentsPanel = false;
+
+          this.filteredPositions = this.positionForm.get('position').valueChanges
+            .pipe(
+              startWith(''),
+              map(value => value ? this._filterAutocomplete(this.positions, value) : this.positions)
+            );
         });
     }
   }
@@ -149,17 +144,24 @@ export class DocumentsAssignPageComponent implements OnInit {
     this.departmentProv.getAllDepartments()
       .subscribe(res => {
         this.departments = res.departments;
+
+        this.filteredDepartments = this.positionForm.get('department').valueChanges
+          .pipe(
+            startWith(''),
+            map(value => value ? this._filterAutocomplete(this.departments, value) : this.departments)
+          );
       });
   }
 
-  private _filterAutocomplete(array: Array<any>, value: string): Array<any> {
+  private _filterAutocomplete(array: any[], value: string): any[] {
     const filterValue = (value || '').toLowerCase();
-    return (array && filterValue) ? array.filter(data => data.name.toLowerCase().includes(filterValue)) : null;
+    return (array || []).filter(data => data.name.toLowerCase().includes(filterValue));
   }
 
-  private _findDepartmentId(departmentName): string {
+  private _findDepartmentId(departmentName: string): string {
+    const name = (departmentName || '').toLocaleLowerCase();
     return departmentName
-      ? this.departments.filter(department => department.name.toLowerCase() === departmentName.toLowerCase())[0]._id
+      ? this.departments.filter(department => department.name.toLowerCase() === name)[0]._id
       : null;
   }
 
@@ -171,8 +173,6 @@ export class DocumentsAssignPageComponent implements OnInit {
   }
 
   private _getDocumentsNotAssigned(allDocuments, documentsAssigned) {
-    const docsNotAssigned = new Set(allDocuments
-      .filter((doc: IDocument) => !JSON.stringify(documentsAssigned).includes(doc._id)));
-    return Array.from(docsNotAssigned);
+    return allDocuments.filter((doc: IDocument) => !documentsAssigned.some((document: IDocument) => document._id === doc._id));
   }
 }
