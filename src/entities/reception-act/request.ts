@@ -129,7 +129,7 @@ export class uRequest {
                 break;
             }
             case eFILES.ACTA_EXAMEN: {
-                document = this.testReport().output('arraybuffer');
+                document = this.testReport(true).output('arraybuffer');
                 binary = this.bufferToBase64(document);
                 break;
             }
@@ -650,21 +650,25 @@ export class uRequest {
         return doc;
     }
 
-    public testReport(): jsPDF {
+    public testReport(version: boolean): jsPDF {
 
         const doc = this.newDocumentTec(true, false);
+        console.log(this._request);
+        
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(10);
-        doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', (this.WIDTH / 2), 45, { align: 'center' });
-        doc.text('CERTIFICACIÓN DE CONSTANCIA DE EXENCIÓN DE EXAMEN PROFESIONAL', (this.WIDTH / 2), 53, { align: 'center' });
+        doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', ((this.WIDTH) / 2)+14, 45, { align: 'center' });
+        doc.text('CERTIFICACIÓN DE CONSTANCIA DE EXENCIÓN DE EXAMEN PROFESIONAL', (this.WIDTH / 2)+13, 53, { align: 'center' });
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(8);
         let tmpDate = new Date();
         // tslint:disable-next-line: max-line-length
-        let content = 'El (la) suscrito (a) Director (a) del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a la carrera de @CARRERA No. @LIBRO Autorizado el día @AUTORIZACION, por la Dirección de Asuntos Escolares y Apoyo a Estudiantes del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a le letra dice:';
+        let content = 'El (la) suscrito (a) Director (a) del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a la carrera de @CARRERA No. @LIBRO Autorizado el día @AUTORIZACION, por la @DIR del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a le letra dice:';
         content = content.replace('@CARRERA', this.letterCapital(this._request.registry.career));
+
         content = content.replace('@AUTORIZACION', moment(this._request.registry.date).format('LL'));
+        content = version ? content.replace('@DIR','Dirección de Asuntos Escolares y Apoyo a Estudiantes') : content.replace('@DIR','Dirección de Servicios Escolares y Estudiantiles');
         content = content.replace('@NUMERO', this._request.registry.foja + '');
         content = content.replace('@LIBRO', this._request.registry.bookNumber + '');
         this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
