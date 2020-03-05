@@ -13,6 +13,7 @@ import {
 } from 'src/pages/credentials/loader-data-credentials-page/loader-data-credentials-page.component';
 import { StudentPageComponent } from 'src/pages/credentials/student-page/student-page.component';
 import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/one-student-page.component';
+import { ImssPageComponent } from 'src/pages/credentials/imss-page/imss-page.component';
 
 // Inscriptions
 import { InscriptionsPageComponent } from 'src/pages/inscriptions/inscriptions-page/inscriptions-page.component';
@@ -69,6 +70,7 @@ const appRoutes: Routes = [
   { path: 'loaderDataCredentials', component: LoaderDataCredentialsPageComponent, pathMatch: 'full' },
   { path: 'oneStudentPage', component: OneStudentPageComponent, pathMatch: 'full' },
   { path: 'student', component: StudentPageComponent, pathMatch: 'full' },
+  { path: 'imss', component: ImssPageComponent, pathMatch: 'full' },
 
   // Inscriptions
   { path: 'inscriptions', component: InscriptionsPageComponent, pathMatch: 'full' },

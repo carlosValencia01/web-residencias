@@ -39,6 +39,7 @@ export class MyGraduationComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.user = this.cookiesService.getData().user;
+    console.log(this.user);
     this.init();
   }
 
