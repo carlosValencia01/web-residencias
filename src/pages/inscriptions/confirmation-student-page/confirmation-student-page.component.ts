@@ -36,6 +36,28 @@ export class ConfirmationStudentPageComponent implements OnInit {
    docAcuse;
    docCompromiso;
 
+  // Maestria
+  certificateLDoc;
+  titledLDoc;
+  cedulaLDoc;
+  examActLDoc;
+  // Maestria Cartas Comprimiso
+  cccertificateLDoc;
+  cctitledLDoc;
+  cccedulaLDoc;
+  ccexamActLDoc;
+
+  // Doctorado
+  certificateMDoc;
+  titledMDoc;
+  cedulaMDoc;
+  examActMDoc;
+  // Doctorado Cartas Compromiso
+  cccertificateMDoc;
+  cctitledMDoc;
+  cccedulaMDoc;
+  ccexamActMDoc;
+
   // Imagenes para Reportes
   public logoTecNM: any;
   public logoSep: any;
@@ -44,6 +66,10 @@ export class ConfirmationStudentPageComponent implements OnInit {
   // Font Montserrat
   montserratNormal: any;
   montserratBold: any;
+
+  // Validar Tipo de Carrera (Maestria o Doctorado)
+  public mastersDegree = false;
+  public doctorate = false;
 
   constructor(
     private inscriptionsProv: InscriptionsProvider,
@@ -84,6 +110,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
   getIdStudent() {
     this.data = this.cookiesServ.getData().user;
     this._idStudent = this.data._id;
+    this.doctorate = (this.data.career === 'DCA') ? true : false;
+    this.mastersDegree = (this.data.career === 'MCA' || this.data.career === 'MTI') ? true : false;
   }
 
   getStudentData(id) {
@@ -94,24 +122,37 @@ export class ConfirmationStudentPageComponent implements OnInit {
   }
 
   async getIdDocuments() {
-    this.docActa = await this.filterDocuments('ACTA');
-    this.docCertificado = await this.filterDocuments('CERTIFICADO');
-    this.docAnalisis = await this.filterDocuments('CLINICOS');
-    this.docComprobante = await this.filterDocuments('COMPROBANTE');
-    this.docCurp = await this.filterDocuments('CURP');
-    this.docNss = await this.filterDocuments('NSS');
-    this.docFoto = await this.filterDocuments('FOTO');
-    this.docSolicitud = await this.filterDocuments('SOLICITUD');
-    this.docContrato = await this.filterDocuments('CONTRATO');
-    this.docAcuse = await this.filterDocuments('ACUSE');
-    this.docCompromiso = await this.filterDocuments('COMPROMISO');
+    let documents = this.studentData.documents;
 
-  }
+    this.docCurp = documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] : '';
+    this.docNss = documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] : '';
+    this.docFoto = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] ? documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+    this.docComprobante = documents.filter(docc => docc.filename == this.data.email+'-COMPROBANTE.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROBANTE.pdf')[0] : '';
+    this.docCertificado = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO.pdf')[0] : '';
+    this.docActa = documents.filter(docc => docc.filename == this.data.email+'-ACTA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-ACTA.pdf')[0] : '';
+    this.docAnalisis = documents.filter(docc => docc.filename == this.data.email+'-CLINICOS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CLINICOS.pdf')[0] : '';
+    this.docCompromiso = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO.pdf')[0] : '';
 
-  filterDocuments(filename) {
-    return this.studentData.documents.filter(function (alumno) {
-      return alumno.filename.toLowerCase().indexOf(filename.toLowerCase()) > -1;
-    });
+    //MESTRIA
+    this.certificateLDoc = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_LICENCIATURA.pdf')[0] : '';
+    this.titledLDoc = documents.filter(docc => docc.filename == this.data.email+'-TITULO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-TITULO_LICENCIATURA.pdf')[0] : '';
+    this.cedulaLDoc = documents.filter(docc => docc.filename == this.data.email+'-CEDULA_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CEDULA_LICENCIATURA.pdf')[0] : '';
+    this.examActLDoc = documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_LICENCIATURA.pdf')[0] : '';
+    this.cccertificateLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf')[0] : '';;
+    this.cctitledLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf')[0] : '';
+    this.cccedulaLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf')[0] : '';
+    this.ccexamActLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf')[0] : '';
+
+    //DOCTORADO
+    this.certificateMDoc = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_MAESTRIA.pdf')[0] : '';
+    this.titledMDoc = documents.filter(docc => docc.filename == this.data.email+'-TITULO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-TITULO_MAESTRIA.pdf')[0] : '';
+    this.cedulaMDoc = documents.filter(docc => docc.filename == this.data.email+'-CEDULA_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CEDULA_MAESTRIA.pdf')[0] : '';
+    this.examActMDoc = documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_MAESTRIA.pdf')[0] : '';
+    this.cccertificateMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf')[0] : '';
+    this.cctitledMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf')[0] : '';
+    this.cccedulaMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf')[0] : '';
+    this.ccexamActMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf')[0] : '';
+
   }
 
   onView(file) {
@@ -231,163 +272,692 @@ export class ConfirmationStudentPageComponent implements OnInit {
     doc.setFontSize(10);
     doc.text(this.studentData.controlNumber,177,55,'left');
 
-    doc.line((pageWidth / 2)-35, 150, (pageWidth / 2)+35, 150);
+    doc.line((pageWidth / 2)-35, 250, (pageWidth / 2)+35, 250);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(10);
-    doc.text("Firma del Estudiante", pageWidth / 2, 160, 'center');
+    doc.text("Firma del Estudiante", pageWidth / 2, 260, 'center');
 
     var columns = ["No", "Documento", "Estatus"];
-    var data = [
-      [1, "COMPROBANTE DE PAGO",""],
-      [2, "CERTIFICADO DE ESTUDIOS",""],
-      [3, "CURP",""],
-      [4, "ACTA DE NACIMIENTO",""],
-      [5, "ANÁLISIS CLÍNICOS",""],
-      [6, "FOTOGRAFÍA",""],
-      [7, "NÚMERO DE SEGURO SOCIAL",""],
-      [8, "CARTA COMPROMISO",""] 
-    ];
 
-    doc.autoTable(columns,data,{ 
-      headStyles: {fillColor: [20, 43, 88]},
-      margin:{ top: 60 }
-    });
+    var data = [];
+    if(this.doctorate){
+      data = [
+        [1, "COMPROBANTE DE PAGO",""],
+        [2, "CERTIFICADO DE MAESTRIA",""],
+        [3, "TÍTULO DE MAESTRIA",""],
+        [4, "CÉDULA DE MAESTRIA",""],
+        [5, "ACTA DE EXAMEN DE MAESTRIA",""],
+        [6, "CURP",""],
+        [7, "ACTA DE NACIMIENTO",""],
+        [8, "ANÁLISIS CLÍNICOS",""],
+        [9, "FOTOGRAFÍA",""],
+        [10, "NÚMERO DE SEGURO SOCIAL",""],
+        [11, "CARTA COMPROMISO CERTIFICADO DE MAESTRIA",""] ,
+        [12, "CARTA COMPROMISO TÍTULO DE MAESTRIA",""] ,
+        [13, "CARTA COMPROMISO CÉDULA DE MAESTRIA",""] ,
+        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE MAESTRIA",""] 
+      ];
 
-    // docComprobante
-    if(this.docComprobante != ''){
-      doc.setTextColor(0,0,0);
-      doc.setFillColor(255, 245, 204);
-      doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('ENVIADO', 161, 72.25);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 72.25);
+      doc.autoTable(columns,data,{ 
+        headStyles: {fillColor: [20, 43, 88]},
+        margin:{ top: 60 }
+      });
+  
+      // COMPROBANTE DE PAGO
+      if(this.docComprobante != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 72.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 72.25);
+      }
+  
+      // CERTIFICADO MAESTRIA
+      if(this.certificateMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 79.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 79.85);
+      }
+  
+      // TITULO MAESTRIA 
+      if(this.titledMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 87.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 87.45);
+      }
+  
+      // CEDULA MAESTRIA
+      if(this.cedulaMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 95.05);  
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 95.05);
+      }
+  
+      // ACTA DE EXAMEN MAESTRIA
+      if(this.examActMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);   
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 102.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 102.65);
+      }
+  
+      // CURP
+      if(this.docCurp != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 110.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 110.25);
+      }
+  
+      // ACTA NACIMIENTO
+      if(this.docActa != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 117.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 117.85);
+      }   
+  
+      // ANALISIS CLINICOS
+      if(this.docAnalisis != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD'); // +7.6
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 125.45); // + 7.6
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 125.45);
+      }   
+
+      // FOTOGRAFIA
+      if(this.docFoto != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 128.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 133.05);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 128.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 133.05);
+      }   
+
+      // NSS
+      if(this.docNss != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 136.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 140.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 136.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 140.65);
+      }   
+
+      // CC CERTIFICADO DE MAESTRIA
+      if(this.cccertificateMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 143.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 148.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 143.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 148.25);
+      }   
+
+      // CC TITULO DE MAESTRIA
+      if(this.cctitledMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 151.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 155.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 151.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 155.85);
+      }  
+
+      // CC CEDULA DE MAESTRIA
+      if(this.cccedulaMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 159, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 163.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 159, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 163.45);
+      }  
+
+      // CC ACTA EXAMEN DE MAESTRIA
+      if(this.ccexamActMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 166.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 171.05);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 166.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 171.05);
+      }  
+
     }
 
-    // docCertificado
-    if(this.docCertificado != ''){
-      doc.setTextColor(0,0,0);
-      doc.setFillColor(255, 245, 204);
-      doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('ENVIADO', 161, 79.85);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 79.85);
+    if(this.mastersDegree){
+      data = [
+        [1, "COMPROBANTE DE PAGO",""],
+        [2, "CERTIFICADO DE LICENCIATURA",""],
+        [3, "TÍTULO DE LICENCIATURA",""],
+        [4, "CÉDULA DE LICENCIATURA",""],
+        [5, "ACTA DE EXAMEN DE LICENCIATURA",""],
+        [6, "CURP",""],
+        [7, "ACTA DE NACIMIENTO",""],
+        [8, "ANÁLISIS CLÍNICOS",""],
+        [9, "FOTOGRAFÍA",""],
+        [10, "NÚMERO DE SEGURO SOCIAL",""],
+        [11, "CARTA COMPROMISO CERTIFICADO DE LICENCIATURA",""] ,
+        [12, "CARTA COMPROMISO TÍTULO DE LICENCIATURA",""] ,
+        [13, "CARTA COMPROMISO CÉDULA DE LICENCIATURA",""] ,
+        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE LICENCIATURA",""] 
+      ];
+
+      doc.autoTable(columns,data,{ 
+        headStyles: {fillColor: [20, 43, 88]},
+        margin:{ top: 60 }
+      });
+  
+      // COMPROBANTE DE PAGO
+      if(this.docComprobante != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 72.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 72.25);
+      }
+  
+      // CERTIFICADO LICENCIATURA
+      if(this.certificateLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 79.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 79.85);
+      }
+  
+      // TITULO LICENCIATURA 
+      if(this.titledLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 87.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 87.45);
+      }
+  
+      // CEDULA LICENCIATURA
+      if(this.cedulaLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 95.05);  
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 95.05);
+      }
+  
+      // ACTA DE EXAMEN LICENCIATURA
+      if(this.examActLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);   
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 102.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 102.65);
+      }
+  
+      // CURP
+      if(this.docCurp != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 110.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 110.25);
+      }
+  
+      // ACTA NACIMIENTO
+      if(this.docActa != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 117.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 117.85);
+      }   
+  
+      // ANALISIS CLINICOS
+      if(this.docAnalisis != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD'); // +7.6
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 125.45); // + 7.6
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 125.45);
+      }   
+
+      // FOTOGRAFIA
+      if(this.docFoto != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 128.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 133.05);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 128.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 133.05);
+      }   
+
+      // NSS
+      if(this.docNss != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 136.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 140.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 136.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 140.65);
+      }   
+
+      // CC CERTIFICADO DE LICENCIATURA
+      if(this.cccertificateLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 143.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 148.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 143.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 148.25);
+      }   
+
+      // CC TITULO DE LICENCIATURA
+      if(this.cctitledLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 151.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 155.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 151.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 155.85);
+      }  
+
+      // CC CEDULA DE LICENCIATURA
+      if(this.cccedulaLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 159, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 163.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 159, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 163.45);
+      }  
+
+      // CC ACTA EXAMEN DE LICENCIATURA
+      if(this.ccexamActLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 166.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 171.05);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 166.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 171.05);
+      }  
+
     }
+    if(!this.doctorate && !this.mastersDegree){
+      data = [
+        [1, "COMPROBANTE DE PAGO",""],
+        [2, "CERTIFICADO DE ESTUDIOS",""],
+        [3, "CURP",""],
+        [4, "ACTA DE NACIMIENTO",""],
+        [5, "ANÁLISIS CLÍNICOS",""],
+        [6, "FOTOGRAFÍA",""],
+        [7, "NÚMERO DE SEGURO SOCIAL",""],
+        [8, "CARTA COMPROMISO",""] 
+      ];
 
-    // docCurp 
-    if(this.docCurp != ''){
-      doc.setTextColor(0,0,0);
-      doc.setFillColor(255, 245, 204);
-      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('ENVIADO', 161, 87.45);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 87.45);
+      doc.autoTable(columns,data,{ 
+        headStyles: {fillColor: [20, 43, 88]},
+        margin:{ top: 60 }
+      });
+  
+      // docComprobante
+      if(this.docComprobante != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 72.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 72.25);
+      }
+  
+      // docCertificado
+      if(this.docCertificado != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 79.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 79.85);
+      }
+  
+      // docCurp 
+      if(this.docCurp != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 87.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 87.45);
+      }
+  
+      // docActa
+      if(this.docActa != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 95.05);  
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 95.05);
+      }
+  
+      // docAnalisis
+      if(this.docAnalisis != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);   
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 102.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 102.65);
+      }
+  
+      // docFoto
+      if(this.docFoto != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 110.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 110.25);
+      }
+  
+      // docNss
+      if(this.docNss != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 117.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 117.85);
+      }   
+  
+      // docCompromiso
+      if(this.docCompromiso != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 125.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 125.45);
+      }   
     }
-
-    // docActa
-    if(this.docActa != ''){
-      doc.setTextColor(0,0,0);
-      doc.setFillColor(255, 245, 204);
-      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('ENVIADO', 161, 95.05);  
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 95.05);
-    }
-
-    // docAnalisis
-    if(this.docAnalisis != ''){
-      doc.setTextColor(0,0,0);
-      doc.setFillColor(255, 245, 204);   
-      doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('ENVIADO', 161, 102.65);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 102.65);
-    }
-
-    // docFoto
-    if(this.docFoto != ''){
-      doc.setTextColor(0,0,0);
-      doc.setFillColor(255, 245, 204);
-      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('ENVIADO', 161, 110.25);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 110.25);
-    }
-
-    // docNss
-    if(this.docNss != ''){
-      doc.setTextColor(0,0,0);
-      doc.setFillColor(255, 245, 204);
-      doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('ENVIADO', 161, 117.85);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 117.85);
-    }   
-
-    // docCompromiso
-    if(this.docCompromiso != ''){
-      doc.setTextColor(0,0,0);
-      doc.setFillColor(255, 245, 204);
-      doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('ENVIADO', 161, 125.45);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 125.45);
-    }   
 
     this.loading = false; 
     window.open(doc.output('bloburl'), '_blank');

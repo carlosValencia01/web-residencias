@@ -48,6 +48,28 @@ export class ProfileInscriptionPageComponent implements OnInit {
   docAcuse;
   docCompromiso;
 
+  // Maestria
+  certificateLDoc;
+  titledLDoc;
+  cedulaLDoc;
+  examActLDoc;
+  // Maestria Cartas Comprimiso
+  cccertificateLDoc;
+  cctitledLDoc;
+  cccedulaLDoc;
+  ccexamActLDoc;
+
+  // Doctorado
+  certificateMDoc;
+  titledMDoc;
+  cedulaMDoc;
+  examActMDoc;
+  // Doctorado Cartas Compromiso
+  cccertificateMDoc;
+  cctitledMDoc;
+  cccedulaMDoc;
+  ccexamActMDoc;
+
   // Datos Alumno
   nombre: String;
   numeroControl: any;
@@ -86,6 +108,10 @@ export class ProfileInscriptionPageComponent implements OnInit {
   montserratNormal: any;
   montserratBold: any;
 
+  // Validar Tipo de Carrera (Maestria o Doctorado)
+  public mastersDegree = false;
+  public doctorate = false;
+
   folderId;
   selectedFile: File = null;
   imageChangedEvent: any = '';
@@ -106,6 +132,26 @@ export class ProfileInscriptionPageComponent implements OnInit {
    public config5: DropzoneConfigInterface;
    public config6: DropzoneConfigInterface;
    public config7: DropzoneConfigInterface;
+
+  // MAESTRIA
+  public config8: DropzoneConfigInterface;
+  public config9: DropzoneConfigInterface;
+  public config10: DropzoneConfigInterface;
+  public config11: DropzoneConfigInterface;
+  public config12: DropzoneConfigInterface;
+  public config13: DropzoneConfigInterface;
+  public config14: DropzoneConfigInterface;
+  public config15: DropzoneConfigInterface;
+
+  // DOCTORADO
+  public config16: DropzoneConfigInterface;
+  public config17: DropzoneConfigInterface;
+  public config18: DropzoneConfigInterface;
+  public config19: DropzoneConfigInterface;
+  public config20: DropzoneConfigInterface;
+  public config21: DropzoneConfigInterface;
+  public config22: DropzoneConfigInterface;
+  public config23: DropzoneConfigInterface;
 
   constructor( 
     private inscriptionsProv: InscriptionsProvider,
@@ -143,6 +189,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
   getIdStudent() {
     this.data = this.cookiesServ.getData().user;
     this._idStudent = this.data._id;
+    this.doctorate = (this.data.career === 'DCA') ? true : false;
+    this.mastersDegree = (this.data.career === 'MCA' || this.data.career === 'MTI') ? true : false;
   }
 
   getStudentData(id) {
@@ -213,48 +261,79 @@ export class ProfileInscriptionPageComponent implements OnInit {
     this.studentProv.getDriveDocuments(this._idStudent.toString()).subscribe(
       files=>{
         let documents = files.documents;
-        
-        this.docCurp = documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] : '';
-       
-        this.docNss = documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] : '';
-       
-        this.docFoto = documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-        
-        this.docComprobante = documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
-        
-        this.docCertificado = documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
-        
-        this.docActa = documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
-       
-        this.docAnalisis = documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
 
-        this.docSolicitud = documents.filter( docc => docc.filename.indexOf('SOLICITUD') !== -1)[0];
+        this.docSolicitud = documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] : '';
+        this.docContrato = documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] : '';
+        
+        this.docCurp = documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] : '';
+        this.docNss = documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] : '';
+        this.docFoto = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] ? documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+        this.docComprobante = documents.filter(docc => docc.filename == this.data.email+'-COMPROBANTE.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROBANTE.pdf')[0] : '';
+        this.docCertificado = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO.pdf')[0] : '';
+        this.docActa = documents.filter(docc => docc.filename == this.data.email+'-ACTA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-ACTA.pdf')[0] : '';
+        this.docAnalisis = documents.filter(docc => docc.filename == this.data.email+'-CLINICOS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CLINICOS.pdf')[0] : '';
+        this.docCompromiso = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO.pdf')[0] : '';
+        //MESTRIA
+        this.certificateLDoc = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_LICENCIATURA.pdf')[0] : '';
+        this.titledLDoc = documents.filter(docc => docc.filename == this.data.email+'-TITULO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-TITULO_LICENCIATURA.pdf')[0] : '';
+        this.cedulaLDoc = documents.filter(docc => docc.filename == this.data.email+'-CEDULA_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CEDULA_LICENCIATURA.pdf')[0] : '';
+        this.examActLDoc = documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_LICENCIATURA.pdf')[0] : '';
+        this.cccertificateLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf')[0] : '';;
+        this.cctitledLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf')[0] : '';
+        this.cccedulaLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf')[0] : '';
+        this.ccexamActLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf')[0] : '';
 
-        this.docContrato = documents.filter( docc => docc.filename.indexOf('CONTRATO') !== -1)[0];
-
-        this.docCompromiso = documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] ? documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] : '';
+        //DOCTORADO
+        this.certificateMDoc = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_MAESTRIA.pdf')[0] : '';
+        this.titledMDoc = documents.filter(docc => docc.filename == this.data.email+'-TITULO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-TITULO_MAESTRIA.pdf')[0] : '';
+        this.cedulaMDoc = documents.filter(docc => docc.filename == this.data.email+'-CEDULA_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CEDULA_MAESTRIA.pdf')[0] : '';
+        this.examActMDoc = documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_MAESTRIA.pdf')[0] : '';
+        this.cccertificateMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf')[0] : '';
+        this.cctitledMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf')[0] : '';
+        this.cccedulaMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf')[0] : '';
+        this.ccexamActMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf')[0] : '';
 
         this.checkFolders();
 
-        if(this.docFoto) this.docFoto.status = this.docFoto ? this.docFoto.status.filter( st=> st.active===true)[0] : '';
+        if (this.docFoto) this.docFoto.status = this.docFoto ? this.docFoto.status.filter(st => st.active === true)[0] : '';
 
-        if(this.docCurp)this.docCurp.status = this.docCurp ? this.docCurp.status.filter( st=> st.active===true)[0] : '';
-        
-        if(this.docActa)this.docActa.status = this.docActa ? this.docActa.status.filter( st=> st.active===true)[0] : '';
+        if (this.docCurp) this.docCurp.status = this.docCurp ? this.docCurp.status.filter(st => st.active === true)[0] : '';
 
-        if(this.docAnalisis)this.docAnalisis.status = this.docAnalisis ? this.docAnalisis.status.filter( st=> st.active===true)[0] : '';
+        if (this.docActa) this.docActa.status = this.docActa ? this.docActa.status.filter(st => st.active === true)[0] : '';
 
-        if(this.docCertificado) this.docCertificado.status = this.docCertificado ? this.docCertificado.status.filter( st=> st.active===true)[0] : '';
+        if (this.docAnalisis) this.docAnalisis.status = this.docAnalisis ? this.docAnalisis.status.filter(st => st.active === true)[0] : '';
 
-        if(this.docComprobante) this.docComprobante.status = this.docComprobante ? this.docComprobante.status.filter( st=> st.active===true)[0] : '';
+        if (this.docCertificado) this.docCertificado.status = this.docCertificado ? this.docCertificado.status.filter(st => st.active === true)[0] : '';
 
-        if(this.docNss) this.docNss.status = this.docNss ? this.docNss.status.filter( st=> st.active===true)[0] : '';
+        if (this.docComprobante) this.docComprobante.status = this.docComprobante ? this.docComprobante.status.filter(st => st.active === true)[0] : '';
+
+        if (this.docNss) this.docNss.status = this.docNss ? this.docNss.status.filter(st => st.active === true)[0] : '';
+
+        if (this.docCompromiso) this.docCompromiso.status = this.docCompromiso ? this.docCompromiso.status.filter(st => st.active === true)[0] : '';
 
         if(this.docSolicitud) this.docSolicitud.status = this.docSolicitud ? this.docSolicitud.status.filter( st=> st.active===true)[0] : '';
 
         if(this.docContrato) this.docContrato.status = this.docContrato ? this.docContrato.status.filter( st=> st.active===true)[0] : '';
 
-        if(this.docCompromiso)this.docCompromiso.status = this.docCompromiso ? this.docCompromiso.status.filter( st=> st.active===true)[0] : '';
+        // MAESTRIA
+        if (this.certificateLDoc) this.certificateLDoc.status = this.certificateLDoc ? this.certificateLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.titledLDoc) this.titledLDoc.status = this.titledLDoc ? this.titledLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cedulaLDoc) this.cedulaLDoc.status = this.cedulaLDoc ? this.cedulaLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.examActLDoc) this.examActLDoc.status = this.examActLDoc ? this.examActLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cccertificateLDoc) this.cccertificateLDoc.status = this.cccertificateLDoc ? this.cccertificateLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cctitledLDoc) this.cctitledLDoc.status = this.cctitledLDoc ? this.cctitledLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cccedulaLDoc) this.cccedulaLDoc.status = this.cccedulaLDoc ? this.cccedulaLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.ccexamActLDoc) this.ccexamActLDoc.status = this.ccexamActLDoc ? this.ccexamActLDoc.status.filter(st => st.active === true)[0] : '';
+        
+        // DOCTORADO
+        if (this.certificateMDoc) this.certificateMDoc.status = this.certificateMDoc ? this.certificateMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.titledMDoc) this.titledMDoc.status = this.titledMDoc ? this.titledMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cedulaMDoc) this.cedulaMDoc.status = this.cedulaMDoc ? this.cedulaMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.examActMDoc) this.examActMDoc.status = this.examActMDoc ? this.examActMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cccertificateMDoc) this.cccertificateMDoc.status = this.cccertificateMDoc ? this.cccertificateMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cctitledMDoc) this.cctitledMDoc.status = this.cctitledMDoc ? this.cctitledMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cccedulaMDoc) this.cccedulaMDoc.status = this.cccedulaMDoc ? this.cccedulaMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.ccexamActMDoc) this.ccexamActMDoc.status = this.ccexamActMDoc ? this.ccexamActMDoc.status.filter(st => st.active === true)[0] : '';
 
 
         this.showImg=false;
@@ -267,17 +346,6 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
     );    
 
-
-    
-   
-    // setTimeout(() => {this.findFoto()}, 3000);
-
-  }
-
-  filterDocuments(filename) {
-    return this.studentData.documents.filter(function (alumno) {
-      return alumno.filename.toLowerCase().indexOf(filename.toLowerCase()) > -1;
-    });
   }
 
   onView(file) {
@@ -302,8 +370,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
+            'Inscripción App', error);
         });
+
         break;
       }
       case "CURP": {
@@ -326,7 +395,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
+            'Inscripción App', error);
         });
         break;
       }
@@ -350,7 +419,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
+            'Inscripción App', error);
         });
         break;
       }
@@ -374,7 +443,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
+            'Inscripción App', error);
         });
         break;
       }
@@ -398,7 +467,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
+            'Inscripción App', error);
         });
         break;
       }
@@ -422,32 +491,452 @@ export class ProfileInscriptionPageComponent implements OnInit {
           this.loading = false; 
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
+            'Inscripción App', error);
         });
         break;
       }
-      case "Foto": {
-        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Fotografía.', '');
+      case "Compromiso": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Carta Compromiso.', '');
         this.loading = true; 
-        this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(data => {
-            let pub = data.file;
-            let image = 'data:image/png;base64,' +pub;
-            pub = true;
-            Swal.fire({
-              imageUrl: image,
-              imageWidth: 200,
-              imageHeight: 200,
-              imageAlt: 'Custom image',
-              confirmButtonText: 'Aceptar'
-            });
-            this.loading = false; 
-          },
-          error => {
-            this.notificationService.showNotification(eNotificationType.ERROR,'', error);
-          }
-        )
+        this.inscriptionsProv.getFile(this.docCompromiso.fileIdInDrive, this.docCompromiso.filename).subscribe(data => {
+          var pubCC = data.file;
+          let buffCC = new Buffer(pubCC.data);
+          var pdfSrcCC = buffCC;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrcCC,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
         break;
       }
+      // MAESTRIA
+      case "Certificado_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.certificateLDoc.fileIdInDrive, this.certificateLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Titulo_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Titulo Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.titledLDoc.fileIdInDrive, this.titledLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cedula_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Cedula Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cedulaLDoc.fileIdInDrive, this.cedulaLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Examen_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta Examen Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.examActLDoc.fileIdInDrive, this.examActLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Certificado_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Certificado Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cccertificateLDoc.fileIdInDrive, this.cccertificateLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Titulo_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Titulo Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cctitledLDoc.fileIdInDrive, this.cctitledLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Cedula_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Cedula Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cccedulaLDoc.fileIdInDrive, this.cccedulaLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Examen_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Acta Examen Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.ccexamActLDoc.fileIdInDrive, this.ccexamActLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      // DOCTORADO
+      case "Certificado_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.certificateMDoc.fileIdInDrive, this.certificateMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Titulo_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Titulo Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.titledMDoc.fileIdInDrive, this.titledMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cedula_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Cedula Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cedulaMDoc.fileIdInDrive, this.cedulaMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Examen_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta Examen Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.examActMDoc.fileIdInDrive, this.examActMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Certificado_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Certificado Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cccertificateMDoc.fileIdInDrive, this.cccertificateMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Titulo_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Titulo Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cctitledMDoc.fileIdInDrive, this.cctitledMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Cedula_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Cedula Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cccedulaMDoc.fileIdInDrive, this.cccedulaMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Examen_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Acta Examen Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.ccexamActMDoc.fileIdInDrive, this.ccexamActMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
       case "Solicitud": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Solicitud.', '');
         this.loading = true; 
@@ -463,6 +952,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         });
         break;
       }
+
       case "Contrato": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Contrato.', '');
         this.loading = true; 
@@ -483,63 +973,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         this.generatePDFAcuse();
         break;
       }
-      case "Compromiso": {
-        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Carta Compromiso.', '');
-        this.loading = true; 
-        this.inscriptionsProv.getFile(this.docCompromiso.fileIdInDrive, this.docCompromiso.filename).subscribe(data => {
-          var pubCompromiso = data.file;
-          let buffCompromiso = new Buffer(pubCompromiso.data);
-          var pdfSrcCompromiso = buffCompromiso;
-          this.dialog.open(ExtendViewerComponent, {
-            data: {
-              source: pdfSrcCompromiso,
-              isBase64: true
-            },
-            disableClose: true,
-            hasBackdrop: true,
-            width: '60em',
-            height: '600px'
-          });
-          this.loading = false; 
-        }, error => {
-          this.notificationService.showNotification(eNotificationType.ERROR,
-            '', error);
-        });
-        break;
-      }
-    }
-  }
 
-  updateDocument(file) {
-    switch (file) {
-      case "Acta": {
-        this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','ACTA');
-        break;
-      }
-      case "CURP": {
-        this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','CURP');
-        break;
-      }
-      case "NSS": {
-        this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','NSS');
-        break;
-      }
-      case "Certificado": {
-        this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','CERTIFICADO');
-        break;
-      }
-      case "Analisis": {
-        this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','ANÁLISIS');
-        break;
-      }
-      case "Comprobante": {
-        this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','COMPROBANTE');
-        break;
-      }
-      case "Foto": {
-        this.notificationService.showNotification(eNotificationType.INFORMATION,'MODIFICAR','FOTO');
-        break;
-      }
     }
   }
 
@@ -565,7 +999,6 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
 
   generatePDFAcuse() {
-    this.loading = true; 
     const doc = new jsPDF();
 
     // @ts-ignore
@@ -607,274 +1040,691 @@ export class ProfileInscriptionPageComponent implements OnInit {
     doc.setFontSize(10);
     doc.text(this.studentData.controlNumber,177,55,'left');
 
-    doc.line((pageWidth / 2)-35, 150, (pageWidth / 2)+35, 150);
+    doc.line((pageWidth / 2)-35, 250, (pageWidth / 2)+35, 250);
     doc.setFont('Montserrat', 'Bold');
     doc.setFontSize(10);
-    doc.text("Firma del Estudiante", pageWidth / 2, 160, 'center');
+    doc.text("Firma del Estudiante", pageWidth / 2, 260, 'center');
 
     var columns = ["No", "Documento", "Estatus"];
-    var data = [
-      [1, "COMPROBANTE DE PAGO",""],
-      [2, "CERTIFICADO DE ESTUDIOS",""],
-      [3, "CURP",""],
-      [4, "ACTA DE NACIMIENTO",""],
-      [5, "ANÁLISIS CLÍNICOS",""],
-      [6, "FOTOGRAFÍA",""] ,
-      [7, "NÚMERO DE SEGURO SOCIAL",""],
-      [8, "CARTA COMPROMISO",""]
-    ];
 
-    doc.autoTable(columns,data,{ 
-      headStyles: {fillColor: [20, 43, 88]},
-      margin:{ top: 60 }
-    });
+    var data = [];
+    if(this.doctorate){
+      data = [
+        [1, "COMPROBANTE DE PAGO",""],
+        [2, "CERTIFICADO DE MAESTRIA",""],
+        [3, "TÍTULO DE MAESTRIA",""],
+        [4, "CÉDULA DE MAESTRIA",""],
+        [5, "ACTA DE EXAMEN DE MAESTRIA",""],
+        [6, "CURP",""],
+        [7, "ACTA DE NACIMIENTO",""],
+        [8, "ANÁLISIS CLÍNICOS",""],
+        [9, "FOTOGRAFÍA",""],
+        [10, "NÚMERO DE SEGURO SOCIAL",""],
+        [11, "CARTA COMPROMISO CERTIFICADO DE MAESTRIA",""] ,
+        [12, "CARTA COMPROMISO TÍTULO DE MAESTRIA",""] ,
+        [13, "CARTA COMPROMISO CÉDULA DE MAESTRIA",""] ,
+        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE MAESTRIA",""] 
+      ];
 
-    // docComprobante
-    if(this.docComprobante != ''){
-      if(this.docComprobante.status.name == 'EN PROCESO'){
+      doc.autoTable(columns,data,{ 
+        headStyles: {fillColor: [20, 43, 88]},
+        margin:{ top: 60 }
+      });
+  
+      // COMPROBANTE DE PAGO
+      if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
-      }
-      if(this.docComprobante.status.name == 'RECHAZADO'){
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 72.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 72.25);
       }
-      if(this.docComprobante.status.name == 'VALIDADO'){
+  
+      // CERTIFICADO MAESTRIA
+      if(this.certificateMDoc != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 79.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 79.85);
       }
-      if(this.docComprobante.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
+  
+      // TITULO MAESTRIA 
+      if(this.titledMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 87.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 87.45);
       }
-      doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docComprobante.status.name, 161, 72.25);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 72.25);
+  
+      // CEDULA MAESTRIA
+      if(this.cedulaMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 95.05);  
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 95.05);
+      }
+  
+      // ACTA DE EXAMEN MAESTRIA
+      if(this.examActMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);   
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 102.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 102.65);
+      }
+  
+      // CURP
+      if(this.docCurp != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 110.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 110.25);
+      }
+  
+      // ACTA NACIMIENTO
+      if(this.docActa != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 117.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 117.85);
+      }   
+  
+      // ANALISIS CLINICOS
+      if(this.docAnalisis != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD'); // +7.6
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 125.45); // + 7.6
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 125.45);
+      }   
+
+      // FOTOGRAFIA
+      if(this.docFoto != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 128.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 133.05);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 128.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 133.05);
+      }   
+
+      // NSS
+      if(this.docNss != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 136.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 140.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 136.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 140.65);
+      }   
+
+      // CC CERTIFICADO DE MAESTRIA
+      if(this.cccertificateMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 143.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 148.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 143.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 148.25);
+      }   
+
+      // CC TITULO DE MAESTRIA
+      if(this.cctitledMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 151.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 155.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 151.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 155.85);
+      }  
+
+      // CC CEDULA DE MAESTRIA
+      if(this.cccedulaMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 159, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 163.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 159, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 163.45);
+      }  
+
+      // CC ACTA EXAMEN DE MAESTRIA
+      if(this.ccexamActMDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 166.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 171.05);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 166.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 171.05);
+      }  
+
     }
 
-    // docCertificado
-    if(this.docCertificado != ''){
-      if(this.docCertificado.status.name == 'EN PROCESO'){
+    if(this.mastersDegree){
+      data = [
+        [1, "COMPROBANTE DE PAGO",""],
+        [2, "CERTIFICADO DE LICENCIATURA",""],
+        [3, "TÍTULO DE LICENCIATURA",""],
+        [4, "CÉDULA DE LICENCIATURA",""],
+        [5, "ACTA DE EXAMEN DE LICENCIATURA",""],
+        [6, "CURP",""],
+        [7, "ACTA DE NACIMIENTO",""],
+        [8, "ANÁLISIS CLÍNICOS",""],
+        [9, "FOTOGRAFÍA",""],
+        [10, "NÚMERO DE SEGURO SOCIAL",""],
+        [11, "CARTA COMPROMISO CERTIFICADO DE LICENCIATURA",""] ,
+        [12, "CARTA COMPROMISO TÍTULO DE LICENCIATURA",""] ,
+        [13, "CARTA COMPROMISO CÉDULA DE LICENCIATURA",""] ,
+        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE LICENCIATURA",""] 
+      ];
+
+      doc.autoTable(columns,data,{ 
+        headStyles: {fillColor: [20, 43, 88]},
+        margin:{ top: 60 }
+      });
+  
+      // COMPROBANTE DE PAGO
+      if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
-      }
-      if(this.docCertificado.status.name == 'RECHAZADO'){
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 72.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 72.25);
       }
-      if(this.docCertificado.status.name == 'VALIDADO'){
+  
+      // CERTIFICADO LICENCIATURA
+      if(this.certificateLDoc != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 79.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 79.85);
       }
-      if(this.docCertificado.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
+  
+      // TITULO LICENCIATURA 
+      if(this.titledLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 87.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 87.45);
       }
-      doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docCertificado.status.name, 161, 79.85);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 79.85);
+  
+      // CEDULA LICENCIATURA
+      if(this.cedulaLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 95.05);  
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 95.05);
+      }
+  
+      // ACTA DE EXAMEN LICENCIATURA
+      if(this.examActLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);   
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 102.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 102.65);
+      }
+  
+      // CURP
+      if(this.docCurp != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 110.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 110.25);
+      }
+  
+      // ACTA NACIMIENTO
+      if(this.docActa != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 117.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 117.85);
+      }   
+  
+      // ANALISIS CLINICOS
+      if(this.docAnalisis != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD'); // +7.6
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 125.45); // + 7.6
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 125.45);
+      }   
+
+      // FOTOGRAFIA
+      if(this.docFoto != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 128.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 133.05);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 128.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 133.05);
+      }   
+
+      // NSS
+      if(this.docNss != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 136.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 140.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 136.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 140.65);
+      }   
+
+      // CC CERTIFICADO DE LICENCIATURA
+      if(this.cccertificateLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 143.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 148.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 143.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 148.25);
+      }   
+
+      // CC TITULO DE LICENCIATURA
+      if(this.cctitledLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 151.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 155.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 151.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 155.85);
+      }  
+
+      // CC CEDULA DE LICENCIATURA
+      if(this.cccedulaLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 159, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 163.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 159, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 163.45);
+      }  
+
+      // CC ACTA EXAMEN DE LICENCIATURA
+      if(this.ccexamActLDoc != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 166.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 171.05);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 166.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 171.05);
+      }  
+
     }
+    if(!this.doctorate && !this.mastersDegree){
+      data = [
+        [1, "COMPROBANTE DE PAGO",""],
+        [2, "CERTIFICADO DE ESTUDIOS",""],
+        [3, "CURP",""],
+        [4, "ACTA DE NACIMIENTO",""],
+        [5, "ANÁLISIS CLÍNICOS",""],
+        [6, "FOTOGRAFÍA",""],
+        [7, "NÚMERO DE SEGURO SOCIAL",""],
+        [8, "CARTA COMPROMISO",""] 
+      ];
 
-    // docCurp 
-    if(this.docCurp != ''){
-      if(this.docCurp.status.name == 'EN PROCESO'){
+      doc.autoTable(columns,data,{ 
+        headStyles: {fillColor: [20, 43, 88]},
+        margin:{ top: 60 }
+      });
+  
+      // docComprobante
+      if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
-      }
-      if(this.docCurp.status.name == 'RECHAZADO'){
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 72.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
+        doc.roundedRect(155, 67.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 72.25);
       }
-      if(this.docCurp.status.name == 'VALIDADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docCurp.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docCurp.status.name, 161, 87.45);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 87.45);
-    }
-
-    // docActa
-    if(this.docActa != ''){
-      if(this.docActa.status.name == 'EN PROCESO'){
+  
+      // docCertificado
+      if(this.docCertificado != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
-      }
-      if(this.docActa.status.name == 'RECHAZADO'){
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 79.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
+        doc.roundedRect(155, 75.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 79.85);
       }
-      if(this.docActa.status.name == 'VALIDADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docActa.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docActa.status.name, 161, 95.05);  
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 95.05);
-    }
-
-    // docAnalisis
-    if(this.docAnalisis != ''){
-      if(this.docAnalisis.status.name == 'EN PROCESO'){
+  
+      // docCurp 
+      if(this.docCurp != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
-      }
-      if(this.docAnalisis.status.name == 'RECHAZADO'){
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 87.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
+        doc.roundedRect(155, 83, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 87.45);
       }
-      if(this.docAnalisis.status.name == 'VALIDADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docAnalisis.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docAnalisis.status.name, 161, 102.65);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 102.65);
-    }
-
-    // docFoto
-    if(this.docFoto != ''){
-      if(this.docFoto.status.name == 'EN PROCESO'){
+  
+      // docActa
+      if(this.docActa != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
-      }
-      if(this.docFoto.status.name == 'RECHAZADO'){
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 95.05);  
+      } else {
+        doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
+        doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 95.05);
       }
-      if(this.docFoto.status.name == 'VALIDADO'){
+  
+      // docAnalisis
+      if(this.docAnalisis != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docFoto.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docFoto.status.name, 161, 110.25);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 110.25);
-    }
-
-    // docNss
-    if(this.docNss != ''){
-      if(this.docNss.status.name == 'EN PROCESO'){
+        doc.setFillColor(255, 245, 204);   
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 102.65);
+      } else {
+        doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 102.65);
       }
-      if(this.docNss.status.name == 'RECHAZADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
-      }
-      if(this.docNss.status.name == 'VALIDADO'){
-        doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docNss.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docNss.status.name, 161, 117.85);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 117.85);
-    }   
-
-    // docCompromiso
-    if(this.docCompromiso != ''){
-      if(this.docCompromiso.status.name == 'EN PROCESO'){
+  
+      // docFoto
+      if(this.docFoto != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
-      }
-      if(this.docCompromiso.status.name == 'RECHAZADO'){
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 110.25);
+      } else {
+        doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
-        doc.setFillColor(251, 191, 193);
+        doc.roundedRect(155, 105.8, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 110.25);
       }
-      if(this.docCompromiso.status.name == 'VALIDADO'){
+  
+      // docNss
+      if(this.docNss != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(199, 247, 237);
-      }
-      if(this.docCompromiso.status.name == 'ACEPTADO'){
-        doc.setFillColor(17, 32, 71);
-        doc.setTextColor(255,255,255);
-      }
-      doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text(this.docCompromiso.status.name, 161, 125.45);
-    } else {
-      doc.setFillColor(255, 255, 255);
-      doc.setTextColor(0,0,0);
-      doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
-      doc.setFont('Montserrat', 'Bold');
-      doc.setFontSize(10);
-      doc.text('NO ENVIADO', 161, 125.45);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 117.85);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 113.4, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 117.85);
+      }   
+  
+      // docCompromiso
+      if(this.docCompromiso != ''){
+        doc.setTextColor(0,0,0);
+        doc.setFillColor(255, 245, 204);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('ENVIADO', 161, 125.45);
+      } else {
+        doc.setFillColor(255, 255, 255);
+        doc.setTextColor(0,0,0);
+        doc.roundedRect(155, 121, 35, 7, 1, 1, 'FD');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text('NO ENVIADO', 161, 125.45);
+      }   
     }
 
     this.loading = false; 
@@ -941,6 +1791,90 @@ export class ProfileInscriptionPageComponent implements OnInit {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO.pdf', 'mimeType': 'application/pdf', newF: this.docCompromiso ? false :true, fileId:this.docCompromiso ? this.docCompromiso.fileIdInDrive :''},
       acceptedFiles:'application/pdf',
+    };
+
+    // DROPZONE MAESTRIA
+    this.config8 = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.certificateLDoc ? false :true, fileId:this.certificateLDoc ? this.certificateLDoc.fileIdInDrive :''},
+      acceptedFiles:'application/pdf',
+    };
+    this.config9 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-TITULO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.titledLDoc ? false :true, fileId:this.titledLDoc ? this.titledLDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config10 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CEDULA_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cedulaLDoc ? false :true, fileId:this.cedulaLDoc ? this.cedulaLDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config11 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-EXAMEN_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.examActLDoc ? false :true, fileId:this.examActLDoc ? this.examActLDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config12 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cccertificateLDoc ? false :true, fileId:this.cccertificateLDoc ? this.cccertificateLDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config13 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cctitledLDoc ? false :true, fileId:this.cctitledLDoc ? this.cctitledLDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config14 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cccedulaLDoc ? false :true, fileId:this.cccedulaLDoc ? this.cccedulaLDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config15 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.ccexamActLDoc ? false :true, fileId:this.ccexamActLDoc ? this.ccexamActLDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+
+    // DROPZONE DOCTORADO
+    this.config16 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.certificateMDoc ? false :true, fileId:this.certificateMDoc ? this.certificateMDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config17 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-TITULO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.titledMDoc ? false :true, fileId:this.titledMDoc ? this.titledMDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config18 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CEDULA_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cedulaMDoc ? false :true, fileId:this.cedulaMDoc ? this.cedulaMDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config19 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-EXAMEN_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.examActMDoc ? false :true, fileId:this.examActMDoc ? this.examActMDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config20 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cccertificateMDoc ? false :true, fileId:this.cccertificateMDoc ? this.cccertificateMDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config21 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cctitledMDoc ? false :true, fileId:this.cctitledMDoc ? this.cctitledMDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config22 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cccedulaMDoc ? false :true, fileId:this.cccedulaMDoc ? this.cccedulaMDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
+    };
+    this.config23 = {
+      clickable: true, maxFiles: 2,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.ccexamActMDoc ? false :true, fileId:this.ccexamActMDoc ? this.ccexamActMDoc.fileIdInDrive :''},
+      acceptedFiles: 'application/pdf',    
     };
   }
   /*  DROPZONE 1 METHODS  */

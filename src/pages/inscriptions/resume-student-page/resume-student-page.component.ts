@@ -34,6 +34,28 @@ export class ResumeStudentPageComponent implements OnInit {
   docFoto;
   docCC;
 
+  // Maestria
+  certificateLDoc;
+  titledLDoc;
+  cedulaLDoc;
+  examActLDoc;
+  // Maestria Cartas Comprimiso
+  cccertificateLDoc;
+  cctitledLDoc;
+  cccedulaLDoc;
+  ccexamActLDoc;
+
+  // Doctorado
+  certificateMDoc;
+  titledMDoc;
+  cedulaMDoc;
+  examActMDoc;
+  // Doctorado Cartas Compromiso
+  cccertificateMDoc;
+  cctitledMDoc;
+  cccedulaMDoc;
+  ccexamActMDoc;
+
   // Datos Alumno
   nombre: String;
   numeroControl: any;
@@ -64,6 +86,11 @@ export class ResumeStudentPageComponent implements OnInit {
   carreraCursar: String;
 
 
+  // Validar Tipo de Carrera (Maestria o Doctorado)
+  public mastersDegree = false;
+  public doctorate = false;
+
+
   constructor(
     private inscriptionsProv: InscriptionsProvider,
     private notificationsServices: NotificationsServices,
@@ -82,6 +109,8 @@ export class ResumeStudentPageComponent implements OnInit {
   getIdStudent() {
     this.data = this.cookiesServ.getData().user;
     this._idStudent = this.data._id;
+    this.doctorate = (this.data.career === 'DCA') ? true : false;
+    this.mastersDegree = (this.data.career === 'MCA' || this.data.career === 'MTI') ? true : false;
   }
 
   getStudentData(id) {
@@ -159,14 +188,36 @@ export class ResumeStudentPageComponent implements OnInit {
   }
 
   async getIdDocuments() {
-    this.docActa = await this.filterDocuments('ACTA');
-    this.docCertificado = await this.filterDocuments('CERTIFICADO');
-    this.docAnalisis = await this.filterDocuments('CLINICOS');
-    this.docComprobante = await this.filterDocuments('COMPROBANTE');
-    this.docCurp = await this.filterDocuments('CURP');
-    this.docNss = await this.filterDocuments('NSS');
-    this.docFoto = await this.filterDocuments('FOTO');
-    this.docCC = await this.filterDocuments('COMPROMISO')
+    let documents = this.studentData.documents;
+
+    this.docCurp = documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] : '';
+    this.docNss = documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] : '';
+    this.docFoto = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] ? documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+    this.docComprobante = documents.filter(docc => docc.filename == this.data.email+'-COMPROBANTE.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROBANTE.pdf')[0] : '';
+    this.docCertificado = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO.pdf')[0] : '';
+    this.docActa = documents.filter(docc => docc.filename == this.data.email+'-ACTA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-ACTA.pdf')[0] : '';
+    this.docAnalisis = documents.filter(docc => docc.filename == this.data.email+'-CLINICOS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CLINICOS.pdf')[0] : '';
+    this.docCC = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO.pdf')[0] : '';
+
+    //MESTRIA
+    this.certificateLDoc = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_LICENCIATURA.pdf')[0] : '';
+    this.titledLDoc = documents.filter(docc => docc.filename == this.data.email+'-TITULO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-TITULO_LICENCIATURA.pdf')[0] : '';
+    this.cedulaLDoc = documents.filter(docc => docc.filename == this.data.email+'-CEDULA_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CEDULA_LICENCIATURA.pdf')[0] : '';
+    this.examActLDoc = documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_LICENCIATURA.pdf')[0] : '';
+    this.cccertificateLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf')[0] : '';;
+    this.cctitledLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf')[0] : '';
+    this.cccedulaLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf')[0] : '';
+    this.ccexamActLDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf')[0] : '';
+
+    //DOCTORADO
+    this.certificateMDoc = documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CERTIFICADO_MAESTRIA.pdf')[0] : '';
+    this.titledMDoc = documents.filter(docc => docc.filename == this.data.email+'-TITULO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-TITULO_MAESTRIA.pdf')[0] : '';
+    this.cedulaMDoc = documents.filter(docc => docc.filename == this.data.email+'-CEDULA_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CEDULA_MAESTRIA.pdf')[0] : '';
+    this.examActMDoc = documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-EXAMEN_MAESTRIA.pdf')[0] : '';
+    this.cccertificateMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf')[0] : '';
+    this.cctitledMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf')[0] : '';
+    this.cccedulaMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf')[0] : '';
+    this.ccexamActMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf')[0] : '';
 
     if(this.docFoto[0]){
       this.findFoto();
@@ -175,18 +226,12 @@ export class ResumeStudentPageComponent implements OnInit {
     }
   }
 
-  filterDocuments(filename) {
-    return this.studentData.documents.filter(function (alumno) {
-      return alumno.filename.toLowerCase().indexOf(filename.toLowerCase()) > -1;
-    });
-  }
-
   onView(file) {
     switch (file) {
       case "Acta": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta de Nacimiento.', '');
         this.loading = true; 
-        this.inscriptionsProv.getFile(this.docActa[0].fileIdInDrive, this.docActa[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docActa.fileIdInDrive, this.docActa.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -211,7 +256,7 @@ export class ResumeStudentPageComponent implements OnInit {
       case "CURP": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CURP.', '');
         this.loading = true; 
-        this.inscriptionsProv.getFile(this.docCurp[0].fileIdInDrive, this.docCurp[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docCurp.fileIdInDrive, this.docCurp.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
           var pdfSrc = buff;
@@ -235,7 +280,7 @@ export class ResumeStudentPageComponent implements OnInit {
       case "NSS": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando NSS.', '');
         this.loading = true; 
-        this.inscriptionsProv.getFile(this.docNss[0].fileIdInDrive, this.docNss[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docNss.fileIdInDrive, this.docNss.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -259,7 +304,7 @@ export class ResumeStudentPageComponent implements OnInit {
       case "Certificado": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado de Estudios.', '');
         this.loading = true; 
-        this.inscriptionsProv.getFile(this.docCertificado[0].fileIdInDrive, this.docCertificado[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docCertificado.fileIdInDrive, this.docCertificado.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -283,7 +328,7 @@ export class ResumeStudentPageComponent implements OnInit {
       case "Analisis": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Análisis Clínicos.', '');
         this.loading = true; 
-        this.inscriptionsProv.getFile(this.docAnalisis[0].fileIdInDrive, this.docAnalisis[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docAnalisis.fileIdInDrive, this.docAnalisis.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -307,7 +352,7 @@ export class ResumeStudentPageComponent implements OnInit {
       case "Comprobante": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Comprobante de Pago.', '');
         this.loading = true; 
-        this.inscriptionsProv.getFile(this.docComprobante[0].fileIdInDrive, this.docComprobante[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docComprobante.fileIdInDrive, this.docComprobante.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
           var pdfSrcCurp = buffCurp;
@@ -331,7 +376,7 @@ export class ResumeStudentPageComponent implements OnInit {
       case "Compromiso": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Carta Compromiso.', '');
         this.loading = true; 
-        this.inscriptionsProv.getFile(this.docCC[0].fileIdInDrive, this.docCC[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docCC.fileIdInDrive, this.docCC.filename).subscribe(data => {
           var pubCC = data.file;
           let buffCC = new Buffer(pubCC.data);
           var pdfSrcCC = buffCC;
@@ -352,6 +397,424 @@ export class ResumeStudentPageComponent implements OnInit {
         });
         break;
       }
+      // MAESTRIA
+      case "Certificado_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.certificateLDoc.fileIdInDrive, this.certificateLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Titulo_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Titulo Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.titledLDoc.fileIdInDrive, this.titledLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cedula_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Cedula Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cedulaLDoc.fileIdInDrive, this.cedulaLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Examen_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta Examen Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.examActLDoc.fileIdInDrive, this.examActLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Certificado_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Certificado Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cccertificateLDoc.fileIdInDrive, this.cccertificateLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Titulo_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Titulo Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cctitledLDoc.fileIdInDrive, this.cctitledLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Cedula_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Cedula Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cccedulaLDoc.fileIdInDrive, this.cccedulaLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Examen_Licenciatura": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Acta Examen Licenciatura.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.ccexamActLDoc.fileIdInDrive, this.ccexamActLDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      // DOCTORADO
+      case "Certificado_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.certificateMDoc.fileIdInDrive, this.certificateMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Titulo_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Titulo Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.titledMDoc.fileIdInDrive, this.titledMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cedula_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Cedula Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cedulaMDoc.fileIdInDrive, this.cedulaMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Examen_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta Examen Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.examActMDoc.fileIdInDrive, this.examActMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Certificado_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Certificado Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cccertificateMDoc.fileIdInDrive, this.cccertificateMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Titulo_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Titulo Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cctitledMDoc.fileIdInDrive, this.cctitledMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Cedula_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Cedula Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.cccedulaMDoc.fileIdInDrive, this.cccedulaMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
+      case "Cc_Examen_Maestria": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Acta Examen Maestria.', '');
+        this.loading = true; 
+        this.inscriptionsProv.getFile(this.ccexamActMDoc.fileIdInDrive, this.ccexamActMDoc.filename).subscribe(data => {
+          var pub = data.file;
+          let buff = new Buffer(pub.data);
+          var pdfSrc = buff;
+          this.dialog.open(ExtendViewerComponent, {
+            data: {
+              source: pdfSrc,
+              isBase64: true
+            },
+            disableClose: true,
+            hasBackdrop: true,
+            width: '60em',
+            height: '600px'
+          });
+          this.loading = false; 
+        }, error => {
+          this.notificationService.showNotification(eNotificationType.ERROR,
+            'Inscripción App', error);
+        });
+
+        break;
+      }
+
     }
   }
 

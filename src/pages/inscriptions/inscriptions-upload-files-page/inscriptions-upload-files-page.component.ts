@@ -231,11 +231,8 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   getIdStudent() {
     this.data = this.cookiesService.getData().user;
     this._idStudent = this.data._id;
-    console.log(this.data.career);
     this.doctorate = (this.data.career === 'DCA') ? true : false;
     this.mastersDegree = (this.data.career === 'MCA' || this.data.career === 'MTI') ? true : false;
-    console.log("Doctorado: "+this.doctorate);
-    console.log("Maestria: "+this.mastersDegree);
     this.inscriptionsProv.getStudent(this.data._id).subscribe(res => {
       var studentData = res.student[0];
       this.nombre = studentData.fullName ? studentData.fullName : '';
