@@ -197,4 +197,32 @@ export class StudentProvider {
     createFromSii(controlNumber: string) {
         return this.api.post(`student/create/sii/${controlNumber}`, {}, true).pipe(map(res => res.json()));
     }
+
+    studentsImssInsured() {
+        return this.api.get(`imss/insured`).pipe(map(res => res.json()));
+    }
+
+    studentsImssUninsured() {
+        return this.api.get(`imss/uninsured`).pipe(map(res => res.json()));
+    }
+
+    insuredStudent(controlNumber: string) {
+        const doc = {
+            registerDate: new Date(),
+            type: 'IMSS'
+        };
+        return this.api.put(`imss/insured/${controlNumber}`, doc)
+            .pipe(map(res => res.json()));
+    }
+
+    uninsuredStudent(controlNumber: string) {
+        return this.api.delete(`imss/uninsured/${controlNumber}`)
+            .pipe(map(res => res.json()));
+    }
+
+    insuredStudentsCsv(data: any) {
+        return this.api.put(`imss/insured/csv`, data).pipe(map(res => res.json()));
+    }
+
+    
 }

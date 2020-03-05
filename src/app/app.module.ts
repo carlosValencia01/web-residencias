@@ -112,6 +112,7 @@ import {
 } from 'src/pages/credentials/loader-data-credentials-page/loader-data-credentials-page.component';
 import { OneStudentPageComponent } from 'src/pages/credentials/one-student-page/one-student-page.component';
 import { StudentPageComponent } from 'src/pages/credentials/student-page/student-page.component';
+import { ImssPageComponent } from 'src/pages/credentials/imss-page/imss-page.component';
 
 // Inscriptions module
 // Pages
@@ -287,6 +288,7 @@ registerLocaleData(localeEs);
     LoaderDataCredentialsPageComponent,
     OneStudentPageComponent,
     StudentPageComponent,
+    ImssPageComponent,
 
     // Inscriptions module
     // Pages

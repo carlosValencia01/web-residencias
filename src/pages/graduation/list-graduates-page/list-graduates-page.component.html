@@ -359,12 +359,12 @@
                      <td>{{alumno.nc}} </td>
                      <td
                         *ngIf="alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA' && alumno.carreer != 'DCA'">
-                        <b>ING.</b> {{alumno.nameLastName}}</td>
-                     <td *ngIf="alumno.degree && alumno.carreer == 'LA'"><b>LIC.</b> {{alumno.nameLastName}}</td>
-                     <td *ngIf="alumno.degree && alumno.carreer == 'ARQ'"><b>ARQ.</b> {{alumno.nameLastName}}</td>
-                     <td *ngIf="alumno.degree && alumno.carreer == 'MCA'"><b>MCA.</b> {{alumno.nameLastName}}</td>
-                     <td *ngIf="alumno.degree && alumno.carreer == 'DCA'"><b>DCA.</b> {{alumno.nameLastName}}</td>
-                     <td *ngIf="!alumno.degree">{{alumno.nameLastName}}</td>
+                        <b>ING.</b> {{alumno.name}}</td>
+                     <td *ngIf="alumno.degree && alumno.carreer == 'LA'"><b>LIC.</b> {{alumno.name}}</td>
+                     <td *ngIf="alumno.degree && alumno.carreer == 'ARQ'"><b>ARQ.</b> {{alumno.name}}</td>
+                     <td *ngIf="alumno.degree && alumno.carreer == 'MCA'"><b>MCA.</b> {{alumno.name}}</td>
+                     <td *ngIf="alumno.degree && alumno.carreer == 'DCA'"><b>DCA.</b> {{alumno.name}}</td>
+                     <td *ngIf="!alumno.degree">{{alumno.name}}</td>
                      <td>{{alumno.carreer}}</td>
                      <td class="{{alumno.status}}">{{alumno.status}}</td>
                      <td>{{alumno.observations}}</td>
@@ -400,17 +400,17 @@
                      <td data-f-sz="12">{{alumno.nc}} </td>
                      <td data-f-sz="12"
                         *ngIf="alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA' && alumno.carreer != 'DCA'">
-                        <b>ING.</b> {{alumno.nameLastName}}</td>
+                        <b>ING.</b> {{alumno.name}}</td>
                      <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'LA'"><b>LIC.</b>
-                        {{alumno.nameLastName}}
+                        {{alumno.name}}
                      </td>
                      <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'ARQ'"><b>ARQ.</b>
-                        {{alumno.nameLastName}}</td>
+                        {{alumno.name}}</td>
                      <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'MCA'"><b>MCA.</b>
-                        {{alumno.nameLastName}}</td>
+                        {{alumno.name}}</td>
                      <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'DCA'"><b>DCA.</b>
-                        {{alumno.nameLastName}}</td>
-                     <td data-f-sz="12" *ngIf="!alumno.degree">{{alumno.nameLastName}}</td>
+                        {{alumno.name}}</td>
+                     <td data-f-sz="12" *ngIf="!alumno.degree">{{alumno.name}}</td>
                      <td data-f-sz="12">{{alumno.carreerComplete}}</td>
                      <td data-f-sz="12">{{alumno.email}}</td>
                      <td data-f-sz="12" *ngIf="alumno.degree">Si</td>
