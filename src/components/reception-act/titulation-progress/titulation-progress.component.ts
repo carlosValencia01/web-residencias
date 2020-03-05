@@ -658,9 +658,13 @@ export class TitulationProgressComponent implements OnInit {
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Reimprimiendo acta de examen');
     this.showLoading = true;
     const _request: iRequest = this.getRequestById(Identificador);
+    let acta = true;
+    if(_request.titulationOption.split('-')[0].trim() === 'XI'){
+      acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
+    }
     const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
     await this.delay(3000);
-    window.open(oRequest.testReport().output('bloburl'), '_blank');
+    window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
     this.showLoading = false;
   }
 
@@ -732,7 +736,7 @@ export class TitulationProgressComponent implements OnInit {
     }
   }
 
-  showAlert(message: string, buttons: { accept: string, cancel: string } = { accept: 'Aceptar', cancel: 'Cancelar' }) {
+  showAlert(message: string, buttons: { accept: string, cancel: string } = { accept: 'Aceptar', cancel: 'Cancelar' }):any {
     return new Promise((resolve) => {
       Swal.fire({
         title: message,
@@ -766,9 +770,13 @@ export class TitulationProgressComponent implements OnInit {
         this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Creando acta de examen');
         this.showLoading = true;
         const _request: iRequest = this.getRequestById(Identificador);
+        let acta = true;
+        if(_request.titulationOption.split('-')[0].trim() === 'XI'){
+          acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
+        }
         const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
         await this.delay(3000);
-        window.open(oRequest.testReport().output('bloburl'), '_blank');
+        window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
         this.showLoading = false;
       }
       this._NotificationsServices
