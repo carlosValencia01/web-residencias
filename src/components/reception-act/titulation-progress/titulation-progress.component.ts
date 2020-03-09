@@ -38,6 +38,7 @@ import Swal from 'sweetalert2';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
 
+
 @Component({
   selector: 'app-titulation-progress',
   templateUrl: './titulation-progress.component.html',
@@ -90,7 +91,7 @@ export class TitulationProgressComponent implements OnInit {
     public _RequestService: RequestService,
     private loadingBar: LoadingBarService,
     private firebaseService: FirebaseService,
-    private _bookProvider: BookProvider,
+    private _bookProvider: BookProvider    
   ) {
     this.careers = [];
     this.phases = [];
@@ -633,9 +634,15 @@ export class TitulationProgressComponent implements OnInit {
                       );
                     }
                     this.showLoading = false;
-                    this._NotificationsServices
-                      .showNotification(eNotificationType.SUCCESS,
-                        'Acto recepcional', 'Se actualizó la solicitud y el estatus en el SII');
+                    if(data.operation === eStatusRequest.ACCEPT){
+                      this._NotificationsServices
+                        .showNotification(eNotificationType.SUCCESS,
+                          'Acto recepcional', 'Se actualizó la solicitud y el estatus en el SII');
+                    }else{
+                        this._NotificationsServices
+                          .showNotification(eNotificationType.SUCCESS,
+                            'Acto recepcional', 'Se actualizó la solicitud');
+                    }
                     this.loadRequest();
                   }, error => {
                     this.showLoading = false;
@@ -659,12 +666,36 @@ export class TitulationProgressComponent implements OnInit {
     this.showLoading = true;
     const _request: iRequest = this.getRequestById(Identificador);
     let acta = true;
+    let juryGender = {president:'MASCULINO',secretary:'MASCULINO'};
+    let studentGender = 'M';
+    let careerPerBook = 1;    
+    // console.log(_request);
+    
+    const titleOption = _request.titulationOption.split('-')[1].trim();
+    await this._StudentProvider.getStudentById(_request.studentId).toPromise().then(
+      st=> {studentGender = st.student[0].sex;}
+    ).catch(err=>{});
+    await this._bookProvider.getActiveBookByCareer(_request.student.careerId._id,titleOption).toPromise().then(
+      (book)=>careerPerBook = book.careers.length
+    ).catch(err=>console.log(err)
+    );         
+    await this.requestProvider.getEmployeeGender(_request.jury[0].email ? _request.jury[0].email : _request.jury[0].name).toPromise().then(
+        (em)=>juryGender.president = em.gender           
+    ).catch( err=> juryGender.president = 'MASCULINO');
+    await this.requestProvider.getEmployeeGender(_request.jury[1].email ? _request.jury[1].email : _request.jury[1].name).toPromise().then(
+        (em)=>juryGender.secretary = em.gender           
+    ).catch( err=> juryGender.secretary = 'MASCULINO');
+
+    const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService,juryGender,studentGender,careerPerBook);
     if(_request.titulationOption.split('-')[0].trim() === 'XI'){
       acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
+      await this.delay(3000);
+      window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
+    }else{
+      await this.delay(3000);
+      window.open(oRequest.testReportForTitulationNotIntegral().output('bloburl'), '_blank');
     }
-    const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
-    await this.delay(3000);
-    window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
+    
     this.showLoading = false;
   }
 
@@ -771,12 +802,34 @@ export class TitulationProgressComponent implements OnInit {
         this.showLoading = true;
         const _request: iRequest = this.getRequestById(Identificador);
         let acta = true;
+        
+        let juryGender = {president:'MASCULINO',secretary:'MASCULINO'};
+        let studentGender = 'M';
+        let careerPerBook = 1;
+        const titleOption = _request.titulationOption.split('-')[1].trim();
+        await this._StudentProvider.getStudentById(_request.studentId).toPromise().then(
+          st=> studentGender = st.student[0].sex
+        ).catch(err=>{});
+        await this._bookProvider.getActiveBookByCareer(_request.student.careerId._id,titleOption).toPromise().then(
+          (book)=>careerPerBook = book.careers.length
+        ).catch(err=>console.log(err)
+        ); 
+        await this.requestProvider.getEmployeeGender(_request.jury[0].email ? _request.jury[0].email : _request.jury[0].name).toPromise().then(
+            (em)=>juryGender.president = em.gender           
+        ).catch( err=> juryGender.president = 'MASCULINO');
+        await this.requestProvider.getEmployeeGender(_request.jury[1].email ? _request.jury[1].email : _request.jury[1].name).toPromise().then(
+            (em)=>juryGender.secretary = em.gender           
+        ).catch( err=> juryGender.secretary = 'MASCULINO');
+
+        const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService,juryGender,studentGender,careerPerBook);
         if(_request.titulationOption.split('-')[0].trim() === 'XI'){
           acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
+          await this.delay(3000);
+          window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
+        }else{
+          await this.delay(3000);
+          window.open(oRequest.testReportForTitulationNotIntegral().output('bloburl'), '_blank');
         }
-        const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
-        await this.delay(3000);
-        window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
         this.showLoading = false;
       }
       this._NotificationsServices

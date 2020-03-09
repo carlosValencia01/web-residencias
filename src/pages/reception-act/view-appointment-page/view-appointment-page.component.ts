@@ -325,7 +325,7 @@ export class ViewAppointmentPageComponent implements OnInit {
           const maped = filtered.
             map((st) => ({
               date: moment(st.proposedDate).format('LL'),
-              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('LT'),
+              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH:mm'),
               student: st.student,
               place: st.place,
               jury: st.jury
@@ -337,12 +337,23 @@ export class ViewAppointmentPageComponent implements OnInit {
                   : index === 2
                   ? 'VOCAL ' + jr.name
                   : 'VOCAL SUPLENTE: ' + jr.name
-                ).join('\r\n')
+                ).join('\r\n'),
+                dateWithoutFormat: moment(st.proposedDate)
             }));
 
-          maped.forEach(maped => {
+          for(let i=0; i < maped.length; i++){
+            for(let j = 0; j < maped.length-i-1; j++){
+              let prev = maped[j].dateWithoutFormat;
+              let next = maped[j+1].dateWithoutFormat;
+              if(prev > next){
+                let tmp = maped[j];
+                maped[j] = maped[j+1];
+                maped[j+1] = tmp;
+              }
+            }
+          }
+          maped.forEach(maped=>{
             this.mapedStudents.push(maped);
-
           });
         }
 
