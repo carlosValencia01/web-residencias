@@ -83,10 +83,9 @@ export class ScheduleComponent implements OnInit {
       //  Para agregar los eventos de acuerdo a la hora y por carrera, se quita para tomar en cuenta todas los eventos
       // if (element._id.career[0] === this.career && this.request.proposedHour === element._id.minutes) 
       // if (this.request.proposedHour === element._id.minutes)
-      diary.push({ career: element._id.career[0], date: element._id.date, minutes: element._id.minutes, count: element.count });      
-      
-      // if (this.request.proposedHour === element._id.minutes) {
-      // }
+      if (this.request.proposedHour === element._id.minutes) {
+        diary.push({ career: element._id.career[0], date: element._id.date, minutes: element._id.minutes, count: element.count });
+      }
     });
     return diary;
   }
