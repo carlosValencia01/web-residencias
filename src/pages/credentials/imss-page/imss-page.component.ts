@@ -1,3 +1,4 @@
+import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComponentType } from '@angular/cdk/overlay';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
@@ -14,7 +15,6 @@ import { IStudent } from 'src/entities/shared/student.model';
 import { LoadCsvDataComponent } from 'src/modals/shared/load-csv-data/load-csv-data.component';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { StudentProvider } from 'src/providers/shared/student.prov';
-import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
 
 @Component({
@@ -27,13 +27,14 @@ export class ImssPageComponent implements OnInit {
   @ViewChild('matPaginatorInsured') paginatorInsured: MatPaginator;
   @ViewChild('matPaginatorUninsured') paginatorUninsured: MatPaginator;
   @ViewChild('fileUpload') fileUpload: ElementRef;
+  @ViewChild('fileImss') fileImss: ElementRef;
   public students: IStudent[] = [];
   public displayedColumnsInsured: string[];
   public displayedColumnsInsuredName: string[];
   public displayedColumnsUninsured: string[];
   public displayedColumnsUninsuredName: string[];
-  public dataSourceInsured: MatTableDataSource<IIMMSTable>;
-  public dataSourceUninsured: MatTableDataSource<IIMMSTable>;
+  public dataSourceInsured: MatTableDataSource<IIMSSTable>;
+  public dataSourceUninsured: MatTableDataSource<IIMSSTable>;
   public search: string;
   public selectedTab: FormControl;
   public loading: boolean;
@@ -54,10 +55,10 @@ export class ImssPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.displayedColumnsUninsuredName = ['Número de control','Nombre', 'Carrera', 'NSS'];
-    this.displayedColumnsUninsured = ['controlNumber', 'name', 'career', 'nss', 'actions']
-    this.displayedColumnsInsuredName = ['Número de control','Nombre', 'Carrera', 'NSS', 'Fecha Alta'];
-    this.displayedColumnsInsured = ['controlNumber','name', 'career', 'nss', 'registerDate', 'actions'];
+    this.displayedColumnsUninsuredName = ['Número de control', 'Nombre', 'Carrera', 'NSS'];
+    this.displayedColumnsUninsured = ['controlNumber', 'name', 'career', 'nss', 'actions'];
+    this.displayedColumnsInsuredName = ['Número de control', 'Nombre', 'Carrera', 'NSS', 'Fecha Alta'];
+    this.displayedColumnsInsured = ['controlNumber', 'name', 'career', 'nss', 'registerDate', 'actions'];
     this._getAllUninsured();
   }
 
@@ -88,7 +89,7 @@ export class ImssPageComponent implements OnInit {
   }
 
   // Asegurar Alumno
-  public insuredStudent(student: IIMMSTable) {
+  public insuredStudent(student: IIMSSTable) {
     Swal.fire({
       title: 'Asegurar Alumno',
       text: `¿Está seguro de asegurar al estudiante ${student.name}?`,
@@ -104,10 +105,10 @@ export class ImssPageComponent implements OnInit {
         this.studentProvider.insuredStudent(student.controlNumber)
           .subscribe(_ => {
             this.loading = false;
-            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante asegurado con éxito', '');
+            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'IMSS', 'Estudiante asegurado con éxito');
             this._getAllUninsured();
           }, _ => {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'Error, no se pudo asegurar al estudiante', '');
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Error, no se pudo asegurar al estudiante');
             this.loading = false;
           });
       }
@@ -115,7 +116,7 @@ export class ImssPageComponent implements OnInit {
   }
 
   // Remover Seguro
-  public uninsuredStudent(student: IIMMSTable) {
+  public uninsuredStudent(student: IIMSSTable) {
     Swal.fire({
       title: 'Cancelación de Seguro',
       text: `¿Está seguro de cancelar el seguro al estudiante ${student.name}?`,
@@ -131,10 +132,10 @@ export class ImssPageComponent implements OnInit {
         this.studentProvider.uninsuredStudent(student.controlNumber)
           .subscribe(_ => {
             this.loading = false;
-            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Se ha quitado el seguro con éxito', '');
+            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'IMSS', 'Se ha dado de baja el seguro con éxito');
             this._getAllInsured();
           }, _ => {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'Error al quitar seguro al estudiante', '');
+            this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Error al dar de baja el seguro al estudiante');
             this.loading = false;
           });
       }
@@ -181,11 +182,11 @@ export class ImssPageComponent implements OnInit {
                 this.loading = true;
                 provider.insuredStudentsCsv(_students).subscribe(_ => {
                   this.loading = false;
-                  notificacion.showNotification(eNotificationType.SUCCESS, 'Estudiantes asegurados con éxito', '');
+                  notificacion.showNotification(eNotificationType.SUCCESS, 'IMSS', 'Estudiantes asegurados con éxito');
                   this.changeTab(this.selectedTab.value);
                   this.fileUpload.nativeElement.value = '';
                 }, _ => {
-                  this.notificationServ.showNotification(eNotificationType.ERROR,'Ocurrió un error al asegurar los estudiantes', '');
+                  this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Ocurrió un error al asegurar los estudiantes');
                   this.loading = false;
                   this.fileUpload.nativeElement.value = '';
                 });
@@ -200,7 +201,7 @@ export class ImssPageComponent implements OnInit {
   }
 
   // Descargar plantilla csv
-  downloadTemplateCsv(){
+  downloadTemplateCsv() {
     const ExampleStudents = [
       {nc: 'Número de Control'},
       {nc: '14400971'},
@@ -212,6 +213,74 @@ export class ImssPageComponent implements OnInit {
     new Angular5Csv(ExampleStudents, 'Plantilla Estudiantes Asegurados IMSS');
   }
 
+  public convertCsv(event) {
+    const file = event.target.files ? event.target.files[0] : null;
+    if (file) {
+      const students = [];
+      Papa.parse(file, {
+        complete: (result: any) => {
+          const data = result ? result.data : null;
+          if (data && data.length) {
+            data.slice(1).forEach((row: any) => {
+              if (row.length >= 4) {
+                const student = this._castStudentImss(row);
+                const index = students.findIndex(_student => _student.nss === student.nss);
+                if (index === -1) {
+                  students.push(student);
+                }
+              }
+            });
+            const _data = {
+              config: {
+                title: 'Datos leídos',
+                displayedColumns: ['nss', 'name', 'date'],
+                displayedColumnsName: ['NSS', 'Nombre', 'Fecha de alta']
+              },
+              componentData: students
+            };
+            const refDialog = this._openDialog(LoadCsvDataComponent, 'ImssData', _data);
+            refDialog.afterClosed().subscribe((_imssData: Array<any>) => {
+              if (_imssData && _imssData.length) {
+                this.loading = true;
+                this.studentProvider.convertCsv(_imssData)
+                  .subscribe((csvData) => {
+                    this.loading = false;
+                    const imssData = csvData.reverse();
+                    const headerCsv = {
+                      controlNumber: 'Número de control',
+                      nss: 'NSS',
+                      name: 'Nombre',
+                      date: 'Fecha de alta',
+                      maxSemester: 'Semestres máximos',
+                    };
+                    imssData.push(headerCsv);
+                    new Angular5Csv(csvData.reverse(), 'IMSS');
+                  }, (_) => {
+                    this.loading = false;
+                    this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Error al convertir csv para descarga.');
+                  });
+              }
+            });
+          }
+        }
+      });
+    }
+    this.fileImss.nativeElement.value = '';
+  }
+
+  public regularizeNss() {
+    this.loading = true;
+    this.studentProvider.regularizeNss()
+      .subscribe((_) => {
+        this.loading = false;
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'IMSS', 'NSS actualizados');
+        this.changeTab(this.selectedTab.value);
+      }, (_) => {
+        this.loading = false;
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Ocurrió un error, inténtalo de nuevo');
+      });
+  }
+
   // Obtener alumnos no asegurados
   private _getAllInsured() {
     this.loading = true;
@@ -220,7 +289,7 @@ export class ImssPageComponent implements OnInit {
         const data = res.students.map(this._castToTable);
         this._refreshInsured(data);
       }, _ => {
-        this.notificationServ.showNotification(eNotificationType.ERROR, 'No se pudieron cargar los estudiantes asegurados', '');
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'No se pudieron cargar los estudiantes asegurados');
         this.loading = false;
       }, () => {
         this.loading = false;
@@ -235,7 +304,7 @@ export class ImssPageComponent implements OnInit {
         const data = res.students.map(this._castToTable);
         this._refreshUninsured(data);
       }, _ => {
-        this.notificationServ.showNotification(eNotificationType.ERROR, 'No se pudieron cargar los estudiantes no asegurados', '');
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'No se pudieron cargar los estudiantes no asegurados');
         this.loading = false;
       }, () => {
         this.loading = false;
@@ -275,9 +344,20 @@ export class ImssPageComponent implements OnInit {
     });
   }
 
+  private _castStudentImss(row: any) {
+    const nss: string[] = (row[0] || '').split('-');
+    return {
+      controlNumber: '',
+      nss: nss.join(''),
+      name: row[1] || '',
+      date: row[3] || '',
+      maxSemester: row[2] || '',
+    };
+  }
+
 }
 
-interface IIMMSTable {
+interface IIMSSTable {
   _id?: string;
   controlNumber?: string;
   name?: string;
