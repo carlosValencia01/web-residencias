@@ -224,5 +224,12 @@ export class StudentProvider {
         return this.api.put(`imss/insured/csv`, data).pipe(map(res => res.json()));
     }
 
-    
+    regularizeNss() {
+        return this.api.put('imss/regularize/nss', {}).pipe(map(res => res.json()));
+    }
+
+    convertCsv(data) {
+        return this.api.post('imss/convert/csv', data).pipe(map(res => res.json()));
+    }
+
 }
