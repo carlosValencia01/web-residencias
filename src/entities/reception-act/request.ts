@@ -341,7 +341,7 @@ export class uRequest {
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(10);
         // tslint:disable-next-line: max-line-length
-        this.justifyText(doc, 'Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', { x: this.MARGIN.LEFT, y: 130 }, 180);
+        this.justifyText(doc, 'Me permito informarle de acuerdo a su solicitud, que no existe inconveniente para que pueda Ud. Presentar su Acto de Recepción Profesional, ya que su expediente quedó integrado para tal efecto.', { x: this.MARGIN.LEFT, y: 130 }, 180,5,10);
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(11);
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 155, { align: 'left' });
@@ -381,7 +381,7 @@ export class uRequest {
         // tslint:disable-next-line:max-line-length
         this.justifyText(doc, `DEDICO MIS CONOCIMIENTOS PROFESIONALES AL PROGRESO Y MEJORAMIENTO DEL BIENESTAR HUMANO, ME COMPROMETO A DAR UN RENDIMIENTO MÁXIMO, A PARTICIPAR TAN SOLO EN EMPRESAS DIGNAS, A VIVIR Y TRABAJAR DE ACUERDO CON LAS LEYES PROPIAS DEL HOMBRE Y EL MÁS ELEVADO NIVEL DE CONDUCTA PROFESIONAL, A PREFERIR EL SERVICIO AL PROVECHO, EL HONOR Y LA CALIDAD PROFESIONAL A LA VENTAJA PERSONAL, EL BIEN PÚBLICO A TODA CONSIDERACIÓN, CON RESPETO Y HONRADEZ HAGO EL PRESENTE JURAMENTO.`,
             { x: this.MARGIN.LEFT + 15, y: initialHeight + (lineHeight * 9) },
-            (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), 7);
+            (this.WIDTH - ((this.MARGIN.LEFT + 13) + (this.MARGIN.RIGHT + 13))), 7,17);
         doc.setFontSize(14);
         this._drawCenterTextWithLineUp(doc, 'FIRMA', initialHeight + (lineHeight * 26.5));
         doc.text(moment(this._request.proposedDate).format('LL').toUpperCase(), this.MARGIN.LEFT + 15, initialHeight + (lineHeight * 31));
@@ -442,7 +442,7 @@ export class uRequest {
                 totalLines = 0;
                 y = initialHeight + (lineHeight * totalLines);
             }
-            this.justifyText(doc, ruleData, { x: startLine, y: y }, lineWidth, 7);
+            this.justifyText(doc, ruleData, { x: startLine, y: y }, lineWidth, 7,12);
             totalLines += linesRule;
         });
     }
@@ -540,17 +540,17 @@ export class uRequest {
         let msn = `Me permito comunicarle que ha sido ratificado como @ASESOR@ del Trabajo Profesional con el nombre: ${this.addArroba(this._request.projectName)} `;
         const rows: Array<string> = doc.splitTextToSize(msn, 180);
         const increment: number = rows.length - 1;
-        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 95 }, 180);
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 95 }, 180,5,10);
         msn = `Que presenta el(la) C. ${this.addArroba(this._request.student.fullName)} `;
-        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 105 + (increment * 5) }, 180);
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 105 + (increment * 5) }, 180,5,10);
         msn = `Correspondiente a la opción ${this.addArroba(this._request.titulationOption)} ( ${this.addArroba(this._request.product)} )`;
-        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 115 + (increment * 5) }, 180);
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 115 + (increment * 5) }, 180,5,10);
         msn = `Pasante de la carrera de ${this.addArroba(this._request.career)} `;
-        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 130 + (increment * 5) }, 180);
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 130 + (increment * 5) }, 180,5,10);
         msn = `No. de control: ${this.addArroba(this._request.controlNumber)} `;
-        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 140 + (increment * 5) }, 180);
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 140 + (increment * 5) }, 180,5,10);
         msn = `Sin más por el momento, me despido`;
-        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 150 + (increment * 5) }, 180);
+        this.justifyText(doc, msn, { x: this.MARGIN.LEFT, y: 150 + (increment * 5) }, 180,5,10);
 
         doc.setFont(this.FONT, 'Bold');
         doc.text('ATENTAMENTE', this.MARGIN.LEFT, 185);
@@ -602,7 +602,7 @@ export class uRequest {
         contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))} `);
         contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())} `);
 
-        this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 148 }, 180);
+        this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 148 }, 180,5,10);
 
         const rows: Array<string> = doc.splitTextToSize(contenido, 180);
         const incremento = (rows.length) * 4;
@@ -649,7 +649,7 @@ export class uRequest {
         contenido = contenido.replace('@FECHA', `${this.addArroba(`${tmpDate.getDate()} de ${this.letterCapital(moment(tmpDate).format('MMMM'))}`)} `);
         contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))} `);
         contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())} `);
-        const paragraph = this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 120 }, 180);
+        const paragraph = this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 120 }, 180,5,10);
         doc.setFontSize(10);
         doc.setFont(this.FONT, 'Bold');
         doc.text('A T E N T A M E N T E.', this.MARGIN.LEFT, paragraph.lastY+25);
@@ -683,7 +683,7 @@ export class uRequest {
         content = version ? content.replace('@DIR','Dirección de Asuntos Escolares y Apoyo a Estudiantes') : content.replace('@DIR','Dirección de Servicios Escolares y Estudiantiles');
         content = content.replace('@NUMERO', this._request.registry.foja + '');
         content = content.replace('@LIBRO', this._request.registry.bookNumber + '');
-        const firstP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
+        const firstP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4,8);
         doc.ellipse(28, 90, 16, 20);
         // tslint:disable-next-line: max-line-length
         content = 'De acuerdo con el instructivo vigente de Titulación, que no tiene como requisito la sustentación del Examen Profesional para Efecto de obtención de Título, en las opciones VIII, IX y Titulación Integral, el Jurado HACE CONSTAR: que a@CIUDADANO C. @ESTUDIANTE con número de control @CONTROL @EGR del Instituto Tecnológico de Tepic, Clave 18DIT0002Z, que cursó la carrera de: @CARRERA.';
@@ -692,30 +692,31 @@ export class uRequest {
         content = content.replace('@CIUDADANO', this.studentGender === 'M' ? 'l' :' la');
         content = content.replace('@EGR', this.studentGender === 'M' ? 'egresado' :'egresada');
         content = content.replace('@CARRERA', `${this.addArroba(this.letterCapital(this._request.student.career))}`);
-        const secondP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: firstP.lastY+5 }, 138, 4);
+        const secondP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: firstP.lastY+5 }, 138, 4,8);
         // tslint:disable-next-line: max-line-length
-        this.justifyText(doc, 'Cumplió satisfactoriamente con lo estipulado en la opción: @Titulación@ @Integral.@', { x: this.MARGIN.LEFT + 32, y: secondP.lastY+5 }, 138, 4);
+        this.justifyText(doc, 'Cumplió satisfactoriamente con lo estipulado en la opción: @Titulación@ @Integral.@', { x: this.MARGIN.LEFT + 32, y: secondP.lastY+5 }, 138, 4,8);
 
         // tslint:disable-next-line: max-line-length
-        content = '@PRESIDENT del jurado le hizo saber a @SUSTENTANTE el resultado obtenido, el Código de Ética Profesional y le tomó la Protesta de Ley, una vez escrita, leída la firmaron las personas que en el acto protocolario intervinieron, para los efectos legales a que haya lugar, se asienta la presente en la ciudad de Tepic Nayarit el @dia@ @HOY';
+        content = '@PRESIDENT del jurado le hizo saber a @SUSTENTANTE el resultado obtenido, el Código de Ética Profesional y le tomó la Protesta de Ley, una vez escrita, leída la firmaron las personas que en el acto protocolario intervinieron, para los efectos legales a que haya lugar, se asienta la presente en la ciudad de Tepic Nayarit el @día@ @HOY.';
         // tslint:disable-next-line: max-line-length
         content = content.replace('@PRESIDENT', president === 'Presidente' ? 'El presidente' : 'La presidenta');
         content = content.replace('@SUSTENTANTE', this.studentGender === 'M' ? 'el sustentate' :'la sustentate');
-        content = content.replace('@HOY', `@${String(tmpDate.getDate())}@ @del@ @mes@ @${this.letterCapital(moment(tmpDate).format('MMMM'))}@ @del@ @Año@ @${tmpDate.getFullYear()}@`);
-        const thirdP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: secondP.lastY+10 }, 138, 4);
+        const proposedDate = new Date(this._request.proposedDate);
+        content = content.replace('@HOY', `@${String(proposedDate.getDate())}@ @del@ @mes@ @${this.letterCapital(moment(proposedDate).format('MMMM'))}@ @del@ @Año@ @${proposedDate.getFullYear()}@`);
+        const thirdP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: secondP.lastY+10 }, 138, 4,8);
         doc.setFont(this.FONT, 'Normal');
         doc.text('Rubrican', this.MARGIN.LEFT + 32, thirdP.lastY+10, { align: 'left' });
         // tslint:disable-next-line: max-line-length
-        this.justifyText(doc, `@${president}:@ ${this.letterCapital(this._request.jury[0].name)} `, { x: this.MARGIN.LEFT + 32, y: thirdP.lastY+14 }, 180);
+        this.justifyText(doc, `@${president}:@ ${this.letterCapital(this._request.jury[0].name)} `, { x: this.MARGIN.LEFT + 32, y: thirdP.lastY+14 }, 180,5,8);
         doc.text(this.letterCapital(this._request.jury[0].title), this.MARGIN.LEFT + 32, thirdP.lastY+18, { align: 'left' });
         doc.text(`No. Ced. Prof. : ${this._request.jury[0].cedula} `, this.MARGIN.LEFT + 32, thirdP.lastY+22, { align: 'left' });
 
         // tslint:disable-next-line: max-line-length
-        this.justifyText(doc, `@${this.juryGender.secretary === 'MASCULINO'? 'Secretario':'Secretaria'}:@ ${this.letterCapital(this._request.jury[1].name)} `, { x: this.MARGIN.LEFT + 32, y: thirdP.lastY+27 }, 180);
+        this.justifyText(doc, `@${this.juryGender.secretary === 'MASCULINO'? 'Secretario':'Secretaria'}:@ ${this.letterCapital(this._request.jury[1].name)} `, { x: this.MARGIN.LEFT + 32, y: thirdP.lastY+27 }, 180,5,8);
         doc.text(this.letterCapital(this._request.jury[1].title), this.MARGIN.LEFT + 32, thirdP.lastY+31, { align: 'left' });
         doc.text(`No. Ced. Prof. : ${this._request.jury[1].cedula} `, this.MARGIN.LEFT + 32, thirdP.lastY+35, { align: 'left' });
 
-        this.justifyText(doc, `@Vocal:@ ${this.letterCapital(this._request.jury[2].name)} `, { x: this.MARGIN.LEFT + 32, y: thirdP.lastY+40 }, 180);
+        this.justifyText(doc, `@Vocal:@ ${this.letterCapital(this._request.jury[2].name)} `, { x: this.MARGIN.LEFT + 32, y: thirdP.lastY+40 }, 180,5,8);
         doc.text(this.letterCapital(this._request.jury[2].title), this.MARGIN.LEFT + 32, thirdP.lastY+44, { align: 'left' });
         doc.text(`No. Ced. Prof. : ${this._request.jury[2].cedula} `, this.MARGIN.LEFT + 32, thirdP.lastY+48, { align: 'left' });
 
@@ -762,7 +763,7 @@ export class uRequest {
         content = content.replace('@AUTORIZACION', moment(this._request.registry.date).format('LL')); 
         content = content.replace('@NUMERO', this._request.registry.foja + '');
         content = content.replace('@LIBRO', this._request.registry.bookNumber + '');
-        const firstP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4);
+        const firstP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 60 }, 138, 4,8);
         doc.ellipse(28, 90, 16, 20);      
         let tmpDateH = new Date( this._request.proposedDate).setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0);
         // tmpDateH.setHours( tmpDate);
@@ -778,22 +779,22 @@ export class uRequest {
         content = content.replace('@DATE',this.addArroba(`del mes de ${month} de ${year}`));
         content = content.replace('@HOUR',tmpProposedD.format('HH:mm'));
         
-        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: firstP.lastY+5 }, 138, 4);
+        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: firstP.lastY+5 }, 138, 4,8);
                                
         doc.setFont(this.FONT, 'Normal');        
         const president = this.juryGender.president === 'MASCULINO'? 'Presidente':'Presidenta';
         // tslint:disable-next-line: max-line-length
-        this.justifyText(doc, `@${president}:@ ${this.letterCapital(this._request.jury[0].name)} `, { x: this.MARGIN.LEFT + 32, y: 98 }, 180);
+        this.justifyText(doc, `@${president}:@ ${this.letterCapital(this._request.jury[0].name)} `, { x: this.MARGIN.LEFT + 32, y: 98 }, 180,5,8);
         doc.text(this.letterCapital(this._request.jury[0].title), this.MARGIN.LEFT + 32, 102, { align: 'left' });
         doc.text(`No. Ced. Prof. : ${this._request.jury[0].cedula} `, this.MARGIN.LEFT + 32, 106, { align: 'left' });
 
         // tslint:disable-next-line: max-line-length
        
-        this.justifyText(doc, `@${this.juryGender.secretary === 'MASCULINO'? 'Secretario':'Secretaria'}:@ ${this.letterCapital(this._request.jury[1].name)} `, { x: this.MARGIN.LEFT + 32, y: 111 }, 180);
+        this.justifyText(doc, `@${this.juryGender.secretary === 'MASCULINO'? 'Secretario':'Secretaria'}:@ ${this.letterCapital(this._request.jury[1].name)} `, { x: this.MARGIN.LEFT + 32, y: 111 }, 180,5,8);
         doc.text(this.letterCapital(this._request.jury[1].title), this.MARGIN.LEFT + 32, 115, { align: 'left' });
         doc.text(`No. Ced. Prof. : ${this._request.jury[1].cedula} `, this.MARGIN.LEFT + 32, 119, { align: 'left' });
 
-        this.justifyText(doc, `@Vocal:@ ${this.letterCapital(this._request.jury[2].name)} `, { x: this.MARGIN.LEFT + 32, y: 124 }, 180);
+        this.justifyText(doc, `@Vocal:@ ${this.letterCapital(this._request.jury[2].name)} `, { x: this.MARGIN.LEFT + 32, y: 124 }, 180,5,8);
         doc.text(this.letterCapital(this._request.jury[2].title), this.MARGIN.LEFT + 32, 128, { align: 'left' });
         doc.text(`No. Ced. Prof. : ${this._request.jury[2].cedula} `, this.MARGIN.LEFT + 32, 132, { align: 'left' });
 
@@ -804,11 +805,11 @@ export class uRequest {
         content = content.replace('@CIUDADANO', this.studentGender === 'M' ? 'l' :' la');
         content = content.replace('@CONTROL', `${this.addArroba(this._request.student.controlNumber)}`);
         content = content.replace('@CARRERA', `${this.addArroba(this.letterCapital(this._request.student.career))}`);
-        const secondP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 139 }, 138, 4);
+        const secondP = this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: 139 }, 138, 4,8);
        
         
         content = 'El jurado tomando en cuenta el contenido del Trabajo Profesional cuyo tema es: '; 
-        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: secondP.lastY+5 }, 138, 4);
+        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: secondP.lastY+5 }, 138, 4,8);
         content = '@PROJECT';   
         content = content.replace('@PROJECT',this.letterCapital(this._request.projectName.trim()));
         const proyRows = doc.splitTextToSize(this._request.projectName.trim(), 145);
@@ -826,7 +827,7 @@ export class uRequest {
         content = content.replace('@PRESIDENT', president === 'Presidente' ? 'El presidente' : 'La presidenta');
         content = content.replace('@SUSTENTANTE', this.studentGender === 'M' ? 'el sustentate' :'la sustentate');
         content = content.replace('@ENDH', newH.format('HH:mm'));
-        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: proyParagraph.lastY+5 }, 138, 4);
+        this.justifyText(doc, content, { x: this.MARGIN.LEFT + 32, y: proyParagraph.lastY+5 }, 138, 4,8);
 
         const today = tmpDate.getDate() === 1 ? `al día 1` : `a los ${tmpDate.getDate()} días`;
         doc.text(`Se extiende esta certificación ${today} del mes ${this.letterCapital(moment(tmpDate).format('MMMM'))} del Año ${tmpDate.getFullYear()} `, this.MARGIN.LEFT + 32, 209, { align: 'left' });
@@ -894,7 +895,7 @@ export class uRequest {
     // Justifica un texto
     // Doc: Instancia JSPDF, Text: Texto a justificar, Point: Coordenada (X,Y) de dibujo
     // Size: Anchura en la que se dividirá, lineaBreak: Salto de linea
-    private justifyText(Doc: jsPDF, Text: string, Point: { x: number, y: number }, Size: number, lineBreak: number = 5, fontSize: number = 8, afterParagraph: boolean = false) {
+    private justifyText(Doc: jsPDF, Text: string, Point: { x: number, y: number }, Size: number, lineBreak: number = 5, fontSize: number, afterParagraph: boolean = false) {
         // Texto sin @ (Negritas) para conocer más adelante las filas en las que será dividido
         const tmpText: string = Text.split('@').join('');
         // Texto original

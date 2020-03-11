@@ -174,7 +174,7 @@ export class TitulationProgressComponent implements OnInit {
         res.request.forEach(element => {
           const isProcess = this.tabNumber === 3
             ? element.documents.filter(doc => doc.status === 'Process').length > 0
-            : true; // for tab dictamination
+            : true; // for tab dictamination use for only request that have at least one document in process
           if (isProcess) {
             const tmpRequest: iRequest = this.castRequest(element);
             if (this.role !== 'jefe académico' && this.role !== 'secretaria académica') {
