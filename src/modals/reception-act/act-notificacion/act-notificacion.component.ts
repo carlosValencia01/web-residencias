@@ -30,13 +30,15 @@ export class ActNotificacionComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.jury = 'Presidente';
-    this.oficio = '';
+    this.oficio = ''; 
+    
     this._RequestProvider.getRequestById(data.Appointment.id).subscribe(
       request => {
         this._Request = request.request[0];
         this._Request.student = <IStudent>request.request[0].studentId;
         this._Request.studentId = this._Request.student._id;
-        this.oRequest = new uRequest(request.request[0], _ImageToBase64Service, this._CookiesService);
+        this.oRequest = new uRequest(request.request[0], _ImageToBase64Service, this._CookiesService);  
+        
       }, _ => {
         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Solicitud no encontrada');
         this.dialogRef.close();

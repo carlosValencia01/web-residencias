@@ -269,7 +269,8 @@ export class DiaryComponent implements OnInit {
       dialogRef = this.dialog.open(NewTitleComponent, {
         data: {
           operation: eOperation.NEW,
-          date: date
+          date: date,
+          doer:this._CookiesService.getData().user.name.fullName
         },
         disableClose: true,
         hasBackdrop: true,

@@ -28,8 +28,8 @@ export class BookProvider {
             .pipe(map(books => books.json()));
     }
 
-    getActiveBookByCareer(careerId: string) {
-        return this.api.get(`minuteBook/active/${careerId}`)
+    getActiveBookByCareer(careerId: string, titulationOption: string) {
+        return this.api.get(`minuteBook/active/${careerId}/${titulationOption}`)
             .pipe(map(res => res.json()));
     }
 }

@@ -37,7 +37,6 @@ import { BookProvider } from 'src/providers/reception-act/book.prov';
 import Swal from 'sweetalert2';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
-
 @Component({
   selector: 'app-titulation-progress',
   templateUrl: './titulation-progress.component.html',
@@ -538,7 +537,7 @@ export class TitulationProgressComponent implements OnInit {
   }
 
   approve(row): void {
-    const {_id, controlNumber, student} = row;
+    const {_id, controlNumber, student, titulationOption} = row;
     Swal.fire({
       title: 'Estatus del Acto Recepcional',
       type: 'question',
@@ -564,7 +563,7 @@ export class TitulationProgressComponent implements OnInit {
           confirmButtonText: 'Aceptar'
         });
         if (typeof (response.value) !== 'undefined') {
-          const minuteBook = await this._getActiveBookByCareer(student.careerId._id);
+          const minuteBook = await this._getActiveBookByCareer(student.careerId._id,titulationOption.split('-')[1].trim());
           if (minuteBook) {
             const linkModal = this.dialog.open(BookComponent, {
               data: {
@@ -652,7 +651,7 @@ export class TitulationProgressComponent implements OnInit {
         }
       }
     });
-  }
+  }  
 
   async reImprimir(Identificador: string) {
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Reimprimiendo acta de examen');
@@ -1098,9 +1097,9 @@ export class TitulationProgressComponent implements OnInit {
       width: '45em'
     });
   }
-
-  slectedPeriod(period) {
-    this.updatePeriods(period, 'insert');
+  
+  slectedPeriod(period){    
+    this.updatePeriods(period,'insert'); 
   }
 
   addPeriod(event: MatChipInputEvent): void {
@@ -1147,9 +1146,9 @@ export class TitulationProgressComponent implements OnInit {
     }
   }
 
-  private _getActiveBookByCareer(careerId: string) {
+  private _getActiveBookByCareer(careerId: string,titulationOption: string) {
     return new Promise(resolve => {
-      this._bookProvider.getActiveBookByCareer(careerId)
+      this._bookProvider.getActiveBookByCareer(careerId, titulationOption)
         .subscribe(
           book => resolve(book),
           _ => resolve(null));

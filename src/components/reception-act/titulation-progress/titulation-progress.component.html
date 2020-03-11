@@ -4,7 +4,7 @@
       <div class="card">
           <div class="row text-center p-4 m-0 mt-2">              
               <div class="col-11">
-                <mat-form-field *ngIf="periods">
+                <mat-form-field *ngIf="periods && tabNumber === 4 || tabNumber === 1">
                     <mat-chip-list #chipList aria-label="Period selection">
                         <mat-chip
                             *ngFor="let p of usedPeriods"
