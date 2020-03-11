@@ -23,15 +23,24 @@
     <div class="row justify-content-center">
       <mat-card class="col-sm-12 col-md-5 m-2">
         <mat-card-header>
-          <mat-card-title>Firma</mat-card-title>
+          <!-- <mat-card-title>Firma</mat-card-title> -->
         </mat-card-header>
-        <div>
-          <input type='file' (change)="fileChanged($event)" style="margin-bottom: 10px">
-          <input type="password" placeholder="Contraseña" [(ngModel)]="password">
-        </div>
+        <mat-card-content>
+          <div class="form-group">        
+              <div class="custom-file mt-4" id="customFile">
+                <input type="file" class="custom-file-input" id="customFile" (change)="fileChanged($event)" placeholder="Buscar" aria-label="No se a seleccionado ningun archivo">
+                <label class="custom-file-label" for="customFile">Buscar firma</label>
+                
+              </div>
+            <mat-form-field appearance="outline" class="w-100  mt-4">
+              <mat-label>Contraseña</mat-label>
+              <input matInput placeholder="Contraseña" type="password" [(ngModel)]="password">
+            </mat-form-field>          
+          </div>
+        </mat-card-content>
         <mat-card-actions align="end">
-          <button type="button" class="btn btn-primary" (click)="signProjectRegister()"
-            [disabled]="!fileFlag || !password">Firmar</button>
+          <button mat-flat-button color="primary" (click)="signProjectRegister()"
+          [disabled]="!fileFlag || !password">Firmar</button>
         </mat-card-actions>
       </mat-card>
     </div>

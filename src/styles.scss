@@ -60,9 +60,12 @@ dropzone > .dropzone.dz-wrapper .dz-message{
   }
 }
 .mat-sort-header-container {          
-  justify-content: center !important;
+  justify-content: center !important;  
+  padding-left: 10px;
 }
-
+.mat-cell{    
+  text-align: center;
+}
 /* SCROLL BAR */
 ::-webkit-scrollbar {
   width: 13px;

@@ -96,4 +96,13 @@ export class RequestProvider {
         return this.api.get(`request/periods`).pipe(map(request => request.json()));
     }
 
+    getEmployeeGender(email: string) {
+        return this.api.get(`request/employee/gender/${email}`)
+            .pipe(map(employee => employee.json()));
+    }
+    getEmployeeGenderAndGrade(email: string) {
+        return this.api.get(`request/employee/grade/gender/${email}`)
+            .pipe(map(employee => employee.json()));
+    }
+
 }

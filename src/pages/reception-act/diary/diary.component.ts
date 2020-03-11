@@ -25,6 +25,10 @@ import { Subject } from 'rxjs';
 import * as moment from 'moment';
 import Swal from 'sweetalert2';
 
+require('jspdf-autotable');
+const jsPDF = require('jspdf');
+
+
 moment.locale('es');
 
 @Component({
@@ -53,7 +57,26 @@ export class DiaryComponent implements OnInit {
   locale = 'es';
   public showLoading: boolean;
   private folderId: string;
-
+  private sepLogo: any;
+  private tecNacLogoTitle: any;
+  private tecLogo: any;
+  private montserratNormal: any;
+  private montserratBold: any;
+  mapedStudents = [];
+  private WIDTH = 286;
+  private HEIGHT = 239;
+  private FONT = 'Montserrat';
+  private MARGIN: {
+    LEFT: number,
+    RIGHT: number,
+    TOP: number,
+    BOTTOM: number
+  } = {
+      LEFT: 20,
+      RIGHT: 20,
+      TOP: 25,
+      BOTTOM: 25
+    };
   constructor(
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
@@ -62,8 +85,10 @@ export class DiaryComponent implements OnInit {
     private _StudentProvider: StudentProvider,
     public _ImageToBase64Service: ImageToBase64Service,
     public dialog: MatDialog,
+    public _getImage: ImageToBase64Service,
   ) {
     const tmpFecha = localStorage.getItem('Appointment');
+    this._getImageToPdf();
     if (typeof (tmpFecha) !== 'undefined' && tmpFecha) {
       this.viewDate = new Date(tmpFecha);
       this.view = CalendarView.Week;
@@ -749,6 +774,161 @@ export class DiaryComponent implements OnInit {
       );
     });
   }
+
+  excelExport() {
+    const filteredCareers = this.carrers.filter((ca) => ca.status == true);
+    this.mapedStudents = [];
+    if (filteredCareers.length > 0) {
+      this.showLoading = true;
+      const y = 60;
+
+      const doc = this.newDocumentTec(true, false);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont(this.FONT, 'Bold');
+      doc.setFontSize(10);
+      // doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', (this.WIDTH / 2), 45, { align: 'center' });
+      doc.text('AGENDA DE ACTO RECEPCIONAL', (this.WIDTH / 2), 45, { align: 'center' });
+      doc.setFont(this.FONT, 'Normal');
+      doc.setFontSize(8);
+
+      filteredCareers.forEach((car) => {
+        const filtered = this.Appointments.filter((ap) => ap._id[0] == car.carrer).map(
+          (care) => care.values
+        )[0];
+        if (filtered) {
+          const maped = filtered.
+            map((st) => ({
+              date: moment(st.proposedDate).format('LL'),
+              hour: moment(new Date(st.proposedDate).setHours(st.proposedHour / 60, st.proposedHour % 60, 0, 0)).format('HH:mm'),
+              student: st.student,
+              place: st.place,
+              jury: st.jury
+                .map((jr: any, index: number) =>
+                  index === 0
+                  ? 'PRESIDENTE: ' + jr.name
+                  : index === 1
+                  ? 'SECRETARIO: ' + jr.name
+                  : index === 2
+                  ? 'VOCAL ' + jr.name
+                  : 'VOCAL SUPLENTE: ' + jr.name
+                ).join('\r\n'),
+                dateWithoutFormat: moment(st.proposedDate),
+                career: car.abbreviation
+            }));
+
+          for(let i=0; i < maped.length; i++){
+            for(let j = 0; j < maped.length-i-1; j++){
+              let prev = maped[j].dateWithoutFormat;
+              let next = maped[j+1].dateWithoutFormat;
+              if(prev > next){
+                let tmp = maped[j];
+                maped[j] = maped[j+1];
+                maped[j+1] = tmp;
+              }
+            }
+          }
+          maped.forEach(maped=>{
+            this.mapedStudents.push(maped);
+          });
+        }
+
+      });
+      this.showLoading = false;
+      setTimeout(() => {
+        this.showLoading = false;
+        doc.autoTable(
+          {
+            html: '#table',
+            theme: 'grid',
+            startY: y,
+            headStyles: { fillColor: [24, 57, 105], halign: 'center', valign: 'middle' },
+            bodyStyles: { textColor: [0, 0, 0] },
+            columnStyles: {
+              0: { cellWidth: 6, halign: 'center', valign: 'middle' },
+              1: { cellWidth: 10, halign: 'center', valign: 'middle' },
+              2: { cellWidth: 30, halign: 'center', valign: 'middle' },
+              3: { cellWidth: 7, halign: 'center', valign: 'middle' },
+              4: { cellWidth: 40, halign: 'center', valign: 'middle' },
+              5: { cellWidth: 30, halign: 'center', valign: 'middle' },
+              6: { cellWidth: 80, halign: 'center', valign: 'middle' },
+            }
+          }
+        );
+        
+        window.open(doc.output('bloburl'), '_blank');
+      }, 500);
+
+    }
+  }
+
+  private newDocumentTec(header = true, footer = true) {
+    const doc = new jsPDF({
+      unit: 'mm',
+      format: 'letter',
+      orientation: 'landscape'
+    });
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+    // @ts-ignore
+    doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+    doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+    doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+    if (header) {
+      this.addHeaderTec(doc);
+    }
+    if (footer) {
+      this.addFooterTec(doc);
+    }
+    return doc;
+  }
+
+  private addHeaderTec(document) {
+    const tecnmHeight = 15;
+    const sepHeight = tecnmHeight * 100 / 53;
+    document.setFont(this.FONT, 'Bold');
+    document.setFontSize(8);
+    document.setTextColor(189, 189, 189);
+    // Logo Izquierdo
+    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 35 * 3, sepHeight);
+    // Logo Derecho
+    document.addImage(this.tecNacLogoTitle, 'PNG', 215, 5, 40, tecnmHeight);
+    document.text('Instituto Tecnólogico de Tepic', 212, 23, { align: 'left' });
+  }
+
+  private addFooterTec(document) {
+    document.setFont(this.FONT, 'Bold');
+    document.setFontSize(8);
+    document.setTextColor(189, 189, 189);
+    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    // document.setTextColor(183, 178, 178);
+    document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2), 260, { align: 'center' });
+    document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01. email: info@ittepic.edu.mx',
+      (this.WIDTH / 2), 265, { align: 'center' });
+    document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
+  }
+
+  private _getImageToPdf() {
+    this._getImage.getBase64('assets/imgs/sep.png').then(logo => {
+      this.sepLogo = logo;
+    });
+
+    this._getImage.getBase64('assets/imgs/ittepic-sm.png').then(logo => {
+      this.tecLogo = logo;
+    });
+
+    this._getImage.getBase64('assets/imgs/tecnm.png').then(logo => {
+      this.tecNacLogoTitle = logo;
+    });
+
+    this._getImage.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
+      this.montserratNormal = base64.toString().split(',')[1];
+    });
+
+    this._getImage.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
+      this.montserratBold = base64.toString().split(',')[1];
+    });
+  }
+
 }
 
 interface iAppointmentGroup {

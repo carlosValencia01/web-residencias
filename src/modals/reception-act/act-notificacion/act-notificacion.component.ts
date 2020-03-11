@@ -8,6 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { IStudent } from 'src/entities/shared/student.model';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { CookiesService } from 'src/services/app/cookie.service';
+import { StudentProvider } from 'src/providers/shared/student.prov';
 
 @Component({
   selector: 'app-act-notificacion',
@@ -27,6 +28,7 @@ export class ActNotificacionComponent implements OnInit {
     public _NotificationsServices: NotificationsServices,
     public dialogRef: MatDialogRef<ActNotificacionComponent>,
     public _CookiesService: CookiesService,
+    public _StudentProvider: StudentProvider,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.jury = 'Presidente';
@@ -49,21 +51,43 @@ export class ActNotificacionComponent implements OnInit {
   ngOnInit() {
   }
 
-  Generar(): void {
+  async Generar() {
     this.existError = this.oficio.trim().length === 0;
     if (!this.existError) {
+      let juryGenderAndGrade = [];
+      let studentGender = 'MASCULINO';
+      let bossGender = 'MASCULINO';
+      await this._StudentProvider.getStudentById(this._Request.studentId).toPromise().then(
+        st=> studentGender = st.student[0].sex
+      ).catch(err=>{});
+
+      await this._RequestProvider.getEmployeeGenderAndGrade(this._Request.jury[0].email ? this._Request.jury[0].email : this._Request.jury[0].name).toPromise().then(
+        (em)=>juryGenderAndGrade.push({gender:em.gender,grade:em.grade})           
+      ).catch( err=> juryGenderAndGrade.push({gender:'MASCULINO',grade:'C.'}));
+      await this._RequestProvider.getEmployeeGenderAndGrade(this._Request.jury[1].email ? this._Request.jury[1].email : this._Request.jury[1].name).toPromise().then(
+          (em)=>juryGenderAndGrade.push({gender:em.gender,grade:em.grade})          
+      ).catch( err=> juryGenderAndGrade.push({gender:'MASCULINO',grade:'C.'}));
+      await this._RequestProvider.getEmployeeGenderAndGrade(this._Request.jury[2].email ? this._Request.jury[2].email : this._Request.jury[2].name).toPromise().then(
+          (em)=>juryGenderAndGrade.push({gender:em.gender,grade:em.grade})          
+      ).catch( err=> juryGenderAndGrade.push({gender:'MASCULINO',grade:'C.'}));
+      await this._RequestProvider.getEmployeeGenderAndGrade(this._Request.jury[3].email ? this._Request.jury[3].email : this._Request.jury[3].name).toPromise().then(
+          (em)=>juryGenderAndGrade.push({gender:em.gender,grade:em.grade})          
+      ).catch( err=> juryGenderAndGrade.push({gender:'MASCULINO',grade:'C.'}));
+      await this._RequestProvider.getEmployeeGender(this._Request.department.boss).toPromise().then(
+          (em)=>bossGender = em.gender          
+      ).catch( err=> bossGender = 'MASCULINO');
       switch (this.jury) {
         case 'Presidente':
-          window.open(this.oRequest.juryDuty(this.oficio, 'Presidente', this._Request.jury[0].name).output('bloburl'), '_blank');
+          window.open(this.oRequest.juryDuty(this.oficio, 'Presidente', this._Request.jury[0].name,juryGenderAndGrade[0],studentGender,bossGender).output('bloburl'), '_blank');
           break;
         case 'Secretario':
-          window.open(this.oRequest.juryDuty(this.oficio, 'Secretario', this._Request.jury[1].name).output('bloburl'), '_blank');
+          window.open(this.oRequest.juryDuty(this.oficio, 'Secretario', this._Request.jury[1].name,juryGenderAndGrade[1],studentGender,bossGender).output('bloburl'), '_blank');
           break;
         case 'Vocal':
-          window.open(this.oRequest.juryDuty(this.oficio, 'Vocal', this._Request.jury[2].name).output('bloburl'), '_blank');
+          window.open(this.oRequest.juryDuty(this.oficio, 'Vocal', this._Request.jury[2].name,juryGenderAndGrade[2],studentGender,bossGender).output('bloburl'), '_blank');
           break;
         case 'Suplente':
-          window.open(this.oRequest.juryDuty(this.oficio, 'Suplente', this._Request.jury[3].name).output('bloburl'), '_blank');
+          window.open(this.oRequest.juryDuty(this.oficio, 'Suplente', this._Request.jury[3].name,juryGenderAndGrade[3],studentGender,bossGender).output('bloburl'), '_blank');
           break;
         default:
           break;

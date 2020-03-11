@@ -1,40 +1,25 @@
-<!--<div class="container-fluid">
-  <div class="row">
-    <div class="col-12">
-      <div class="card text-center">
-        <div class="card-body"
-          style="color: #08a3bc; background-color: rgba(10, 215, 247, 0.2); border: 1px solid #09c6e3;">
-          <img alt="File" src="../../assets/imgs/notfound.png" style="width: 80px; height: 80px">
-          <p class="card-text"> <strong>ARCHIVO NO CARGADO</strong></p>
-        </div>
-      </div>
-    </div>
+<div class="row">
+  <div class="col-11">
+    <h1 mat-dialog-title>Firma electrónica</h1>
   </div>
-  <div class="row text-center mt-2">
-    <div class="col-12">
-      <button type="button" class="btn btn-outline-success btn-sm" [mat-dialog-close]="true">Aceptar</button>
-      <button type="button" class="btn btn-outline-danger btn-sm ml-2" [mat-dialog-close]>Cancelar</button>
-    </div>
-  </div>
-</div>-->
-
-<div>
-  <div align="end">
-    <button mat-icon-button [mat-dialog-close]="{response:false, data:null}">
+  <div class="col-1">
+    <button mat-icon-button [mat-dialog-close]="{response:false, data:null}" class="float-right">
       <mat-icon>close</mat-icon>
     </button>
   </div>
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Firma</mat-card-title>
-    </mat-card-header>
-    <div>
-      <input type='file' (change)="fileChanged($event)" style="margin-bottom: 10px">
-      <input type="password" placeholder="Contraseña" [(ngModel)]="password">
-    </div>
-    <mat-card-actions align="end">
-      <button type="button" class="btn btn-primary" (click)="uploadDocument()"
-        [disabled]="!fileFlag || !password">Firmar</button>
-    </mat-card-actions>
-  </mat-card>
+</div>
+<div class="form-group">        
+  <div class="custom-file mt-4" id="customFile">
+    <input type="file" class="custom-file-input" id="customFile" (change)="fileChanged($event)" placeholder="Buscar" aria-label="No se a seleccionado ningun archivo">
+    <label class="custom-file-label" for="customFile">Buscar firma</label>
+    
+  </div>
+  <mat-form-field appearance="outline" class="w-100  mt-4">
+    <mat-label>Contraseña</mat-label>
+    <input matInput placeholder="Contraseña" type="password" [(ngModel)]="password">
+  </mat-form-field>          
+</div>
+<div align="end">      
+  <button mat-flat-button color="primary" (click)="uploadDocument()"
+  [disabled]="!fileFlag || !password">Firmar</button>
 </div>
