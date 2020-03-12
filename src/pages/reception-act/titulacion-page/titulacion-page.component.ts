@@ -93,7 +93,7 @@ export class TitulacionPageComponent implements OnInit {
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
-
+  public showLoading: boolean;
 
   constructor(private studentProv: StudentProvider,
     private cookiesService: CookiesService,
@@ -148,11 +148,10 @@ export class TitulacionPageComponent implements OnInit {
        }, err => console.log(err));
   }
 
-  loadRequest() {  
-    
+  loadRequest() {
+    this.showLoading = true;
     this.studentProv.getRequest(this.cookiesService.getData().user._id)
-      .subscribe(res => {        
-        
+      .subscribe(res => {
         if (res.request.length > 0) {
           this.Request = <iRequest>res.request[0];
           this.Request.student = <IStudent>res.request[0].studentId;
@@ -171,7 +170,9 @@ export class TitulacionPageComponent implements OnInit {
           };
         }
         this.SelectItem();
+        this.showLoading = false;
       }, _ => {
+        this.showLoading = false;
         this.srvNotifications
           .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitud');
       });
