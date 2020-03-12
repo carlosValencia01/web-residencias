@@ -15,7 +15,9 @@ export class NotificationsServices {
         this._notificationsService.success(
           tittle,
           subtittle, {
-            maxLength: 0
+            maxLength: 0,
+            showProgressBar: true,
+            pauseOnHover: true,
           }
         );
         break;
@@ -24,7 +26,9 @@ export class NotificationsServices {
         this._notificationsService.error(
           tittle,
           subtittle, {
-            maxLength: 0
+            maxLength: 0,
+            showProgressBar: true,
+            pauseOnHover: true,
           }
         );
         break;
@@ -33,7 +37,9 @@ export class NotificationsServices {
         this._notificationsService.info(
           tittle,
           subtittle, {
-            maxLength: 0
+            maxLength: 0,
+            showProgressBar: true,
+            pauseOnHover: true,
           }
         );
       }

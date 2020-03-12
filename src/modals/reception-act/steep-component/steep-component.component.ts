@@ -41,6 +41,7 @@ export class SteepComponentComponent implements OnInit {
   private employee;
   private oRequest: uRequest;
   private folderId: string;
+  public fileName: string;
 
   constructor(
     public dialogRef: MatDialogRef<SteepComponentComponent>,
@@ -140,6 +141,7 @@ export class SteepComponentComponent implements OnInit {
   fileChanged(e) {
     this.file = e.target.files[0];
     this.fileFlag = true;
+    this.fileName = this.file ? this.file.name : undefined;
   }
 
   signProjectRegister() {

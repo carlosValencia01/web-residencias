@@ -296,7 +296,7 @@ export class TitulationProgressComponent implements OnInit {
     const ref = this.dialog.open(UploadDeliveredComponent, {
       disableClose: true,
       hasBackdrop: true,
-      width: '25em',
+      width: '50vw',
       data: { reqId: Identificador }
     });
 

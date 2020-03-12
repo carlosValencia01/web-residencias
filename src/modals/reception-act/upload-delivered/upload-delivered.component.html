@@ -1,8 +1,8 @@
 <div class="row">
-  <div class="col-11">
+  <div class="col-sm-8 col-lg-11">
     <h1 mat-dialog-title>Firma electrónica</h1>
   </div>
-  <div class="col-1">
+  <div class="col-sm-4 col-lg-1">
     <button mat-icon-button [mat-dialog-close]="{response:false, data:null}" class="float-right">
       <mat-icon>close</mat-icon>
     </button>
@@ -10,9 +10,8 @@
 </div>
 <div class="form-group">        
   <div class="custom-file mt-4" id="customFile">
-    <input type="file" class="custom-file-input" id="customFile" (change)="fileChanged($event)" placeholder="Buscar" aria-label="No se a seleccionado ningun archivo">
-    <label class="custom-file-label" for="customFile">Buscar firma</label>
-    
+    <input type="file" class="btn custom-file-input" id="customFile" (change)="fileChanged($event)" placeholder="Buscar" aria-label="No se a seleccionado ningún archivo">
+    <label class="custom-file-label" for="customFile">{{fileName || 'Buscar firma'}}</label>
   </div>
   <mat-form-field appearance="outline" class="w-100  mt-4">
     <mat-label>Contraseña</mat-label>

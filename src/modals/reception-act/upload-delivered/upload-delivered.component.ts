@@ -27,6 +27,7 @@ export class UploadDeliveredComponent implements OnInit {
   private oRequest: uRequest;
   private reqId;
   private request;
+  public fileName: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private data,
@@ -67,6 +68,7 @@ export class UploadDeliveredComponent implements OnInit {
   fileChanged(e) {
     this.file = e.target.files[0];
     this.fileFlag = true;
+    this.fileName = this.file ? this.file.name : undefined;
   }
 
   uploadDocument() {
@@ -95,7 +97,7 @@ export class UploadDeliveredComponent implements OnInit {
             this.dialogRef.close({ response: true, data: { QR: this.QR, ESTAMP: this.EStamp, RESPONSE: true } });
           }
         }, err => {
-          const error = JSON.parse(err._body).err;
+          const error = (err && !err.ok) ? 'Ocurrió un error' : JSON.parse(err._body).err;
           this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
         });
       } else {
