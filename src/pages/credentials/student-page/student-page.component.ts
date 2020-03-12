@@ -15,6 +15,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { CareerProvider } from 'src/providers/shared/career.prov';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
+import { eRegex } from 'src/enumerators/shared/eRegex.enum';
 
 @Component({
   selector: 'app-student-page',
@@ -81,7 +82,7 @@ export class StudentPageComponent implements OnInit {
     private router: Router,
     private routeActive: ActivatedRoute,
     private inscriptionProv: InscriptionsProvider,
-    private careerProv: CareerProvider
+    private careerProv: CareerProvider  
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
@@ -132,7 +133,7 @@ export class StudentPageComponent implements OnInit {
       'motherFirstNameInput': ['', null],
       'firstNameInput': ['', [Validators.required]],
       'numberControlInput': ['', [Validators.required]],
-      'nssInput': ['', [Validators.required]]
+      'nssInput': ['', [Validators.pattern(eRegex.NSS),Validators.required]]
     });
     this.searchInput.nativeElement.focus();
   }
@@ -655,6 +656,16 @@ export class StudentPageComponent implements OnInit {
       }
     );
     return folderId;
+  }
+
+  isNumber(event){        
+    const pattern = /[0-9]/;
+    const inputChar = String.fromCharCode(event.charCode);
+
+    if (!pattern.test(inputChar)) {    
+        // invalid character, prevent input
+        event.preventDefault();
+    }
   }
  
 }
