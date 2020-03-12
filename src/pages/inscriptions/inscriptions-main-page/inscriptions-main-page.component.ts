@@ -26,6 +26,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   pag;
   pageSize = 5;
   careers = {};
+  loading: boolean = false;
 
   constructor(
     private notificationsServices: NotificationsServices,
@@ -325,8 +326,8 @@ export class InscriptionsMainPageComponent implements OnInit {
       {fullName:'INGENIERÍA INDUSTRIAL',shortName:'ING. INDUSTRIAL',acronym:'II'},
       {fullName:'LICENCIATURA EN ADMINISTRACIÓN',shortName:'LIC. ADMINISTRACIÓN',acronym:'LA'},
       {fullName:'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN',shortName:'M. EN TECNOLOGÍAS DE LA INFORMACIÓN',acronym:'MTI'},
-      {fullName:'MAESTRÍA EN CIENCIAS DE ALIMENTOS',shortName:'M. CIENCIAS DE ALIMENTOS',acronym:'MCA'},
-      {fullName:'DOCTORADO EN CIENCIAS DE ALIMENTOS',shortName:'D. CIENCIAS DE ALIMENTOS',acronym:'DCA'},
+      {fullName:'MAESTRÍA EN CIENCIAS EN ALIMENTOS',shortName:'M. CIENCIAS EN ALIMENTOS',acronym:'MCA'},
+      {fullName:'DOCTORADO EN CIENCIAS EN ALIMENTOS',shortName:'D. CIENCIAS EN ALIMENTOS',acronym:'DCA'},
     ];
     this.careerProv.newCareer({careers:careers}).subscribe(
       res=>{
@@ -339,7 +340,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   }
 
   secretaryAssignment(period?){
-    const linkModal = this.dialog.open(SecretaryAssignmentComponent, {
+    this.dialog.open(SecretaryAssignmentComponent, {
       data: {
         operation: 'create',
         period: period
@@ -351,8 +352,38 @@ export class InscriptionsMainPageComponent implements OnInit {
     });
   }
 
-  onUpload(event, file): void {
-
+  async insertSignedUpStudents(){
+    const insertStudents = await this.showAlert('¿Insertar los nuevos alumnos inscritos?');
+    if(insertStudents){
+      this.loading = true;
+      await this.stProv.insertSignedUpStudents().toPromise().then(
+        inserted=>{          
+          this.loading = false;
+          this.notificationsServices.showNotification(eNotificationType.SUCCESS,'Configuraciones','Se insertaron '+inserted.created+' alumnos')
+        },
+        err=>this.loading = false  
+      ).catch(err=>this.loading=false);
+    }
+  }
+  showAlert(message: string, buttons: { accept: string, cancel: string } = { accept: 'Aceptar', cancel: 'Cancelar' }):any {
+    return new Promise((resolve) => {
+      Swal.fire({
+        title: message,
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: buttons.cancel,
+        confirmButtonText: buttons.accept
+      }).then((result) => {
+        if (result.value) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    });
   }
 
 }

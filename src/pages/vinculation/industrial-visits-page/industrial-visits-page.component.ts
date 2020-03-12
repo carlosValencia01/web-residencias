@@ -8,6 +8,8 @@ import TableToExcel from '@linways/table-to-excel';
 import { NotificationsServices } from 'src/services/app/notifications.service';
 import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
+
+
 @Component({
   selector: 'app-industrial-visits-page',
   templateUrl: './industrial-visits-page.component.html',
@@ -15,7 +17,7 @@ import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 })
 export class IndustrialVisitsPageComponent implements OnInit {
 
-  displayedColumns: string[] = ['no','controlNumber', 'fullName', 'career', 'semester','nss','status'];
+  displayedColumns: string[] = ['no','controlNumber', 'fullName', 'career', 'semester','nss','status','insured'];
   dataSource: MatTableDataSource<ListData>;
 
   @ViewChild(MatPaginator) set paginator(paginator: MatPaginator){
@@ -56,11 +58,27 @@ export class IndustrialVisitsPageComponent implements OnInit {
   public async onUpload(event) {
     this.loading=true;    
     this.showTable = false;
-    let localStudents;
+    let localStudents,activeStudents;
     this.formatedStudents = [];
     await this.studentProv.getAllStudents().toPromise().then(
       sts=>{
-        localStudents = sts.students;        
+        localStudents = sts.students.map(
+          st=>({
+            controlNumber:st.controlNumber,
+            career: st.careerId ? st.careerId.acronym : st.career,
+            fullName:st.fullName,
+            semester:st.semester,
+            nss: st.nss,
+            insured: st.documents.filter( doc=> doc.type == 'IMSS' ).length > 0 ? true : false
+          })
+        );          
+             
+      }
+    );    
+    await this.studentProv.getAllActiveStudents().toPromise().then(
+      sts=>{
+        activeStudents = sts.activeStudents;              
+          
       }
     );    
     
@@ -70,46 +88,31 @@ export class IndustrialVisitsPageComponent implements OnInit {
           if (results.data.length > 0) {
             results.data.slice(1).forEach(async (st,index) => {
               const tmpSt = localStudents.filter( stu=> stu.controlNumber.trim() == st[0].trim())[0];
-              if(tmpSt){
-                // let status;
-                // await this.studentProv.getStatus(tmpSt.controlNumber).toPromise().then(
-                //   (stat)=> status = stat.status
-                // );
-                if(tmpSt.careerId){
-                  this.formatedStudents.push(
-                    {
-                      no:index+1,
-                      fullName: tmpSt.fullName,
-                      controlNumber: tmpSt.controlNumber,
-                      career: tmpSt.careerId.acronym,
-                      semester: tmpSt.semester,
-                      nss: tmpSt.nss ? tmpSt.nss : '------',
-                      status:'------'
-                    }
-                  );
-                }else{
-                  this.formatedStudents.push(
-                    {
-                      no:index+1,
-                      fullName: tmpSt.fullName,
-                      controlNumber: tmpSt.controlNumber,
-                      career: tmpSt.career,
-                      semester: tmpSt.semester,
-                      nss: tmpSt.nss ? tmpSt.nss : '------',
-                      status:'------'
-                    }
-                  );
-                }
+              const stStatus = activeStudents.filter(stu=>stu.controlNumber.trim() == st[0].trim())[0];
+              if(tmpSt){              
+                this.formatedStudents.push(
+                  {
+                    no:index+1,
+                    fullName: tmpSt.fullName,
+                    controlNumber: tmpSt.controlNumber,
+                    career: tmpSt.career,
+                    semester: tmpSt.semester,
+                    nss: tmpSt.nss ? tmpSt.nss : '------',
+                    status: stStatus ? 'ACTIVO' : 'INACTIVO',
+                    insured: tmpSt.insured ? 'SI' : 'NO'
+                  }
+                );
               }else{
                 this.formatedStudents.push(
                   {
                     no:index+1,
                     fullName: st[1],
                     controlNumber: st[0],
-                    career: st[2],
-                    semester: st[3],
-                    nss: 'NO REGISTRADO',
-                    status:'NO REGISTRADO'
+                    career: st[2] ? st[2] : '------',
+                    semester: st[3] ? st[3] : '------',
+                    nss: '------',
+                    status:'------',
+                    insured: '------'
                   }
                 );
               }
@@ -117,10 +120,7 @@ export class IndustrialVisitsPageComponent implements OnInit {
             // Assign the data to the data source for the table to render            
             this.dataSource = new MatTableDataSource(this.formatedStudents);
             this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;
-            console.log(this.formatedStudents);
-            
-            
+            this.dataSource.sort = this.sort;            
             this.loading = false;
             this.showTable = true;
           }
@@ -152,4 +152,5 @@ interface ListData {
   semester: string;
   nss: string;
   status: string;
+  insured: string;
 }
