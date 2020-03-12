@@ -675,7 +675,7 @@ export class uRequest {
         doc.setFontSize(8);
         let tmpDate = new Date();
         // tslint:disable-next-line: max-line-length
-        let content = '@DIRECTOR del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a @CAREERNUM de @CARRERA No. @LIBRO Autorizado el día @AUTORIZACION, por la Dirección de Servicios Escolares y Estudiantiles del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a la letra dice:';
+        let content = '@DIRECTOR del Instituto Tecnológico de Tepic, certifica que en el libro para Constancias de Exención de Examen Profesional, referente a @CAREERNUM de @CARRERA No. @LIBRO Autorizado el día @AUTORIZACION, por la @DIR del Tecnológico Nacional de México, se encuentra asentada en la foja número @NUMERO la constancia que a la letra dice:';
         content = content.replace('@DIRECTOR', this.Director.gender === 'MASCULINO' ? 'El suscrito Director' : 'La suscrita Directora');
         content = content.replace('@CAREERNUM', this.careersPerBook > 1 ? 'las carreras' : 'la carrera');
         content = content.replace('@CARRERA', this.letterCapital(this._request.registry.career));
