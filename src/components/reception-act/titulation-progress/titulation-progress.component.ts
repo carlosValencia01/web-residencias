@@ -246,7 +246,7 @@ export class TitulationProgressComponent implements OnInit {
     tmp.integrants = element.integrants;
     tmp.email = element.email;
     tmp.product = element.product;
-    tmp.titulationOption = element.titulationOption.split(' ')[0];
+    tmp.titulationOption = element.titulationOption;
     tmp.place = element.place;
     tmp.grade = element.grade;
     tmp.department = element.department;
