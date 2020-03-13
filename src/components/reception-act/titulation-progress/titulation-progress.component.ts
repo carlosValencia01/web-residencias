@@ -37,6 +37,7 @@ import { BookProvider } from 'src/providers/reception-act/book.prov';
 import Swal from 'sweetalert2';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
+import * as moment from 'moment';
 
 
 @Component({
@@ -56,6 +57,7 @@ export class TitulationProgressComponent implements OnInit {
   request: iRequest[];
   requestFilter: iRequest[];
   displayedColumns: string[];
+  displayedColumnsGestionTitled: string[];
   statusOptions: { icon: string, option: string }[];
   dataSource: MatTableDataSource<iRequestSource>;
   careers: Array<string>;
@@ -67,6 +69,13 @@ export class TitulationProgressComponent implements OnInit {
   phases: Array<string>;
   search: string;
   role: string;
+  cantPendientes = 0;
+  cantImpresos = 0;
+  cantListos = 0;
+  cantEntregados = 0;
+  cantProceso = 0;
+  cantAceptados = 0;
+  cantFinalizados = 0;
   public showLoading: boolean;
   departmentCareers: Array<ICareer>; // Carreras del puesto
   private folderId: string;
@@ -113,6 +122,8 @@ export class TitulationProgressComponent implements OnInit {
     this.loadRequest(true);
     this.displayedColumns = ['controlNumber', 'fullName', 'career', 'phase', 'status',
       'applicationDateLocal', 'lastModifiedLocal', 'action'];
+    this.displayedColumnsGestionTitled = ['controlNumber', 'fullName', 'career', 'phase', 'status',
+    'titulationDate', 'optionTitled', 'applicationDateLocal', 'lastModifiedLocal', 'action'];
     this.statusOptions = [
       { icon: 'accessibility_new', option: 'Todos' },
       { icon: 'mail', option: 'Solicitado' },
@@ -172,9 +183,9 @@ export class TitulationProgressComponent implements OnInit {
       res => {
         this.request = [];
         res.request.forEach(element => {
-          const isProcess = this.tabNumber === 3
+          const isProcess = (this.tabNumber === 3)
             ? element.documents.filter(doc => doc.status === 'Process').length > 0
-            : true; // for tab dictamination use for only request that have at least one document in process
+            : true;
           if (isProcess) {
             const tmpRequest: iRequest = this.castRequest(element);
             if (this.role !== 'jefe académico' && this.role !== 'secretaria académica') {
@@ -188,6 +199,7 @@ export class TitulationProgressComponent implements OnInit {
             }
           }
         });
+
         this.requestFilter = this.request.slice(0);
         if (isInit) {
           this.careers = this.allCarrers.slice(0);
@@ -234,10 +246,11 @@ export class TitulationProgressComponent implements OnInit {
     tmp.integrants = element.integrants;
     tmp.email = element.email;
     tmp.product = element.product;
-    tmp.titulationOption = element.titulationOption;
+    tmp.titulationOption = element.titulationOption.split(' ')[0];
     tmp.place = element.place;
     tmp.grade = element.grade;
     tmp.department = element.department;
+    tmp.proposedDateLocal = new Date(element.proposedDate).toLocaleDateString();
     tmp.applicationDateLocal = new Date(element.applicationDate).toLocaleDateString();
     tmp.lastModifiedLocal = new Date(element.lastModified).toLocaleDateString();
     tmp.registry = element.registry;
@@ -266,9 +279,84 @@ export class TitulationProgressComponent implements OnInit {
       if (this.tabNumber === 2) {
         this.dataSource.filter = 'pendiente';
       }
+
       if (this.tabNumber === 3) {
         this.dataSource.filter = 'proceso';
       }
+
+      if(this.tabNumber === 4) {
+        this.dataSource.filter = 'proceso';
+        this.dataSource.data = this.dataSource.data.filter(
+          (req: any) => {
+            const finalizedDate = new Date(req.proposedDate);
+            const finalizedHour = req.proposedHour+req.duration;
+            finalizedDate.setHours(finalizedHour/60,finalizedHour%60,0,0);
+            if(finalizedDate <= new Date()){
+              return true;
+            }
+            return false;
+          }
+        );
+      }
+
+      if (this.tabNumber === 5) {
+        this.dataSource.data = this.dataSource.data.filter(
+          (req: any) => {
+            if((req.phase === 'Generado' && req.status === 'Pendiente') || (req.phase === 'Generado' && req.status === 'Impreso') || (req.phase === 'Generado' && req.status === 'Aceptado') || (req.phase === 'Titulado' && req.status === 'Pendiente')){
+              return true;
+            }
+            return false;
+          }
+        );
+        let cantPendientes = 0;
+        let cantImpresos = 0;
+        let cantListos = 0;
+        let cantEntregados = 0;
+
+        this.dataSource.data.forEach( (element,index) => {
+          if (this.dataSource.data[index].phase === 'Generado' && this.dataSource.data[index].status === 'Pendiente') cantPendientes++;
+          if (this.dataSource.data[index].phase === 'Generado' && this.dataSource.data[index].status === 'Impreso') cantImpresos++;
+          if (this.dataSource.data[index].phase === 'Generado' && this.dataSource.data[index].status === 'Aceptado') cantListos++;
+          if (this.dataSource.data[index].phase === 'Titulado' && this.dataSource.data[index].status === 'Pendiente') cantEntregados++;
+        });
+
+        this.cantPendientes = cantPendientes;
+        this.cantImpresos = cantImpresos;
+        this.cantListos = cantListos;
+        this.cantEntregados = cantEntregados;
+      }
+
+      if (this.tabNumber === 6) {
+        this.dataSource.data = this.dataSource.data.filter(
+          (req: any) => {
+            if((req.phase === 'Generado' && req.status === 'Aceptado') || (req.phase === 'Titulado' && req.status === 'Pendiente') || (req.phase === 'Titulado' && req.status === 'Proceso') || (req.phase === 'Titulado' && req.status === 'Aceptado') || (req.phase === 'Titulado' && req.status === 'Finalizado')){
+              return true;
+            }
+            return false;
+          }
+        );
+
+        let cantListos = 0;
+        let cantEntregados = 0;
+        let cantProceso = 0;
+        let cantAceptados = 0;
+        let cantFinalizados = 0;
+
+        this.dataSource.data.forEach( (element,index) => {
+          if (this.dataSource.data[index].phase === 'Generado' && this.dataSource.data[index].status === 'Aceptado') cantListos++;
+          if (this.dataSource.data[index].phase === 'Titulado' && this.dataSource.data[index].status === 'Pendiente') cantEntregados++;
+          if (this.dataSource.data[index].phase === 'Titulado' && this.dataSource.data[index].status === 'Proceso') cantProceso++;
+          if (this.dataSource.data[index].phase === 'Titulado' && this.dataSource.data[index].status === 'Aceptado') cantAceptados++;
+          if (this.dataSource.data[index].phase === 'Titulado' && this.dataSource.data[index].status === 'Finalizado') cantFinalizados++;
+        });
+
+        this.cantListos = cantListos;
+        this.cantEntregados = cantEntregados;
+        this.cantProceso = cantProceso;
+        this.cantAceptados = cantAceptados;
+        this.cantFinalizados = cantFinalizados;
+      }
+
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     }
