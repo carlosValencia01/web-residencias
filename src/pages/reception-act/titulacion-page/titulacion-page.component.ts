@@ -157,7 +157,10 @@ export class TitulacionPageComponent implements OnInit {
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
           this.oRequest = new uRequest(this.Request, this.imgService, this.cookiesService);
-          this.isOkTitulation = this.Request.phase !== eRequest.TITLED && this.Request.status !== eStatusRequest.FINALIZED;
+          this.isOkTitulation = this.Request.phase !== eRequest.TITLED ? this.Request.status !== eStatusRequest.FINALIZED : 
+          // status is titled
+            this.Request.status !== eStatusRequest.FINALIZED
+          ;
           this.hasPhase = true;
           this.loaded = true;
           // Titulado	-	Finalized
