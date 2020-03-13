@@ -70,6 +70,12 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Estatus </th>
             <td mat-cell *matCellDef="let row"> {{row.status}} </td>
           </ng-container>
+  
+          <!-- Asegurado -->
+          <ng-container matColumnDef="insured">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Asegurado </th>
+            <td mat-cell *matCellDef="let row"> {{row.insured}} </td>
+          </ng-container>
       
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;">
@@ -93,7 +99,7 @@
 
 <!-- Tabla reporte alumnos Excel-->
 <table class="table table-bordered" id="tableReportExcel"
-data-cols-width="9,21,46,66,10,25,15" *ngIf="showTable">
+data-cols-width="9,21,46,46,15,35,15,25" *ngIf="showTable">
 <thead>
    <tr>
       <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
@@ -107,6 +113,7 @@ data-cols-width="9,21,46,66,10,25,15" *ngIf="showTable">
       <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Semestre</th>
       <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Seguro Social</th>
       <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Estatus</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Asegurado</th>
 <!-- BAEDF9 -->
    </tr>
 </thead>
@@ -126,6 +133,7 @@ data-cols-width="9,21,46,66,10,25,15" *ngIf="showTable">
       <td data-f-sz="12">{{alumno.semester}}</td>
       <td data-f-sz="12" >{{alumno.nss}}</td>
       <td data-f-sz="12">{{alumno.status}}</td>      
+      <td data-f-sz="12">{{alumno.insured}}</td>      
    </tr>
 </tbody>
 </table>

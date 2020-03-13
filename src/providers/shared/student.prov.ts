@@ -192,8 +192,9 @@ export class StudentProvider {
     }
 
     getStatus(controlNumber: string): Observable<any> {
-        return this.api.get(`student/get/status/${controlNumber}`).pipe(map(res => res.json()));
+        return this.api.get(`student/get/status/sii/${controlNumber}`).pipe(map(res => res.json()));
     }
+    
     createFromSii(controlNumber: string) {
         return this.api.post(`student/create/sii/${controlNumber}`, {}, true).pipe(map(res => res.json()));
     }
@@ -254,4 +255,11 @@ export class StudentProvider {
         return this.api.put(`student/credential/${_id}`, {status})
             .pipe(map(res => res.json()));
     }    
+    insertSignedUpStudents() {
+        return this.api.post('student/active/create', {}).pipe(map(res => res.json()));
+    }
+
+    getAllActiveStudents(): Observable<any> {
+        return this.api.get(`student/get/active/students`).pipe(map(res => res.json()));
+    }
 }
