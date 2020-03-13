@@ -83,7 +83,7 @@ export class IndustrialVisitsPageComponent implements OnInit {
     );    
     
     if (event.target.files && event.target.files[0]) {
-      let decoder = new TextDecoder('iso-8859-2'); 
+      
       Papa.parse(event.target.files[0], {
         complete: (results) => {
           if (results.data.length > 0) {
@@ -107,7 +107,7 @@ export class IndustrialVisitsPageComponent implements OnInit {
                 this.formatedStudents.push(
                   {
                     no:index+1,
-                    fullName: st[1] ?  decoder.decode(new Buffer(st[1])) : '------',
+                    fullName: st[1] ?  st[1] : '------',
                     controlNumber: st[0] ? st[0] : '------',
                     career: st[2] ? st[2] : '------',
                     semester: st[3] ? st[3] : '------',
@@ -125,7 +125,9 @@ export class IndustrialVisitsPageComponent implements OnInit {
             this.loading = false;
             this.showTable = true;
           }
-        }
+        },
+        encoding:'ISO-8859-3',
+        skipEmptyLines:true
       });
     }
   }
