@@ -13,38 +13,23 @@
     <div class="row justify-content-center">
       <mat-form-field class="col-sm-12 col-lg-12" appearance="outline">
         <mat-label>Nombre del libro</mat-label>
-        <input matInput placeholder="Nombre de libro" formControlName="name" type="text" readonly required>
-        <mat-error *ngIf="!formMinuteBook.get('name').valid && formMinuteBook.get('name').touched">
-          <span *ngIf="formMinuteBook.get('name').errors['required']">
-            ¡Ingrese el nombre del libro!
-          </span>
-        </mat-error>
+        <textarea matInput placeholder="Nombre de libro" formControlName="name" readonly></textarea>        
       </mat-form-field>
     </div>
     <div class="row">
       <mat-form-field class="col-sm-12 col-lg-4" appearance="outline">
         <mat-label>Fecha de registro</mat-label>
-        <input matInput [matDatepicker]="picker" placeholder="Fecha de registro" formControlName="date" readonly required>
+        <input matInput [matDatepicker]="picker" placeholder="Fecha de registro" formControlName="date" readonly>
         <mat-datepicker-toggle [for]="picker" matSuffix></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="!formMinuteBook.get('date').valid && formMinuteBook.get('date').touched">
-          <span *ngIf="formMinuteBook.get('date').errors['required']">
-            ¡Seleccione una fecha!
-          </span>
-        </mat-error>
+        <mat-datepicker #picker></mat-datepicker>        
       </mat-form-field>
       <mat-form-field class="col-sm-12 col-lg-4" appearance="outline">
         <mat-label>Número de libro</mat-label>
-        <input matInput placeholder="Número de libro" formControlName="bookNumber" type="text" readonly required>
-        <mat-error *ngIf="!formMinuteBook.get('bookNumber').valid && formMinuteBook.get('bookNumber').touched">
-          <span *ngIf="formMinuteBook.get('bookNumber').errors['required']">
-            ¡Ingrese un número de libro!
-          </span>
-        </mat-error>
+        <input matInput placeholder="Número de libro" formControlName="bookNumber" type="text" readonly>        
       </mat-form-field>
       <mat-form-field class="col-sm-12 col-lg-4" appearance="outline">
         <mat-label>Foja</mat-label>
-        <input matInput placeholder="Foja" formControlName="foja" type="text" required>
+        <input matInput placeholder="Foja" formControlName="foja" type="text" required id="foja">
         <mat-error *ngIf="!formMinuteBook.get('foja').valid && formMinuteBook.get('foja').touched">
           <span *ngIf="formMinuteBook.get('foja').errors['required']">
             ¡Ingrese una foja!

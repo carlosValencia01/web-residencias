@@ -28,7 +28,7 @@ export class BookComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    document.getElementById("foja").focus();
   }
 
   onClose() {
