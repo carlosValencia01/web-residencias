@@ -278,6 +278,7 @@ export class StudentPageComponent implements OnInit {
       //     }
       //   }, () => this.loading = false);
     } else {
+      this.loading = false;
       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
     }
   }
@@ -329,6 +330,7 @@ export class StudentPageComponent implements OnInit {
               this.loading = false;
               window.open(doc.output('bloburl'), '_blank');
             } else {
+              this.loading = false;
               this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
             }
   }
@@ -354,7 +356,8 @@ export class StudentPageComponent implements OnInit {
             fatherLastName:data.fatherLastName,
             motherLastName:data.motherLastName,
             careerId: data.careerId,
-            insured: (data.documents || []).some(doc => doc.type.toUpperCase() === 'IMSS') ? 'Si' : 'No'
+            insured: (data.documents || []).some(doc => doc.type.toUpperCase() === 'IMSS') ? 'Si' : 'No',
+            campaign: (data.documents || []).some(doc => doc.type.toUpperCase() === 'CREDENCIAL') ? 'Si' : 'No'
           }
         }else{
           return data;
@@ -666,6 +669,34 @@ export class StudentPageComponent implements OnInit {
         // invalid character, prevent input
         event.preventDefault();
     }
+  }
+
+  addCampaign(student) {
+    this.loading = true;
+    this.studentProv.addCampaignStudent(student.controlNumber)
+      .subscribe(_ => {
+        this.loading = false;
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Éxito al agregar a campaña', '');
+        this.searchStudent(false);
+      }, _ => {
+        console.log(_);
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'Error, no se pudo agregar a campaña', '');
+        this.loading = false;
+      });
+  }
+
+  removeCampaign(student) {
+    this.loading = true;
+    this.studentProv.removeCampaignStudent(student.controlNumber)
+      .subscribe(_ => {
+        this.loading = false;
+        this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Éxito al remover de campaña', '');
+        this.searchStudent(false);
+      }, _ => {
+        console.log(_);
+        this.notificationServ.showNotification(eNotificationType.ERROR, 'Error, no se pudo remover de campaña', '');
+        this.loading = false;
+      });
   }
  
 }

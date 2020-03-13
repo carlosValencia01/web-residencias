@@ -232,4 +232,26 @@ export class StudentProvider {
         return this.api.post('imss/convert/csv', data).pipe(map(res => res.json()));
     }
 
+    addCampaignStudent(controlNumber: string) {
+        const doc = {
+            registerDate: new Date(),
+            type: 'CREDENCIAL'
+        };
+        return this.api.put(`student/campaign/${controlNumber}`, doc)
+            .pipe(map(res => res.json()));
+    }
+
+    removeCampaignStudent(controlNumber: string) {
+        return this.api.delete(`student/campaign/${controlNumber}`)
+            .pipe(map(res => res.json()));
+    }
+
+    studentsCampaign() {
+        return this.api.get(`student/campaign/students/all`).pipe(map(res => res.json()));
+    }
+
+    registerCredentialStudent(_id: string,status: boolean) {
+        return this.api.put(`student/credential/${_id}`, {status})
+            .pipe(map(res => res.json()));
+    }    
 }
