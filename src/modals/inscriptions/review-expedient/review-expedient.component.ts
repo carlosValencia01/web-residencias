@@ -180,14 +180,15 @@ export class ReviewExpedientComponent implements OnInit {
         res => {
           this.notificationsServices.showNotification(eNotificationType.SUCCESS,
             'Exito', 'Estatus actualizado correctamente.');
+           console.log(this.data.student);
            
           if (action == "RECHAZADO") {
-            this.inscriptionsProv.sendNotification(this.data.student.controlNumber, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+this.docto.file.fullName+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://mitec.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
+            this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+this.docto.file.fullName+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://mitec.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
               res => {
-                this.notificationsServices.showNotification(0, 'Notificación enviada a:', this.data.student.controlNumber);
+                this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Notificación enviada a:', this.data.student.email);
               },
               err => {
-                this.notificationsServices.showNotification(1, 'No se pudo enviar el correo a:', this.data.student.controlNumber);
+                this.notificationsServices.showNotification(eNotificationType.ERROR, 'No se pudo enviar el correo a:', this.data.student.email);
               }
             );
           }
