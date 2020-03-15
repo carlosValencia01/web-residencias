@@ -8,4 +8,5 @@ export interface IPosition {
     canSign?: boolean;
     documents?: Array<IDocument>;
     isUnique?: boolean;
+    gender?: { male?: string, female?: string };
 }

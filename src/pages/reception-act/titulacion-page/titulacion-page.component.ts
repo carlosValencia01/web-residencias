@@ -173,7 +173,6 @@ export class TitulacionPageComponent implements OnInit {
           // Titulado	-	Finalized
           this.getFolderId();
         } else {
-          this.loaded = true;
           this.Request = {
             phase: eRequest.NONE,
             status: eStatusRequest.NONE
@@ -210,11 +209,9 @@ export class TitulacionPageComponent implements OnInit {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
     this.requestService.AddRequest(this.Request, phase);
-    if(this.isOkTitulation){
-      this.Steeps = new ContextState(phase, status);
-      this.StatusComponent = this.Steeps.state.status;
-      this.enableSteps(phase);
-    }
+    this.Steeps = new ContextState(phase, status);
+    this.StatusComponent = this.Steeps.state.status;
+    this.enableSteps(phase);
   }
 
   // Visualiza el componente donde colocarse
