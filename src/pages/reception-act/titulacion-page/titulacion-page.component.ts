@@ -17,6 +17,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 import { RequestService } from 'src/services/reception-act/request.service';
 import { InscriptionsProvider } from 'src/providers/inscriptions/inscriptions.prov';
 import { eFOLDER } from 'src/enumerators/shared/folder.enum';
+import { eStatus } from 'src/enumerators/reception-act/status.enum';
 import * as moment from 'moment';
 
 moment.locale('es');
@@ -55,7 +56,7 @@ export class TitulacionPageComponent implements OnInit {
   public isApprovedEnglish: boolean;
   public titrationHour: string;
   public isActive = true;
-
+  public status: string;
   // Mensajes
   ProcessSentMessage: String = 'En espera de que tu solicitud sea aceptada';
   CompletedSentMessage: String = 'TU SOLICITUD HA SIDO ACEPTADA'; // 'Tú solicitud ha sido aceptada';
@@ -85,17 +86,18 @@ export class TitulacionPageComponent implements OnInit {
   AcceptTitledMessage: String = 'TÍTULO PROFESIONAL LISTO PARA SER ENTREGADO';
   FinalizedTitledMessage: String = 'TÍTULO PROFESIONAL ENTREGADO';
 
-  isTitled: boolean = false;
-  hasPhase: boolean = false;
-  loaded: boolean = false;
-  degree: string = '';
+  isTitled = false;
+  hasPhase = false;
+  loaded = false;
+  degree = '';
   user;
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
   public showLoading: boolean;
 
-  constructor(private studentProv: StudentProvider,
+  constructor(
+    private studentProv: StudentProvider,
     private cookiesService: CookiesService,
     private imgService: ImageToBase64Service,
     private router: Router,
@@ -104,12 +106,11 @@ export class TitulacionPageComponent implements OnInit {
     private requestService: RequestService,
     public _InscriptionsProvider: InscriptionsProvider,
   ) {
-    this.user = this.cookiesService.getData().user;        
-    
+    this.user = this.cookiesService.getData().user;
     this.isApprovedEnglish = this.user.english;
     this.isGraduate = this.user.graduate;
     this.isTitled = this.user.titled;
-    this.degree = this.isTitled ? this.user.career != 'LA' && this.user.career != 'ARQ' && this.user.career != 'MCA' && this.user.career != 'DCA' ? 'ING.' : this.user.career == 'LA' ? 'LIC.' : this.user.career == 'ARQ' ? 'ARQ.' : this.user.career == 'MCA' ? 'M.C.A.' : this.user.career == 'MTI' ? 'M.T.I.' : this.user.career == 'DCA' ? 'D.C.A.' :'' : '';
+    this.degree = this.isTitled ? this.user.career !== 'LA' && this.user.career !== 'ARQ' && this.user.career !== 'MCA' && this.user.career !== 'DCA' ? 'ING.' : this.user.career === 'LA' ? 'LIC.' : this.user.career === 'ARQ' ? 'ARQ.' : this.user.career === 'MCA' ? 'M.C.A.' : this.user.career === 'MTI' ? 'M.T.I.' : this.user.career === 'DCA' ? 'D.C.A.' : '' : '';
     this.isOkTitulation = this.user.english && this.user.graduate;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -125,32 +126,38 @@ export class TitulacionPageComponent implements OnInit {
 
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
-    this._InscriptionsProvider.getActivePeriod().subscribe(
-      periodo => {
-                
-        if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
-          this.loadRequest();
-          this.isActive = true;
-        } else {
-          this.loaded = true;
-          this.isActive = false;
-        }
-      }, _ => {
-        this.loaded = true;
-        this.isActive = false;
-      });
+    this.studentProv.getStatusById(this.user._id).subscribe( data => {
+      this.isGraduate = data.status === 'EGR';
+      this.isApprovedEnglish = data.english;
+      this.isOkTitulation = this.isGraduate && this.isApprovedEnglish;
+      if (this.isOkTitulation) {
+        this._InscriptionsProvider.getActivePeriod().subscribe(
+          periodo => {
+            if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
+              this.loadRequest();
+              this.isActive = true;
+            } else {
+              this.loaded = true;
+              this.isActive = false;
+            }
+          }, _ => {
+            this.loaded = true;
+            this.isActive = false;
+          });
+      }
+    });
   }
 
   getFolderId(): void {
-    this.studentProv.getDriveFolderId(this.cookiesService.getData().user.email, eFOLDER.TITULACION)
+    this.studentProv.getDriveFolderId(this.user.email, eFOLDER.TITULACION)
       .subscribe(folder => {
-         this.cookiesService.saveFolder(folder.folderIdInDrive);
-       }, err => console.log(err));
+        this.cookiesService.saveFolder(folder.folderIdInDrive);
+      }, err => console.log(err));
   }
 
   loadRequest() {
     this.showLoading = true;
-    this.studentProv.getRequest(this.cookiesService.getData().user._id)
+    this.studentProv.getRequest(this.user._id)
       .subscribe(res => {
         if (res.request.length > 0) {
           this.Request = <iRequest>res.request[0];
