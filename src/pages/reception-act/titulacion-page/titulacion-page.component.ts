@@ -107,11 +107,6 @@ export class TitulacionPageComponent implements OnInit {
     public _InscriptionsProvider: InscriptionsProvider,
   ) {
     this.user = this.cookiesService.getData().user;
-    this.isApprovedEnglish = this.user.english;
-    this.isGraduate = this.user.graduate;
-    this.isTitled = this.user.titled;
-    this.degree = this.isTitled ? this.user.career !== 'LA' && this.user.career !== 'ARQ' && this.user.career !== 'MCA' && this.user.career !== 'DCA' ? 'ING.' : this.user.career === 'LA' ? 'LIC.' : this.user.career === 'ARQ' ? 'ARQ.' : this.user.career === 'MCA' ? 'M.C.A.' : this.user.career === 'MTI' ? 'M.T.I.' : this.user.career === 'DCA' ? 'D.C.A.' : '' : '';
-    this.isOkTitulation = this.user.english && this.user.graduate;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -127,24 +122,24 @@ export class TitulacionPageComponent implements OnInit {
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
     this.studentProv.getStatusById(this.user._id).subscribe( data => {
-      this.isGraduate = data.status === 'EGR';
+      this.isGraduate = data.status === eStatus.EGRESADO;
+      this.isTitled = data.status === eStatus.TITULADO;
       this.isApprovedEnglish = data.english;
       this.isOkTitulation = this.isGraduate && this.isApprovedEnglish;
-      if (this.isOkTitulation) {
-        this._InscriptionsProvider.getActivePeriod().subscribe(
-          periodo => {
-            if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
-              this.loadRequest();
-              this.isActive = true;
-            } else {
-              this.loaded = true;
-              this.isActive = false;
-            }
-          }, _ => {
+      this.degree = this._getDegree(data.status, this.user.career);
+      this._InscriptionsProvider.getActivePeriod().subscribe(
+        periodo => {
+          if (typeof (periodo) !== 'undefined' && typeof (periodo.period) !== 'undefined' && periodo.period.active) {
+            this.loadRequest();
+            this.isActive = true;
+          } else {
             this.loaded = true;
             this.isActive = false;
-          });
-      }
+          }
+        }, _ => {
+          this.loaded = true;
+          this.isActive = false;
+        });
     });
   }
 
@@ -164,15 +159,12 @@ export class TitulacionPageComponent implements OnInit {
           this.Request.student = <IStudent>res.request[0].studentId;
           this.Request.studentId = this.Request.student._id;
           this.oRequest = new uRequest(this.Request, this.imgService, this.cookiesService);
-          this.isOkTitulation = this.Request.phase !== eRequest.TITLED ? this.Request.status !== eStatusRequest.FINALIZED : 
-          // status is titled
-            this.Request.status !== eStatusRequest.FINALIZED
-          ;
+          this.isOkTitulation = !(this.Request.phase === eRequest.TITLED && this.Request.status === eStatusRequest.FINALIZED);
           this.hasPhase = true;
           this.loaded = true;
-          // Titulado	-	Finalized
           this.getFolderId();
         } else {
+          this.loaded = true;
           this.Request = {
             phase: eRequest.NONE,
             status: eStatusRequest.NONE
@@ -209,9 +201,11 @@ export class TitulacionPageComponent implements OnInit {
     const phase = <eRequest><keyof typeof eRequest>this.Request.phase;
     const status = <eStatusRequest><keyof typeof eStatusRequest>this.Request.status;
     this.requestService.AddRequest(this.Request, phase);
-    this.Steeps = new ContextState(phase, status);
-    this.StatusComponent = this.Steeps.state.status;
-    this.enableSteps(phase);
+    if (this.isOkTitulation) {
+      this.Steeps = new ContextState(phase, status);
+      this.StatusComponent = this.Steeps.state.status;
+      this.enableSteps(phase);
+    }
   }
 
   // Visualiza el componente donde colocarse
@@ -279,7 +273,12 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   resetSteep(): void {
-    this.SteepOneCompleted = this.SteepTwoCompleted = this.SteepThreeCompleted = this.SteepFourCompleted = this.SteepFiveCompleted = this.SteepSixCompleted = false;
+    this.SteepOneCompleted = false;
+    this.SteepTwoCompleted =  false;
+    this.SteepThreeCompleted = false;
+    this.SteepFourCompleted = false;
+    this.SteepFiveCompleted = false;
+    this.SteepSixCompleted = false;
   }
 
   valores() {
@@ -287,5 +286,19 @@ export class TitulacionPageComponent implements OnInit {
 
   viewRequeriments() {
     window.open('../../../assets/Requisitos.pdf', '_blank');
+  }
+
+  private _getDegree(status: string, career: string) {
+    if ((status || '').toUpperCase() === eStatus.TITULADO) {
+      switch (career) {
+        case 'LA': return 'LIC.';
+        case 'ARQ': return 'ARQ.';
+        case 'MCA.': return 'M.C.A.';
+        case 'MTI.': return 'M.T.I.';
+        case 'DCA.': return 'D.C.A.';
+        default: return 'ING.';
+      }
+    }
+    return '';
   }
 }
