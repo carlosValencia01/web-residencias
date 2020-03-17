@@ -169,8 +169,8 @@ export class OneStudentPageComponent implements OnInit {
       return career;
     }
     switch (career) {
-      case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
-        return 'DOC. EN CIENCIAS DE ALIMENTOS';
+      case 'DOCTORADO EN CIENCIAS EN ALIMENTOS':
+        return 'DOC. EN CIENCIAS EN ALIMENTOS';
 
       case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
         return 'ING. EN GESTION EMPRESARIAL';

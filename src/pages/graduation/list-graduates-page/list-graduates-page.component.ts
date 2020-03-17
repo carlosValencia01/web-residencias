@@ -1815,13 +1815,13 @@ export class ListGraduatesPageComponent implements OnInit {
             case 'LICENCIATURA EN ADMINISTRACIÓN':
               titulo = 'LIC.';
               break;
-            case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+            case 'MAESTRÍA EN CIENCIAS EN ALIMENTOS':
               titulo = 'MCA.';
               break;
-            case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+            case 'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN':
               titulo = 'MTI.';
               break;
-            case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
+            case 'DOCTORADO EN CIENCIAS EN ALIMENTOS':
               titulo = 'DCA.';
               break;
             default:
@@ -1910,13 +1910,13 @@ export class ListGraduatesPageComponent implements OnInit {
             case 'LICENCIATURA EN ADMINISTRACIÓN':
               titulo = 'LIC.';
               break;
-            case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+            case 'MAESTRÍA EN CIENCIAS EN ALIMENTOS':
               titulo = 'MCA.';
               break;
-            case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+            case 'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN':
               titulo = 'MTI.';
               break;
-            case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
+            case 'DOCTORADO EN CIENCIAS EN ALIMENTOS':
               titulo = 'DCA.';
               break;
             default:
@@ -2005,13 +2005,13 @@ export class ListGraduatesPageComponent implements OnInit {
             case 'LICENCIATURA EN ADMINISTRACIÓN':
               titulo = 'LIC.';
               break;
-            case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
+            case 'MAESTRÍA EN CIENCIAS EN ALIMENTOS':
               titulo = 'MCA.';
               break;
-            case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+            case 'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN':
               titulo = 'MTI.';
               break;
-            case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
+            case 'DOCTORADO EN CIENCIAS EN ALIMENTOS':
               titulo = 'DCA.';
               break;
             default:

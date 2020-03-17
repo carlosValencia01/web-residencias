@@ -22,6 +22,11 @@ export class StudentProvider {
 
     }
 
+    getStatusById(id: string) {
+      return this.api.get(`user/student/status/${id}`)
+        .pipe(map(students => students.json()));
+    }
+
     getApiURL() {
         return this.api.getURL();
     }
@@ -180,9 +185,11 @@ export class StudentProvider {
     getDocumentsUpload(_id: string): Observable<any> {
         return this.api.get(`student/get/documents/status/${_id}`).pipe(map(res => res.json()));
     }
+
     isStudentInscription(controlNumber: string): Observable<any> {
         return this.api.get(`student/get/inscription/ready/${controlNumber}`).pipe(map(res => res.json()));
     }
+
     getDocumentsInscription(controlNumber: string, degree: string): Observable<any> {
         return this.api.get(`student/inscription/docs/${controlNumber}/${degree}`).pipe(map(res => res.json()));
     }
