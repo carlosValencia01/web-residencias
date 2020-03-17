@@ -192,6 +192,7 @@ import { UploadDeliveredComponent } from 'src/modals/reception-act/upload-delive
 import { ActNotificacionComponent } from 'src/modals/reception-act/act-notificacion/act-notificacion.component';
 import { NewTitleComponent } from 'src/modals/reception-act/new-title/new-title.component';
 import { ChangeJuryComponent } from 'src/modals/reception-act/change-jury/change-jury.component';
+import { UpdateBookComponent } from 'src/modals/reception-act/update-book/update-book.component';
 // Services
 import { RequestService } from 'src/services/reception-act/request.service';
 // Providers
@@ -361,6 +362,7 @@ registerLocaleData(localeEs);
     RangeModalComponent,
     ChangeJuryComponent,
     ReleaseCheckComponent,
+    UpdateBookComponent,
 
     // Graduation module
     // Pages
@@ -570,6 +572,7 @@ registerLocaleData(localeEs);
     DocumentReviewComponent,
     ViewMoreComponent,
     NewEventComponent,
+    UpdateBookComponent,
 
     // Inscriptions
     // Modals

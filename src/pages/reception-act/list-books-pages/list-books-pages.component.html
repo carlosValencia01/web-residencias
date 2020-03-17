@@ -1,96 +1,128 @@
-<div class="content-general">
-    <mat-tab-group>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-home"></i> Home</li>
+    <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-book"></i> Libros de actas</li>
+  </ol>
+</nav>
+<mat-card class="row m-1">
+  <mat-card-content>
+    <div class="row justify-content-end mr-2">
+      <div class="text-center">
+        <button mat-mini-fab class="m-1" (click)="createBook()" data-toggle="tooltip" title="Nuevo libro" style="background: green;">
+          <mat-icon>note_add</mat-icon>
+        </button>
+      </div>
+    </div>
+    <mat-tab-group [selectedIndex]="selectedTab.value" (selectedIndexChange)="changeTab($event)">
       <mat-tab>
-        <ng-template matTabLabel>
+        <ng-template mat-tab-label>
+          <mat-icon class="m-1" style="color:green;">check_circle</mat-icon>
           <span  matBadge="{{numberActiveBooks}}" matBadgeOverlap="false" style="padding-right: 10px;">Libros Activos</span>
         </ng-template>
-        <div class="row fluid-content">
-          <div class="col-sm-12" style="overflow-x:auto; padding-top: 20px;">
-            <div style="text-align: end;">
-              <button class="btn btn-info" (click)="createBook()">Nuevo Libro</button>
-            </div>
-            <table class="table table-striped table-bordered table-hover" id="my-table">
-              <thead>
-                <tr>
-                  <th style="width: 40%;">Nombre del Libro</th>
-                  <th>No. Libro</th>
-                  <th>Opción Titulación</th>
-                  <th>Carreras</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of listActiveBooks | paginate: {id:'pagAB', itemsPerPage: pageSizeAB, currentPage: pageAB };">
-                  <td>{{item.name}}</td>
-                  <td>{{item.number}}</td>
-                  <td>{{item.titleOption}}</td>
-                  <td>{{displayData(item.careers)}}</td>
-                  <td>
-                    <div *ngIf="!item.status" class="div-img" ngbTooltip="Activar" tooltipClass="my-custom-class">
-                      <img src="../../assets/icons/presence.svg" class="action"
-                          (click)="changeStatusBook(item._id,true)">
-                    </div>
-                    <div *ngIf="item.status" class="div-img" ngbTooltip="Desactivar" tooltipClass="my-custom-class">
-                      <img src="../../assets/icons/remove-paid.svg" class="action"
-                          (click)="changeStatusBook(item._id,false)">
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
+        <div class="row p-3">
+          <div class="col-11">
+            <mat-form-field>
+              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                oninput="this.value=this.value.toUpperCase()">
+            </mat-form-field>
+          </div>
+          <div class="col-1 justify-content-end text-center">
+            <button mat-mini-fab class="m-1" color="primary" (click)="refreshActiveBooks()" data-toggle="tooltip"
+              title="Recargar">
+              <mat-icon>update</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 mat-elevation-z8">
+            <table mat-table [dataSource]="dataSourceActiveBooks" matSort>
+              <ng-container *ngFor="let item of displayedColumnsActiveBooks.slice(0, -1);let index=index"
+                [matColumnDef]="item">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsActiveBooksName[index]}}</th>
+                <td *matCellDef="let row" mat-cell style="width:25%;">{{row[item]}}</td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th *matHeaderCellDef mat-header-cell></th>
+                <td *matCellDef="let row" mat-cell style="width:20%">
+                  <button [matMenuTriggerFor]="actions" mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions>
+                    <button (click)="changeStatusBook(row._id,false)" mat-menu-item>
+                      <mat-icon style="color:red;">cancel</mat-icon>
+                      Desactivar
+                    </button>
+                    <button (click)="updateBook(row)" mat-menu-item>
+                      <mat-icon color="primary">cached</mat-icon>
+                      Modificar
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <tr *matHeaderRowDef="displayedColumnsActiveBooks" mat-header-row></tr>
+              <tr *matRowDef="let row; columns: displayedColumnsActiveBooks;" mat-row></tr>
             </table>
-            <div class='div-pagination'>
-              <pagination-controls id="pagAB" directionLinks="true" (pageChange)="pageChangedAB($event)" responsive="true"
-                previousLabel="Anterior" nextLabel="Siguiente">
-              </pagination-controls>
-            </div>
+            <mat-paginator #matPaginatorActiveBooks [pageSizeOptions]="[5, 10, 50, 100]"></mat-paginator>
           </div>
         </div>
       </mat-tab>
+
       <mat-tab>
-        <ng-template matTabLabel>
+        <ng-template mat-tab-label>
+          <mat-icon class="m-1" style="color:red;">cancel</mat-icon>
           <span  matBadge="{{numberInactiveBooks}}" matBadgeOverlap="false" style="padding-right: 10px;">Libros Inactivos</span>
         </ng-template>
-        <div class="row fluid-content">
-          <div class="col-sm-12" style="overflow-x:auto; padding-top: 20px;">
-            <div style="text-align: end;">
-              <button class="btn btn-info" (click)="createBook()">Nuevo Libro</button>
-            </div>
-            <table class="table table-striped table-bordered table-hover" id="my-table">
-              <thead>
-                <tr>
-                  <th style="width: 40%;">Nombre del Libro</th>
-                  <th>No. Libro</th>
-                  <th>Opción Titulación</th>
-                  <th>Carreras</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of listInactiveBooks  | paginate: {id:'pagIB', itemsPerPage: pageSizeIB, currentPage: pageIB };">
-                  <td>{{item.name}}</td>
-                  <td>{{item.number}}</td>
-                  <td>{{item.titleOption}}</td>
-                  <td>{{displayData(item.careers)}}</td>
-                  <td>
-                    <div *ngIf="!item.status" class="div-img" ngbTooltip="Activar" tooltipClass="my-custom-class">
-                      <img src="../../assets/icons/presence.svg" class="action"
-                          (click)="changeStatusBook(item._id,true)">
-                    </div>
-                    <div *ngIf="item.status" class="div-img" ngbTooltip="Desactivar" tooltipClass="my-custom-class">
-                      <img src="../../assets/icons/remove-paid.svg" class="action"
-                          (click)="changeStatusBook(item._id,false)">
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
+        <div class="row p-3">
+          <div class="col-11">
+            <mat-form-field>
+              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Busqueda..."
+                oninput="this.value=this.value.toUpperCase()">
+            </mat-form-field>
+          </div>
+          <div class="col-1 justify-content-end text-center">
+            <button mat-mini-fab class="m-1" color="primary" (click)="refreshInactiveBooks()" data-toggle="tooltip"
+              title="Recargar">
+              <mat-icon>update</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 mat-elevation-z8">
+            <table mat-table [dataSource]="dataSourceInactiveBooks" matSort>
+              <ng-container *ngFor="let item of displayedColumnsInactiveBooks.slice(0, -1);let index=index"
+                [matColumnDef]="item">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsInactiveBooksName[index]}}</th>
+                <td *matCellDef="let row" mat-cell style="width:25%;">{{row[item]}}</td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th *matHeaderCellDef mat-header-cell></th>
+                <td *matCellDef="let row" mat-cell style="width:20%;">
+                  <button [matMenuTriggerFor]="actions" mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions>
+                    <button (click)="changeStatusBook(row._id,true)" mat-menu-item>
+                      <mat-icon style="color:green;">check_circle</mat-icon>
+                      Activar
+                    </button>
+                    <button (click)="updateBook(row)" mat-menu-item>
+                      <mat-icon color="primary">cached</mat-icon>
+                      Modificar
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <tr *matHeaderRowDef="displayedColumnsInactiveBooks" mat-header-row></tr>
+              <tr *matRowDef="let row; columns: displayedColumnsInactiveBooks;" mat-row></tr>
             </table>
-            <div class='div-pagination'>
-              <pagination-controls id="pagIB" directionLinks="true" (pageChange)="pageChangedIB($event)" responsive="true"
-                previousLabel="Anterior" nextLabel="Siguiente">
-              </pagination-controls>
-            </div>
+            <mat-paginator #matPaginatorInactiveBooks [pageSizeOptions]="[5, 10, 50, 100]"></mat-paginator>
           </div>
         </div>
       </mat-tab>
     </mat-tab-group>
+  </mat-card-content>
+</mat-card>
+
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
 </div>

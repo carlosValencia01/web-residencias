@@ -32,4 +32,9 @@ export class BookProvider {
         return this.api.get(`minuteBook/active/${careerId}/${titleOption}`)
             .pipe(map(res => res.json()));
     }
+
+    updateInfoBook(id, data) {
+        return this.api.put(`minuteBook/update/${id}`, data)
+            .pipe(map(book => book.json()));
+    }
 }

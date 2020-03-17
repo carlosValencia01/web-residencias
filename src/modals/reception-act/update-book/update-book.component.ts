@@ -9,15 +9,16 @@ import { BookProvider } from 'src/providers/reception-act/book.prov';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-new-book',
-  templateUrl: './new-book.component.html',
-  styleUrls: ['./new-book.component.scss']
+  selector: 'app-update-book',
+  templateUrl: './update-book.component.html',
+  styleUrls: ['./update-book.component.scss']
 })
-export class NewBookComponent implements OnInit {
-  title = 'Nuevo Libro';
+export class UpdateBookComponent implements OnInit {
+  title = 'Modificar Libro';
+  oldBook;
   bookForm: FormGroup;
   loading: boolean;
-  opcionTitulacion = 'XI - TITULACIÓN INTEGRAL';
+  opcionTitulacion = '';
   cAsigned = false;
   nombreLibro = '';
   enabledName = true;
@@ -36,28 +37,37 @@ export class NewBookComponent implements OnInit {
   private unassignedCareers: Array<ICareer>;
 
   constructor(
-    public dialogRef: MatDialogRef<NewBookComponent>,
+    public dialogRef: MatDialogRef<UpdateBookComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder,
     private notificationsServices: NotificationsServices,
     private careerProvider: CareerProvider,
     private bookProvider: BookProvider,
   ) {
-    this.validateForm();
+    this.oldBook = data.oldBook;
+    this.getBook();
   }
 
   ngOnInit() {
+
+  }
+
+  async getBook(){
+    this.assignedCareers = this.oldBook.careers;
+    this.nombreLibro = this.oldBook.name;
+    this.opcionTitulacion = this.oldBook.titleOption ? this.oldBook.titleOption : "XI - TITULACIÓN INTEGRAL";
     this._getAllCareers();
     this._cleanCareersAssignment();
     this.getActiveBooks();
+    this.validateForm();
   }
 
   validateForm() {
     this.bookForm = new FormGroup({
-      name: new FormControl('', [Validators.required]),
-      number: new FormControl('', [Validators.required]),
+      name: new FormControl(this.oldBook.name, [Validators.required]),
+      number: new FormControl(this.oldBook.number, [Validators.required]),
       registerDate: new FormControl(new Date(), [Validators.required]),
-      titleOption: new FormControl('', [Validators.required])
+      titleOption: new FormControl(this.oldBook.titleOption, [Validators.required])
     });
   }
 
@@ -67,11 +77,12 @@ export class NewBookComponent implements OnInit {
 
   async onFormSubmit(form: NgForm) {
     this.loading = true;
-    await this.createBook(form);
+    await this.updateBook(form);
   }
 
-  async createBook(data) {
+  async updateBook(data) {
     data.careers = this.assignedCareers;
+    data.status = this.oldBook.status;
     this.assignCareers.forEach((carreraA, index) => {
       if (!this.existCareer) {
         data.careers.forEach((carrera) => {
@@ -111,11 +122,11 @@ export class NewBookComponent implements OnInit {
       });
 
     } else {
-        // Guardar elemento
+        // Modificar elemento
         this.existCareer = false;
-        this.bookProvider.newBook(data).subscribe(res => {});
+        this.bookProvider.updateInfoBook(this.oldBook._id,{data}).subscribe(res => {});
         this.onClose();
-        this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Libro creado con éxito');
+        this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Libro actualizado con éxito');
     }
     this.loading = false;
   }
@@ -153,6 +164,7 @@ export class NewBookComponent implements OnInit {
     this.unassignedCareers.splice(index, 1);
 
     this.nombreLibro = '';
+    
     for (let i = 0; i < this.assignedCareers.length; i++) {
       if (this.assignedCareers.length === 1) {
         this.nombreLibro = this.assignedCareers[i].fullName;
@@ -174,12 +186,18 @@ export class NewBookComponent implements OnInit {
     this.careerProvider.getAllCareers()
       .subscribe(res => {
         this.careers = res.careers;
+        this._careersAssignment(this.oldBook);
       });
   }
 
   private _cleanCareersAssignment() {
     this.assignedCareers = [];
     this.unassignedCareers = [];
+  }
+
+  private _careersAssignment(book) {
+    this.assignedCareers = book.careers;
+    this.unassignedCareers = this.careers.filter(career => !this.isCareerAssigned(career));
   }
 
   editName() {
