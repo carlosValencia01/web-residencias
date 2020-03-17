@@ -497,8 +497,8 @@ export class ListPendingStudentComponent implements OnInit {
     }
 
     switch (career) {
-      case 'DOCTORADO EN CIENCIAS DE ALIMENTOS':
-        return 'DOC. EN CIENCIAS DE ALIMENTOS';
+      case 'DOCTORADO EN CIENCIAS EN ALIMENTOS':
+        return 'DOC. EN CIENCIAS EN ALIMENTOS';
 
       case 'INGENIERÍA EN GESTIÓN EMPRESARIAL':
         return 'ING. EN GESTION EMPRESARIAL';
@@ -507,11 +507,11 @@ export class ListPendingStudentComponent implements OnInit {
       case 'INGENIERÍA EN SISTEMAS COMPUTACIONALES':
         return 'ING. EN SISTEMAS COMPUTACIONALES';
 
-      case 'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN':
+      case 'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN':
         return 'MAESTRÍA EN TEC. DE LA INFORMACIÓN';
 
-      case 'MAESTRIA EN CIENCIAS DE ALIMENTOS':
-        return 'MAEST. EN CIENCIAS DE ALIMENTOS';
+      case 'MAESTRÍA EN CIENCIAS EN ALIMENTOS':
+        return 'MAEST. EN CIENCIAS EN ALIMENTOS';
 
       default:
         return 'ING. EN TEC. DE LA INF. Y COM.';

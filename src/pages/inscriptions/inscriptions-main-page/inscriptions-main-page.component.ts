@@ -325,7 +325,7 @@ export class InscriptionsMainPageComponent implements OnInit {
       {fullName:'INGENIERÍA EN SISTEMAS COMPUTACIONALES',shortName:'ING. EN SISTEMAS COMPUTACIONALES',acronym:'ISC'},
       {fullName:'INGENIERÍA INDUSTRIAL',shortName:'ING. INDUSTRIAL',acronym:'II'},
       {fullName:'LICENCIATURA EN ADMINISTRACIÓN',shortName:'LIC. ADMINISTRACIÓN',acronym:'LA'},
-      {fullName:'MAESTRIA EN TECNOLOGÍAS DE LA INFORMACIÓN',shortName:'M. EN TECNOLOGÍAS DE LA INFORMACIÓN',acronym:'MTI'},
+      {fullName:'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN',shortName:'M. EN TECNOLOGÍAS DE LA INFORMACIÓN',acronym:'MTI'},
       {fullName:'MAESTRÍA EN CIENCIAS EN ALIMENTOS',shortName:'M. CIENCIAS EN ALIMENTOS',acronym:'MCA'},
       {fullName:'DOCTORADO EN CIENCIAS EN ALIMENTOS',shortName:'D. CIENCIAS EN ALIMENTOS',acronym:'DCA'},
     ];
