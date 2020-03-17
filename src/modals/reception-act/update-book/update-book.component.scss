@@ -1,0 +1,51 @@
+/* Structure */
+.example-container {
+    position: relative;
+    padding: 10px;
+  }
+  
+  .example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .example-full-width {
+    width: 100%;
+  }
+  
+  .example-full-width:nth-last-child() {
+    margin-bottom: 10px;
+  }
+  
+  .button-row {
+    margin: 10px 0;
+  }
+  
+  .mat-flat-button {
+    margin: 5px;
+  }
+  
+  h6{
+    text-align: center;
+  }
+
+  h6 span {
+    font-weight: normal;
+}
+
+.careers-list {
+  max-height: 40vh;
+  overflow: hidden scroll;
+  margin: 10px 0px !important;
+}
+
+.assigned-career {
+  background-color: #008D42;
+  color: white;
+}
+
+.not-assigned-career {
+  background-color: #F58220;
+  color: white;
+}
