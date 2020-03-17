@@ -653,7 +653,7 @@ export class TitulationProgressComponent implements OnInit {
           confirmButtonText: 'Aceptar'
         });
         if (typeof (response.value) !== 'undefined') {
-          const minuteBook = await this._getActiveBookByCareer(student.careerId._id,titulationOption.split('-')[1].trim());
+          const minuteBook = await this._getActiveBookByCareer(student.careerId._id,titulationOption);
           if (minuteBook) {
             const linkModal = this.dialog.open(BookComponent, {
               data: {
