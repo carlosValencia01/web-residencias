@@ -52,6 +52,7 @@ export class ImssPageComponent implements OnInit {
   haveImage = false;
   frontBase64: any;
   backBase64: any;
+  templateImssCampaign = [];
 
   constructor(
     private cookiesService: CookiesService,
@@ -75,9 +76,9 @@ export class ImssPageComponent implements OnInit {
     this.displayedColumnsUninsuredName = ['Número de control','Nombre', 'Carrera', 'NSS'];
     this.displayedColumnsUninsured = ['controlNumber', 'name', 'career', 'nss', 'actions']
     this.displayedColumnsInsuredName = ['Número de control','Nombre', 'Carrera', 'NSS', 'Fecha Alta'];
-    this.displayedColumnsInsured = ['controlNumber','name', 'career', 'nss', 'registerDate', 'actions'];
-    this.displayedColumnsCampaignName = ['Número de control','Nombre', 'Carrera', 'NSS', 'Fecha Alta', 'Asegurado', 'Credencial Impresa'];
-    this.displayedColumnsCampaign = ['controlNumber','name', 'career', 'nss', 'registerDate', 'insured', 'printCredential', 'actions'];
+    this.displayedColumnsInsured = ['controlNumber','name', 'career', 'nss', 'registerDateImss', 'actions'];
+    this.displayedColumnsCampaignName = ['Número de control','Nombre', 'Carrera', 'NSS', 'Asegurado', 'Fecha Alta IMSS', 'Credencial Impresa', 'Fecha Alta Campaña'];
+    this.displayedColumnsCampaign = ['controlNumber','name', 'career', 'nss', 'insured', 'registerDateImss', 'printCredential', 'registerDateCampaign', 'actions'];
     this._getAllUninsured();
   }
 
@@ -369,6 +370,7 @@ export class ImssPageComponent implements OnInit {
     this.dataSourceCampaign = new MatTableDataSource(data);
     this.dataSourceCampaign.paginator = this.paginatorCampaign;
     this.dataSourceCampaign.sort = this.sort;
+    this.templateImssCampaign = this.dataSourceCampaign.data.filter( student => student.insured === 'No');
   }
 
   private _refreshUninsured(data: Array<any>): void {
@@ -384,7 +386,8 @@ export class ImssPageComponent implements OnInit {
       name: data.fullName ? data.fullName : '',
       career: data.career ? data.career : '',
       nss: (data.nss && data.nss.length === 11) ? data.nss : '',
-      registerDate: (data.documents && data.documents.length) ? moment(data.documents[0].registerDate).format('LL') : '',
+      registerDateImss: (data.documents || []).some(doc => doc.type.toUpperCase() === 'IMSS') ? moment(data.documents.filter(doc => doc.type === 'IMSS').map(doc => doc.releaseDate)+'').format('LL') : '',
+      registerDateCampaign: (data.documents || []).some(doc => doc.type.toUpperCase() === 'CREDENCIAL') ? moment(data.documents.filter(doc => doc.type === 'CREDENCIAL').map(doc => doc.releaseDate)+'').format('LL') : '',
       fatherLastName: data.fatherLastName ? data.fatherLastName : '',
       motherLastName: data.motherLastName ? data.motherLastName : '',
       firstName: data.firstName ? data.firstName : '',
@@ -410,6 +413,18 @@ export class ImssPageComponent implements OnInit {
     this.loading = true;
     TableToExcel.convert(document.getElementById('tablaPlantillaExcelIMSS'), {
       name: 'Plantilla Alumnos IMSS.xlsx',
+      sheet: {
+        name: 'Alumnos'
+      }
+    });
+    this.loading = false;
+  }
+
+  excelExportIMSSCampaign(){
+    this.notificationServ.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
+    this.loading = true;
+    TableToExcel.convert(document.getElementById('tablaPlantillaExcelIMSSCampaign'), {
+      name: 'Plantilla Alumnos IMSS Campaña.xlsx',
       sheet: {
         name: 'Alumnos'
       }
@@ -682,7 +697,7 @@ interface IIMSSTable {
   name?: string;
   career?: string;
   nss?: string;
-  registerDate?: string;
+  registerDateImss?: string;
   action?: string;
   fatherLastName?
   motherLastName?: string;
@@ -690,4 +705,5 @@ interface IIMSSTable {
   curp?: string;
   insured?: string;
   printCredential?: string;
+  registerDateCampaign?: string;
 }
