@@ -581,6 +581,43 @@
               </mat-card-content>
             </mat-card>
           </div>
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
+            <mat-card class="p-1"
+              [ngClass]="{'accept':whatStatus(FileActaExamen)==='Accept', 'none':whatStatus(FileActaExamen)==='None','reject':whatStatus(FileActaExamen)==='Reject','process':whatStatus(FileActaExamen)==='Process'}">
+              <mat-card-header class="justify-content-center">
+                <mat-card-subtitle>
+                  <p
+                    [ngClass]="{'acceptText':whatStatus(FileActaExamen)==='Accept', 'noneText':whatStatus(FileActaExamen)==='None','rejectText':whatStatus(FileActaExamen)==='Reject','processText':whatStatus(FileActaExamen)==='Process'}">
+                    Acta de examen
+                  </p>
+                </mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <div [ngSwitch]="whatStatus(FileActaExamen)" class="text-center">
+                  <div *ngSwitchCase="'Process'" class="cursor-pointer" (click)="onView('6_ACTA_EXAMEN')">
+                    <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
+                    <p class="card-text">En revisión</p>
+                  </div>
+                  <div *ngSwitchCase="'Omit'">
+                    <img alt="File" src="../../assets/imgs/notfound.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Omitido</p>
+                  </div>
+                  <div *ngSwitchCase="'Accept'" class="cursor-pointer" (click)="onView('6_ACTA_EXAMEN')">
+                    <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Aceptado</p>
+                  </div>
+                  <div *ngSwitchCase="'Reject'" class="cursor-pointer" (click)="onView('6_ACTA_EXAMEN')">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Rechazado</p>
+                  </div>
+                  <div *ngSwitchCase="'None'">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    <p class="card-text">Sin enviar</p>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
         </div>
       </div>
     </div>

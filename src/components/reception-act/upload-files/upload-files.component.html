@@ -1115,7 +1115,7 @@
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <input type="file" accept="application/pdf" (change)="onUpload($event,'ACTA_EXAMEN')" style="display: none">
+            <input type="file" accept="application/pdf" (change)="onUpload($event,'6_ACTA_EXAMEN')" style="display: none">
             <div [ngSwitch]="UploadActaExamen.status">
               <div *ngSwitchCase="'Accept'" class="text-center">
                 <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
@@ -1147,17 +1147,17 @@
           <mat-card-actions align="end">
             <div *ngIf="isEditable">
               <div *ngIf="UploadActaExamen.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('ACTA_EXAMEN')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onSend('6_ACTA_EXAMEN')" data-toggle="tooltip"
                   data-placement="top" title="Enviar documento">send</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('ACTA_EXAMEN')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onRemove('6_ACTA_EXAMEN')" data-toggle="tooltip"
                   data-placement="top" title="Cancelar">close</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_EXAMEN')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('6_ACTA_EXAMEN')" data-toggle="tooltip"
                   data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
               <div *ngIf="!UploadActaExamen.file">
-                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('ACTA_EXAMEN')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onUploadNew('6_ACTA_EXAMEN')" data-toggle="tooltip"
                   data-placement="top" title="Subir documento">attach_file</mat-icon>
-                <mat-icon class="mx-1" style="color:#607188" (click)="onView('ACTA_EXAMEN')" data-toggle="tooltip"
+                <mat-icon class="mx-1" style="color:#607188" (click)="onView('6_ACTA_EXAMEN')" data-toggle="tooltip"
                   data-placement="top" title="Ver documento">visibility</mat-icon>
               </div>
             </div>

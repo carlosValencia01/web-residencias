@@ -47,6 +47,7 @@ export class ExpedientDocumentsComponent implements OnInit {
   public FileRevalidacion: iDocument;
   public FilePhotos: iDocument;
   public FileOficio: iDocument;
+  public FileActaExamen: iDocument;
   private _Request: uRequest;
   public changeDocument = false;
   public isTitled: string;
@@ -166,6 +167,7 @@ export class ExpedientDocumentsComponent implements OnInit {
     this.FilePago = this.getDocument(eFILES.PAGO);
     this.FilePhotos = this.getDocument(eFILES.PHOTOS);
     this.FileOficio = this.getDocument(eFILES.OFICIO);
+    this.FileActaExamen = this.getDocument(eFILES.ACTA_EXAMEN);
   }
 
   documentTitle(type: eFILES): string {
@@ -314,6 +316,10 @@ export class ExpedientDocumentsComponent implements OnInit {
       }
       case eFILES.OFICIO: {
         exists = typeof (this.FileOficio) !== 'undefined';
+        break;
+      }
+      case eFILES.ACTA_EXAMEN: {
+        exists = typeof (this.FileActaExamen) !== 'undefined';
         break;
       }
     }
