@@ -1098,13 +1098,13 @@
         </mat-card>
       </div>
       <div class="col-3"
-        *ngIf="Request && ((Request.phase==='Generado' && Request.status==='Printed') || Request.phase==='Titulado')">
+        *ngIf="Request && ((Request.phase === 'Generado' && Request.status==='Impreso') || Request.phase === 'Titulado')">
         <mat-card [ngClass]="{
-            'process':UploadActaExamen.status==='Process',
-            'accept':UploadActaExamen.status==='Accept',
-            'reject':UploadActaExamen.status==='Reject',
-            'none':UploadActaExamen.status=== 'None',
-            'omit':UploadActaExamen.status=== 'Omit'
+            'process':UploadActaExamen.status === 'Process',
+            'accept':UploadActaExamen.status === 'Accept',
+            'reject':UploadActaExamen.status === 'Reject',
+            'none':UploadActaExamen.status === 'None',
+            'omit':UploadActaExamen.status === 'Omit'
           }">
           <mat-card-header>
             <mat-card-subtitle>
