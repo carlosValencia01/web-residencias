@@ -120,7 +120,7 @@ export class uRequest {
                 break;
             }
             case eFILES.OFICIO: {
-                document = this.notificationOffice().output('arraybuffer');
+                document = this.notificationOffice(qrCode, eStamp).output('arraybuffer');
                 binary = this.bufferToBase64(document);
                 break;
             }
@@ -561,39 +561,41 @@ export class uRequest {
         return doc;
     }
 
-    public notificationOffice(): jsPDF {
+    public notificationOffice(qrCode?, eStamp?): jsPDF {
         let tmpDate = new Date(this._request.proposedDate);
         tmpDate.setHours(this._request.proposedHour / 60, this._request.proposedHour % 60, 0, 0);
         const doc = this.newDocumentTec();
         doc.setTextColor(0, 0, 0);
         doc.setFont(this.FONT, 'Normal');
         doc.setFontSize(8);
-        doc.text(`${this.ENCABEZADO} `, (this.WIDTH / 2), 45, { align: 'center' });
+        doc.text(`${this.ENCABEZADO} `, (this.WIDTH / 2), 35, { align: 'center' });
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(10);
         // doc.text('TEPIC, NAYARIT;', (this.WIDTH / 2), 55, { align: 'center' });
-        this.addTextRight(doc, `TEPIC, NAYARIT; ${moment(new Date()).format('LL').toUpperCase()}`, 55)
-        doc.text('ACTO DE RECEPCIÓN PROFESIONAL', (this.WIDTH / 2), 65, { align: 'center' });
-        doc.text('INTEGRANTES DEL JURADO', (this.WIDTH / 2), 75, { align: 'center' });
+        this.addTextRight(doc, `TEPIC, NAYARIT; ${moment(new Date()).format('LL').toUpperCase()}`, 45)
+        doc.text('ACTO DE RECEPCIÓN PROFESIONAL', (this.WIDTH / 2), 55, { align: 'center' });
+        doc.text('INTEGRANTES DEL JURADO', (this.WIDTH / 2), 60, { align: 'center' });
         doc.setFont(this.FONT, 'Normal');
-        doc.text('PRESIDENTE', this.MARGIN.LEFT, 85);
-        this.addJury(doc, this._request.jury[0], 85); // 100,105,110
-        doc.text('SECRETARIO', this.MARGIN.LEFT, 100);
-        this.addJury(doc, this._request.jury[1], 100); // 115,120,125
-        doc.text('VOCAL', this.MARGIN.LEFT, 115);
-        this.addJury(doc, this._request.jury[2], 115); // 130,135,140
-        doc.text('VOCAL SUPLENTE', this.MARGIN.LEFT, 130);
-        this.addJury(doc, this._request.jury[3], 130); // 145,150,155
+        doc.text( this.juryGender.president === 'MASCULINO'? 'PRESIDENTE':'PRESIDENTA', this.MARGIN.LEFT, 65);
+        this.addJury(doc, this._request.jury[0], 65); // 100,105,110
+        doc.text(this.juryGender.secretary === 'MASCULINO'? 'SECRETARIO':'SECRETARIA', this.MARGIN.LEFT, 80);
+        this.addJury(doc, this._request.jury[1], 80); // 115,120,125
+        doc.text('VOCAL', this.MARGIN.LEFT, 95);
+        this.addJury(doc, this._request.jury[2], 95); // 130,135,140
+        doc.text('VOCAL SUPLENTE', this.MARGIN.LEFT, 110);
+        this.addJury(doc, this._request.jury[3], 110); // 145,150,155
 
         // tslint:disable-next-line: max-line-length
         // let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, XI(TITULACIÓN INTEGRAL) INFORME TECNICO DE RESIDENCIA PROFESIONAL, con el proyecto @PROYECTO.El cual se realizará el día @FECHA , a las @HORA Hrs.En la Sala @LUGAR de este Instituto.`;
-        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de C. @ESTUDIANTE con número de control @NUMERO egresado del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, @OPCION @PRODUCTO, con el proyecto @PROYECTO . El cual se realizará el día @FECHA, a las @HORA Hrs. En la Sala @LUGAR de este Instituto.`;
+        let contenido = `Por este conducto le informo que el Acto de Recepción Profesional de@CIUDADANO C. @ESTUDIANTE con número de control @NUMERO @EGR del Instituto Tecnológico de Tepic, de la carrera de @CARRERA por la Opción, @OPCION @PRODUCTO, con el proyecto @PROYECTO El cual se realizará el día @FECHA, a las @HORA Hrs. En la Sala @LUGAR de este Instituto.`;
 
+        contenido = contenido.replace('@CIUDADANO', this.studentGender === 'M' ? 'l' :' la');
         contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba(this._request.student.fullName.toUpperCase())} `);
+        contenido = contenido.replace('@EGR', this.studentGender === 'M' ? 'egresado' :' egresada');
         // contenido = contenido.replace('@ESTUDIANTE', `${this.addArroba('AGUSTIN BARAJAS VALDIVIA')} `);
         contenido = contenido.replace('@NUMERO', `${this.addArroba(this._request.student.controlNumber.toUpperCase())} `);
         contenido = contenido.replace('@CARRERA', `${this.addArroba(this._request.student.career.toUpperCase())} `);
-        contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())}`);
+        contenido = contenido.replace('@PROYECTO', `${this.addArroba(this._request.projectName.toUpperCase())}${this._request.projectName.substr(this._request.projectName.length-1,1) == '.' ? '' :'.'}`);
         // contenido = contenido.replace('@PROYECTO', `${this.addArroba('MÓDULO DE GENERACIÓN DE FIRMAS ELECTRÓNICAS, VALIDACIÓN DE DOCUMENTOS Y OPTIMIZACIÓN DE PROCEDIMIENTO DE TITULACIÓN')} `);
         contenido = contenido.replace('@OPCION', `${this.addArroba(this._request.titulationOption.toUpperCase())}`);
         contenido = contenido.replace('@PRODUCTO', `${this.addArroba(this._request.product.toUpperCase())} `);
@@ -602,18 +604,18 @@ export class uRequest {
         contenido = contenido.replace('@HORA', `${this.addArroba(moment(tmpDate).format('LT'))} `);
         contenido = contenido.replace('@LUGAR', `${this.addArroba(this._request.place.toUpperCase())} `);
 
-        this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 148 }, 180,5,10);
-
-        const rows: Array<string> = doc.splitTextToSize(contenido, 180);
-        const incremento = (rows.length) * 4;
-
-        doc.text('Por lo que se le pide su puntual asistencia.', this.MARGIN.LEFT, (152 + incremento));
+        const lastParagraph = this.justifyText(doc, contenido, { x: this.MARGIN.LEFT, y: 130 }, 180,5,10);
+        
+        doc.text('Por lo que se le pide su puntual asistencia.', this.MARGIN.LEFT, lastParagraph.lastY + 8);
         doc.setFont(this.FONT, 'Bold');
-        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 235);
-        // doc.text('L.A. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 240);
-        doc.text(`${this.JDeptoDiv.name} `, this.MARGIN.LEFT, 240);
+        
+        
+        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 193);        
+        doc.text(`${this.JDeptoDiv.name} `, this.MARGIN.LEFT, 198);
         let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
-        doc.text(`${positionGender} DE LA DIV.DE EST.PROFESIONALES`, this.MARGIN.LEFT, 245);
+        doc.text(`${positionGender} DE LA DIV.DE EST.PROFESIONALES`, this.MARGIN.LEFT, 203);
+        doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 205, 50, 50);
+        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 50)), this.MARGIN.LEFT + 45, 225);
         return doc;
     }
 

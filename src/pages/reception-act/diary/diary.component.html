@@ -96,7 +96,7 @@
       </mwl-calendar-day-view> -->
     </div>
 
-    <context-menu #basicMenu style="background: grey; color:black">
+    <context-menu #basicMenu style="background: grey; color:black" *ngIf="role==='coordinación de titulación'  || role==='administrador' || role === 'jefe div. est. prof.'">
       <ng-template class="mt-1" contextMenuItem (execute)="viewEvent($event.item)">
         <div style=" border-style: solid;
           border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#c0a22b"
@@ -130,7 +130,7 @@
       </ng-template>
     </context-menu>
 
-    <context-menu #basicMenu_2 style="background: grey; color:black">
+    <context-menu #basicMenu_2 style="background: grey; color:black" *ngIf="role==='coordinación de titulación'  || role==='administrador' || role === 'jefe div. est. prof.'">
       <ng-template class="mt-1" contextMenuItem (execute)="appointmentClicked($event.item)">
         <div style=" border-style: solid;
               border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#08a3bc"
