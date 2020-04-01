@@ -37,11 +37,12 @@ export class SteepComponentComponent implements OnInit {
   public fileFlag;
   public passwordFlag;
   public showLoading = false;
+  public fileName: string;
   private cookies;
   private employee;
   private oRequest: uRequest;
   private folderId: string;
-  public fileName: string;
+  private registerObservations: string;
 
   constructor(
     public dialogRef: MatDialogRef<SteepComponentComponent>,
@@ -164,9 +165,19 @@ export class SteepComponentComponent implements OnInit {
             this.EStamp = signed.eStamp;
             this.enableNext = false;
             this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Registro de proyecto firmado');
+            const observation = {
+              phase: eRequest.VERIFIED,
+              achievementDate: new Date(),
+              achievementDateString: new Date().toString(),
+              user: this.cookiesService.getData().user.name.fullName,
+              observation: this.registerObservations || '',
+              status: eStatusRequest.ACCEPT,
+            };
+            this.Request.history.push(observation);
+            this.oRequest.setRequest(this.Request);
             const data = {
               doer: this.cookiesService.getData().user.name.fullName,
-              observation: '',
+              observation: this.registerObservations || '',
               operation: eStatusRequest.ACCEPT,
               phase: eRequest.VERIFIED,
               folderId: this.folderId,
@@ -197,5 +208,10 @@ export class SteepComponentComponent implements OnInit {
       }
     };
     fileReader.readAsText(this.file);
+  }
+
+  onSave(data) {
+    this.registerObservations = data;
+    this.Next(0);
   }
 }

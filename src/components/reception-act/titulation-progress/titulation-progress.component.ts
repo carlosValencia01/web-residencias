@@ -537,7 +537,7 @@ export class TitulationProgressComponent implements OnInit {
       },
       disableClose: true,
       hasBackdrop: true,
-      width: '60em'
+      width: '80vw'
     });
 
     ref.afterClosed().subscribe((valor: any) => {
