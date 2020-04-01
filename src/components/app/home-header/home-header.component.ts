@@ -64,7 +64,7 @@ export class HomeHeaderComponent implements OnInit {
   }
 
   logOut() {
-    this.cookiesServ.deleteCookie();
+    this.cookiesServ.deleteStorageData();
     window.location.replace('/');
   }
 

@@ -98,6 +98,7 @@ import { CookiesService } from 'src/services/app/cookie.service';
 import { FormErrorsService } from 'src/services/app/forms.errors.service';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { NotificationsServices } from 'src/services/app/notifications.service';
+import { Storage } from 'src/services/app/storage.service';
 // Providers
 import { Api } from 'src/providers/app/api.prov';
 import { UserProvider } from 'src/providers/app/user.prov';
@@ -395,7 +396,7 @@ registerLocaleData(localeEs);
     PositionsHistoryComponent,
     SelectPositionComponent,
     UploadEmployeesCsvComponent,
-    
+
     // Vinculation
     IndustrialVisitsPageComponent,
 
@@ -500,6 +501,7 @@ registerLocaleData(localeEs);
     FormErrorsService,
     ImageToBase64Service,
     NotificationsServices,
+    Storage,
 
     // Inscriptions
     // Providers

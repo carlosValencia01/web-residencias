@@ -1,90 +1,112 @@
 import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
 import { IPosition } from 'src/entities/shared/position.model';
+import { Storage } from 'src/services/app/storage.service';
+import { environment } from 'src/environments/environment';
 
 
 @Injectable()
 export class CookiesService {
 
     constructor(
-        private cookieService: CookieService,
+        private storage: Storage,
     ) {
 
     }
 
     saveData(data) {
-        // console.log(data,'=============');
-        // console.log(data,'===d===');
         const menu = data.user.rol.permissions.map(
-            (per)=> ({
-                label:per.label,
+            (per) => ({
+                label: per.label,
                 items: per.items.length > 0 ? per.items : undefined,
-                icon: per.icon,                
+                icon: per.icon,
                 routerLink: per.routerLink
             })
         );
         data.user.rol.permissions = undefined;
-        data.action = undefined;                             
-        // expiration: number of days for cookie actie. 0.04166667 aprox 1 hour; 0.5 => 12 hrs
-        // 0.5 / 12 = 0.04166667 aprox 1 hour
-        this.cookieService.set('session', JSON.stringify(data), 0.04166667);
-        this.cookieService.set('menu', JSON.stringify(menu), 0.04166667);
-    }    
+        data.action = undefined;
+
+        this.storage.saveLocalData('menu', JSON.stringify(menu));
+        this.storage.saveCookieData('_mt_user_jwt', data.token, 1 / 24, environment.production);
+        this.storage.saveLocalData('user', JSON.stringify(data.user));
+    }
 
     getData() {
-        
         try {
-            return JSON.parse(this.cookieService.get('session').trim());
-        } catch (e) {
-            console.log(e);
-            this.deleteCookie();
-            return false;    
+            const user = JSON.parse(this.storage.getLocalData('user').trim());
+            const token = this.storage.getCookieData('_mt_user_jwt');
+            return {
+                user: user,
+                token: token
+            };
+        } catch (_) {
+            return null;
         }
     }
-    getMenu(){
+
+    getMenu() {
         try {
-            return JSON.parse(this.cookieService.get('menu').trim());
-        } catch (e) {
-            console.log(e);
-            this.deleteCookie();
-            return false;    
+            return JSON.parse(this.storage.getLocalData('menu').trim());
+        } catch (_) {
+            return null;
         }
     }
 
     saveFolder(folder) {
-        this.cookieService.set('folder', folder, 1);        
+        this.storage.saveLocalData('folder', folder);
     }
 
     getFolder() {
-        return this.cookieService.get('folder');
+        return this.storage.getLocalData('folder');
     }
 
     savePosition(position: IPosition) {
-        this.cookieService.set('position', JSON.stringify(position), 0.04166667);
+        this.storage.saveLocalData('position', JSON.stringify(position));
     }
 
     getPosition(): IPosition {
-        return JSON.parse(this.cookieService.get('position'));
+        return JSON.parse(this.storage.getLocalData('position'));
     }
 
-    saveBosses(bosses: any) {        
-        this.cookieService.set('bosses', JSON.stringify(bosses), 0.04166667);
+    saveBosses(bosses: any) {
+        this.storage.saveLocalData('bosses', JSON.stringify(bosses));
     }
 
     getBosses(): any {
-        return JSON.parse(this.cookieService.get('bosses'));
+        return JSON.parse(this.storage.getLocalData('bosses'));
     }
 
-    deleteCookie() {
-        this.cookieService.delete('session');
-        this.cookieService.delete('bosses');
-        this.cookieService.delete('position');
-        this.cookieService.delete('folder');
-        this.cookieService.delete('menu');
+    saveUser(user: any): boolean {
+        if (!user) {
+            return false;
+        }
+        try {
+            this.storage.saveLocalData('user', JSON.stringify(user));
+            return true;
+        } catch (_) {
+            return false;
+        }
     }
 
-    checkCookie(name: string): boolean {
-        return this.cookieService.check(name);
+    deleteStorageData() {
+        this.storage.deleteAllCookieData();
+        this.storage.deleteAllLocalData();
+        this.storage.deleteAllSessionData();
+    }
+
+    checkStorageData(name: string): boolean {
+        if (!name) {
+            return false;
+        }
+        if (this.storage.getCookieData(name)) {
+            return true;
+        }
+        if (this.storage.getLocalData(name)) {
+            return true;
+        }
+        if (this.storage.getSessionData(name)) {
+            return true;
+        }
+        return false;
     }
 
     isAllowed(url: string): boolean {

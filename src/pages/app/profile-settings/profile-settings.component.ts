@@ -94,9 +94,8 @@ export class ProfileSettingsComponent implements OnInit {
       } else {
         this.notification.showNotification(eNotificationType.SUCCESS, 'Datos actualizados correctamente', '');
         this.user.name = name;
-        this.cookiesService.deleteCookie();
         this.usr.user = this.user;
-        this.cookiesService.saveData(this.usr);
+        this.cookiesService.saveUser(this.user);
         this.setFormGroupData();
         this.formGroupData.get('loginPsw').reset();
       }

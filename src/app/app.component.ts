@@ -62,9 +62,10 @@ export class AppComponent {
 
   checkLogin() {
     const fullurl = window.location.href;
-    if (this.cookiesServ.checkCookie('session')) {
+    const _session = this.cookiesServ.getData();
+    if (_session && _session.user && _session.token) {
       this.activeSession = true;
-      this.userProv.sendTokenFromAPI(this.cookiesServ.getData().token);
+      this.userProv.sendTokenFromAPI(_session.token);
     } else if (fullurl.indexOf('survey') !== -1) { // para saber si se esta ingresando por la encuesta
       this.activeSession = true;
     } else {
