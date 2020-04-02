@@ -269,4 +269,8 @@ export class StudentProvider {
     getAllActiveStudents(): Observable<any> {
         return this.api.get(`student/get/active/students`).pipe(map(res => res.json()));
     }
+
+    getStatusFromSii(controlNumber: string): Observable<any> {
+        return this.api.get(`student/get/active/sii/${controlNumber}`).pipe(map(res => res.json()));
+    }
 }
