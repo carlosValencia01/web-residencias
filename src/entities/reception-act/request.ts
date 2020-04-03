@@ -200,7 +200,6 @@ export class uRequest {
 
     projectRegistrationOffice(qrCode?, eStamp?): jsPDF {
         const doc = this.newDocumentTec();
-        console.log(this._request,'r');
         const registerHistory = this._request.history
             .filter(x => x.phase === 'Verificado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         doc.setTextColor(0, 0, 0);
@@ -217,7 +216,7 @@ export class uRequest {
         doc.setFont(this.FONT, 'Bold');
         // doc.text('LIC. LAURA ELENA CASILLAS CASTAÑEDA', this.MARGIN.LEFT, 62);
         doc.text(`${this.JDeptoDiv.name}`, this.MARGIN.LEFT, 62);
-        let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
+        const positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
         doc.text(`${this.letterCapital(positionGender)} de la División de Estudios Profesionales`, this.MARGIN.LEFT, 67, { align: 'left' });
         doc.text('P R E S E N T E', this.MARGIN.LEFT, 72, { align: 'left' });
 
@@ -233,11 +232,9 @@ export class uRequest {
             ['Número de estudiantes:', this._request.noIntegrants]
         ], 93, undefined, 9);
 
-        const aceptHistory = this._request.history
-            .filter(x => x.phase === 'Enviado' && (x.status === 'Accept' || x.status === 'Aceptado'))[0];
         const nameProjectLines = 3.6 * (nameProjectRows.length - 1);
         const integrantsLines = 9 * (this._request.noIntegrants - 1);
-        const observationRows: Array<String> = doc.splitTextToSize(aceptHistory ? (aceptHistory.observation || '') : '', 180);
+        const observationRows: Array<String> = doc.splitTextToSize(registerHistory ? (registerHistory.observation || '') : '', 180);
         const observationsLines = 5 * observationRows.length;
 
         doc.text('Datos del (de los) estudiante(s):', this.MARGIN.LEFT, 123 + nameProjectLines, { align: 'left' });
@@ -256,14 +253,18 @@ export class uRequest {
         doc.rect(this.MARGIN.LEFT, 150 + integrantsLines + nameProjectLines, this.WIDTH
             - (this.MARGIN.RIGHT + this.MARGIN.LEFT - 6), 7 + observationsLines);
         doc.text('Observaciones: ', this.MARGIN.LEFT + 3, 154 + integrantsLines + nameProjectLines, { align: 'left' });
-        doc.text(doc.splitTextToSize(aceptHistory ? (aceptHistory.observation || '') : '', 180), this.MARGIN.LEFT + 3,
+        doc.text(doc.splitTextToSize(registerHistory ? (registerHistory.observation || '') : '', 180), this.MARGIN.LEFT + 3,
             160 + integrantsLines + nameProjectLines, { align: 'left' });
 
         doc.setFont(this.FONT, 'Bold');
         doc.setFontSize(11);
-        doc.addImage(((typeof (this._qrCode) !== 'undefined') ? this._qrCode : qrCode), 'PNG', this.MARGIN.LEFT - 5, 205, 50, 50);
+        const qrwidth = 50;
+        const qrHeight = 50;
+        doc.addImage(((typeof (this._qrCode) !== 'undefined') ? this._qrCode : qrCode), 'PNG',
+            this.MARGIN.LEFT - 5, this.HEIGHT - (this.MARGIN.BOTTOM + qrHeight), qrwidth, qrHeight);
         doc.text(doc.splitTextToSize(((typeof (this._stamp) !== 'undefined') ? this._stamp : eStamp) || '',
-            this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 45)), this.MARGIN.LEFT + 45, 245);
+            this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + (qrwidth - 5))),
+            this.MARGIN.LEFT + (qrwidth - 5), this.HEIGHT - (this.MARGIN.BOTTOM + 10));
 
         return doc;
     }

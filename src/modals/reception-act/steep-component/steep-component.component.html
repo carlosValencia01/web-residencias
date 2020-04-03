@@ -11,12 +11,7 @@
 <mat-horizontal-stepper #stepper [linear]="true">
   <mat-step [completed]="SteepOneCompleted">
     <ng-template matStepLabel>Solicitud</ng-template>
-    <app-request-view></app-request-view>
-    <div class="text-right">
-      <button mat-stroked-button color="primary" (click)="Next(0)">
-        Siguiente<mat-icon>navigate_next</mat-icon>
-      </button>
-    </div>
+    <app-request-view (save)="onSave($event)"></app-request-view>
   </mat-step>
   <mat-step [completed]="SteepTwoCompleted">
     <ng-template matStepLabel>Firma electrónica</ng-template>

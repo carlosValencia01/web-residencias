@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { iRequest } from 'src/entities/reception-act/request.model';
 import { iIntegrant } from 'src/entities/reception-act/integrant.model';
@@ -21,6 +21,7 @@ import { eNotificationType } from 'src/enumerators/app/notificationType.enum';
 })
 export class RequestViewComponent implements OnInit {
   @ViewChild('observations') txtObservation: ElementRef;
+  @Output() save: EventEmitter<any> = new EventEmitter();
   public frmRequest: FormGroup;
   private request: iRequest;
   public isToggle = false;
@@ -82,7 +83,7 @@ export class RequestViewComponent implements OnInit {
       'email': this.request.email,
       'adviser': this.request.adviser.name,
       'noIntegrants': this.request.noIntegrants,
-      'observations': this.request.observation,
+      'observations': '',
       'project': this.request.projectName,
       'product': this.request.product,
       'honorific': this.request.honorificMention,
@@ -125,5 +126,10 @@ export class RequestViewComponent implements OnInit {
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener la solicitud');
     });
 
+  }
+
+  public next() {
+    const observations = this.frmRequest.get('observations').value;
+    this.save.emit(observations || '');
   }
 }
