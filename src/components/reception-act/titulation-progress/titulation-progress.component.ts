@@ -1329,6 +1329,24 @@ export class TitulationProgressComponent implements OnInit {
     });
     
   }
+
+  // insertSummary(){
+  //   const tmpRequest: iRequest = { };
+  //   const oRequest: uRequest = new uRequest(tmpRequest, this._ImageToBase64Service, this._CookiesService);
+  //   this.requestProvider.getSummary().toPromise().then(
+  //     requests=>{
+  //       console.log(requests);
+        
+  //       requests.forEach(request => {
+  //         setTimeout(() => {
+  //           if(request) window.open(oRequest.requestSummary(request).output('bloburl'), '_blank');         
+  //         }, 500);       
+  //       });
+  //     }
+  //   ).catch(err=>console.log(err)
+  //   );
+    
+  // }
 }
 
 // tslint:disable-next-line: class-name

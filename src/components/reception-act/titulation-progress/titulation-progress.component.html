@@ -1,4 +1,5 @@
 
+
 <div class="row w-100 m-0 p-0" *ngIf="tabNumber">
   <div class="col-12 p-0">
       <div class="card">
@@ -67,11 +68,15 @@
                     </mat-autocomplete>
                     </mat-form-field> 
               </div>
-              <div class="col-1" style="clear: both;">
+
+              <div class="col-xs-12 col-md-1">
                   <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
                       (click)="reload()" data-toggle="tooltip" title="Actualizar">
                       <mat-icon>cached</mat-icon>
                   </button>
+                  <!-- <button type="button" class="btn btn-success" (click)="insertSummary()">
+                    Insertar 
+                </button> -->
               </div>
           </div>
           <div class="card-body col-12">
@@ -217,6 +222,7 @@
                                       </mat-slide-toggle>
                                   </div>
                               </div>
+            
 
                               <div class="row text-left">
                                   <div class="col-4" data-toggle="tooltip" title="Registradas">

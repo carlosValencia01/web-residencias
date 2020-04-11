@@ -610,12 +610,12 @@ export class uRequest {
         doc.setFont(this.FONT, 'Bold');
         
         
-        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 193);        
-        doc.text(`${this.JDeptoDiv.name} `, this.MARGIN.LEFT, 198);
+        doc.text('ATENTAMENTE', this.MARGIN.LEFT, 223);        
+        doc.text(`${this.JDeptoDiv.name} `, this.MARGIN.LEFT, 228);
         let positionGender = this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
-        doc.text(`${positionGender} DE LA DIV.DE EST.PROFESIONALES`, this.MARGIN.LEFT, 203);
-        doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT - 5, 205, 50, 50);
-        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 50)), this.MARGIN.LEFT + 45, 225);
+        doc.text(`${positionGender} DE LA DIV.DE EST.PROFESIONALES`, this.MARGIN.LEFT, 233);
+        doc.addImage(qrCode, 'PNG', this.MARGIN.LEFT + 15, 235, 20, 20);
+        doc.text(doc.splitTextToSize(eStamp || '', this.WIDTH - (this.MARGIN.LEFT + this.MARGIN.RIGHT + 50)), this.MARGIN.LEFT + 45, 245);
         return doc;
     }
 
@@ -850,6 +850,28 @@ export class uRequest {
         doc.text(`Director`, (this.WIDTH / 2) + ((doc.getStringUnitWidth(director) * 72 / 25.6) / 2) - 5, 247, { maxWidth: 50, align: 'left' });
 
         doc.text(this.gradeMax(this.Director)+' '+director, this.WIDTH / 2, this.HEIGHT-(this.MARGIN.BOTTOM), { align: 'left' });
+        return doc;
+    }
+
+    requestSummary(req){        
+        let tmpDate;
+        if(req.proposedDate){
+            tmpDate =  new Date(req.proposedDate);
+            tmpDate.setHours(req.proposedHour / 60, req.proposedHour % 60, 0, 0);
+        }
+        const doc = this.newDocumentTec(false,false);        
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(this.FONT, 'Normal');
+        doc.setFontSize(10);
+        doc.text(doc.splitTextToSize(req.student.fullName,160), (this.WIDTH / 2), 35, { align: 'center' });
+        doc.text(doc.splitTextToSize(req.student.controlNumber,160), (this.WIDTH / 2), 40, { align: 'center' });
+        doc.addImage(req.student.emailQr, 'PNG', (this.WIDTH / 2)-30, 50, 60, 60);
+        doc.text(doc.splitTextToSize(req.student.email,160), (this.WIDTH / 2), 110,{ align: 'center' });
+        const splitedText = doc.splitTextToSize(`OPCIÓN DE TITULACIÓN: ${req.titulationOption}`,160);
+        doc.text(splitedText, (this.WIDTH / 2), 120,{ align: 'center' });        
+        const newPosition = splitedText.length > 1 ? 135 : 130;
+        doc.text(doc.splitTextToSize(`ENTREGABLE: ${req.product}`,160), (this.WIDTH / 2), newPosition, { align: 'center' });
+        doc.text(doc.splitTextToSize(`FECHA DE ACTO RECEPCIONAL: ${tmpDate ? moment(tmpDate).format('YYYY-MM-DD') : ''}`,160), (this.WIDTH / 2), newPosition+10, { align: 'center' });
         return doc;
     }
 
