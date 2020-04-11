@@ -23,7 +23,9 @@ import { WizardInscriptionPageComponent } from 'src/pages/inscriptions/wizard-in
 import { ContractStudentPageComponent } from 'src/pages/inscriptions/contract-student-page/contract-student-page.component';
 import { ResumeStudentPageComponent } from 'src/pages/inscriptions/resume-student-page/resume-student-page.component';
 import { ConfirmationStudentPageComponent } from 'src/pages/inscriptions/confirmation-student-page/confirmation-student-page.component';
-import { InscriptionsUploadFilesPageComponent } from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
+import {
+  InscriptionsUploadFilesPageComponent
+} from 'src/pages/inscriptions/inscriptions-upload-files-page/inscriptions-upload-files-page.component';
 import { ProfileInscriptionPageComponent } from 'src/pages/inscriptions/profile-inscription-page/profile-inscription-page.component';
 import { SecretaryInscriptionPageComponent } from 'src/pages/inscriptions/secretary-inscription-page/secretary-inscription-page.component';
 
@@ -37,7 +39,9 @@ import { DiaryComponent } from './pages/reception-act/diary/diary.component';
 import { ViewAppointmentPageComponent } from './pages/reception-act/view-appointment-page/view-appointment-page.component';
 
 // Graduation
-import { RegisterEmailgraduationPageComponent } from 'src/pages/graduation/register-emailgraduation-page/register-emailgraduation-page.component';
+import {
+  RegisterEmailgraduationPageComponent
+} from 'src/pages/graduation/register-emailgraduation-page/register-emailgraduation-page.component';
 import { LoaderDataGraduationPageComponent } from 'src/pages/graduation/loader-data-graduation-page/loader-data-graduation-page.component';
 import { GraduationEventsPageComponent } from 'src/pages/graduation/graduation-events-page/graduation-events-page.component';
 import { SurveyPageComponent } from 'src/pages/graduation/survey-page/survey-page.component';
@@ -57,7 +61,7 @@ import { ElectronicSignatureComponent } from 'src/pages/electronic-signature/ele
 import { EmployeePageComponent } from 'src/pages/electronic-signature/employee-page/employee-page.component';
 import { PositionsAdminPageComponent } from 'src/pages/electronic-signature/positions-admin-page/positions-admin-page.component';
 
-// Vinculation 
+// Vinculation
 import { IndustrialVisitsPageComponent } from 'src/pages/vinculation/industrial-visits-page/industrial-visits-page.component';
 
 const appRoutes: Routes = [
@@ -115,7 +119,7 @@ const appRoutes: Routes = [
   { path: 'electronicSignature', component: ElectronicSignatureComponent, pathMatch: 'full' },
   { path: 'grades/:id', component: EmployeePageComponent, pathMatch: 'full' },
   { path: 'positionsAdmin', component: PositionsAdminPageComponent, pathMatch: 'full' },
-  
+
   // Vinculation
   { path: 'visits', component: IndustrialVisitsPageComponent, pathMatch: 'full' },
 

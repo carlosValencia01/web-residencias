@@ -87,6 +87,7 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 // App module
 // Pages
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
+import { LockSessionComponent } from 'src/pages/app/lock-session/lock-session.component';
 import { LoginPageComponent } from 'src/pages/app/login-page/login-page.component';
 import { ProfileSettingsComponent } from 'src/pages/app/profile-settings/profile-settings.component';
 // Components
@@ -265,6 +266,7 @@ import { CareerProvider } from 'src/providers/shared/career.prov';
 // Services
 import { ErrorMatcher } from 'src/services/shared/ErrorMatcher';
 import { CurrentPositionService } from 'src/services/shared/current-position.service';
+import { RoleService } from 'src/services/shared/role.service';
 // Pipes
 import { SafePipe } from 'src/pipes/safePipe.pipe';
 import { DocumentTypePipe } from 'src/pipes/doumentType.pipe';
@@ -277,6 +279,7 @@ registerLocaleData(localeEs);
     // Pages
     AppComponent,
     HomePageComponent,
+    LockSessionComponent,
     LoginPageComponent,
     ProfileSettingsComponent,
     // Components
@@ -546,6 +549,7 @@ registerLocaleData(localeEs);
     // Services
     CurrentPositionService,
     ErrorMatcher,
+    RoleService,
     // LoadingBarService
   ],
   entryComponents: [

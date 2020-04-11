@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+
+import { environment } from 'src/environments/environment';
 import { IPosition } from 'src/entities/shared/position.model';
 import { Storage } from 'src/services/app/storage.service';
-import { environment } from 'src/environments/environment';
 
 
 @Injectable()
@@ -13,16 +14,25 @@ export class CookiesService {
 
     }
 
-    saveData(data) {
-        const menu = data.user.rol.permissions.map(
-            (per) => ({
-                label: per.label,
-                items: per.items.length > 0 ? per.items : undefined,
-                icon: per.icon,
-                routerLink: per.routerLink
-            })
-        );
-        data.user.rol.permissions = undefined;
+    public saveData(data) {
+        let menu = [];
+        if (data.user.rol) {
+            menu = data.user.rol.permissions.map(
+                (per) => ({
+                    label: per.label,
+                    items: per.items.length > 0 ? per.items : undefined,
+                    icon: per.icon,
+                    routerLink: per.routerLink
+                })
+            );
+            data.user.rol.permissions = undefined;
+        }
+        if (data.hasOwnProperty('gender')) {
+            this.saveGender(data.gender);
+        }
+        if (data.hasOwnProperty('profileIcon')) {
+            this.saveProfileIcon(data.profileIcon);
+        }
         data.action = undefined;
 
         this.storage.saveLocalData('menu', JSON.stringify(menu));
@@ -30,7 +40,7 @@ export class CookiesService {
         this.storage.saveLocalData('user', JSON.stringify(data.user));
     }
 
-    getData() {
+    public getData() {
         try {
             const user = JSON.parse(this.storage.getLocalData('user').trim());
             const token = this.storage.getCookieData('_mt_user_jwt');
@@ -43,7 +53,7 @@ export class CookiesService {
         }
     }
 
-    getMenu() {
+    public getMenu() {
         try {
             return JSON.parse(this.storage.getLocalData('menu').trim());
         } catch (_) {
@@ -51,31 +61,32 @@ export class CookiesService {
         }
     }
 
-    saveFolder(folder) {
+    public saveFolder(folder) {
         this.storage.saveLocalData('folder', folder);
     }
 
-    getFolder() {
+    public getFolder() {
         return this.storage.getLocalData('folder');
     }
 
-    savePosition(position: IPosition) {
+    public savePosition(position: IPosition) {
+        position.role = undefined;
         this.storage.saveLocalData('position', JSON.stringify(position));
     }
 
-    getPosition(): IPosition {
+    public getPosition(): IPosition {
         return JSON.parse(this.storage.getLocalData('position'));
     }
 
-    saveBosses(bosses: any) {
+    public saveBosses(bosses: any) {
         this.storage.saveLocalData('bosses', JSON.stringify(bosses));
     }
 
-    getBosses(): any {
+    public getBosses(): any {
         return JSON.parse(this.storage.getLocalData('bosses'));
     }
 
-    saveUser(user: any): boolean {
+    public saveUser(user: any): boolean {
         if (!user) {
             return false;
         }
@@ -87,13 +98,32 @@ export class CookiesService {
         }
     }
 
-    deleteStorageData() {
-        this.storage.deleteAllCookieData();
-        this.storage.deleteAllLocalData();
-        this.storage.deleteAllSessionData();
+    public saveEmployeePositions(positions: IPosition[]): boolean {
+        if (!positions || !positions.length) {
+            return false;
+        }
+        try {
+            const _positions = positions.map(_pos => {
+                _pos.role = undefined;
+                return _pos;
+            });
+            this.storage.saveLocalData('active_positions', JSON.stringify(_positions));
+            return true;
+        } catch (_) {
+            return false;
+        }
     }
 
-    checkStorageData(name: string): boolean {
+    public getEmployeePositions(): IPosition[] {
+        try {
+            const _positions = JSON.parse(this.storage.getLocalData('active_positions'));
+            return _positions;
+        } catch (_) {
+            return null;
+        }
+    }
+
+    public checkStorageData(name: string): boolean {
         if (!name) {
             return false;
         }
@@ -109,7 +139,7 @@ export class CookiesService {
         return false;
     }
 
-    isAllowed(url: string): boolean {
+    public isAllowed(url: string): boolean {
         const array = this.getMenu();
         for (let i = 0; i < array.length; i++) {
             let isCorrect = false;
@@ -123,5 +153,43 @@ export class CookiesService {
             }
         }
         return false;
+    }
+
+    public deleteStorageData() {
+        this.storage.deleteAllCookieData();
+        this.storage.deleteAllLocalData();
+        this.storage.deleteAllSessionData();
+    }
+
+    public deleteSessionData() {
+        this.storage.deleteCookieData('_mt_user_jwt');
+    }
+
+    public saveSessionStatus(status: string): boolean {
+        return this.storage.saveLocalData('status', status);
+    }
+
+    public getSessionStatus(): string {
+        return this.storage.getLocalData('status');
+    }
+
+    public saveGender(gender: string): boolean {
+        return this.storage.saveLocalData('gender', gender);
+    }
+
+    public getGender(): string {
+        return this.storage.getLocalData('gender');
+    }
+
+    public saveProfileIcon(iconPath: string): boolean {
+        return this.storage.saveLocalData('profile_icon', iconPath);
+    }
+
+    public getProfileIcon(): string {
+        return this.storage.getLocalData('profile_icon');
+    }
+
+    public saveUserToken(userToken: string): boolean {
+        return this.storage.saveCookieData('_mt_user_jwt', userToken, 1 / 24, environment.production);
     }
 }

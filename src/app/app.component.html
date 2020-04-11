@@ -1,24 +1,27 @@
 <simple-notifications [options]="optionsNotifications"></simple-notifications>
 
-<div *ngIf="! activeSession">
-    <div class="content">
-        <app-login-header></app-login-header>
-        <app-login-page (loginSuccessful)="changeStatus()"></app-login-page>
+<div [ngSwitch]="sessionStatus">
+    <div *ngSwitchCase="'active'">
+        <mat-sidenav-container class="content" style="background-color: #E9EBEE;" fullscreen>
+            <mat-sidenav #sidenav [(opened)]="opened" [mode]="mode" position="start">
+                <app-sidebar-content (closeMenu)="closeMenu()"></app-sidebar-content>
+            </mat-sidenav>
+            <mat-sidenav-content>
+                <app-home-header (onMenu)="onMenu()" (session)="changeSessionStatus($event)" [size]="sizeBoolean"></app-home-header>
+                <div class="main-content" [ngStyle]="{'padding':'15px'}">
+                    <router-outlet></router-outlet>
+                </div>
+            </mat-sidenav-content>
+        </mat-sidenav-container>
     </div>
-
+    <div class="content" *ngSwitchCase="'inactive'">
+        <app-login-header></app-login-header>
+        <app-login-page (session)="changeSessionStatus($event)"></app-login-page>
+    </div>
+    <div class="content" *ngSwitchCase="'locked'">
+        <app-login-header></app-login-header>
+        <app-lock-session (session)="changeSessionStatus($event)"></app-lock-session>
+    </div>
 </div>
 
-<div *ngIf="activeSession">
-    <mat-sidenav-container class="content" style="background-color: #E9EBEE;" fullscreen>
-        <mat-sidenav #sidenav [(opened)]="opened" [mode]="mode" position="start">
-            <app-sidebar-content (closeMenu)="closeMenu()"></app-sidebar-content>
-        </mat-sidenav>
-        <mat-sidenav-content>
-            <app-home-header (onMenu)="onMenu()" [size]="sizeBoolean"></app-home-header>
-            <div class="main-content" [ngStyle]="{'padding':'15px'}">
-                <router-outlet></router-outlet>
-            </div>
-        </mat-sidenav-content>
-    </mat-sidenav-container>
-</div>
 <loading-bar #loadingBar color="#ff831b" height="3"></loading-bar>

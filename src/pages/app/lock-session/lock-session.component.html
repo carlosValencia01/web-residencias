@@ -1,0 +1,25 @@
+<div class="row content">
+  <div class="card col-xl-3 col-md-6 col-sm-8 col-10">
+    <img class="profile-icon" [src]="profileIcon" alt="">
+    <mat-label class="name">{{user.name.fullName}}</mat-label>
+    <mat-label class="position">{{position.name}} ({{position.ascription.shortName}})</mat-label>
+    <div class="password-field">
+      <input type="password" [formControl]="passworForm" (keyup.enter)="login()"
+        placeholder="Contraseña" autofocus required>
+      <button mat-icon-button (click)="login()">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+    <mat-label class="banner">¡Ingresa tu contraseña para acceder a tu cuenta!</mat-label>
+  </div>
+</div>
+<div class="actions">
+  <div class="btn lock-btn" (click)="logOut()">
+    <mat-icon>exit_to_app</mat-icon><br>
+    <mat-label>Salir</mat-label>
+  </div>
+</div>
+
+<div class="center">
+  <app-loader [loading]="showLoading"></app-loader>
+</div>
