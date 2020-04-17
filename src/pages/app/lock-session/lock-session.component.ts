@@ -30,12 +30,15 @@ export class LockSessionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.user = this.cookiesServ.getData().user;
+    this._verifySessionStatus();
+    const _data = this.cookiesServ.getData();
+    this.user = _data && _data.user;
     this.position = this.cookiesServ.getPosition();
     this.profileIcon = this.cookiesServ.getProfileIcon() || 'assets/icons/profile.svg';
   }
 
   public login() {
+    this._verifySessionStatus();
     if (this.passworForm.valid) {
       this.showLoading = true;
       this.userProv.login({
@@ -58,6 +61,18 @@ export class LockSessionComponent implements OnInit {
   public logOut() {
     this.cookiesServ.deleteStorageData();
     window.location.replace('/');
+  }
+
+  private _verifySessionStatus(): boolean {
+    const _data = this.cookiesServ.getData();
+    let _status = this.cookiesServ.getSessionStatus();
+    if (_status !== eSessionStatus.LOCK) {
+      if (!_data || (_data && !_data.user)) {
+        _status = eSessionStatus.INACTIVE;
+      }
+      this.session.emit(_status);
+      return;
+    }
   }
 
 }

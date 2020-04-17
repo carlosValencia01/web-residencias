@@ -130,8 +130,13 @@ export class HomeHeaderComponent implements OnInit {
   }
 
   public lockSession() {
+    const _data = this.cookiesServ.getData();
+    let _status = eSessionStatus.LOCK;
+    if (!_data || (_data && !_data.user)) {
+      _status = eSessionStatus.INACTIVE;
+    }
     this.cookiesServ.deleteSessionData();
-    this.session.emit(eSessionStatus.LOCK);
+    this.session.emit(_status);
   }
 
   private _getEmployee(email) {

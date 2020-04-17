@@ -73,8 +73,13 @@ export class AppComponent {
       this._setSessionStatus(eSessionStatus.ACTIVE);
     } else {
       const _allStatus = Object.values(eSessionStatus);
-      const _sessionStatus = (_status && _status !== eSessionStatus.ACTIVE && _allStatus.includes(<eSessionStatus>_status))
-        ? _status : eSessionStatus.INACTIVE;
+      let _sessionStatus;
+      if (!_session || (_session && !_session.user)) {
+        _sessionStatus = eSessionStatus.INACTIVE;
+      } else {
+        _sessionStatus = (_status && _status !== eSessionStatus.ACTIVE && _allStatus.includes(<eSessionStatus>_status))
+          ? _status : eSessionStatus.INACTIVE;
+      }
       this._setSessionStatus(_sessionStatus);
     }
   }
