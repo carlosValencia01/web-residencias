@@ -29,4 +29,9 @@ export class DepartmentProvider {
     return this.api.delete(`department/remove/${departmentId}`)
       .pipe(map(res => res.json()));
   }  
+
+  getDepartmentBossSecretary(department : string) {
+    return this.api.get(`department/DepartmentBossSecretary/${department}`)
+      .pipe(map(res => res.json()));
+  }
 }
