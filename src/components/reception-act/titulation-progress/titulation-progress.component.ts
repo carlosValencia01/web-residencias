@@ -38,6 +38,7 @@ import Swal from 'sweetalert2';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
 import * as moment from 'moment';
+import { CareerProvider } from 'src/providers/shared/career.prov';
 
 
 @Component({
@@ -81,12 +82,23 @@ export class TitulationProgressComponent implements OnInit {
   private folderId: string;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
   @ViewChild('periodInput') periodInput: ElementRef<HTMLInputElement>;
+  @ViewChild('careerInput') careerInput: ElementRef<HTMLInputElement>;
+  @ViewChild('phaseInput') phaseInput: ElementRef<HTMLInputElement>;
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
   periods;
+  carreras;
+  fases;
   periodCtrl = new FormControl();
+  careerCtrl = new FormControl();
+  phaseCtrl = new FormControl();
   filteredPeriods;
   usedPeriods = [];
+  filteredCareers;
+  usedCareers = [];
+  allStatus;
+  filteredPhases;
+  usedPhases = [];
 
   constructor(
     private requestProvider: RequestProvider,
@@ -100,7 +112,8 @@ export class TitulationProgressComponent implements OnInit {
     public _RequestService: RequestService,
     private loadingBar: LoadingBarService,
     private firebaseService: FirebaseService,
-    private _bookProvider: BookProvider    
+    private _bookProvider: BookProvider,
+    private careerProv: CareerProvider,        
   ) {
     this.careers = [];
     this.phases = [];
@@ -110,6 +123,8 @@ export class TitulationProgressComponent implements OnInit {
       'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES'];
     this.allPhases = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado',
       'Realizado', 'Generado', 'Finalized', 'Titulado'];
+    this.allStatus = [{phase:'Enviado',status:'ENVIADAS'}, {phase:'Verificado',status:'VERIFICADAS'}, {phase:'Registrado',status:'REGISTRADAS'}, {phase:'Liberado',status:'LIBERADAS'}, {phase:'Entregado',status:'ENTREGADAS'}, {phase:'Validado',status:'VALIDADAS'}, {phase:'Asignado',status:'ASIGNADAS'},
+      {phase:'Realizado',status:'TITULADOS'}, {phase:'Generado',status:'ACTAS GENERADAS'},{phase:'Titulado',status:'TÍTULOS ENTREGADOS'}];
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -142,6 +157,13 @@ export class TitulationProgressComponent implements OnInit {
         this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
       }
     );
+    this.careerProv.getAllCareers().subscribe(
+      (careers) => {
+        this.carreras = careers.careers;
+        this.filteredCareers = careers.careers;
+      });
+    this.fases = this.allStatus;
+    this.filteredPhases = this.allStatus;
   }
 
   reload(): void {
@@ -261,10 +283,10 @@ export class TitulationProgressComponent implements OnInit {
 
   refresh() {
     this.dataSource = new MatTableDataSource(this.requestFilter);
-    this.filterRequests(this.usedPeriods);
+    this.filterRequests(this.usedPeriods, this.usedCareers, this.usedPhases);
   }
 
-  filterRequests(periods: Array<any>) {
+  filterRequests(periods: Array<any>, careers: Array<any>, phases: Array<any>) {
     if (this.dataSource) {
       if (periods.length > 0) {
         this.dataSource.data = this.dataSource.data.filter(
@@ -273,6 +295,25 @@ export class TitulationProgressComponent implements OnInit {
       } else {
         this.dataSource.data = this.dataSource.data;
       }
+
+      if(careers.length > 0){
+        this.dataSource.data = this.dataSource.data.filter(
+          (req: any) => careers.map( car => (car.acronym)).includes((req.careerAcronym))
+        );
+      } else if (periods.length === 0) {
+        this.dataSource.data = this.dataSource.data;
+      }
+
+    
+      if(phases.length > 0){
+        this.dataSource.data = this.dataSource.data.filter(
+          (req: any) => phases.map( p => (p.phase)).includes((req.phase))
+        );
+      } else if (periods.length === 0 && careers.length == 0){
+          this.dataSource.data = this.dataSource.data;
+      } 
+
+    
 
       const inputFilter: any = document.getElementById('myfilter');
       this.dataSource.filter = inputFilter ?  inputFilter.value !== '' ? inputFilter.value.trim().toLowerCase() : '' : '';
@@ -1240,41 +1281,33 @@ export class TitulationProgressComponent implements OnInit {
     });
   }
   
+  // FILTRO PERIODOS
   slectedPeriod(period){    
     this.updatePeriods(period,'insert'); 
   }
 
   addPeriod(event: MatChipInputEvent): void {
-    // Add fruit only when MatAutocomplete is not open
-    // To make sure this does not conflict with OptionSelected Event
-
     if (!this.matAutocomplete.isOpen) {
       const input = event.input;
       const value = event.value;
-      // Reset the input value
-
       if (input) {
         input.value = '';
       }
-
       this.periodCtrl.setValue(null);
     }
   }
 
   updatePeriods(period, action) {
-     if (action === 'delete') {
+  if (action === 'delete') {
       this.filteredPeriods.push(period);
-
-       this.usedPeriods = this.usedPeriods.filter( per => per._id !== period._id);
-     }
-     if (action === 'insert') {
-
+      this.usedPeriods = this.usedPeriods.filter( per => per._id !== period._id);
+    }
+    if (action === 'insert') {
       this.usedPeriods.push(period);
-
       this.filteredPeriods = this.filteredPeriods.filter(per => per._id !== period._id);
      }
      this.periods = this.filteredPeriods;
-
+     if(this.periodInput) this.periodInput.nativeElement.blur();
      this.refresh();
   }
 
@@ -1285,6 +1318,87 @@ export class TitulationProgressComponent implements OnInit {
   filterPeriod(value) {
     if (value) {
       this.periods = this.periods.filter( period => (period.periodName + '-' + period.year).toLowerCase().trim().indexOf(value) !== -1);
+    }
+  }
+
+  // FILTRO CARRERAS
+  slectedCareer(career){    
+    this.updateCareers(career,'insert'); 
+  }
+
+  removeCareer(career): void {
+    this.updateCareers(career, 'delete');
+  }
+
+  addCareer(event: MatChipInputEvent): void {
+    if (!this.matAutocomplete.isOpen) {
+      const input = event.input;
+      const value = event.value;
+      if (input) {
+        input.value = '';
+      }
+
+      this.careerCtrl.setValue(null);
+    }
+  }
+
+  updateCareers(career, action) {
+     if (action === 'delete') {
+      this.filteredCareers.push(career);
+      this.usedCareers = this.usedCareers.filter( car => car._id !== career._id);
+     }
+     if (action === 'insert') {
+      this.usedCareers.push(career);
+      this.filteredCareers = this.filteredCareers.filter(car => car._id !== career._id);
+     }
+     this.carreras = this.filteredCareers;
+     if(this.careerInput) this.careerInput.nativeElement.blur();
+     this.refresh();
+  }
+
+  filterCareer(value) {
+    if (value) {
+      this.carreras = this.carreras.filter( carrera => (carrera.shortName).toLowerCase().trim().indexOf(value) !== -1);
+    }
+  }
+
+  // FILTRO FASES
+  slectedPhase(phase){    
+    this.updatePhases(phase,'insert'); 
+  }
+
+  removePhase(phase): void {
+    this.updatePhases(phase, 'delete');
+  }
+
+  addPhase(event: MatChipInputEvent): void {
+    if (!this.matAutocomplete.isOpen) {
+      const input = event.input;
+      const value = event.value;
+      if (input) {
+        input.value = '';
+      }
+      this.phaseCtrl.setValue(null);
+    }
+  }
+
+  updatePhases(phase, action) {
+     if (action === 'delete') {
+      this.filteredPhases.push(phase);
+      this.usedPhases = this.usedPhases.filter( p => p.phase !== phase.phase);
+     }
+     if (action === 'insert') {
+      this.usedPhases.push(phase);
+      this.filteredPhases = this.filteredPhases.filter(p => p.phase !== phase.phase);
+     }
+     this.fases = this.filteredPhases;
+     if(this.phaseInput) this.phaseInput.nativeElement.blur();
+     this.refresh();
+  }
+
+  filterPhase(value) {
+    if (value) {
+      this.fases = this.fases.filter( p => (p.phase).toLowerCase().trim().indexOf(value) !== -1);
     }
   }
 

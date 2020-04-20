@@ -2,7 +2,7 @@
 <div class="row w-100 m-0 p-0" *ngIf="tabNumber">
   <div class="col-12 p-0">
       <div class="card">
-        <div class="row" *ngIf = "tabNumber === 5" style="padding: 5px;">
+        <div class="row text-center p-4 m-0 mt-2" *ngIf = "tabNumber === 5" style="padding: 5px;">
             <div class="col-xs-12 col-sm-6 col-md-3">
                <mat-card class = "cardStatus"><b>Pendientes</b><br>{{cantPendientes}}</mat-card>
             </div>
@@ -24,18 +24,18 @@
                 <mat-card class = "cardStatus"><b>Actas Entregadas</b><br>{{cantEntregados}}</mat-card>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-2">
-                <mat-card class = "cardStatus"><b>Títulos Registrados</b><br>{{cantProceso}}</mat-card>
+                <mat-card class = "cardStatus"><b>Tít. Registrados</b><br>{{cantProceso}}</mat-card>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-2">
-                <mat-card class = "cardStatus"><b>Títulos Listos</b><br>{{cantAceptados}}</mat-card>
+                <mat-card class = "cardStatus"><b>Tít. Listos</b><br>{{cantAceptados}}</mat-card>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-3">
-                <mat-card class = "cardStatus"><b>Títulos Entregados</b><br>{{cantFinalizados}}</mat-card>
+                <mat-card class = "cardStatus"><b>Tít. Entregados</b><br>{{cantFinalizados}}</mat-card>
             </div>
           </div>
-          <div class="row text-center p-4 m-0 mt-2">              
-              <div class="col-11">
-                <mat-form-field *ngIf="periods && tabNumber === 4 || tabNumber === 1">
+          <div class="row text-center p-4 m-0 mt-2" *ngIf="role!=='jefe académico' && role!=='secretaria académica'">              
+              <div class="col-xs-12 col-md-3" *ngIf="tabNumber === 1">
+                <mat-form-field *ngIf="periods && tabNumber === 6 || tabNumber === 1">
                     <mat-chip-list #chipList aria-label="Period selection">
                         <mat-chip
                             *ngFor="let p of usedPeriods"
@@ -53,11 +53,9 @@
                             [matChipInputFor]="chipList"
                             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                             matChipInputAddOnBlur="true"
-                            (matChipInputTokenEnd)="addPeriod($event)"
-                                                            
+                            (matChipInputTokenEnd)="addPeriod($event)"                   
                             (ngModelChange) = "filterPeriod($event)"
                             matInput
-                            
                             >
                         </mat-chip-list>
                         <mat-autocomplete #auto="matAutocomplete">
@@ -65,349 +63,186 @@
                         {{period.periodName}}-{{period.year}}
                         </mat-option>
                     </mat-autocomplete>
+                </mat-form-field> 
+              </div>
+
+              <div class="col-xs-12 col-md-5" *ngIf="tabNumber === 6">
+                <mat-form-field *ngIf="periods && tabNumber === 6 || tabNumber === 1">
+                    <mat-chip-list #chipList aria-label="Period selection">
+                        <mat-chip
+                            *ngFor="let p of usedPeriods"
+                            selectable="true"
+                            removable="true"
+                            (removed)="remove(p)">
+                            {{p.periodName}}-{{p.year}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>              
+                        <input
+                            placeholder="Filtrar por periodo..."
+                            #periodInput
+                            [formControl]="periodCtrl"
+                            [matAutocomplete]="auto"
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            matChipInputAddOnBlur="true"
+                            (matChipInputTokenEnd)="addPeriod($event)"                   
+                            (ngModelChange) = "filterPeriod($event)"
+                            matInput
+                            >
+                        </mat-chip-list>
+                        <mat-autocomplete #auto="matAutocomplete">
+                        <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
+                        {{period.periodName}}-{{period.year}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field> 
+              </div>
+
+              <div class="col-xs-12 col-md-4" *ngIf="tabNumber === 1">
+                <mat-form-field>
+                    <mat-chip-list #chipListCareers aria-label="Period selection">
+                        <mat-chip
+                            *ngFor="let c of usedCareers"
+                            selectable="true"
+                            removable="true"
+                            (removed)="removeCareer(c)">
+                            {{c.acronym}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>              
+                        <input
+                            placeholder="Filtrar por carreras..."
+                            #careerInput
+                            [formControl]="careerCtrl"
+                            [matAutocomplete]="autoCarrers"
+                            [matChipInputFor]="chipListCareers"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            matChipInputAddOnBlur="true"
+                            (matChipInputTokenEnd)="addCareer($event)"                      
+                            (ngModelChange) = "filterCareer($event)"
+                            matInput
+                            >
+                        </mat-chip-list>
+                        <mat-autocomplete #autoCarrers="matAutocomplete">
+                        <mat-option *ngFor="let career of carreras" [value]="career" (click)="slectedCareer(career)">
+                        {{career.shortName}}
+                        </mat-option>
+                    </mat-autocomplete>
                     </mat-form-field> 
               </div>
-              <div class="col-1" style="clear: both;">
+
+              <div class="col-xs-12 col-md-4" *ngIf="tabNumber === 1">
+                <mat-form-field>
+                    <mat-chip-list #chipListPhases aria-label="Period selection">
+                        <mat-chip
+                            *ngFor="let p of usedPhases"
+                            selectable="true"
+                            removable="true"
+                            (removed)="removePhase(p)">
+                            {{p.status}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>              
+                        <input
+                            placeholder="Filtrar por estatus..."
+                            #phaseInput
+                            [formControl]="phaseCtrl"
+                            [matAutocomplete]="autoPhases"
+                            [matChipInputFor]="chipListPhases"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            matChipInputAddOnBlur="true"
+                            (matChipInputTokenEnd)="addPhase($event)"                      
+                            (ngModelChange) = "filterPhase($event)"
+                            matInput
+                            
+                            >
+                        </mat-chip-list>
+                        <mat-autocomplete #autoPhases="matAutocomplete">
+                        <mat-option *ngFor="let phase of fases" [value]="phase" (click)="slectedPhase(phase)">
+                        {{phase.status}}
+                        </mat-option>
+                    </mat-autocomplete>
+                    </mat-form-field> 
+              </div>
+
+              <div class="col-xs-12 col-md-6" *ngIf="tabNumber === 6">
+                <mat-form-field>
+                    <mat-chip-list #chipListCareers aria-label="Period selection">
+                        <mat-chip
+                            *ngFor="let c of usedCareers"
+                            selectable="true"
+                            removable="true"
+                            (removed)="removeCareer(c)">
+                            {{c.acronym}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>              
+                        <input
+                            placeholder="Filtrar por carreras..."
+                            #careerInput
+                            [formControl]="careerCtrl"
+                            [matAutocomplete]="autoCarrers"
+                            [matChipInputFor]="chipListCareers"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            matChipInputAddOnBlur="true"
+                            (matChipInputTokenEnd)="addCareer($event)"                      
+                            (ngModelChange) = "filterCareer($event)"
+                            matInput
+                            >
+                        </mat-chip-list>
+                        <mat-autocomplete #autoCarrers="matAutocomplete">
+                        <mat-option *ngFor="let career of carreras" [value]="career" (click)="slectedCareer(career)">
+                        {{career.shortName}}
+                        </mat-option>
+                    </mat-autocomplete>
+                    </mat-form-field> 
+              </div>
+
+              <div class="col-11" *ngIf="tabNumber !== 6 && tabNumber !== 1">
+                <mat-form-field>
+                    <mat-chip-list #chipListCareers aria-label="Period selection">
+                        <mat-chip
+                            *ngFor="let c of usedCareers"
+                            selectable="true"
+                            removable="true"
+                            (removed)="removeCareer(c)">
+                            {{c.acronym}}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip>              
+                        <input
+                            placeholder="Filtrar por carreras..."
+                            #careerInput
+                            [formControl]="careerCtrl"
+                            [matAutocomplete]="autoCarrers"
+                            [matChipInputFor]="chipListCareers"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            matChipInputAddOnBlur="true"
+                            (matChipInputTokenEnd)="addCareer($event)"                      
+                            (ngModelChange) = "filterCareer($event)"
+                            matInput
+                            >
+                        </mat-chip-list>
+                        <mat-autocomplete #autoCarrers="matAutocomplete">
+                        <mat-option *ngFor="let career of carreras" [value]="career" (click)="slectedCareer(career)">
+                        {{career.shortName}}
+                        </mat-option>
+                    </mat-autocomplete>
+                    </mat-form-field> 
+              </div>
+
+              <div class="col-xs-12 col-md-1">
                   <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
                       (click)="reload()" data-toggle="tooltip" title="Actualizar">
                       <mat-icon>cached</mat-icon>
                   </button>
               </div>
           </div>
-          <div class="card-body col-12">
-              <div *ngIf="role!=='jefe académico' && role!=='secretaria académica'" class="row m-1 text-center" >
-                  <div [class.col-6]="tabNumber == 1 " [class.col-12]="tabNumber !== 1 ">
-                      <div class="card" style="border-color: #0cc9aa; background-color: rgba(13, 219, 185, 0.2);">
-                          <div class="card-body">
-                              <!-- <h6>Carreras</h6> -->
-                              <div class="row text-left">
-                                  <div class="col-4" data-toggle="tooltip" title="Todos">
-                                      <mat-slide-toggle [(ngModel)]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'ALL'})">
-                                          <img alt="File" src="../../assets/imgs/careers/all.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> TODAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Arquitectura">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'ARQUITECTURA'})">
-                                          <img alt="File" src="../../assets/imgs/careers/arq.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> ARQU</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Ingeniería Bioquímica">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_QUIMICA'})">
-                                          <img alt="File" src="../../assets/imgs/careers/ibq.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> IBQA</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-                              <div class="row text-left">
-                                  <div class="col-4" data-toggle="tooltip" title="INGENIERÍA CIVIL">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_CIVIL'})">
-                                          <img alt="File" src="../../assets/imgs/careers/ic.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> ICIV</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Ingeniería Eléctrica">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_ELECTRICA'})">
-                                          <img alt="File" src="../../assets/imgs/careers/ie.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> IELE</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Ingeniería En Gestión Empresarial">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_EN_GESTION_EMPRESARIAL'})">
-                                          <img alt="File" src="../../assets/imgs/careers/ige.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> IGEM</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-                              <div class="row text-left">
-                                  <div class="col-4" data-toggle="tooltip" title="Ingeniería Industrial">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_INDUSTRIAL'})">
-                                          <img alt="File" src="../../assets/imgs/careers/ii.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> IIND</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Ingeniería Mecatrónica">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_MECATRONICA'})">
-                                          <img alt="File" src="../../assets/imgs/careers/imc.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> IMCT</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Ingeniería Química">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_QUIMICA'})">
-                                          <img alt="File" src="../../assets/imgs/careers/iq.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> IQUI</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-                              <div class="row text-left">
-                                  <div class="col-4" data-toggle="tooltip" title="Licenciatura En Administración">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'LICENCIATURA_EN_ADMINISTRACION'})">
-                                          <img alt="File" src="../../assets/imgs/careers/la.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> LADM</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip"
-                                      title="Ingeniería En Sistemas Computacionales">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_EN_SISTEMAS_COMPUTACIONALES'})">
-                                          <img alt="File" src="../../assets/imgs/careers/isc.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> ISIC</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip"
-                                      title="Ingeniería En Tecnologías De La Información">
-                                      <mat-slide-toggle [ngModel]="isAllCarrers"
-                                          (change)="changed({event:$event, value:'INGENIERIA_EN_TECNOLOGIAS_DE_LA_INFORMACION_Y_COMUNICACIONES'})">
-                                          <img alt="File" src="../../assets/imgs/careers/itic.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> ITIC</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="col-6" *ngIf="tabNumber == 1">
-                      <div class="card" style="border-color: #0cc9aa; background-color: rgba(13, 219, 185, 0.2);">
-                          <div class="card-body">
-                              <!-- <h6>Solicitudes</h6> -->
-                              <div class="row text-left">
-                                  <div class="col-4" data-toggle="tooltip" title="Todas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'ALL'})">
-                                          <img alt="File" src="../../assets/imgs/careers/all.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> TODAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Enviadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'SENT'})">
-                                          <img alt="File" src="../../assets/imgs/request/send.png">
-                                          <small> 2 ENVIADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Verificadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'VERIFIED'})">
-                                          <img alt="File" src="../../assets/imgs/request/verified.png">
-                                          <small> 3 VERIFICADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-
-                              <div class="row text-left">
-                                  <div class="col-4" data-toggle="tooltip" title="Registradas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'REGISTERED'})">
-                                          <img alt="File" src="../../assets/imgs/request/registered.png">
-                                          <small> 4 REGISTRADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Liberadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'RELEASED'})">
-                                          <img alt="File" src="../../assets/imgs/request/released.png">
-                                          <small> 5 LIBERADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Entregadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'DELIVERED'})">
-                                          <img alt="File" src="../../assets/imgs/request/delivered.png">
-                                          <small> 6 ENTREGADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-
-                              </div>
-                              <div class="row text-left">
-                                  <div class="col-4" data-toggle="tooltip" title="Validadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'VALIDATED'})">
-                                          <img alt="File" src="../../assets/imgs/request/validated.png">
-                                          <small> 7 VALIDADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Asignadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'ASSIGNED'})">
-                                          <img alt="File" src="../../assets/imgs/request/assigned.png">
-                                          <small> 8 ASIGNADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Titulado">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'REALIZED'})">
-                                          <img alt="File" src="../../assets/imgs/request/realized.png">
-                                          <small> 9 TITULADO</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-                              <div class="row text-left">
-                                  <div class="col-4" data-toggle="tooltip" title="Acta Generada">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'GENERATED'})">
-                                          <img alt="File" src="../../assets/imgs/request/generated.png">
-                                          <small> 10 ACTA GENERADA</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Asignadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'CEDULA'})">
-                                          <img alt="File" src="../../assets/imgs/request/assigned.png">
-                                          <small>11 ENTREGA DE CÉDULA</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-4" data-toggle="tooltip" title="Titulado">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'TITLED'})">
-                                          <img alt="File" src="../../assets/imgs/request/realized.png">
-                                          <small> 12 ENTREGA DE TÍTULO</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <div *ngIf="role==='jefe académico' || role==='secretaria académica'" class="row m-1">
-                  <div class="col-12">
-                      <div class="card" style="border-color: #0cc9aa; background-color: rgba(13, 219, 185, 0.2);">
-                          <div class="card-body">
-                              <!-- <h6>Solicitudes</h6> -->
-                              <div class="row">
-                                  <div class="col-2" data-toggle="tooltip" title="Todas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'ALL'})">
-                                          <img alt="File" src="../../assets/imgs/careers/all.png"
-                                              style="width: 20px; height: 20px">
-                                          <small> TODAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Enviadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'SENT'})">
-                                          <img alt="File" src="../../assets/imgs/request/send.png">
-                                          <small> 2 ENVIADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Verificadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'VERIFIED'})">
-                                          <img alt="File" src="../../assets/imgs/request/verified.png">
-                                          <small> 3 VERIFICADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Registradas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'REGISTERED'})">
-                                          <img alt="File" src="../../assets/imgs/request/registered.png">
-                                          <small> 4 REGISTRADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Liberadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'RELEASED'})">
-                                          <img alt="File" src="../../assets/imgs/request/released.png">
-                                          <small> 5 LIBERADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Entregadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'DELIVERED'})">
-                                          <img alt="File" src="../../assets/imgs/request/delivered.png">
-                                          <small> 6 ENTREGADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-                              <div class="row">
-                                  <div class="col-2" data-toggle="tooltip" title="Validadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'VALIDATED'})">
-                                          <img alt="File" src="../../assets/imgs/request/validated.png">
-                                          <small> 7 VALIDADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Asignadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'ASSIGNED'})">
-                                          <img alt="File" src="../../assets/imgs/request/assigned.png">
-                                          <small> 8 ASIGNADAS</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Titulado">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'REALIZED'})">
-                                          <img alt="File" src="../../assets/imgs/request/realized.png">
-                                          <small> 9 TITULADO</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Acta Generada">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'GENERATED'})">
-                                          <img alt="File" src="../../assets/imgs/request/generated.png">
-                                          <small> 10 ACTA GENERADA</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Asignadas">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'CEDULA'})">
-                                          <img alt="File" src="../../assets/imgs/request/assigned.png">
-                                          <small>11 ENTREGA DE CÉDULA</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                                  <div class="col-2" data-toggle="tooltip" title="Titulado">
-                                      <mat-slide-toggle [ngModel]="isAllPhases"
-                                          (change)="changedPhase({event:$event, value:'TITLED'})">
-                                          <img alt="File" src="../../assets/imgs/request/realized.png">
-                                          <small> 12 ENTREGA DE TÍTULO</small>
-                                      </mat-slide-toggle>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-              <div class="row mx-1" *ngIf="tabNumber == 1 || tabNumber == 6">
-                  <div class="col-6">                      
-                                                            
-                  </div>
-                  <div class="col-6">
-                      <!-- <mat-form-field>
-                          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro">
-                      </mat-form-field> -->
-                      <div class="input-group input-group-sm mb-3">
-                          <div class="input-group-prepend">
-                              <span class="input-group-text">Filtro</span>
-                          </div>
-                          <input type="text" class="form-control" (keyup)="applyFilter($event.target.value)"
-                              placeholder="Filtro" id="myfilter">
-                      </div>
-                  </div>
-              </div>
-
+          <div class="row mx-1" *ngIf="tabNumber == 1 || tabNumber == 6">
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Filtro</span>
+                    </div>
+                    <input type="text" class="form-control" (keyup)="applyFilter($event.target.value)"
+                        placeholder="Filtro" id="myfilter">
+                </div>
+        </div>
               <div class="row">
                   <div class="mat-elevation-z8 col-12">
                       <table mat-table [dataSource]="dataSource" matSort>
@@ -686,7 +521,6 @@
                       <mat-paginator [pageSizeOptions]="[5, 10, 15,20]"></mat-paginator>
                   </div>
               </div>
-          </div>
       </div>
   </div>
 </div>
