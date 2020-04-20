@@ -4,15 +4,13 @@
       <strong>IV. Resúmen</strong>
     </div>
     <div class="example-container" style="padding: 20px;">
-      <table>
-        <td style="width: 35%;" *ngIf="image">
+      <div class="row">
+        <div class="col-sm-12 col-md-4">
           <mat-card class="cardProfile">
-            <div style="text-align: center;" *ngIf="image">
               <img mat-card-image [src]="image" class="imgProfile">
-            </div>
           </mat-card>
-        </td>
-        <td colspan="3" style="vertical-align: top;">
+        </div>
+        <div class="col-sm-12 col-md-8">
           <mat-card class="cardData">
             <mat-card-header>
               <h4>Datos Generales</h4>
@@ -29,16 +27,20 @@
               <h6>NSS (Número de Seguro Social): <span>{{nss}}</span></h6>
             </mat-card-content>
             <a (click)="showMoreInformation()" style="cursor: pointer;">Ver más ...</a>
-          </mat-card><br>
-        </td>
-      </table>
+          </mat-card>
+        </div>
+      </div>
+
+
       <div class="card mt-3">
         <div class="card-header text-white bg-secondary">
           <strong>Documentos</strong>
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3" *ngIf="docComprobante != ''">
+
+            <!--COMPROBANTE DE PAGO-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docComprobante != ''" style="padding-top: 5px;">
               <mat-card class="cardDocuments" (click)="onView('Comprobante')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
@@ -60,7 +62,7 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docComprobante == ''">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docComprobante == ''" style="padding-top: 5px;">
               <mat-card class="cardDocumentsNoSend">
                 <mat-card-header>
                   <mat-card-subtitle>
@@ -81,7 +83,9 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docCertificado != ''">
+
+            <!--CERTIFICADO DE PREPA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(!doctorate && !mastersDegree && docCertificado != '')" style="padding-top: 5px;">
               <mat-card class="cardDocuments" (click)="onView('Certificado')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
@@ -103,7 +107,7 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docCertificado == ''">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(!doctorate && !mastersDegree && docCertificado == '')" style="padding-top: 5px;">
               <mat-card class="cardDocumentsNoSend">
                 <mat-card-header>
                   <mat-card-subtitle>
@@ -124,7 +128,369 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docCurp != ''">
+
+            <!--CERTIFICADO DE LICENCIATURA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && certificateLDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Certificado Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && certificateLDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Certificado Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--TITULO LICENCIATURA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && titledLDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Título Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && titledLDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Título Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CEDULA LICENCIATURA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && cedulaLDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Cédula Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && cedulaLDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Cédula Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--ACTA EXAMEN LICENCIATURA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && examActLDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Acta Examen Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && examActLDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Acta Examen Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CERTIFICADO DE MAESTRIA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && certificateMDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Certificado_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Certificado Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && certificateMDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Certificado Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--TITULO MAESTRIA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && titledMDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Título Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && titledMDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Título Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+            
+            <!--CEDULA MAESTRIA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && cedulaMDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Cédula Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && cedulaMDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Cédula Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--ACTA EXAMEN MAESTRIA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && examActMDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      Acta Examen Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && examActMDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      Acta Examen Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+            
+            <!--CURP-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docCurp != ''" style="padding-top: 5px;">
               <mat-card class="cardDocuments" (click)="onView('CURP')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
@@ -146,7 +512,7 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docCurp == ''">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docCurp == ''" style="padding-top: 5px;">
               <mat-card class="cardDocumentsNoSend">
                 <mat-card-header class="documentHeader">
                   <mat-card-subtitle>
@@ -167,7 +533,9 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docActa != ''">
+
+            <!--ACTA NACIMIENTO-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docActa != ''" style="padding-top: 5px;">
               <mat-card class="cardDocuments" (click)="onView('Acta')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header class="cardDocumentsHeader">
@@ -189,7 +557,7 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docActa == ''">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docActa == ''" style="padding-top: 5px;">
               <mat-card class="cardDocumentsNoSend">
                 <mat-card-header class="cardDocumentsHeader">
                   <mat-card-subtitle>
@@ -210,11 +578,9 @@
                 </div>
               </mat-card>
             </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-3" *ngIf="docAnalisis != ''">
+
+            <!--ANALISIS CLINICOS-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docAnalisis != ''" style="padding-top: 5px;">
               <mat-card class="cardDocuments" (click)="onView('Analisis')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
@@ -236,7 +602,7 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docAnalisis == ''">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docAnalisis == ''" style="padding-top: 5px;">
               <mat-card class="cardDocumentsNoSend">
                 <mat-card-header>
                   <mat-card-subtitle>
@@ -256,8 +622,10 @@
                   <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
                 </div>
               </mat-card>
-            </div>            
-            <div class="col-3" *ngIf="docFoto != ''">
+            </div>  
+            
+            <!--FOTO-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docFoto != ''" style="padding-top: 5px;">
               <mat-card class="cardDocuments">
                 <mat-card-header>
                   <mat-card-subtitle>
@@ -278,7 +646,7 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docFoto == ''">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docFoto == ''" style="padding-top: 5px;">
               <mat-card class="cardDocumentsNoSend">
                 <mat-card-header>
                   <mat-card-subtitle>
@@ -299,7 +667,9 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docNss != ''">
+
+            <!--NSS-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docNss != ''" style="padding-top: 5px;">
               <mat-card class="cardDocuments" (click)="onView('NSS')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
@@ -321,7 +691,7 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docNss == ''">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="docNss == ''" style="padding-top: 5px;">
               <mat-card class="cardDocumentsNoSend">
                 <mat-card-header>
                   <mat-card-subtitle>
@@ -342,7 +712,9 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docCC != ''">
+
+            <!--CC CERTIFICADO DE BACHILLER-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(!doctorate && !mastersDegree && docCC != '')" style="padding-top: 5px;">
               <mat-card class="cardDocuments" (click)="onView('Compromiso')" style="cursor: pointer;"
                 ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
                 <mat-card-header>
@@ -364,7 +736,7 @@
                 </div>
               </mat-card>
             </div>
-            <div class="col-3" *ngIf="docCC == ''">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(!doctorate && !mastersDegree && docCC == '')" style="padding-top: 5px;">
               <mat-card class="cardDocumentsNoSend">
                 <mat-card-header>
                   <mat-card-subtitle>
@@ -385,6 +757,367 @@
                 </div>
               </mat-card>
             </div>
+
+            <!--CC CERTIFICADO DE LICENCIATURA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && cccertificateLDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cc_Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      C.C. Certificado Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && cccertificateLDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      C.C. Certificado Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CC TITULO LICENCIATURA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && cctitledLDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cc_Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      C.C. Título Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && cctitledLDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      C.C. Título Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CC CEDULA LICENCIATURA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && cccedulaLDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cc_Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      C.C. Cédula Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && cccedulaLDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      C.C. Cédula Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CC ACTA EXAMEN LICENCIATURA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && ccexamActLDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cc_Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      C.C. Acta Examen Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(mastersDegree && ccexamActLDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      C.C. Acta Examen Licenciatura
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CC CERTIFICADO DE MAESTRIA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && cccertificateMDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cc_Certificado_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      C.C. Certificado Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && cccertificateMDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      C.C. Certificado Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CC TITULO MAESTRIA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && cctitledMDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cc_Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      C.C. Título Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && cctitledMDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      C.C. Título Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CC CEDULA MAESTRIA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && cccedulaMDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cc_Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      C.C. Cédula Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && cccedulaMDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      C.C. Cédula Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
+            <!--CC ACTA EXAMEN MAESTRIA-->
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && ccexamActMDoc != '')" style="padding-top: 5px;">
+              <mat-card class="cardDocuments" (click)="onView('Cc_Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Clic para visualizar" tooltipClass="my-custom-class">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocuments">
+                      C.C. Acta Examen Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-warning">ENVIADO</span>
+                </div>
+              </mat-card>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3" *ngIf="(doctorate && ccexamActMDoc == '')" style="padding-top: 5px;">
+              <mat-card class="cardDocumentsNoSend">
+                <mat-card-header>
+                  <mat-card-subtitle>
+                    <p class="titleDocumentsNoSend">
+                      C.C. Acta Examen Maestria
+                    </p>
+                  </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div>
+                    <div class="text-center">
+                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                    </div>
+                  </div>
+                </mat-card-content>
+                <div style="text-align: center;">
+                  <span *ngIf="!nssDoc" class="badge badge-secondary">SIN ENVÍO</span>
+                </div>
+              </mat-card>
+            </div>
+
           </div>
         </div>
       </div>

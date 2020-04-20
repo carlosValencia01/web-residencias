@@ -35,10 +35,10 @@
       <strong>Perfil del Estudiante</strong>
     </div>
     <div class="example-container" style="padding: 20px;">
-      <table>
-        <td style="width: 35%;" *ngIf="image">
+      <div class="row">
+        <div class="col-sm-12 col-md-4">
           <mat-card class="cardProfile">
-            <div style="text-align: center; height: 320px;" *ngIf="image">
+            <div style="text-align: center; height: 320px;">
               <img *ngIf="showImg == true" mat-card-image [src]="image" class="imgProfile">
               <div *ngIf="showImg == false">
                 <div class="cssload-thecube">
@@ -48,10 +48,10 @@
                   <div class="cssload-cube cssload-c3"></div>
                 </div>
               </div>
-            </div>
+            </div>          
           </mat-card>
-        </td>
-        <td colspan="3" style="vertical-align: top; padding-left: 20px;">
+        </div>
+        <div class="col-sm-12 col-md-8">
           <mat-card class="cardData">
             <mat-card-header>
               <h4>Datos Generales</h4>
@@ -68,9 +68,10 @@
               <h6>NSS (Número de Seguro Social): <span>{{nss}}</span></h6>
             </mat-card-content>
             <a (click)="showMoreInformation()" style="cursor: pointer;">Ver más ...</a>
-          </mat-card><br>
-        </td>
-      </table>
+          </mat-card>
+        </div>
+      </div>
+
       <div class="card mt-3">
         <div class="card-header text-white bg-secondary">
           <strong>Documentos</strong>
@@ -78,7 +79,7 @@
         <!--EXPEDIENTE-->
         <div class='row'>
           <!--Comprobante de Pago-->
-          <div class='col-sm-3' *ngIf="docComprobante">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="docComprobante">
             <mat-card *ngIf="docComprobante.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Comprobante Pago</mat-card-title>
@@ -107,11 +108,6 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Comprobante')">
-                    <p style="text-align: center;">
-                      Cambiar Documento
-                    </p>
-                  </button> -->
                 <dropzone id="dz4" [config]="config4" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
@@ -145,11 +141,6 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Comprobante')">
-                  <p style="text-align: center;">
-                    Cambiar Documento
-                  </p>
-                </button> -->
                 <dropzone id="dz4" [config]="config4" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
@@ -191,8 +182,9 @@
               </mat-card-actions>
             </mat-card>
           </div>
+
           <!--Certificado de estudios-->
-          <div class='col-sm-3' *ngIf="docCertificado">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!doctorate && !mastersDegree && docCertificado">
             <mat-card *ngIf="docCertificado.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Certificado Estudios</mat-card-title>
@@ -272,11 +264,6 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Certificado')">
-                  <p style="text-align: center;">
-                    Cambiar Documento
-                  </p>
-                </button> -->
                 <dropzone id="dz2" [config]="config2" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
@@ -299,9 +286,8 @@
                 </p>
               </mat-card-actions>
             </mat-card>
-
           </div>
-          <div class='col-sm-3' *ngIf="!docCertificado">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!doctorate && !mastersDegree && !docCertificado">
             <mat-card class="cardDocumentsNoSend">
               <mat-card-header>
                 <mat-card-title class="titleDocumentsNoSend">Certificado Estudios</mat-card-title>
@@ -334,8 +320,881 @@
               </mat-card-footer>
             </mat-card>
           </div>
+
+          <!--Certificado de licenciatura-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && certificateLDoc">
+            <mat-card *ngIf="certificateLDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{certificateLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config8" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="certificateLDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{certificateLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="certificateLDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{certificateLDoc.status.name}}</span>
+                </p>
+                <span>{{certificateLDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config8" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="certificateLDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{certificateLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && !certificateLDoc">
+            <mat-card class="cardDocumentsNoSend">
+              <mat-card-header>
+                <mat-card-title class="titleDocumentsNoSend">Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-secondary">SIN ENVÍO</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config8" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+          </div>
+
+          <!--Titulo de licenciatura-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && titledLDoc">
+            <mat-card *ngIf="titledLDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{titledLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config9" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="titledLDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{titledLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="titledLDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{titledLDoc.status.name}}</span>
+                </p>
+                <span>{{titledLDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config9" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="titledLDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{titledLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && !titledLDoc">
+            <mat-card class="cardDocumentsNoSend">
+              <mat-card-header>
+                <mat-card-title class="titleDocumentsNoSend">Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-secondary">SIN ENVÍO</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config9" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+          </div>
+
+          <!--Cedula de licenciatura-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && cedulaLDoc">
+            <mat-card *ngIf="cedulaLDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{cedulaLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config10" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cedulaLDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{cedulaLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="cedulaLDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{cedulaLDoc.status.name}}</span>
+                </p>
+                <span>{{cedulaLDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config10" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cedulaLDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{cedulaLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && !cedulaLDoc">
+            <mat-card class="cardDocumentsNoSend">
+              <mat-card-header>
+                <mat-card-title class="titleDocumentsNoSend">Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-secondary">SIN ENVÍO</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config10" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+          </div>
+
+          <!--Acta Examen de licenciatura-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && examActLDoc">
+            <mat-card *ngIf="examActLDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{examActLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config11" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="examActLDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{examActLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="examActLDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{examActLDoc.status.name}}</span>
+                </p>
+                <span>{{examActLDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config11" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="examActLDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{examActLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && !examActLDoc">
+            <mat-card class="cardDocumentsNoSend">
+              <mat-card-header>
+                <mat-card-title class="titleDocumentsNoSend">Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-secondary">SIN ENVÍO</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config11" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+          </div>
+
+          <!--Certificado de maestria-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && certificateMDoc">
+            <mat-card *ngIf="certificateMDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Certificado MaestMaestriaria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Certificado_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{certificateMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config16" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="certificateMDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Certificado Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Certificado_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{certificateMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="certificateMDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Certificado Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Certificado_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{certificateMDoc.status.name}}</span>
+                </p>
+                <span>{{certificateMDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config16" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="certificateMDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Certificado Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Certificado_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{certificateMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && !certificateMDoc">
+            <mat-card class="cardDocumentsNoSend">
+              <mat-card-header>
+                <mat-card-title class="titleDocumentsNoSend">Certificado Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-secondary">SIN ENVÍO</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config16" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+          </div>
+
+          <!--Titulo de maestria-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && titledMDoc">
+            <mat-card *ngIf="titledMDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{titledMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config17" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="titledMDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{titledMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="titledMDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{titledMDoc.status.name}}</span>
+                </p>
+                <span>{{titledMDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config17" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="titledMDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{titledMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && !titledMDoc">
+            <mat-card class="cardDocumentsNoSend">
+              <mat-card-header>
+                <mat-card-title class="titleDocumentsNoSend">Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-secondary">SIN ENVÍO</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config17" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+          </div>
+
+          <!--Cedula de maestria-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && cedulaMDoc">
+            <mat-card *ngIf="cedulaMDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{cedulaMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config18" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cedulaMDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{cedulaMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="cedulaMDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{cedulaMDoc.status.name}}</span>
+                </p>
+                <span>{{cedulaMDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config18" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cedulaMDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{cedulaMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && !cedulaMDoc">
+            <mat-card class="cardDocumentsNoSend">
+              <mat-card-header>
+                <mat-card-title class="titleDocumentsNoSend">Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-secondary">SIN ENVÍO</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config18" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+          </div>
+
+          <!--Acta Examen de maestria-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && examActMDoc">
+            <mat-card *ngIf="examActMDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{examActMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config19" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="examActMDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{examActMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="examActMDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{examActMDoc.status.name}}</span>
+                </p>
+                <span>{{examActMDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config19" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="examActMDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{examActMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && !examActMDoc">
+            <mat-card class="cardDocumentsNoSend">
+              <mat-card-header>
+                <mat-card-title class="titleDocumentsNoSend">Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-secondary">SIN ENVÍO</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config19" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+          </div>
+          
           <!--Curp-->
-          <div class='col-sm-3' *ngIf="docCurp">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="docCurp">
             <mat-card *ngIf="docCurp.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
                 <mat-card-title class="acceptText">CURP</mat-card-title>
@@ -401,11 +1260,6 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('CURP')">
-                  <p style="text-align: center;">
-                    Cambiar Documento
-                  </p>
-                </button> -->
                 <dropzone id="dz5" [config]="config5" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
@@ -438,17 +1292,12 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('CURP')">
-                    <p style="text-align: center;">
-                      Cambiar Documento
-                    </p>
-                  </button> -->
                 <dropzone id="dz5" [config]="config5" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
             </mat-card>
           </div>
-          <div class='col-sm-3' *ngIf="!docCurp">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!docCurp">
             <mat-card class="cardDocumentsNoSend">
               <mat-card-header>
                 <mat-card-title class="titleDocumentsNoSend">CURP</mat-card-title>
@@ -476,18 +1325,13 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Acta')">
-                      <p style="text-align: center;">
-                        Cambiar Documento
-                      </p>
-                    </button> -->
                 <dropzone id="dz5" [config]="config5" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
             </mat-card>
           </div>
           <!--Acta de Nacimiento-->
-          <div class='col-sm-3' *ngIf="docActa">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="docActa">
             <mat-card *ngIf="docActa.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Acta de Nacimiento</mat-card-title>
@@ -549,11 +1393,6 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Acta')">
-                  <p style="text-align: center;">
-                    Cambiar Documento
-                  </p>
-                </button> -->
                 <dropzone id="dz1" [config]="config1" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
@@ -595,7 +1434,7 @@
               </mat-card-actions>
             </mat-card>
           </div>
-          <div class='col-sm-3' *ngIf="!docActa">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!docActa">
             <mat-card class="cardDocumentsNoSend">
               <mat-card-header>
                 <mat-card-title class="titleDocumentsNoSend">Acta de Nacimiento</mat-card-title>
@@ -623,18 +1462,13 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Acta')">
-                      <p style="text-align: center;">
-                        Cambiar Documento
-                      </p>
-                    </button> -->
                 <dropzone id="dz1" [config]="config1" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
             </mat-card>
           </div>
           <!--Análisis Clínicos-->
-          <div class='col-sm-3' *ngIf="docAnalisis">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="docAnalisis">
             <mat-card *ngIf="docAnalisis.status.name == 'VALIDADO'" class="validate">
               <mat-card-header>
                 <mat-card-title class="validateText">Análisis Clínicos</mat-card-title>
@@ -710,11 +1544,6 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Analisis')">
-                  <p style="text-align: center;">
-                    Cambiar Documento
-                  </p>
-                </button> -->
                 <dropzone id="dz3" [config]="config3" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
@@ -753,7 +1582,7 @@
             </mat-card>
 
           </div>
-          <div class='col-sm-3' *ngIf="!docAnalisis">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!docAnalisis">
             <mat-card class="cardDocumentsNoSend">
               <mat-card-header>
                 <mat-card-title class="titleDocumentsNoSend">Análisis Clínicos</mat-card-title>
@@ -781,18 +1610,13 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Acta')">
-                      <p style="text-align: center;">
-                        Cambiar Documento
-                      </p>
-                    </button> -->
                 <dropzone id="dz3" [config]="config3" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
             </mat-card>
           </div>
           <!--Foto-->
-          <div class='col-sm-3' *ngIf="docFoto">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="docFoto">
             <mat-card *ngIf="docFoto.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Foto</mat-card-title>
@@ -905,7 +1729,7 @@
               </mat-card-actions>
             </mat-card>
           </div>
-          <div class='col-sm-3' *ngIf="!docFoto">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!docFoto">
             <mat-card class="cardDocumentsNoSend">
               <mat-card-header>
                 <mat-card-title class="titleDocumentsNoSend">Foto</mat-card-title>
@@ -945,7 +1769,7 @@
             </mat-card>
           </div>
           <!--NSS-->
-          <div class='col-sm-3' *ngIf="docNss">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="docNss">
             <mat-card *ngIf="docNss.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Constancia de Vigencia de Derechos IMSS</mat-card-title>
@@ -974,11 +1798,6 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('NSS')">
-                    <p style="text-align: center;">
-                      Cambiar Documento
-                    </p>
-                  </button> -->
                 <dropzone id="dz6" [config]="config6" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
@@ -1012,11 +1831,6 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('NSS')">
-                  <p style="text-align: center;">
-                    Cambiar Documento
-                  </p>
-                </button> -->
                 <dropzone id="dz6" [config]="config6" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
@@ -1058,7 +1872,7 @@
               </mat-card-actions>
             </mat-card>
           </div>
-          <div class='col-sm-3' *ngIf="!docNss">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!docNss">
             <mat-card class="cardDocumentsNoSend">
               <mat-card-header>
                 <mat-card-title class="titleDocumentsNoSend">Constancia de Vigencia de Derechos IMSS</mat-card-title>
@@ -1086,18 +1900,14 @@
                 </div>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
-                <!-- <button mat-button (click)="updateDocument('Acta')">
-                      <p style="text-align: center;">
-                        Cambiar Documento
-                      </p>
-                    </button> -->
                 <dropzone id="dz6" [config]="config6" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </mat-card-footer>
             </mat-card>
           </div>
-          <div class='col-sm-3' *ngIf="docCompromiso">
-            <!--Carta Compromiso-->
+
+          <!--Carta Compromiso-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!doctorate && !mastersDegree && docCompromiso">
             <mat-card *ngIf="docCompromiso.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Carta Compromiso</mat-card-title>
@@ -1180,10 +1990,691 @@
               </mat-card-actions>
             </mat-card>
           </div>
-        </div><hr>
+
+          <!-- CC Certificado de licenciatura-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && cccertificateLDoc">
+            <mat-card *ngIf="cccertificateLDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cc Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{cccertificateLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config12" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cccertificateLDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cc Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{cccertificateLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="cccertificateLDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cc Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{cccertificateLDoc.status.name}}</span>
+                </p>
+                <span>{{cccertificateLDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config12" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cccertificateLDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cc Certificado Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Certificado_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{cccertificateLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <!--CC Titulo de licenciatura-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && cctitledLDoc">
+            <mat-card *ngIf="cctitledLDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cc Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{cctitledLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config13" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cctitledLDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cc Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{cctitledLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="cctitledLDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cc Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{cctitledLDoc.status.name}}</span>
+                </p>
+                <span>{{cctitledLDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config13" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cctitledLDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cc Título Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Titulo_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{cctitledLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>        
+
+          <!--CC Cedula de licenciatura-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && cccedulaLDoc">
+            <mat-card *ngIf="cccedulaLDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cc Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{cccedulaLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config14" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cccedulaLDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cc Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{cccedulaLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="cccedulaLDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cc Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{cccedulaLDoc.status.name}}</span>
+                </p>
+                <span>{{cccedulaLDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config14" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cccedulaLDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cc Cédula Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Cedula_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{cccedulaLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>  
+
+          <!--CC Acta Examen de licenciatura-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="mastersDegree && ccexamActLDoc">
+            <mat-card *ngIf="ccexamActLDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cc Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{ccexamActLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config15" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="ccexamActLDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cc Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{ccexamActLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="ccexamActLDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cc Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{ccexamActLDoc.status.name}}</span>
+                </p>
+                <span>{{ccexamActLDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config15" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="ccexamActLDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cc Acta Examen Licenciatura</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Examen_Licenciatura')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{ccexamActLDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <!-- CC Certificado de maestria-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && cccertificateMDoc">
+            <mat-card *ngIf="cccertificateMDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cc Certificado Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{cccertificateMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config20" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cccertificateMDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cc Certificado Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{cccertificateMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="cccertificateMDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cc Certificado Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{cccertificateMDoc.status.name}}</span>
+                </p>
+                <span>{{cccertificateMDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config20" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cccertificateMDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cc Certificado Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Certificado" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{cccertificateMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <!--CC Titulo de maestria-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && cctitledMDoc">
+            <mat-card *ngIf="cctitledMDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cc Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{cctitledMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config21" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cctitledMDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cc Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{cctitledMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="cctitledMDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cc Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{cctitledMDoc.status.name}}</span>
+                </p>
+                <span>{{cctitledMDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config21" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cctitledMDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cc Título Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Titulo_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Título" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{cctitledMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>        
+
+          <!--CC Cedula de maestria-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && cccedulaMDoc">
+            <mat-card *ngIf="cccedulaMDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cc Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{cccedulaMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config22" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cccedulaMDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cc Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{cccedulaMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="cccedulaMDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cc Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{cccedulaMDoc.status.name}}</span>
+                </p>
+                <span>{{cccedulaMDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config22" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="cccedulaMDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cc Cédula Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Cedula_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Cédula" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{cccedulaMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>  
+
+          <!--CC Acta Examen de maestria-->
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && ccexamActMDoc">
+            <mat-card *ngIf="ccexamActMDoc.status.name == 'EN PROCESO'" class="process">
+              <mat-card-header>
+                <mat-card-title class="processText">Cc Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-warning">{{ccexamActMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config23" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="ccexamActMDoc.status.name == 'ACEPTADO'" class="accept">
+              <mat-card-header>
+                <mat-card-title class="acceptText">Cc Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-primary">{{ccexamActMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+            <mat-card *ngIf="ccexamActMDoc.status.name == 'RECHAZADO'" class="reject">
+              <mat-card-header>
+                <mat-card-title class="rejectText">Cc Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-danger">{{ccexamActMDoc.status.name}}</span>
+                </p>
+                <span>{{ccexamActMDoc.status.observation}}</span>
+              </mat-card-actions>
+              <mat-card-footer style="text-align: center; color: black;">
+                <dropzone id="dz2" [config]="config23" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)"></dropzone>
+              </mat-card-footer>
+            </mat-card>
+            <mat-card *ngIf="ccexamActMDoc.status.name == 'VALIDADO'" class="validate">
+              <mat-card-header>
+                <mat-card-title class="validateText">Cc Acta Examen Maestria</mat-card-title>
+              </mat-card-header>
+              <mat-card-content (click)="onView('Cc_Examen_Maestria')" style="cursor: pointer;"
+                ngbTooltip="Visualizar Cc Acta Examen" tooltipClass="my-custom-class">
+                <div>
+                  <div class="text-center">
+                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <p style="text-align: center;">
+                  <span class="badge badge-success">{{ccexamActMDoc.status.name}}</span>
+                </p>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+        </div>
+        <hr>
         <!--Solicitud, Contrato y Acuse-->
         <div class='row'>
-          <div class='col-sm-4'>
+          <div class='col-xs-12 col-sm-6 col-md-4' style="padding-top: 5px;">
             <!--Solicitud-->
             <mat-card class="accept">
               <mat-card-header>
@@ -1201,7 +2692,7 @@
               </mat-card-actions>
             </mat-card>
           </div>
-          <div class='col-sm-4'>
+          <div class='col-xs-12 col-sm-6 col-md-4' style="padding-top: 5px;">
             <!--Contrato-->
             <mat-card class="accept">
               <mat-card-header>
@@ -1219,7 +2710,7 @@
               </mat-card-actions>
             </mat-card>
           </div>
-          <div class='col-sm-4'>
+          <div class='col-xs-12 col-sm-6 col-md-4' style="padding-top: 5px;">
             <!--Acuse-->
             <mat-card class="accept">
               <mat-card-header>
