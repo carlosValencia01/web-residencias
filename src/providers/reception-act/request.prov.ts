@@ -105,4 +105,9 @@ export class RequestProvider {
             .pipe(map(employee => employee.json()));
     }
 
+    // getSummary() {
+    //     return this.api.get(`request/summary`)
+    //         .pipe(map(summary => summary.json()));
+    // }
+
 }

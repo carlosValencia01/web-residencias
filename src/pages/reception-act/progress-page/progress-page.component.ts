@@ -43,6 +43,10 @@ export class ProgressPageComponent implements OnInit {
         this.role = 'services';
         break;
       }
+      case eRole.DIVESTPROFCHIEF.toLowerCase(): {
+        this.role = 'divestprof';
+        break;
+      }
       default: {
         this.role = 'administrator';
         break;

@@ -128,7 +128,8 @@ export class TitulationProgressComponent implements OnInit {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
+    this.role = this._CookiesService.getData().user.rol.name.toLowerCase();    
+    
     // Asigno las carreras asociadas al puesto
     this.departmentCareers = this._CookiesService.getPosition().ascription.careers;
   }
@@ -193,6 +194,10 @@ export class TitulationProgressComponent implements OnInit {
       }
       case eRole.STUDENTSERVICES.toLowerCase(): {
         filter = 'servicios';
+        break;
+      }
+      case eRole.DIVESTPROFCHIEF.toLowerCase(): {
+        filter = 'coordinacion';
         break;
       }
       default: {
@@ -426,7 +431,7 @@ export class TitulationProgressComponent implements OnInit {
       disableClose: true,
       hasBackdrop: true,
       width: '50vw',
-      data: { reqId: Identificador }
+      data: { reqId: Identificador, department:eRole.HEADSCHOOLSERVICE }
     });
 
     ref.afterClosed().subscribe((valor: { response: boolean, data: { QR: any, ESTAMP: any, RESPONSE: boolean } }) => {
@@ -1183,79 +1188,45 @@ export class TitulationProgressComponent implements OnInit {
     this.getFolder(_request.controlNumber);
 
     await this.delay(2000);
-    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando oficio de jurado');
-    const data_oficio = {
+    const fileData = {
       file: {
         mimetype: 'application/pdf',
-        data: oRequest.documentSend(eFILES.OFICIO),
-        name: eFILES.OFICIO + '.pdf',
+        data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
+        name: eFILES.JURAMENTO_ETICA + '.pdf',
       },
       folderId: this.folderId,
       isJsPdf: true,
-      Document: eFILES.OFICIO,
+      Document: eFILES.JURAMENTO_ETICA,
       phase: _request.phase,
       IsEdit: 'true'
     };
-
-    const response = await new Promise(resolve => {
-      this.requestProvider.uploadFile(_id, data_oficio).subscribe(_ => {
-        if (_request.status === 'Pendiente') {
-          window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
-          resolve(true);
-        } else {
-          window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
-          resolve(true);
-        }
-      }, _ => {
-        this._NotificationsServices
-          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
-        resolve(false);
-      });
-    });
-
-    if (response) {
-      const fileData = {
-        file: {
-          mimetype: 'application/pdf',
-          data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
-          name: eFILES.JURAMENTO_ETICA + '.pdf',
-        },
-        folderId: this.folderId,
-        isJsPdf: true,
-        Document: eFILES.JURAMENTO_ETICA,
-        phase: _request.phase,
-        IsEdit: 'true'
-      };
-      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto Recepcional', 'Generando código de ética');
-      this.requestProvider.uploadFile(_id, fileData).subscribe(_ => {
-        if (_request.status === 'Pendiente') {
-          const data = {
-            doer: this._CookiesService.getData().user.name.fullName,
-            observation: '',
-            phase: eRequest.REALIZED,
-            operation: eStatusRequest.PROCESS
-          };
-          this.requestProvider.updateRequest(_id, data).subscribe(__ => {
-            window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
-            this.loadRequest();
-            this.showLoading = false;
-          }, __ => {
-            this.showLoading = false;
-            this._NotificationsServices
-              .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
-          });
-        } else {
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto Recepcional', 'Generando código de ética');
+    this.requestProvider.uploadFile(_id, fileData).subscribe(_ => {
+      if (_request.status === 'Pendiente') {
+        const data = {
+          doer: this._CookiesService.getData().user.name.fullName,
+          observation: '',
+          phase: eRequest.REALIZED,
+          operation: eStatusRequest.PROCESS
+        };
+        this.requestProvider.updateRequest(_id, data).subscribe(__ => {
           window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+          this.loadRequest();
           this.showLoading = false;
-        }
-      }, _ => {
+        }, __ => {
+          this.showLoading = false;
+          this._NotificationsServices
+            .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
+        });
+      } else {
+        window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
         this.showLoading = false;
-        this._NotificationsServices
-          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
-      });
-    } else {
+      }
+    }, _ => {
       this.showLoading = false;
-    }
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
+    });
   }
 
   delay(ms: number) {
@@ -1410,6 +1381,86 @@ export class TitulationProgressComponent implements OnInit {
           _ => resolve(null));
     });
   }
+
+ async jurySign(requestId){
+    const _request: iRequest = this.getRequestById(requestId);
+    let juryGender  = {president:'MASCULINO',secretary:'MASCULINO',};
+    let studentGender = 'M';
+    
+    await this._StudentProvider.getStudentById(_request.studentId).toPromise().then(
+      st=> {studentGender = st.student[0].sex;}
+    ).catch(err=>{});
+    
+    await this.requestProvider.getEmployeeGender(_request.jury[0].email ? _request.jury[0].email : _request.jury[0].name).toPromise().then(
+      (em)=>juryGender.president = em.gender           
+    ).catch( err=> juryGender.president = 'MASCULINO');
+        
+    await this.requestProvider.getEmployeeGender(_request.jury[1].email ? _request.jury[1].email : _request.jury[1].name).toPromise().then(
+      (em)=>juryGender.secretary = em.gender           
+    ).catch( err=> juryGender.secretary = 'MASCULINO');
+
+    this.getFolder(_request.controlNumber);    
+    const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService,juryGender,studentGender);
+          
+    const ref = this.dialog.open(UploadDeliveredComponent, {
+      disableClose: true,
+      hasBackdrop: true,
+      width: '50vw',
+      data: { reqId: requestId, department:eRole.DIVESTPROFCHIEF, departmentOut: _request.department.name }
+    });
+
+    ref.afterClosed().subscribe((valor: { response: boolean, data: { QR: any, ESTAMP: any, RESPONSE: boolean } }) => {
+      if (typeof (valor) !== 'undefined' && valor.response) {
+        this.showLoading = true;               
+        const data = {
+          doer: this._CookiesService.getData().user.name.fullName,
+          observation: '',
+          operation: eStatusRequest.PROCESS,
+          file: {
+            mimetype: 'application/pdf',
+            data: oRequest.documentSend(eFILES.OFICIO, valor.data.QR, valor.data.ESTAMP),
+            name: eFILES.OFICIO + '.pdf'
+          },
+          folderId: this.folderId,
+          phase: eRequest.REALIZED
+        };
+
+        this.requestProvider.updateRequest(requestId, data).subscribe(_ => {
+          this.showLoading = false;
+          this._NotificationsServices
+            .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
+            window.open(oRequest.notificationOffice( valor.data.QR, valor.data.ESTAMP).output('bloburl'), '_blank'); 
+          this.loadRequest();
+        }, _ => {
+          this.showLoading = false;
+          this._NotificationsServices
+            .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
+        });
+      }
+    }, _ => {
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error');
+    });
+    
+  }
+
+  // insertSummary(){
+  //   const tmpRequest: iRequest = { };
+  //   const oRequest: uRequest = new uRequest(tmpRequest, this._ImageToBase64Service, this._CookiesService);
+  //   this.requestProvider.getSummary().toPromise().then(
+  //     requests=>{
+  //       console.log(requests);
+        
+  //       requests.forEach(request => {
+  //         setTimeout(() => {
+  //           if(request) window.open(oRequest.requestSummary(request).output('bloburl'), '_blank');         
+  //         }, 500);       
+  //       });
+  //     }
+  //   ).catch(err=>console.log(err)
+  //   );
+    
+  // }
 }
 
 // tslint:disable-next-line: class-name

@@ -81,6 +81,7 @@ export class DiaryComponent implements OnInit {
       BOTTOM: 25
     };
 
+    role: string;
   constructor(
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
@@ -100,6 +101,7 @@ export class DiaryComponent implements OnInit {
       this.view = CalendarView.Week;
       localStorage.removeItem('Appointment');
     }
+    // this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
   }
 
   ngOnInit() {
