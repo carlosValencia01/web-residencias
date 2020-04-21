@@ -39,7 +39,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
 import * as moment from 'moment';
 import { CareerProvider } from 'src/providers/shared/career.prov';
-
+import TableToExcel from '@linways/table-to-excel';
 
 @Component({
   selector: 'app-titulation-progress',
@@ -99,7 +99,7 @@ export class TitulationProgressComponent implements OnInit {
   allStatus;
   filteredPhases;
   usedPhases = [];
-
+  canExport = false;
   constructor(
     private requestProvider: RequestProvider,
     public dialog: MatDialog,
@@ -122,14 +122,14 @@ export class TitulationProgressComponent implements OnInit {
       'LICENCIATURA EN ADMINISTRACIÓN', 'INGENIERÍA EN GESTIÓN EMPRESARIAL', 'INGENIERÍA MECATRÓNICA',
       'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES'];
     this.allPhases = ['Enviado', 'Verificado', 'Registrado', 'Liberado', 'Entregado', 'Validado', 'Asignado',
-      'Realizado', 'Generado', 'Finalized', 'Titulado'];
+      'Realizado', 'Generado', 'Finalized', 'Titulado','Capturado'];
     this.allStatus = [{phase:'Enviado',status:'ENVIADAS'}, {phase:'Verificado',status:'VERIFICADAS'}, {phase:'Registrado',status:'REGISTRADAS'}, {phase:'Liberado',status:'LIBERADAS'}, {phase:'Entregado',status:'ENTREGADAS'}, {phase:'Validado',status:'VALIDADAS'}, {phase:'Asignado',status:'ASIGNADAS'},
       {phase:'Realizado',status:'TITULADOS'}, {phase:'Generado',status:'ACTAS GENERADAS'},{phase:'Titulado',status:'TÍTULOS ENTREGADOS'}];
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.role = this._CookiesService.getData().user.rol.name.toLowerCase();    
-    
+    this.canExport = this.role === 'administrador' || this.role === 'jefe de servicios escolares' || this.role === 'servicios estudiantiles' ? true : false;
     // Asigno las carreras asociadas al puesto
     this.departmentCareers = this._CookiesService.getPosition().ascription.careers;
   }
@@ -208,7 +208,7 @@ export class TitulationProgressComponent implements OnInit {
 
     this.requestProvider.getAllRequestByStatus(filter).subscribe(
       res => {
-        this.request = [];
+        this.request = [];        
         res.request.forEach(element => {
           const isProcess = (this.tabNumber === 3)
             ? element.documents.filter(doc => doc.status === 'Process').length > 0
@@ -1461,10 +1461,22 @@ export class TitulationProgressComponent implements OnInit {
   //   );
     
   // }
+
+  excelExport(){
+    console.log(this.dataSource.filteredData);
+    
+    this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Los datos se exportaron con éxito');
+    TableToExcel.convert(document.getElementById('table'), {
+      name: 'Reporte acto recepcional.xlsx',
+      sheet: {
+        name: 'Egresados'
+      }
+    });
+  }
 }
 
 // tslint:disable-next-line: class-name
-interface iRequestSource {
+interface   iRequestSource {
   _id?: string;
   controlNumber?: string;
   fullName?: string;

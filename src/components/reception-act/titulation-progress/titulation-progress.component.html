@@ -235,13 +235,19 @@
                   </button>
               </div>
           </div>
-          <div class="row mx-1" *ngIf="tabNumber == 1 || tabNumber == 6">
-                <div class="input-group input-group-sm mb-3">
+          <div class="row mx-1 mb-3" *ngIf="tabNumber == 1 || tabNumber == 6">
+                <div class="input-group input-group-sm center" [class.col-12]="tabNumber == 6" [class.col-11]="tabNumber == 1 && canExport">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Filtro</span>
                     </div>
                     <input type="text" class="form-control" (keyup)="applyFilter($event.target.value)"
                         placeholder="Filtro" id="myfilter">
+                </div>
+                <div *ngIf="tabNumber == 1 && canExport" class="col-1 center">
+                    <div class="div-img">
+                        <img src="../../assets/icons/excelExport.svg" class="action"
+                          (click)="excelExport()" style="width: 50px;" ngbTooltip="Exportar expedientes"/>
+                    </div>                    
                 </div>
         </div>
               <div class="row">
@@ -520,6 +526,51 @@
       </div>
   </div>
 </div>
+<table class="table table-striped table-bordered table-hover" 
+data-cols-width="2,20,16,15,35,15,10,50,50,50,50,15,28,15,15"
+id="table"
+*ngIf="dataSource && tabNumber === 1"
+>
+    <thead>            
+    <tr>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">#</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Opción de titulación</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Num. de control</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Carrera</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Correo</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Teléfono</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Género</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Presidente(a)</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Secretario(a)</th>
+        <th  data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Vocal</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Suplente</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14" data-f-color="#FFFFFF">Fecha</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center" data-a-v="middle">Periodo de titulación</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center" data-a-v="middle">Fase</th>
+        <th data-f-bold="true"  data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center" data-a-v="middle">Estatus</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let req of dataSource.filteredData; let i = index">
+        <td data-f-sz="12" data-t="n" data-a-h="center" data-a-v="middle">{{i+1}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.titulationOption | slice:0:2}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.controlNumber}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.careerAcronym}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.email}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.telephone}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.student.sex}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.jury[0] ? req.jury[0].name : '---'}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.jury[1] ? req.jury[1].name : '---'}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.jury[2] ? req.jury[2].name : '---'}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.jury[3] ? req.jury[3].name : '---'}}</td>        
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.proposedDate ? req.proposedDateLocal : '---'}}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.period.periodName +'-'+ req.period.year }}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.phase }}</td>
+        <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.status }}</td>
+        
+    </tr>
+    </tbody>
+</table>
 <div class="center">
   <app-loader [loading]="showLoading"></app-loader>
 </div>
