@@ -85,33 +85,33 @@
       </mwl-calendar-week-view>
     </div>
 
-    <context-menu #basicMenu style="background: grey; color:black">
+    <context-menu #basicMenu style="background: grey; color:black" >
       <ng-template class="mt-1" contextMenuItem (execute)="viewEvent($event.item)">
         <div style=" border-style: solid;
           border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#c0a22b"
             class="fa fa-eye"></i> Ver Más</div>
       </ng-template>
-      <ng-template contextMenuItem (execute)="addEvent($event.item)">
+      <ng-template contextMenuItem (execute)="addEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>
           Agregar
           Evento</div>
       </ng-template>
-      <ng-template contextMenuItem (execute)="addTitled($event.item)">
+      <ng-template contextMenuItem (execute)="addTitled($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
           Agregar
           Titulación</div>
       </ng-template>
-      <ng-template class="mt-1" contextMenuItem (execute)="cancelledEvent($event.item)">
+      <ng-template class="mt-1" contextMenuItem (execute)="cancelledEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
             class="fa fa-calendar-times-o"></i>
           Cancelar Evento</div>
       </ng-template>
-      <ng-template class="mt-1" contextMenuItem (execute)="documentation($event.item)">
+      <ng-template class="mt-1" contextMenuItem (execute)="documentation($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#353bb5"
             class="fa fa-book"></i>
@@ -120,28 +120,28 @@
     </context-menu>
 
     <context-menu #basicMenu_2 style="background: grey; color:black">
-      <ng-template class="mt-1" contextMenuItem (execute)="appointmentClicked($event.item)">
+      <ng-template class="mt-1" contextMenuItem (execute)="appointmentClicked($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
               border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#08a3bc"
             class="fa fa-calendar-check-o"></i>
           Confirmar
           Evento</div>
       </ng-template>
-      <ng-template contextMenuItem (execute)="addEvent($event.item)">
+      <ng-template contextMenuItem (execute)="addEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
           border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>
           Agregar
           Evento</div>
       </ng-template>
-      <ng-template class="mt-1" contextMenuItem (execute)="rejectEvent($event.item)">
+      <ng-template class="mt-1" contextMenuItem (execute)="rejectEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
           border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
             class="fa fa-ban"></i>
           Rechazar Evento</div>
       </ng-template>
 
-      <ng-template contextMenuItem (execute)="addTitled($event.item)">
+      <ng-template contextMenuItem (execute)="addTitled($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
@@ -209,11 +209,11 @@
     </ng-template>
 
     <context-menu #viewMenu>
-      <ng-template contextMenuItem (execute)="addNewEvent($event.item)">
+      <ng-template contextMenuItem (execute)="addNewEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid; border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>Agregar Evento</div>
       </ng-template>
-      <ng-template contextMenuItem (execute)="addNewTitled($event.item)">
+      <ng-template contextMenuItem (execute)="addNewTitled($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>

@@ -80,8 +80,9 @@ export class DiaryComponent implements OnInit {
       TOP: 25,
       BOTTOM: 25
     };
-
-    role: string;
+  
+  rol: string;
+  canEdit = false;    
   constructor(
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
@@ -95,14 +96,15 @@ export class DiaryComponent implements OnInit {
 
   ) {
     const tmpFecha = localStorage.getItem('Appointment');
+    this.rol = this._CookiesService.getData().user.rol.name.toLowerCase();
+    this.canEdit = this.rol === 'jefe div. est. prof.' || 'administrador' || 'coordinación de titulación' ? true : false;    
+    
     this._getImageToPdf();
     if (typeof (tmpFecha) !== 'undefined' && tmpFecha) {
       this.viewDate = new Date(tmpFecha);
       this.view = CalendarView.Week;
       localStorage.removeItem('Appointment');
-    }
-    // this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
-  }
+    }  }
 
   ngOnInit() {
     this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
@@ -863,6 +865,7 @@ export class DiaryComponent implements OnInit {
           (care) => care.values
         )[0];
         if (filtered) {
+          
           const maped = filtered.
             map((st) => ({
               date: moment(st.proposedDate).format('LL'),
@@ -872,11 +875,11 @@ export class DiaryComponent implements OnInit {
               jury: st.jury
                 .map((jr: any, index: number) =>
                   index === 0
-                  ? 'PRESIDENTE: ' + jr.name
+                  ? 'PRESIDENTE(A): ' + jr.name
                   : index === 1
-                  ? 'SECRETARIO: ' + jr.name
+                  ? 'SECRETARIO(A): ' + jr.name
                   : index === 2
-                  ? 'VOCAL ' + jr.name
+                  ? 'VOCAL: ' + jr.name
                   : 'VOCAL SUPLENTE: ' + jr.name
                 ).join('\r\n'),
                 dateWithoutFormat: moment(st.proposedDate),
@@ -911,13 +914,13 @@ export class DiaryComponent implements OnInit {
             headStyles: { fillColor: [24, 57, 105], halign: 'center', valign: 'middle' },
             bodyStyles: { textColor: [0, 0, 0] },
             columnStyles: {
-              0: { cellWidth: 6, halign: 'center', valign: 'middle' },
-              1: { cellWidth: 10, halign: 'center', valign: 'middle' },
-              2: { cellWidth: 30, halign: 'center', valign: 'middle' },
+              0: { cellWidth: 1, halign: 'center', valign: 'middle' },
+              1: { cellWidth: 2, halign: 'center', valign: 'middle' },
+              2: { cellWidth: 35, halign: 'center', valign: 'middle' },
               3: { cellWidth: 7, halign: 'center', valign: 'middle' },
               4: { cellWidth: 40, halign: 'center', valign: 'middle' },
               5: { cellWidth: 30, halign: 'center', valign: 'middle' },
-              6: { cellWidth: 80, halign: 'center', valign: 'middle' },
+              6: { cellWidth: 100, halign: 'left', valign: 'middle' },
             }
           }
         );
