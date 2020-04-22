@@ -21,6 +21,7 @@ import { eFOLDER } from 'src/enumerators/shared/folder.enum';
 import { uRequest } from 'src/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 import { eFILES } from 'src/enumerators/reception-act/document.enum';
+import { DepartmentProvider } from 'src/providers/shared/department.prov';
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
 import Swal from 'sweetalert2';
@@ -49,7 +50,9 @@ export class DiaryComponent implements OnInit {
   events: CalendarEvent[];
   hour: string;
   excludeDays: number[] = [0, 6];
-  Appointments: Array<iAppointmentGroup> = [];
+  employees;
+  // Appointments: Array<{ _id: string[], values: [{ id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string, jury: Array<string>, place: string, }] }> = []
+  Appointments: Array<iAppointmentGroup> = []
   Ranges: Array<{ start: Date, end: Date, quantity: number, careers: string[] }> = [];
   refresh: Subject<any> = new Subject();
   request: iRequest;
@@ -77,6 +80,7 @@ export class DiaryComponent implements OnInit {
       TOP: 25,
       BOTTOM: 25
     };
+
   constructor(
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
@@ -86,6 +90,8 @@ export class DiaryComponent implements OnInit {
     public _ImageToBase64Service: ImageToBase64Service,
     public dialog: MatDialog,
     public _getImage: ImageToBase64Service,
+    private _DepartmentProvider: DepartmentProvider,
+
   ) {
     const tmpFecha = localStorage.getItem('Appointment');
     this._getImageToPdf();
@@ -567,11 +573,12 @@ export class DiaryComponent implements OnInit {
     // const tmpMinutes: number = value.start.getHours() * 60;
     // let tmpDate: Date = new Date(value.start.getFullYear(), value.start.getMonth(), value.start.getDate(), 0, 0, 0, 0);
     const tmpMinutes: number = $event.start.getHours() * 60;
-    const tmpDate: Date = new Date($event.start.getFullYear(), $event.start.getMonth(), $event.start.getDate(), 0, 0, 0, 0);
-    // Obtencion de datos del evento
-    const student = $event.title.split(' ').slice(2).join(' ');
-    const abbreviation = $event.title.split(' ')[1];
-    const career = this.carrers.find(x => x.abbreviation === abbreviation);
+    let tmpDate: Date = new Date($event.start.getFullYear(), $event.start.getMonth(), $event.start.getDate(), 0, 0, 0, 0);
+    let tmpStudentData;
+    //Obtencion de datos del evento
+    let student = $event.title.split(' ').slice(2).join(' ');
+    let abbreviation = $event.title.split(' ')[1];
+    let career = this.carrers.find(x => x.abbreviation === abbreviation);
 
     // Busqueda del evento
     let tmpValor: { id: string, student: string[], proposedDate: Date, proposedHour: number, phase: string };
@@ -585,7 +592,50 @@ export class DiaryComponent implements OnInit {
           && this.Appointments[i]._id[0].trim() === career.carrer.trim()
         ) {
           tmpValor = this.Appointments[i].values[j];
+          tmpStudentData = this.Appointments[i].values[j];
           index = { appointment: i, value: j };
+          var departamento;
+          switch(career.carrer){
+            case "ARQUITECTURA" :
+              departamento = 'DEPARTAMENTO DE CIENCIAS DE LA TIERRA';
+              break;
+            case "INGENIERÍA CIVIL" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA CIVIL';
+              break;
+            case "INGENIERÍA BIOQUÍMICA" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA QUÍMICA Y BIOQUÍMICA';
+              break;
+            case "INGENIERÍA EN GESTIÓN EMPRESARIAL" :
+              departamento = 'DEPARTAMENTO DE CIENCIAS ECONÓMICO ADMINISTRATIVAS';
+              break;
+            case "INGENIERÍA QUÍMICA" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA QUÍMICA Y BIOQUÍMICA';
+              break;
+            case "INGENIERÍA MECATRÓNICA" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA ELÉCTRICA Y ELECTRÓNICA';
+              break;
+            case "INGENIERÍA ELÉCTRICA" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA ELÉCTRICA Y ELECTRÓNICA';
+              break;
+            case "INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES" :
+              departamento = 'DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN'
+              break;
+            case "INGENIERÍA EN SISTEMAS COMPUTACIONALES" :
+              departamento = 'DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN'
+              break;
+            case "INGENIERÍA INDUSTRIAL" :
+              departamento = 'DEPARTAMENTO DE INGENIERÍA INDUSTRIAL';
+              break;
+            case "LICENCIATURA EN ADMINISTRACIÓN" :
+              departamento = 'DEPARTAMENTO DE CIENCIAS ECONÓMICO ADMINISTRATIVAS';
+              break;
+            case "LICENCIATURA EN INFORMÁTICA" :
+              departamento = 'DEPARTAMENTO DE SISTEMAS Y COMPUTACIÓN';
+              break;
+         }
+          this._DepartmentProvider.getDepartmentBossSecretary(departamento).subscribe(res => {
+            this.employees = res.department;
+          });
           break;
         }
       }
@@ -603,11 +653,26 @@ export class DiaryComponent implements OnInit {
         confirmButtonText: 'Aceptar'
       }).then((result) => {
         if (result.value) {
+          let hours = tmpStudentData.proposedHour / 60;
+          let minutes = tmpStudentData.proposedHour % 60;
+          let hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
+          let date = moment(tmpStudentData.proposedDate).format('LLL');
+
           const data = {
             operation: eStatusRequest.ACCEPT,
             doer: this._CookiesService.getData().user.name.fullName,
-            phase: eRequest.ASSIGNED
-          };
+            phase: eRequest.ASSIGNED,
+            jurado: tmpStudentData.jury,
+            fechaEvento: date.slice(0,date.length-5),
+            horaEvento: hour,
+            lugarEvento: tmpStudentData.place,
+            duracionEvento: tmpStudentData.duration,
+            nombreAlumno: tmpStudentData.student[0],
+            carreraAlumno: career.carrer,
+            nombreProyecto: tmpStudentData.project,
+            opcionTitulacion: tmpStudentData.product,
+            departamentoEmail: this.employees
+          };       
           this._RequestProvider.updateRequest(tmpValor.id, data).subscribe(_ => {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Fecha propuesta aceptada');
             // tmpValor.phase = "Realizado";

@@ -251,36 +251,29 @@ export class StudentPageComponent implements OnInit {
 
   }
 
-  generatePDF(student) { // 'p', 'mm', [68,20]
+  async generatePDF(student) { // 'p', 'mm', [68,20]
+
+  let studentStatus = '';
+
+  await this.studentProv.getStatusFromSii(student.controlNumber).toPromise().then(
+    res=>{
+      studentStatus = res.status;   
+    }
+  );
+
   let userRol = this.cookiesService.getData().user.rol.name;
   
+  if (studentStatus === 'ACT' || userRol === 'Administrador') {
     if (student.nss) {
       this.loading = true;
       this.printCredential(student);
-      // this.studentProv.verifyStatus(student.controlNumber)
-      //   .subscribe(async res => {
-          
-      //     this.haveSubjects = res.status === 1 ?  true : userRol == 'Administrador' ? true : false;
-      //     if (this.haveSubjects) {
-      //       this.printCredential(student);
-      //     } else {
-      //       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-      //     }
-
-      //   }, error => {
-          
-      //     if (error.status === 401 && userRol !== 'Administrador') {
-      //       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene materias cargadas', '');
-      //     } if(userRol == 'Administrador'){
-      //       this.printCredential(student);
-      //     } else {
-      //       this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, intente nuevamente', '');
-      //     }
-      //   }, () => this.loading = false);
     } else {
       this.loading = false;
       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
     }
+  } else {
+    this.notificationServ.showNotification(eNotificationType.ERROR, 'Alumno Inactivo', '');
+  }
   }
 
   async printCredential(student){
