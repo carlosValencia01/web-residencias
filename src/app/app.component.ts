@@ -1,7 +1,9 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
-import { CookiesService } from '../services/app/cookie.service';
-import { UserProvider } from '../providers/app/user.prov';
 import { MatSidenav } from '@angular/material';
+
+import { CookiesService } from 'src/services/app/cookie.service';
+import { eSessionStatus } from 'src/enumerators/app/sessionStatus.enum';
+import { UserProvider } from 'src/providers/app/user.prov';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +12,6 @@ import { MatSidenav } from '@angular/material';
 })
 export class AppComponent {
   @ViewChild('sidenav') sideNav: MatSidenav;
-  activeSession: boolean;
   opened = true;
   mode = 'side';
   smallScreen: boolean;
@@ -24,6 +25,7 @@ export class AppComponent {
     clickToClose: true,
     maxLength: 10
   };
+  public sessionStatus: string;
 
   constructor(
     private cookiesServ: CookiesService,
@@ -62,17 +64,32 @@ export class AppComponent {
 
   checkLogin() {
     const fullurl = window.location.href;
-    if (this.cookiesServ.checkCookie('session')) {
-      this.activeSession = true;
-      this.userProv.sendTokenFromAPI(this.cookiesServ.getData().token);
+    const _session = this.cookiesServ.getData();
+    const _status = this.cookiesServ.getSessionStatus();
+    if (_session && _session.user && _session.token && _status === eSessionStatus.ACTIVE) {
+      this._setSessionStatus(eSessionStatus.ACTIVE);
+      this.userProv.sendTokenFromAPI(_session.token);
     } else if (fullurl.indexOf('survey') !== -1) { // para saber si se esta ingresando por la encuesta
-      this.activeSession = true;
+      this._setSessionStatus(eSessionStatus.ACTIVE);
     } else {
-      this.activeSession = false;
+      const _allStatus = Object.values(eSessionStatus);
+      let _sessionStatus;
+      if (!_session || (_session && !_session.user)) {
+        _sessionStatus = eSessionStatus.INACTIVE;
+      } else {
+        _sessionStatus = (_status && _status !== eSessionStatus.ACTIVE && _allStatus.includes(<eSessionStatus>_status))
+          ? _status : eSessionStatus.INACTIVE;
+      }
+      this._setSessionStatus(_sessionStatus);
     }
   }
 
-  changeStatus() {
-    this.activeSession = !this.activeSession;
+  public changeSessionStatus(status: string) {
+    this._setSessionStatus(status);
+  }
+
+  private _setSessionStatus(status: string) {
+    this.cookiesServ.saveSessionStatus(status);
+    this.sessionStatus = status;
   }
 }

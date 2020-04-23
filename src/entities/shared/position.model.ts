@@ -1,5 +1,6 @@
-import { IDocument } from './document.model';
-import { IDepartment } from './department.model';
+import { IDocument } from 'src/entities/shared/document.model';
+import { IDepartment } from 'src/entities/shared/department.model';
+import { iRole } from 'src/entities/app/role.model';
 
 export interface IPosition {
     _id?: string;
@@ -9,4 +10,5 @@ export interface IPosition {
     documents?: Array<IDocument>;
     isUnique?: boolean;
     gender?: { male?: string, female?: string };
+    role?: iRole;
 }
