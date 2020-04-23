@@ -5,5 +5,6 @@ export enum eRole {
     CHIEFACADEMIC = 'Jefe Académico',
     HEADSCHOOLSERVICE = 'Jefe de Servicios Escolares',
     SECRETARYACEDMIC = 'Secretaria Académica',
-    STUDENTSERVICES = 'Servicios Estudiantiles'
+    STUDENTSERVICES = 'Servicios Estudiantiles',
+    DIVESTPROFCHIEF = 'Jefe Div. Est. Prof.'
 }

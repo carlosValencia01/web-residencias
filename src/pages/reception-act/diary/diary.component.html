@@ -69,60 +69,49 @@
           <div class="btn btn-light btm-sm" (click)="reload()">
             <i class="fa fa-refresh"></i> Recargar
           </div>
-          <!-- Calendario vista dia -->
-          <!-- <div class="btn btn-light btm-sm" (click)="setView('day')" [class.active]="view === 'day'">
-            <i class="fa fa-calendar"></i> Día
-          </div> -->
         </div>
       </div>
     </div>
-    <!-- [cellTemplate]="customCellTemplate" -->
+    
     <div [ngSwitch]="view" class="mt-3">
       <mwl-calendar-month-view *ngSwitchCase="'month'" [viewDate]="viewDate" [events]="events"
         (beforeViewRender)="beforeMonthViewRender($event)" [locale]="locale" [refresh]="refresh"
         [excludeDays]="excludeDays" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)">
       </mwl-calendar-month-view>
-      <!-- <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" [events]="events"
-        (eventClicked)="eventClicked($event)"></mwl-calendar-week-view> -->
+
       <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" [excludeDays]="excludeDays" [events]="events"
         [dayStartHour]="7" [locale]="locale" [dayEndHour]="19" [refresh]="refresh" [headerTemplate]="weekHeaderTemplate"
         [hourSegmentTemplate]="weekViewHourSegment" [eventTemplate]="customCellTemplate">
       </mwl-calendar-week-view>
-
-      <!-- (eventClicked)="appointmentClicked($event.event)" -->
-      <!-- Vista Día -->
-      <!-- <mwl-calendar-day-view *ngSwitchCase="'day'" [viewDate]="viewDate" [events]="events" [dayStartHour]="7"
-        [locale]="locale" [dayEndHour]="19">
-      </mwl-calendar-day-view> -->
     </div>
 
-    <context-menu #basicMenu style="background: grey; color:black">
+    <context-menu #basicMenu style="background: grey; color:black" >
       <ng-template class="mt-1" contextMenuItem (execute)="viewEvent($event.item)">
         <div style=" border-style: solid;
           border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#c0a22b"
             class="fa fa-eye"></i> Ver Más</div>
       </ng-template>
-      <ng-template contextMenuItem (execute)="addEvent($event.item)">
+      <ng-template contextMenuItem (execute)="addEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>
           Agregar
           Evento</div>
       </ng-template>
-      <ng-template contextMenuItem (execute)="addTitled($event.item)">
+      <ng-template contextMenuItem (execute)="addTitled($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
           Agregar
           Titulación</div>
       </ng-template>
-      <ng-template class="mt-1" contextMenuItem (execute)="cancelledEvent($event.item)">
+      <ng-template class="mt-1" contextMenuItem (execute)="cancelledEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
             class="fa fa-calendar-times-o"></i>
           Cancelar Evento</div>
       </ng-template>
-      <ng-template class="mt-1" contextMenuItem (execute)="documentation($event.item)">
+      <ng-template class="mt-1" contextMenuItem (execute)="documentation($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#353bb5"
             class="fa fa-book"></i>
@@ -131,28 +120,28 @@
     </context-menu>
 
     <context-menu #basicMenu_2 style="background: grey; color:black">
-      <ng-template class="mt-1" contextMenuItem (execute)="appointmentClicked($event.item)">
+      <ng-template class="mt-1" contextMenuItem (execute)="appointmentClicked($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
               border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#08a3bc"
             class="fa fa-calendar-check-o"></i>
           Confirmar
           Evento</div>
       </ng-template>
-      <ng-template contextMenuItem (execute)="addEvent($event.item)">
+      <ng-template contextMenuItem (execute)="addEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
           border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>
           Agregar
           Evento</div>
       </ng-template>
-      <ng-template class="mt-1" contextMenuItem (execute)="rejectEvent($event.item)">
+      <ng-template class="mt-1" contextMenuItem (execute)="rejectEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
           border-width: 1px;color:#525770; background:rgba(108, 114, 147, 0.2)"><i style="color:#b64443"
             class="fa fa-ban"></i>
           Rechazar Evento</div>
       </ng-template>
 
-      <ng-template contextMenuItem (execute)="addTitled($event.item)">
+      <ng-template contextMenuItem (execute)="addTitled($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
@@ -185,20 +174,12 @@
           [contextMenuSubject]="weekEvent.event">
           <div class="cal-cell-top text-right" style="color: #b64443;">
             <small class="mr-1">{{weekEvent.event.title.split(' ')[1]}}</small>
-            <span>
-              <!-- <i class=" fa fa-calendar-check-o" style="color: #0cc9aa"></i> -->
+            <span>              
               <i class=" fa fa-hourglass"></i>
-              <!-- <img alt="File" src="../../../assets/imgs/careers/unicorn.png" style="width: 20px; height: 20px"> -->
             </span>
           </div>
           <small>{{weekEvent.event.title.split(' ').slice(2).join(' ')}}</small>
         </div>
-        <!-- <small style="margin: 5px">{{ day.events.length }}</small> -->
-        <!-- <mwl-calendar-event-actions [event]="weekEvent.event" [customTemplate]="eventActionsTemplate">
-        </mwl-calendar-event-actions>
-        &ngsp;
-        <mwl-calendar-event-title [event]="weekEvent.event" [customTemplate]="eventTitleTemplate" view="week">
-        </mwl-calendar-event-title> -->
 
       </div>
     </ng-template>
@@ -228,11 +209,11 @@
     </ng-template>
 
     <context-menu #viewMenu>
-      <ng-template contextMenuItem (execute)="addNewEvent($event.item)">
+      <ng-template contextMenuItem (execute)="addNewEvent($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid; border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#00c853" class="fa fa-calendar-plus-o"></i>Agregar Evento</div>
       </ng-template>
-      <ng-template contextMenuItem (execute)="addNewTitled($event.item)">
+      <ng-template contextMenuItem (execute)="addNewTitled($event.item)" [visible]="canEdit" [enabled]="canEdit">
         <div style=" border-style: solid;
         border-width: 1px; color:#525770; background:rgba(108, 114, 147, 0.2)">
           <i style="color:#08a3bc" class="fa fa-calendar-plus-o"></i>
@@ -240,19 +221,6 @@
           Titulación</div>
       </ng-template>
     </context-menu>
-
-    <!--<context-menu #basicMenu>
-        <ng-template contextMenuItem (execute)="addEvent($event.item)">
-          Add event
-        </ng-template>
-      </context-menu> -->
-
-    <!-- <ng-template #customCellTemplate let-day="day" let-locale="locale">
-      <div class="cal-cell-top">
-        <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>    
-      </div>
-      <small style="margin: 5px">{{ day.events.length }} Titulacion(es)</small>
-    </ng-template> -->
 
   </div>
 </div>

@@ -10,6 +10,10 @@ import { uRequest } from 'src/entities/reception-act/request';
 import { RequestProvider } from 'src/providers/reception-act/request.prov';
 import { ImageToBase64Service } from 'src/services/app/img.to.base63.service';
 
+import { eFILESCODE } from 'src/enumerators/reception-act/document.code.enum';
+import { eFILES } from 'src/enumerators/reception-act/document.enum';
+import { eRole } from 'src/enumerators/app/role.enum';
+
 @Component({
   selector: 'app-upload-delivered',
   templateUrl: './upload-delivered.component.html',
@@ -26,9 +30,10 @@ export class UploadDeliveredComponent implements OnInit {
   public fileFlag;
   private oRequest: uRequest;
   private reqId;
+  private deparment;
   private request;
   public fileName: string;
-
+  public departmentOut: string;
   constructor(
     @Inject(MAT_DIALOG_DATA) private data,
     public dialogRef: MatDialogRef<UploadDeliveredComponent>,
@@ -41,6 +46,8 @@ export class UploadDeliveredComponent implements OnInit {
     private imgService: ImageToBase64Service,
   ) {
     this.reqId = this.data.reqId;
+    this.deparment = this.data.deparment;
+    this.departmentOut = this.data.departmentOut ? this.data.departmentOut : '' ;
   }
 
   ngOnInit() {
@@ -80,15 +87,15 @@ export class UploadDeliveredComponent implements OnInit {
           encrDocString: fileReader.result,
           employeeId: this.employee.employee._id,
           positionId: this.currentPosition._id,
-          documentCode: 'ITT-POS-03-02',
-          outDepartmentName: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES'
+          documentCode: this.deparment === eRole.CHIEFACADEMIC ? eFILESCODE.NO_INCONVENIENCE : eFILESCODE.JURY_OFFICE,
+          outDepartmentName: this.deparment === eRole.CHIEFACADEMIC ? 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES': this.departmentOut
         };
         this.notificationsServ
-          .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Firmando constancia de no inconveniencia');
+          .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', this.deparment === eRole.CHIEFACADEMIC ? 'Firmando constancia de no inconveniencia' : 'Firmando oficio de jurado');
         this.eSignatureProvider.sign(data).subscribe(signed => {
           if (signed) {
             this.notificationsServ
-              .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Constancia de no inconveniencia firmada con éxito');
+              .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', this.deparment === eRole.CHIEFACADEMIC ? 'Constancia de no inconveniencia firmada con éxito' : 'Oficio de jurado firmado con éxito');
             this.QR = signed.qrData;
             this.EStamp = signed.eStamp;
             const req = this.request.request[0];

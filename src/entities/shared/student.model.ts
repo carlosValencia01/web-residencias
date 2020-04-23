@@ -12,4 +12,5 @@ export interface IStudent {
     nip?: string;
     english?: string;
     document?: { filename?: string, releseDate?: Date, type?: string, status?: string };
+    sex?:string;
 }
