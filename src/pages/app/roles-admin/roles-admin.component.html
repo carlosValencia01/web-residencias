@@ -1,0 +1,97 @@
+<div class="row justify-content-center">
+  <mat-card [ngClass]="showFormPanel ? 'col-sm-11 col-md-4 m-1' : 'col-sm-11 col-md-7 m-2'">
+    <div class="row m-2">
+      <button (click)="newRole()" color="primary" mat-raised-button>Nuevo rol</button>
+    </div>
+    <div class="row">
+      <mat-form-field appearance="fill" class="col-12">
+        <mat-label>Búsqueda</mat-label>
+        <input (keyup)="searchRole()" [(ngModel)]="searchText" matInput oninput="this.value=this.value.toUpperCase()"
+          placeholder="Buscar rol por nombre">
+      </mat-form-field>
+    </div>
+    <mat-selection-list class="custom-list" style="max-height:80vh!important;">
+      <mat-list-item *ngFor="let role of roles" class="role-card">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>{{ role.name }}</mat-card-title>
+            <mat-card-subtitle>{{ role.description }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-actions align="end">
+            <button (click)="viewRole(role)" mat-button>Ver</button>
+            <button (click)="editRole(role)" color="primary" mat-button>Editar</button>
+            <button (click)="removeRole(role)" color="warn" mat-button>Eliminar</button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-list-item>
+    </mat-selection-list>
+  </mat-card>
+  <mat-card *ngIf="showFormPanel" class="col-sm-11 col-md-7 m-1 justify-content-center">
+    <div class="float-right close" placement="top">
+      <button (click)="closeFormPanel()" aria-label="Cerrar panel" mat-icon-button matTooltip="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <form (ngSubmit)="saveRole()" [formGroup]="roleForm">
+      <mat-card-header>
+        <mat-card-title>{{ titleCardForm }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="row justify-content-center m-1">
+        <mat-form-field class="col-sm-12 col-xl-8">
+          <input formControlName="name" matInput oninput="this.value = this.value.toUpperCase()"
+            placeholder="Nombre del rol" type="text" autocomplete="off" required>
+          <mat-error *ngIf="!roleForm.get('name').valid && roleForm.get('name').touched">
+            <span *ngIf="roleForm.get('name').errors['required']">
+              ¡Por favor ingrese el nombre del rol!
+            </span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="col-12">
+          <textarea formControlName="description" matInput oninput="this.value = this.value.toUpperCase()"
+            placeholder="Descripción del rol" type="text" autocomplete="off" required></textarea>
+          <mat-error *ngIf="!roleForm.get('description').valid && roleForm.get('description').touched">
+            <span *ngIf="roleForm.get('description').errors['required']">
+              ¡Por favor ingrese la descripción del rol!
+            </span>
+          </mat-error>
+        </mat-form-field>
+
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Permisos<span style="color:red;">*</span></mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="row custom-list">
+              <div class="col-sm-12 col-md-6 col-xl-4 m-0 p-0" *ngFor="let item of permissions">
+                <div class="m-1 p-1 w-100 h-100">
+                  <mat-card class="w-100 h-100">
+                    <mat-card-subtitle>{{ item.category }}</mat-card-subtitle>
+                    <mat-card-content>
+                      <div *ngFor="let permission of item.items">
+                        <mat-slide-toggle data-toggle="tooltip" title="{{ permission.label }}"
+                          [disabled]="isViewDetails" color="warn" [checked]="isAssignPermission(permission._id)"
+                          (change)="changePermissionStatus($event, permission._id)">
+                          {{ permission.label }}
+                        </mat-slide-toggle>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-card-content>
+      <mat-card-actions *ngIf="!isViewDetails" align="end" style="padding:8px;margin:0px;">
+        <button [disabled]="roleForm.invalid" color="primary" mat-button type="submit">
+          Guardar
+        </button>
+        <button (click)="roleForm.reset()" color="warn" mat-button type="button">Limpiar</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>
+
+<div class="center">
+  <app-loader [loading]="showLoading"></app-loader>
+</div>

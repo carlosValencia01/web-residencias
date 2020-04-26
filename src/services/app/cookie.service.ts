@@ -20,7 +20,7 @@ export class CookiesService {
             menu = data.user.rol.permissions.map(
                 (per) => ({
                     label: per.label,
-                    items: per.items.length > 0 ? per.items : undefined,
+                    items: (per.items && per.items.length) > 0 ? per.items : undefined,
                     icon: per.icon,
                     routerLink: per.routerLink
                 })

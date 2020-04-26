@@ -1,6 +1,8 @@
 export interface iPermission {
-    label: string;
-    icon: string;
+    _id?: string;
+    label?: string;
+    icon?: string;
     routerLink?: string;
+    category?: string;
     items?: Array<iPermission>;
 }

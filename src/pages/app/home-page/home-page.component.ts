@@ -27,7 +27,7 @@ export class HomePageComponent implements OnInit {
     this.homeItems = this._generateHomeItems(this.menu);
     this.roleServ.changeRole
       .subscribe((role: iRole) => {
-        this.homeItems = (role && role.permissions) ? this._generateHomeItems(role.permissions) : [];
+        this.homeItems = (role && role.permissions) ? this._generateHomeItems(<iPermission[]>role.permissions) : [];
       });
   }
 

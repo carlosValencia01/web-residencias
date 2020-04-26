@@ -47,7 +47,7 @@ export class SidebarContentComponent implements OnInit {
       this.title = rol.name;
       this.roleServ.changeRole
         .subscribe((role: iRole) => {
-          this.menu = (role && role.permissions) ? this._filterMenu(role.permissions) : [];
+          this.menu = (role && role.permissions) ? this._filterMenu(<iPermission[]>role.permissions) : [];
           this.title = (role && role.name) || '';
         });
     }

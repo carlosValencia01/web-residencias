@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 // App
 import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
 import { ProfileSettingsComponent } from 'src/pages/app/profile-settings/profile-settings.component';
+import { RolesAdminComponent } from 'src/pages/app/roles-admin/roles-admin.component';
 
 // Credentials
 import { CardEmployeePageComponent } from 'src/pages/credentials/card-employee-page/card-employee-page.component';
@@ -68,6 +69,7 @@ const appRoutes: Routes = [
   // App
   { path: '', component: HomePageComponent, pathMatch: 'full' },
   { path: 'profileSettings', component: ProfileSettingsComponent, pathMatch: 'full' },
+  { path: 'admin/roles', component: RolesAdminComponent, pathMatch: 'full' },
 
   // Credentials
   { path: 'employeeCard', component: CardEmployeePageComponent, pathMatch: 'full' },

@@ -29,6 +29,7 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { registerLocaleData } from '@angular/common';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import localeEs from '@angular/common/locales/es';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
@@ -82,7 +83,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // App module
 // Pages
@@ -90,6 +91,7 @@ import { HomePageComponent } from 'src/pages/app/home-page/home-page.component';
 import { LockSessionComponent } from 'src/pages/app/lock-session/lock-session.component';
 import { LoginPageComponent } from 'src/pages/app/login-page/login-page.component';
 import { ProfileSettingsComponent } from 'src/pages/app/profile-settings/profile-settings.component';
+import { RolesAdminComponent } from 'src/pages/app/roles-admin/roles-admin.component';
 // Components
 import { HomeHeaderComponent } from 'src/components/app/home-header/home-header.component';
 import { LoginHeaderComponent } from 'src/components/app/login-header/login-header.component';
@@ -103,6 +105,8 @@ import { Storage } from 'src/services/app/storage.service';
 // Providers
 import { Api } from 'src/providers/app/api.prov';
 import { UserProvider } from 'src/providers/app/user.prov';
+import { RoleProvider } from 'src/providers/app/role.prov';
+import { PermissionProvider } from 'src/providers/app/permission.prov';
 // Routes
 import { AppRoutingModule } from 'src/app-routing.module';
 
@@ -282,6 +286,7 @@ registerLocaleData(localeEs);
     LockSessionComponent,
     LoginPageComponent,
     ProfileSettingsComponent,
+    RolesAdminComponent,
     // Components
     HomeHeaderComponent,
     LoginHeaderComponent,
@@ -433,6 +438,7 @@ registerLocaleData(localeEs);
 
     // Material
     MatAutocompleteModule,
+    MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -443,12 +449,14 @@ registerLocaleData(localeEs);
     MatFileUploadModule,
     MatExpansionModule,
     MatFormFieldModule,
+    MatGridListModule,
     MatIconModule,
     MatInputModule,
     MatListModule,
     MatMenuModule,
     MatNativeDateModule,
     MatPaginatorModule,
+    MatProgressBarModule,
     MatProgressSpinnerModule,
     MatRadioModule,
     MatSelectModule,
@@ -459,12 +467,7 @@ registerLocaleData(localeEs);
     MatStepperModule,
     MatTableModule,
     MatTabsModule,
-    MatProgressBarModule,
-    MatExpansionModule,
-    MatSlideToggleModule,
-    MatAutocompleteModule,
-    MatBadgeModule,
-    MatGridListModule,
+    MatTooltipModule,
 
     // Ngx
     ImageCropperModule,
@@ -487,17 +490,25 @@ registerLocaleData(localeEs);
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    LoadingBarModule
+    LoadingBarModule,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     { provide: ErrorStateMatcher, useClass: ErrorMatcher },
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+    {
+      provide: DROPZONE_CONFIG,
+      useValue: DEFAULT_DROPZONE_CONFIG
+    },
+    AngularFirestore,
+    AngularFirestoreModule,
+
     // App module
     // Providers
     Api,
     UserProvider,
-    AngularFirestore,
-    AngularFirestoreModule,
+    RoleProvider,
+    PermissionProvider,
     // Services
     CookieService,
     CookiesService,
@@ -541,11 +552,6 @@ registerLocaleData(localeEs);
     StudentProvider,
     CareerProvider,
     CustomDateFormatter,
-    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
-    {
-      provide: DROPZONE_CONFIG,
-      useValue: DEFAULT_DROPZONE_CONFIG
-    },
     // Services
     CurrentPositionService,
     ErrorMatcher,
