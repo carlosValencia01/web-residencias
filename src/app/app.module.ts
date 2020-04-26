@@ -92,6 +92,7 @@ import { LockSessionComponent } from 'src/pages/app/lock-session/lock-session.co
 import { LoginPageComponent } from 'src/pages/app/login-page/login-page.component';
 import { ProfileSettingsComponent } from 'src/pages/app/profile-settings/profile-settings.component';
 import { RolesAdminComponent } from 'src/pages/app/roles-admin/roles-admin.component';
+import { PermissionsAdminComponent } from 'src/pages/app/permissions-admin/permissions-admin.component';
 // Components
 import { HomeHeaderComponent } from 'src/components/app/home-header/home-header.component';
 import { LoginHeaderComponent } from 'src/components/app/login-header/login-header.component';
@@ -248,7 +249,6 @@ import { UploadEmployeesCsvComponent } from 'src/modals/electronic-signature/upl
 // Providers
 import { ESignatureProvider } from 'src/providers/electronic-signature/eSignature.prov';
 
-
 // Vinculation module
 // Pages
 import { IndustrialVisitsPageComponent } from 'src/pages/vinculation/industrial-visits-page/industrial-visits-page.component';
@@ -287,6 +287,7 @@ registerLocaleData(localeEs);
     LoginPageComponent,
     ProfileSettingsComponent,
     RolesAdminComponent,
+    PermissionsAdminComponent,
     // Components
     HomeHeaderComponent,
     LoginHeaderComponent,

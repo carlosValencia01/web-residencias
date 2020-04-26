@@ -10,6 +10,11 @@ export class PermissionProvider {
     private api: Api,
   ) { }
 
+  public getAllPermissions() {
+    return this.api.get('permission')
+      .pipe(map(res => res.json()));
+  }
+
   public getAllPermissionsByCategories() {
     return this.api.get('permission/byCategories')
       .pipe(map(res => res.json()));

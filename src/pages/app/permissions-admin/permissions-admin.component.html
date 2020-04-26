@@ -1,0 +1,103 @@
+<div class="row justify-content-center">
+  <mat-card [ngClass]="showFormPanel ? 'col-sm-11 col-md-5 m-1' : 'col-sm-11 col-md-7 m-2'">
+    <div class="row m-2">
+      <button (click)="newPermission()" color="primary" mat-raised-button>Nuevo permiso</button>
+    </div>
+    <div class="row">
+      <mat-form-field appearance="fill" class="col-12">
+        <mat-label>Búsqueda</mat-label>
+        <input (keyup)="searchPermission()" [(ngModel)]="searchText" matInput
+          oninput="this.value=this.value.toUpperCase()" placeholder="Buscar permiso por nombre">
+      </mat-form-field>
+    </div>
+    <mat-selection-list class="custom-list">
+      <mat-list-item *ngFor="let permission of permissions" class="custom-card">
+        <mat-card>
+          <mat-card-header>
+            <div mat-card-avatar>
+              <mat-icon>{{ permission.icon }}</mat-icon>
+            </div>
+            <mat-card-title>{{ permission.label }}</mat-card-title>
+            <mat-card-subtitle>
+              <span>Categoría: {{ permission.category }}</span><br>
+              <span>Ruta: {{ permission.routerLink }}</span>
+            </mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-actions align="end">
+            <button (click)="viewPermission(permission)" mat-button>Ver</button>
+            <button (click)="editPermission(permission)" color="primary" mat-button>Editar</button>
+            <button (click)="removePermission(permission)" color="warn" mat-button>Eliminar</button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-list-item>
+    </mat-selection-list>
+  </mat-card>
+  <mat-card *ngIf="showFormPanel" class="col-sm-11 col-md-6 m-1 justify-content-center">
+    <div class="float-right close" placement="top">
+      <button (click)="closeFormPanel()" aria-label="Cerrar panel" mat-icon-button matTooltip="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <form (ngSubmit)="savePermission()" [formGroup]="permissionForm">
+      <mat-card-header>
+        <mat-card-title>{{ titleCardForm }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="row justify-content-center m-1">
+        <mat-form-field class="col-11">
+          <mat-label>Nombre</mat-label>
+          <input formControlName="label" matInput placeholder="Nombre del permiso" type="text" autocomplete="off"
+            required>
+          <mat-error *ngIf="!permissionForm.get('label').valid && permissionForm.get('label').touched">
+            <span *ngIf="permissionForm.get('label').errors['required']">
+              ¡Por favor ingrese el nombre del permiso!
+            </span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="col-11">
+          <mat-label>Categoría</mat-label>
+          <input formControlName="category" matInput placeholder="Categoría del permiso" type="text" autocomplete="off"
+            required>
+          <mat-error *ngIf="!permissionForm.get('category').valid && permissionForm.get('category').touched">
+            <span *ngIf="permissionForm.get('category').errors['required']">
+              ¡Por favor ingrese la categoría del permiso!
+            </span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="col-11">
+          <mat-label>Ruta</mat-label>
+          <input formControlName="routerLink" matInput placeholder="Ejemplo: user/profile" type="text"
+            autocomplete="off" required>
+          <mat-error *ngIf="!permissionForm.get('routerLink').valid && permissionForm.get('routerLink').touched">
+            <span *ngIf="permissionForm.get('routerLink').errors['required']">
+              ¡Por favor ingrese la ruta del permiso!
+            </span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="col-11">
+          <mat-label>Icono</mat-label>
+          <input formControlName="icon" matInput placeholder="Ejemplo: account_box" type="text" autocomplete="off"
+            required>
+          <button type="button" matSuffix mat-icon-button aria-label="Buscar iconos" matTooltip="Buscar iconos"
+            (click)="viewIcons()">
+            <mat-icon>search</mat-icon>
+          </button>
+          <mat-error *ngIf="!permissionForm.get('icon').valid && permissionForm.get('icon').touched">
+            <span *ngIf="permissionForm.get('icon').errors['required']">
+              ¡Por favor ingrese el icono del permiso!
+            </span>
+          </mat-error>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions *ngIf="!isViewDetails" align="end" style="padding:8px;margin:0px;">
+        <button [disabled]="permissionForm.invalid" color="primary" mat-button type="submit">
+          Guardar
+        </button>
+        <button (click)="permissionForm.reset()" color="warn" mat-button type="button">Limpiar</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>
+
+<div class="center">
+  <app-loader [loading]="showLoading"></app-loader>
+</div>
