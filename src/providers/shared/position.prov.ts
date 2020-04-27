@@ -27,6 +27,11 @@ export class PositionProvider {
             .pipe(map(updated => updated.json()));
     }
 
+    updatePositionRole(positionId: string, data: any) {
+        return this.api.put(`position/${positionId}/role`, data)
+            .pipe(map(res => res.json()));
+    }
+
     removePosition(positionId) {
         return this.api.delete(`position/remove/${positionId}`)
             .pipe(map(deleted => deleted.json()));

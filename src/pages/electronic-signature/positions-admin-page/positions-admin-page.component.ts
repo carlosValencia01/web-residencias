@@ -10,8 +10,10 @@ import {DepartmentProvider} from 'src/providers/shared/department.prov';
 import {eNotificationType} from 'src/enumerators/app/notificationType.enum';
 import {IDepartment} from 'src/entities/shared/department.model';
 import {IPosition} from 'src/entities/shared/position.model';
+import {iRole} from 'src/entities/app/role.model';
 import {NotificationsServices} from 'src/services/app/notifications.service';
 import {PositionProvider} from 'src/providers/shared/position.prov';
+import {RoleProvider} from 'src/providers/app/role.prov';
 
 @Component({
   selector: 'app-positions-admin-page',
@@ -22,13 +24,20 @@ export class PositionsAdminPageComponent implements OnInit {
   @ViewChild('departmentElement') departmentElement: ElementRef;
   public positionForm: FormGroup;
   public departmentControl = new FormControl();
+  public roleControl = new FormControl();
   public positions: IPosition[];
   public filteredDepartments: Observable<IDepartment[]>;
+  public filteredRoles: Observable<iRole[]>;
   public titleCardForm: string;
+  public titleCardList: string;
   public searchText: string;
   public showFormPanel = false;
   public isViewDetails = false;
+  public canAssignRole = false;
+  public canEditPositions = false;
+  public showLoading = false;
   private departments: IDepartment[];
+  private roles: iRole[];
   private positionsCopy: IPosition[];
   private currentPosition: IPosition;
   private isEditing = false;
@@ -39,11 +48,16 @@ export class PositionsAdminPageComponent implements OnInit {
     private departmentProv: DepartmentProvider,
     private notificationsService: NotificationsServices,
     private positionProv: PositionProvider,
+    private roleProv: RoleProvider,
     private router: Router,
   ) {
-    if (!this.cookiesService.isAllowed(this.activatedRoute.snapshot.url[0].path)) {
+    const _url = this.activatedRoute.snapshot.url.map(({ path }) => path).join('/');
+    if (!this.cookiesService.isAllowed(_url)) {
       this.router.navigate(['/']);
     }
+    this.canEditPositions = _url === 'positionsAdmin';
+    this.canAssignRole = _url === 'admin/roles/assignment';
+    this.titleCardList = this.canAssignRole ? 'Asignación de roles' : 'Administración de puestos';
     this._getAllDepartments();
   }
 
@@ -71,6 +85,7 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   public savePosition() {
+    this.showLoading = true;
     const position = this._getFormData();
     if (position.ascription) {
       if (this.isEditing) {
@@ -78,11 +93,14 @@ export class PositionsAdminPageComponent implements OnInit {
         this.currentPosition.gender = position.gender;
         this.currentPosition.canSign = position.canSign;
         this.currentPosition.isUnique = position.isUnique;
+        this.currentPosition.role = position.role || this.currentPosition.role;
         this.positionProv.updatePosition(this.currentPosition)
           .subscribe(_ => {
-            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto modificado correctamente', '');
             this._updatePosition(this.currentPosition);
+            this.showLoading = false;
+            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto modificado correctamente', '');
           }, _ => {
+            this.showLoading = false;
             this.notificationsService.showNotification(eNotificationType.ERROR,
               'Error, no se pudo modificar el puesto', 'Intente de nuevo');
           });
@@ -90,6 +108,7 @@ export class PositionsAdminPageComponent implements OnInit {
         const positionExists = this.positionsCopy.filter(pos => pos.name.toLowerCase().includes(position.name.toLowerCase()))[0];
         if (!positionExists) {
           this._createPosition(position);
+          this.showLoading = false;
         } else {
           Swal.fire({
             title: '¡Puesto similar encontrado en el mismo departamento!',
@@ -107,10 +126,12 @@ export class PositionsAdminPageComponent implements OnInit {
             if (result.value) {
               this._createPosition(position);
             }
+            this.showLoading = false;
           });
         }
       }
     } else {
+      this.showLoading = false;
       this.notificationsService
         .showNotification(eNotificationType.INFORMATION, 'Para guardar el puesto, debe seleccionar un departamento', '');
       this.departmentElement.nativeElement.focus();
@@ -162,15 +183,18 @@ export class PositionsAdminPageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
+        this.showLoading = true;
         this.positionProv.removePosition(position._id)
           .subscribe(_ => {
-            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto borrado con éxito', '');
             if (this.isEditing && this.currentPosition._id === position._id) {
               this.isEditing = false;
               this.titleCardForm = 'Creando puesto';
             }
             this._removePosition(position);
+            this.showLoading = false;
+            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto borrado con éxito', '');
           }, err => {
+            this.showLoading = false;
             const message = JSON.parse(err._body).message;
             this.notificationsService.showNotification(eNotificationType.ERROR, 'Error al borrar el puesto', message);
           });
@@ -186,7 +210,64 @@ export class PositionsAdminPageComponent implements OnInit {
     this.isViewDetails = false;
   }
 
-  private _initializeForm() {
+  public saveAssignRole() {
+    this.showLoading = true;
+    const roleName = this.roleControl.value;
+    const role = this._getRole(roleName || '');
+    const isValidRole = this._validateRole(role);
+    if (isValidRole) {
+      const isAssign = this._updatePositionRole(this.currentPosition._id, role._id);
+      this.showLoading = false;
+      if (isAssign) {
+        this.currentPosition.role = role._id;
+        this._updatePosition(this.currentPosition);
+        this.notificationsService
+          .showNotification(eNotificationType.SUCCESS, 'Asignación de roles', 'Rol asignado con éxito');
+        return;
+      }
+      this.notificationsService
+        .showNotification(eNotificationType.ERROR, 'Asignación de roles', 'Error, no se pudo asignar el rol');
+    }
+    this.showLoading = false;
+  }
+
+  public assignRole(position: IPosition) {
+    this.titleCardForm = 'Asignar rol';
+    this.currentPosition = position;
+    this.positionForm.disable();
+    this._fillForm(position);
+    this.showFormPanel = true;
+    this.isEditing = false;
+    this.isViewDetails = false;
+  }
+
+  private _getRole(roleName?: string, roleId?: string) {
+    if (roleName) {
+      return this.roles && this.roles.filter(({name}) => name.toLowerCase() === roleName.toLowerCase())[0];
+    }
+    if (roleId) {
+      return this.roles && this.roles.filter(({_id}) => _id === roleId)[0];
+    }
+    return null;
+  }
+
+  private _updatePositionRole(positionId: string, roleId: string) {
+    return new Promise((resolve) => {
+      this.positionProv.updatePositionRole(positionId, { roleId })
+        .subscribe((_) => resolve(true),
+          (_) => resolve(false));
+    });
+  }
+
+  private _validateRole(role: iRole) {
+    if (!role) {
+      this.notificationsService.showNotification(eNotificationType.ERROR, 'Asignación de roles', 'Seleccione un rol válido');
+      return false;
+    }
+    return true;
+  }
+
+  private async _initializeForm() {
     this.positionForm = new FormGroup({
       'name': new FormControl({value: ''}, Validators.required),
       'canSign': new FormControl({value: false}),
@@ -194,9 +275,18 @@ export class PositionsAdminPageComponent implements OnInit {
       'nameMale': new FormControl({value: ''}),
       'nameFemale': new FormControl({value: ''})
     });
+    if (this.canAssignRole) {
+      this.roles = <iRole[]>(await this._getAllRoles());
+      this.filteredRoles = this.roleControl.valueChanges
+        .pipe(
+          startWith(''),
+          map(value => value ? this._filterRoles(value) : [...this.roles])
+        );
+    }
   }
 
   private _getAllDepartments() {
+    this.showLoading = true;
     this.departmentProv.getAllDepartments()
       .subscribe(data => {
         this.departments = data.departments;
@@ -206,6 +296,9 @@ export class PositionsAdminPageComponent implements OnInit {
           startWith(''),
           map(value => value ? this._filterDepartments(value) : [...data.departments])
         );
+        this.showLoading = false;
+      }, (_) => {
+        this.showLoading = false;
       });
   }
 
@@ -214,20 +307,33 @@ export class PositionsAdminPageComponent implements OnInit {
     return this.departments.filter(department => department.name.toLowerCase().includes(filterValue));
   }
 
+  private _filterRoles(value: string): iRole[] {
+    const filterValue = (value || '').toLowerCase();
+    return this.roles.filter((role) => role.name.toLowerCase().includes(filterValue));
+  }
+
   private _createPosition(position) {
+    this.showLoading = true;
     position.documents = [];
     this.positionProv.createPosition(position)
       .subscribe(createdPosition => {
         this.positionForm.reset();
-        this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto creado con éxito', '');
         this._addPosition(createdPosition);
+        this.showLoading = false;
+        this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto creado con éxito', '');
       }, _ => {
+        this.showLoading = false;
         this.notificationsService.showNotification(eNotificationType.ERROR,
           'Ocurrió un error al crear el puesto', 'Intente de nuevo');
       });
   }
 
   private _getFormData() {
+    let role;
+    if (this.canAssignRole) {
+      const roleName = this.roleControl && this.roleControl.value;
+      role = this._getRole(roleName);
+    }
     return {
       name: this.positionForm.get('name').value,
       canSign: Boolean(this.positionForm.get('canSign').value),
@@ -236,7 +342,8 @@ export class PositionsAdminPageComponent implements OnInit {
       gender: {
         male: this.positionForm.get('nameMale').value,
         female: this.positionForm.get('nameFemale').value
-      }
+      },
+      role: (role && role._id) || null
     };
   }
 
@@ -252,6 +359,10 @@ export class PositionsAdminPageComponent implements OnInit {
       'nameMale': position.gender ? position.gender.male : '',
       'nameFemale': position.gender ? position.gender.female : ''
     });
+    if (this.canAssignRole) {
+      const role = this._getRole(undefined, position.role);
+      this.roleControl.setValue((role && role.name) || null);
+    }
   }
 
   private _addPosition(position: IPosition) {
@@ -276,4 +387,13 @@ export class PositionsAdminPageComponent implements OnInit {
       this.closeFormPanel();
     }
   }
+
+  private _getAllRoles() {
+    return new Promise((resolve) => {
+      this.roleProv.getAllRoles()
+        .subscribe((res) => resolve(res && res.role),
+          (_) => resolve([]));
+    });
+  }
+
 }

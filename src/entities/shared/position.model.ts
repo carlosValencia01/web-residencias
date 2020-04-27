@@ -10,5 +10,5 @@ export interface IPosition {
     documents?: Array<IDocument>;
     isUnique?: boolean;
     gender?: { male?: string, female?: string };
-    role?: iRole;
+    role?: iRole | string;
 }

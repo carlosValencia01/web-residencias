@@ -68,10 +68,12 @@ import { IndustrialVisitsPageComponent } from 'src/pages/vinculation/industrial-
 
 const appRoutes: Routes = [
   // App
-  { path: '', component: HomePageComponent, pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: HomePageComponent, pathMatch: 'full' },
   { path: 'profileSettings', component: ProfileSettingsComponent, pathMatch: 'full' },
   { path: 'admin/roles', component: RolesAdminComponent, pathMatch: 'full' },
   { path: 'admin/permissions', component: PermissionsAdminComponent, pathMatch: 'full' },
+  { path: 'admin/roles/assignment', component: PositionsAdminPageComponent, pathMatch: 'full' },
 
   // Credentials
   { path: 'employeeCard', component: CardEmployeePageComponent, pathMatch: 'full' },
