@@ -8,7 +8,7 @@
         <form [formGroup]="formLogin">
           <div class="form-group">
             <label style="color: #707070;" for="loginInputUser">
-              <img style="height: 18px; width: 18px;" src="assets/imgs/profile.svg" alt=""> Usuario o Número de Control *
+              <mat-icon style="font-size: 15px;">account_circle</mat-icon> Usuario o Número de Control *
             </label>
             <input (input)="errorUsernameInput = false" (keyup.enter)="login()" formControlName="usernameInput"
               [ngClass]="{'is-invalid': (formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorUsernameInput }"
@@ -22,7 +22,7 @@
 
           <div class="form-group">
             <label style="color: #707070;" for="loginInputPassword">
-              <img style="height: 18px; width: 18px;" src="assets/imgs/lock.svg" alt=""> Contraseña o NIP *
+              <mat-icon style="font-size: 15px;">lock</mat-icon> Contraseña o NIP *
             </label>
             <input (input)="errorPasswordInput = false" (keyup.enter)="login()" formControlName="passwordInput" [ngClass]="{'is-invalid': (formLogin.get('passwordInput').errors && formLogin.get('passwordInput').dirty) || errorPasswordInput }"
               type="password" class="form-control" id="loginInputPassword" aria-describedby="emailHelp" placeholder="Password o NIP">

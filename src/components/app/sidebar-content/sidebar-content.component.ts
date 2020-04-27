@@ -23,18 +23,20 @@ export class SidebarContentComponent implements OnInit {
   // tslint:disable-next-line:no-output-rename
   @Output('closeMenu') menuClicked = new EventEmitter();
   public menu: iPermission[];
+  public canAccessProfile = false;
 
   constructor(
     private cookiesServ: CookiesService,
     private roleServ: RoleService,
     private router: Router,
   ) {
-    this.DEFAULT_PROFILE_IMG =  this.cookiesServ.getProfileIcon() || this.DEFAULT_PROFILE_IMG;
+    this.DEFAULT_PROFILE_IMG = this.cookiesServ.getProfileIcon() || this.DEFAULT_PROFILE_IMG;
     const fulturi = window.location.href;
     this.survey = fulturi.indexOf('survey') !== -1;
     if (!this.survey) {
       this.data = this.cookiesServ.getData().user;
       this.status = this.data.status;
+      this.canAccessProfile = this.cookiesServ.isAllowed('profileSettings');
     }
   }
 
@@ -70,17 +72,42 @@ export class SidebarContentComponent implements OnInit {
   }
 
   public goProfile() {
-    this.router.navigate(['/profileSettings']);
-    this.menuClicked.emit();
+    if (this.canAccessProfile) {
+      this.router.navigate(['/profileSettings']);
+      this.menuClicked.emit();
+    }
   }
 
   private _filterMenu(menu: iPermission[]): iPermission[] {
     const _menu = [];
-    menu.forEach((permission) => {
-      if (permission.label !== 'Perfil') {
-        _menu.push(permission);
+    let _currentCategory = '';
+    let _categoryItems = [];
+    menu.forEach((permission: iPermission) => {
+      if (_currentCategory.toLowerCase() !== (permission.category || '').toLowerCase() && _categoryItems && _categoryItems.length) {
+        _menu.push(this._createCategory(_currentCategory, _categoryItems));
+        _categoryItems = [];
+      }
+      _currentCategory = permission.category || '';
+      if (permission.label.toLowerCase() !== 'perfil') {
+        if (permission.label.toLowerCase() === 'inicio') {
+          _menu.unshift(permission);
+        } else {
+          _categoryItems.push(permission);
+        }
       }
     });
+    if (_categoryItems && _categoryItems.length) {
+      _menu.push(this._createCategory(_currentCategory, _categoryItems));
+    }
     return _menu;
   }
+
+  private _createCategory(categoryName: string, categoryItems: iPermission[]) {
+    return {
+      label: categoryName,
+      icon: 'keyboard_arrow_down',
+      items: categoryItems
+    };
+  }
+
 }
