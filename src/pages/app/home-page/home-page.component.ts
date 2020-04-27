@@ -33,13 +33,21 @@ export class HomePageComponent implements OnInit {
 
   private _generateHomeItems(menu: iPermission[]): iPermission[] {
     let homeItems = [];
+    let _currentCategory = '';
+    let _categoryItems = [];
     if (menu && menu.length) {
       menu.forEach(permission => {
-        if (permission.items) {
-          homeItems = homeItems.concat(permission.items);
+        if (_currentCategory.toLowerCase() !== (permission.category || '').toLowerCase() && _categoryItems && _categoryItems.length > 1) {
+          homeItems = homeItems.concat(_categoryItems);
+          _categoryItems = [];
+        }
+        _currentCategory = permission.category || '';
+        if (permission.label.toLowerCase() !== 'perfil' && permission.label.toLowerCase() !== 'inicio') {
+          _categoryItems.push(permission);
         }
       });
     }
     return homeItems;
   }
+
 }

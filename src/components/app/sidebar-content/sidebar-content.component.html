@@ -4,7 +4,7 @@
     <div>
       <p class="profile-text">{{ data.name.fullName }}</p>
       <p class="profile-text">{{ title }}</p>
-      <span *ngIf="title && title !== 'Estudiante'" class="profile-chip">Perfil</span>
+      <span *ngIf="canAccessProfile" class="profile-chip">Perfil</span>
     </div>
   </div>
   <hr>
@@ -12,19 +12,19 @@
     <div *ngFor="let item of menu">
       <div *ngIf="item.items ? item.items.length > 0 : false; else noSubmenu">
         <button mat-menu-item [matMenuTriggerFor]="sub_menu">
-          <img class="menu-item-img" src="assets/icons/{{item.icon}}.svg" alt="">
+          <mat-icon>keyboard_arrow_down</mat-icon>
           <span>{{item.label}}</span>
         </button>
         <mat-menu #sub_menu>
           <button *ngFor="let submenu of item.items" mat-menu-item routerLink="{{submenu.routerLink}}" (click)="closeMenu()">
-            <img class="menu-item-img" src="assets/icons/{{submenu.icon}}.svg" alt="">
+            <mat-icon>{{submenu.icon}}</mat-icon>
             <span>{{submenu.label}}</span>
           </button>
         </mat-menu>
       </div>
       <ng-template #noSubmenu>
         <button mat-menu-item  [matMenuTriggerFor]="sub_menu2" routerLink="{{item.routerLink}}" (click)="closeMenu()">
-          <img class="menu-item-img" src="assets/icons/{{item.icon}}.svg" alt="">
+          <mat-icon>{{item.icon}}</mat-icon>
           <span>{{item.label}}</span>
         </button>
         <mat-menu #sub_menu2>
