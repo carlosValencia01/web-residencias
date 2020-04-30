@@ -1,0 +1,64 @@
+<div class="content-general">
+
+  <div class="row fluid-content">
+    <!-- tabla de períodos  -->
+    <div class="col-sm-12" style="overflow-x:auto; padding-top: 20px;">    
+      <div class="period-buttons">
+        <button class="btn btn-info" (click)="secretaryAssignment()">Asignar carreras</button>
+        <button class="btn btn-primary" (click)="insertSignedUpStudents()">Insertar alumnos inscritos</button>
+        <button class="btn btn-success" (click)="createPeriod()">Crear período</button>
+      </div>
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Año</th>
+            <th>Período</th>
+            <th>Acciones</th>
+            <th>Estatus</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="periods.length>0">
+          <tr *ngFor="let period of periods | paginate: {id:pag, itemsPerPage: pageSize, currentPage: page };">
+            <td>{{period.year}}</td>
+            <td>{{period.periodName}}</td>
+            <td>
+              <!-- <button class="btn btn-info">Ver</button> -->
+
+              <div style="text-align: -webkit-center;">
+                <table>
+                  <tr>
+                    <td>
+                      <div class="div-img" ngbTooltip="Detalles" tooltipClass="my-custom-class">
+                        <img src="../../assets/icons/infoAnalysis.svg" class="action" (click)="periodDetail(period)">
+                      </div>
+                    </td>
+                    <td *ngIf="period.active===true">
+                      <div class="div-img" ngbTooltip="Actualizar" tooltipClass="my-custom-class">
+                        <img src="../../assets/icons/refresh.svg" class="action" (click)="editPeriod(period)">
+                      </div>
+                    </td>
+                    <td *ngIf="period.active===true">
+                      <div class="div-img" ngbTooltip="Desactivar" tooltipClass="my-custom-class">
+                        <img src="../../assets/icons/remove-paid.svg" class="action" (click)="updatePeriodo(period)">
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+            <td style="background-color:green !important; color:white" *ngIf="period.active===true">Activo</td>
+            <td *ngIf="period.active===false">Inactivo</td>
+          </tr>
+        </tbody>
+      </table>      
+      <div class='div-pagination'>
+        <pagination-controls [id]="pag" directionLinks="true" (pageChange)="pageChanged($event)" responsive="true"
+          previousLabel="Anterior" nextLabel="Siguiente">
+        </pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="center">
+  <app-loader [loading]="loading"></app-loader>
+</div>

@@ -1,9 +1,9 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
 
-import { CookiesService } from 'src/services/app/cookie.service';
-import { eSessionStatus } from 'src/enumerators/app/sessionStatus.enum';
-import { UserProvider } from 'src/providers/app/user.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { eSessionStatus } from 'src/app/enumerators/app/sessionStatus.enum';
+import { UserProvider } from 'src/app/providers/app/user.prov';
 
 @Component({
   selector: 'app-root',
