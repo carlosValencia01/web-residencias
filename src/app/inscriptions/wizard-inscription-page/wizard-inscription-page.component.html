@@ -1,0 +1,66 @@
+<div *ngIf="isOkPeriod === 2 || isOpen === 1">
+  <div class="row justify-content-md-center">
+    <div class="col-12 col-lg-8">
+      <div class="title">
+        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+        <h2>¡Aviso, Inscripción!</h2><br>
+        <span>Aún no inicia el período de inscripciones</span><br>
+        <span>Es necesario esperar a que sea aperturado el período en el sistema.</span><br><br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isOpen === 2">
+  <div class="row justify-content-md-center">
+    <div class="col-12 col-lg-8">
+      <div class="title">
+        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+        <h2>¡Aviso, Inscripción!</h2><br>
+        <span>El período de inscripciones ha terminado.</span><br>
+        <span>Acude al Departamento de Servicios Escolares para más información</span><br><br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!validateStudent && isOkPeriod === 0 && isOpen === 0">
+  <div class="row justify-content-md-center">
+    <div class="col-12 col-lg-8">
+      <div class="title">
+        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+        <h2>¡Atención!</h2><br>
+        <span>Este módulo permitirá crear un expediente electrónico y es exclusivo para los alumnos de nuevo
+          ingreso.</span><br><br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <ng-template > -->
+<div *ngIf="isOkPeriod === 0 && isOpen === 0 && validateStudent">
+
+  <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="step != 6">
+    <mat-step editable='false'>
+      <ng-template matStepLabel>Formulario</ng-template>
+      <app-register-student-page></app-register-student-page>
+    </mat-step>
+    <mat-step editable='false'>
+      <ng-template matStepLabel>Documentos</ng-template>
+      <app-inscriptions-upload-files-page *ngIf="step == 2"></app-inscriptions-upload-files-page>
+    </mat-step>
+    <mat-step editable='false'>
+      <ng-template matStepLabel>Contrato</ng-template>
+      <app-contract-student-page></app-contract-student-page>
+    </mat-step>
+    <mat-step editable='false'>
+      <ng-template matStepLabel>Resumen</ng-template>
+      <app-resume-student-page *ngIf="step == 4"></app-resume-student-page>
+    </mat-step>
+    <mat-step editable='false'>
+      <ng-template matStepLabel>Confirmación</ng-template>
+      <app-confirmation-student-page *ngIf="step == 5"></app-confirmation-student-page>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>
+<!-- </ng-template> -->
