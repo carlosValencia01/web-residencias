@@ -33,27 +33,31 @@
 <div class="mat-elevation-z8 col-12">
   <table [dataSource]="dataSource" mat-table matSort class="col-12">
     <ng-container matColumnDef="fullName">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>Nombre</th>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header style="width:20%;">Nombre</th>
       <td *matCellDef="let row" mat-cell> {{row.fullName}} </td>
     </ng-container>
+    <ng-container matColumnDef="positions">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header style="width:45%;">Puestos activos</th>
+      <td *matCellDef="let row" mat-cell>
+        <div *ngFor="let position of row.positions.split('|')">
+          <span> - {{ position }}</span>
+        </div>
+      </td>
+    </ng-container>
     <ng-container matColumnDef="rfc">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>RFC</th>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header style="width:15%;">RFC</th>
       <td *matCellDef="let row" mat-cell> {{row.rfc}} </td>
     </ng-container>
-    <ng-container matColumnDef="email">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
-      <td *matCellDef="let row" mat-cell> {{row.email}} </td>
-    </ng-container>
     <ng-container matColumnDef="grades">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>Grados</th>
-      <td *matCellDef="let row" mat-cell> {{row.grades}} </td>
-    </ng-container>
-    <ng-container matColumnDef="positions">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>Puestos activos</th>
-      <td *matCellDef="let row" mat-cell> {{row.positions}} </td>
+      <th *matHeaderCellDef mat-header-cell mat-sort-header style="width:10%;">Grados</th>
+      <td *matCellDef="let row" mat-cell>
+        <div *ngFor="let grade of row.grades.split('|')">
+          <span>{{ grade }}</span>
+        </div>
+      </td>
     </ng-container>
     <ng-container matColumnDef="action">
-      <th *matHeaderCellDef mat-header-cell></th>
+      <th *matHeaderCellDef mat-header-cell style="width:10%;"></th>
       <td *matCellDef="let row" mat-cell>
         <button [matMenuTriggerFor]="actions" mat-icon-button>
           <mat-icon>more_vert</mat-icon>

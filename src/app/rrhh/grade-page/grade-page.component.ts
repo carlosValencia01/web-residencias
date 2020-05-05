@@ -1,16 +1,16 @@
-import {Component, Injectable, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import {CookiesService} from 'src/app/services/app/cookie.service';
-import {EmployeeGradeComponent} from 'src/app/rrhh/employee-grade/employee-grade.component';
-import {EmployeeProvider} from 'src/app/providers/shared/employee.prov';
-import {eNotificationType} from 'src/app/enumerators/app/notificationType.enum';
-import {eOperation} from 'src/app/enumerators/reception-act/operation.enum';
-import {IEmployee} from 'src/app/entities/shared/employee.model';
-import {NotificationsServices} from 'src/app/services/app/notifications.service';
-import {UploadEmployeesCsvComponent} from 'src/app/rrhh/upload-employees-csv/upload-employees-csv.component';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { EmployeeGradeComponent } from 'src/app/rrhh/employee-grade/employee-grade.component';
+import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eOperation } from 'src/app/enumerators/reception-act/operation.enum';
+import { IEmployee } from 'src/app/entities/shared/employee.model';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { UploadEmployeesCsvComponent } from 'src/app/rrhh/upload-employees-csv/upload-employees-csv.component';
 
 @Component({
   selector: 'app-grade-page',
@@ -41,7 +41,7 @@ export class GradePageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.displayedColumns = ['fullName', 'rfc', 'email', 'grades', 'positions', 'action'];
+    this.displayedColumns = ['fullName', 'positions', 'rfc', 'grades', 'action'];
     this.getEmployees();
   }
 
@@ -61,8 +61,12 @@ export class GradePageComponent implements OnInit {
       rfc: employee.rfc,
       email: employee.email,
       fullName: employee.name.fullName,
-      grades: employee.grade ? employee.grade.length : 0,
-      positions: employee.positions ? employee.positions.filter(item => item.status === 'ACTIVE').length : 0,
+      grades: employee.grade ? employee.grade.map(({ abbreviation }) => abbreviation).join('|') : '',
+      positions: employee.positions
+        ? employee.positions
+          .filter(({ status }) => status === 'ACTIVE')
+          .map(({ position }) => `${position.ascription.name} (${position.name})`).join('|')
+        : '',
       employee: employee,
       action: '',
     };
@@ -70,36 +74,36 @@ export class GradePageComponent implements OnInit {
   }
 
   public onRowEdit(row: IGradeTable) {
-      const employee: IEmployee = this.castRowToEmployee(row);
-      const dialogRef = this.dialog.open(EmployeeGradeComponent, {
-        data: {
-          Employee: employee,
-          Operation: eOperation.EDIT
-        },
-        disableClose: true,
-        hasBackdrop: true,
-        width: '45em'
-      });
+    const employee: IEmployee = this.castRowToEmployee(row);
+    const dialogRef = this.dialog.open(EmployeeGradeComponent, {
+      data: {
+        Employee: employee,
+        Operation: eOperation.EDIT
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '45em'
+    });
 
-      dialogRef.afterClosed().subscribe((employeeResult: IEmployee) => {
-        if (employeeResult) {
-          this.loading = true;
-          employeeResult.name.fullName = employeeResult.name.firstName.concat(' ', employeeResult.name.lastName);
-          this.employeeProvider.updateEmployee(employeeResult._id, employeeResult).subscribe(data => {
-            this.loading =  false;
-            this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Empleado actualizado exitosamente', '');
-            this.employees[this.employees.indexOf(row)] = this.castEmployeeRow(employeeResult);
-            this.refresh();
-          }, error => {
-            this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
-            this.loading = false;
-          });
-        }
-      });
+    dialogRef.afterClosed().subscribe((employeeResult: IEmployee) => {
+      if (employeeResult) {
+        this.loading = true;
+        employeeResult.name.fullName = employeeResult.name.firstName.concat(' ', employeeResult.name.lastName);
+        this.employeeProvider.updateEmployee(employeeResult._id, employeeResult).subscribe(data => {
+          this.loading = false;
+          this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Empleado actualizado exitosamente', '');
+          this.employees[this.employees.indexOf(row)] = this.castEmployeeRow(employeeResult);
+          this.refresh();
+        }, error => {
+          this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un problema ' + error, '');
+          this.loading = false;
+        });
+      }
+    });
   }
 
   public employeeDetails(row: IGradeTable) {
-    this.router.navigate([row._id], {relativeTo: this.routeActive});
+    this.router.navigate([row._id], { relativeTo: this.routeActive });
   }
 
   private getEmployees() {
@@ -139,7 +143,7 @@ export class GradePageComponent implements OnInit {
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Empleado registrado exitosamente', '');
           employeeResult._id = data._id;
           this.employees.push(this.castEmployeeRow(employeeResult));
-          this.router.navigate([employeeResult._id], {relativeTo: this.routeActive});
+          this.router.navigate([employeeResult._id], { relativeTo: this.routeActive });
         }, err => {
           const message = JSON.parse(err._body).error;
           this.notificationServ.showNotification(eNotificationType.ERROR, message, '');
@@ -190,8 +194,8 @@ interface IGradeTable {
   rfc?: string;
   email?: string;
   fullName?: string;
-  grades?: number;
-  positions?: number;
+  grades?: string;
+  positions?: string;
   employee?: IEmployee;
   action?: string;
 }
