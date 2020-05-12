@@ -18,6 +18,7 @@ import { HttpModule } from '@angular/http';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 
 // Material
+import { ErrorStateMatcher } from '@angular/material';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -25,9 +26,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import {
-  MatButtonModule,
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 // Ngx
 import { CookieService } from 'ngx-cookie-service';
@@ -45,6 +45,7 @@ import { PositionProvider } from 'src/app/providers/shared/position.prov';
 // Services
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { CurrentPositionService } from 'src/app/services/shared/current-position.service';
+import { ErrorMatcher } from './services/shared/ErrorMatcher';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { RoleService } from 'src/app/services/shared/role.service';
 import { Storage } from 'src/app/services/app/storage.service';
@@ -91,6 +92,7 @@ import { LockSessionComponent } from './commons/lock-session/lock-session.compon
     MatButtonModule,
     MatMenuModule,
     MatSidenavModule,
+    MatFormFieldModule,
 
     // Angular 2
     SimpleNotificationsModule.forRoot(),
@@ -99,6 +101,7 @@ import { LockSessionComponent } from './commons/lock-session/lock-session.compon
     LoadingBarModule,
   ],
   providers: [
+    { provide: ErrorStateMatcher, useClass: ErrorMatcher },
     // Ngx
     CookieService,
 
