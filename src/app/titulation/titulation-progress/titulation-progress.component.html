@@ -235,6 +235,15 @@
                   </button>
               </div>
           </div>
+          <div class="row mb-2" *ngIf="tabNumber == 1 && role === 'administrador'">
+            <div class="col-9 text-right">                
+                <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
+                      (click)="uploadSummary()" data-toggle="tooltip" title="GENERAR FICHAS DE SOLICITUDES">
+                      <mat-icon>add_circle</mat-icon>
+                  </button>
+            </div>
+            <div class="col-3"></div>
+          </div>
           <div class="row mx-1 mb-3" *ngIf="tabNumber == 1 || tabNumber == 6">
                 <div class="input-group input-group-sm center" [class.col-12]="tabNumber == 6" [class.col-11]="tabNumber == 1 && canExport">
                     <div class="input-group-prepend">

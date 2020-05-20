@@ -105,9 +105,12 @@ export class RequestProvider {
             .pipe(map(employee => employee.json()));
     }
 
-    // getSummary() {
-    //     return this.api.get(`request/summary`)
-    //         .pipe(map(summary => summary.json()));
-    // }
+    getSummary() {
+        return this.api.get(`request/summary`)
+            .pipe(map(summary => summary.json()));
+    }
+    uploadSummary(data){
+        return this.api.post(`request/summary`, data).pipe(map(request => request.json()));
+    }
 
 }

@@ -100,6 +100,9 @@ export class TitulationProgressComponent implements OnInit {
   filteredPhases;
   usedPhases = [];
   canExport = false;
+
+  emptyoRequest: uRequest;
+
   constructor(
     private requestProvider: RequestProvider,
     public dialog: MatDialog,
@@ -132,6 +135,8 @@ export class TitulationProgressComponent implements OnInit {
     this.canExport = this.role === 'administrador' || this.role === 'jefe de servicios escolares' || this.role === 'servicios estudiantiles' ? true : false;
     // Asigno las carreras asociadas al puesto
     this.departmentCareers = this._CookiesService.getPosition().ascription.careers;
+    const tmpRequest: iRequest = { };
+    this.emptyoRequest = new uRequest(tmpRequest, this._ImageToBase64Service, this._CookiesService);
   }
 
   ngOnInit() {
@@ -760,8 +765,10 @@ export class TitulationProgressComponent implements OnInit {
                               }
                             );
                           } else {
+
                             this.showLoading = false;
                           }
+                          this.uploadSummary();
                         }, __ => {
                           this.showLoading = false;
                         }
@@ -1444,23 +1451,66 @@ export class TitulationProgressComponent implements OnInit {
     
   }
 
-  // insertSummary(){
-  //   const tmpRequest: iRequest = { };
-  //   const oRequest: uRequest = new uRequest(tmpRequest, this._ImageToBase64Service, this._CookiesService);
-  //   this.requestProvider.getSummary().toPromise().then(
-  //     requests=>{
-  //       console.log(requests);
-        
-  //       requests.forEach(request => {
-  //         setTimeout(() => {
-  //           if(request) window.open(oRequest.requestSummary(request).output('bloburl'), '_blank');         
-  //         }, 500);       
-  //       });
-  //     }
-  //   ).catch(err=>console.log(err)
-  //   );
+  uploadSummary(){
     
-  // }
+    this.showLoading = true;    
+      this.requestProvider.getSummary().toPromise().then(
+        requests=>{    
+          let agrupSummary=[];
+          requests.forEach(request => {
+            if(request){
+              agrupSummary.push(
+                {                
+                  file: {
+                    mimetype: 'application/pdf',
+                    data:this.emptyoRequest.bufferToBase64(this.emptyoRequest.requestSummary(request).output('arraybuffer')),
+                    name: eFILES.SUMMARY + '.pdf'
+                  },
+                  Document:eFILES.SUMMARY,
+                  folderId: request.student.folderDriveIdRecAct,
+                  studentId: request.student._id
+                }
+              );
+            }
+                       
+          });
+          this.requestProvider.uploadSummary(agrupSummary).toPromise().then(
+            re=>{
+              this.showLoading = false;
+              this._NotificationsServices.showNotification(
+              eNotificationType.SUCCESS,'Acto recepcional', 
+              'Se generó y subió a drive la ficha');
+            }              
+            ,
+            err=> {
+              this.showLoading = false;
+              console.log(err);
+              
+              this._NotificationsServices.showNotification(
+            eNotificationType.ERROR,'Acto recepcional', 
+            'Algo salio mal al generar la ficha');              
+          }            
+          );
+        }
+      ).catch(err=>{
+        this.showLoading = false;
+        const error = JSON.parse(err._body);       
+        
+        if(error.err) {
+          this._NotificationsServices.showNotification(
+        eNotificationType.ERROR,'Acto recepcional', 
+        'Algo salio mal al buscar la solicitud');
+        console.log(err);
+      }else{
+        this._NotificationsServices.showNotification(
+          eNotificationType.ERROR,'Acto recepcional', 
+          'No se encontro la solicitud para generar la ficha');
+      }
+        
+      });    
+    
+    
+  }
 
   excelExport(){
     console.log(this.dataSource.filteredData);
