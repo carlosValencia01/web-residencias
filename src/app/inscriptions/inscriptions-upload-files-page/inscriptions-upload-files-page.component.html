@@ -21,24 +21,20 @@
 <div class="content-general">
   <div class="card card-shadow">
     <div class="card-header text-white bg-secondary">
-      <strong>II. Solicitud de Documentos</strong>
+      <strong>{{ title }}</strong>
     </div>
     <div class="example-container" style="padding: 20px;">
       <!--Fila 1: CURP y Acta de nacimiento-->
       <div class="row">
         <!--Columna 2: COPIA DEL COMPROBANTE-->
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="step === 2">
           <div class="card cd">
             <div [class.cheaderrequired]="!payDoc" [class.cheaderok]="payDoc"
-              [class.isDisabled]="payDoc !== undefined ? true : false" class="card-header">
+              [class.isDisabled]="payDoc !== undefined ? true : false" class="card-header"
+              (click)="collapse('collapsePAGO', payDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row text-center" (click)="
-                      collapse(
-                        'collapsePAGO',
-                        payDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row text-center">
                     <div class="col-12">
                       <p>
                         <b>
@@ -81,7 +77,7 @@
                     <mat-icon class="help" (click)="
                         help(
                           'LA COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN',
-                          'assets/pdf/help_comprobante.pdf'
+                          '../assets/pdf/help_comprobante.pdf'
                         )
                       ">help</mat-icon>
                   </div>
@@ -91,19 +87,15 @@
           </div>
         </div>
         <!--Columna 1: CERTIFICADO BACHILLER-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="!doctorate && !mastersDegree">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="!doctorate && !mastersDegree && step === 2">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!certificateDoc && !ccDoc"
               [class.cheaderok]="certificateDoc || ccDoc"
-              [class.isDisabled]="certificateDoc !== undefined ? true : false">
+              [class.isDisabled]="certificateDoc !== undefined ? true : false"
+              (click)="collapse('collapseCERT', certificateDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseCERT',
-                        certificateDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -173,7 +165,7 @@
                   <mat-icon class="help" (click)="
                       help(
                         'EL CERTIFICADO DE BACHILLERATO O EQUIVALENTE',
-                        'assets/pdf/help_certificado.pdf'
+                        '../assets/pdf/help_certificado.pdf'
                       )
                     ">help</mat-icon>
                 </div>
@@ -183,19 +175,15 @@
         </div>
 
         <!--CERTIFICADO LICENCIATURA-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="mastersDegree">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="mastersDegree && step === 2">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!certificateLDoc && !cccertificateLDoc"
               [class.cheaderok]="certificateLDoc || cccertificateLDoc"
-              [class.isDisabled]="certificateLDoc !== undefined ? true : false">
+              [class.isDisabled]="certificateLDoc !== undefined ? true : false"
+              (click)="collapse('collapseCERTLIC', certificateLDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseCERTLIC',
-                        certificateLDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -266,19 +254,15 @@
         </div>
 
         <!--TITULO LICENCIATURA-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="mastersDegree">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="mastersDegree && step === 3">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!titledLDoc && !cctitledLDoc"
               [class.cheaderok]="titledLDoc || cctitledLDoc"
-              [class.isDisabled]="titledLDoc !== undefined ? true : false">
+              [class.isDisabled]="titledLDoc !== undefined ? true : false"
+              (click)="collapse('collapseTITLIC', titledLDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseTITLIC',
-                        titledLDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -347,19 +331,15 @@
         </div>
 
         <!--CEDULA LICENCIATURA-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="mastersDegree">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="mastersDegree && step === 3">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!cedulaLDoc && !cccedulaLDoc"
               [class.cheaderok]="cedulaLDoc || cccedulaLDoc"
-              [class.isDisabled]="cedulaLDoc !== undefined ? true : false">
+              [class.isDisabled]="cedulaLDoc !== undefined ? true : false"
+              (click)="collapse('collapseCEDLIC', cedulaLDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseCEDLIC',
-                        cedulaLDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -428,19 +408,15 @@
         </div>
 
         <!--EXAMEN LICENCIATURA-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="mastersDegree">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="mastersDegree && step === 3">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!examActLDoc && !ccexamActLDoc"
               [class.cheaderok]="examActLDoc || ccexamActLDoc"
-              [class.isDisabled]="examActLDoc !== undefined ? true : false">
+              [class.isDisabled]="examActLDoc !== undefined ? true : false"
+              (click)="collapse('collapseEXALIC', examActLDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseEXALIC',
-                        examActLDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -510,19 +486,15 @@
         </div>
 
         <!--CERTIFICADO MAESTRIA-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate && step === 2">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!certificateMDoc && !cccertificateMDoc"
               [class.cheaderok]="certificateMDoc || cccertificateMDoc"
-              [class.isDisabled]="certificateMDoc !== undefined ? true : false">
+              [class.isDisabled]="certificateMDoc !== undefined ? true : false"
+              (click)="collapse('collapseCERTMAE', certificateMDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseCERTMAE',
-                        certificateMDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -592,19 +564,15 @@
         </div>
 
         <!--TITULO MAESTRIA-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate && step === 3">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!titledMDoc && !cctitledMDoc"
               [class.cheaderok]="titledMDoc || cctitledMDoc"
-              [class.isDisabled]="titledMDoc !== undefined ? true : false">
+              [class.isDisabled]="titledMDoc !== undefined ? true : false"
+              (click)="collapse('collapseTITMAE', titledMDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseTITMAE',
-                        titledMDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -673,19 +641,15 @@
         </div>
 
         <!--CEDULA MAESTRIA-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate && step === 3">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!cedulaMDoc && !cccedulaMDoc"
               [class.cheaderok]="cedulaMDoc || cccedulaMDoc"
-              [class.isDisabled]="cedulaMDoc !== undefined ? true : false">
+              [class.isDisabled]="cedulaMDoc !== undefined ? true : false"
+              (click)="collapse('collapseCEDMAE', cedulaMDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseCEDMAE',
-                        cedulaMDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -754,19 +718,15 @@
         </div>
 
         <!--EXAMEN MAESTRIA-->
-        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="doctorate && step === 3">
           <div class="card cd">
             <div class="card-header c-header" [class.cheaderrequired]="!examActMDoc && !ccexamActMDoc"
               [class.cheaderok]="examActMDoc || ccexamActMDoc"
-              [class.isDisabled]="examActMDoc !== undefined ? true : false">
+              [class.isDisabled]="examActMDoc !== undefined ? true : false"
+              (click)="collapse('collapseEXAMAE', examActMDoc !== undefined ? true : false)">
               <div class="row">
                 <div class="col-12">
-                  <div class="row" (click)="
-                      collapse(
-                        'collapseEXAMAE',
-                        examActMDoc !== undefined ? true : false
-                      )
-                    ">
+                  <div class="row">
                     <div class="col-12">
                       <p>
                         <b>
@@ -837,7 +797,7 @@
 
 
         <!--Columna 1: CURP-->
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="step === 3">
           <div class="card cd">
             <div [class.isDisabled]="curpDoc !== undefined ? true : false" class="card-header c-header" (click)="
                 collapse('collapseCURP', curpDoc !== undefined ? true : false)
@@ -878,7 +838,7 @@
                 </div>
                 <div class="row text-center">
                   <div class="col-12" ngbTooltip="Ayuda">
-                    <mat-icon class="help" (click)="help('LA CURP', 'assets/pdf/help_curp.pdf')">help</mat-icon>
+                    <mat-icon class="help" (click)="help('LA CURP', '../assets/pdf/help_curp.pdf')">help</mat-icon>
                   </div>
                 </div>
               </div>
@@ -886,7 +846,7 @@
           </div>
         </div>
         <!--Columna 2: ACTA DE NACIMIENTO-->
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="step === 3">
           <div class="card cd">
             <div [class.isDisabled]="actaDoc !== undefined ? true : false" class="card-header c-header" (click)="
                 collapse('collapseACTA', actaDoc !== undefined ? true : false)
@@ -923,15 +883,15 @@
               <div class="row text-center">
                 <div class="col-12" ngbTooltip="Ayuda">
                   <mat-icon class="help" (click)="
-                      help('EL ACTA DE NACIMIENTO', 'assets/pdf/help_acta.pdf')
+                      help('EL ACTA DE NACIMIENTO', '../assets/pdf/help_acta.pdf')
                     ">help</mat-icon>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <!--Columna 1: CURP-->
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <!--Columna 1: ANÁLISIS CLÍNICOS-->
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="step === 3">
           <div class="card cd">
             <div [class.isDisabled]="clinicDoc !== undefined ? true : false" class="card-header c-header" (click)="
                 collapse(
@@ -971,7 +931,7 @@
                   <mat-icon class="help" (click)="
                       help(
                         'LOS RESULTADOS DE ANÁLISIS CLÍNICOS',
-                        'assets/pdf/help_clinicos.pdf'
+                        '../assets/pdf/help_clinicos.pdf'
                       )
                     ">help</mat-icon>
                 </div>
@@ -981,7 +941,7 @@
         </div>
 
         <!--Columna 1: FOTO-->
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="step === 3">
           <div class="card cd">
             <div [class.isDisabled]="imageDoc !== undefined ? true : false" class="card-header c-header" (click)="
                 collapse('collapseFOTO', imageDoc !== undefined ? true : false)
@@ -1042,7 +1002,7 @@
         </div>
 
         <!-- NSS -->
-        <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="col-sm-6 col-md-4 col-lg-3" *ngIf="step === 3">
           <div class="card cd">
             <div [class.isDisabled]="nssDoc !== undefined ? true : false" class="card-header c-header" (click)="
                 collapse('collapseNSS', nssDoc !== undefined ? true : false)
@@ -1082,7 +1042,7 @@
                   <mat-icon (click)="
                       help(
                         'EL NÚMERO DE SEGURO SOCIAL',
-                        'assets/pdf/help_nss.pdf'
+                        '../assets/pdf/help_nss.pdf'
                       )
                     " class="help">help</mat-icon>
                 </div>
@@ -1095,17 +1055,17 @@
     <div class="row justify-content-center mt-3">
       <div>
         <button type="submit" (click)="continue()" class="btn btn-success"
-          [disabled]="(!payDoc || !certificateDoc) && (!payDoc || !ccDoc)" *ngIf="!doctorate && !mastersDegree">
+          [disabled]="(!payDoc || !certificateDoc) && (!payDoc || !ccDoc)" *ngIf="!doctorate && !mastersDegree && step === 3">
           Continuar
         </button>
         <button type="submit" (click)="continue()" class="btn btn-success"
           [disabled]="((!payDoc || !certificateLDoc) && (!payDoc || !cccertificateLDoc)) || ((!payDoc || !titledLDoc) && (!payDoc || !cctitledLDoc)) || ((!payDoc || !cedulaLDoc) && (!payDoc || !cccedulaLDoc)) || ((!payDoc || !examActLDoc) && (!payDoc || !ccexamActLDoc))"
-          *ngIf="mastersDegree">
+          *ngIf="mastersDegree && step === 3">
           Continuar
         </button>
         <button type="submit" (click)="continue()" class="btn btn-success"
           [disabled]="((!payDoc || !certificateMDoc) && (!payDoc || !cccertificateMDoc)) || ((!payDoc || !titledMDoc) && (!payDoc || !cctitledMDoc)) || ((!payDoc || !cedulaMDoc) && (!payDoc || !cccedulaMDoc)) || ((!payDoc || !examActMDoc) && (!payDoc || !ccexamActMDoc))"
-          *ngIf="doctorate">
+          *ngIf="doctorate && step === 3">
           Continuar
         </button>
       </div>

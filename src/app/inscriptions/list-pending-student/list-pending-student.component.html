@@ -96,13 +96,13 @@
             class="Aceptado">{{item.inscriptionStatus}}</td>
           <td>
             <div class="div-actions">
-        <tr *ngIf="item.inscriptionStatus != 'En Captura'">
+        <tr>
           <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
             <div class="div-img" ngbTooltip="Información General" tooltipClass="my-custom-class">
               <img src="../../assets/icons/observations.svg" class="action" (click)="updateGI(item)">
             </div>
           </td>
-          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
+          <td *ngIf="(item.documentsLastStatus || []).length >= 2 && (rolName == 'Administrador' || rolName == 'Secretaria escolares')">
             <div class="div-img" ngbTooltip="Documentos a Dictaminar" tooltipClass="my-custom-class">
               <img src="../../assets/icons/folder.svg" class="action" (click)="viewExpedient(item)">
             </div>

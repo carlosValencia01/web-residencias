@@ -15,7 +15,7 @@ export class WizardInscriptionPageComponent implements OnInit {
   _idStudent: String;
   data: any;
   studentData: any;
-  
+
   isOkPeriod = 3;
   isOpen = 3;
 
@@ -24,7 +24,7 @@ export class WizardInscriptionPageComponent implements OnInit {
   validateStudent: boolean;
   semesterStudent;
   controlNumberStudent: string;
-  constructor( 
+  constructor(
     private inscriptionsProv: InscriptionsProvider,
     private cookiesServ: CookiesService,
     private router: Router,
@@ -33,20 +33,20 @@ export class WizardInscriptionPageComponent implements OnInit {
   ){
     this.init();
     console.log('2');
-    
+
     if (!this.cookiesServ.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    
+
   }
 
   ngOnInit() {
-    
+
   }
 
   init(){
     this.inscriptionsProv.getActivePeriod().subscribe(
-      period=>{ 
+      period=>{
         if(period.period){
           this.isOkPeriod= 0;
           let initDate = new Date(period.period.insPerInitDate);
@@ -67,7 +67,7 @@ export class WizardInscriptionPageComponent implements OnInit {
 
   getIdStudent() {
     this.data = this.cookiesServ.getData().user;
-    
+
     this._idStudent = this.data._id;
     this.controlNumberStudent = this.data.email;
   }
@@ -81,17 +81,17 @@ export class WizardInscriptionPageComponent implements OnInit {
           this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
           this.validateStudent = true;
           if(this.studentData.inscriptionStatus){
-             if(this.step == 6){
+             if(this.step == 7){
                //window.location.assign("/profileInscription");
                this.router.navigate(['/inscriptions/profileInscription']);
              }
-           } 
-        });     
+           }
+        });
       },
-      (err)=>{        
+      (err)=>{
         this.validateStudent = false;
       }
     );
-    
+
   }
 }

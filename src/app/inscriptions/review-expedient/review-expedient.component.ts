@@ -16,7 +16,7 @@ import { ExpedientHistoryComponent } from '../expedient-history/expedient-histor
 })
 export class ReviewExpedientComponent implements OnInit {
 
-  
+
   pdfSrc;
   image;
   viewdoc: boolean = false;
@@ -24,7 +24,7 @@ export class ReviewExpedientComponent implements OnInit {
   showDocument = false;
   typeDocShow: string;
   docDisplayName: string;
-  docto;  
+  docto;
   refused;
   loading = false;
   showInputCurp = false;
@@ -44,8 +44,8 @@ export class ReviewExpedientComponent implements OnInit {
     private notificationsServices: NotificationsServices,
     public dialog: MatDialog,
   ) {
-    this.degree = this.data.student.careerId.acronym === 'DCA' ? 'doc' : this.data.student.careerId.acronym === 'MCA' || this.data.student.careerId.acronym === 'MTI' ? 'mas' : 'lic';    
-    
+    this.degree = this.data.student.careerId.acronym === 'DCA' ? 'doc' : this.data.student.careerId.acronym === 'MCA' || this.data.student.careerId.acronym === 'MTI' ? 'mas' : 'lic';
+
     this.studentProv.refreshNeeded$.subscribe(
       () => {
         this.getDocuments();
@@ -79,8 +79,8 @@ export class ReviewExpedientComponent implements OnInit {
   }
   swalDialogInput(title,msg) {
     return Swal.fire({
-      title: title,    
-      text: msg,  
+      title: title,
+      text: msg,
       showCancelButton: true,
       allowOutsideClick: false,
       confirmButtonColor: '#3085d6',
@@ -97,16 +97,16 @@ export class ReviewExpedientComponent implements OnInit {
       (docs)=>{
         this.documents = docs.docs;
         console.log(this.documents);
-        
+
         this.docto = this.docto ? this.documents.filter(docc => docc.file.filename === this.docto.file.filename)[0] : null;
         this.pendings = this.documents.filter( (doc)=> doc.status !== 'ACEPTADO').length;
         this.selectPendings = 0;
-        if(this.docto == null){          
+        if(this.docto == null){
           this.cardClick('COMPROBANTE');
         }
       }
     );
-       
+
   }
 
   cardClick(card) {
@@ -132,7 +132,7 @@ export class ReviewExpedientComponent implements OnInit {
   }
 
   getPdf(docname) {
-   
+
     this.docto = this.documents.filter((doc)=>doc.file.shortName == docname)[0];
       this.showDocument = false;
 
@@ -150,11 +150,11 @@ export class ReviewExpedientComponent implements OnInit {
         }
         this.showDocument = true;
       }, (err) => { }, () => this.loading = false);
-    
+
   }
 
   async changeStatus(action) {
-    
+
     this.refused = '';
     const msg = action === 'RECHAZADO' ? 'rechazar' : this.data.user === 'Secretaria escolares' ? 'validar' : 'aceptar';
     let confirmdialog = false;
@@ -164,7 +164,7 @@ export class ReviewExpedientComponent implements OnInit {
       confirmdialog = await this.swalDialogInput('RECHAZAR '+this.docDisplayName,'Especifique el motivo');
     }
     console.log(this.docto.file);
-    
+
     if (confirmdialog) {
       const documentInfo = {
         filename: this.docto.file.filename,
@@ -180,7 +180,7 @@ export class ReviewExpedientComponent implements OnInit {
           this.notificationsServices.showNotification(eNotificationType.SUCCESS,
             'Exito', 'Estatus actualizado correctamente.');
            console.log(this.data.student);
-           
+
           if (action == "RECHAZADO") {
             this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+this.docto.file.fullName+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://mitec.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
               res => {
@@ -196,56 +196,61 @@ export class ReviewExpedientComponent implements OnInit {
         err => console.log(err)
       );
     }
-  }  
+  }
 
   changeExpedientStatus(){
     setTimeout(() => {
       const processDocs = this.documents.filter( (doc)=> doc.status === 'EN PROCESO').length;
       const validatedDocs = this.documents.filter( (doc)=> doc.status === 'VALIDADO').length;
       const aceptedDocs = this.documents.filter( (doc)=> doc.status === 'ACEPTADO').length;
-      
+      const totalDocs = processDocs + validatedDocs + aceptedDocs;
+
       if(this.degree === 'lic'){
          // Cambiar estatus a ACEPTADO
-         if(aceptedDocs === 7){          
-           this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => { });   
+         if(aceptedDocs === 7){
+           this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => { });
           return;
          }
          if(validatedDocs === 7){
           // Cambiar estatus a VALIDADO
-          this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => { });   
+          this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => { });
           return;
          }
       }
       if(this.degree === 'mas'){
          // Cambiar estatus a ACEPTADO
-         if(aceptedDocs === 10){          
-           this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => { });   
+         if(aceptedDocs === 10){
+           this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => { });
           return;
          }
          if(validatedDocs === 10){
           // Cambiar estatus a VALIDADO
-          this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => { });   
+          this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => { });
           return;
-         }         
+         }
       }
       if(this.degree === 'doc'){
          // Cambiar estatus a ACEPTADO
-         if(aceptedDocs === 10){          
-           this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => { });   
+         if(aceptedDocs === 10){
+           this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => { });
           return;
          }
          if(validatedDocs === 10){
           // Cambiar estatus a VALIDADO
-          this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => { });   
+          this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => { });
           return;
-         }         
+         }
       }
       if(processDocs === 0){
         // Cambiar estatus a EN PROCESO
-       this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},this.data.student._id).subscribe(res => {  });   
+        let query = { inscriptionStatus:"En Proceso" };
+        if (totalDocs === 2 && validatedDocs === 2 && this.data.student.stepWizard === 2) {
+          query['stepWizard'] = 3;
+        }
+       this.inscriptionsProv.updateStudent(query, this.data.student._id).subscribe(res => {  });
        return;
       }
-    }, 500);    
+    }, 500);
   }
 
   history() {
@@ -263,19 +268,19 @@ export class ReviewExpedientComponent implements OnInit {
     });
   }
   checkChange(index){
-    
+
     this.documents[index].checked = !this.documents[index].checked;
-    this.selectPendings = this.getDocsPending().length;     
+    this.selectPendings = this.getDocsPending().length;
   }
 
   selectAll(){
     this.documents.forEach( (doc,index)=>{
       this.documents[index].checked = this.pendings == this.selectPendings ? false : true;
     });
-    this.selectPendings = this.getDocsPending().length;    
+    this.selectPendings = this.getDocsPending().length;
   }
   getDocsPending(): Array<any>{
-     return this.documents.filter((doc)=> doc.checked == true && doc.status !== 'ACEPTADO');   
+     return this.documents.filter((doc)=> doc.checked == true && doc.status !== 'ACEPTADO');
   }
   async acceptManyDocuments() {
 
@@ -299,12 +304,12 @@ export class ReviewExpedientComponent implements OnInit {
         this.studentProv.updateDocumentStatus(this.data.student._id, documentInfo).toPromise().then(
           res => {
             this.notificationsServices.showNotification(eNotificationType.SUCCESS,
-              'Exito', 'Estatus actualizado correctamente.');              
+              'Exito', 'Estatus actualizado correctamente.');
           },
           err => console.log(err)
         );
       }
-      this.changeExpedientStatus();      
+      this.changeExpedientStatus();
     }
   }
   updateCurp(){
@@ -330,7 +335,7 @@ export class ReviewExpedientComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Aceptar'
     }).then((result) => {
-      
+
     });
   }
 
