@@ -1,12 +1,12 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-
-import { CookiesService } from 'src/app/services/app/cookie.service';
+import { IPosition } from 'src/app/entities/shared/position.model';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { eSessionStatus } from 'src/app/enumerators/app/sessionStatus.enum';
-import { IPosition } from 'src/app/entities/shared/position.model';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { UserProvider } from 'src/app/providers/app/user.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 @Component({
   selector: 'app-lock-session',
@@ -19,12 +19,12 @@ export class LockSessionComponent implements OnInit {
   public user: any;
   public position: IPosition;
   public profileIcon: string;
-  public showLoading: boolean;
 
   constructor(
     private cookiesServ: CookiesService,
     private notificationServ: NotificationsServices,
     private userProv: UserProvider,
+    private loadingService: LoadingService,
   ) {
     this.passworForm = new FormControl(null, Validators.required);
   }
@@ -40,17 +40,17 @@ export class LockSessionComponent implements OnInit {
   public login() {
     this._verifySessionStatus();
     if (this.passworForm.valid) {
-      this.showLoading = true;
+      this.loadingService.setLoading(true);
       this.userProv.login({
         email: this.user.email,
         password: this.passworForm.value
       }).subscribe((res) => {
         this.userProv.sendTokenFromAPI(res.token);
         this.cookiesServ.saveUserToken(res.token);
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.session.emit(eSessionStatus.ACTIVE);
       }, (_) => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Mi tec', 'Error al ingresar, inténtelo de nuevo');
       });
     } else {

@@ -48,7 +48,7 @@
                 </div>
                 <ng-template #notApprovedEnglish>
                   <p>Nota: Aún no tienes el inglés liberado,
-                    favor de comunicarte a la Coordinación 
+                    favor de comunicarte a la Coordinación
                     de lenguas extranjeras</p>
                 </ng-template>
               </mat-card-footer>
@@ -82,11 +82,11 @@
             <h2>¡Aviso, acto recepcional!</h2>
           </div>
           <div class="message">
-            <span>Ya eres un estudiante títulado</span><br>        
+            <span>Ya eres un estudiante títulado</span><br>
             <div class="row" style="justify-content:center;">
               <mat-card [ngClass]="'requirement-card card-green'">
                 <mat-card-header>
-                  <mat-card-subtitle>                    
+                  <mat-card-subtitle>
                     <b>{{degree}}</b> {{user.name.fullName}}
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -97,7 +97,7 @@
                     </p>
                   </div>
                 </mat-card-footer>
-              </mat-card>          
+              </mat-card>
             </div><br>
           </div>
         </div>
@@ -108,8 +108,8 @@
       </ng-template>
     </div>
   </div>
-  
-  
+
+
   <ng-template #requestForm>
     <mat-vertical-stepper [linear]="true" #stepper>
       <mat-step [completed]="SteepOneCompleted">
@@ -144,7 +144,7 @@
             </div>
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
           </div>
-  
+
         </div>
         <div *ngIf="!SteepTwoCompleted">
           <div [ngSwitch]="StatusComponent">
@@ -171,11 +171,11 @@
             </div>
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
           </div>
-  
+
         </div>
         <div *ngIf="!SteepThreeCompleted">
           <div [ngSwitch]="StatusComponent">
-  
+
             <div class="row" *ngSwitchCase="'None'">
               <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
               <div class="col-10 col-sm-8 col-md-6 col-lg-6">
@@ -199,7 +199,7 @@
             </div>
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
           </div>
-  
+
         </div>
         <div *ngIf="!SteepFourCompleted">
           <div [ngSwitch]="StatusComponent">
@@ -227,7 +227,7 @@
               </div>
               <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
             </div>
-  
+
           </div>
         </div>
       </mat-step>
@@ -242,7 +242,7 @@
             </div>
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
           </div>
-  
+
         </div>
         <div *ngIf="!SteepFiveCompleted">
           <div class="row">
@@ -253,7 +253,7 @@
             </div>
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
           </div>
-  
+
         </div>
       </mat-step>
       <mat-step [completed]="SteepSixCompleted">
@@ -289,7 +289,7 @@
             </div>
             <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
           </div> -->
-  
+
           <!-- <div [ngSwitch]="StatusComponent">
           <app-upload-files *ngSwitchCase="'None'"></app-upload-files>
           <app-process-component *ngSwitchCase="'Process'" [Message]="ProcessReleasedMessage"></app-process-component>
@@ -339,7 +339,7 @@
                 </div>
                 <div class="col-1 col-sm-2 col-md-3 col-lg-3"></div>
               </div>
-  
+
               <!-- <img alt="File" src="../../assets/imgs/reloj.png" style="width: 50px; height: 50px">
               <p>
                 {{ProcessAssignedMessage}}
@@ -494,8 +494,4 @@
       </mat-step>
     </mat-vertical-stepper>
   </ng-template>
-</div>
-
-<div class="center">
-  <app-loader [loading]="showLoading"></app-loader>
 </div>

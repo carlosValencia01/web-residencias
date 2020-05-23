@@ -1,24 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
-import { StudentInformationComponent } from '../student-information/student-information.component';
-import { ReviewAnalysisComponent } from '../review-analysis/review-analysis.component';
-import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatTabChangeEvent } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
-import Swal from 'sweetalert2';
-import { Router, ActivatedRoute } from '@angular/router';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import * as JsBarcode from 'jsbarcode';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import {ViewChild} from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material';
-import { ListPendingStudentComponent } from '../list-pending-student/list-pending-student.component'
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
+import { ListAceptStudentComponent } from '../list-acept-student/list-acept-student.component';
+import { ListPendingStudentComponent } from '../list-pending-student/list-pending-student.component';
 import { ListProcessStudentComponent } from '../list-process-student/list-process-student.component';
-import { ListAceptStudentComponent } from '../list-acept-student/list-acept-student.component'
-import * as JsBarcode from 'jsbarcode';
+import { ReviewAnalysisComponent } from '../review-analysis/review-analysis.component';
+import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
+import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
+import { StudentInformationComponent } from '../student-information/student-information.component';
 
 const jsPDF = require('jspdf');
 
@@ -44,7 +43,6 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   cantArchivedExpedient = 0;
   periods = [];
   activPeriod;
-  loading = false;
 
   listCovers;
 
@@ -107,7 +105,8 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     private routeActive: ActivatedRoute,
     private router: Router,
     private studentProv: StudentProvider,
-  ) { 
+    private loadingService: LoadingService,
+  ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -196,7 +195,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.inscriptionsProv.getArchivedExpedient().subscribe(res => {
       this.cantArchivedExpedient = res.expedients.length;
     });
-    
+
   }
 
   countStudents(){
@@ -315,7 +314,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   filterItemsCovers(carreer,nc) {
     return this.students.filter(function (student) {
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 &&
-        student.controlNumber.toLowerCase().indexOf(nc.toLowerCase()) > -1    
+        student.controlNumber.toLowerCase().indexOf(nc.toLowerCase()) > -1
       });
   }
 
@@ -377,21 +376,21 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   // Exportar alumnos a excel
   excelExport() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcel'), {
       name: 'Reporte Alumnos Inscripcion.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   // Generar Carátulas
   generateCovers() {
     if(this.listCovers.length != 0){
       this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO CARÁTULAS', '');
-      this.loading = true;
+      this.loadingService.setLoading(true);
       const doc = new jsPDF();
       var pageWidth = doc.internal.pageSize.width;
       for(let i = 0; i < this.listCovers.length; i++){
@@ -407,17 +406,17 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           doc.addPage();
         }
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank');
     }
-        
+
   }
 
   // Generar Pestañas
   generateLabels() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO PESTAÑAS', '');
-    this.loading = true;
-    
+    this.loadingService.setLoading(true);
+
     const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
@@ -477,7 +476,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           break;
         default:
           doc.text('CAR',pageWidth-15,(pageHeight/2)+1.5)
-          break; 
+          break;
       }
       //doc.text('CAR',56.6,2.5);
 
@@ -485,7 +484,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         doc.addPage();
       }
     }
-    this.loading = false;
+    this.loadingService.setLoading(false);
     window.open(doc.output('bloburl'), '_blank');
   }
 
@@ -511,21 +510,21 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             err=>console.log(err), ()=> sub.unsubscribe()
           );
         } else {
-          this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Aun no son Validados/Aceptados los análisis clínicos.');   
+          this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Aun no son Validados/Aceptados los análisis clínicos.');
         }
       } else {
-        this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene análisis clínicos.');   
+        this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene análisis clínicos.');
       }
     } else {
-      this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene expediente.');   
+      this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene expediente.');
     }
-    
+
   }
 
   filterDocuments(document,student){
-    
-  
-    
+
+
+
     switch (document) {
       case "Acta": {
         var doc = student.documents ? student.documents.filter(docc => docc.filename ?docc.filename.indexOf('ACTA') !== -1 && docc.status.length>0: undefined)[0]:'';
@@ -599,27 +598,27 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   // Generar plantilla IMSS Excel
   excelExportIMSS() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcelIMSS'), {
       name: 'Plantilla Alumnos IMSS.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
    // Generar plantilla CM Excel
    excelExportCM() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcelCM'), {
       name: 'Reporte Consultorio Médico.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   complete10Dig(number){
@@ -664,11 +663,11 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        this.loading=true;
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.updateStudent({printCredential:true},item._id).subscribe(res => {
         }, err=>{},
         ()=>{
-          this.loading=false
+          this.loadingService.setLoading(false);
           this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
           this.getStudents();
         });
@@ -689,11 +688,11 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        this.loading=true;
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.updateStudent({printCredential:false},item._id).subscribe(res => {
         }, err=>{},
         ()=>{
-          this.loading=false
+          this.loadingService.setLoading(false);
           this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Removida.');
           this.getStudents();
         });
@@ -705,7 +704,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     var numCredentials = 0;
     var tempStudents = [];
     if(this.credentialStudents.length != 0){
-      this.loading = true;
+      this.loadingService.setLoading(true);
       const doc = new jsPDF({
         unit: 'mm',
         format: [251, 158], // Medidas correctas: [88.6, 56]
@@ -724,7 +723,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
                 numCredentials ++;
                 // cara frontal de la credencial
                 doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-                  
+
                 //FOTOGRAFIA DEL ALUMNO
                 var foto = await this.findFoto(docFoto);
                 doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
@@ -776,7 +775,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       if(pageCount%2 != 0){
         doc.deletePage(pageCount);
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       if(numCredentials != 0){
         var credentials = doc.output('arraybuffer');
         // Abrir Modal para visualizar credenciales
@@ -880,118 +879,118 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        this.loading = true;
+        this.loadingService.setLoading(true);
         var day = student.curp.substring(8, 10);
         var month = student.curp.substring(6, 8);
         var year = student.curp.substring(4, 6);
         var fechaNacimiento = day + "/" + month + "/" + year;
-    
+
         const doc = new jsPDF();
-    
+
         // @ts-ignore
         doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
         // @ts-ignore
         doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
         doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
         doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
-    
+
         // Header
         var pageHeight = doc.internal.pageSize.height;
         var pageWidth = doc.internal.pageSize.width;
-    
+
         doc.addImage(this.logoSep, 'PNG', 5, 5, 74, 15); // Logo SEP
         doc.addImage(this.logoTecNM, 'PNG', pageWidth - 47, 2, 39, 17); // Logo TecNM
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(15);
         doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text("Solicitud de Inscripción", pageWidth / 2, 37, 'center');
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text("Código: ITT-POE-01-02      Revisión: 0", pageWidth / 2, 42, 'center');
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text("Referencia a la Norma ISO 9001-2015:    8.2.2, 8.2.3, 8.2.1, 8.5.2", pageWidth / 2, 47, 'center');
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(15);
         doc.text("SOLICITUD DE INSCRIPCIÓN", pageWidth / 2, 60, 'center');
-    
+
         // Cuadro 1
         doc.setDrawColor(0);
         doc.setFillColor(0, 0, 0);
         doc.rect(10, 65, 190, 10, 'f');
-    
+
         doc.setDrawColor(0);
         doc.setFillColor(230, 230, 230);
         doc.rect(10, 75, 190, 45, 'f');
-    
+
         doc.setFontSize(18);
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
         doc.text(15, 72, 'Datos Generales');
-    
+
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.text('Nombre: ', 15, 80);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.fatherLastName + ' ' + student.motherLastName + ' ' + student.firstName, 70, 80);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Lugar de nacimiento: ', 15, 85);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.birthPlace, 70, 85);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Fecha de nacimiento: ', 15, 90);
         doc.setFont('Montserrat', 'Normal');
         doc.text(fechaNacimiento, 70, 90);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Estado Civil: ', 15, 95);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.civilStatus, 70, 95);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Correo Electrónico: ', 15, 100);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.email, 70, 100);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('CURP: ', 15, 105);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.curp, 70, 105);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('NSS: ', 15, 110);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.nss, 70, 110);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Número de control: ', 15, 115);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.controlNumber, 70, 115);
-    
+
         // Cuadro 2
         doc.setDrawColor(0);
         doc.setFillColor(0, 0, 0);
         doc.rect(10, 125, 190, 10, 'f');
-    
+
         doc.setDrawColor(0);
         doc.setFillColor(230, 230, 230);
         doc.rect(10, 135, 190, 35, 'f');
-    
+
         doc.setFontSize(18);
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
@@ -1112,7 +1111,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         let binary = this.bufferToBase64(document);
 
         this.updateDocument(binary,student);
-        // window.open(doc.output('bloburl'), '_blank'); 
+        // window.open(doc.output('bloburl'), '_blank');
       }
     });
   }
@@ -1124,7 +1123,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   async updateDocument(document, student){
-    
+
     const fileId = student.documents[0].fileIdInDrive;
     const folderId = await this.getFolderId(student._id);
     const documentInfo = {
@@ -1132,7 +1131,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       nameInDrive: student.controlNumber + '-SOLICITUD.pdf',
       bodyMedia: document,
       folderId: folderId,
-      newF: false, 
+      newF: false,
       fileId: fileId
     };
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
@@ -1151,16 +1150,16 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         };
         await this.studentProv.uploadDocumentDrive(student._id, documentInfo2).subscribe(
           updated => {
-            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');    
-             this.loading = false;
+            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');
+             this.loadingService.setLoading(false);
           },
           err => {
             console.log(err);
-          }, () => this.loading = false
+          }, () => this.loadingService.setLoading(false)
         );
       },
       err => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
         console.log(err);
       }
     );
@@ -1184,7 +1183,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     if(docFoto != ''){
       if(docFoto.status[docFoto.status.length-1].name == "ACEPTADO" || docFoto.status[docFoto.status.length-1].name == "VALIDADO"){
         if(student.printCredential != true){
-          this.loading = true;
+          this.loadingService.setLoading(true);
           const doc = new jsPDF({
             unit: 'mm',
             format: [251, 158], // Medidas correctas: [88.6, 56]
@@ -1192,7 +1191,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           });
            // cara frontal de la credencial
            doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-                  
+
            //FOTOGRAFIA DEL ALUMNO
            var foto = await this.findFoto(docFoto);
            doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
@@ -1226,7 +1225,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
            doc.setTextColor(0, 0, 0);
            doc.setFontSize(8);
            doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber ? student.controlNumber : '', 35));
-           this.loading = false;
+           this.loadingService.setLoading(false);
            var credentials = doc.output('arraybuffer');
            // Abrir Modal para visualizar credenciales
            const linkModal = this.dialog.open(ReviewCredentialsComponent, {
@@ -1279,11 +1278,11 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
           var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
           var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-          
+
           if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
             // Cambiar estatus a ACEPTADO
             this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
-            }); 
+            });
             this.getStudents();
             return;
           }
@@ -1394,14 +1393,14 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
   excelExportDebts(){
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcelDebts'), {
       name: 'Reporte Adeudos Alumnos Inscripcion.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
-  
+
 }

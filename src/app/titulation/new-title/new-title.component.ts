@@ -1,16 +1,17 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import * as moment from 'moment';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { EmployeeAdviserComponent } from 'src/app/titulation/employee-adviser/employee-adviser.component';
 import { eOperation } from 'src/app/enumerators/reception-act/operation.enum';
-import { sourceDataProvider } from 'src/app/providers/reception-act/sourceData.prov';
 import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
 import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import * as moment from 'moment';
+import { sourceDataProvider } from 'src/app/providers/reception-act/sourceData.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { EmployeeAdviserComponent } from 'src/app/titulation/employee-adviser/employee-adviser.component';
 import Swal from 'sweetalert2';
 
 moment.locale('es');
@@ -30,7 +31,6 @@ export class NewTitleComponent implements OnInit {
   public index = 0;
   public title: string;
   public date: Date;
-  public showLoading: boolean;
   private juryInfo: Array<{ name: string, title: string, cedula: string, email?: string }>;
   private event: { appointment: Date, minutes: number, abbreviation: string };
 
@@ -60,13 +60,14 @@ export class NewTitleComponent implements OnInit {
     private _NotificationsServices: NotificationsServices,
     private _sourceDataProvider: sourceDataProvider,
     private _RequestProvider: RequestProvider,
+    private loadingService: LoadingService,
   ) {
     this.date = data.operation === eOperation.NEW ? data.date : new Date(data.event.start);
     this.event = {
       appointment: this.date,
       minutes: (this.date.getHours() * 60 + this.date.getMinutes()),
       abbreviation: data.operation === eOperation.NEW ? '' : data.event.title.split(' ')[1]
-    };   
+    };
     this.title = 'NUEVA TITULACIÓN A LAS ' + moment(this.date).format('LT');
     this.options = [
       'I - TESIS PROFESIONAL',
@@ -138,12 +139,12 @@ export class NewTitleComponent implements OnInit {
   onSearch() {
     this.existError = '';
     this.existWarning = '';
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     if (typeof (this.controlNumber) !== 'undefined' && this.controlNumber.trim() !== '') {
       this._StudentProvider.getByControlNumber(this.controlNumber).subscribe(students => {
         if (typeof (students) !== 'undefined' && typeof (students.student) !== 'undefined' && students.student.length > 0) {
-          this.showLoading = false;          
-          
+          this.loadingService.setLoading(false);
+
           this.request = {
             studentId: students.student[0]._id,
             student: students.student[0].fullName,
@@ -154,14 +155,14 @@ export class NewTitleComponent implements OnInit {
             doer:this.data.doer,
             noIntegrants:1
           };
-          
+
           this.frmNewTitle.get('student').setValue(this.request.student);
           this.frmNewTitle.get('career').setValue(this.request.career);
           this.frmNewTitle.get('controlNumber').setValue(this.request.controlNumber);
         } else {
           this._StudentProvider.getByControlNumberSII({ controlNumber: this.controlNumber }).subscribe(
             student => {
-              this.showLoading = false;
+              this.loadingService.setLoading(false);
               this.controlNumber = '';
               this.request = {
                 studentId: student._id,
@@ -183,7 +184,7 @@ export class NewTitleComponent implements OnInit {
               this.frmNewTitle.get('career').setValue(this.request.career);
               this.frmNewTitle.get('controlNumber').setValue(this.request.controlNumber);
             }, error => {
-              this.showLoading = false;
+              this.loadingService.setLoading(false);
               const errorJson = JSON.parse(error._body);
               this.request = { studentId: '', student: '', career: '', controlNumber: '' };
               this.frmNewTitle.get('student').setValue(this.request.student);
@@ -193,7 +194,7 @@ export class NewTitleComponent implements OnInit {
             });
         }
       }, _ => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener estudiante');
       });
     }
@@ -215,17 +216,17 @@ export class NewTitleComponent implements OnInit {
 
     ref.afterClosed().subscribe((result) => {
       if (typeof (result) != 'undefined') {
-        this.request.department = this.request.department ? this.request.department : result.Depto;      
+        this.request.department = this.request.department ? this.request.department : result.Depto;
         if (this.juryInfo.findIndex(x => x.name === result.ExtraInfo.name) !== -1) {
           this.existError = 'Empleado ya asignado';
         } else {
           switch (button) {
             case 'president': {
               this.frmNewTitle.patchValue({ 'president': typeof (result) !== 'undefined' ? result.Employee : '' });
-              this.request.adviser = {                
+              this.request.adviser = {
                   name:result.ExtraInfo.name,
                   title: result.ExtraInfo.title,
-                  cedula:result.ExtraInfo.cedula                
+                  cedula:result.ExtraInfo.cedula
               };
               this.juryInfo[0].name = result.ExtraInfo.name;
               this.juryInfo[0].title = result.ExtraInfo.title;
@@ -275,8 +276,8 @@ export class NewTitleComponent implements OnInit {
     this.request.product = this.frmNewTitle.get('product').value;
     this.request.isIntegral = false;
     const tmpSearch = this._sourceDataProvider.getCareerAbbreviation().find(x => x.carrer === this.request.career);
-    if (this.data.operation === eOperation.NEW) {     
-      
+    if (this.data.operation === eOperation.NEW) {
+
       this.event.abbreviation = tmpSearch.abbreviation;
       this.addEvent();
     } else {
@@ -330,8 +331,8 @@ export class NewTitleComponent implements OnInit {
   }
 
   addEvent(): void {
-    this.request.noIntegrants = 1;    
-    
+    this.request.noIntegrants = 1;
+
     this._RequestProvider.titled(this.request).subscribe(data => {
       if (typeof (data) !== 'undefined') {
         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Evento asignado');

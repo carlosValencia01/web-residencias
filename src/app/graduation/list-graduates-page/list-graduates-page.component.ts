@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import Swal from 'sweetalert2';
 import TableToExcel from '@linways/table-to-excel';
+import * as crypto from "crypto-js";
+import * as firebase from 'firebase/app';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { FirebaseService } from 'src/app/services/graduation/firebase.service';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { eQR } from 'src/app/enumerators/graduation/e-qr.enum';
 import { GraduationProvider } from 'src/app/providers/graduation/graduation.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import * as firebase from 'firebase/app';
-import * as crypto from "crypto-js";
-import { eQR } from 'src/app/enumerators/graduation/e-qr.enum';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { FirebaseService } from 'src/app/services/graduation/firebase.service';
+import Swal from 'sweetalert2';
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -97,14 +98,12 @@ export class ListGraduatesPageComponent implements OnInit {
   studentOut = [];
   careersPosition = [];
 
-  loading = false;
-
   // Font Montserrat
   montserratNormal: any;
   montserratBold: any;
 
   dateGraduation;
-  
+
   // Bucar boletos alumno
   public findStudentTickets = '';
   studentsTickets;
@@ -119,6 +118,7 @@ export class ListGraduatesPageComponent implements OnInit {
     private router: Router,
     private imageToBase64Serv: ImageToBase64Service,
     private studentProv: StudentProvider,
+    private loadingService: LoadingService,
   ) {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
@@ -601,7 +601,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   // Generar reporte de alumnos
   generateReport() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     var doc = new jsPDF('l', 'pt');
 
     // Header
@@ -682,7 +682,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(7);
     doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
     window.open(doc.output('bloburl'), '_blank');
-    this.loading = false;
+    this.loadingService.setLoading(false);
     // doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
   }
 
@@ -1009,7 +1009,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   async generateReportBestAverage() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     await this.getBestAvgs();
 
     var doc = new jsPDF('p', 'pt');
@@ -1081,7 +1081,7 @@ export class ListGraduatesPageComponent implements OnInit {
       doc.setFontStyle('bold');
       doc.setFontSize(7);
       doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank');
     }, 500);
     // doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
@@ -1387,7 +1387,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   generateConstancy(student) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
     var doc = new jsPDF();
@@ -1445,13 +1445,13 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.text('DIRECTOR', pageWidth / 2, 267, 'center');
 
     doc.addImage(this.firmaDirector, 'jpg', (pageWidth / 2) - 50, 217, 100, 53.75);
-    this.loading = false;
+    this.loadingService.setLoading(false);
     window.open(doc.output('bloburl'), '_blank');
   }
 
   generateAllConstancys() {
     if (this.alumnosConstancia.length !== 0) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       var doc = new jsPDF();
       let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
       // @ts-ignore
@@ -1517,7 +1517,7 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.addPage();
         }
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
@@ -1526,7 +1526,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   generateRegisteredConstancys() {
     if (this.alumnosConstanciaRegistrados.length !== 0) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       var doc = new jsPDF();
       let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
       // @ts-ignore
@@ -1592,7 +1592,7 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.addPage();
         }
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
@@ -1601,7 +1601,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   generateVerifiedConstancys() {
     if (this.alumnosConstanciaVerificados.length !== 0) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       var doc = new jsPDF();
       let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
       // @ts-ignore
@@ -1667,7 +1667,7 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.addPage();
         }
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
@@ -1758,7 +1758,7 @@ export class ListGraduatesPageComponent implements OnInit {
   // Generar Pestañas
   generateAllLabels() {
     if (this.alumnosConstancia.length !== 0) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
       // @ts-ignore
       doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
@@ -1844,7 +1844,7 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.addPage();
         }
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
@@ -1853,7 +1853,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   generateRegisteredLabels() {
     if (this.alumnosConstanciaRegistrados.length !== 0) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
       // @ts-ignore
       doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
@@ -1939,7 +1939,7 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.addPage();
         }
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');
@@ -1948,7 +1948,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   generateVerifiedLabels() {
     if (this.alumnosConstanciaVerificados.length !== 0) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
       // @ts-ignore
       doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
@@ -2034,7 +2034,7 @@ export class ListGraduatesPageComponent implements OnInit {
           doc.addPage();
         }
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
       this.notificationsServices.showNotification(2, 'Atención', 'No hay alumnos de esta carrera.');

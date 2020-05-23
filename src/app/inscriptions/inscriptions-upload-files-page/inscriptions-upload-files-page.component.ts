@@ -1,23 +1,23 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { DropzoneComponent, DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
-import { Router, ActivatedRoute } from '@angular/router';
-
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import { DocumentsHelpComponent } from '../documents-help/documents-help.component';
-
-import { MatStepper } from '@angular/material/stepper';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
-import Swal from 'sweetalert2';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { MatStepper } from '@angular/material/stepper';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as jsPDF from 'jspdf';
 import * as moment from 'moment';
+import { DropzoneComponent, DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
+import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
+import { DocumentsHelpComponent } from '../documents-help/documents-help.component';
+
 moment.locale('es');
 
 @Component({
@@ -85,7 +85,6 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   imgForSend: boolean;
   croppedImage: any = '';
   croppedImageBase64: any = '';
-  loading: boolean;
   currentStudent = {
     nss: '',
     fullName: '',
@@ -204,6 +203,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     private modalService: NgbModal,
     private dialog: MatDialog,
     private imageToBase64Serv: ImageToBase64Service,
+    private loadingService: LoadingService,
 
   ) {
     this.data = this.cookiesService.getData().user;
@@ -618,9 +618,9 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
   async continue() {
     var newStep = { stepWizard: this.step + 1 }
-    this.loading = true;
+    this.loadingService.setLoading(true);
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
-      this.loading = false;
+      this.loadingService.setLoading(false);
       this.stepper.next();
       //window.location.assign("/wizardInscription");
 
@@ -667,7 +667,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     input.click();
   }
   uploadFile() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     const red = new FileReader;
     red.addEventListener('load', () => {
       let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg' , bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
@@ -698,7 +698,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
               err => {
                 console.log(err);
 
-              }, () => this.loading = false
+              }, () => this.loadingService.setLoading(false)
             );
           } else {
 
@@ -718,10 +718,11 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
               err => console.log(err)
             );
           }
-          this.loading = false;
+          this.loadingService.setLoading(false);
         },
         err => {
-          console.log(err); this.loading = false;
+          console.log(err);
+          this.loadingService.setLoading(false);
         }
       )
     }, false);

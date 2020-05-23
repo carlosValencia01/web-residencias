@@ -1,21 +1,22 @@
-import { Component, OnInit, Output, EventEmitter, Inject, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Inject, OnInit, Output, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { iIntegrant } from 'src/app/entities/reception-act/integrant.model';
+import { uRequest } from 'src/app/entities/reception-act/request';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
+import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { DatePipe } from '@angular/common';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { ObservationsComponentComponent } from 'src/app/titulation/observations-component/observations-component.component';
-import { iIntegrant } from 'src/app/entities/reception-act/integrant.model';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { uRequest } from 'src/app/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
-import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { ObservationsComponentComponent } from 'src/app/titulation/observations-component/observations-component.component';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -34,7 +35,6 @@ export class RequestModalComponent implements OnInit {
   private integrants: Array<iIntegrant> = [];
   private oRequest: uRequest;
   private folderId: string;
-  public showLoading: boolean;
 
   constructor(
     public studentProvider: StudentProvider,
@@ -46,6 +46,7 @@ export class RequestModalComponent implements OnInit {
     public dialogRef: MatDialogRef<RequestModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private imgService: ImageToBase64Service,
+    private loadingService: LoadingService,
   ) {
     this.userInformation = this.cookiesService.getData().user;
   }
@@ -66,13 +67,13 @@ export class RequestModalComponent implements OnInit {
         // 'dateProposed': new FormControl({ value: null, disabled: true }, Validators.required),
         'honorific': new FormControl({ value: false, disabled: true }, Validators.required)
       });
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.requestProvider.getRequestById(this.data.Id).subscribe(res => {
       this.loadRequest(res);
       this.getFolder();
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitud');
     });
   }
@@ -183,14 +184,14 @@ export class RequestModalComponent implements OnInit {
   }
 
   updateRequest(data: any) {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Procesando solicitud');
     this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
       this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.dialogRef.close(true);
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
       this.dialogRef.close(false);
     });
@@ -209,12 +210,12 @@ export class RequestModalComponent implements OnInit {
   }
 
   getProjectCover() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.requestProvider.getResource(this.request._id, eFILES.PROYECTO).subscribe(data => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       window.open(URL.createObjectURL(data), '_blank');
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener la portada');
     });
   }

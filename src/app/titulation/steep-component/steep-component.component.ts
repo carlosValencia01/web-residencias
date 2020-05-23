@@ -1,21 +1,22 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { MatStepper, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { RequestService } from 'src/app/services/reception-act/request.service';
-import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
-import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
-import { ESignatureProvider } from 'src/app/providers/electronic-signature/eSignature.prov';
-import { CurrentPositionService } from 'src/app/services/shared/current-position.service';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef, MatStepper, MAT_DIALOG_DATA } from '@angular/material';
 import { uRequest } from 'src/app/entities/reception-act/request';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
 import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { ESignatureProvider } from 'src/app/providers/electronic-signature/eSignature.prov';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { RequestService } from 'src/app/services/reception-act/request.service';
+import { CurrentPositionService } from 'src/app/services/shared/current-position.service';
 
 @Component({
   selector: 'app-steep-component',
@@ -36,7 +37,6 @@ export class SteepComponentComponent implements OnInit {
   public enableNext;
   public fileFlag;
   public passwordFlag;
-  public showLoading = false;
   public fileName: string;
   private cookies;
   private employee;
@@ -56,6 +56,7 @@ export class SteepComponentComponent implements OnInit {
     private currentPositionService: CurrentPositionService,
     private _ImageToBase64Service: ImageToBase64Service,
     public _StudentProvider: StudentProvider,
+    private loadingService: LoadingService,
   ) {
     this.Request = data.Request;
     this.enableNext = true;
@@ -96,18 +97,18 @@ export class SteepComponentComponent implements OnInit {
   }
 
   Next(index: number): void {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     switch (index) {
       case 0: {
         this.SteepOneCompleted = true;
         this.updateSteeps(1);
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         break;
       }
       case 1: {
         this.SteepTwoCompleted = true;
         this.updateSteeps(2);
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         break;
       }
       case 2: {
@@ -157,7 +158,7 @@ export class SteepComponentComponent implements OnInit {
           documentCode: 'ITT-POS-02-02',
           outDepartmentName: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES'
         };
-        this.showLoading = true;
+        this.loadingService.setLoading(true);
         this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Firmando registro de proyecto');
         this.eSignatureProvider.sign(dataSign).subscribe(signed => {
           if (signed) {
@@ -191,15 +192,15 @@ export class SteepComponentComponent implements OnInit {
             this._RequestProvider.updateRequest(this.Request._id, data)
               .subscribe(_ => {
                 this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
-                this.showLoading = false;
+                this.loadingService.setLoading(false);
                 this.Next(1);
               }, _ => {
                 this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
-                this.showLoading = false;
+                this.loadingService.setLoading(false);
               });
           }
         }, err => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           const error = JSON.parse(err._body).err;
           this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
         });

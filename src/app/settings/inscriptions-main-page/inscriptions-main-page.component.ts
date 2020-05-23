@@ -1,53 +1,50 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-
+import { MatDialog } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { CookiesService } from 'src/app/services/app/cookie.service';
 import { CareerProvider } from 'src/app/providers/shared/career.prov';
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
-
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { MatDialog } from '@angular/material';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { NewPeriodComponent } from 'src/app/settings/new-period/new-period.component';
 import { SecretaryAssignmentComponent } from 'src/app/settings/secretary-assignment/secretary-assignment.component';
-
 import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-inscriptions-main-page',
   templateUrl: './inscriptions-main-page.component.html',
   styleUrls: ['./inscriptions-main-page.component.scss']
 })
 export class InscriptionsMainPageComponent implements OnInit {
-
-  
   periods = [];
   page = 1;
   pag;
   pageSize = 5;
   careers = {};
-  loading: boolean = false;
 
   constructor(
     private notificationsServices: NotificationsServices,
     private cookiesService: CookiesService,
     private router: Router,
     private routeActive: ActivatedRoute,
-    private inscriptionsProv: InscriptionsProvider, 
+    private inscriptionsProv: InscriptionsProvider,
     public dialog: MatDialog,
     private careerProv: CareerProvider,
     private stProv : StudentProvider,
-  ) {    
+    private loadingService: LoadingService,
+  ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    
+
     this.refreshDataSource();
    }
 
   ngOnInit() {
     this.getCareers();
-    
+
   }
   pageChanged(ev) {
     this.page = ev;
@@ -64,12 +61,12 @@ export class InscriptionsMainPageComponent implements OnInit {
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Confirmar'
     }).then((result) => {
-      if (result.value)  return true;      
+      if (result.value)  return true;
       else return false;
     });
   }
 
-  async updatePeriodo(row) {      
+  async updatePeriodo(row) {
     let confirmdialog = await this.swalDialog('¿Estás seguro de cerrar este Período ?',`El período (${row.periodName} ${row.year}) será desactivado.`,'question');
     if(confirmdialog){
       row.active = false;
@@ -77,15 +74,15 @@ export class InscriptionsMainPageComponent implements OnInit {
     }
   }
 
-  confirmedPeriodChange(row, msg){  
+  confirmedPeriodChange(row, msg){
 
-    this.inscriptionsProv.updatePeriod(row,row._id).subscribe(res => {    
-              
+    this.inscriptionsProv.updatePeriod(row,row._id).subscribe(res => {
+
       this.notificationsServices.showNotification(eNotificationType.SUCCESS,
         'Exito', msg);
         this.refreshDataSource();
     });
-  } 
+  }
 
   refreshDataSource() {
     let sub = this.inscriptionsProv.getAllPeriods()
@@ -95,7 +92,7 @@ export class InscriptionsMainPageComponent implements OnInit {
         sub.unsubscribe();
       });
   }
-  
+
   private async addPeriod(period, currentYear){
 
     // period.year = currentYear+'';
@@ -142,7 +139,7 @@ export class InscriptionsMainPageComponent implements OnInit {
       await  this.inscriptionsProv.createSubFolder(periodName,periodId, insFolder.idFolderInDrive,1).subscribe(res=>{
       },
       err=>{
-      } 
+      }
       );
     }else{
       await this.inscriptionsProv.createSubFolder('Expedientes nuevo ingreso',periodId,rootF,1).subscribe(
@@ -150,7 +147,7 @@ export class InscriptionsMainPageComponent implements OnInit {
           await  this.inscriptionsProv.createSubFolder(periodName,periodId, res.folder.idFolderInDrive,1).subscribe(ress=>{
           },
           err=>{
-          } 
+          }
           );;
         },
         err=>{
@@ -184,7 +181,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   createPeriod(){
     let lastActivePeriod, currentYear;
     if(this.periods.length>0){
-      lastActivePeriod = this.periods[0]; 
+      lastActivePeriod = this.periods[0];
       currentYear = lastActivePeriod.periodName === 'AGOSTO-DICIEMBRE' ? (parseInt(lastActivePeriod.year)+1) : lastActivePeriod.year;
 
       let activePeriod = this.periods.filter( period=> period.active === true).length > 0;
@@ -195,7 +192,7 @@ export class InscriptionsMainPageComponent implements OnInit {
         return;
       }
     }else if(this.periods.length == 0){
-      lastActivePeriod=0; 
+      lastActivePeriod=0;
       currentYear = new Date;
       currentYear = currentYear.getFullYear();
     }
@@ -250,26 +247,26 @@ export class InscriptionsMainPageComponent implements OnInit {
         `<h4>General</h4>
           <p style="text-align='left'">
             <h6><b>Fecha inicio:</b> ${new Date(period.initDate).toLocaleDateString("es-MX", dateOptions)}</h6>
-            <h6><b>Fecha fin:</b> ${new Date(period.endDate).toLocaleDateString("es-MX", dateOptions)}</h6>        
+            <h6><b>Fecha fin:</b> ${new Date(period.endDate).toLocaleDateString("es-MX", dateOptions)}</h6>
             <br>
           </p>
           <h4>Período inscripciones</h4>
           <p style="text-align='left'">
             <h6><b>Fecha inicio:</b> ${new Date(period.insPerInitDate).toLocaleDateString("es-MX", dateOptions)}</h6>
-            <h6><b>Fecha fin:</b> ${new Date(period.insPerEndDate).toLocaleDateString("es-MX", dateOptions)}</h6> 
-            <h6><b>Fecha entrega de certificado:</b> ${new Date(period.certificateDeliveryDate).toLocaleDateString("es-MX", dateOptions)}</h6>        
+            <h6><b>Fecha fin:</b> ${new Date(period.insPerEndDate).toLocaleDateString("es-MX", dateOptions)}</h6>
+            <h6><b>Fecha entrega de certificado:</b> ${new Date(period.certificateDeliveryDate).toLocaleDateString("es-MX", dateOptions)}</h6>
             <br>
           </p>
           <h4>Período acto recepcional</h4>
           <p style="text-align='left'">
             <h6><b>Fecha inicio:</b> ${new Date(period.arecPerInitDate).toLocaleDateString("es-MX", dateOptions)}</h6>
-            <h6><b>Fecha fin:</b> ${new Date(period.arecPerEndDate).toLocaleDateString("es-MX", dateOptions)}</h6>        
+            <h6><b>Fecha fin:</b> ${new Date(period.arecPerEndDate).toLocaleDateString("es-MX", dateOptions)}</h6>
             <br>
           </p>
           <h4>Horario acto recepcional</h4>
           <p style="text-align='left'">
             <h6><b>Hora inicio:</b> ${period.arecInitShed}</h6>
-            <h6><b>Hora fin:</b> ${period.arecEndShed}</h6>        
+            <h6><b>Hora fin:</b> ${period.arecEndShed}</h6>
             <br>
           </p>
         `,
@@ -283,7 +280,7 @@ export class InscriptionsMainPageComponent implements OnInit {
     this.careerProv.getAllCareers().subscribe(
       res=>{
         if(res.careers){
-          let  careers = res.careers;        
+          let  careers = res.careers;
           careers.forEach( career => {
             this.careers[career.fullName] = career._id;
           });
@@ -291,22 +288,22 @@ export class InscriptionsMainPageComponent implements OnInit {
       });
   }
 
-  updateCareer(){            
+  updateCareer(){
         this.stProv.getAllStudents().subscribe(
           async res2=>{
-            let students = res2.students;                        
+            let students = res2.students;
             for await (const student of students){
-              let career = this.careers[student.career];                  
-              let f = await this.up(student,career);              
-            }            
+              let career = this.careers[student.career];
+              let f = await this.up(student,career);
+            }
             this.notificationsServices.showNotification(eNotificationType.SUCCESS,
               'Carreras agregadas', '');
           }
-        );          
+        );
   }
  async up(student,career){
     return await this.stProv.updateStudent(student._id,{careerId:career}).toPromise()
-              .then( 
+              .then(
                 rest=>{return rest;
                 }
               ).catch( err=>console.log(err)
@@ -355,14 +352,14 @@ export class InscriptionsMainPageComponent implements OnInit {
   async insertSignedUpStudents(){
     const insertStudents = await this.showAlert('¿Insertar los nuevos alumnos inscritos?');
     if(insertStudents){
-      this.loading = true;
+      this.loadingService.setLoading(true);
       await this.stProv.insertSignedUpStudents().toPromise().then(
-        inserted=>{          
-          this.loading = false;
+        inserted=>{
+          this.loadingService.setLoading(false);
           this.notificationsServices.showNotification(eNotificationType.SUCCESS,'Configuraciones','Se insertaron '+inserted.created+' alumnos')
         },
-        err=>this.loading = false  
-      ).catch(err=>this.loading=false);
+        err=> this.loadingService.setLoading(false)
+      ).catch(err => this.loadingService.setLoading(false));
     }
   }
   showAlert(message: string, buttons: { accept: string, cancel: string } = { accept: 'Aceptar', cancel: 'Cancelar' }):any {

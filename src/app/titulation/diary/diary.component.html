@@ -16,7 +16,7 @@
   </div> -->
     <!-- </div> -->
     <div class="my-3 text-center row">
-      <div class="btn-group col-8" role="group">        
+      <div class="btn-group col-8" role="group">
         <button type="button" *ngFor="let carrer of carrers"
           [ngClass]="carrer.status? 'btn btn-dark btn-sm mt-1':'btn btn-outline-dark btn-sm mt-1'"
           (click)="toggle(carrer)" data-toggle="tooltip" title="{{carrer.carrer}}">
@@ -72,7 +72,7 @@
         </div>
       </div>
     </div>
-    
+
     <div [ngSwitch]="view" class="mt-3">
       <mwl-calendar-month-view *ngSwitchCase="'month'" [viewDate]="viewDate" [events]="events"
         (beforeViewRender)="beforeMonthViewRender($event)" [locale]="locale" [refresh]="refresh"
@@ -174,7 +174,7 @@
           [contextMenuSubject]="weekEvent.event">
           <div class="cal-cell-top text-right" style="color: #b64443;">
             <small class="mr-1">{{weekEvent.event.title.split(' ')[1]}}</small>
-            <span>              
+            <span>
               <i class=" fa fa-hourglass"></i>
             </span>
           </div>
@@ -249,7 +249,4 @@
       </tr>
     </tbody>
   </table>
-</div>
-<div class="center">
-  <app-loader [loading]="showLoading"></app-loader>
 </div>

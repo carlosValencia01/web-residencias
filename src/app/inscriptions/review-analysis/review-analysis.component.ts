@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, ShowOnDirtyErrorStateMatcher } from '@angular/material';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,7 +18,6 @@ export class ReviewAnalysisComponent implements OnInit {
   studentData;
   docAnalisis;
   pdfSrc;
-  loading : boolean;
   showDocument = false;
   observations;
 
@@ -25,8 +25,9 @@ export class ReviewAnalysisComponent implements OnInit {
     public dialogRef: MatDialogRef<ReviewAnalysisComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private inscriptionsProv: InscriptionsProvider,
-    private studentProv: StudentProvider,    
+    private studentProv: StudentProvider,
     private notificationsServices: NotificationsServices,
+    private loadingService: LoadingService,
   ) {
     this.studentData = this.data.student;
     this.observations = this.data.student.observationsAnalysis ? this.data.student.observationsAnalysis : '';
@@ -57,28 +58,28 @@ export class ReviewAnalysisComponent implements OnInit {
   }
 
   showAnalysis(analysis){
-    this.loading=true;
+    this.loadingService.setLoading(true);
     this.inscriptionsProv.getFile(analysis.fileIdInDrive,analysis.filename).subscribe(data => {
       var docdata = data.file;
       let buff = new Buffer(docdata.data);
       this.pdfSrc = buff;
       this.showDocument=true;
-    },(err)=>{},()=>this.loading=false);
+    },(err)=>{},()=>this.loadingService.setLoading(false));
   }
 
   async saveObservationsGood(observaciones,warning) {
-    this.loading=true;
+    this.loadingService.setLoading(true);
     await this.inscriptionsProv.updateStudent({observationsAnalysis:observaciones,warningAnalysis:warning},this.studentData._id).subscribe(res => {
     }, err=>{},
     ()=>{
-      this.loading=false
+      this.loadingService.setLoading(false)
       this.onClose();
       this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Observaciones Guardadas.');
     });
   }
 
   async saveObservationsBad(observaciones,warning) {
-    this.loading=true;
+    this.loadingService.setLoading(true);
     await this.inscriptionsProv.updateStudent({observationsAnalysis:observaciones,warningAnalysis:warning},this.studentData._id).subscribe(res => {
       this.inscriptionsProv.sendNotification(this.studentData.email,"Observaciones de Análisis Clínicos",this.studentData.fullName,observaciones,"Observaciones Análisis Clínicos","Consultorio Médico <cmedico@ittepic.edu.mx>").subscribe(
         res => {
@@ -90,7 +91,7 @@ export class ReviewAnalysisComponent implements OnInit {
       );
     }, err=>{},
     ()=>{
-      this.loading=false
+      this.loadingService.setLoading(false)
       this.onClose();
     });
   }

@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as JsBarcode from 'jsbarcode';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
-import { ActivatedRoute, Router } from '@angular/router';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
 import { CareerProvider } from 'src/app/providers/shared/career.prov';
-import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 @Component({
   selector: 'app-one-student-page',
@@ -18,8 +19,6 @@ import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
   styleUrls: ['./one-student-page.component.scss']
 })
 export class OneStudentPageComponent implements OnInit {
-
-  loading = false;
   showNotFound = false;
   showImg = false;
   frontBase64: any;
@@ -62,7 +61,8 @@ export class OneStudentPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
     private inscriptionProv : InscriptionsProvider,
-    private careerProv: CareerProvider
+    private careerProv: CareerProvider,
+    private loadingService: LoadingService,
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -73,41 +73,41 @@ export class OneStudentPageComponent implements OnInit {
 
     this.careerProv.getAllCareers().subscribe(
       (careers)=>{
-        this.careers =careers.careers;        
-        
+        this.careers =careers.careers;
+
         this.init();
       }
     );
-            
+
   }
 
-  async init(){    
+  async init(){
     await this.studentProv.searchStudents(this.data.email+'').toPromise().then(
       (students)=>{
-        this.student = students.students[0];        
+        this.student = students.students[0];
       }
     );
-    
+
     this.inscriptionProv.getActivePeriod().subscribe(
       period=>{
         if(period.period){
           this.getDocuments();
-          this.activePeriod = period.period;                      
+          this.activePeriod = period.period;
           this.studentProv.getPeriodId(this.data._id.toString()).subscribe(
-            per=>{              
+            per=>{
               if(!per.student.idPeriodInscription){
                 this.studentProv.updateStudent(this.data._id,{idPeriodInscription:this.activePeriod._id}).subscribe(
                   f=>{}
                 );
               }
             }
-          );          
+          );
           if(this.student.careerId){
             const career = this.careers.filter( career=> career._id == this.student.careerId)[0];
-            this.data.career = career.fullName;           
+            this.data.career = career.fullName;
           }else if(this.student.career){
             const career = this.careers.filter( career=> career.fullName.indexOf(this.student.career) > -1 )[0];
-            if(career){              
+            if(career){
               this.studentProv.updateStudent(this.data._id,{careerId:career._id}).subscribe(up=>{},err=>{});
             }else{ // error en la carrera
               return;
@@ -122,14 +122,14 @@ export class OneStudentPageComponent implements OnInit {
         }
         else{ // no hay período activo
 
-        }    
-      }  
+        }
+      }
     );
 
   }
   ngOnInit() {
     const _id = this.data._id;
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProv.getStudentById(_id)
       .subscribe(res => {
         this.showImg = false;
@@ -143,7 +143,7 @@ export class OneStudentPageComponent implements OnInit {
         // this.getImageFromService(res.student[0]._id);
       }, error => {
         console.log(error);
-      }, () => this.loading = false);
+      }, () => this.loadingService.setLoading(false));
   }
 
   // Generacion de PDF *************************************************************************************//#endregion
@@ -236,30 +236,30 @@ export class OneStudentPageComponent implements OnInit {
   }
 
   getImage() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProv.getProfileImage(this.currentStudent._id).subscribe(res => {
     }, error => {
       console.log(error);
       if (error.status === 404) {
         this.photoStudent = 'assets/imgs/studentAvatar.png';
       }
-    }, () => this.loading = false);
+    }, () => this.loadingService.setLoading(false));
   }
 
   uploadFile() {
-    this.loading = true;
-    const red = new FileReader;  
-    
+    this.loadingService.setLoading(true);
+    const red = new FileReader;
+
     if(this.folderId){
       red.addEventListener('load', () => {
         let file = { mimeType: this.selectedFile.type, nameInDrive: this.data.email + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: this.folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
-  
+
         this.inscriptionProv.uploadFile2(file).subscribe(
           resp => {
             if (resp.action == 'create file') {
-  
+
               const documentInfo = {
-  
+
                 doc: {
                   filename: resp.name,
                   type: 'DRIVE',
@@ -275,15 +275,15 @@ export class OneStudentPageComponent implements OnInit {
                 updated => {
                   this.notificationServ.showNotification(eNotificationType.SUCCESS,
                     'Exito', 'Foto cargada correctamente.');
-  
+
                 },
                 err => {
                   console.log(err);
-  
-                }, () => this.loading = false
+
+                }, () => this.loadingService.setLoading(false)
               );
             } else {
-  
+
               const documentInfo = {
                 filename: resp.filename,
                 status: {
@@ -300,18 +300,19 @@ export class OneStudentPageComponent implements OnInit {
                 err => console.log(err)
               );
             }
-            this.loading = false;
+            this.loadingService.setLoading(false);
           },
           err => {
-            console.log(err); this.loading = false;
+            console.log(err);
+            this.loadingService.setLoading(false);
           }
         )
       }, false);
       red.readAsDataURL(this.croppedImage);
     }
-            
-         
-    
+
+
+
   }
 
   // Zona de test :D *********************************************************************************************//#region
@@ -331,7 +332,7 @@ export class OneStudentPageComponent implements OnInit {
   }
 
   getImageFromService(id) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
 
@@ -341,18 +342,18 @@ export class OneStudentPageComponent implements OnInit {
         this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
       }
-    }, () => this.loading = false);
+    }, () => this.loadingService.setLoading(false));
   }
   getDocuments(){
     this.showImg=false;
     this.studentProv.getDriveDocuments(this.data._id).subscribe(
       docs=>{
-        let documents = docs.documents;              
+        let documents = docs.documents;
         if(documents){
 
-          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];                
+          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];
           if(this.imageDoc){
-  
+
             this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
               succss=>{
                 this.showImg=true;
@@ -361,18 +362,18 @@ export class OneStudentPageComponent implements OnInit {
               },
               err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
             );
-          }else{            
-            this.loading = false
+          }else{
+            this.loadingService.setLoading(false);
             this.photoStudent = 'assets/imgs/studentAvatar.png';
             this.showImg=true;
           }
         }else{
-          this.loading = false
+          this.loadingService.setLoading(false);
           this.photoStudent = 'assets/imgs/studentAvatar.png';
           this.showImg=true;
         }
       }
-    );  
+    );
   }
 
 }

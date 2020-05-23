@@ -1,20 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
-import { StudentInformationComponent } from '../student-information/student-information.component';
-import { ReviewAnalysisComponent } from '../review-analysis/review-analysis.component';
-import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
+import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
-import Swal from 'sweetalert2';
-import { Router, ActivatedRoute } from '@angular/router';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import * as JsBarcode from 'jsbarcode';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
+import { ReviewAnalysisComponent } from '../review-analysis/review-analysis.component';
+import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
+import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
+import { StudentInformationComponent } from '../student-information/student-information.component';
 const jsPDF = require('jspdf');
-import * as JsBarcode from 'jsbarcode';
 
 @Component({
   selector: 'app-list-acept-student',
@@ -22,13 +23,10 @@ import * as JsBarcode from 'jsbarcode';
   styleUrls: ['./list-acept-student.component.scss']
 })
 export class ListAceptStudentComponent implements OnInit {
-
-
   students;
   listStudentsAcept;
   periods = [];
   activPeriod;
-  loading = false;
 
   listCovers;
 
@@ -83,8 +81,9 @@ export class ListAceptStudentComponent implements OnInit {
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
     private router: Router,
-    private studentProv: StudentProvider
-  ) { 
+    private studentProv: StudentProvider,
+    private loadingService: LoadingService,
+  ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -134,9 +133,9 @@ export class ListAceptStudentComponent implements OnInit {
       this.listStudentsAcept = this.students;
       this.listCovers = this.listStudentsAcept;
       this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
-      this.eventFilterStatus();       
+      this.eventFilterStatus();
     });
-    
+
   }
 
   pageChanged(ev) {
@@ -276,21 +275,21 @@ export class ListAceptStudentComponent implements OnInit {
   // Exportar alumnos a excel
   excelExport() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcel'), {
       name: 'Reporte Alumnos Inscripcion.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   // Generar Carátulas
   generateCovers() {
     if(this.listCovers.length != 0){
       this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO CARÁTULAS', '');
-      this.loading = true;
+      this.loadingService.setLoading(true);
       const doc = new jsPDF();
       var pageWidth = doc.internal.pageSize.width;
       for(let i = 0; i < this.listCovers.length; i++){
@@ -306,17 +305,17 @@ export class ListAceptStudentComponent implements OnInit {
           doc.addPage();
         }
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank');
     }
-        
+
   }
 
   // Generar Pestañas
   generateLabels() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'GENERANDO PESTAÑAS', '');
-    this.loading = true;
-    
+    this.loadingService.setLoading(true);
+
     const doc = new jsPDF('l', 'mm', [33.84, 479.4]);
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
@@ -376,7 +375,7 @@ export class ListAceptStudentComponent implements OnInit {
           break;
         default:
           doc.text('CAR',pageWidth-15,(pageHeight/2)+1.5)
-          break; 
+          break;
       }
       //doc.text('CAR',56.6,2.5);
 
@@ -384,7 +383,7 @@ export class ListAceptStudentComponent implements OnInit {
         doc.addPage();
       }
     }
-    this.loading = false;
+    this.loadingService.setLoading(false);
     window.open(doc.output('bloburl'), '_blank');
   }
 
@@ -410,15 +409,15 @@ export class ListAceptStudentComponent implements OnInit {
             err=>console.log(err), ()=> sub.unsubscribe()
           );
         } else {
-          this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Aun no son Validados/Aceptados los análisis clínicos.');   
+          this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Aun no son Validados/Aceptados los análisis clínicos.');
         }
       } else {
-        this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene análisis clínicos.');   
+        this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene análisis clínicos.');
       }
     } else {
-      this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene expediente.');   
+      this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene expediente.');
     }
-    
+
   }
 
   filterDocuments(document,student){
@@ -494,27 +493,27 @@ export class ListAceptStudentComponent implements OnInit {
   // Generar plantilla IMSS Excel
   excelExportIMSS() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcelIMSS'), {
       name: 'Plantilla Alumnos IMSS.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
    // Generar plantilla CM Excel
    excelExportCM() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcelCM'), {
       name: 'Reporte Consultorio Médico.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   complete10Dig(number){
@@ -559,11 +558,11 @@ export class ListAceptStudentComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        this.loading=true;
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.updateStudent({printCredential:true},item._id).subscribe(res => {
         }, err=>{},
         ()=>{
-          this.loading=false
+          this.loadingService.setLoading(false);
           this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
           this.getStudents();
         });
@@ -584,11 +583,11 @@ export class ListAceptStudentComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        this.loading=true;
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.updateStudent({printCredential:false},item._id).subscribe(res => {
         }, err=>{},
         ()=>{
-          this.loading=false
+          this.loadingService.setLoading(false);
           this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Removida.');
           this.getStudents();
         });
@@ -600,7 +599,7 @@ export class ListAceptStudentComponent implements OnInit {
     var numCredentials = 0;
     var tempStudents = [];
     if(this.credentialStudents.length != 0){
-      this.loading = true;
+      this.loadingService.setLoading(true);
       const doc = new jsPDF({
         unit: 'mm',
         format: [251, 158], // Medidas correctas: [88.6, 56]
@@ -619,7 +618,7 @@ export class ListAceptStudentComponent implements OnInit {
                 numCredentials ++;
                 // cara frontal de la credencial
                 doc.addImage(this.frontBase64, 'PNG', 0, 0, 88.6, 56);
-                  
+
                 //FOTOGRAFIA DEL ALUMNO
                 var foto = await this.findFoto(docFoto);
                 doc.addImage(foto, 'PNG', 3.6, 7.1, 25.8, 31);
@@ -662,7 +661,7 @@ export class ListAceptStudentComponent implements OnInit {
               }
             } else {
             }
-          } else { 
+          } else {
           }
         } else {
         }
@@ -671,7 +670,7 @@ export class ListAceptStudentComponent implements OnInit {
       if(pageCount%2 != 0){
         doc.deletePage(pageCount);
       }
-      this.loading = false;
+      this.loadingService.setLoading(false);
       if(numCredentials != 0){
         var credentials = doc.output('arraybuffer');
         // Abrir Modal para visualizar credenciales
@@ -687,7 +686,7 @@ export class ListAceptStudentComponent implements OnInit {
           height: '800px'
         });
         let sub = linkModal.afterClosed().subscribe(
-          credentials=>{         
+          credentials=>{
             this.getStudents();
           },
           err=>console.log(err), ()=> sub.unsubscribe()
@@ -763,7 +762,7 @@ export class ListAceptStudentComponent implements OnInit {
   }
 
   updateSolicitud(student){
-    this.loading = true;
+    this.loadingService.setLoading(true);
     var day = student.curp.substring(8, 10);
     var month = student.curp.substring(6, 8);
     var year = student.curp.substring(4, 6);
@@ -1013,7 +1012,7 @@ export class ListAceptStudentComponent implements OnInit {
       nameInDrive: student.controlNumber + '-SOLICITUD.pdf',
       bodyMedia: document,
       folderId: folderId,
-      newF: false, 
+      newF: false,
       fileId: fileId
     };
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
@@ -1032,16 +1031,16 @@ export class ListAceptStudentComponent implements OnInit {
         };
         await this.studentProv.uploadDocumentDrive(student._id, documentInfo2).subscribe(
           updated => {
-            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');    
-             this.loading = false;
+            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');
+            this.loadingService.setLoading(false);
           },
           err => {
             console.log(err);
-          }, () => this.loading = false
+          }, () => this.loadingService.setLoading(false)
         );
       },
       err => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
         console.log(err);
       }
     );
@@ -1050,10 +1049,10 @@ export class ListAceptStudentComponent implements OnInit {
   async getFolderId(id){
     let folderId;
    await this.studentProv.getFolderId(id).toPromise().then(
-      folder => {        
+      folder => {
         if (folder.folder) {// folder exists
           if (folder.folder.idFolderInDrive) {
-            folderId = folder.folder.idFolderInDrive;                        
+            folderId = folder.folder.idFolderInDrive;
           }
         }
       });
@@ -1065,7 +1064,7 @@ export class ListAceptStudentComponent implements OnInit {
     if(docFoto != ''){
       if(docFoto.status[docFoto.status.length-1].name == "ACEPTADO" || docFoto.status[docFoto.status.length-1].name == "VALIDADO"){
         if(student.printCredential != true){
-          this.loading = true;
+          this.loadingService.setLoading(true);
           const doc = new jsPDF({
             unit: 'mm',
             format: [251, 158], // Medidas correctas: [88.6, 56]
@@ -1106,7 +1105,7 @@ export class ListAceptStudentComponent implements OnInit {
            doc.setTextColor(0, 0, 0);
            doc.setFontSize(8);
            doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber ? student.controlNumber : '', 35));
-           this.loading = false;
+           this.loadingService.setLoading(false);
            var credentials = doc.output('arraybuffer');
            // Abrir Modal para visualizar credenciales
            const linkModal = this.dialog.open(ReviewCredentialsComponent, {
@@ -1147,18 +1146,18 @@ export class ListAceptStudentComponent implements OnInit {
       var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
       var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
       var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-      
+
       if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
         // Cambiar estatus a ACEPTADO
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
-        }); 
+        });
         this.getStudents();
         return;
-      } 
+      }
       if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
         // Cambiar estatus a VALIDADO
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
-        });   
+        });
         this.getStudents();
         return;
       }

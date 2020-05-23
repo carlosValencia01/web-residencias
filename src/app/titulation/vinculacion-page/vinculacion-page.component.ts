@@ -1,19 +1,19 @@
-import { ActivatedRoute, Router } from '@angular/router';
 import { ComponentType } from '@angular/cdk/overlay';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
-import Swal from 'sweetalert2';
-import * as Papa from 'papaparse';
+import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-moment.locale('es');
-
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { IStudent } from 'src/app/entities/shared/student.model';
+import * as Papa from 'papaparse';
 import { LoadCsvDataComponent } from 'src/app/commons/load-csv-data/load-csv-data.component';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { IStudent } from 'src/app/entities/shared/student.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
+moment.locale('es');
 
 @Component({
   selector: 'app-vinculacion-page',
@@ -34,7 +34,6 @@ export class VinculacionPageComponent implements OnInit {
   public dataSourceNotReleased: MatTableDataSource<IEnglishTable>;
   public search: string;
   public selectedTab: FormControl;
-  public loading: boolean;
 
   constructor(
     private cookiesService: CookiesService,
@@ -43,12 +42,13 @@ export class VinculacionPageComponent implements OnInit {
     private routeActive: ActivatedRoute,
     private studentProvider: StudentProvider,
     private dialog: MatDialog,
+    private loadingService: LoadingService,
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.selectedTab = new FormControl(0);
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   ngOnInit() {
@@ -96,15 +96,15 @@ export class VinculacionPageComponent implements OnInit {
       confirmButtonText: 'Liberar'
     }).then((result) => {
       if (result.value) {
-        this.loading = true;
+        this.loadingService.setLoading(true);
         this.studentProvider.releaseEnglish(student.controlNumber)
           .subscribe(_ => {
-            this.loading = false;
+            this.loadingService.setLoading(false);
             this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Estudiante liberado con éxito', '');
             this._getAllNotReleased();
           }, _ => {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'Error, no se pudo liberar el inglés al estudiante', '');
-            this.loading = false;
+            this.loadingService.setLoading(false);
           });
       }
     });
@@ -122,15 +122,15 @@ export class VinculacionPageComponent implements OnInit {
       confirmButtonText: 'Aceptar'
     }).then((result) => {
       if (result.value) {
-        this.loading = true;
+        this.loadingService.setLoading(true);
         this.studentProvider.removeRelease(student.controlNumber)
           .subscribe(_ => {
-            this.loading = false;
+            this.loadingService.setLoading(false);
             this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Se ha quitado la liberación con éxito', '');
             this._getAllReleased();
           }, _ => {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'Error al quitar liberación al estudiante', '');
-            this.loading = false;
+            this.loadingService.setLoading(false);
           });
       }
     });
@@ -171,15 +171,15 @@ export class VinculacionPageComponent implements OnInit {
             const refDialog = this._openDialog(LoadCsvDataComponent, 'EnglishRelease', _data);
             refDialog.afterClosed().subscribe((_students: Array<any>) => {
               if (_students) {
-                this.loading = true;
+                this.loadingService.setLoading(true);
                 provider.releaseEnglishCsv(_students).subscribe(_ => {
-                  this.loading = false;
+                  this.loadingService.setLoading(false);
                   notificacion.showNotification(eNotificationType.SUCCESS, 'Estudiantes liberados con éxito', '');
                   this.changeTab(this.selectedTab.value);
                 }, _ => {
                   this.notificationServ.showNotification(eNotificationType.ERROR,
                     'Ocurrió un error al liberar los estudiantes', '');
-                  this.loading = false;
+                  this.loadingService.setLoading(false);
                 });
               }
             });
@@ -190,30 +190,30 @@ export class VinculacionPageComponent implements OnInit {
   }
 
   private _getAllReleased() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProvider.studentsEnglishReleased()
       .subscribe(res => {
         const data = res.students.map(this._castToTable);
         this._refreshReleased(data);
       }, _ => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'No se pudieron cargar los estudiantes liberados', '');
-        this.loading = false;
+        this.loadingService.setLoading(false);
       }, () => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
       });
   }
 
   private _getAllNotReleased() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProvider.studentsEnglishNotReleased()
       .subscribe(res => {
         const data = res.students.map(this._castToTable);
         this._refreshNotReleased(data);
       }, _ => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'No se pudieron cargar los estudiantes sin liberar', '');
-        this.loading = false;
+        this.loadingService.setLoading(false);
       }, () => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
       });
   }
 

@@ -1,11 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { ICareer } from 'src/app/entities/shared/career.model';
-import { CareerProvider } from 'src/app/providers/shared/career.prov';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { BookProvider } from 'src/app/providers/reception-act/book.prov';
+import { CareerProvider } from 'src/app/providers/shared/career.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,7 +18,6 @@ export class UpdateBookComponent implements OnInit {
   title = 'Modificar Libro';
   oldBook;
   bookForm: FormGroup;
-  loading: boolean;
   opcionTitulacion = '';
   cAsigned = false;
   nombreLibro = '';
@@ -43,6 +43,7 @@ export class UpdateBookComponent implements OnInit {
     private notificationsServices: NotificationsServices,
     private careerProvider: CareerProvider,
     private bookProvider: BookProvider,
+    private loadingService: LoadingService,
   ) {
     this.oldBook = data.oldBook;
     this.getBook();
@@ -76,7 +77,7 @@ export class UpdateBookComponent implements OnInit {
   }
 
   async onFormSubmit(form: NgForm) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     await this.updateBook(form);
   }
 
@@ -128,7 +129,7 @@ export class UpdateBookComponent implements OnInit {
         this.onClose();
         this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Libro actualizado con éxito');
     }
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   public isCareerAssigned(career: ICareer): boolean {
@@ -164,7 +165,7 @@ export class UpdateBookComponent implements OnInit {
     this.unassignedCareers.splice(index, 1);
 
     this.nombreLibro = '';
-    
+
     for (let i = 0; i < this.assignedCareers.length; i++) {
       if (this.assignedCareers.length === 1) {
         this.nombreLibro = this.assignedCareers[i].fullName;

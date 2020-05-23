@@ -1,9 +1,9 @@
 import { Component, HostListener, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
-
-import { CookiesService } from 'src/app/services/app/cookie.service';
 import { eSessionStatus } from 'src/app/enumerators/app/sessionStatus.enum';
 import { UserProvider } from 'src/app/providers/app/user.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -26,10 +26,12 @@ export class AppComponent {
     maxLength: 10
   };
   public sessionStatus: string;
+  public loading = false;
 
   constructor(
     private cookiesServ: CookiesService,
     private userProv: UserProvider,
+    private loadingService: LoadingService,
   ) {
     this.checkLogin();
   }
@@ -42,6 +44,7 @@ export class AppComponent {
   // tslint:disable-next-line:use-life-cycle-interface
   ngOnInit() {
     this.configureSideNav();
+    this.loadingService.isLoading.subscribe((status) => this.loading = status);
   }
 
   configureSideNav() {

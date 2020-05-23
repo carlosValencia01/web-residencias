@@ -1,11 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { ICareer } from 'src/app/entities/shared/career.model';
-import { CareerProvider } from 'src/app/providers/shared/career.prov';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { BookProvider } from 'src/app/providers/reception-act/book.prov';
+import { CareerProvider } from 'src/app/providers/shared/career.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -16,7 +17,6 @@ import Swal from 'sweetalert2';
 export class NewBookComponent implements OnInit {
   title = 'Nuevo Libro';
   bookForm: FormGroup;
-  loading: boolean;
   opcionTitulacion = 'XI - TITULACIÓN INTEGRAL';
   cAsigned = false;
   nombreLibro = '';
@@ -42,6 +42,7 @@ export class NewBookComponent implements OnInit {
     private notificationsServices: NotificationsServices,
     private careerProvider: CareerProvider,
     private bookProvider: BookProvider,
+    private loadingService: LoadingService,
   ) {
     this.validateForm();
   }
@@ -66,7 +67,7 @@ export class NewBookComponent implements OnInit {
   }
 
   async onFormSubmit(form: NgForm) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     await this.createBook(form);
   }
 
@@ -117,7 +118,7 @@ export class NewBookComponent implements OnInit {
         this.onClose();
         this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Libro creado con éxito');
     }
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   public isCareerAssigned(career: ICareer): boolean {

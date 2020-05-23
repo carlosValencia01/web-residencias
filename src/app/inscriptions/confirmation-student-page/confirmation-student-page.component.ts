@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { MatStepper } from '@angular/material/stepper';
-import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
 import { MatDialog } from '@angular/material';
-import Swal from 'sweetalert2';
-import * as FileSaver from 'file-saver';
+import { MatStepper } from '@angular/material/stepper';
 import { Router } from '@angular/router';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 declare var jsPDF: any;
 
 @Component({
@@ -21,7 +20,6 @@ export class ConfirmationStudentPageComponent implements OnInit {
   _idStudent: String;
   data: any;
   studentData: any;
-  loading = false; 
 
    //Documentos
    docActa;
@@ -80,6 +78,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
     private notificationService: NotificationsServices,
     private router: Router,
     private imageToBase64Serv: ImageToBase64Service,
+    private loadingService: LoadingService,
   ) {
     this.getFonts();
     this.getIdStudent();
@@ -157,14 +156,14 @@ export class ConfirmationStudentPageComponent implements OnInit {
 
   onView(file) {
     this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando '+file+'.', '');
-    this.loading = true; 
+    this.loadingService.setLoading(true);
     switch (file) {
       case "Solicitud": {
         this.inscriptionsProv.getFile(this.docSolicitud[0].fileIdInDrive, this.docSolicitud[0].filename).subscribe(data => {
           var pubSolicitud = data.file;
           let buffSolicitud = new Buffer(pubSolicitud.data);
           var pdfSrcSolicitud = buffSolicitud;
-          this.loading = false; 
+          this.loadingService.setLoading(false);
           var blob = new Blob([pdfSrcSolicitud], {type: "application/pdf"});
 
           //FileSaver.saveAs(blob,this.data.email+'-Solicitud.pdf');
@@ -180,7 +179,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
           var pubContrato = data.file;
           let buffContrato = new Buffer(pubContrato.data);
           var pdfSrcContrato = buffContrato;
-          this.loading = false; 
+          this.loadingService.setLoading(false);
           var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});
 
           //FileSaver.saveAs(blob,this.data.email+'-Contrato.pdf');
@@ -227,7 +226,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
       //this.router.navigate(['/wizardInscription']);
       window.location.assign("/inscriptions/profileInscription");
-    });    
+    });
   }
 
   generatePDFAcuse() {
@@ -295,14 +294,14 @@ export class ConfirmationStudentPageComponent implements OnInit {
         [11, "CARTA COMPROMISO CERTIFICADO DE MAESTRIA",""] ,
         [12, "CARTA COMPROMISO TÍTULO DE MAESTRIA",""] ,
         [13, "CARTA COMPROMISO CÉDULA DE MAESTRIA",""] ,
-        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE MAESTRIA",""] 
+        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE MAESTRIA",""]
       ];
 
-      doc.autoTable(columns,data,{ 
+      doc.autoTable(columns,data,{
         headStyles: {fillColor: [20, 43, 88]},
         margin:{ top: 60 }
       });
-  
+
       // COMPROBANTE DE PAGO
       if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
@@ -319,7 +318,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 72.25);
       }
-  
+
       // CERTIFICADO MAESTRIA
       if(this.certificateMDoc != ''){
         doc.setTextColor(0,0,0);
@@ -336,8 +335,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 79.85);
       }
-  
-      // TITULO MAESTRIA 
+
+      // TITULO MAESTRIA
       if(this.titledMDoc != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
@@ -353,7 +352,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 87.45);
       }
-  
+
       // CEDULA MAESTRIA
       if(this.cedulaMDoc != ''){
         doc.setTextColor(0,0,0);
@@ -361,7 +360,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
-        doc.text('ENVIADO', 161, 95.05);  
+        doc.text('ENVIADO', 161, 95.05);
       } else {
         doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
@@ -370,11 +369,11 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 95.05);
       }
-  
+
       // ACTA DE EXAMEN MAESTRIA
       if(this.examActMDoc != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);   
+        doc.setFillColor(255, 245, 204);
         doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
@@ -387,7 +386,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 102.65);
       }
-  
+
       // CURP
       if(this.docCurp != ''){
         doc.setTextColor(0,0,0);
@@ -404,7 +403,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 110.25);
       }
-  
+
       // ACTA NACIMIENTO
       if(this.docActa != ''){
         doc.setTextColor(0,0,0);
@@ -420,8 +419,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 117.85);
-      }   
-  
+      }
+
       // ANALISIS CLINICOS
       if(this.docAnalisis != ''){
         doc.setTextColor(0,0,0);
@@ -437,7 +436,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 125.45);
-      }   
+      }
 
       // FOTOGRAFIA
       if(this.docFoto != ''){
@@ -454,7 +453,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 133.05);
-      }   
+      }
 
       // NSS
       if(this.docNss != ''){
@@ -471,7 +470,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 140.65);
-      }   
+      }
 
       // CC CERTIFICADO DE MAESTRIA
       if(this.cccertificateMDoc != ''){
@@ -488,7 +487,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 148.25);
-      }   
+      }
 
       // CC TITULO DE MAESTRIA
       if(this.cctitledMDoc != ''){
@@ -505,7 +504,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 155.85);
-      }  
+      }
 
       // CC CEDULA DE MAESTRIA
       if(this.cccedulaMDoc != ''){
@@ -522,7 +521,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 163.45);
-      }  
+      }
 
       // CC ACTA EXAMEN DE MAESTRIA
       if(this.ccexamActMDoc != ''){
@@ -539,7 +538,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 171.05);
-      }  
+      }
 
     }
 
@@ -558,14 +557,14 @@ export class ConfirmationStudentPageComponent implements OnInit {
         [11, "CARTA COMPROMISO CERTIFICADO DE LICENCIATURA",""] ,
         [12, "CARTA COMPROMISO TÍTULO DE LICENCIATURA",""] ,
         [13, "CARTA COMPROMISO CÉDULA DE LICENCIATURA",""] ,
-        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE LICENCIATURA",""] 
+        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE LICENCIATURA",""]
       ];
 
-      doc.autoTable(columns,data,{ 
+      doc.autoTable(columns,data,{
         headStyles: {fillColor: [20, 43, 88]},
         margin:{ top: 60 }
       });
-  
+
       // COMPROBANTE DE PAGO
       if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
@@ -582,7 +581,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 72.25);
       }
-  
+
       // CERTIFICADO LICENCIATURA
       if(this.certificateLDoc != ''){
         doc.setTextColor(0,0,0);
@@ -599,8 +598,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 79.85);
       }
-  
-      // TITULO LICENCIATURA 
+
+      // TITULO LICENCIATURA
       if(this.titledLDoc != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
@@ -616,7 +615,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 87.45);
       }
-  
+
       // CEDULA LICENCIATURA
       if(this.cedulaLDoc != ''){
         doc.setTextColor(0,0,0);
@@ -624,7 +623,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
-        doc.text('ENVIADO', 161, 95.05);  
+        doc.text('ENVIADO', 161, 95.05);
       } else {
         doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
@@ -633,11 +632,11 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 95.05);
       }
-  
+
       // ACTA DE EXAMEN LICENCIATURA
       if(this.examActLDoc != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);   
+        doc.setFillColor(255, 245, 204);
         doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
@@ -650,7 +649,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 102.65);
       }
-  
+
       // CURP
       if(this.docCurp != ''){
         doc.setTextColor(0,0,0);
@@ -667,7 +666,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 110.25);
       }
-  
+
       // ACTA NACIMIENTO
       if(this.docActa != ''){
         doc.setTextColor(0,0,0);
@@ -683,8 +682,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 117.85);
-      }   
-  
+      }
+
       // ANALISIS CLINICOS
       if(this.docAnalisis != ''){
         doc.setTextColor(0,0,0);
@@ -700,7 +699,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 125.45);
-      }   
+      }
 
       // FOTOGRAFIA
       if(this.docFoto != ''){
@@ -717,7 +716,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 133.05);
-      }   
+      }
 
       // NSS
       if(this.docNss != ''){
@@ -734,7 +733,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 140.65);
-      }   
+      }
 
       // CC CERTIFICADO DE LICENCIATURA
       if(this.cccertificateLDoc != ''){
@@ -751,7 +750,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 148.25);
-      }   
+      }
 
       // CC TITULO DE LICENCIATURA
       if(this.cctitledLDoc != ''){
@@ -768,7 +767,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 155.85);
-      }  
+      }
 
       // CC CEDULA DE LICENCIATURA
       if(this.cccedulaLDoc != ''){
@@ -785,7 +784,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 163.45);
-      }  
+      }
 
       // CC ACTA EXAMEN DE LICENCIATURA
       if(this.ccexamActLDoc != ''){
@@ -802,7 +801,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 171.05);
-      }  
+      }
 
     }
     if(!this.doctorate && !this.mastersDegree){
@@ -814,14 +813,14 @@ export class ConfirmationStudentPageComponent implements OnInit {
         [5, "ANÁLISIS CLÍNICOS",""],
         [6, "FOTOGRAFÍA",""],
         [7, "NÚMERO DE SEGURO SOCIAL",""],
-        [8, "CARTA COMPROMISO",""] 
+        [8, "CARTA COMPROMISO",""]
       ];
 
-      doc.autoTable(columns,data,{ 
+      doc.autoTable(columns,data,{
         headStyles: {fillColor: [20, 43, 88]},
         margin:{ top: 60 }
       });
-  
+
       // docComprobante
       if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
@@ -838,7 +837,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 72.25);
       }
-  
+
       // docCertificado
       if(this.docCertificado != ''){
         doc.setTextColor(0,0,0);
@@ -855,8 +854,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 79.85);
       }
-  
-      // docCurp 
+
+      // docCurp
       if(this.docCurp != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
@@ -872,7 +871,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 87.45);
       }
-  
+
       // docActa
       if(this.docActa != ''){
         doc.setTextColor(0,0,0);
@@ -880,7 +879,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
-        doc.text('ENVIADO', 161, 95.05);  
+        doc.text('ENVIADO', 161, 95.05);
       } else {
         doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
@@ -889,11 +888,11 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 95.05);
       }
-  
+
       // docAnalisis
       if(this.docAnalisis != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);   
+        doc.setFillColor(255, 245, 204);
         doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
@@ -906,7 +905,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 102.65);
       }
-  
+
       // docFoto
       if(this.docFoto != ''){
         doc.setTextColor(0,0,0);
@@ -923,7 +922,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 110.25);
       }
-  
+
       // docNss
       if(this.docNss != ''){
         doc.setTextColor(0,0,0);
@@ -939,8 +938,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 117.85);
-      }   
-  
+      }
+
       // docCompromiso
       if(this.docCompromiso != ''){
         doc.setTextColor(0,0,0);
@@ -956,10 +955,10 @@ export class ConfirmationStudentPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 125.45);
-      }   
+      }
     }
 
-    this.loading = false; 
+    this.loadingService.setLoading(false);
     window.open(doc.output('bloburl'), '_blank');
   }
 

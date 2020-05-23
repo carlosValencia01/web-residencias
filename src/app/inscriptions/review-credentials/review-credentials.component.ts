@@ -1,8 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, ShowOnDirtyErrorStateMatcher } from '@angular/material';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 @Component({
   selector: 'app-review-credentials',
@@ -14,7 +15,6 @@ export class ReviewCredentialsComponent implements OnInit {
   title = 'CREDENCIALES A IMPRIMIR';
   textButton = 'Cambiar Estatus de Credenciales';
   pdfSrc;
-  loading: boolean;
   showDocument = false;
 
   constructor(
@@ -22,6 +22,7 @@ export class ReviewCredentialsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private inscriptionsProv: InscriptionsProvider,
     private notificationService: NotificationsServices,
+    private loadingService: LoadingService,
   ) {
     if(this.data.students.length == undefined){
       this.title = 'CREDENCIAL DE: '+this.data.students.fullName+' - '+this.data.students.controlNumber
@@ -38,26 +39,26 @@ export class ReviewCredentialsComponent implements OnInit {
   }
 
   showCredentials(credentials) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.pdfSrc = credentials;
     this.showDocument = true;
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   changeStatusCredentials() {
     if(this.data.students.length == undefined){
-      this.loading = true;
+      this.loadingService.setLoading(true);
       this.updateStudent(this.data.students._id);
       this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
-      this.loading = false;
+      this.loadingService.setLoading(false);
       this.onClose();
     } else {
         for (var i = 0; i < this.data.students.length; i++) {
-          this.loading = true;
+          this.loadingService.setLoading(true);
           this.updateStudent(this.data.students[i]._id);
           if(i == this.data.students.length-1){
             this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
-            this.loading = false;
+            this.loadingService.setLoading(false);
             this.onClose();
           }
         }

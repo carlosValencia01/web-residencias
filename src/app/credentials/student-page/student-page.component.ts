@@ -1,21 +1,22 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FormErrorsService } from 'src/app/services/app/forms.errors.service';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { HotkeysService, Hotkey } from 'angular2-hotkeys';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as jsPDF from 'jspdf';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Hotkey, HotkeysService } from 'angular2-hotkeys';
 import * as JsBarcode from 'jsbarcode';
+import * as jsPDF from 'jspdf';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
-import { CookiesService } from 'src/app/services/app/cookie.service';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eRegex } from 'src/app/enumerators/shared/eRegex.enum';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
 import { CareerProvider } from 'src/app/providers/shared/career.prov';
-import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
-import { eRegex } from 'src/app/enumerators/shared/eRegex.enum';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { FormErrorsService } from 'src/app/services/app/forms.errors.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 @Component({
   selector: 'app-student-page',
@@ -26,7 +27,6 @@ export class StudentPageComponent implements OnInit {
 
   @ViewChild('searchinput') searchInput: ElementRef;
 
-  loading = false;
   data: Array<any>;
   search: any;
   showTable = false;
@@ -82,7 +82,8 @@ export class StudentPageComponent implements OnInit {
     private router: Router,
     private routeActive: ActivatedRoute,
     private inscriptionProv: InscriptionsProvider,
-    private careerProv: CareerProvider  
+    private careerProv: CareerProvider,
+    private loadingService: LoadingService,
   ) {
     this.getBase64ForStaticImages();
     this.cleanCurrentStudent();
@@ -112,7 +113,7 @@ export class StudentPageComponent implements OnInit {
       firstName:'',
       fatherLastName:'',
       motherLastName:''
-      
+
     };
   }
 
@@ -160,7 +161,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   newStudentData() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
 
     const data = {
       controlNumber: this.formStudent.get('numberControlInput').value,
@@ -180,9 +181,9 @@ export class StudentPageComponent implements OnInit {
 
       this.currentStudent = student;
     }, error => {
-      this.loading = false;
+      this.loadingService.setLoading(false);
       this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error al guardar, intente nuevamente', '');
-    }, () => this.loading = false);
+    }, () => this.loadingService.setLoading(false));
   }
 
   showFormValues(student) {
@@ -257,18 +258,18 @@ export class StudentPageComponent implements OnInit {
 
   await this.studentProv.getStatusFromSii(student.controlNumber).toPromise().then(
     res=>{
-      studentStatus = res.status;   
+      studentStatus = res.status;
     }
   );
 
   let userRol = this.cookiesService.getData().user.rol.name;
-  
+
   if (studentStatus === 'ACT' || userRol === 'Administrador') {
     if (student.nss) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       this.printCredential(student);
     } else {
-      this.loading = false;
+      this.loadingService.setLoading(false);
       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
     }
   } else {
@@ -320,10 +321,10 @@ export class StudentPageComponent implements OnInit {
               doc.setFontSize(8);
               doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
               // this.loading=false;
-              this.loading = false;
+              this.loadingService.setLoading(false);
               window.open(doc.output('bloburl'), '_blank');
             } else {
-              this.loading = false;
+              this.loadingService.setLoading(false);
               this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
             }
   }
@@ -333,18 +334,18 @@ export class StudentPageComponent implements OnInit {
   searchStudent(showForm) {
     this.photoStudent = null;
     this.showForm = showForm;
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProv.searchStudents(this.search).subscribe(res => {
       this.data = res.students;
       this.data = this.data.map( (data)=>{
-        if(data.careerId){                    
+        if(data.careerId){
           const career = this.careers.filter(career=> career._id == data.careerId)[0];
           return {
             controlNumber: data.controlNumber,
             fullName: data.fullName,
             nss: data.nss,
             career: career.fullName,
-            _id: data._id,            
+            _id: data._id,
             firstName:data.firstName,
             fatherLastName:data.fatherLastName,
             motherLastName:data.motherLastName,
@@ -365,7 +366,7 @@ export class StudentPageComponent implements OnInit {
       }
 
     }, err => {
-    }, () => this.loading = false);
+    }, () => this.loadingService.setLoading(false));
   }
 
   // Actualizacion de información basica (sin imagen) ************************************************************//#endregion
@@ -402,7 +403,7 @@ export class StudentPageComponent implements OnInit {
 
   updateStudentData() {
     this.isNewStudent = false;
-    if (!this.formValidation()) {      
+    if (!this.formValidation()) {
       this.currentStudent.fullName = this.formStudent.get('firstNameInput').value.toUpperCase()+' ' +this.formStudent.get('fatherFirstNameInput').value.toUpperCase() + ' '+ this.formStudent.get('motherFirstNameInput').value.toUpperCase();
       this.currentStudent.controlNumber = this.formStudent.get('numberControlInput').value;
       this.currentStudent.careerId = this.currentStudent.careerId;
@@ -410,7 +411,7 @@ export class StudentPageComponent implements OnInit {
       this.currentStudent.firstName = this.formStudent.get('firstNameInput').value.toUpperCase();
       this.currentStudent.fatherLastName = this.formStudent.get('fatherFirstNameInput').value.toUpperCase();
       this.currentStudent.motherLastName = this.formStudent.get('motherFirstNameInput').value.toUpperCase();
-      this.loading = true;
+      this.loadingService.setLoading(true);
       this.studentProv.updateStudent(this.currentStudent._id, this.currentStudent).subscribe(res => {
         // if (this.imgForSend) {
         //   this.uploadFile(this.currentStudent._id, false);
@@ -423,7 +424,7 @@ export class StudentPageComponent implements OnInit {
         this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Alumno actualizado correctamente', '');
       }, error => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
-      }, () => this.loading = false);
+      }, () => this.loadingService.setLoading(false));
     }
   }
 
@@ -469,7 +470,7 @@ export class StudentPageComponent implements OnInit {
       });
     }
   }
-  
+
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
@@ -494,18 +495,18 @@ export class StudentPageComponent implements OnInit {
   }
 
   async uploadFile() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     var folderId = await this.getFolderId(this.currentStudent._id,this.currentStudent.controlNumber);
     const red = new FileReader;
             red.addEventListener('load', () => {
               let file = { mimeType: this.selectedFile.type, nameInDrive: this.currentStudent.controlNumber + '-FOTO.jpg', bodyMedia: red.result.toString().split(',')[1], folderId: folderId, newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' };
-        
+
               this.inscriptionProv.uploadFile2(file).subscribe(
                 resp => {
                   if (resp.action == 'create file') {
-        
+
                     const documentInfo = {
-        
+
                       doc: {
                         filename: resp.name,
                         type: 'DRIVE',
@@ -522,15 +523,15 @@ export class StudentPageComponent implements OnInit {
                         this.haveImage = true;
                         this.notificationServ.showNotification(eNotificationType.SUCCESS,
                           'Exito', 'Foto cargada correctamente.');
-        
+
                       },
                       err => {
                         console.log(err);
-        
-                      }, () => this.loading = false
+
+                      }, () => this.loadingService.setLoading(false)
                     );
                   } else {
-        
+
                     const documentInfo = {
                       filename: resp.filename,
                       status: {
@@ -547,16 +548,17 @@ export class StudentPageComponent implements OnInit {
                       err => console.log(err)
                     );
                   }
-                  this.loading = false;
+                  this.loadingService.setLoading(false);
                 },
                 err => {
-                  console.log(err); this.loading = false;
+                  console.log(err);
+                  this.loadingService.setLoading(false);
                 }
               );
             }, false);
             red.readAsDataURL(this.croppedImage);
-         
-    
+
+
   }
 
   // Zona de test *********************************************************************************************//#region
@@ -576,7 +578,7 @@ export class StudentPageComponent implements OnInit {
   }
 
   getImageFromService(id) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
       this.haveImage = true;
@@ -585,9 +587,9 @@ export class StudentPageComponent implements OnInit {
         this.haveImage = false;
         this.photoStudent = 'assets/imgs/studentAvatar.png';
         this.showImg = true;
-        this.loading = false;
+        this.loadingService.setLoading(false);
       }
-    }, () => this.loading = false);
+    }, () => this.loadingService.setLoading(false));
   }
 
   async getDocuments(id) {
@@ -629,7 +631,7 @@ export class StudentPageComponent implements OnInit {
   async getFolderId(id, controlNumber){
 
     var folderId='';
-    
+
     await this.inscriptionProv.getActivePeriod().toPromise().then(
      async period=>{
         if(period.period){
@@ -654,42 +656,42 @@ export class StudentPageComponent implements OnInit {
     return folderId;
   }
 
-  isNumber(event){        
+  isNumber(event){
     const pattern = /[0-9]/;
     const inputChar = String.fromCharCode(event.charCode);
 
-    if (!pattern.test(inputChar)) {    
+    if (!pattern.test(inputChar)) {
         // invalid character, prevent input
         event.preventDefault();
     }
   }
 
   addCampaign(student) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProv.addCampaignStudent(student.controlNumber)
       .subscribe(_ => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
         this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Éxito al agregar a campaña', '');
         this.searchStudent(false);
       }, _ => {
         console.log(_);
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Error, no se pudo agregar a campaña', '');
-        this.loading = false;
+        this.loadingService.setLoading(false);
       });
   }
 
   removeCampaign(student) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProv.removeCampaignStudent(student.controlNumber)
       .subscribe(_ => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
         this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Éxito al remover de campaña', '');
         this.searchStudent(false);
       }, _ => {
         console.log(_);
         this.notificationServ.showNotification(eNotificationType.ERROR, 'Error, no se pudo remover de campaña', '');
-        this.loading = false;
+        this.loadingService.setLoading(false);
       });
   }
- 
+
 }

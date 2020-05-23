@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
 import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
 import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { RequestService } from 'src/app/services/reception-act/request.service';
-import { MatDialog } from '@angular/material';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
-import Swal from 'sweetalert2';
-import { StepperDocumentComponent } from 'src/app/titulation/stepper-document/stepper-document.component';
 import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { RequestService } from 'src/app/services/reception-act/request.service';
+import { StepperDocumentComponent } from 'src/app/titulation/stepper-document/stepper-document.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-upload-file-titled',
@@ -23,7 +24,6 @@ export class UploadFileTitledComponent implements OnInit {
   public UploadINE: IDocument;
   public UploadCedula: IDocument;
   public UploadXML: IDocument;
-  public showLoading = false;
 
   constructor(
     private _RequestService: RequestService,
@@ -31,6 +31,7 @@ export class UploadFileTitledComponent implements OnInit {
     public dialog: MatDialog,
     public _NotificationsServices: NotificationsServices,
     private _CookiesService: CookiesService,
+    private loadingService: LoadingService,
   ) { }
 
   ngOnInit() {
@@ -149,15 +150,15 @@ export class UploadFileTitledComponent implements OnInit {
         this.openView(pdf, isBase64, type);
       }
     } else {
-      this.showLoading = true;
+      this.loadingService.setLoading(true);
       this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Recuperando archivo');
       await this.delay(5000);
       this._RequestProvider.getResource(this.Request._id, type).subscribe(data => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.openView(data, isBase64, type);
 
       }, _ => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this._NotificationsServices
           .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Archivo no recuperado');
       });
@@ -223,14 +224,14 @@ export class UploadFileTitledComponent implements OnInit {
     }
     frmData.append('phase', this.Request.phase);
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Cargando archivo');
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this._RequestProvider.uploadFile(this.Request._id, frmData).subscribe(data => {
       const doc = this.getDocument(type);
       doc.status = eStatusRequest.PROCESS;
       document.status = eStatusRequest.PROCESS; // eStatusRequest.PROCESS;
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this._NotificationsServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
     });

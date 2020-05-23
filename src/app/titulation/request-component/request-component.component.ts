@@ -1,25 +1,26 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import { iIntegrant } from 'src/app/entities/reception-act/integrant.model';
+import { uRequest } from 'src/app/entities/reception-act/request';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
+import { eOperation } from 'src/app/enumerators/reception-act/operation.enum';
+import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
+import { eCAREER } from 'src/app/enumerators/shared/career.enum';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eCAREER } from 'src/app/enumerators/shared/career.enum';
-import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { eOperation } from 'src/app/enumerators/reception-act/operation.enum';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { ActivatedRoute, Router } from '@angular/router';
 import { EmployeeAdviserComponent } from 'src/app/titulation/employee-adviser/employee-adviser.component';
 import { IntegrantsComponentComponent } from 'src/app/titulation/integrants-component/integrants-component.component';
-import { iIntegrant } from 'src/app/entities/reception-act/integrant.model';
-import { MatDialog } from '@angular/material';
-import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { uRequest } from 'src/app/entities/reception-act/request';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
 import Swal from 'sweetalert2';
-import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
-import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
 
 @Component({
   selector: 'app-request-component',
@@ -41,7 +42,6 @@ export class RequestComponentComponent implements OnInit {
   public observations: string;
   public viewObservation = false;
   public isEdit = false;
-  public showLoading = false;
   public folderId: String;
   public activePeriod;
   public foldersByPeriod = [];
@@ -67,6 +67,7 @@ export class RequestComponentComponent implements OnInit {
     private routeActive: ActivatedRoute,
     public dialog: MatDialog,
     private imgService: ImageToBase64Service,
+    private loadingService: LoadingService,
   ) {
     this.userInformation = this.cookiesService.getData().user;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -96,7 +97,7 @@ export class RequestComponentComponent implements OnInit {
   }
 
   private getRequest() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.studentProvider.getRequest(this.userInformation._id).subscribe(res => {
       if (typeof (res) !== 'undefined' && res.request.length > 0
         && (res.request[0].phase === 'Capturado' && res.request[0].phase !== 'None')
@@ -113,10 +114,10 @@ export class RequestComponentComponent implements OnInit {
       } else {
         this.operationMode = eOperation.NEW;
       }
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
     }, error => {
       this.operationMode = eOperation.NEW;
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
     });
   }
 
@@ -263,20 +264,20 @@ export class RequestComponentComponent implements OnInit {
     this.frmData.append('department', this.deptoInfo.name);
     this.frmData.append('boss', this.deptoInfo.boss);
     this.frmData.append('titulationOption', this.frmRequest.get('titulationOption').value);
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     switch (this.operationMode) {
       case eOperation.NEW: {
         this.studentProvider.request(this.userInformation._id, this.frmData).subscribe(data => {
           this.studentProvider.addIntegrants(data.request._id, this.integrants).subscribe(_ => {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud guardada correctamente');
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             this.btnSubmitRequest.emit(true);
           }, _ => {
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar integrantes');
             this.btnSubmitRequest.emit(false);
           });
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           if (data.code && data.code !== 200) {
             this.notificationsServ
               .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al enviar código de verificación');
@@ -286,7 +287,7 @@ export class RequestComponentComponent implements OnInit {
                 'Su código de verificación ha sido enviado al correo ingresado');
           }
         }, _ => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al guardar solicitud');
           this.btnSubmitRequest.emit(false);
         });
@@ -308,7 +309,7 @@ export class RequestComponentComponent implements OnInit {
             this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud editada correctamente');
             this.isEdit = false;
             this.viewObservation = false;
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             if (isEmailChanged) {
               if (data.code && data.code !== 200) {
                 this.notificationsServ
@@ -322,13 +323,13 @@ export class RequestComponentComponent implements OnInit {
             this.getRequest();
             this.btnSubmitRequest.emit(true);
           }, _ => {
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             this.notificationsServ
               .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error al agregar integrantes');
             this.btnSubmitRequest.emit(false);
           });
         }, _ => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
           this.btnSubmitRequest.emit(false);
         });
@@ -338,7 +339,7 @@ export class RequestComponentComponent implements OnInit {
   }
 
   public Send(): void {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     const data = {
       operation: eStatusRequest.ACCEPT,
       doer: this.cookiesService.getData().user.name.fullName,
@@ -347,11 +348,11 @@ export class RequestComponentComponent implements OnInit {
       boss: this.request.department.boss
     };
     this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Enviada');
       this.btnSubmitRequest.emit(true);
     }, error => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto Recepcional', error);
       this.btnSubmitRequest.emit(false);
     });

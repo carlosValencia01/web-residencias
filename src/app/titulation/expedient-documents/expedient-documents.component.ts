@@ -1,22 +1,23 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import * as moment from 'moment';
+import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
+import { uRequest } from 'src/app/entities/reception-act/request';
 import { iRequest } from 'src/app/entities/reception-act/request.model';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
-import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
-import { ObservationsComponentComponent } from '../observations-component/observations-component.component';
-import { uRequest } from 'src/app/entities/reception-act/request';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { RequestService } from 'src/app/services/reception-act/request.service';
 import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
 import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
-import { MatDialog } from '@angular/material';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import * as moment from 'moment';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { RequestService } from 'src/app/services/reception-act/request.service';
+import { ObservationsComponentComponent } from '../observations-component/observations-component.component';
 
 @Component({
   selector: 'app-expedient-documents',
@@ -57,7 +58,6 @@ export class ExpedientDocumentsComponent implements OnInit {
   public titledHour: string;
   public registeredDate: string;
   public folderId: string;
-  public showLoading: boolean;
   public photo;
   public showImg = false;
 
@@ -70,6 +70,7 @@ export class ExpedientDocumentsComponent implements OnInit {
     private _StudentProvider: StudentProvider,
     public dialog: MatDialog,
     private inscriptionProv: InscriptionsProvider,
+    private loadingService: LoadingService,
   ) { }
 
   ngOnInit() {
@@ -260,7 +261,7 @@ export class ExpedientDocumentsComponent implements OnInit {
     const type = <eFILES><keyof typeof eFILES>file;
     let exists = false;
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Recuperando archivo');
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     switch (type) {
       case eFILES.SOLICITUD: {
         exists = typeof (this.FileRequest) !== 'undefined';
@@ -326,7 +327,7 @@ export class ExpedientDocumentsComponent implements OnInit {
 
     if (exists) {
       this.requestProvider.getResource(this.Request._id, type).subscribe(data => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.dialog.open(ExtendViewerComponent, {
           data: {
             source: data,
@@ -338,12 +339,12 @@ export class ExpedientDocumentsComponent implements OnInit {
           width: '60em',
         });
       }, _ => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this._NotificationsServices
           .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Documento no encontrado');
       });
     } else {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
     }
   }
 

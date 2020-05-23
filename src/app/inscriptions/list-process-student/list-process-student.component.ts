@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
-import { StudentInformationComponent } from '../student-information/student-information.component';
-import { ReviewAnalysisComponent } from '../review-analysis/review-analysis.component';
-import { ReviewCredentialsComponent } from '..//review-credentials/review-credentials.component';
+import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
-import Swal from 'sweetalert2';
-import { Router, ActivatedRoute } from '@angular/router';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import * as JsBarcode from 'jsbarcode';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import * as JsBarcode from 'jsbarcode';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
+import { StudentInformationComponent } from '../student-information/student-information.component';
 
 const jsPDF = require('jspdf');
 
@@ -26,7 +24,6 @@ export class ListProcessStudentComponent implements OnInit {
   students;
   listStudentsProcess;
   periods = [];
-  loading = false;
 
   listCovers;
 
@@ -82,8 +79,9 @@ export class ListProcessStudentComponent implements OnInit {
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
     private router: Router,
-    private studentProv: StudentProvider
-  ) { 
+    private studentProv: StudentProvider,
+    private loadingService: LoadingService,
+  ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -129,8 +127,8 @@ export class ListProcessStudentComponent implements OnInit {
 
       this.listStudentsProcess = this.students;
       this.listCovers = this.listStudentsProcess;
-      this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);   
-      this.eventFilterStatus();          
+      this.credentialStudents = this.filterItemsCarreer(this.searchCarreer);
+      this.eventFilterStatus();
     });
   }
 
@@ -200,7 +198,7 @@ export class ListProcessStudentComponent implements OnInit {
         student.inscriptionStatus.toLowerCase().indexOf(E.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(EP.toLowerCase()) > -1 ||
         student.inscriptionStatus.toLowerCase().indexOf(V.toLowerCase()) > -1 ||
-        student.inscriptionStatus.toLowerCase().indexOf(A.toLowerCase()) > -1) 
+        student.inscriptionStatus.toLowerCase().indexOf(A.toLowerCase()) > -1)
     });
   }
 
@@ -262,14 +260,14 @@ export class ListProcessStudentComponent implements OnInit {
   // Exportar alumnos a excel
   excelExport() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcel'), {
       name: 'Reporte Alumnos Inscripcion.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
 
@@ -427,7 +425,7 @@ export class ListProcessStudentComponent implements OnInit {
   }
 
   updateSolicitud(student){
-    this.loading = true;
+    this.loadingService.setLoading(true);
     var day = student.curp.substring(8, 10);
     var month = student.curp.substring(6, 8);
     var year = student.curp.substring(4, 6);
@@ -670,7 +668,7 @@ export class ListProcessStudentComponent implements OnInit {
   }
 
   async updateDocument(document, student){
-    
+
     const fileId = student.documents[0].fileIdInDrive;
     const folderId = await this.getFolderId(student._id);
     const documentInfo = {
@@ -678,7 +676,7 @@ export class ListProcessStudentComponent implements OnInit {
       nameInDrive: student.controlNumber + '-SOLICITUD.pdf',
       bodyMedia: document,
       folderId: folderId,
-      newF: false, 
+      newF: false,
       fileId: fileId
     };
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
@@ -695,19 +693,19 @@ export class ListProcessStudentComponent implements OnInit {
             message: 'Se envio por primera vez'
           }
         };
-        
+
         await this.studentProv.uploadDocumentDrive(student._id, documentInfo2).subscribe(
           updated => {
-            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');    
-             this.loading = false;
+            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');
+             this.loadingService.setLoading(false);
           },
           err => {
             console.log(err);
-          }, () => this.loading = false
+          }, () => this.loadingService.setLoading(false)
         );
       },
       err => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
         console.log(err);
       }
     );
@@ -716,10 +714,10 @@ export class ListProcessStudentComponent implements OnInit {
   async getFolderId(id){
     let folderId;
    await this.studentProv.getFolderId(id).toPromise().then(
-      folder => {        
+      folder => {
         if (folder.folder) {// folder exists
           if (folder.folder.idFolderInDrive) {
-            folderId = folder.folder.idFolderInDrive;                        
+            folderId = folder.folder.idFolderInDrive;
           }
         }
       });
@@ -736,18 +734,18 @@ export class ListProcessStudentComponent implements OnInit {
       var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
       var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
       var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-      
+
       if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
         // Cambiar estatus a ACEPTADO
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
-        }); 
+        });
         this.getStudents();
         return;
-      } 
+      }
       if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
         // Cambiar estatus a VALIDADO
         this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
-        });   
+        });
         this.getStudents();
         return;
       }

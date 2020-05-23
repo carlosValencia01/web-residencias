@@ -8,7 +8,7 @@
       </div>
       <div class="col-4 p-0" *ngIf="showInputCurp">
         <mat-form-field style="width: 220px;">
-          <input type="text" matInput oninput="this.value=this.value.toUpperCase()" placeholder="CURP" [(ngModel)]="data.student.curp" name="curp" pattern="^[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}$">   
+          <input type="text" matInput oninput="this.value=this.value.toUpperCase()" placeholder="CURP" [(ngModel)]="data.student.curp" name="curp" pattern="^[A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}$">
         </mat-form-field>
         <div style="display: inline;">
           <button type="button" [disabled]="data.student.curp === ''" class="btn btn-secondary" style="margin-left: 7px;" (click)="updateCurp()">Actualizar</button>
@@ -16,7 +16,7 @@
       </div>
       <div class="col-4 p-0" *ngIf="showInputNss">
         <mat-form-field style="width: 220px;">
-          <input type="text" matInput placeholder="NSS" [(ngModel)]="data.student.nss" name="nss" pattern="^[0-9]{11}$">   
+          <input type="text" matInput placeholder="NSS" [(ngModel)]="data.student.nss" name="nss" pattern="^[0-9]{11}$">
         </mat-form-field>
         <div style="display: inline;">
           <button type="button" [disabled]="data.student.nss === ''" class="btn btn-secondary" style="margin-left: 7px;" (click)="updateNss()">Actualizar</button>
@@ -31,7 +31,7 @@
   </div>
 </div>
 <div class="content noScroll">
-  
+
    <div class="row text-center mt-3 p-0">
     <div [class.col-6]="!viewdoc" [class.col-2]="viewdoc">
       <div
@@ -39,29 +39,29 @@
         class="row text-center"
       >
         <div class="col-12">
-          <mat-checkbox           
-            (change)="selectAll()"            
+          <mat-checkbox
+            (change)="selectAll()"
             [checked]="pendings === selectPendings"
             color="warn"
             >Seleccionar todos</mat-checkbox
           >
         </div>
-      </div> 
+      </div>
     </div>
-    <div [class.col-6]="!viewdoc" [class.col-2]="viewdoc" 
+    <div [class.col-6]="!viewdoc" [class.col-2]="viewdoc"
     *ngIf="data.user === 'Administrador' && pendings > 0"
     >
       <button
-        mat-stroked-button 
-        color="primary"        
+        mat-stroked-button
+        color="primary"
         *ngIf="!viewdoc"
         (click)="acceptManyDocuments()"
       >
         Aceptar documento(s)
       </button>
       <button
-        mat-stroked-button 
-        color="primary"        
+        mat-stroked-button
+        color="primary"
         *ngIf="viewdoc"
         (click)="acceptManyDocuments()"
       >
@@ -70,27 +70,27 @@
     </div>
    </div>
   <div class="row text-center" *ngIf="documents.length>0">
-      
-      
-      <div 
-        class="text-center pb-1" 
-        [class.row]="!viewdoc" 
-        [class.col-12]="!viewdoc" 
+
+
+      <div
+        class="text-center pb-1"
+        [class.row]="!viewdoc"
+        [class.col-12]="!viewdoc"
         [class.col-2]="viewdoc"
         [class.item-maxh]="viewdoc"
         >
         <div
-          *ngFor="let doc of documents; let i = index"          
-          [class.col-3]="!viewdoc"          
+          *ngFor="let doc of documents; let i = index"
+          [class.col-3]="!viewdoc"
           class="mt-1"
         >
-          <mat-card          
+          <mat-card
           [class.adjustcard]="viewdoc"
           [class.cardini]="!viewdoc"
           [class.process]="doc.status == 'EN PROCESO'"
           [class.reject]="doc.status == 'RECHAZADO'"
           [class.validate]="doc.status == 'VALIDADO'"
-          [class.accept]="doc.status == 'ACEPTADO'"          
+          [class.accept]="doc.status == 'ACEPTADO'"
           class="p-0"
           >
             <mat-card-header
@@ -125,7 +125,7 @@
             </mat-card-content>
           </mat-card>
         </div>
-        
+
       </div>
       <div [class.col-10]="viewdoc" [class.noview]="!viewdoc" class="mt-2">
         <div class="content" [class.viewdoc]="viewdoc">
@@ -174,7 +174,7 @@
                           </div>
                         </div>
                       </div>
-                    </div>                        
+                    </div>
                       <div
                         class="col-12"
                         *ngIf="data.user === 'Administrador' && docto.status !== 'ACEPTADO'"
@@ -198,7 +198,7 @@
                           </div>
                         </div>
                       </div>
-                      </div>                        
+                      </div>
                   </div>
                 </div>
               </div>
@@ -239,10 +239,7 @@
             </div>
           </div>
         </div>
-      </div>      
-  </div> 
+      </div>
+  </div>
 
-</div>
-<div class="center">
-  <app-loader [loading]="loading"></app-loader>
 </div>

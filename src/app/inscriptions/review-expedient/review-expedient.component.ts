@@ -1,12 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-
-import Swal from 'sweetalert2';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 import { ExpedientHistoryComponent } from '../expedient-history/expedient-history.component';
 
 @Component({
@@ -26,7 +25,6 @@ export class ReviewExpedientComponent implements OnInit {
   docDisplayName: string;
   docto;
   refused;
-  loading = false;
   showInputCurp = false;
   showInputNss = false;
 
@@ -43,6 +41,7 @@ export class ReviewExpedientComponent implements OnInit {
     private inscriptionsProv: InscriptionsProvider,
     private notificationsServices: NotificationsServices,
     public dialog: MatDialog,
+    private loadingService: LoadingService,
   ) {
     this.degree = this.data.student.careerId.acronym === 'DCA' ? 'doc' : this.data.student.careerId.acronym === 'MCA' || this.data.student.careerId.acronym === 'MTI' ? 'mas' : 'lic';
 
@@ -138,7 +137,7 @@ export class ReviewExpedientComponent implements OnInit {
 
       this.typeDocShow = docname === 'FOTO' ? 'image' : 'pdf';
       this.docDisplayName = docname;
-      this.loading = true;
+      this.loadingService.setLoading(true);
       this.inscriptionsProv.getFile(this.docto .fileIdInDrive, this.docto.file.filename).subscribe(data => {
         var docdata = data.file;
 
@@ -149,7 +148,7 @@ export class ReviewExpedientComponent implements OnInit {
           this.image = 'data:image/png;base64,' + docdata;
         }
         this.showDocument = true;
-      }, (err) => { }, () => this.loading = false);
+      }, (err) => { }, () => this.loadingService.setLoading(false));
 
   }
 

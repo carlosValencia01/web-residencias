@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { CalendarView, CalendarEvent, CalendarMonthViewBeforeRenderEvent } from 'angular-calendar';
+import { MatDialog } from '@angular/material';
+import { CalendarEvent, CalendarMonthViewBeforeRenderEvent, CalendarView } from 'angular-calendar';
+import { isSameDay, isSameMonth } from 'date-fns';
+import * as moment from 'moment';
 import { Subject } from 'rxjs';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { sourceDataProvider } from 'src/app/providers/reception-act/sourceData.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { isSameMonth, isSameDay } from 'date-fns';
-import { MatDialog } from '@angular/material';
-import { ViewMoreComponent } from 'src/app/titulation/view-more/view-more.component';
-import { ActNotificacionComponent } from 'src/app/titulation/act-notificacion/act-notificacion.component';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import * as moment from 'moment';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { ActNotificacionComponent } from 'src/app/titulation/act-notificacion/act-notificacion.component';
+import { ViewMoreComponent } from 'src/app/titulation/view-more/view-more.component';
 
 require('jspdf-autotable');
 const jsPDF = require('jspdf');
@@ -26,7 +27,6 @@ moment.locale('es');
   styleUrls: ['./view-appointment-page.component.scss']
 })
 export class ViewAppointmentPageComponent implements OnInit {
-  loading = false;
   private WIDTH = 286;
   private HEIGHT = 239;
   private FONT = 'Montserrat';
@@ -70,6 +70,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     public dialog: MatDialog,
     private _CookiesService: CookiesService,
     public _getImage: ImageToBase64Service,
+    private loadingService: LoadingService,
   ) {
     this.carrers = [];
     this._getImageToPdf();
@@ -305,7 +306,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     const filteredCareers = this.carrers.filter((ca) => ca.status == true);
     this.mapedStudents = [];
     if (filteredCareers.length > 0) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       const y = 60;
 
       const doc = this.newDocumentTec(true, false);
@@ -376,7 +377,7 @@ export class ViewAppointmentPageComponent implements OnInit {
             }
           }
         );
-        this.loading = false;
+        this.loadingService.setLoading(false);
         window.open(doc.output('bloburl'), '_blank');
       }, 500);
 

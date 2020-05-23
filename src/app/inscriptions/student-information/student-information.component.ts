@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 @Component({
   selector: 'app-student-information',
@@ -15,8 +16,6 @@ export class StudentInformationComponent implements OnInit {
   title = 'INFORMACIÓN DEL ESTUDIANTE';
   registerForm: FormGroup;
   studentData: any;
-
-  loading : boolean;
 
   // Datos Alumno
   apellidoPaterno: String;
@@ -59,9 +58,10 @@ export class StudentInformationComponent implements OnInit {
     public dialogRef: MatDialogRef<StudentInformationComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private inscriptionsProv: InscriptionsProvider,
-    private formBuilder: FormBuilder,  
+    private formBuilder: FormBuilder,
     private notificationsServices: NotificationsServices,
-  ) { 
+    private loadingService: LoadingService,
+  ) {
     this.getInformation();
   }
 
@@ -145,7 +145,7 @@ export class StudentInformationComponent implements OnInit {
   }
 
   async onFormSubmit(form: NgForm) {
-    this.loading=true;
+    this.loadingService.setLoading(true);
     await this.updateStudent(form, this.studentData._id);
   }
 
@@ -154,10 +154,10 @@ export class StudentInformationComponent implements OnInit {
       // Actualizar fullName
       var newFullName = data.firstName+' '+data.fatherLastName+' '+data.motherLastName ;
       this.inscriptionsProv.updateStudent({fullName:newFullName}, id).subscribe(res => {
-      });   
+      });
     }, err=>{},
     ()=>{
-      this.loading=false
+      this.loadingService.setLoading(false)
       this.onClose();
       this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Datos Actualizados.');
     });
