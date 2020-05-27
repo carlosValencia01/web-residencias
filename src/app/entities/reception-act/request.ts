@@ -665,7 +665,7 @@ export class uRequest {
         return doc;
     }
 
-    public testReport(version: boolean): jsPDF {
+    public testReport(version: boolean,firmada?: boolean): jsPDF {
 
         const doc = this.newDocumentTec(true, false);
         const president = this.juryGender.president === 'MASCULINO'? 'Presidente':'Presidenta';
@@ -734,13 +734,17 @@ export class uRequest {
 
         doc.text(`COTEJÓ`, this.MARGIN.LEFT + 32, 190, { align: 'left' });
 
-        // doc.addImage(this.serviceFirm, 'PNG', this.MARGIN.LEFT + 10, 198, 60, 20);
         let positionGender = 'JEFE';
         // this.JDeptoDiv.gender === 'FEMENINO' ? 'JEFA' : 'JEFE';
         doc.text(`${this.letterCapital(positionGender)} del Departamento de Servicios Escolares`, this.MARGIN.LEFT + 32, 220, { maxWidth: 50, align: 'left' });
-        doc.text(this.gradeMax(this.JDeptoEsc)+' '+servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
+        // doc.text(this.gradeMax(this.JDeptoEsc)+' '+servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
+        doc.text(servicios, this.MARGIN.LEFT + 32, 226, { maxWidth: 50, align: 'left' });
 
-        // doc.addImage(this.directorFirm, 'PNG', this.WIDTH / 2, 221, 60, 25);
+        if(firmada){
+            doc.addImage(this.serviceFirm, 'PNG', this.MARGIN.LEFT + 25, 198, 60, 20);
+            doc.addImage(this.directorFirm, 'PNG', this.WIDTH / 2, 221, 60, 25);
+        }
+
         doc.text(this.gradeMax(this.Director)+' '+director, this.WIDTH / 2, 240, { align: 'left' });
         doc.text(`Director`, (this.WIDTH / 2) + ((doc.getStringUnitWidth(director) * 72 / 25.6) / 2), 244, { maxWidth: 50, align: 'left' });
         return doc;
