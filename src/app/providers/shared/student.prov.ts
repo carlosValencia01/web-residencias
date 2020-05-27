@@ -273,4 +273,8 @@ export class StudentProvider {
     getStatusFromSii(controlNumber: string): Observable<any> {
         return this.api.get(`student/get/active/sii/${controlNumber}`).pipe(map(res => res.json()));
     }
+
+    notificateDebtsStudents(students) {
+        return this.api.post('student/inscriptions/register/debts/',{students}, true).pipe(map(res => res.json()));
+    }
 }
