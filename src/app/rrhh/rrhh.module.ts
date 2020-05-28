@@ -1,64 +1,49 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CommonsModule } from 'src/app/commons/commons.module';
-
-// Angular
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-// Material
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { ErrorStateMatcher, MatNativeDateModule } from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatTableModule } from '@angular/material/table';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
-import {
-  MatButtonModule,
-  MatAutocompleteModule,
-  MatExpansionModule,
-  MatSlideToggleModule,
-  MatDatepickerModule,
-  MatSelectModule,
-  MatRadioModule,
-  MatNativeDateModule,
-  ErrorStateMatcher,
-} from '@angular/material';
-
-import { RrhhRoutingModule } from './rrhh-routing.module';
+import { MatTableModule } from '@angular/material/table';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CommonsModule } from 'src/app/commons/commons.module';
+import { RoleProvider } from '../providers/app/role.prov';
+import { ESignatureProvider } from '../providers/electronic-signature/eSignature.prov';
+import { sourceDataProvider } from '../providers/reception-act/sourceData.prov';
+import { CareerProvider } from '../providers/shared/career.prov';
+import { DepartmentProvider } from '../providers/shared/department.prov';
+import { DocumentProvider } from '../providers/shared/document.prov';
+import { ErrorMatcher } from '../services/shared/ErrorMatcher';
 import { DepartmentsAdminPageComponent } from './departments-admin-page/departments-admin-page.component';
-import { PositionsAdminPageComponent } from './positions-admin-page/positions-admin-page.component';
+import { DocumentsAdminPageComponent } from './documents-admin-page/documents-admin-page.component';
+import { DocumentsAssignPageComponent } from './documents-assign-page/documents-assign-page.component';
+import { ElectronicSignatureComponent } from './electronic-signature/electronic-signature.component';
+import { EmployeeGradeComponent } from './employee-grade/employee-grade.component';
 import { EmployeePageComponent } from './employee-page/employee-page.component';
 import { GradePageComponent } from './grade-page/grade-page.component';
-import { ElectronicSignatureComponent } from './electronic-signature/electronic-signature.component';
-import { DocumentsAssignPageComponent } from './documents-assign-page/documents-assign-page.component';
-import { DocumentsAdminPageComponent } from './documents-admin-page/documents-admin-page.component';
-import { UploadEmployeesCsvComponent } from './upload-employees-csv/upload-employees-csv.component';
-import { NewPositionComponent } from './new-position/new-position.component';
-import { PositionsHistoryComponent } from './positions-history/positions-history.component';
 import { NewGradeComponent } from './new-grade/new-grade.component';
-import { EmployeeGradeComponent } from './employee-grade/employee-grade.component';
-
-// Providers
-import { ESignatureProvider } from '../providers/electronic-signature/eSignature.prov';
-import { DepartmentProvider } from '../providers/shared/department.prov';
-import { sourceDataProvider } from '../providers/reception-act/sourceData.prov';
-import { RoleProvider } from '../providers/app/role.prov';
-import { CareerProvider } from '../providers/shared/career.prov';
-import { DocumentProvider } from '../providers/shared/document.prov';
-
-// Services
-import { ErrorMatcher } from '../services/shared/ErrorMatcher';
+import { NewPositionComponent } from './new-position/new-position.component';
+import { PositionsAdminPageComponent } from './positions-admin-page/positions-admin-page.component';
+import { PositionsHistoryComponent } from './positions-history/positions-history.component';
+import { RrhhRoutingModule } from './rrhh-routing.module';
+import { UploadEmployeesCsvComponent } from './upload-employees-csv/upload-employees-csv.component';
 
 @NgModule({
   imports: [
-    CommonModule,
     CommonsModule,
     RrhhRoutingModule,
     MatIconModule,
@@ -72,8 +57,6 @@ import { ErrorMatcher } from '../services/shared/ErrorMatcher';
     MatAutocompleteModule,
     MatButtonModule,
     MatListModule,
-    FormsModule,
-    ReactiveFormsModule,
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,

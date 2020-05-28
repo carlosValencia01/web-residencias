@@ -1,15 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-// Angular
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher, MatButtonModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material';
-// Material
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-// Ngx
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { QuicklinkModule } from 'ngx-quicklink';
 import { ErrorMatcher } from '../services/shared/ErrorMatcher';
@@ -42,6 +39,9 @@ import { LoadCsvDataComponent } from './load-csv-data/load-csv-data.component';
   ],
   exports: [
     QuicklinkModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     LoadCsvDataComponent,
     ExtendViewerComponent,
     ConfirmDialogComponent,

@@ -1,9 +1,7 @@
-// External modules
 import { registerLocaleData } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import localeEs from '@angular/common/locales/es';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { ErrorStateMatcher } from '@angular/material';
 import { MatButtonModule } from '@angular/material/button';
@@ -64,10 +62,8 @@ registerLocaleData(localeEs);
     CommonsModule,
 
     // Angular
-    FormsModule,
     HttpClientModule,
     HttpModule,
-    ReactiveFormsModule,
 
     // Material
     MatCardModule,
