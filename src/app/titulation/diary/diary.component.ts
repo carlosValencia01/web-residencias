@@ -25,6 +25,7 @@ import { DepartmentProvider } from 'src/app/providers/shared/department.prov';
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
 import Swal from 'sweetalert2';
+import { DenyDayProvider } from 'src/app/providers/reception-act/denyDays.prov';
 
 require('jspdf-autotable');
 const jsPDF = require('jspdf');
@@ -81,7 +82,8 @@ export class DiaryComponent implements OnInit {
     };
   
   rol: string;
-  canEdit = false;    
+  canEdit = false;
+  denyDays = [];
   constructor(
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
@@ -92,6 +94,7 @@ export class DiaryComponent implements OnInit {
     public dialog: MatDialog,
     public _getImage: ImageToBase64Service,
     private _DepartmentProvider: DepartmentProvider,
+    private _DenyDayProvider: DenyDayProvider
 
   ) {
     const tmpFecha = localStorage.getItem('Appointment');
@@ -139,8 +142,20 @@ export class DiaryComponent implements OnInit {
     }).subscribe(data => {
       if (typeof (data.Diary) !== 'undefined') {
         this.Appointments = data.Diary;
-        this.Ranges = data.Ranges;
+        // this.Ranges = data.Ranges;
+        this.denyDays = data.denyDays;
         // this.generateAppointment(month, year);
+        // this._DenyDayProvider.getAll().subscribe(
+        //   (denyDays)=>{
+            
+        //     this.denyDays = denyDays;
+            
+        //   },
+        //   err=>{
+        //     console.warn(err);        
+            
+        //   }
+        // );
         this.loadAppointment();
         this.refresh.next();
       }
@@ -224,6 +239,7 @@ export class DiaryComponent implements OnInit {
   // Genera los eventos de la agenda
   loadAppointment(): void {
     this.events = [];
+    
     this.carrers.forEach(career => {
       if (career.status) {
         let tmp: {
@@ -266,12 +282,27 @@ export class DiaryComponent implements OnInit {
         }
       }
     });
+    this.denyDays.forEach(date => {
+      const start = new Date(date.date);
+      start.setHours(0,0,0);
+        this.events.push({
+          title: 'Día bloqueado',
+          start: start,
+          end: new Date(date.date),
+          color:  { primary: '#00c853', secondary: '#69f0ae' }
+          });
+    });
     this.refresh.next();
   }
 
   beforeMonthViewRender(renderEvent: CalendarMonthViewBeforeRenderEvent): void {
     renderEvent.body.forEach(day => {
-      day.cssClass = 'disable-days';
+      
+      const ev = day.events.length > 0 ? 
+                day.events.filter(e=> e.title == 'Día bloqueado').length > 0
+                ? 'bloqueado' : 'ocupado' : 'libre';
+      
+      day.cssClass = ev == 'bloqueado' ? 'deny-day' :'disable-days' ;
     });
     (async () => {
       await this.delay(100);
@@ -299,6 +330,18 @@ export class DiaryComponent implements OnInit {
 
   addNewEvent(date: Date, isTitled: boolean = false) {
     let dialogRef;
+    const mapedDenyDays = this.denyDays.map( dd=> { 
+      const tmpD = new Date(dd.date);
+      return {
+        day: tmpD.getDate(),
+        month: tmpD.getMonth(),
+        year: tmpD.getFullYear()        
+      }
+    });
+    const itsLock = mapedDenyDays.find( d=> d.day == date.getDate() && d.month == date.getMonth() && d.year == date.getFullYear());
+    if(itsLock){
+      return this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'El día ha sido bloqueado');
+    }
     if (isTitled) {
       dialogRef = this.dialog.open(NewTitleComponent, {
         data: {
@@ -363,6 +406,9 @@ export class DiaryComponent implements OnInit {
 
   addEvent($event, isTitled: boolean = false): void {
     let dialogRef;
+    const mapedDenyDays = this.denyDays.map( dd=> dd.date);
+    console.log(mapedDenyDays, $event,'33');
+    
     if (isTitled) {
       dialogRef = this.dialog.open(
         NewTitleComponent, {
@@ -418,7 +464,7 @@ export class DiaryComponent implements OnInit {
     }, _ => {
       this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un problema');
     });
-  }
+  } 
 
   viewEvent($event): void {
     const tmpAppointment: iAppointment =
@@ -995,6 +1041,61 @@ export class DiaryComponent implements OnInit {
 
     this._getImage.getBase64('assets/fonts/Montserrat-Bold.ttf').then(base64 => {
       this.montserratBold = base64.toString().split(',')[1];
+    });
+  }
+
+  async disableDay(event){
+    const ev = event.events.length > 0 ? 
+                event.events.filter(e=> e.title == 'Día bloqueado').length > 0
+                ? 'bloqueado' : 'ocupado' : 'libre';
+    if(ev == 'libre'){
+      const curdate = new Date();
+      curdate.setHours(0,0,0);
+      curdate.setDate(new Date().getDate()-1);
+      if(event.date < curdate){
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'No se puede bloquear un día antes de hoy');  
+      }else{              
+        event.date.setHours(23,59,59);
+        console.log(event.date);
+        
+        const answer = await this.showAlert('Bloquear el día, no podra deshacer esta operacion');
+        if(answer){
+          this._DenyDayProvider.add({date:event.date}).toPromise().then(
+            res=>{
+              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Día deshabilitado');  
+              this.reload();
+            },
+            err=>this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Algo salió mal')
+          ).catch(err=>this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Algo salió mal'));
+        }
+      }
+      
+    }else if(ev == 'ocupado'){
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ya se agendaron solicitudes ese día');
+    }else{
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'El día ya a sido bloqueado');
+    }
+    
+  }
+
+  showAlert(message: string, buttons: { accept: string, cancel: string } = { accept: 'Aceptar', cancel: 'Cancelar' }):any {
+    return new Promise((resolve) => {
+      Swal.fire({
+        title: message,
+        type: 'question',
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: buttons.cancel,
+        confirmButtonText: buttons.accept
+      }).then((result) => {
+        if (result.value) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
     });
   }
 

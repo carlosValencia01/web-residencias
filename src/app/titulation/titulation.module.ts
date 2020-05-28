@@ -47,6 +47,8 @@ import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscription
 import { BookProvider } from 'src/app/providers/reception-act/book.prov';
 import { CareerProvider } from 'src/app/providers/shared/career.prov';
 import { ESignatureProvider } from '../providers/electronic-signature/eSignature.prov';
+import { RangeProvider } from '../providers/reception-act/range.prov';
+import {DenyDayProvider } from '../providers/reception-act/denyDays.prov';
 
 // Services
 import { RequestService } from 'src/app/services/reception-act/request.service';
@@ -193,6 +195,8 @@ import { environment } from 'src/environments/environment';
     ESignatureProvider,
     sourceDataProvider,
     DepartmentProvider,
+    RangeProvider,
+    DenyDayProvider,
   ],
   entryComponents: [
     ObservationsComponentComponent,

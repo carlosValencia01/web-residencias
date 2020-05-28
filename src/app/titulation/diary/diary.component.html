@@ -76,7 +76,9 @@
     <div [ngSwitch]="view" class="mt-3">
       <mwl-calendar-month-view *ngSwitchCase="'month'" [viewDate]="viewDate" [events]="events"
         (beforeViewRender)="beforeMonthViewRender($event)" [locale]="locale" [refresh]="refresh"
-        [excludeDays]="excludeDays" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)">
+        [excludeDays]="excludeDays" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)" 
+        [cellTemplate]="monthCellTemplate"
+        >
       </mwl-calendar-month-view>
 
       <mwl-calendar-week-view *ngSwitchCase="'week'" [viewDate]="viewDate" [excludeDays]="excludeDays" [events]="events"
@@ -84,6 +86,52 @@
         [hourSegmentTemplate]="weekViewHourSegment" [eventTemplate]="customCellTemplate">
       </mwl-calendar-week-view>
     </div>
+
+    <ng-template
+      #monthCellTemplate
+      let-day="day"
+      let-openDay="openDay"
+      let-locale="locale"
+      let-tooltipPlacement="tooltipPlacement"
+      let-highlightDay="highlightDay"
+      let-unhighlightDay="unhighlightDay"
+      let-eventClicked="eventClicked"
+    >
+      <div
+        class="fill-height"
+        [contextMenu]="excludeDayMenu"
+        [contextMenuSubject]="{date:day.date,events:day.events}"
+      >
+        <div class="cal-cell-top">
+          <span class="cal-day-badge" *ngIf="day.badgeTotal > 0"
+            >{{ day.badgeTotal }}</span
+          >
+          <span class="cal-day-number"
+            >{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span
+          >
+        </div>
+        <div class="cal-events">
+          <div
+            class="cal-event"
+            *ngFor="let event of day.events"
+            [style.backgroundColor]="event.color.primary"
+            [ngClass]="event?.cssClass"
+            (mouseenter)="highlightDay.emit({event: event})"
+            (mouseleave)="unhighlightDay.emit({event: event})"
+            [mwlCalendarTooltip]="event.title | calendarEventTitle:'monthTooltip':event"
+            [tooltipPlacement]="tooltipPlacement"
+            (click)="$event.stopPropagation(); eventClicked.emit({event: event})"
+          ></div>
+        </div>
+      </div>
+    </ng-template>
+
+    <context-menu #excludeDayMenu style="padding: 0;">
+      <ng-template contextMenuItem (execute)="disableDay($event.item)" [visible]="canEdit" [enabled]="canEdit">
+        <div style=" border-style: solid; border-width: 1px; color:#525770;">
+          <i style="color:#c80000" class="fa fa-calendar-minus-o"></i>Bloquear día</div>
+      </ng-template>      
+    </context-menu>
 
     <context-menu #basicMenu style="background: grey; color:black" >
       <ng-template class="mt-1" contextMenuItem (execute)="viewEvent($event.item)">
@@ -220,6 +268,7 @@
           Agregar
           Titulación</div>
       </ng-template>
+      
     </context-menu>
 
   </div>

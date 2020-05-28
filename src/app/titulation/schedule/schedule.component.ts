@@ -44,6 +44,7 @@ export class ScheduleComponent implements OnInit {
   locale = 'es';
   weekStartsOn: number = DAYS_OF_WEEK.MONDAY;
   weekendDays: number[] = [DAYS_OF_WEEK.FRIDAY, DAYS_OF_WEEK.SATURDAY];
+  denyDays = [];
 
   constructor(
     public _RequestProvider: RequestProvider,
@@ -110,14 +111,16 @@ export class ScheduleComponent implements OnInit {
   schedule(month: number, year: number): void {
     this.events = [];
     this.appointments = [];
-    console.log('b',month,year);
     
     this._RequestProvider.getAvailableSpaces({
       month: month,
       year: year
     }).subscribe(data => {
+      
+      
       if (typeof (data.Schedule) !== 'undefined') {
-        this.getRanges(data.Ranges);
+        // this.getRanges(data.Ranges);
+        this.denyDays = data.denyDays;        
         
         const diary = this.getEvents(data.Schedule);
         
@@ -132,7 +135,6 @@ export class ScheduleComponent implements OnInit {
           tmpDate.setHours(0, 0, 0, 0);
           this.appointments.push({ date: tmpDate, count: e.count });
         });
-        console.log(this.appointments,'ap');
         this.refresh.next();
       }
     }, error => {
@@ -144,9 +146,21 @@ export class ScheduleComponent implements OnInit {
   beforeMonthViewRender(renderEvent: CalendarMonthViewBeforeRenderEvent): void {
     renderEvent.body.forEach(day => {
       if (typeof (this.appointments) !== 'undefined') {
-        if ((day.isPast && !day.isToday) || day.date > this.maxDate) {
+        const mapedDenyDays = this.denyDays.map( dd=> { 
+          const tmpD = new Date(dd.date);
+          return {
+            day: tmpD.getDate(),
+            month: tmpD.getMonth(),
+            year: tmpD.getFullYear()        
+          }
+        });
+        const itsLock = mapedDenyDays.find( d=> d.day == day.date.getDate() && d.month == day.date.getMonth() && d.year == day.date.getFullYear());        
+        
+        if ((day.isPast && !day.isToday) || day.date > this.maxDate && !itsLock) {
           day.cssClass = 'disable-days';
-        } else {
+        } else if(itsLock){
+          day.cssClass = 'complete';
+        } else{
           const lDate: Date = new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate());
           lDate.setHours(0, 0, 0, 0);
           // let tmp: { fecha: Date, count: Number } = this.citas.find(x => x.fecha.getTime() === lDate.getTime());
