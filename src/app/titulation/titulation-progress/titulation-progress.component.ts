@@ -802,7 +802,8 @@ export class TitulationProgressComponent implements OnInit {
     let acta = true;
     let juryGender = {president:'MASCULINO',secretary:'MASCULINO'};
     let studentGender = 'M';
-    let careerPerBook = 1;
+    let careerPerBook = 1;  
+    let firma = false;  
     // console.log(_request);
 
     const titleOption = _request.titulationOption.split('-')[1].trim();
@@ -823,8 +824,17 @@ export class TitulationProgressComponent implements OnInit {
     const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService,juryGender,studentGender,careerPerBook);
     if(_request.titulationOption.split('-')[0].trim() === 'XI'){
       acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
-      await this.delay(3000);
-      window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
+      firma = await this.showAlert('¿Acta Firmada?',{accept:'SI',cancel:'NO'});
+          
+      if(firma){
+        await this.delay(3000);
+        window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
+      } else {
+        await this.delay(3000);
+        window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
+      }
+
+
     }else{
       await this.delay(3000);
       window.open(oRequest.testReportForTitulationNotIntegral().output('bloburl'), '_blank');
@@ -936,7 +946,7 @@ export class TitulationProgressComponent implements OnInit {
         this.loadingService.setLoading(true);
         const _request: iRequest = this.getRequestById(Identificador);
         let acta = true;
-
+        let firma = false;
         let juryGender = {president:'MASCULINO',secretary:'MASCULINO'};
         let studentGender = 'M';
         let careerPerBook = 1;
@@ -954,12 +964,23 @@ export class TitulationProgressComponent implements OnInit {
         await this.requestProvider.getEmployeeGender(_request.jury[1].email ? _request.jury[1].email : _request.jury[1].name).toPromise().then(
             (em)=>juryGender.secretary = em.gender
         ).catch( err=> juryGender.secretary = 'MASCULINO');
-
+        
+        const _Request = this.getRequestById(Identificador);
         const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService,juryGender,studentGender,careerPerBook);
+        this.getFolder(_Request.controlNumber);
+        
         if(_request.titulationOption.split('-')[0].trim() === 'XI'){
           acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
-          await this.delay(3000);
-          window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
+          firma = await this.showAlert('¿Acta Firmada?',{accept:'SI',cancel:'NO'});
+          
+          if(firma){
+            await this.delay(3000);
+            window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
+          } else {
+            await this.delay(3000);
+            window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
+          }
+          
         }else{
           await this.delay(3000);
           window.open(oRequest.testReportForTitulationNotIntegral().output('bloburl'), '_blank');
