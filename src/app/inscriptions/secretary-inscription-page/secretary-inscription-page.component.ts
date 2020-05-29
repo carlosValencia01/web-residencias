@@ -589,6 +589,15 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           return "SIN ENVÍO";
         }
       }
+      case "Compromiso": {
+        var doc = student.documents ? student.documents.filter(docc => docc.filename ? docc.filename.indexOf('COMPROMISO') !== -1 && docc.status.length>0: undefined)[0]:'';
+        if(doc != undefined){
+          return doc.status[doc.status.length-1].name;
+        }
+        else{
+          return "SIN ENVÍO";
+        }
+      }
       default:{
 
       }
@@ -1391,6 +1400,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       }
     });
   }
+
   excelExportDebts(){
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
     this.loadingService.setLoading(true);
@@ -1403,4 +1413,118 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.loadingService.setLoading(false);
   }
 
+  async getDebts(){
+    var debtsStudents = [];
+    this.listStudents.forEach((student) => {
+      let debts = [];
+      if(this.filterDocuments('Acta',student) !== 'ACEPTADO' && this.filterDocuments('Acta',student) !== 'VALIDADO'){
+        debts.push('Acta de Nacimiento');
+      }
+      if(this.filterDocuments('Certificado',student) !== 'ACEPTADO' && this.filterDocuments('Certificado',student) !== 'VALIDADO'){
+        debts.push('Certificado de Bachiller');
+      }
+      if(this.filterDocuments('Analisis',student) !== 'ACEPTADO' && this.filterDocuments('Analisis',student) !== 'VALIDADO'){
+        debts.push('Análisis Clínicos');
+      }
+      if(this.filterDocuments('Comprobante',student) !== 'ACEPTADO' && this.filterDocuments('Comprobante',student) !== 'VALIDADO'){
+        debts.push('Comprobante de Pago');
+      }
+      if(this.filterDocuments('Curp',student) !== 'ACEPTADO' && this.filterDocuments('Curp',student) !== 'VALIDADO'){
+        debts.push('Curp');
+      }
+      if(this.filterDocuments('Nss',student) !== 'ACEPTADO' && this.filterDocuments('Nss',student) !== 'VALIDADO'){
+        debts.push('Número de Seguro Social');
+      }
+      if(this.filterDocuments('Foto',student) !== 'ACEPTADO' && this.filterDocuments('Foto',student) !== 'VALIDADO'){
+        debts.push('Fotografía');
+      }
+      if(debts.length !== 0){
+        debtsStudents.push({
+            alumno:{
+              nombre:student.fullName,
+              nc:student.controlNumber,
+              carrera:student.career,
+              correo:student.email
+            },
+            adeudos:debts
+          });
+      }
+    });
+    console.log(debtsStudents);
+
+    //this.loading = true;
+    // await this.studentProv.notificateDebtsStudents(debtsStudents).subscribe(
+    //   debts => {
+    //     this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Adeudos Registrados');    
+    //      this.loading = false;
+    //   },
+    //   err => {
+    //     console.log(err);
+    //   }, () => this.loading = false
+    // );
+    
+  }
+
+  async getSchedule(){
+    this.loadingService.setLoading(true);
+
+
+    var doc = new jsPDF('p', 'pt');
+
+    // Header
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+    doc.addImage(this.logoSep, 'PNG', 36, 10, 110, 27); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth - 120, 6, 82, 35); // Logo TecNM
+
+    let header = 'Derecho a Horario';
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(15);
+    doc.setFontStyle('bold');
+    doc.text(header, pageWidth / 2, 50, 'center');
+
+    doc.autoTable({
+      html: '#tableReportSchedule',
+      theme: 'striped',
+      margin: { top: 70 },
+      headStyles: { fillColor: [24, 57, 105], halign: 'center' },
+      columnStyles: {
+        0: { cellWidth: 40, halign: 'center' },
+        1: { cellWidth: 230, halign: 'center' },
+        2: { cellWidth: 40, halign: 'center' },
+        3: { cellWidth: 50, halign: 'center' },
+        4: { cellWidth: 40, halign: 'center' }
+      }
+    });
+
+    // FOOTER
+    var today = new Date();
+    var m = today.getMonth() + 1;
+    var mes = (m < 10) ? '0' + m : m;
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+    doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 15, pageHeight - 47, 30, 30); // Logo SEP
+    let footer = '© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n';
+    doc.setTextColor(0, 0, 0);
+    doc.setFontStyle('bold');
+    doc.setFontSize(7);
+    doc.text(footer, pageWidth / 2, pageHeight - 12, 'center');
+
+    // Hour PDF
+    let hour = today.getDate() + '/' + mes + '/' + today.getFullYear()
+      + ' - ' + today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+    doc.setTextColor(100);
+    doc.setFontStyle('bold');
+    doc.setFontSize(7);
+    doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
+    
+    await this.delay(3000);
+    this.loadingService.setLoading(false);
+    window.open(doc.output('bloburl'), '_blank');
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
 }
