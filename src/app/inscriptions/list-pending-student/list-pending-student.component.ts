@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
-import { StudentInformationComponent } from '../student-information/student-information.component';
-import { ReviewAnalysisComponent } from '../review-analysis/review-analysis.component';
-import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
+import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
-import Swal from 'sweetalert2';
-import { Router, ActivatedRoute } from '@angular/router';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import * as JsBarcode from 'jsbarcode';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import * as JsBarcode from 'jsbarcode';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
+import { ReviewAnalysisComponent } from '../review-analysis/review-analysis.component';
+import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
+import { StudentInformationComponent } from '../student-information/student-information.component';
 
 const jsPDF = require('jspdf');
 
@@ -26,7 +26,6 @@ export class ListPendingStudentComponent implements OnInit {
   students;
   listStudentsPending;
   periods = [];
-  loading = false;
 
   rolName;
 
@@ -77,8 +76,9 @@ export class ListPendingStudentComponent implements OnInit {
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
     private router: Router,
-    private studentProv: StudentProvider
-  ) { 
+    private studentProv: StudentProvider,
+    private loadingService: LoadingService,
+  ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -197,10 +197,10 @@ export class ListPendingStudentComponent implements OnInit {
   filterItemsCovers(carreer,nc) {
     return this.students.filter(function (student) {
       return student.career.toLowerCase().indexOf(carreer.toLowerCase()) > -1 &&
-        student.controlNumber.toLowerCase().indexOf(nc.toLowerCase()) > -1    
+        student.controlNumber.toLowerCase().indexOf(nc.toLowerCase()) > -1
       });
   }
-  
+
 
   getPeriods(){
     let sub = this.inscriptionsProv.getAllPeriods()
@@ -253,14 +253,14 @@ export class ListPendingStudentComponent implements OnInit {
   // Exportar alumnos a excel
   excelExport() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcel'), {
       name: 'Reporte Alumnos Inscripcion.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   viewAnalysis(student){
@@ -285,21 +285,21 @@ export class ListPendingStudentComponent implements OnInit {
             err=>console.log(err), ()=> sub.unsubscribe()
           );
         } else {
-          this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Aun no son Validados/Aceptados los análisis clínicos.');   
+          this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Aun no son Validados/Aceptados los análisis clínicos.');
         }
       } else {
-        this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene análisis clínicos.');   
+        this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene análisis clínicos.');
       }
     } else {
-      this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene expediente.');   
+      this.notificationService.showNotification(eNotificationType.INFORMATION, 'ATENCIÓN', 'Alumno no tiene expediente.');
     }
-    
+
   }
 
   filterDocuments(document,student){
-    
-  
-    
+
+
+
     switch (document) {
       case "Acta": {
         var doc = student.documents ? student.documents.filter(docc => docc.filename ?docc.filename.indexOf('ACTA') !== -1 && docc.status.length>0: undefined)[0]:'';
@@ -373,27 +373,27 @@ export class ListPendingStudentComponent implements OnInit {
   // Generar plantilla IMSS Excel
   excelExportIMSS() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcelIMSS'), {
       name: 'Plantilla Alumnos IMSS.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
    // Generar plantilla CM Excel
    excelExportCM() {
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tableReportExcelCM'), {
       name: 'Reporte Consultorio Médico.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   complete10Dig(number){
@@ -438,11 +438,11 @@ export class ListPendingStudentComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        this.loading=true;
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.updateStudent({printCredential:true},item._id).subscribe(res => {
         }, err=>{},
         ()=>{
-          this.loading=false
+          this.loadingService.setLoading(false);
           this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
           this.getStudents();
         });
@@ -463,11 +463,11 @@ export class ListPendingStudentComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        this.loading=true;
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.updateStudent({printCredential:false},item._id).subscribe(res => {
         }, err=>{},
         ()=>{
-          this.loading=false
+          this.loadingService.setLoading(false);
           this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Removida.');
           this.getStudents();
         });
@@ -548,169 +548,169 @@ export class ListPendingStudentComponent implements OnInit {
       confirmButtonText: 'Confirmar'
     }).then((result) => {
       if (result.value) {
-        this.loading = true;
+        this.loadingService.setLoading(true);
         var day = student.curp.substring(8, 10);
         var month = student.curp.substring(6, 8);
         var year = student.curp.substring(4, 6);
         var fechaNacimiento = day + "/" + month + "/" + year;
-    
+
         const doc = new jsPDF();
-    
+
         // @ts-ignore
         doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
         // @ts-ignore
         doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
         doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
         doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
-    
+
         // Header
         var pageHeight = doc.internal.pageSize.height;
         var pageWidth = doc.internal.pageSize.width;
-    
+
         doc.addImage(this.logoSep, 'PNG', 5, 5, 74, 15); // Logo SEP
         doc.addImage(this.logoTecNM, 'PNG', pageWidth - 47, 2, 39, 17); // Logo TecNM
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(15);
         doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text("Solicitud de Inscripción", pageWidth / 2, 37, 'center');
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text("Código: ITT-POE-01-02      Revisión: 0", pageWidth / 2, 42, 'center');
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(13);
         doc.text("Referencia a la Norma ISO 9001-2015:    8.2.2, 8.2.3, 8.2.1, 8.5.2", pageWidth / 2, 47, 'center');
-    
+
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(15);
         doc.text("SOLICITUD DE INSCRIPCIÓN", pageWidth / 2, 60, 'center');
-    
+
         // Cuadro 1
         doc.setDrawColor(0);
         doc.setFillColor(0, 0, 0);
         doc.rect(10, 65, 190, 10, 'f');
-    
+
         doc.setDrawColor(0);
         doc.setFillColor(230, 230, 230);
         doc.rect(10, 75, 190, 45, 'f');
-    
+
         doc.setFontSize(18);
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
         doc.text(15, 72, 'Datos Generales');
-    
+
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.text('Nombre: ', 15, 80);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.fatherLastName + ' ' + student.motherLastName + ' ' + student.firstName, 70, 80);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Lugar de nacimiento: ', 15, 85);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.birthPlace, 70, 85);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Fecha de nacimiento: ', 15, 90);
         doc.setFont('Montserrat', 'Normal');
         doc.text(fechaNacimiento, 70, 90);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Estado Civil: ', 15, 95);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.civilStatus, 70, 95);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Correo Electrónico: ', 15, 100);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.email, 70, 100);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('CURP: ', 15, 105);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.curp, 70, 105);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('NSS: ', 15, 110);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.nss, 70, 110);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Número de control: ', 15, 115);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.controlNumber, 70, 115);
-    
+
         // Cuadro 2
         doc.setDrawColor(0);
         doc.setFillColor(0, 0, 0);
         doc.rect(10, 125, 190, 10, 'f');
-    
+
         doc.setDrawColor(0);
         doc.setFillColor(230, 230, 230);
         doc.rect(10, 135, 190, 35, 'f');
-    
+
         doc.setFontSize(18);
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
         doc.text(15, 132, 'Dirección');
-    
+
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.text('Calle: ', 15, 140);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.street, 70, 140);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Colonia: ', 15, 145);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.suburb, 70, 145);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Ciudad: ', 15, 150);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.city, 70, 150);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Estado: ', 15, 155);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.state, 70, 155);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Código Postal: ', 15, 160);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.cp + '', 70, 160);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Teléfono: ', 15, 165);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.phone + '', 70, 165);
-    
+
         // Cuadro 3
         doc.setDrawColor(0);
         doc.setFillColor(0, 0, 0);
         doc.rect(10, 175, 190, 10, 'f');
-    
+
         doc.setDrawColor(0);
         doc.setFillColor(230, 230, 230);
         doc.rect(10, 185, 190, 25, 'f');
-    
+
         doc.setFontSize(18);
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
         doc.text(15, 182, 'Datos académicos');
-    
+
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
@@ -718,69 +718,69 @@ export class ListPendingStudentComponent implements OnInit {
         doc.setFont('Montserrat', 'Normal');
         doc.setFontSize(9);
         doc.text(student.originSchool + ': ' + student.nameOriginSchool, 70, 190);
-    
+
         doc.setFontSize(12);
         doc.setFont('Montserrat', 'Bold');
         doc.text('Otra: ', 15, 195);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.otherSchool, 70, 195);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Promedio: ', 15, 200);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.averageOriginSchool + '', 70, 200);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('Carrera a cursar: ', 15, 205);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.career, 70, 205);
-    
+
         // Cuadro 4
         doc.setDrawColor(0);
         doc.setFillColor(0, 0, 0);
         doc.rect(10, 215, 190, 10, 'f');
-    
+
         doc.setDrawColor(0);
         doc.setFillColor(230, 230, 230);
         doc.rect(10, 225, 190, 25, 'f');
-    
+
         doc.setFontSize(18);
         doc.setTextColor(255, 255, 255);
         doc.setFont('Montserrat', 'Bold');
         doc.text(15, 222, 'Datos extras');
-    
+
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont('Montserrat', 'Bold');
         doc.text('¿Perteneces a alguna Etnia? ', 15, 230);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.etnia, 85, 230);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('¿Cuál?', 15, 235);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.typeEtnia, 85, 235);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('¿Tienes alguna discapacidad? ', 15, 240);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.disability, 85, 240);
-    
+
         doc.setFont('Montserrat', 'Bold');
         doc.text('¿Cuál?', 15, 245);
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.typeDisability, 85, 245);
-    
+
         doc.line((pageWidth / 2)-35, 270, (pageWidth / 2)+35, 270);
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text("Firma del Estudiante", pageWidth / 2, 280, 'center');
-    
+
         let document = doc.output('arraybuffer');
         let binary = this.bufferToBase64(document);
-    
+
         this.updateDocument(binary,student);
-        // window.open(doc.output('bloburl'), '_blank');    
+        // window.open(doc.output('bloburl'), '_blank');
       }
     });
   }
@@ -792,7 +792,7 @@ export class ListPendingStudentComponent implements OnInit {
   }
 
   async updateDocument(document, student){
-    
+
     const fileId = student.documents[0].fileIdInDrive;
     const folderId = await this.getFolderId(student._id);
     const documentInfo = {
@@ -800,7 +800,7 @@ export class ListPendingStudentComponent implements OnInit {
       nameInDrive: student.controlNumber + '-SOLICITUD.pdf',
       bodyMedia: document,
       folderId: folderId,
-      newF: false, 
+      newF: false,
       fileId: fileId
     };
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
@@ -819,16 +819,16 @@ export class ListPendingStudentComponent implements OnInit {
         };
         await this.studentProv.uploadDocumentDrive(student._id, documentInfo2).subscribe(
           updated => {
-            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');    
-             this.loading = false;
+            this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');
+             this.loadingService.setLoading(false);
           },
           err => {
             console.log(err);
-          }, () => this.loading = false
+          }, () => this.loadingService.setLoading(false)
         );
       },
       err => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
         console.log(err);
       }
     );
@@ -837,10 +837,10 @@ export class ListPendingStudentComponent implements OnInit {
   async getFolderId(id){
     let folderId;
    await this.studentProv.getFolderId(id).toPromise().then(
-      folder => {        
+      folder => {
         if (folder.folder) {// folder exists
           if (folder.folder.idFolderInDrive) {
-            folderId = folder.folder.idFolderInDrive;                        
+            folderId = folder.folder.idFolderInDrive;
           }
         }
       });
@@ -869,25 +869,25 @@ export class ListPendingStudentComponent implements OnInit {
           var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
           var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
           var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
-          
+
           if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
             // Cambiar estatus a ACEPTADO
             this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
-            }); 
-            this.getStudents();
-            return;
-          } 
-          if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
-            // Cambiar estatus a VALIDADO
-            this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
-            });   
+            });
             this.getStudents();
             return;
           }
-    
+          if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
+            // Cambiar estatus a VALIDADO
+            this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
+            });
+            this.getStudents();
+            return;
+          }
+
           var allDiferentProcess = true;
           var allValidateOrAcept = true;
-    
+
           for(var i = 0; i < res.documents.length; i++){
             if(res.documents[i].statusName == "EN PROCESO"){
               allDiferentProcess = false;
@@ -898,7 +898,7 @@ export class ListPendingStudentComponent implements OnInit {
               allValidateOrAcept = false;
             }
           }
-    
+
           if(allDiferentProcess){
             if(!allValidateOrAcept){
               // Cambiar estatus a EN PROCESO

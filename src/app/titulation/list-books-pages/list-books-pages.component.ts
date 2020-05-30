@@ -1,14 +1,15 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
+import { BookProvider } from 'src/app/providers/reception-act/book.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { NewBookComponent } from 'src/app/titulation/new-book/new-book.component';
 import { UpdateBookComponent } from 'src/app/titulation/update-book/update-book.component';
-import { MatDialog, MatSort, MatPaginator, MatTableDataSource } from '@angular/material';
-import { BookProvider } from 'src/app/providers/reception-act/book.prov';
-import * as moment from 'moment';
 import Swal from 'sweetalert2';
-import { FormControl } from '@angular/forms';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { Router, ActivatedRoute } from '@angular/router';
 
 moment.locale('es');
 
@@ -29,7 +30,6 @@ export class ListBooksPagesComponent implements OnInit {
   public dataSourceInactiveBooks: MatTableDataSource<BookTable>;
   public search: string;
   public selectedTab: FormControl;
-  public loading: boolean;
 
   listBooks;
   listActiveBooks;
@@ -44,13 +44,14 @@ export class ListBooksPagesComponent implements OnInit {
     private notificationServ: NotificationsServices,
     private router: Router,
     private routeActive: ActivatedRoute,
-  ) { 
+    private loadingService: LoadingService,
+  ) {
     this.getBooks();
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.selectedTab = new FormControl(0);
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   ngOnInit() {
@@ -115,7 +116,7 @@ export class ListBooksPagesComponent implements OnInit {
         carreras += '/';
       }
     }
-    
+
     return {
       _id: data._id ? data._id : '',
       careers: data.careers ? carreras : '',

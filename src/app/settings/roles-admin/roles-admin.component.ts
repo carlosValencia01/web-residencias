@@ -1,15 +1,15 @@
-import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
-
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { iPermission } from 'src/app/entities/app/permissions.model';
 import { iRole } from 'src/app/entities/app/role.model';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { PermissionProvider } from 'src/app/providers/app/permission.prov';
 import { RoleProvider } from 'src/app/providers/app/role.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-roles-admin',
@@ -24,7 +24,6 @@ export class RolesAdminComponent implements OnInit {
   public searchText: string;
   public showFormPanel = false;
   public isViewDetails = false;
-  public showLoading = false;
   private rolesCopy: iRole[];
   private currentRole: iRole;
   private isEditing = false;
@@ -36,6 +35,7 @@ export class RolesAdminComponent implements OnInit {
     private permissionProv: PermissionProvider,
     private roleProv: RoleProvider,
     private router: Router,
+    private loadingService: LoadingService,
   ) {
     if (!this.cookiesServ.isAllowed(this.activateRoute.snapshot.url.map(({ path }) => path).join('/'))) {
       this.router.navigate(['/']);
@@ -83,9 +83,9 @@ export class RolesAdminComponent implements OnInit {
       focusCancel: true
     }).then(async (result) => {
       if (result.value) {
-        this.showLoading = true;
+        this.loadingService.setLoading(true);
         const isDeleted = await this._removeRole(role);
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         if (isDeleted) {
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Roles', 'Rol eliminado con éxito');
           this._removeLocalRole(role);
@@ -108,17 +108,17 @@ export class RolesAdminComponent implements OnInit {
   }
 
   public async saveRole() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     const role = this._getFormData();
     if (!role.permissions || (role.permissions && !role.permissions.length)) {
       this.notificationServ.showNotification(eNotificationType.ERROR, 'Roles', 'Seleccione los permisos del rol');
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       return;
     }
     if (this.isEditing) {
       this.currentRole = this._getNewCurrentRole(this.currentRole, role);
       const isUpdate = await this._updateRole(this.currentRole);
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       if (isUpdate) {
         this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Roles', 'Rol actualizado con éxito');
         this._updateLocalRole(this.currentRole);
@@ -131,11 +131,11 @@ export class RolesAdminComponent implements OnInit {
     const index = this.rolesCopy.findIndex(({ name }) => name.toLowerCase() === role.name.toLowerCase());
     if (index !== -1) {
       Swal.fire('Roles', 'Ya existe un rol con el mismo nombre', 'error');
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       return;
     }
     const _role = <iRole>(await this._createRole(role));
-    this.showLoading = false;
+    this.loadingService.setLoading(false);
     if (_role) {
       this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Roles', 'Rol creado con éxito');
       this._addLocalRole(_role);
@@ -169,7 +169,7 @@ export class RolesAdminComponent implements OnInit {
   }
 
   private async _initialize() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.roleForm = new FormGroup({
       'name': new FormControl(null, Validators.required),
       'description': new FormControl(null, Validators.required)
@@ -179,7 +179,7 @@ export class RolesAdminComponent implements OnInit {
     this.rolesCopy = this.roles;
     this.searchRole();
     this.closeFormPanel();
-    this.showLoading = false;
+    this.loadingService.setLoading(false);
   }
 
   private _fillForm(role: iRole) {

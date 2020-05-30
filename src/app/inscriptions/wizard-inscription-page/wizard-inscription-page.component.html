@@ -40,14 +40,18 @@
 <!-- <ng-template > -->
 <div *ngIf="isOkPeriod === 0 && isOpen === 0 && validateStudent">
 
-  <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="step != 6">
+  <mat-horizontal-stepper [linear]="isLinear" #stepper *ngIf="step != 7">
     <mat-step editable='false'>
       <ng-template matStepLabel>Formulario</ng-template>
       <app-register-student-page></app-register-student-page>
     </mat-step>
     <mat-step editable='false'>
+      <ng-template matStepLabel>Recibo de pago</ng-template>
+      <app-inscriptions-upload-files-page [step]="2" *ngIf="step == 2"></app-inscriptions-upload-files-page>
+    </mat-step>
+    <mat-step editable='false'>
       <ng-template matStepLabel>Documentos</ng-template>
-      <app-inscriptions-upload-files-page *ngIf="step == 2"></app-inscriptions-upload-files-page>
+      <app-inscriptions-upload-files-page [step]="3" *ngIf="step == 3"></app-inscriptions-upload-files-page>
     </mat-step>
     <mat-step editable='false'>
       <ng-template matStepLabel>Contrato</ng-template>
@@ -55,11 +59,11 @@
     </mat-step>
     <mat-step editable='false'>
       <ng-template matStepLabel>Resumen</ng-template>
-      <app-resume-student-page *ngIf="step == 4"></app-resume-student-page>
+      <app-resume-student-page *ngIf="step == 5"></app-resume-student-page>
     </mat-step>
     <mat-step editable='false'>
       <ng-template matStepLabel>Confirmación</ng-template>
-      <app-confirmation-student-page *ngIf="step == 5"></app-confirmation-student-page>
+      <app-confirmation-student-page *ngIf="step == 6"></app-confirmation-student-page>
     </mat-step>
   </mat-horizontal-stepper>
 </div>

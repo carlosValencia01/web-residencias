@@ -1,18 +1,19 @@
-import { Component, OnInit, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
 import { iIntegrant } from 'src/app/entities/reception-act/integrant.model';
+import { uRequest } from 'src/app/entities/reception-act/request';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { MatDialog } from '@angular/material';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
-import { ObservationsComponentComponent } from 'src/app/titulation/observations-component/observations-component.component';
-import { RequestService } from 'src/app/services/reception-act/request.service';
-import { uRequest } from 'src/app/entities/reception-act/request';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { RequestService } from 'src/app/services/reception-act/request.service';
+import { ObservationsComponentComponent } from 'src/app/titulation/observations-component/observations-component.component';
 
 @Component({
   selector: 'app-request-view',
@@ -27,7 +28,6 @@ export class RequestViewComponent implements OnInit {
   public isToggle = false;
   private integrants: Array<iIntegrant> = [];
   private oRequest: uRequest;
-  public showLoading = false;
 
   constructor(
     public studentProvider: StudentProvider,
@@ -37,6 +37,7 @@ export class RequestViewComponent implements OnInit {
     public dialog: MatDialog,
     public _RequestService: RequestService,
     private imgService: ImageToBase64Service,
+    private loadingService: LoadingService,
   ) { }
 
   ngOnInit() {
@@ -106,23 +107,23 @@ export class RequestViewComponent implements OnInit {
   }
 
   public getProjectCover() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.requestProvider.getResource(this.request._id, eFILES.PROYECTO).subscribe(data => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       window.open(URL.createObjectURL(data), '_blank');
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener la portada');
     });
   }
 
   public getRequestPDF() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.requestProvider.getResource(this.request._id, eFILES.SOLICITUD).subscribe(data => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       window.open(URL.createObjectURL(data), '_blank');
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener la solicitud');
     });
 

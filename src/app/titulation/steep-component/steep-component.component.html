@@ -21,7 +21,7 @@
           <!-- <mat-card-title>Firma</mat-card-title> -->
         </mat-card-header>
         <mat-card-content>
-          <div class="form-group">        
+          <div class="form-group">
               <div class="custom-file mt-4" id="customFile">
                 <input type="file" class="btn custom-file-input" id="customFile" (change)="fileChanged($event)" placeholder="Buscar" aria-label="No se a seleccionado ningún archivo">
                 <label class="custom-file-label" for="customFile">{{fileName || 'Buscar firma'}}</label>
@@ -29,7 +29,7 @@
             <mat-form-field appearance="outline" class="w-100  mt-4">
               <mat-label>Contraseña</mat-label>
               <input matInput placeholder="Contraseña" type="password" [(ngModel)]="password">
-            </mat-form-field>          
+            </mat-form-field>
           </div>
         </mat-card-content>
         <mat-card-actions align="end">
@@ -68,7 +68,3 @@
     </div>
   </mat-step>
 </mat-horizontal-stepper>
-
-<div class="center">
-  <app-loader [loading]="showLoading"></app-loader>
-</div>

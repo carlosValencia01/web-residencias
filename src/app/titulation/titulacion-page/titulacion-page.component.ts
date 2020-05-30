@@ -1,24 +1,25 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { RequestComponentComponent } from 'src/app/titulation/request-component/request-component.component';
-import { ContextState } from 'src/app/providers/reception-act/State/ContextState';
-import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { MatStepper } from '@angular/material';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { uRequest } from 'src/app/entities/reception-act/request';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { IStudent } from 'src/app/entities/shared/student.model';
-import { ViewerComponentComponent } from 'src/app/titulation/viewer-component/viewer-component.component';
-import { Router, ActivatedRoute } from '@angular/router';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { RequestService } from 'src/app/services/reception-act/request.service';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
-import { eStatus } from 'src/app/enumerators/reception-act/status.enum';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
+import { uRequest } from 'src/app/entities/reception-act/request';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { IStudent } from 'src/app/entities/shared/student.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { eStatus } from 'src/app/enumerators/reception-act/status.enum';
+import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { ContextState } from 'src/app/providers/reception-act/State/ContextState';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { RequestService } from 'src/app/services/reception-act/request.service';
+import { RequestComponentComponent } from 'src/app/titulation/request-component/request-component.component';
+import { ViewerComponentComponent } from 'src/app/titulation/viewer-component/viewer-component.component';
 
 moment.locale('es');
 
@@ -94,7 +95,6 @@ export class TitulacionPageComponent implements OnInit {
   get frmStepOne() {
     return this.stepOneComponent ? this.stepOneComponent.frmRequest : null;
   }
-  public showLoading: boolean;
 
   constructor(
     private studentProv: StudentProvider,
@@ -105,6 +105,7 @@ export class TitulacionPageComponent implements OnInit {
     private srvNotifications: NotificationsServices,
     private requestService: RequestService,
     public _InscriptionsProvider: InscriptionsProvider,
+    private loadingService: LoadingService,
   ) {
     this.user = this.cookiesService.getData().user;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -151,7 +152,7 @@ export class TitulacionPageComponent implements OnInit {
   }
 
   loadRequest() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.studentProv.getRequest(this.user._id)
       .subscribe(res => {
         if (res.request.length > 0) {
@@ -171,9 +172,9 @@ export class TitulacionPageComponent implements OnInit {
           };
         }
         this.SelectItem();
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
       }, _ => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.srvNotifications
           .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitud');
       });

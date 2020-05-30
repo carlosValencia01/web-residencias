@@ -1,24 +1,25 @@
-import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ComponentType } from '@angular/cdk/overlay';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
-import Swal from 'sweetalert2';
-import * as Papa from 'papaparse';
-import * as moment from 'moment';
-moment.locale('es');
+import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { IStudent } from 'src/app/entities/shared/student.model';
-import { LoadCsvDataComponent } from 'src/app/commons/load-csv-data/load-csv-data.component';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import * as jsPDF from 'jspdf';
+import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 import * as JsBarcode from 'jsbarcode';
+import * as jsPDF from 'jspdf';
+import * as moment from 'moment';
+import * as Papa from 'papaparse';
+import { LoadCsvDataComponent } from 'src/app/commons/load-csv-data/load-csv-data.component';
+import { IStudent } from 'src/app/entities/shared/student.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
+moment.locale('es');
 
 @Component({
   selector: 'app-imss-page',
@@ -44,7 +45,6 @@ export class ImssPageComponent implements OnInit {
   public dataSourceCampaign: MatTableDataSource<IIMSSTable>;
   public search: string;
   public selectedTab: FormControl;
-  public loading: boolean;
 
   photoStudent = '';
   imageDoc;
@@ -63,12 +63,13 @@ export class ImssPageComponent implements OnInit {
     private dialog: MatDialog,
     private inscriptionProv: InscriptionsProvider,
     private imageToBase64Serv: ImageToBase64Service,
+    private loadingService: LoadingService,
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.selectedTab = new FormControl(0);
-    this.loading = false;
+    this.loadingService.setLoading(false);
     this.getBase64ForStaticImages();
   }
 
@@ -128,16 +129,16 @@ export class ImssPageComponent implements OnInit {
       confirmButtonText: 'Aceptar'
     }).then((result) => {
       if (result.value) {
-        this.loading = true;
+        this.loadingService.setLoading(true);
         this.studentProvider.insuredStudent(student.controlNumber)
           .subscribe(_ => {
-            this.loading = false;
+            this.loadingService.setLoading(false);
             this.notificationServ.showNotification(eNotificationType.SUCCESS, 'IMSS', 'Estudiante asegurado con éxito');
             this._getAllUninsured();
             this._getAllCampaign();
           }, _ => {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Error, no se pudo asegurar al estudiante');
-            this.loading = false;
+            this.loadingService.setLoading(false);
           });
       }
     });
@@ -156,16 +157,16 @@ export class ImssPageComponent implements OnInit {
       confirmButtonText: 'Aceptar'
     }).then((result) => {
       if (result.value) {
-        this.loading = true;
+        this.loadingService.setLoading(true);
         this.studentProvider.uninsuredStudent(student.controlNumber)
           .subscribe(_ => {
-            this.loading = false;
+            this.loadingService.setLoading(false);
             this.notificationServ.showNotification(eNotificationType.SUCCESS, 'IMSS', 'Se ha dado de baja el seguro con éxito');
             this._getAllInsured();
             this._getAllCampaign();
           }, _ => {
             this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Error al dar de baja el seguro al estudiante');
-            this.loading = false;
+            this.loadingService.setLoading(false);
           });
       }
     });
@@ -212,15 +213,15 @@ export class ImssPageComponent implements OnInit {
             const refDialog = this._openDialog(LoadCsvDataComponent, 'ImssInsured', _data);
             refDialog.afterClosed().subscribe((_students: Array<any>) => {
               if (_students) {
-                this.loading = true;
+                this.loadingService.setLoading(true);
                 provider.insuredStudentsCsv(_students).subscribe(_ => {
-                  this.loading = false;
+                  this.loadingService.setLoading(false);
                   notificacion.showNotification(eNotificationType.SUCCESS, 'IMSS', 'Estudiantes asegurados con éxito');
                   this.changeTab(this.selectedTab.value);
                   this.fileUpload.nativeElement.value = '';
                 }, _ => {
                   this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Ocurrió un error al asegurar los estudiantes');
-                  this.loading = false;
+                  this.loadingService.setLoading(false);
                   this.fileUpload.nativeElement.value = '';
                 });
               } else {
@@ -274,10 +275,10 @@ export class ImssPageComponent implements OnInit {
             const refDialog = this._openDialog(LoadCsvDataComponent, 'ImssData', _data);
             refDialog.afterClosed().subscribe((_imssData: Array<any>) => {
               if (_imssData && _imssData.length) {
-                this.loading = true;
+                this.loadingService.setLoading(true);
                 this.studentProvider.convertCsv(_imssData)
                   .subscribe((csvData) => {
-                    this.loading = false;
+                    this.loadingService.setLoading(false);
                     const imssData = csvData.reverse();
                     const headerCsv = {
                       controlNumber: 'Número de control',
@@ -289,7 +290,7 @@ export class ImssPageComponent implements OnInit {
                     imssData.push(headerCsv);
                     new Angular5Csv(csvData.reverse(), 'IMSS');
                   }, (_) => {
-                    this.loading = false;
+                    this.loadingService.setLoading(false);
                     this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Error al convertir csv para descarga.');
                   });
               }
@@ -302,60 +303,60 @@ export class ImssPageComponent implements OnInit {
   }
 
   public regularizeNss() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProvider.regularizeNss()
       .subscribe((_) => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
         this.notificationServ.showNotification(eNotificationType.SUCCESS, 'IMSS', 'NSS actualizados');
         this.changeTab(this.selectedTab.value);
       }, (_) => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
         this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Ocurrió un error, inténtalo de nuevo');
       });
   }
 
   // Obtener alumnos no asegurados
   private _getAllInsured() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProvider.studentsImssInsured()
       .subscribe(res => {
         const data = res.students.map(this._castToTable);
         this._refreshInsured(data);
       }, _ => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'No se pudieron cargar los estudiantes asegurados');
-        this.loading = false;
+        this.loadingService.setLoading(false);
       }, () => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
       });
   }
 
   // Obtener alumnos asegurados
   private _getAllUninsured() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProvider.studentsImssUninsured()
       .subscribe(res => {
         const data = res.students.map(this._castToTable);
         this._refreshUninsured(data);
       }, _ => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'No se pudieron cargar los estudiantes no asegurados');
-        this.loading = false;
+        this.loadingService.setLoading(false);
       }, () => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
       });
   }
 
   // Obtener alumnos campaña credencializacion
   private _getAllCampaign() {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.studentProvider.studentsCampaign()
       .subscribe(res => {
         const data = res.students.map(this._castToTable);
         this._refreshCampaign(data);
       }, _ => {
         this.notificationServ.showNotification(eNotificationType.ERROR, 'No se pudieron cargar los estudiantes de campaña', '');
-        this.loading = false;
+        this.loadingService.setLoading(false);
       }, () => {
-        this.loading = false;
+        this.loadingService.setLoading(false);
       });
   }
 
@@ -407,29 +408,29 @@ export class ImssPageComponent implements OnInit {
       width: '50em'
     });
   }
-  
+
   excelExportIMSS(){
     this.notificationServ.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tablaPlantillaExcelIMSS'), {
       name: 'Plantilla Alumnos IMSS.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   excelExportIMSSCampaign(){
     this.notificationServ.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
-    this.loading = true;
+    this.loadingService.setLoading(true);
     TableToExcel.convert(document.getElementById('tablaPlantillaExcelIMSSCampaign'), {
       name: 'Plantilla Alumnos IMSS Campaña.xlsx',
       sheet: {
         name: 'Alumnos'
       }
     });
-    this.loading = false;
+    this.loadingService.setLoading(false);
   }
 
   excelExportUninsured(){
@@ -502,7 +503,7 @@ export class ImssPageComponent implements OnInit {
     };
   }
 
-  generatePDF(student) { 
+  generatePDF(student) {
     if (student.nss) {
 
       Swal.fire({
@@ -520,13 +521,13 @@ export class ImssPageComponent implements OnInit {
         }
       });
     } else {
-      this.loading = false;
+      this.loadingService.setLoading(false);
       this.notificationServ.showNotification(eNotificationType.ERROR, 'No tiene NSS asignado', '');
     }
   }
 
   async printCredential(student){
-    this.loading = true;
+    this.loadingService.setLoading(true);
     await this.getDocuments(student._id);
     if (this.photoStudent !== '' && this.photoStudent !== 'assets/imgs/studentAvatar.png') {
       const doc = new jsPDF({
@@ -569,7 +570,7 @@ export class ImssPageComponent implements OnInit {
       doc.setFontSize(8);
       doc.text(57, 53.5, doc.splitTextToSize(student.controlNumber, 35));
       // this.loading=false;
-      this.loading = false;
+      this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank');
 
       this.studentProvider.registerCredentialStudent(student._id,true)
@@ -579,7 +580,7 @@ export class ImssPageComponent implements OnInit {
       });
 
     } else {
-      this.loading = false;
+      this.loadingService.setLoading(false);
       this.notificationServ.showNotification(eNotificationType.ERROR, 'No cuenta con fotografía', '');
     }
   }
@@ -675,15 +676,15 @@ export class ImssPageComponent implements OnInit {
       confirmButtonText: 'Aceptar'
     }).then((result) => {
       if (result.value) {
-        this.loading = true;
+        this.loadingService.setLoading(true);
         this.studentProvider.registerCredentialStudent(student._id,false)
         .subscribe(_ => {
-          this.loading = false;
+          this.loadingService.setLoading(false);
           this._getAllCampaign();
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'IMSS', 'Credencial removida con éxito');
         }, _ => {
           this.notificationServ.showNotification(eNotificationType.ERROR, 'IMSS', 'Error, no se pudo remover la credencial');
-          this.loading = false;
+          this.loadingService.setLoading(false);
         });
       }
     });

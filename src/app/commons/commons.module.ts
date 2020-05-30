@@ -1,27 +1,18 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-// Angular
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-// Ngx
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
-import { QuicklinkModule } from 'ngx-quicklink';
-
-// Material
+import { ErrorStateMatcher, MatButtonModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-import { MatButtonModule, } from '@angular/material';
-
-import { LoaderComponent } from './loader/loader.component';
-import { MAT_DIALOG_DEFAULT_OPTIONS, ErrorStateMatcher } from '@angular/material';
+import { MatTableModule } from '@angular/material/table';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { QuicklinkModule } from 'ngx-quicklink';
 import { ErrorMatcher } from '../services/shared/ErrorMatcher';
-import { LoadCsvDataComponent } from './load-csv-data/load-csv-data.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { ExtendViewerComponent } from './extend-viewer/extend-viewer.component';
+import { LoadCsvDataComponent } from './load-csv-data/load-csv-data.component';
 
 @NgModule({
   imports: [
@@ -38,7 +29,6 @@ import { ExtendViewerComponent } from './extend-viewer/extend-viewer.component';
     ReactiveFormsModule,
   ],
   declarations: [
-    LoaderComponent,
     LoadCsvDataComponent,
     ExtendViewerComponent,
     ConfirmDialogComponent,
@@ -49,7 +39,9 @@ import { ExtendViewerComponent } from './extend-viewer/extend-viewer.component';
   ],
   exports: [
     QuicklinkModule,
-    LoaderComponent,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     LoadCsvDataComponent,
     ExtendViewerComponent,
     ConfirmDialogComponent,

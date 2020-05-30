@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
+import { MatDialog } from '@angular/material';
 import { MatStepper } from '@angular/material/stepper';
 import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
-import { MatDialog } from '@angular/material';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,7 +18,6 @@ export class ResumeStudentPageComponent implements OnInit {
   _idStudent: String;
   data: any;
   studentData: any;
-  loading = false; 
 
   //Foto del Estudiante
   pub;
@@ -98,6 +98,7 @@ export class ResumeStudentPageComponent implements OnInit {
     private stepper: MatStepper,
     public dialog: MatDialog,
     private notificationService: NotificationsServices,
+    private loadingService: LoadingService,
   ) {
     this.getIdStudent();
     this.getStudentData(this._idStudent);
@@ -230,7 +231,7 @@ export class ResumeStudentPageComponent implements OnInit {
     switch (file) {
       case "Acta": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta de Nacimiento.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docActa.fileIdInDrive, this.docActa.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -245,7 +246,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -255,7 +256,7 @@ export class ResumeStudentPageComponent implements OnInit {
       }
       case "CURP": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CURP.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docCurp.fileIdInDrive, this.docCurp.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -270,7 +271,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -279,7 +280,7 @@ export class ResumeStudentPageComponent implements OnInit {
       }
       case "NSS": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando NSS.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docNss.fileIdInDrive, this.docNss.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -294,7 +295,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -303,7 +304,7 @@ export class ResumeStudentPageComponent implements OnInit {
       }
       case "Certificado": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado de Estudios.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docCertificado.fileIdInDrive, this.docCertificado.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -318,7 +319,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -327,7 +328,7 @@ export class ResumeStudentPageComponent implements OnInit {
       }
       case "Analisis": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Análisis Clínicos.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docAnalisis.fileIdInDrive, this.docAnalisis.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -342,7 +343,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -351,7 +352,7 @@ export class ResumeStudentPageComponent implements OnInit {
       }
       case "Comprobante": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Comprobante de Pago.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docComprobante.fileIdInDrive, this.docComprobante.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -366,7 +367,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -375,7 +376,7 @@ export class ResumeStudentPageComponent implements OnInit {
       }
       case "Compromiso": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Carta Compromiso.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docCC.fileIdInDrive, this.docCC.filename).subscribe(data => {
           var pubCC = data.file;
           let buffCC = new Buffer(pubCC.data);
@@ -390,7 +391,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -400,7 +401,7 @@ export class ResumeStudentPageComponent implements OnInit {
       // MAESTRIA
       case "Certificado_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.certificateLDoc.fileIdInDrive, this.certificateLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -415,7 +416,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -426,7 +427,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Titulo_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Titulo Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.titledLDoc.fileIdInDrive, this.titledLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -441,7 +442,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -452,7 +453,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cedula_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Cedula Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cedulaLDoc.fileIdInDrive, this.cedulaLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -467,7 +468,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -478,7 +479,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Examen_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta Examen Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.examActLDoc.fileIdInDrive, this.examActLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -493,7 +494,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -504,7 +505,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cc_Certificado_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Certificado Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cccertificateLDoc.fileIdInDrive, this.cccertificateLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -519,7 +520,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -530,7 +531,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cc_Titulo_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Titulo Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cctitledLDoc.fileIdInDrive, this.cctitledLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -545,7 +546,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -556,7 +557,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cc_Cedula_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Cedula Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cccedulaLDoc.fileIdInDrive, this.cccedulaLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -571,7 +572,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -582,7 +583,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cc_Examen_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Acta Examen Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.ccexamActLDoc.fileIdInDrive, this.ccexamActLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -597,7 +598,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -609,7 +610,7 @@ export class ResumeStudentPageComponent implements OnInit {
       // DOCTORADO
       case "Certificado_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.certificateMDoc.fileIdInDrive, this.certificateMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -624,7 +625,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -635,7 +636,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Titulo_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Titulo Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.titledMDoc.fileIdInDrive, this.titledMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -650,7 +651,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -661,7 +662,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cedula_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Cedula Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cedulaMDoc.fileIdInDrive, this.cedulaMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -676,7 +677,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -687,7 +688,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Examen_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta Examen Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.examActMDoc.fileIdInDrive, this.examActMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -702,7 +703,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -713,7 +714,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cc_Certificado_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Certificado Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cccertificateMDoc.fileIdInDrive, this.cccertificateMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -728,7 +729,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -739,7 +740,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cc_Titulo_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Titulo Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cctitledMDoc.fileIdInDrive, this.cctitledMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -754,7 +755,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -765,7 +766,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cc_Cedula_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Cedula Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cccedulaMDoc.fileIdInDrive, this.cccedulaMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -780,7 +781,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -791,7 +792,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
       case "Cc_Examen_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Acta Examen Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.ccexamActMDoc.fileIdInDrive, this.ccexamActMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -806,7 +807,7 @@ export class ResumeStudentPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);

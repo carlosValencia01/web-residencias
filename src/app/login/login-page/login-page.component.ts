@@ -1,5 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IPosition } from 'src/app/entities/shared/position.model';
+import { IEmployee } from 'src/app/entities/shared/employee.model';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 
@@ -17,77 +19,54 @@ import { eSessionStatus } from 'src/app/enumerators/app/sessionStatus.enum';
   styleUrls: ['./login-page.component.scss']
 })
 export class LoginPageComponent implements OnInit {
-  @ViewChild('loginInputUser') loginInputUser: ElementRef;
   @Output('session') session = new EventEmitter();
 
-  formLogin: FormGroup;
-  errorForm = false;
-  errorUsernameInput = false;
-  errorPasswordInput = false;
-  showAlertDiv = false;
-  messageAlertDiv = '';
-  datos;
-  user: any;
+  public formLogin: FormGroup;
+  public showAlertDiv = false;
+  public messageAlertDiv = '';
 
   constructor(
-    public formBuilder: FormBuilder,
     private userProv: UserProvider,
     private employeeProv: EmployeeProvider,
     private cookiesServ: CookiesService,
     public dialog: MatDialog,
     private currentPositionService: CurrentPositionService,
     private roleServ: RoleService,
-  ) { }
-
-  ngOnInit() {
-    this._initializeForm();
-  }
-
-  private _initializeForm() {
-    this.formLogin = this.formBuilder.group({
-      'usernameInput': ['', [Validators.required]],
-      'passwordInput': ['', [Validators.required]],
+  ) {
+    this.formLogin = new FormGroup({
+      'usernameInput': new FormControl(null, Validators.required),
+      'passwordInput': new FormControl(null, Validators.required),
     });
-
-    this.formLogin.get('usernameInput').setValue('');
-    this.formLogin.get('passwordInput').setValue('');
-    this.loginInputUser.nativeElement.focus();
   }
+
+  ngOnInit() { }
 
   public login() {
     if (this.formLogin.invalid) {
-      this.errorForm = true;
-
-      if (this.formLogin.get('usernameInput').errors) {
-        this.errorUsernameInput = true;
-      }
-
-      if (this.formLogin.get('passwordInput').errors) {
-        this.errorPasswordInput = true;
-      }
       return;
     }
     this.userProv.login({
       email: this.formLogin.get('usernameInput').value,
       password: this.formLogin.get('passwordInput').value
     })
-    .subscribe((res) => {
-      this.userProv.sendTokenFromAPI(res.token);
+      .subscribe((res) => {
+        this.userProv.sendTokenFromAPI(res.token);
 
-      if (res.user.rol && res.user.rol.name && res.user.rol.name.toUpperCase() === 'ESTUDIANTE') {
-        this._getBosses();
-        this._studentLogin(res);
-        return;
-      }
-      this._employeeLogin(res);
-    }, (error) => {
-      const msg = JSON.parse(error._body);
-      this.messageAlertDiv = msg.error;
-      this.showAlertDiv = true;
-    });
+        if (res.user.rol && res.user.rol.name && res.user.rol.name.toUpperCase() === 'ESTUDIANTE') {
+          this._getBosses();
+          this._studentLogin(res);
+          return;
+        }
+        this._employeeLogin(res);
+        this.showAlertDiv = false;
+      }, (error) => {
+        const msg = JSON.parse(error._body);
+        this.messageAlertDiv = msg.error;
+        this.showAlertDiv = true;
+      });
   }
 
-  private loginIsSuccessful(res) {
+  private loginIsSuccessful(res: any) {
     this.roleServ.setRole(res.user.rol);
     this.cookiesServ.saveData(res);
     this.showAlertDiv = false;
@@ -97,13 +76,16 @@ export class LoginPageComponent implements OnInit {
   private async _getBosses() {
     const JDeptoDiv = await this._getBoss({
       Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES',
-      Position: 'JEFE DE DEPARTAMENTO' });
+      Position: 'JEFE DE DEPARTAMENTO'
+    });
     const CDeptoDiv = await this._getBoss({
       Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES',
-      Position: 'COORDINADOR DE TITULACIÓN' });
+      Position: 'COORDINADOR DE TITULACIÓN'
+    });
     const JDeptoEsc = await this._getBoss({
       Department: 'DEPARTAMENTO DE SERVICIOS ESCOLARES',
-      Position: 'JEFE DE DEPARTAMENTO' });
+      Position: 'JEFE DE DEPARTAMENTO'
+    });
     const Director = await this._getBoss({ Department: 'DIRECCIÓN', Position: 'DIRECTOR' });
     const Bosses = {
       JDeptoDiv: JDeptoDiv,
@@ -126,7 +108,7 @@ export class LoginPageComponent implements OnInit {
     });
   }
 
-  private _getEmployee(email) {
+  private _getEmployee(email: string) {
     return new Promise(resolve => {
       this.employeeProv.getEmployee(email).subscribe(
         res => resolve(res.employee),
@@ -135,17 +117,17 @@ export class LoginPageComponent implements OnInit {
     });
   }
 
-  public viewVideo() {
+  public viewInscriptionsVideo() {
     // Tutorial Nuevo Ingreso
-    window.open('https://drive.google.com/file/d/1QlVOPP6_wy89Ld7sJsDKFNNH6gMn3V-B/view?usp=sharing');    
+    window.open('https://drive.google.com/file/d/1QlVOPP6_wy89Ld7sJsDKFNNH6gMn3V-B/view?usp=sharing');
   }
 
-  public viewVideoReceptionAct() {
+  public viewReceptionActVideo() {
     // Tutorial Acto Recepcional
     window.open('https://drive.google.com/file/d/1o4WxNZ-RCPuqkb9cnK0ybulchgx8uLVp/view?usp=sharing');
   }
 
-  private _studentLogin(res) {
+  private _studentLogin(res: any) {
     const _defaultGender = 'DESCONOCIDO';
     const _defaultProfileIcon = 'assets/icons/profile.svg';
     res.gender = ((res.gender === 'F') ? 'femenino'
@@ -156,12 +138,12 @@ export class LoginPageComponent implements OnInit {
     this.loginIsSuccessful(res);
   }
 
-  private async _employeeLogin(res) {
-    let _employee;
-    _employee = await this._getEmployee(res.user.email);
+  private async _employeeLogin(res: any) {
+    let _employee: IEmployee;
+    _employee = <IEmployee>await this._getEmployee(res.user.email);
     const _positions = _employee.positions;
 
-    if (_positions.length > 1) {
+    if (_positions && _positions.length > 1) {
       const dialogRef = this.dialog.open(SelectPositionComponent, {
         width: '25em',
         data: { positions: _positions },
@@ -174,7 +156,7 @@ export class LoginPageComponent implements OnInit {
           this._completeEmployeeLogin(res, result, _employee);
         }
       });
-    } else if (_positions.length > 0) {
+    } else if (_positions && _positions.length > 0) {
       this._completeEmployeeLogin(res, _positions[0], _employee);
     } else {
       Swal.fire({
@@ -186,7 +168,7 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
-  private _completeEmployeeLogin(res, selectedPosition, employee) {
+  private _completeEmployeeLogin(res: any, selectedPosition: IPosition, employee: IEmployee) {
     const _defaultRole = { name: '', permissions: [] };
     const _defaultGender = 'DESCONOCIDO';
     const _defaultProfileIcon = 'assets/icons/profile.svg';
@@ -198,7 +180,7 @@ export class LoginPageComponent implements OnInit {
     res.user.position = selectedPosition._id;
     res.user.eid = employee._id;
     res.user.rol = selectedPosition.role || _defaultRole;
-    this.cookiesServ.saveEmployeePositions(employee.positions);
+    this.cookiesServ.saveEmployeePositions(<IPosition[]>employee.positions);
     this.cookiesServ.savePosition(selectedPosition);
     this.loginIsSuccessful(res);
   }

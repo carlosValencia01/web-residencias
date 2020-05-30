@@ -1,17 +1,17 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import Swal from 'sweetalert2';
-
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { CurrentPositionService } from 'src/app/services/shared/current-position.service';
-import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
+import { SelectPositionComponent } from 'src/app/commons/select-position/select-position.component';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { eSessionStatus } from 'src/app/enumerators/app/sessionStatus.enum';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { SelectPositionComponent } from 'src/app/commons/select-position/select-position.component';
 import { UserProvider } from 'src/app/providers/app/user.prov';
+import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { CurrentPositionService } from 'src/app/services/shared/current-position.service';
 import { RoleService } from 'src/app/services/shared/role.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-home-header',
@@ -28,7 +28,6 @@ export class HomeHeaderComponent implements OnInit {
   public role: string;
   survey: boolean; // comprobar si la url es para la encuesta
   public roleName: string;
-  public showLoading: boolean;
   public profileIcon: string;
 
   constructor(
@@ -40,6 +39,7 @@ export class HomeHeaderComponent implements OnInit {
     private router: Router,
     private userProv: UserProvider,
     private roleServ: RoleService,
+    private loadingService: LoadingService,
   ) {
     const fulturi = window.location.href;
     this.survey = fulturi.indexOf('survey') !== -1;
@@ -100,9 +100,9 @@ export class HomeHeaderComponent implements OnInit {
   public async changePosition() {
     const _user =  this.cookiesServ.getData().user;
     let _employee;
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     _employee = await this._getEmployee(_user.email);
-    this.showLoading = false;
+    this.loadingService.setLoading(false);
     const positions = _employee.positions;
     const otherPositions = positions.filter(pos => pos._id !== _user.position);
 

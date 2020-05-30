@@ -1,16 +1,17 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
-import { EmployeeAdviserComponent } from 'src/app/titulation/employee-adviser/employee-adviser.component';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { NgxTimepickerFieldComponent } from 'ngx-material-timepicker';
+import { uRequest } from 'src/app/entities/reception-act/request';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { uRequest } from 'src/app/entities/reception-act/request';
+import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { EmployeeAdviserComponent } from 'src/app/titulation/employee-adviser/employee-adviser.component';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -34,7 +35,6 @@ export class ReleaseComponentComponent implements OnInit {
   };
   public activeReleased = false;
   public enableUpload = false;
-  public showLoading = false;
   public folderId;
   private userInformation: any;
   private juryInfo: Array<{ name: string, title: string, cedula: string, email?: string }>;
@@ -50,6 +50,7 @@ export class ReleaseComponentComponent implements OnInit {
     private _RequestProvider: RequestProvider,
     public _ImageToBase64Service: ImageToBase64Service,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private loadingService: LoadingService,
   ) {
     this.information = data;
     this.isReject = typeof (this.information.observation) !== 'undefined' && this.information.observation.length > 0;
@@ -103,12 +104,12 @@ export class ReleaseComponentComponent implements OnInit {
   }
 
   loadFile(): void {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this._RequestProvider.getResource(this.information.request._id, eFILES.RELEASED).subscribe(data => {
       this.fileData = data;
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al recuperar recurso');
     });
   }
@@ -221,7 +222,7 @@ export class ReleaseComponentComponent implements OnInit {
   }
 
   onUpload(event): void {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === 'application/pdf') {
         const frmData = new FormData();
@@ -232,17 +233,17 @@ export class ReleaseComponentComponent implements OnInit {
         frmData.append('phase', this.information.request.phase);
         this._RequestProvider.uploadFile(this.information.id, frmData).subscribe(data => {
           this.fileData = event.target.files[0];
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         }, _ => {
           this.notifications
             .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         });
 
       } else {
         this.notifications
           .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, su archivo debe ser de tipo PDF');
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
       }
     }
   }

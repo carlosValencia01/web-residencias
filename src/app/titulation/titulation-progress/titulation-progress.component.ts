@@ -1,45 +1,45 @@
-import { Component, OnInit, ViewChild, Input, ElementRef } from '@angular/core';
-import { IStudent } from 'src/app/entities/shared/student.model';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { MatTableDataSource, MatPaginator, MatSort, MatChipInputEvent } from '@angular/material';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatChipInputEvent, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatAutocomplete } from '@angular/material/autocomplete';
 import { MatDialog } from '@angular/material/dialog';
-import { RequestModalComponent } from 'src/app/titulation/request-modal/request-modal.component';
-import { eRole } from 'src/app/enumerators/app/role.enum';
-import { SteepComponentComponent } from 'src/app/titulation/steep-component/steep-component.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import TableToExcel from '@linways/table-to-excel';
+import { LoadingBarService } from 'ngx-loading-bar';
 import { uRequest } from 'src/app/entities/reception-act/request';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { ReleaseComponentComponent } from 'src/app/titulation/release-component/release-component.component';
-import { RequestService } from 'src/app/services/reception-act/request.service';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { ICareer } from 'src/app/entities/shared/career.model';
+import { IStudent } from 'src/app/entities/shared/student.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eRole } from 'src/app/enumerators/app/role.enum';
 import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
 import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
+import { eCAREER } from 'src/app/enumerators/shared/career.enum';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { BookProvider } from 'src/app/providers/reception-act/book.prov';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { CareerProvider } from 'src/app/providers/shared/career.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { FirebaseService } from 'src/app/services/graduation/firebase.service';
+import { RequestService } from 'src/app/services/reception-act/request.service';
+import { ActNotificacionComponent } from 'src/app/titulation/act-notificacion/act-notificacion.component';
+import { BookComponent } from 'src/app/titulation/book/book.component';
+import { ChangeJuryComponent } from 'src/app/titulation/change-jury/change-jury.component';
 import { DocumentReviewComponent } from 'src/app/titulation/document-review/document-review.component';
+import { ExpedientComponent } from 'src/app/titulation/expedient/expedient.component';
 import { ObservationsComponentComponent } from 'src/app/titulation/observations-component/observations-component.component';
 import { ReleaseCheckComponent } from 'src/app/titulation/release-check/release-check.component';
-import { eCAREER } from 'src/app/enumerators/shared/career.enum';
+import { ReleaseComponentComponent } from 'src/app/titulation/release-component/release-component.component';
+import { RequestModalComponent } from 'src/app/titulation/request-modal/request-modal.component';
+import { SteepComponentComponent } from 'src/app/titulation/steep-component/steep-component.component';
 import { UploadDeliveredComponent } from 'src/app/titulation/upload-delivered/upload-delivered.component';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import { ICareer } from 'src/app/entities/shared/career.model';
-import { BookComponent } from 'src/app/titulation/book/book.component';
-import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
-import { ChangeJuryComponent } from 'src/app/titulation/change-jury/change-jury.component';
-import { ActNotificacionComponent } from 'src/app/titulation/act-notificacion/act-notificacion.component';
-import { ExpedientComponent } from 'src/app/titulation/expedient/expedient.component';
-import { LoadingBarService } from 'ngx-loading-bar';
-import { FirebaseService } from 'src/app/services/graduation/firebase.service';
-import { MatAutocomplete } from '@angular/material/autocomplete';
-import { BookProvider } from 'src/app/providers/reception-act/book.prov';
 import Swal from 'sweetalert2';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import { FormControl } from '@angular/forms';
-import * as moment from 'moment';
-import { CareerProvider } from 'src/app/providers/shared/career.prov';
-import TableToExcel from '@linways/table-to-excel';
 
 @Component({
   selector: 'app-titulation-progress',
@@ -77,7 +77,6 @@ export class TitulationProgressComponent implements OnInit {
   cantProceso = 0;
   cantAceptados = 0;
   cantFinalizados = 0;
-  public showLoading: boolean;
   departmentCareers: Array<ICareer>; // Carreras del puesto
   private folderId: string;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
@@ -116,7 +115,8 @@ export class TitulationProgressComponent implements OnInit {
     private loadingBar: LoadingBarService,
     private firebaseService: FirebaseService,
     private _bookProvider: BookProvider,
-    private careerProv: CareerProvider,        
+    private careerProv: CareerProvider,
+    private loadingService: LoadingService,
   ) {
     this.careers = [];
     this.phases = [];
@@ -131,7 +131,7 @@ export class TitulationProgressComponent implements OnInit {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    this.role = this._CookiesService.getData().user.rol.name.toLowerCase();    
+    this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
     this.canExport = this.role === 'administrador' || this.role === 'jefe de servicios escolares' || this.role === 'servicios estudiantiles' ? true : false;
     // Asigno las carreras asociadas al puesto
     this.departmentCareers = this._CookiesService.getPosition().ascription.careers;
@@ -213,7 +213,7 @@ export class TitulationProgressComponent implements OnInit {
 
     this.requestProvider.getAllRequestByStatus(filter).subscribe(
       res => {
-        this.request = [];        
+        this.request = [];
         res.request.forEach(element => {
           const isProcess = (this.tabNumber === 3)
             ? element.documents.filter(doc => doc.status === 'Process').length > 0
@@ -314,16 +314,16 @@ export class TitulationProgressComponent implements OnInit {
         this.dataSource.data = this.dataSource.data;
       }
 
-    
+
       if(phases.length > 0){
         this.dataSource.data = this.dataSource.data.filter(
           (req: any) => phases.map( p => (p.phase)).includes((req.phase))
         );
       } else if (periods.length === 0 && careers.length == 0){
           this.dataSource.data = this.dataSource.data;
-      } 
+      }
 
-    
+
 
       const inputFilter: any = document.getElementById('myfilter');
       this.dataSource.filter = inputFilter ?  inputFilter.value !== '' ? inputFilter.value.trim().toLowerCase() : '' : '';
@@ -441,7 +441,7 @@ export class TitulationProgressComponent implements OnInit {
 
     ref.afterClosed().subscribe((valor: { response: boolean, data: { QR: any, ESTAMP: any, RESPONSE: boolean } }) => {
       if (typeof (valor) !== 'undefined' && valor.response) {
-        this.showLoading = true;
+        this.loadingService.setLoading(true);
         const data = {
           doer: this._CookiesService.getData().user.name.fullName,
           observation: '',
@@ -456,12 +456,12 @@ export class TitulationProgressComponent implements OnInit {
         };
 
         this.requestProvider.updateRequest(Identificador, data).subscribe(_ => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           this._NotificationsServices
             .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
           this.loadRequest();
         }, _ => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           this._NotificationsServices
             .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
         });
@@ -732,49 +732,48 @@ export class TitulationProgressComponent implements OnInit {
                   data.operation = eStatusRequest.REJECT;
                 }
                 if (book.action === 'create') {
-                  this.showLoading = true;
+                  this.loadingService.setLoading(true);
                   data.registry = book.data;
                   this.requestProvider.updateRequest(_id, data).subscribe(_ => {
                     if (data.operation === eStatusRequest.ACCEPT) {
-                      this.showLoading = true;
+                      this.loadingService.setLoading(true);
                       const sub1 = this.firebaseService.getActivedEvent().subscribe(
                         (event) => {
-                          this.showLoading = false;
+                          this.loadingService.setLoading(false);
                           sub1.unsubscribe();
                           if (event[0]) {
-                            this.showLoading = true;
+                            this.loadingService.setLoading(true);
                             const collectionName = event[0].payload.doc.id;
                             const sub2 = this.firebaseService.getGraduateByControlNumber(controlNumber, collectionName).subscribe(
                               (studentData) => {
-                                this.showLoading = false;
+                                this.loadingService.setLoading(false);
                                 sub2.unsubscribe();
                                 if (studentData[0]) {
-                                  this.showLoading = true;
+                                  this.loadingService.setLoading(true);
                                   this.firebaseService.updateFieldGraduate(studentData[0].id, {degree: true}, collectionName)
                                     .then(__ => {
-                                      this.showLoading = false;
+                                      this.loadingService.setLoading(false);
                                       this._NotificationsServices
                                         .showNotification(eNotificationType.SUCCESS,
                                           'Acto recepcional', 'Se actualizó el acrónimo del egresado para graduación');
                                     }, __ => {
-                                      this.showLoading = false;
+                                      this.loadingService.setLoading(false);
                                     });
                                 }
                               }, __ => {
-                                this.showLoading = false;
+                                this.loadingService.setLoading(false);
                               }
                             );
                           } else {
-
-                            this.showLoading = false;
+                            this.loadingService.setLoading(false);
                           }
                           this.uploadSummary();
                         }, __ => {
-                          this.showLoading = false;
+                          this.loadingService.setLoading(false);
                         }
                       );
                     }
-                    this.showLoading = false;
+                    this.loadingService.setLoading(false);
                     if(data.operation === eStatusRequest.ACCEPT){
                       this._NotificationsServices
                         .showNotification(eNotificationType.SUCCESS,
@@ -786,7 +785,7 @@ export class TitulationProgressComponent implements OnInit {
                     }
                     this.loadRequest();
                   }, error => {
-                    this.showLoading = false;
+                    this.loadingService.setLoading(false);
                     const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
                     this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
                   });
@@ -800,18 +799,19 @@ export class TitulationProgressComponent implements OnInit {
         }
       }
     });
-  }  
+  }
 
   async reImprimir(Identificador: string) {
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Reimprimiendo acta de examen');
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     const _request: iRequest = this.getRequestById(Identificador);
     let acta = true;
     let juryGender = {president:'MASCULINO',secretary:'MASCULINO'};
     let studentGender = 'M';
-    let careerPerBook = 1;    
+    let careerPerBook = 1;  
+    let firma = false;  
     // console.log(_request);
-    
+
     const titleOption = _request.titulationOption.split('-')[1].trim();
     await this._StudentProvider.getStudentById(_request.studentId).toPromise().then(
       st=> {studentGender = st.student[0].sex;}
@@ -819,25 +819,34 @@ export class TitulationProgressComponent implements OnInit {
     await this._bookProvider.getActiveBookByCareer(_request.student.careerId._id,titleOption).toPromise().then(
       (book)=>careerPerBook = book.careers.length
     ).catch(err=>console.log(err)
-    );         
+    );
     await this.requestProvider.getEmployeeGender(_request.jury[0].email ? _request.jury[0].email : _request.jury[0].name).toPromise().then(
-        (em)=>juryGender.president = em.gender           
+        (em)=>juryGender.president = em.gender
     ).catch( err=> juryGender.president = 'MASCULINO');
     await this.requestProvider.getEmployeeGender(_request.jury[1].email ? _request.jury[1].email : _request.jury[1].name).toPromise().then(
-        (em)=>juryGender.secretary = em.gender           
+        (em)=>juryGender.secretary = em.gender
     ).catch( err=> juryGender.secretary = 'MASCULINO');
 
     const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService,juryGender,studentGender,careerPerBook);
     if(_request.titulationOption.split('-')[0].trim() === 'XI'){
       acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
-      await this.delay(3000);
-      window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
+      firma = await this.showAlert('¿Acta Firmada?',{accept:'SI',cancel:'NO'});
+          
+      if(firma){
+        await this.delay(3000);
+        window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
+      } else {
+        await this.delay(3000);
+        window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
+      }
+
+
     }else{
       await this.delay(3000);
       window.open(oRequest.testReportForTitulationNotIntegral().output('bloburl'), '_blank');
     }
-    
-    this.showLoading = false;
+
+    this.loadingService.setLoading(false);
   }
 
   async generated(Identificador: string, operation: string) {
@@ -857,7 +866,7 @@ export class TitulationProgressComponent implements OnInit {
 
         ref.afterClosed().subscribe(async (result) => {
           if (typeof (result) !== 'undefined' && result.response) {
-            this.showLoading = true;
+            this.loadingService.setLoading(true);
             this._NotificationsServices
               .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Regenerando oficio de jurado');
             this.loadRequest();
@@ -886,7 +895,7 @@ export class TitulationProgressComponent implements OnInit {
                 resolve(false);
               });
             });
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             if (response) {
               this.testReportGenerate(Identificador, eOperation);
             } else {
@@ -940,10 +949,10 @@ export class TitulationProgressComponent implements OnInit {
     this.requestProvider.updateRequest(Identificador, data).subscribe(async (_) => {
       if (eOperation === eStatusRequest.PROCESS) {
         this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Creando acta de examen');
-        this.showLoading = true;
+        this.loadingService.setLoading(true);
         const _request: iRequest = this.getRequestById(Identificador);
         let acta = true;
-        
+        let firma = false;
         let juryGender = {president:'MASCULINO',secretary:'MASCULINO'};
         let studentGender = 'M';
         let careerPerBook = 1;
@@ -954,24 +963,35 @@ export class TitulationProgressComponent implements OnInit {
         await this._bookProvider.getActiveBookByCareer(_request.student.careerId._id,titleOption).toPromise().then(
           (book)=>careerPerBook = book.careers.length
         ).catch(err=>console.log(err)
-        ); 
+        );
         await this.requestProvider.getEmployeeGender(_request.jury[0].email ? _request.jury[0].email : _request.jury[0].name).toPromise().then(
-            (em)=>juryGender.president = em.gender           
+            (em)=>juryGender.president = em.gender
         ).catch( err=> juryGender.president = 'MASCULINO');
         await this.requestProvider.getEmployeeGender(_request.jury[1].email ? _request.jury[1].email : _request.jury[1].name).toPromise().then(
-            (em)=>juryGender.secretary = em.gender           
+            (em)=>juryGender.secretary = em.gender
         ).catch( err=> juryGender.secretary = 'MASCULINO');
-
+        
+        const _Request = this.getRequestById(Identificador);
         const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService,juryGender,studentGender,careerPerBook);
+        this.getFolder(_Request.controlNumber);
+        
         if(_request.titulationOption.split('-')[0].trim() === 'XI'){
           acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
-          await this.delay(3000);
-          window.open(oRequest.testReport(acta).output('bloburl'), '_blank');
+          firma = await this.showAlert('¿Acta Firmada?',{accept:'SI',cancel:'NO'});
+          
+          if(firma){
+            await this.delay(3000);
+            window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
+          } else {
+            await this.delay(3000);
+            window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
+          }
+          
         }else{
           await this.delay(3000);
           window.open(oRequest.testReportForTitulationNotIntegral().output('bloburl'), '_blank');
         }
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
       }
       this._NotificationsServices
         .showNotification(eNotificationType.SUCCESS, 'Acto recepcional',
@@ -1085,9 +1105,9 @@ export class TitulationProgressComponent implements OnInit {
   checkReleased(_id: string) {
     const Request = this.getRequestById(_id);
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Procesando liberación');
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.requestProvider.getResource(_id, eFILES.RELEASED).subscribe(data => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       const dialogRef = this.dialog.open(ReleaseCheckComponent, {
         data: { file: data, jury: Request.jury },
         disableClose: true,
@@ -1159,7 +1179,7 @@ export class TitulationProgressComponent implements OnInit {
           .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error');
       });
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this._NotificationsServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener archivo');
     });
@@ -1189,7 +1209,7 @@ export class TitulationProgressComponent implements OnInit {
 
   async juryNotification(_id: string) {
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando documentación');
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     const _request = this.getRequestById(_id);
     const oRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
     this.getFolder(_request.controlNumber);
@@ -1219,18 +1239,18 @@ export class TitulationProgressComponent implements OnInit {
         this.requestProvider.updateRequest(_id, data).subscribe(__ => {
           window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
           this.loadRequest();
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         }, __ => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           this._NotificationsServices
             .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
         });
       } else {
         window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
       }
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this._NotificationsServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
     });
@@ -1258,10 +1278,10 @@ export class TitulationProgressComponent implements OnInit {
       width: '45em'
     });
   }
-  
+
   // FILTRO PERÍODOS
-  slectedPeriod(period){    
-    this.updatePeriods(period,'insert'); 
+  slectedPeriod(period){
+    this.updatePeriods(period,'insert');
   }
 
   addPeriod(event: MatChipInputEvent): void {
@@ -1300,8 +1320,8 @@ export class TitulationProgressComponent implements OnInit {
   }
 
   // FILTRO CARRERAS
-  slectedCareer(career){    
-    this.updateCareers(career,'insert'); 
+  slectedCareer(career){
+    this.updateCareers(career,'insert');
   }
 
   removeCareer(career): void {
@@ -1341,8 +1361,8 @@ export class TitulationProgressComponent implements OnInit {
   }
 
   // FILTRO FASES
-  slectedPhase(phase){    
-    this.updatePhases(phase,'insert'); 
+  slectedPhase(phase){
+    this.updatePhases(phase,'insert');
   }
 
   removePhase(phase): void {
@@ -1393,22 +1413,22 @@ export class TitulationProgressComponent implements OnInit {
     const _request: iRequest = this.getRequestById(requestId);
     let juryGender  = {president:'MASCULINO',secretary:'MASCULINO',};
     let studentGender = 'M';
-    
+
     await this._StudentProvider.getStudentById(_request.studentId).toPromise().then(
       st=> {studentGender = st.student[0].sex;}
     ).catch(err=>{});
-    
+
     await this.requestProvider.getEmployeeGender(_request.jury[0].email ? _request.jury[0].email : _request.jury[0].name).toPromise().then(
-      (em)=>juryGender.president = em.gender           
+      (em)=>juryGender.president = em.gender
     ).catch( err=> juryGender.president = 'MASCULINO');
-        
+
     await this.requestProvider.getEmployeeGender(_request.jury[1].email ? _request.jury[1].email : _request.jury[1].name).toPromise().then(
-      (em)=>juryGender.secretary = em.gender           
+      (em)=>juryGender.secretary = em.gender
     ).catch( err=> juryGender.secretary = 'MASCULINO');
 
-    this.getFolder(_request.controlNumber);    
+    this.getFolder(_request.controlNumber);
     const oRequest: uRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService,juryGender,studentGender);
-          
+
     const ref = this.dialog.open(UploadDeliveredComponent, {
       disableClose: true,
       hasBackdrop: true,
@@ -1418,7 +1438,7 @@ export class TitulationProgressComponent implements OnInit {
 
     ref.afterClosed().subscribe((valor: { response: boolean, data: { QR: any, ESTAMP: any, RESPONSE: boolean } }) => {
       if (typeof (valor) !== 'undefined' && valor.response) {
-        this.showLoading = true;               
+        this.loadingService.setLoading(true);
         const data = {
           doer: this._CookiesService.getData().user.name.fullName,
           observation: '',
@@ -1433,13 +1453,13 @@ export class TitulationProgressComponent implements OnInit {
         };
 
         this.requestProvider.updateRequest(requestId, data).subscribe(_ => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           this._NotificationsServices
             .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
-            window.open(oRequest.notificationOffice( valor.data.QR, valor.data.ESTAMP).output('bloburl'), '_blank'); 
+            window.open(oRequest.notificationOffice( valor.data.QR, valor.data.ESTAMP).output('bloburl'), '_blank');
           this.loadRequest();
         }, _ => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           this._NotificationsServices
             .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
         });
@@ -1448,12 +1468,12 @@ export class TitulationProgressComponent implements OnInit {
       this._NotificationsServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error');
     });
-    
+
   }
 
   uploadSummary(){
-    
-    this.showLoading = true;    
+        
+    this.loadingService.setLoading(true); 
       this.requestProvider.getSummary().toPromise().then(
         requests=>{    
           let agrupSummary=[];
@@ -1476,14 +1496,14 @@ export class TitulationProgressComponent implements OnInit {
           });
           this.requestProvider.uploadSummary(agrupSummary).toPromise().then(
             re=>{
-              this.showLoading = false;
+              this.loadingService.setLoading(false);
               this._NotificationsServices.showNotification(
               eNotificationType.SUCCESS,'Acto recepcional', 
               'Se generó y subió a drive la ficha');
             }              
             ,
             err=> {
-              this.showLoading = false;
+              this.loadingService.setLoading(false);
               console.log(err);
               
               this._NotificationsServices.showNotification(
@@ -1493,7 +1513,7 @@ export class TitulationProgressComponent implements OnInit {
           );
         }
       ).catch(err=>{
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         const error = JSON.parse(err._body);       
         
         if(error.err) {
@@ -1514,7 +1534,7 @@ export class TitulationProgressComponent implements OnInit {
 
   excelExport(){
     console.log(this.dataSource.filteredData);
-    
+
     this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Los datos se exportaron con éxito');
     TableToExcel.convert(document.getElementById('table'), {
       name: 'Reporte acto recepcional.xlsx',
