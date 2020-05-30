@@ -8,7 +8,7 @@
         <button mat-mini-fab class="mr-3" color="primary" (click)="fileUpload.click()" data-toggle="tooltip"
           title="Cargar archivo csv">
           <mat-icon>attachment</mat-icon>
-        </button>        
+        </button>
       </div>
       <div class="col-2">
         <p>Guardar plantilla</p>
@@ -25,10 +25,10 @@
         <mat-label>Buscar...</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Ej. 14400001">
       </mat-form-field>
-      
+
       <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort>
-      
+
           <!-- # Column -->
           <ng-container matColumnDef="no">
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> # </th>
@@ -39,49 +39,49 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">  Número de control </th>
             <td mat-cell *matCellDef="let row"> {{row.controlNumber}} </td>
           </ng-container>
-      
+
           <!-- Nombre -->
           <ng-container matColumnDef="fullName">
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Nombre </th>
             <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>
           </ng-container>
-      
-      
+
+
           <!-- Carrera -->
           <ng-container matColumnDef="career">
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Carrera </th>
             <td mat-cell *matCellDef="let row"> {{row.career}} </td>
           </ng-container>
-          
+
           <!-- Semestre -->
           <ng-container matColumnDef="semester">
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Semestre </th>
             <td mat-cell *matCellDef="let row"> {{row.semester}} </td>
           </ng-container>
-  
+
           <!-- Número de Seguro Social -->
           <ng-container matColumnDef="nss">
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Número de Seguro Social </th>
             <td mat-cell *matCellDef="let row"> {{row.nss}} </td>
           </ng-container>
-  
+
           <!-- Estatus -->
           <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Estatus </th>
             <td mat-cell *matCellDef="let row"> {{row.status}} </td>
           </ng-container>
-  
+
           <!-- Asegurado -->
           <ng-container matColumnDef="insured">
             <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Asegurado </th>
             <td mat-cell *matCellDef="let row"> {{row.insured}} </td>
           </ng-container>
-      
+
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;">
           </tr>
         </table>
-      
+
         <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
       </div>
       <div class="row text-center mt-2">
@@ -122,21 +122,18 @@ data-cols-width="9,21,46,46,15,35,15,25" *ngIf="showTable">
       *ngFor="let alumno of dataSource.filteredData"
       [class.table-primary]="alumno.no%2==0"
       [class.table-light]="alumno.no%2!==0"
-      
+
       >
       <td data-f-sz="12">{{alumno.no}}</td>
       <td data-f-sz="12">{{alumno.controlNumber}} </td>
       <td data-f-sz="12" >
          {{alumno.fullName}}
-      </td>      
+      </td>
       <td data-f-sz="12">{{alumno.career}}</td>
       <td data-f-sz="12">{{alumno.semester}}</td>
       <td data-f-sz="12" >{{alumno.nss}}</td>
-      <td data-f-sz="12">{{alumno.status}}</td>      
-      <td data-f-sz="12">{{alumno.insured}}</td>      
+      <td data-f-sz="12">{{alumno.status}}</td>
+      <td data-f-sz="12">{{alumno.insured}}</td>
    </tr>
 </tbody>
 </table>
-<div class="center">
-  <app-loader [loading]="loading"></app-loader>
-</div>

@@ -1,35 +1,35 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation, OnInit, ViewChild } from '@angular/core';
-import { CalendarEvent, CalendarView, CalendarMonthViewBeforeRenderEvent } from 'angular-calendar';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { sourceDataProvider } from 'src/app/providers/reception-act/sourceData.prov';
-import { isSameDay, isSameMonth } from 'date-fns';
-import { ContextMenuComponent } from 'ngx-contextmenu';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { NewEventComponent } from '../new-event/new-event.component';
-import { eOperation } from 'src/app/enumerators/reception-act/operation.enum';
-import { ViewMoreComponent } from '../view-more/view-more.component';
-import { ConfirmDialogComponent } from 'src/app/commons/confirm-dialog/confirm-dialog.component';
-import { NewTitleComponent } from '../new-title/new-title.component';
-import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
-import { uRequest } from 'src/app/entities/reception-act/request';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
-import { DepartmentProvider } from 'src/app/providers/shared/department.prov';
-import { Subject } from 'rxjs';
+import { CalendarEvent, CalendarMonthViewBeforeRenderEvent, CalendarView } from 'angular-calendar';
+import { isSameDay, isSameMonth } from 'date-fns';
 import * as moment from 'moment';
+import { ContextMenuComponent } from 'ngx-contextmenu';
+import { Subject } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/commons/confirm-dialog/confirm-dialog.component';
+import { uRequest } from 'src/app/entities/reception-act/request';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
+import { eOperation } from 'src/app/enumerators/reception-act/operation.enum';
+import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { sourceDataProvider } from 'src/app/providers/reception-act/sourceData.prov';
+import { DepartmentProvider } from 'src/app/providers/shared/department.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
 import { DenyDayProvider } from 'src/app/providers/reception-act/denyDays.prov';
+import { NewEventComponent } from '../new-event/new-event.component';
+import { NewTitleComponent } from '../new-title/new-title.component';
+import { ViewMoreComponent } from '../view-more/view-more.component';
 
 require('jspdf-autotable');
 const jsPDF = require('jspdf');
-
 
 moment.locale('es');
 
@@ -58,7 +58,6 @@ export class DiaryComponent implements OnInit {
   request: iRequest;
   view: CalendarView = CalendarView.Month;
   locale = 'es';
-  public showLoading: boolean;
   private folderId: string;
   private sepLogo: any;
   private tecNacLogoTitle: any;
@@ -80,7 +79,7 @@ export class DiaryComponent implements OnInit {
       TOP: 25,
       BOTTOM: 25
     };
-  
+
   rol: string;
   canEdit = false;
   denyDays = [];
@@ -94,13 +93,13 @@ export class DiaryComponent implements OnInit {
     public dialog: MatDialog,
     public _getImage: ImageToBase64Service,
     private _DepartmentProvider: DepartmentProvider,
-    private _DenyDayProvider: DenyDayProvider
-
+    private _DenyDayProvider: DenyDayProvider,
+    private loadingService: LoadingService,
   ) {
     const tmpFecha = localStorage.getItem('Appointment');
     this.rol = this._CookiesService.getData().user.rol.name.toLowerCase();
-    this.canEdit = this.rol === 'jefe div. est. prof.' || 'administrador' || 'coordinación de titulación' ? true : false;    
-    
+    this.canEdit = this.rol === 'jefe div. est. prof.' || 'administrador' || 'coordinación de titulación' ? true : false;
+
     this._getImageToPdf();
     if (typeof (tmpFecha) !== 'undefined' && tmpFecha) {
       this.viewDate = new Date(tmpFecha);
@@ -721,7 +720,7 @@ export class DiaryComponent implements OnInit {
             nombreProyecto: tmpStudentData.project,
             opcionTitulacion: tmpStudentData.product,
             departamentoEmail: this.employees
-          };       
+          };
           this._RequestProvider.updateRequest(tmpValor.id, data).subscribe(_ => {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Fecha propuesta aceptada');
             // tmpValor.phase = "Realizado";
@@ -802,7 +801,7 @@ export class DiaryComponent implements OnInit {
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando documentación');
     const iRequest: iRequest = await this.getRequestById(tmpAppointment.id);
     if (iRequest.phase === 'Realizado') {
-      this.showLoading = true;
+      this.loadingService.setLoading(true);
       const oRequest = new uRequest(iRequest, this._ImageToBase64Service, this._CookiesService);
       this.getFolder(iRequest.controlNumber);
       await this.delay(1000);
@@ -852,24 +851,24 @@ export class DiaryComponent implements OnInit {
               operation: eStatusRequest.PROCESS
             };
             this._RequestProvider.updateRequest(iRequest._id, data).subscribe(__ => {
-              this.showLoading = false;
+              this.loadingService.setLoading(false);
               window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
             }, error => {
               console.log('Error', error);
-              this.showLoading = false;
+              this.loadingService.setLoading(false);
               this._NotificationsServices
                 .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
             });
           } else {
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
           }
         }, _ => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
         });
       } else {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
       }
     } else {
       this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'La solicitud ya ha pasado de fase');
@@ -893,7 +892,7 @@ export class DiaryComponent implements OnInit {
     const filteredCareers = this.carrers.filter((ca) => ca.status == true);
     this.mapedStudents = [];
     if (filteredCareers.length > 0) {
-      this.showLoading = true;
+      this.loadingService.setLoading(true);
       const y = 60;
 
       const doc = this.newDocumentTec(true, false);
@@ -910,7 +909,7 @@ export class DiaryComponent implements OnInit {
           (care) => care.values
         )[0];
         if (filtered) {
-          
+
           const maped = filtered.
             map((st) => ({
               date: moment(st.proposedDate).format('LL'),
@@ -948,9 +947,9 @@ export class DiaryComponent implements OnInit {
         }
 
       });
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       setTimeout(() => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         doc.autoTable(
           {
             html: '#table',
@@ -969,7 +968,7 @@ export class DiaryComponent implements OnInit {
             }
           }
         );
-        
+
         window.open(doc.output('bloburl'), '_blank');
       }, 500);
 

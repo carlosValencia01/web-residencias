@@ -2,7 +2,7 @@
 
   <div class="row fluid-content">
     <!-- tabla de períodos  -->
-    <div class="col-sm-12" style="overflow-x:auto; padding-top: 20px;">    
+    <div class="col-sm-12" style="overflow-x:auto; padding-top: 20px;">
       <div class="period-buttons">
         <button class="btn btn-info" (click)="secretaryAssignment()">Asignar carreras</button>
         <button class="btn btn-primary" (click)="insertSignedUpStudents()">Insertar alumnos inscritos</button>
@@ -50,7 +50,7 @@
             <td *ngIf="period.active===false">Inactivo</td>
           </tr>
         </tbody>
-      </table>      
+      </table>
       <div class='div-pagination'>
         <pagination-controls [id]="pag" directionLinks="true" (pageChange)="pageChanged($event)" responsive="true"
           previousLabel="Anterior" nextLabel="Siguiente">
@@ -58,7 +58,4 @@
       </div>
     </div>
   </div>
-</div>
-<div class="center">
-  <app-loader [loading]="loading"></app-loader>
 </div>

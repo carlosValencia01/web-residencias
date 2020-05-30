@@ -1,16 +1,17 @@
-import { Component, OnInit,ViewChild } from '@angular/core';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
-import { DropzoneComponent , DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
-import {NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DropzoneComponent, DropzoneConfigInterface } from 'ngx-dropzone-wrapper';
 import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
-import Swal from 'sweetalert2';
+import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 import { DocumentsHelpComponent } from '../documents-help/documents-help.component';
 
 declare var jsPDF: any;
@@ -120,11 +121,10 @@ export class ProfileInscriptionPageComponent implements OnInit {
   imgForSend: boolean;
   croppedImage: any = '';
   croppedImageBase64: any = '';
-  loading = false;
   showImg = false;
    /* Dropzone conf */
    @ViewChild(DropzoneComponent) componentRef?: DropzoneComponent;
-  
+
    public config1: DropzoneConfigInterface;
    public config2: DropzoneConfigInterface;
    public config3: DropzoneConfigInterface;
@@ -153,18 +153,19 @@ export class ProfileInscriptionPageComponent implements OnInit {
   public config22: DropzoneConfigInterface;
   public config23: DropzoneConfigInterface;
 
-  constructor( 
+  constructor(
     private inscriptionsProv: InscriptionsProvider,
     private notificationsServices: NotificationsServices,
     private cookiesServ: CookiesService,
     public dialog: MatDialog,
     private notificationService: NotificationsServices,
-    private studentProv: StudentProvider,    
+    private studentProv: StudentProvider,
     private modalService: NgbModal,
     private imageToBase64Serv: ImageToBase64Service,
+    private loadingService: LoadingService,
   ){
     this.getFonts();
-    this.getIdStudent();    
+    this.getIdStudent();
     this.getStudentData(this._idStudent);
     this.studentProv.refreshNeeded$.subscribe(
       ()=>{
@@ -264,7 +265,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
         this.docSolicitud = documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] : '';
         this.docContrato = documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] : '';
-        
+
         this.docCurp = documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] : '';
         this.docNss = documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] : '';
         this.docFoto = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] ? documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
@@ -324,7 +325,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         if (this.cctitledLDoc) this.cctitledLDoc.status = this.cctitledLDoc ? this.cctitledLDoc.status.filter(st => st.active === true)[0] : '';
         if (this.cccedulaLDoc) this.cccedulaLDoc.status = this.cccedulaLDoc ? this.cccedulaLDoc.status.filter(st => st.active === true)[0] : '';
         if (this.ccexamActLDoc) this.ccexamActLDoc.status = this.ccexamActLDoc ? this.ccexamActLDoc.status.filter(st => st.active === true)[0] : '';
-        
+
         // DOCTORADO
         if (this.certificateMDoc) this.certificateMDoc.status = this.certificateMDoc ? this.certificateMDoc.status.filter(st => st.active === true)[0] : '';
         if (this.titledMDoc) this.titledMDoc.status = this.titledMDoc ? this.titledMDoc.status.filter(st => st.active === true)[0] : '';
@@ -344,7 +345,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
           this.showImg=true;
         }
       }
-    );    
+    );
 
   }
 
@@ -352,7 +353,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     switch (file) {
       case "Acta": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta de Nacimiento.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docActa.fileIdInDrive, this.docActa.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -367,7 +368,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -377,7 +378,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "CURP": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CURP.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docCurp.fileIdInDrive, this.docCurp.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -392,7 +393,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -401,7 +402,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "NSS": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando NSS.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docNss.fileIdInDrive, this.docNss.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -416,7 +417,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -425,7 +426,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Certificado": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado de Estudios.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docCertificado.fileIdInDrive, this.docCertificado.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -440,7 +441,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -449,7 +450,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Analisis": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Análisis Clínicos.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docAnalisis.fileIdInDrive, this.docAnalisis.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -464,7 +465,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -473,7 +474,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Comprobante": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Comprobante de Pago.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docComprobante.fileIdInDrive, this.docComprobante.filename).subscribe(data => {
           var pubCurp = data.file;
           let buffCurp = new Buffer(pubCurp.data);
@@ -488,7 +489,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -497,7 +498,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       }
       case "Compromiso": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Carta Compromiso.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docCompromiso.fileIdInDrive, this.docCompromiso.filename).subscribe(data => {
           var pubCC = data.file;
           let buffCC = new Buffer(pubCC.data);
@@ -512,7 +513,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -522,7 +523,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       // MAESTRIA
       case "Certificado_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.certificateLDoc.fileIdInDrive, this.certificateLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -537,7 +538,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -548,7 +549,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Titulo_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Titulo Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.titledLDoc.fileIdInDrive, this.titledLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -563,7 +564,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -574,7 +575,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cedula_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Cedula Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cedulaLDoc.fileIdInDrive, this.cedulaLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -589,7 +590,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -600,7 +601,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Examen_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta Examen Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.examActLDoc.fileIdInDrive, this.examActLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -615,7 +616,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -626,7 +627,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cc_Certificado_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Certificado Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cccertificateLDoc.fileIdInDrive, this.cccertificateLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -641,7 +642,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -652,7 +653,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cc_Titulo_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Titulo Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cctitledLDoc.fileIdInDrive, this.cctitledLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -667,7 +668,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -678,7 +679,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cc_Cedula_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Cedula Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cccedulaLDoc.fileIdInDrive, this.cccedulaLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -693,7 +694,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -704,7 +705,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cc_Examen_Licenciatura": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Acta Examen Licenciatura.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.ccexamActLDoc.fileIdInDrive, this.ccexamActLDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -719,7 +720,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -731,7 +732,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       // DOCTORADO
       case "Certificado_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Certificado Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.certificateMDoc.fileIdInDrive, this.certificateMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -746,7 +747,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -757,7 +758,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Titulo_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Titulo Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.titledMDoc.fileIdInDrive, this.titledMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -772,7 +773,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -783,7 +784,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cedula_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Cedula Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cedulaMDoc.fileIdInDrive, this.cedulaMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -798,7 +799,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -809,7 +810,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Examen_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acta Examen Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.examActMDoc.fileIdInDrive, this.examActMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -824,7 +825,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -835,7 +836,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cc_Certificado_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Certificado Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cccertificateMDoc.fileIdInDrive, this.cccertificateMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -850,7 +851,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -861,7 +862,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cc_Titulo_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Titulo Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cctitledMDoc.fileIdInDrive, this.cctitledMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -876,7 +877,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -887,7 +888,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cc_Cedula_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Cedula Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.cccedulaMDoc.fileIdInDrive, this.cccedulaMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -902,7 +903,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -913,7 +914,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Cc_Examen_Maestria": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando CC Acta Examen Maestria.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.ccexamActMDoc.fileIdInDrive, this.ccexamActMDoc.filename).subscribe(data => {
           var pub = data.file;
           let buff = new Buffer(pub.data);
@@ -928,7 +929,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
             width: '60em',
             height: '600px'
           });
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         }, error => {
           this.notificationService.showNotification(eNotificationType.ERROR,
             'Inscripción App', error);
@@ -939,13 +940,13 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Solicitud": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Solicitud.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docSolicitud.fileIdInDrive, this.docSolicitud.filename).subscribe(data => {
           var pubSolicitud = data.file;
           let buffSolicitud = new Buffer(pubSolicitud.data);
           var pdfSrcSolicitud = buffSolicitud;
-          var blob = new Blob([pdfSrcSolicitud], {type: "application/pdf"}); 
-          this.loading = false;          
+          var blob = new Blob([pdfSrcSolicitud], {type: "application/pdf"});
+          this.loadingService.setLoading(false);
           window.open( URL.createObjectURL(blob) );
         }, error => {
           console.log(error);
@@ -955,13 +956,13 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       case "Contrato": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Contrato.', '');
-        this.loading = true; 
+        this.loadingService.setLoading(true);
         this.inscriptionsProv.getFile(this.docContrato.fileIdInDrive, this.docContrato.filename).subscribe(data => {
           var pubContrato = data.file;
           let buffContrato = new Buffer(pubContrato.data);
           var pdfSrcContrato = buffContrato;
-          var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});  
-          this.loading = false;         
+          var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});
+          this.loadingService.setLoading(false);
           window.open( URL.createObjectURL(blob) );
         }, error => {
           console.log(error);
@@ -1063,14 +1064,14 @@ export class ProfileInscriptionPageComponent implements OnInit {
         [11, "CARTA COMPROMISO CERTIFICADO DE MAESTRIA",""] ,
         [12, "CARTA COMPROMISO TÍTULO DE MAESTRIA",""] ,
         [13, "CARTA COMPROMISO CÉDULA DE MAESTRIA",""] ,
-        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE MAESTRIA",""] 
+        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE MAESTRIA",""]
       ];
 
-      doc.autoTable(columns,data,{ 
+      doc.autoTable(columns,data,{
         headStyles: {fillColor: [20, 43, 88]},
         margin:{ top: 60 }
       });
-  
+
       // COMPROBANTE DE PAGO
       if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
@@ -1087,7 +1088,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 72.25);
       }
-  
+
       // CERTIFICADO MAESTRIA
       if(this.certificateMDoc != ''){
         doc.setTextColor(0,0,0);
@@ -1104,8 +1105,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 79.85);
       }
-  
-      // TITULO MAESTRIA 
+
+      // TITULO MAESTRIA
       if(this.titledMDoc != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
@@ -1121,7 +1122,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 87.45);
       }
-  
+
       // CEDULA MAESTRIA
       if(this.cedulaMDoc != ''){
         doc.setTextColor(0,0,0);
@@ -1129,7 +1130,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
-        doc.text('ENVIADO', 161, 95.05);  
+        doc.text('ENVIADO', 161, 95.05);
       } else {
         doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
@@ -1138,11 +1139,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 95.05);
       }
-  
+
       // ACTA DE EXAMEN MAESTRIA
       if(this.examActMDoc != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);   
+        doc.setFillColor(255, 245, 204);
         doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
@@ -1155,7 +1156,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 102.65);
       }
-  
+
       // CURP
       if(this.docCurp != ''){
         doc.setTextColor(0,0,0);
@@ -1172,7 +1173,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 110.25);
       }
-  
+
       // ACTA NACIMIENTO
       if(this.docActa != ''){
         doc.setTextColor(0,0,0);
@@ -1188,8 +1189,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 117.85);
-      }   
-  
+      }
+
       // ANALISIS CLINICOS
       if(this.docAnalisis != ''){
         doc.setTextColor(0,0,0);
@@ -1205,7 +1206,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 125.45);
-      }   
+      }
 
       // FOTOGRAFIA
       if(this.docFoto != ''){
@@ -1222,7 +1223,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 133.05);
-      }   
+      }
 
       // NSS
       if(this.docNss != ''){
@@ -1239,7 +1240,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 140.65);
-      }   
+      }
 
       // CC CERTIFICADO DE MAESTRIA
       if(this.cccertificateMDoc != ''){
@@ -1256,7 +1257,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 148.25);
-      }   
+      }
 
       // CC TITULO DE MAESTRIA
       if(this.cctitledMDoc != ''){
@@ -1273,7 +1274,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 155.85);
-      }  
+      }
 
       // CC CEDULA DE MAESTRIA
       if(this.cccedulaMDoc != ''){
@@ -1290,7 +1291,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 163.45);
-      }  
+      }
 
       // CC ACTA EXAMEN DE MAESTRIA
       if(this.ccexamActMDoc != ''){
@@ -1307,7 +1308,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 171.05);
-      }  
+      }
 
     }
 
@@ -1326,14 +1327,14 @@ export class ProfileInscriptionPageComponent implements OnInit {
         [11, "CARTA COMPROMISO CERTIFICADO DE LICENCIATURA",""] ,
         [12, "CARTA COMPROMISO TÍTULO DE LICENCIATURA",""] ,
         [13, "CARTA COMPROMISO CÉDULA DE LICENCIATURA",""] ,
-        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE LICENCIATURA",""] 
+        [14, "CARTA COMPROMISO ACTA DE EXAMEN DE LICENCIATURA",""]
       ];
 
-      doc.autoTable(columns,data,{ 
+      doc.autoTable(columns,data,{
         headStyles: {fillColor: [20, 43, 88]},
         margin:{ top: 60 }
       });
-  
+
       // COMPROBANTE DE PAGO
       if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
@@ -1350,7 +1351,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 72.25);
       }
-  
+
       // CERTIFICADO LICENCIATURA
       if(this.certificateLDoc != ''){
         doc.setTextColor(0,0,0);
@@ -1367,8 +1368,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 79.85);
       }
-  
-      // TITULO LICENCIATURA 
+
+      // TITULO LICENCIATURA
       if(this.titledLDoc != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
@@ -1384,7 +1385,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 87.45);
       }
-  
+
       // CEDULA LICENCIATURA
       if(this.cedulaLDoc != ''){
         doc.setTextColor(0,0,0);
@@ -1392,7 +1393,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
-        doc.text('ENVIADO', 161, 95.05);  
+        doc.text('ENVIADO', 161, 95.05);
       } else {
         doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
@@ -1401,11 +1402,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 95.05);
       }
-  
+
       // ACTA DE EXAMEN LICENCIATURA
       if(this.examActLDoc != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);   
+        doc.setFillColor(255, 245, 204);
         doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
@@ -1418,7 +1419,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 102.65);
       }
-  
+
       // CURP
       if(this.docCurp != ''){
         doc.setTextColor(0,0,0);
@@ -1435,7 +1436,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 110.25);
       }
-  
+
       // ACTA NACIMIENTO
       if(this.docActa != ''){
         doc.setTextColor(0,0,0);
@@ -1451,8 +1452,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 117.85);
-      }   
-  
+      }
+
       // ANALISIS CLINICOS
       if(this.docAnalisis != ''){
         doc.setTextColor(0,0,0);
@@ -1468,7 +1469,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 125.45);
-      }   
+      }
 
       // FOTOGRAFIA
       if(this.docFoto != ''){
@@ -1485,7 +1486,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 133.05);
-      }   
+      }
 
       // NSS
       if(this.docNss != ''){
@@ -1502,7 +1503,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 140.65);
-      }   
+      }
 
       // CC CERTIFICADO DE LICENCIATURA
       if(this.cccertificateLDoc != ''){
@@ -1519,7 +1520,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 148.25);
-      }   
+      }
 
       // CC TITULO DE LICENCIATURA
       if(this.cctitledLDoc != ''){
@@ -1536,7 +1537,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 155.85);
-      }  
+      }
 
       // CC CEDULA DE LICENCIATURA
       if(this.cccedulaLDoc != ''){
@@ -1553,7 +1554,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 163.45);
-      }  
+      }
 
       // CC ACTA EXAMEN DE LICENCIATURA
       if(this.ccexamActLDoc != ''){
@@ -1570,7 +1571,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 171.05);
-      }  
+      }
 
     }
     if(!this.doctorate && !this.mastersDegree){
@@ -1582,14 +1583,14 @@ export class ProfileInscriptionPageComponent implements OnInit {
         [5, "ANÁLISIS CLÍNICOS",""],
         [6, "FOTOGRAFÍA",""],
         [7, "NÚMERO DE SEGURO SOCIAL",""],
-        [8, "CARTA COMPROMISO",""] 
+        [8, "CARTA COMPROMISO",""]
       ];
 
-      doc.autoTable(columns,data,{ 
+      doc.autoTable(columns,data,{
         headStyles: {fillColor: [20, 43, 88]},
         margin:{ top: 60 }
       });
-  
+
       // docComprobante
       if(this.docComprobante != ''){
         doc.setTextColor(0,0,0);
@@ -1606,7 +1607,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 72.25);
       }
-  
+
       // docCertificado
       if(this.docCertificado != ''){
         doc.setTextColor(0,0,0);
@@ -1623,8 +1624,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 79.85);
       }
-  
-      // docCurp 
+
+      // docCurp
       if(this.docCurp != ''){
         doc.setTextColor(0,0,0);
         doc.setFillColor(255, 245, 204);
@@ -1640,7 +1641,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 87.45);
       }
-  
+
       // docActa
       if(this.docActa != ''){
         doc.setTextColor(0,0,0);
@@ -1648,7 +1649,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.roundedRect(155, 90.6, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
-        doc.text('ENVIADO', 161, 95.05);  
+        doc.text('ENVIADO', 161, 95.05);
       } else {
         doc.setFillColor(255, 255, 255);
         doc.setTextColor(0,0,0);
@@ -1657,11 +1658,11 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 95.05);
       }
-  
+
       // docAnalisis
       if(this.docAnalisis != ''){
         doc.setTextColor(0,0,0);
-        doc.setFillColor(255, 245, 204);   
+        doc.setFillColor(255, 245, 204);
         doc.roundedRect(155, 98.2, 35, 7, 1, 1, 'FD');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
@@ -1674,7 +1675,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 102.65);
       }
-  
+
       // docFoto
       if(this.docFoto != ''){
         doc.setTextColor(0,0,0);
@@ -1691,7 +1692,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 110.25);
       }
-  
+
       // docNss
       if(this.docNss != ''){
         doc.setTextColor(0,0,0);
@@ -1707,8 +1708,8 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 117.85);
-      }   
-  
+      }
+
       // docCompromiso
       if(this.docCompromiso != ''){
         doc.setTextColor(0,0,0);
@@ -1724,10 +1725,10 @@ export class ProfileInscriptionPageComponent implements OnInit {
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
         doc.text('NO ENVIADO', 161, 125.45);
-      }   
+      }
     }
 
-    this.loading = false; 
+    this.loadingService.setLoading(false);
     window.open(doc.output('bloburl'), '_blank');
   }
 
@@ -1757,7 +1758,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
     this.config1 = {
       clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-ACTA.pdf', 'mimeType': 'application/pdf', newF: this.docActa ? false :true, fileId:this.docActa ? this.docActa.fileIdInDrive :''},   
+      params: {folderId:this.folderId, 'filename': this.data.email+'-ACTA.pdf', 'mimeType': 'application/pdf', newF: this.docActa ? false :true, fileId:this.docActa ? this.docActa.fileIdInDrive :''},
         acceptedFiles:'application/pdf',
     };
     this.config2 = {
@@ -1772,7 +1773,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     };
     this.config4 = {
       clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROBANTE.pdf', 'mimeType': 'application/pdf', newF: this.docComprobante? false : true, fileId: this.docComprobante ? this.docComprobante.fileIdInDrive : ''},    
+      params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROBANTE.pdf', 'mimeType': 'application/pdf', newF: this.docComprobante? false : true, fileId: this.docComprobante ? this.docComprobante.fileIdInDrive : ''},
       acceptedFiles:'application/pdf',
     };
     this.config5 = {
@@ -1802,79 +1803,79 @@ export class ProfileInscriptionPageComponent implements OnInit {
     this.config9 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-TITULO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.titledLDoc ? false :true, fileId:this.titledLDoc ? this.titledLDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config10 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CEDULA_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cedulaLDoc ? false :true, fileId:this.cedulaLDoc ? this.cedulaLDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config11 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-EXAMEN_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.examActLDoc ? false :true, fileId:this.examActLDoc ? this.examActLDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config12 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cccertificateLDoc ? false :true, fileId:this.cccertificateLDoc ? this.cccertificateLDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config13 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cctitledLDoc ? false :true, fileId:this.cctitledLDoc ? this.cctitledLDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config14 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cccedulaLDoc ? false :true, fileId:this.cccedulaLDoc ? this.cccedulaLDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config15 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.ccexamActLDoc ? false :true, fileId:this.ccexamActLDoc ? this.ccexamActLDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
 
     // DROPZONE DOCTORADO
     this.config16 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.certificateMDoc ? false :true, fileId:this.certificateMDoc ? this.certificateMDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config17 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-TITULO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.titledMDoc ? false :true, fileId:this.titledMDoc ? this.titledMDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config18 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CEDULA_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cedulaMDoc ? false :true, fileId:this.cedulaMDoc ? this.cedulaMDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config19 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-EXAMEN_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.examActMDoc ? false :true, fileId:this.examActMDoc ? this.examActMDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config20 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cccertificateMDoc ? false :true, fileId:this.cccertificateMDoc ? this.cccertificateMDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config21 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cctitledMDoc ? false :true, fileId:this.cctitledMDoc ? this.cctitledMDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config22 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cccedulaMDoc ? false :true, fileId:this.cccedulaMDoc ? this.cccedulaMDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
     this.config23 = {
       clickable: true, maxFiles: 2,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.ccexamActMDoc ? false :true, fileId:this.ccexamActMDoc ? this.ccexamActMDoc.fileIdInDrive :''},
-      acceptedFiles: 'application/pdf',    
+      acceptedFiles: 'application/pdf',
     };
   }
   /*  DROPZONE 1 METHODS  */
@@ -1930,7 +1931,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     if (args[1] === `You can't upload files of this type.`) {
       this.notificationsServices.showNotification(eNotificationType.ERROR,
         '!ERROR!', "No se pueden subir archivos con esa extensión!\n Las extensiones permitidas son .pdf");
-     
+
     } else {
       this.notificationsServices.showNotification(eNotificationType.ERROR,
         '!ERROR!', "No se pueden subir archivos tan pesados!\nEl límite es 3MB");
@@ -1976,21 +1977,21 @@ export class ProfileInscriptionPageComponent implements OnInit {
     input.click();
   }
   uploadFile() {
-    this.loading = true; 
+    this.loadingService.setLoading(true);
     const red = new FileReader;
     red.addEventListener('load', () => {
-      let file = { 
-        mimeType:this.selectedFile.type, 
+      let file = {
+        mimeType:this.selectedFile.type,
         nameInDrive:this.data.email+'-FOTO.'+this.selectedFile.type.substr(6,this.selectedFile.type.length-1),
-        bodyMedia:red.result.toString().split(',')[1], 
+        bodyMedia:red.result.toString().split(',')[1],
         folderId:this.folderId,
         newF: this.docFoto ? false:true, fileId: this.docFoto ? this.docFoto.fileIdInDrive:''};
 
       this.inscriptionsProv.uploadFile2(file).subscribe(
         resp=>{
           if(resp.action !== 'create file'){
-            const documentInfo = {      
-                filename:resp.filename,        
+            const documentInfo = {
+                filename:resp.filename,
                 status : {
                 name:'EN PROCESO',
                 active:true,
@@ -2003,36 +2004,36 @@ export class ProfileInscriptionPageComponent implements OnInit {
                 'Exito', 'Documento actualizado correctamente.');
               },
               err=>console.log(err)
-            );                                    
+            );
           }else{
             const documentInfo = {
-              
+
               doc:{
                 filename:resp.name,
-                type:'DRIVE',                
+                type:'DRIVE',
                 fileIdInDrive:resp.fileId
               },
               status : {
                 name:'EN PROCESO',
                 active:true,
                 message:'Se envio por primera vez'
-              }            
+              }
             };
             this.studentProv.uploadDocumentDrive(this.data._id,documentInfo).subscribe(
-              updated=>{                
+              updated=>{
                 this.notificationsServices.showNotification(eNotificationType.SUCCESS,
                   'Exito', 'Documento cargado correctamente.');
-                        
+
               },
               err=>{
                 console.log(err);
-                
-              },()=>this.loading=false
+
+              },()=> this.loadingService.setLoading(false)
             );
           }
-          this.loading = false; 
+          this.loadingService.setLoading(false);
         },
-        err=>{console.log(err); this.loading = false; 
+        err=>{console.log(err); this.loadingService.setLoading(false);
         }
       )
     }, false);

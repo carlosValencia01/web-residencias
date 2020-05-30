@@ -1,19 +1,19 @@
-import {ActivatedRoute, Router} from '@angular/router';
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {map, startWith} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { iRole } from 'src/app/entities/app/role.model';
+import { IDepartment } from 'src/app/entities/shared/department.model';
+import { IPosition } from 'src/app/entities/shared/position.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { RoleProvider } from 'src/app/providers/app/role.prov';
+import { DepartmentProvider } from 'src/app/providers/shared/department.prov';
+import { PositionProvider } from 'src/app/providers/shared/position.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
-
-import {CookiesService} from 'src/app/services/app/cookie.service';
-import {DepartmentProvider} from 'src/app/providers/shared/department.prov';
-import {eNotificationType} from 'src/app/enumerators/app/notificationType.enum';
-import {IDepartment} from 'src/app/entities/shared/department.model';
-import {IPosition} from 'src/app/entities/shared/position.model';
-import {iRole} from 'src/app/entities/app/role.model';
-import {NotificationsServices} from 'src/app/services/app/notifications.service';
-import {PositionProvider} from 'src/app/providers/shared/position.prov';
-import {RoleProvider} from 'src/app/providers/app/role.prov';
 
 @Component({
   selector: 'app-positions-admin-page',
@@ -35,7 +35,6 @@ export class PositionsAdminPageComponent implements OnInit {
   public isViewDetails = false;
   public canAssignRole = false;
   public canEditPositions = false;
-  public showLoading = false;
   private departments: IDepartment[];
   private roles: iRole[];
   private positionsCopy: IPosition[];
@@ -50,6 +49,7 @@ export class PositionsAdminPageComponent implements OnInit {
     private positionProv: PositionProvider,
     private roleProv: RoleProvider,
     private router: Router,
+    private loadingService: LoadingService,
   ) {
     const _url = this.activatedRoute.snapshot.url.map(({ path }) => path).join('/');
     if (!this.cookiesService.isAllowed(_url)) {
@@ -85,7 +85,7 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   public savePosition() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     const position = this._getFormData();
     if (position.ascription) {
       if (this.isEditing) {
@@ -97,10 +97,10 @@ export class PositionsAdminPageComponent implements OnInit {
         this.positionProv.updatePosition(this.currentPosition)
           .subscribe(_ => {
             this._updatePosition(this.currentPosition);
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto modificado correctamente', '');
           }, _ => {
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             this.notificationsService.showNotification(eNotificationType.ERROR,
               'Error, no se pudo modificar el puesto', 'Intente de nuevo');
           });
@@ -108,7 +108,7 @@ export class PositionsAdminPageComponent implements OnInit {
         const positionExists = this.positionsCopy.filter(pos => pos.name.toLowerCase().includes(position.name.toLowerCase()))[0];
         if (!positionExists) {
           this._createPosition(position);
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         } else {
           Swal.fire({
             title: '¡Puesto similar encontrado en el mismo departamento!',
@@ -126,12 +126,12 @@ export class PositionsAdminPageComponent implements OnInit {
             if (result.value) {
               this._createPosition(position);
             }
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
           });
         }
       }
     } else {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationsService
         .showNotification(eNotificationType.INFORMATION, 'Para guardar el puesto, debe seleccionar un departamento', '');
       this.departmentElement.nativeElement.focus();
@@ -183,7 +183,7 @@ export class PositionsAdminPageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.showLoading = true;
+        this.loadingService.setLoading(true);
         this.positionProv.removePosition(position._id)
           .subscribe(_ => {
             if (this.isEditing && this.currentPosition._id === position._id) {
@@ -191,10 +191,10 @@ export class PositionsAdminPageComponent implements OnInit {
               this.titleCardForm = 'Creando puesto';
             }
             this._removePosition(position);
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto borrado con éxito', '');
           }, err => {
-            this.showLoading = false;
+            this.loadingService.setLoading(false);
             const message = JSON.parse(err._body).message;
             this.notificationsService.showNotification(eNotificationType.ERROR, 'Error al borrar el puesto', message);
           });
@@ -211,13 +211,13 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   public saveAssignRole() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     const roleName = this.roleControl.value;
     const role = this._getRole(roleName || '');
     const isValidRole = this._validateRole(role);
     if (isValidRole) {
       const isAssign = this._updatePositionRole(this.currentPosition._id, role._id);
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       if (isAssign) {
         this.currentPosition.role = role._id;
         this._updatePosition(this.currentPosition);
@@ -228,7 +228,7 @@ export class PositionsAdminPageComponent implements OnInit {
       this.notificationsService
         .showNotification(eNotificationType.ERROR, 'Asignación de roles', 'Error, no se pudo asignar el rol');
     }
-    this.showLoading = false;
+    this.loadingService.setLoading(false);
   }
 
   public assignRole(position: IPosition) {
@@ -286,7 +286,7 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   private _getAllDepartments() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.departmentProv.getAllDepartments()
       .subscribe(data => {
         this.departments = data.departments;
@@ -296,9 +296,9 @@ export class PositionsAdminPageComponent implements OnInit {
           startWith(''),
           map(value => value ? this._filterDepartments(value) : [...data.departments])
         );
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
       }, (_) => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
       });
   }
 
@@ -313,16 +313,16 @@ export class PositionsAdminPageComponent implements OnInit {
   }
 
   private _createPosition(position) {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     position.documents = [];
     this.positionProv.createPosition(position)
       .subscribe(createdPosition => {
         this.positionForm.reset();
         this._addPosition(createdPosition);
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Puesto creado con éxito', '');
       }, _ => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.notificationsService.showNotification(eNotificationType.ERROR,
           'Ocurrió un error al crear el puesto', 'Intente de nuevo');
       });

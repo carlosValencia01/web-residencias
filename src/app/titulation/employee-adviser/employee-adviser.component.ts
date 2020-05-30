@@ -1,14 +1,15 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { IGrade } from 'src/app/entities/reception-act/grade.model';
 import { IDepartment } from 'src/app/entities/shared/department.model';
 import { IEmployee } from 'src/app/entities/shared/employee.model';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
-import { IGrade } from 'src/app/entities/reception-act/grade.model';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 @Component({
   selector: 'app-employee-adviser',
@@ -30,7 +31,6 @@ export class EmployeeAdviserComponent implements OnInit {
   public isNewEmployee: boolean;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  public showLoading: boolean;
   public role: string;
   public synodal: string;
   public title: string;
@@ -41,6 +41,7 @@ export class EmployeeAdviserComponent implements OnInit {
     public dialogRef: MatDialogRef<EmployeeAdviserComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private cookiesServ: CookiesService,
+    private loadingService: LoadingService,
   ) {
     this.isNewEmployee = false;
     this.career = this.data.carrer;
@@ -58,7 +59,7 @@ export class EmployeeAdviserComponent implements OnInit {
       'Cedula': new FormControl(null, Validators.required),
       'email': new FormControl(null, [Validators.required, Validators.email])
     });
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.employeProvider.getEmployeesByDepto().subscribe(
       data => {
         this.departments = <IDepartment[]>data.departments;
@@ -76,9 +77,9 @@ export class EmployeeAdviserComponent implements OnInit {
         this.departmentInfo.boss = (indice === -1 ? '' : this.departments[indice].boss.name.fullName);
 
         this.refresh();
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
       }, _ => {
-        this.showLoading = true;
+        this.loadingService.setLoading(false);
         this.notifications.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener empleados');
       }
     );

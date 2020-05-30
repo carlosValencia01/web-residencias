@@ -1,15 +1,16 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { MatDialogRef, MatSort, MatTableDataSource, MAT_DIALOG_DATA } from '@angular/material';
+import { uRequest } from 'src/app/entities/reception-act/request';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
 import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import Swal from 'sweetalert2';
-import { uRequest } from 'src/app/entities/reception-act/request';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
 import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-document-review',
@@ -32,7 +33,6 @@ export class DocumentReviewComponent implements OnInit {
   request: iRequest;
   student;
   uRequest: uRequest;
-  showLoading = false;
   documentDisplayed;
 
   constructor(
@@ -41,7 +41,8 @@ export class DocumentReviewComponent implements OnInit {
     public requestProvider: RequestProvider,
     private notificationService: NotificationsServices,
     public imgSrv: ImageToBase64Service,
-    public _CookiesService: CookiesService
+    public _CookiesService: CookiesService,
+    private loadingService: LoadingService,
   ) {
     this.isTitled = this.data.isTitled;
     this.init();
@@ -139,7 +140,7 @@ export class DocumentReviewComponent implements OnInit {
       this.existFile = true;
       const archivo = this.getDocument(type);
       this.documentDisplayed = archivo;
-      this.showLoading = true;
+      this.loadingService.setLoading(true);
       if (archivo.status !== 'Omitido' && archivo.status !== 'No Enviado') {
         switch (type) {
           case eFILES.SOLICITUD: {
@@ -254,7 +255,7 @@ export class DocumentReviewComponent implements OnInit {
   }
 
   disableLoading(pdf) {
-    this.showLoading = false;
+    this.loadingService.setLoading(false);
   }
 }
 

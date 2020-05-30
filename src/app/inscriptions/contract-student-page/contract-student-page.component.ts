@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { CookiesService } from 'src/app/services/app/cookie.service';
 import { MatStepper } from '@angular/material/stepper';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 const jsPDF = require('jspdf');
 
@@ -34,8 +35,6 @@ export class ContractStudentPageComponent implements OnInit {
   currentDate: Date;
   currentMonth: String;
 
-  loading : boolean;
-
   // Imagenes para Reportes
   public logoTecNM: any;
   public logoSep: any;
@@ -49,6 +48,7 @@ export class ContractStudentPageComponent implements OnInit {
     private notificationsServices: NotificationsServices,
     private imageToBase64Serv: ImageToBase64Service,
     private studentProv: StudentProvider,
+    private loadingService: LoadingService,
   ) {
     this.currentDate = new Date();
     this.convertNumericalMonth();
@@ -85,7 +85,7 @@ export class ContractStudentPageComponent implements OnInit {
   }
 
   async continue() {
-    this.loading=true;
+    this.loadingService.setLoading(true);
     var data = { acceptedTerms: this.acceptedTerms, dateAcceptedTerms: this.currentDate }
     await this.updateStudent(data, this._idStudent);
   }
@@ -247,16 +247,16 @@ export class ContractStudentPageComponent implements OnInit {
       nameInDrive: this.data.email+'-CONTRATO.pdf',
       bodyMedia: document,
       folderId: this.folderId,
-      newF: true, 
+      newF: true,
       fileId: ''
     };
-    
+
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
       updated=>{
-        const documentInfo2 = {          
+        const documentInfo2 = {
           doc:{
             filename:updated.name,
-            type:'DRIVE',         
+            type:'DRIVE',
             fileIdInDrive:updated.fileId
           },
             status : {
@@ -267,18 +267,18 @@ export class ContractStudentPageComponent implements OnInit {
         };
         this.studentProv.uploadDocumentDrive(this.data._id,documentInfo2).subscribe(
           updated=>{
-            this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Exito', 'Contrato enviada correctamente.');    
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Exito', 'Contrato enviada correctamente.');
             this.nextStep();
           },
           err=>{
             console.log(err);
-            
-          }, ()=>this.loading=false
+
+          }, () => this.loadingService.setLoading(false)
         );
       },
       err=>{
         console.log(err);
-        this.loading=false
+        this.loadingService.setLoading(false);
       }
     );
   }

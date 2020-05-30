@@ -1,95 +1,58 @@
 .content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    padding-bottom: 75px;
+  min-width: 100%;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.container-title {
-    width: 100%;
+.custom-card-login {
+  margin-top: 10%;
+  width: 536px;
+  border-radius: 15px;
+  padding: 0px;
+
+  mat-card-header {
     height: 51px;
     background-color: #233D7B;
-    border: 1px solid black;
     border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-}
 
-.container-login-form {
-    margin-top: 75px;
-    width: 536px;
-    border-radius: 15px;
-    -webkit-box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.75);
-    -moz-box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.75);
-    box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.75);
+    mat-card-title {
+      color: white;
+      font-size: 1.4rem;
+      font-family: 'PT Sans';
+      margin: 0;
+    }
+  }
 
-    float: left;
-    min-height: 340px;
-}
+  mat-card-content {
+    padding: 16px 16px 0px 16px;
+  }
 
-.container-form {
-    width: 100%;
-}
-
-.form-input {
-    padding: 15px;
-}
-
-.tittle-p {
-    color: white;
-    font-size: 1.4rem;
-    font-family: 'PT Sans';
-    margin: 0;
-}
-
-.href-style {
-    color: #707070;
-    margin:0;
-}
-
-.href-style:hover {
-    cursor: pointer;
-}
-
-.footer-form {
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-login {
-    background-color: #4D66A2;
-    color: white;
+  mat-card-actions {
+    padding: 0px 16px 16px 16px;
+  }
 }
 
 .invalid-feedback {
-    display: block;
-    color: #DC3849;
-  }
+  display: block;
+  color: #DC3849;
+}
 
 // Extra small devices (portrait phones, less than 576px)
 // No media query for `xs` since this is the default in Bootstrap
 
 // Small devices (landscape phones, 576px and up)
-@media (max-width: 576px) {
-    .container-login-form {
-        margin-top: 40px;
-        width: 280px;
-    }
- }
+@media (max-width: 576px) {}
 
 // Medium devices (tablets, 768px and up)
-@media (max-width: 768px) {
-
- }
+@media (max-width: 768px) {}
 
 // Large devices (desktops, 992px and up)
-@media (max-width: 992px) {
-
- }
+@media (max-width: 992px) {}
 
 // Extra large devices (large desktops, 1200px and up)
-@media (max-width: 1200px) {  }
+@media (max-width: 1200px) {}

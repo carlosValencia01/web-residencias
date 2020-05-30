@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FirebaseService } from 'src/app/services/graduation/firebase.service';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { CookiesService } from 'src/app/services/app/cookie.service';
 import { Router } from '@angular/router';
-import { GraduationProvider } from 'src/app/providers/graduation/graduation.prov';
-import Swal from 'sweetalert2';
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
+import { GraduationProvider } from 'src/app/providers/graduation/graduation.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { FirebaseService } from 'src/app/services/graduation/firebase.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-loader-data-graduation-page',
@@ -23,7 +24,6 @@ export class LoaderDataGraduationPageComponent implements OnInit {
   page = 1;
   pageSize = 10;
   students = [];
-  loading : boolean = false;
   displayStudents = [];
   careers = {
     'INGENIERÍA BIOQUÍMICA': 'IBQ',
@@ -48,6 +48,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
     private cookiesService: CookiesService,
     private router: Router,
     private graduationProv: GraduationProvider,
+    private loadingService: LoadingService,
   ) {
     if (this.cookiesService.getData().user.role !== 0 &&
       this.cookiesService.getData().user.role !== 1 &&
@@ -168,7 +169,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
 
   async sendData() {
     let i=0;
-    this.loading=true;
+    this.loadingService.setLoading(true);
     if (this.type === '0') {
       let objects = this.csvObjects;
       const sub = this.firebaseService.getGraduates(this.collection).subscribe(
@@ -177,7 +178,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
           sub.unsubscribe();
 
           if(sts.length>0){
-            for await (const student of objects){ 
+            for await (const student of objects){
               const stu = sts.filter( st=> st.nc == student.nc)[0];
               if(!stu){
                 await this.firebaseService.loadCSV(student, this.collection).then(resp => {
@@ -208,7 +209,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
             this.updateBestAvg();
           }, 70000);
           this.notificationsServices.showNotification(0, 'Exito',' Alumnos registrados');
-          this.loading=false;
+          this.loadingService.setLoading(false);
           this.cancel();
         }, 30000);
       }else{
@@ -216,7 +217,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
           this.updateBestAvg();
         }, 70000);
         this.notificationsServices.showNotification(0, 'Exito',' Alumnos registrados');
-        this.loading=false;
+        this.loadingService.setLoading(false);
         this.cancel();
       }
     }
@@ -243,7 +244,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
               for await (const career of careers){
                 const prevBestAvg = students.filter(st=> st.mejorPromedio == true && st.carrera+'' == career.nombre+'')[0];
                 const studentsCareer = students.filter( (st)=> st.carrera+'' == career.nombre+'').map( std=> std.promedio);
-                const greaterAvg = studentsCareer.length > 0 ? Math.max(...studentsCareer) : false;              
+                const greaterAvg = studentsCareer.length > 0 ? Math.max(...studentsCareer) : false;
 
                 const stGreaterAvg = greaterAvg > 0 ? students.filter( (st)=> st.carrera+'' == career.nombre+'').filter( (st)=> st.promedio == greaterAvg) : false;
 

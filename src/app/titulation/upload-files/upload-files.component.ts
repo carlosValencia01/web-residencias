@@ -1,17 +1,18 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
-import { RequestService } from 'src/app/services/reception-act/request.service';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
-import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { ExtendViewerComponent } from 'src/app/commons/extend-viewer/extend-viewer.component';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import Swal from 'sweetalert2';
-import { StepperDocumentComponent } from 'src/app/titulation/stepper-document/stepper-document.component';
-import { CookiesService } from 'src/app/services/app/cookie.service';
+import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
 import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.enum';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { RequestService } from 'src/app/services/reception-act/request.service';
+import { StepperDocumentComponent } from 'src/app/titulation/stepper-document/stepper-document.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-upload-files',
@@ -35,7 +36,6 @@ export class UploadFilesComponent implements OnInit {
   public UploadPhotos: IDocument;
   public UploadActaExamen: IDocument;
   public isEditable: boolean;
-  public showLoading = false;
 
   constructor(
     private requestService: RequestService,
@@ -43,6 +43,7 @@ export class UploadFilesComponent implements OnInit {
     public requestProvider: RequestProvider,
     private _CookiesService: CookiesService,
     public notificationServices: NotificationsServices,
+    private loadingService: LoadingService,
   ) { }
 
   ngOnInit() {
@@ -120,7 +121,7 @@ export class UploadFilesComponent implements OnInit {
   }
 
   onView(file) {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     const type = <eFILES><keyof typeof eFILES>file;
     let pdf: any;
     let isBase64: boolean;
@@ -178,15 +179,15 @@ export class UploadFilesComponent implements OnInit {
     }
     if (!isBase64) {
       if (pdf !== null) {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.openView(pdf, isBase64, type);
       }
     } else {
       this.requestProvider.getResource(this.Request._id, type).subscribe(data => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.openView(data, isBase64, type);
       }, _ => {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         this.notificationServices
           .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener archivo');
       });
@@ -343,7 +344,7 @@ export class UploadFilesComponent implements OnInit {
   }
 
   onSend(file): void {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.notificationServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Cargando archivo');
     const type = <eFILES><keyof typeof eFILES>file;
     let document: any;
@@ -408,13 +409,13 @@ export class UploadFilesComponent implements OnInit {
       const doc = this.getDocument(type);
       doc.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS;
       document.status = this.isEditable ? eStatusRequest.ACCEPT : eStatusRequest.PROCESS; // eStatusRequest.PROCESS;
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       if (this.isEditable) {
         this.onRemove(file);
         this.notificationServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Documento cambiado');
       }
     }, _ => {
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       this.notificationServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
     });

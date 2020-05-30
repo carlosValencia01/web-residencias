@@ -1,13 +1,13 @@
-import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
-
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { iPermission } from 'src/app/entities/app/permissions.model';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { PermissionProvider } from 'src/app/providers/app/permission.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-permissions-admin',
@@ -20,7 +20,6 @@ export class PermissionsAdminComponent implements OnInit {
   public titleCardForm: string;
   public searchText: string;
   public showFormPanel = false;
-  public showLoading = false;
   public isViewDetails = false;
   private permissionsCopy: iPermission[];
   private currentPermission: iPermission;
@@ -32,6 +31,7 @@ export class PermissionsAdminComponent implements OnInit {
     private notificationServ: NotificationsServices,
     private permissionProv: PermissionProvider,
     private router: Router,
+    private loadingService: LoadingService,
   ) {
     if (!this.cookiesServ.isAllowed(this.activateRoute.snapshot.url.map(({ path }) => path).join('/'))) {
       this.router.navigate(['/']);
@@ -79,9 +79,9 @@ export class PermissionsAdminComponent implements OnInit {
       focusCancel: true
     }).then(async (result) => {
       if (result.value) {
-        this.showLoading = true;
+        this.loadingService.setLoading(true);
         const isDeleted = await this._removePermission(permission);
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         if (isDeleted) {
           this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Permisos', 'Permiso eliminado con éxito');
           this._removeLocalPermission(permission);
@@ -104,12 +104,12 @@ export class PermissionsAdminComponent implements OnInit {
   }
 
   public async savePermission() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     const permission = this._getFormData();
     if (this.isEditing) {
       this.currentPermission = this._getNewCurrentPermission(this.currentPermission, permission);
       const isUpdate = await this._updatePermission(this.currentPermission);
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       if (isUpdate) {
         this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Permisos', 'Permiso actualizado con éxito');
         this._updateLocalPermission(this.currentPermission);
@@ -122,11 +122,11 @@ export class PermissionsAdminComponent implements OnInit {
     const index = this.permissionsCopy.findIndex(({ label }) => label.toLowerCase() === permission.label.toLowerCase());
     if (index !== -1) {
       Swal.fire('Permisos', 'Ya existe un permiso con el mismo nombre', 'error');
-      this.showLoading = false;
+      this.loadingService.setLoading(false);
       return;
     }
     const _permission = <iPermission>(await this._createPermission(permission));
-    this.showLoading = false;
+    this.loadingService.setLoading(false);
     if (_permission) {
       this.notificationServ.showNotification(eNotificationType.SUCCESS, 'Permisos', 'Permiso creado con éxito');
       this._addLocalPermission(_permission);
@@ -142,7 +142,7 @@ export class PermissionsAdminComponent implements OnInit {
   }
 
   private async _initialize() {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     this.permissionForm = new FormGroup({
       'label': new FormControl(null, Validators.required),
       'category': new FormControl(null, Validators.required),
@@ -154,7 +154,7 @@ export class PermissionsAdminComponent implements OnInit {
     this.permissionsCopy = this.permissions;
     this.searchPermission();
     this.closeFormPanel();
-    this.showLoading = false;
+    this.loadingService.setLoading(false);
   }
 
   private _fillForm(permission: iPermission) {

@@ -1,13 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
-import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
+import { Component, Input, OnInit } from '@angular/core';
 import { uRequest } from 'src/app/entities/reception-act/request';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { RequestService } from 'src/app/services/reception-act/request.service';
+import { iRequest } from 'src/app/entities/reception-act/request.model';
+import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
+import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { RequestService } from 'src/app/services/reception-act/request.service';
 
 @Component({
   selector: 'app-viewer-component',
@@ -32,7 +32,6 @@ export class ViewerComponentComponent implements OnInit {
   public message: string;
   public Title: String;
   public existTitle: boolean;
-  public showLoading: boolean;
   private oRequest: uRequest;
   private PHASE: eRequest;
 
@@ -40,7 +39,8 @@ export class ViewerComponentComponent implements OnInit {
     private imgService: ImageToBase64Service,
     private _RequestService: RequestService,
     private requestProvider: RequestProvider,
-    private _CookiesService: CookiesService
+    private _CookiesService: CookiesService,
+    private loadingService: LoadingService,
   ) { }
 
   ngOnInit() {
@@ -108,38 +108,38 @@ export class ViewerComponentComponent implements OnInit {
   }
 
   view(): void {
-    this.showLoading = true;
+    this.loadingService.setLoading(true);
     switch (this.PHASE) {
       case eRequest.GENERATED: {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         break;
       }
       case eRequest.REALIZED: {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         break;
       }
       case eRequest.ASSIGNED: {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         break;
       }
       case eRequest.VALIDATED: {
         this.oRequest.setRequest(this._Request);
         this.requestProvider.getResource(this._Request._id, eFILES.INCONVENIENCE).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         }, error => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           window.open(this.oRequest.noInconvenience().output('bloburl'), '_blank');
         });
         break;
       }
       case eRequest.RELEASED: {
-        // window.open(`${this.requestProvider.getApiURL()}/request/${this._Request._id}/file/${eFILES.RELEASED}`, '_blank');        
+        // window.open(`${this.requestProvider.getApiURL()}/request/${this._Request._id}/file/${eFILES.RELEASED}`, '_blank');
         this.requestProvider.getResource(this._Request._id, eFILES.RELEASED).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         }, error => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           console.log("Error de archivo", error);
         });
         break;
@@ -148,9 +148,9 @@ export class ViewerComponentComponent implements OnInit {
         // window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         this.requestProvider.getResource(this._Request._id, eFILES.REGISTRO).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         }, error => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         });
         break;
@@ -160,25 +160,25 @@ export class ViewerComponentComponent implements OnInit {
         this.oRequest.setCode(this.QR, this.EStamp);
         this.requestProvider.getResource(this._Request._id, eFILES.REGISTRO).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         }, error => {
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           window.open(this.oRequest.projectRegistrationOffice(this.QR, this.EStamp).output('bloburl'), '_blank');
         });
         break;
       }
       case eRequest.SENT: {
-        this.showLoading = false;
+        this.loadingService.setLoading(false);
         window.open('https://drive.google.com/open?id=1fOItfyeVGiItdDHXvSNifvtABt6goe3I', '_blank');
         break;
       }
       case eRequest.CAPTURED: {
         this.requestProvider.getResource(this._Request._id, eFILES.SOLICITUD).subscribe(data => {
           window.open(URL.createObjectURL(data), '_blank');
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
         }, error => {
           console.log("Error de Viewer", error);
-          this.showLoading = false;
+          this.loadingService.setLoading(false);
           window.open(this.oRequest.protocolActRequest().output('bloburl'), '_blank');
         });
         break;

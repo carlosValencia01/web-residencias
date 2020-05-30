@@ -1,80 +1,57 @@
 <div class="content">
-  <div class="container-login-form">
-    <div class="container-title">
-      <p class="tittle-p">Inicio de sesión</p>
-    </div>
-    <div class="container-form">
-      <div class="form-input">
-        <form [formGroup]="formLogin">
-          <div class="form-group">
-            <label style="color: #707070;" for="loginInputUser">
-              <mat-icon style="font-size: 15px;">account_circle</mat-icon> Usuario o Número de Control *
-            </label>
-            <input (input)="errorUsernameInput = false" (keyup.enter)="login()" formControlName="usernameInput"
-              [ngClass]="{'is-invalid': (formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorUsernameInput }"
-              type="text" class="form-control" #loginInputUser aria-describedby="emailHelp" placeholder="Usuario o número de control" id="loginInputUser">
-            <div *ngIf="(formLogin.get('usernameInput').errors && formLogin.get('usernameInput').dirty) || errorForm">
-              <div class="invalid-feedback" *ngIf="formLogin.get('usernameInput').hasError('required') || errorUsernameInput">
+  <mat-card class="custom-card-login col-11 col-sm-10 col-md-6 col-lg-5">
+    <mat-card-header>
+      <mat-card-title>Inicio de sesión</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="justify-align-center">
+      <form [formGroup]="formLogin">
+        <div class="row">
+          <mat-form-field appearance="outline" class="col-12">
+            <mat-label style="color: #707070;">
+              <mat-icon style="font-size: 15px;">account_circle</mat-icon> Usuario o Número de Control
+            </mat-label>
+            <input matInput type="text" (keyup.enter)="password.focus()" formControlName="usernameInput"
+              placeholder="Usuario o número de control" aria-describedby="emailHelp" aria-label="Introduzca su usuario"
+              required autofocus>
+            <mat-error *ngIf="formLogin.get('usernameInput').errors">
+              <span *ngIf="formLogin.get('usernameInput').errors['required']">
                 Campo obligatorio
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label style="color: #707070;" for="loginInputPassword">
-              <mat-icon style="font-size: 15px;">lock</mat-icon> Contraseña o NIP *
-            </label>
-            <input (input)="errorPasswordInput = false" (keyup.enter)="login()" formControlName="passwordInput" [ngClass]="{'is-invalid': (formLogin.get('passwordInput').errors && formLogin.get('passwordInput').dirty) || errorPasswordInput }"
-              type="password" class="form-control" id="loginInputPassword" aria-describedby="emailHelp" placeholder="Password o NIP">
-            <div *ngIf="(formLogin.get('passwordInput').errors && formLogin.get('passwordInput').dirty) || errorForm">
-              <div class="invalid-feedback" *ngIf="formLogin.get('passwordInput').hasError('required') || errorPasswordInput">
+              </span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="col-12">
+            <mat-label style="color: #707070;">
+              <mat-icon style="font-size: 15px;">lock</mat-icon> Contraseña o NIP
+            </mat-label>
+            <input #password matInput type="password" (keyup.enter)="login()" formControlName="passwordInput"
+              aria-describedby="emailHelp" aria-label="Introduzca su contraseña" placeholder="Password o NIP" required>
+            <mat-error *ngIf="formLogin.get('passwordInput').errors">
+              <span *ngIf="formLogin.get('passwordInput').errors['required']">
                 Campo obligatorio
-              </div>
-            </div>
-          </div>
-
-
-
-          <div *ngIf="showAlertDiv" style="margin-top: 8px;" class="alert alert-danger" role="alert">
-           {{messageAlertDiv}}
-          </div>
-
-          <div class="footer-form">
-
-            <div class="row">
-              <div class="col align-self-center">
-                <button (click)="login()"  type="button" class="btn btn-login">Ingresar</button>
-              </div>
-              
-            </div>
-         
-            
-
-            <!-- <button mat-button [matMenuTriggerFor]="menu" >Menu</button>
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item>Item 1</button>
-              <button mat-menu-item>Item 2</button>
-            </mat-menu> -->
-          </div>
-          <div class="row text-right">
-            <div class="col-8"></div>
-            <div class="col-4 align-self-end">
-              <!--<div (click)="viewVideo()" style="cursor: pointer; color: red; " class="text-center">
-                <mat-icon>ondemand_video</mat-icon>      
-                <p>
-                  Tutorial Nuevo Ingreso    
-                </p>        
-              </div>-->
-              <div (click)="viewVideoReceptionAct()" style="cursor: pointer; color: red; " class="text-center">
-                <mat-icon>ondemand_video</mat-icon>      
-                <p>
-                  Tutorial Acto Recepcional                
-                </p>        
-              </div>
-            </div>
-          </div>
-        </form>
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+      <div *ngIf="showAlertDiv" style="margin-top: 8px;" class="alert alert-danger" role="alert">
+        {{messageAlertDiv}}
       </div>
-    </div>
-  </div>
+    </mat-card-content>
+    <mat-card-actions class="d-flex justify-content-between">
+      <button mat-stroked-button type="button" [matMenuTriggerFor]="tutorialsMenu" color="accent">Tutoriales</button>
+      <button mat-stroked-button (click)="login()" [disabled]="formLogin.invalid" type="button"
+        color="primary">Ingresar</button>
+    </mat-card-actions>
+  </mat-card>
 </div>
+
+<mat-menu #tutorialsMenu="matMenu">
+  <button mat-menu-item (click)="viewInscriptionsVideo()" type="button">
+    <mat-icon>ondemand_video</mat-icon>
+    <span>Nuevo ingreso</span>
+  </button>
+  <button mat-menu-item (click)="viewReceptionActVideo()" type="button">
+    <mat-icon>ondemand_video</mat-icon>
+    <span>Acto recepcional</span>
+  </button>
+</mat-menu>

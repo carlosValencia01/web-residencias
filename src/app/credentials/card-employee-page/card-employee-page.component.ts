@@ -1,19 +1,19 @@
-import {ActivatedRoute, Router} from '@angular/router';
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Hotkey, HotkeysService} from 'angular2-hotkeys';
-import {ImageCroppedEvent} from 'ngx-image-cropper/src/image-cropper.component';
-import {ModalDismissReasons, NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Hotkey, HotkeysService } from 'angular2-hotkeys';
 import * as jsPDF from 'jspdf';
-
-import {CookiesService} from 'src/app/services/app/cookie.service';
-import {EmployeeProvider} from 'src/app/providers/shared/employee.prov';
-import {eNotificationType} from 'src/app/enumerators/app/notificationType.enum';
-import {FormErrorsService} from 'src/app/services/app/forms.errors.service';
-import {IEmployee} from 'src/app/entities/shared/employee.model';
-import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
-import {IPosition} from 'src/app/entities/shared/position.model';
-import {NotificationsServices} from 'src/app/services/app/notifications.service';
+import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
+import { IEmployee } from 'src/app/entities/shared/employee.model';
+import { IPosition } from 'src/app/entities/shared/position.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { FormErrorsService } from 'src/app/services/app/forms.errors.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 @Component({
   selector: 'app-card-employee-page',
@@ -23,7 +23,6 @@ import {NotificationsServices} from 'src/app/services/app/notifications.service'
 export class CardEmployeePageComponent implements OnInit {
   @ViewChild('searchinput') searchInput: ElementRef;
   public employee: IEmployee;
-  public loading = false;
   public search: any;
   public showTable = false;
   public showNotFound = false;
@@ -66,6 +65,7 @@ export class CardEmployeePageComponent implements OnInit {
     private notificationServ: NotificationsServices,
     private routeActive: ActivatedRoute,
     private router: Router,
+    private loadingService: LoadingService,
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -137,7 +137,7 @@ export class CardEmployeePageComponent implements OnInit {
   public generatePDF(employee, position?) { // 'p', 'mm', [68,20]
     this.currentPosition = position ? position : this.currentPosition;
     if (employee.filename) {
-      this.loading = true;
+      this.loadingService.setLoading(true);
       this.employeeProv.getImageTest(employee._id).subscribe(data => {
 
         const reader = new FileReader();
@@ -183,7 +183,7 @@ export class CardEmployeePageComponent implements OnInit {
             // doc.setTextColor(255, 255, 255);
             // doc.setFontSize(8);
             // doc.text(52, 45.5, doc.splitTextToSize('RFC: ' + employee.rfc, 35));
-            this.loading = false;
+            this.loadingService.setLoading(false);
             window.open(doc.output('bloburl'), '_blank');
           });
         }, false);
@@ -202,7 +202,7 @@ export class CardEmployeePageComponent implements OnInit {
   // Búsqueda de empleado *************************************************************************************//#endregion
   public searchEmployee(showForm) {
     this.showForm = showForm;
-    this.loading = true;
+    this.loadingService.setLoading(true);
     if (this.search) {
       this.search = this.search.toUpperCase();
     }
@@ -230,8 +230,8 @@ export class CardEmployeePageComponent implements OnInit {
         this.showTable = false;
         this.showNotFound = true;
         this.showNotFoundPositions = false;
-        this.loading = false;
-      }, () => this.loading = false);
+        this.loadingService.setLoading(false);
+      }, () => this.loadingService.setLoading(false));
   }
 
   // Cropper Image ***************************************************************************************************//#endregion
@@ -291,7 +291,7 @@ export class CardEmployeePageComponent implements OnInit {
   private uploadFile(id, showForm) {
     const fd = new FormData();
     fd.append('image', this.croppedImage);
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.employeeProv.updatePhoto(id, fd).subscribe(res => {
       const employee: any = res;
       this.employee.filename = employee.employee.filename;
@@ -305,7 +305,7 @@ export class CardEmployeePageComponent implements OnInit {
       this.haveImage = true;
     }, error => {
       this.notificationServ.showNotification(eNotificationType.ERROR, 'Ocurrió un error, inténtalo nuevamente', '');
-    }, () => this.loading = false);
+    }, () => this.loadingService.setLoading(false));
   }
 
   // Zona de test :D *********************************************************************************************//#region
@@ -323,7 +323,7 @@ export class CardEmployeePageComponent implements OnInit {
   }
 
   private getImageFromService(id) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     this.employeeProv.getImageTest(id).subscribe(data => {
       this.createImageFromBlob(data);
       this.haveImage = true;
@@ -333,8 +333,8 @@ export class CardEmployeePageComponent implements OnInit {
         this.haveImage = false;
         this.photoEmployee = 'assets/imgs/employeeAvatar.png';
         this.showImg = true;
-        this.loading = false;
+        this.loadingService.setLoading(false);
       }
-    }, () => this.loading = false);
+    }, () => this.loadingService.setLoading(false));
   }
 }

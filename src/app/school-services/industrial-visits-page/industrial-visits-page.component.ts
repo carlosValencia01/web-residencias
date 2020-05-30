@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
-import * as Papa from 'papaparse';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import TableToExcel from '@linways/table-to-excel';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
-
+import * as Papa from 'papaparse';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 @Component({
   selector: 'app-industrial-visits-page',
@@ -27,7 +27,6 @@ export class IndustrialVisitsPageComponent implements OnInit {
     this.dataSource.sort = sort;
   };
 
-  loading: boolean = false;
   showTable: boolean = false;
   formatedStudents: Array<ListData>  = [];
 
@@ -37,13 +36,14 @@ export class IndustrialVisitsPageComponent implements OnInit {
   ];
   constructor(
     private studentProv: StudentProvider,
-    private notificationSrv: NotificationsServices
-  ) {      
+    private notificationSrv: NotificationsServices,
+    private loadingService: LoadingService,
+  ) {
     this.dataSource = new MatTableDataSource();
   }
 
   ngOnInit() {
-    
+
   }
 
   applyFilter(event: Event) {
@@ -56,7 +56,7 @@ export class IndustrialVisitsPageComponent implements OnInit {
   }
 
   public async onUpload(event) {
-    this.loading=true;    
+    this.loadingService.setLoading(true);
     this.showTable = false;
     let localStudents,activeStudents;
     this.formatedStudents = [];
@@ -71,26 +71,26 @@ export class IndustrialVisitsPageComponent implements OnInit {
             nss: st.nss,
             insured: st.documents.filter( doc=> doc.type == 'IMSS' ).length > 0 ? true : false
           })
-        );          
-             
+        );
+
       }
-    );    
+    );
     await this.studentProv.getAllActiveStudents().toPromise().then(
       sts=>{
-        activeStudents = sts.activeStudents;              
-          
+        activeStudents = sts.activeStudents;
+
       }
-    );    
-    
+    );
+
     if (event.target.files && event.target.files[0]) {
-      
+
       Papa.parse(event.target.files[0], {
         complete: (results) => {
           if (results.data.length > 0) {
             results.data.slice(1).forEach(async (st,index) => {
               const tmpSt = localStudents.filter( stu=> stu.controlNumber.trim() == st[0].trim())[0];
               const stStatus = activeStudents.filter(stu=>stu.controlNumber.trim() == st[0].trim())[0];
-              if(tmpSt){              
+              if(tmpSt){
                 this.formatedStudents.push(
                   {
                     no:index+1,
@@ -117,12 +117,12 @@ export class IndustrialVisitsPageComponent implements OnInit {
                   }
                 );
               }
-            });            
-            // Assign the data to the data source for the table to render            
+            });
+            // Assign the data to the data source for the table to render
             this.dataSource = new MatTableDataSource(this.formatedStudents);
             this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;            
-            this.loading = false;
+            this.dataSource.sort = this.sort;
+            this.loadingService.setLoading(false);
             this.showTable = true;
           }
         },

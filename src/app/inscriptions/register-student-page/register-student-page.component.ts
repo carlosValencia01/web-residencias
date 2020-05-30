@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
 import { MatStepper } from '@angular/material/stepper';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { Router } from '@angular/router';
 import * as jsPDF from 'jspdf';
-import Swal from 'sweetalert2';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { StudentProvider } from 'src/app/providers/shared/student.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register-student-page',
@@ -70,8 +71,6 @@ export class RegisterStudentPageComponent implements OnInit {
   eRTelefono = '^[0-9]{10}$';
   eRCp = '^[0-9]{4,5}$';
 
-  loading: boolean;
-
   // Imagenes para Reportes
   public logoTecNM: any;
   public logoSep: any;
@@ -86,6 +85,7 @@ export class RegisterStudentPageComponent implements OnInit {
     private imageToBase64Serv: ImageToBase64Service,
     private studentProv: StudentProvider,
     private router: Router,
+    private loadingService: LoadingService,
   ) {
     this.getFonts();
     this.getFolderId();
@@ -148,22 +148,22 @@ export class RegisterStudentPageComponent implements OnInit {
 
   async onFormSubmit(form: NgForm) {
     if(this.registerForm.valid){
-      this.loading=true;
+      this.loadingService.setLoading(true);
       await this.updateStudent(form, this._idStudent);
     } else {
       Swal.fire('¡Atención!', 'Llenar los campos faltantes.', 'info');
     }
-    
+
   }
   async updateStudent(data, id) {
-    
+
     await this.inscriptionsProv.updateStudent(data, id).subscribe(res => {
       // Actualizar fullName
       var newFullName = data.firstName + ' ' + data.fatherLastName + ' ' + data.motherLastName;
       this.inscriptionsProv.updateStudent({ fullName: newFullName }, id).subscribe(res => {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Generando Solicitud ...', '');
         this.generatePDF();
-      });   
+      });
     }, err => { });
   }
 
@@ -187,7 +187,7 @@ export class RegisterStudentPageComponent implements OnInit {
       this.apellidoMaterno = this.studentData.motherLastName ? this.studentData.motherLastName : '';
       this.nombre = this.studentData.firstName ? this.studentData.firstName : '';
       this.numeroControl = this.studentData.controlNumber ? this.studentData.controlNumber : '';
-      
+
       //this.lugarNacimiento = this.studentData.birthPlace ? this.studentData.birthPlace : '';
       switch(this.studentData.birthPlace){
         case 1 : {this.lugarNacimiento = "Aguascalientes"; break;}
@@ -226,7 +226,7 @@ export class RegisterStudentPageComponent implements OnInit {
         case 34 : {this.lugarNacimiento = "Extranjero"; break;}
         default : {this.lugarNacimiento = "Nayarit"; break;}
       }
-      
+
       //this.estadoCivil = this.studentData.civilStatus ? this.studentData.civilStatus : 'Soltero(a)';
       switch(this.studentData.civilStatus){
         case "S" : {this.estadoCivil = "Soltero(a)"; break;}
@@ -245,7 +245,7 @@ export class RegisterStudentPageComponent implements OnInit {
       this.calle = this.studentData.street ? this.studentData.street : '';
       this.colonia = this.studentData.suburb ? this.studentData.suburb : '';
       this.ciudad = this.studentData.city ? this.studentData.city : '';
-      
+
       //this.estado = this.studentData.state ? this.studentData.state : '';
       switch(this.studentData.state){
         case 1 : {this.estado = "Aguascalientes"; break;}
@@ -696,22 +696,22 @@ export class RegisterStudentPageComponent implements OnInit {
   }
 
   saveDocument(document) {
-    this.loading = true;
+    this.loadingService.setLoading(true);
     const documentInfo = {
       mimeType: "application/pdf",
       nameInDrive: this.data.email + '-SOLICITUD.pdf',
       bodyMedia: document,
       folderId: this.folderId,
-      newF: true, 
+      newF: true,
       fileId: ''
     };
-    
+
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-      async updated => {        
+      async updated => {
         const documentInfo2 = {
           doc: {
             filename: updated.name,
-            type: 'DRIVE',          
+            type: 'DRIVE',
             fileIdInDrive: updated.fileId
           },
           status: {
@@ -720,17 +720,17 @@ export class RegisterStudentPageComponent implements OnInit {
             message: 'Se envio por primera vez'
           }
         };
-        
+
         await this.studentProv.uploadDocumentDrive(this.data._id, documentInfo2).subscribe(
           updated => {
-            this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud enviada correctamente.'); 
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud enviada correctamente.');
             if (updated) {
-              this.continue();   
-            }   
+              this.continue();
+            }
           },
           err => {
             console.log(err);
-          }, () => this.loading = false
+          }, () => this.loadingService.setLoading(false)
         );
       },
       err => {
