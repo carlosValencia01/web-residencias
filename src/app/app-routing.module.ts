@@ -12,35 +12,35 @@ const routes: Routes = [
   },
   {
     path: 'credentials',
-    loadChildren: () => import('./credentials/credentials.module').then(m => m.CredentialsModule)
+    loadChildren: './credentials/credentials.module#CredentialsModule'
   },
   {
     path: 'rrhh',
-    loadChildren: () => import('./rrhh/rrhh.module').then(m => m.RrhhModule)
+    loadChildren: './rrhh/rrhh.module#RrhhModule'
   },
   {
     path: 'settings',
-    loadChildren: () => import('./settings/settings.module').then(m => m.SettingsModule)
+    loadChildren: './settings/settings.module#SettingsModule'
   },
   {
     path: 'user',
-    loadChildren: () => import('./user/user.module').then(m => m.UserModule)
+    loadChildren: './user/user.module#UserModule'
   },
   {
     path: 'titulation',
-    loadChildren: () => import('./titulation/titulation.module').then(m => m.TitulationModule)
+    loadChildren: './titulation/titulation.module#TitulationModule'
   },
   {
     path: 'graduation',
-    loadChildren: () => import('./graduation/graduation.module').then(m => m.GraduationModule)
+    loadChildren: './graduation/graduation.module#GraduationModule'
   },
   {
     path: 'inscriptions',
-    loadChildren: () => import('./inscriptions/inscriptions.module').then(m => m.InscriptionsModule)
+    loadChildren: './inscriptions/inscriptions.module#InscriptionsModule'
   },
   {
     path: 'school-services',
-    loadChildren: () => import('./school-services/school-services.module').then(m => m.SchoolServicesModule)
+    loadChildren: './school-services/school-services.module#SchoolServicesModule'
   },
   {
     path: '**',
