@@ -39,7 +39,9 @@ export class PermissionsAdminComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._initialize();
+    setTimeout(() => {
+      this._initialize();
+    });
   }
 
   public newPermission() {

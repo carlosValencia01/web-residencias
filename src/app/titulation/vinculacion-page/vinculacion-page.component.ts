@@ -48,7 +48,6 @@ export class VinculacionPageComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.selectedTab = new FormControl(0);
-    this.loadingService.setLoading(false);
   }
 
   ngOnInit() {
@@ -56,7 +55,9 @@ export class VinculacionPageComponent implements OnInit {
     this.displayedColumnsReleasedName = ['Nombre', 'Carrera', 'Número de control', 'Fecha de liberación'];
     this.displayedColumnsNotReleased = ['name', 'career', 'controlNumber', 'actions'];
     this.displayedColumnsNotReleasedName = ['Nombre', 'Carrera', 'Número de control'];
-    this._getAllNotReleased();
+    setTimeout(() => { 
+      this._getAllNotReleased();
+    });
   }
 
   public changeTab(event) {

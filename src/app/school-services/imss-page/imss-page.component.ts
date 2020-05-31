@@ -69,7 +69,6 @@ export class ImssPageComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.selectedTab = new FormControl(0);
-    this.loadingService.setLoading(false);
     this.getBase64ForStaticImages();
   }
 
@@ -80,7 +79,9 @@ export class ImssPageComponent implements OnInit {
     this.displayedColumnsInsured = ['controlNumber','name', 'career', 'nss', 'registerDateImss', 'actions'];
     this.displayedColumnsCampaignName = ['Número de control','Nombre', 'Carrera', 'NSS', 'Asegurado', 'Fecha Alta IMSS', 'Credencial Impresa', 'Fecha Alta Campaña'];
     this.displayedColumnsCampaign = ['controlNumber','name', 'career', 'nss', 'insured', 'registerDateImss', 'printCredential', 'registerDateCampaign', 'actions'];
-    this._getAllUninsured();
+    setTimeout(() => { 
+      this._getAllUninsured();
+    });
   }
 
   // Obtener alumnos al cambiar de pestaña

@@ -43,7 +43,9 @@ export class RolesAdminComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._initialize();
+    setTimeout(() => {
+      this._initialize();
+    });
   }
 
   public newRole() {

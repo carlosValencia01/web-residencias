@@ -37,12 +37,13 @@ export class GradePageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    this.loadingService.setLoading(false);
   }
 
   ngOnInit() {
     this.displayedColumns = ['fullName', 'positions', 'rfc', 'grades', 'action'];
-    this.getEmployees();
+    setTimeout(() => { 
+      this.getEmployees();
+    });
   }
 
   private refresh(): void {
