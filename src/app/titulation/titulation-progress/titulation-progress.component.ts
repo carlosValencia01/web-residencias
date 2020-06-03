@@ -954,7 +954,7 @@ export class TitulationProgressComponent implements OnInit {
         let juryGender = {president:'MASCULINO',secretary:'MASCULINO'};
         let studentGender = 'M';
         let careerPerBook = 1;
-        const titleOption = _request.titulationOption.split('-')[1].trim();
+        const titleOption = _request.titulationOption;
         await this._StudentProvider.getStudentById(_request.studentId).toPromise().then(
           st=> studentGender = st.student[0].sex
         ).catch(err=>{});
