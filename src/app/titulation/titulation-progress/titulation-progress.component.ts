@@ -803,7 +803,6 @@ export class TitulationProgressComponent implements OnInit {
 
   async reImprimir(Identificador: string) {
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Reimprimiendo acta de examen');
-    this.loadingService.setLoading(true);
     const _request: iRequest = this.getRequestById(Identificador);
     let acta = true;
     let juryGender = {president:'MASCULINO',secretary:'MASCULINO'};
@@ -812,7 +811,7 @@ export class TitulationProgressComponent implements OnInit {
     let firma = false;  
     // console.log(_request);
 
-    const titleOption = _request.titulationOption.split('-')[1].trim();
+    const titleOption = _request.titulationOption;
     await this._StudentProvider.getStudentById(_request.studentId).toPromise().then(
       st=> {studentGender = st.student[0].sex;}
     ).catch(err=>{});
@@ -831,7 +830,7 @@ export class TitulationProgressComponent implements OnInit {
     if(_request.titulationOption.split('-')[0].trim() === 'XI'){
       acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
       firma = await this.showAlert('¿Acta Firmada?',{accept:'SI',cancel:'NO'});
-          
+      this.loadingService.setLoading(true);
       if(firma){
         await this.delay(3000);
         window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
@@ -949,7 +948,6 @@ export class TitulationProgressComponent implements OnInit {
     this.requestProvider.updateRequest(Identificador, data).subscribe(async (_) => {
       if (eOperation === eStatusRequest.PROCESS) {
         this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Creando acta de examen');
-        this.loadingService.setLoading(true);
         const _request: iRequest = this.getRequestById(Identificador);
         let acta = true;
         let firma = false;
@@ -978,7 +976,7 @@ export class TitulationProgressComponent implements OnInit {
         if(_request.titulationOption.split('-')[0].trim() === 'XI'){
           acta = await this.showAlert('¿Usar formato de acta nuevo?',{accept:'SI',cancel:'USAR ANTIGUO'});
           firma = await this.showAlert('¿Acta Firmada?',{accept:'SI',cancel:'NO'});
-          
+          this.loadingService.setLoading(true);
           if(firma){
             await this.delay(3000);
             window.open(oRequest.testReport(acta,firma).output('bloburl'), '_blank');
