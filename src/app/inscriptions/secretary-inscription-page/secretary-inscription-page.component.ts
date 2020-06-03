@@ -1467,9 +1467,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   async getSchedule(){
     this.loadingService.setLoading(true);
-
-
-    var doc = new jsPDF('p', 'pt');
+    var doc = new jsPDF('p', 'pt', 'letter');
 
     // Header
     var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
@@ -1490,10 +1488,11 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       headStyles: { fillColor: [24, 57, 105], halign: 'center' },
       columnStyles: {
         0: { cellWidth: 40, halign: 'center' },
-        1: { cellWidth: 230, halign: 'center' },
-        2: { cellWidth: 40, halign: 'center' },
-        3: { cellWidth: 50, halign: 'center' },
-        4: { cellWidth: 40, halign: 'center' }
+        1: { cellWidth: 150, halign: 'center' },
+        2: { cellWidth: 70, halign: 'center' },
+        3: { cellWidth: 40, halign: 'center' },
+        4: { cellWidth: 80, halign: 'center' },
+        5: { cellWidth: 40, halign: 'center' }
       }
     });
 
@@ -1521,6 +1520,18 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     await this.delay(3000);
     this.loadingService.setLoading(false);
     window.open(doc.output('bloburl'), '_blank');
+  }
+
+  async getScheduleExcel(){
+    this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');
+    this.loadingService.setLoading(true);
+    TableToExcel.convert(document.getElementById('tableReportSchedule'), {
+      name: 'Reporte Alumnos Derecho Horario.xlsx',
+      sheet: {
+        name: 'Alumnos'
+      }
+    });
+    this.loadingService.setLoading(false);
   }
 
   delay(ms: number) {
