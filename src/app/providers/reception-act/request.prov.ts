@@ -113,4 +113,23 @@ export class RequestProvider {
         return this.api.post(`request/summary`, data).pipe(map(request => request.json()));
     }
 
+    saveStatusExamAct(_id, _status) {
+        const doc = {
+            nameFile: 'ACTA_EXAMEN',
+            dateRegister: new Date(),
+            type: 'ACTA_EXAMEN',
+            observation: '¿Acta de examen entregada?',
+            status: _status
+        };
+        return this.api.put(`request/statusExamAct/${_id}`, doc).pipe(map(request => request.json()));
+    }
+
+    changeStatusExamAct(_id, status) {
+        return this.api.put(`request/changeStatusExamAct/${_id}`,{status}).pipe(map(request => request.json()));
+    }
+
+    sendMailExamAct(_mail,_actaEntregada) {
+        return this.api.post(`request/mailExamAct`,{ to_email: _mail, status: _actaEntregada }).pipe(map(request => request.json()));
+    }
+
 }
