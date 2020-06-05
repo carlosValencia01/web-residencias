@@ -16,6 +16,9 @@ export class DenyDayProvider {
     }
 
     add(data) {
-        return this.api.post(`denyDay/create`, data).pipe(map(range => range.json()));
+        return this.api.post(`denyDay/create`, data).pipe(map(add => add.json()));
+    }
+    remove(id) {
+        return this.api.post(`denyDay/delete`, {_id:id}).pipe(map(del => del.json()));
     }
 }
