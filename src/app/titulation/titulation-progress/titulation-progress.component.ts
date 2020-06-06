@@ -1492,6 +1492,9 @@ export class TitulationProgressComponent implements OnInit {
             }
                        
           });
+          console.log(agrupSummary.length);
+          console.log('generando...');
+          
           this.requestProvider.uploadSummary(agrupSummary).toPromise().then(
             re=>{
               this.loadingService.setLoading(false);
@@ -1508,7 +1511,29 @@ export class TitulationProgressComponent implements OnInit {
             eNotificationType.ERROR,'Acto recepcional', 
             'Algo salio mal al generar la ficha');              
           }            
-          );
+          ).catch((err)=>{
+            this.loadingService.setLoading(false);
+              console.log(err);
+              
+              this._NotificationsServices.showNotification(
+            eNotificationType.ERROR,'Acto recepcional', 
+            'Algo salio mal al generar la ficha');  
+          });
+        },
+        err=>{          
+          this.loadingService.setLoading(false);
+          const error = JSON.parse(err._body);       
+
+          if(error.err) {
+            this._NotificationsServices.showNotification(
+          eNotificationType.ERROR,'Acto recepcional', 
+          'Algo salio mal al buscar la solicitud');
+          console.log(err);
+          }else{
+            this._NotificationsServices.showNotification(
+              eNotificationType.ERROR,'Acto recepcional', 
+              'No se encontro la solicitud para generar la ficha');
+          }
         }
       ).catch(err=>{
         this.loadingService.setLoading(false);
@@ -1519,11 +1544,11 @@ export class TitulationProgressComponent implements OnInit {
         eNotificationType.ERROR,'Acto recepcional', 
         'Algo salio mal al buscar la solicitud');
         console.log(err);
-      }else{
-        this._NotificationsServices.showNotification(
-          eNotificationType.ERROR,'Acto recepcional', 
-          'No se encontro la solicitud para generar la ficha');
-      }
+        }else{
+          this._NotificationsServices.showNotification(
+            eNotificationType.ERROR,'Acto recepcional', 
+            'No se encontro la solicitud para generar la ficha');
+        }
         
       });    
     
