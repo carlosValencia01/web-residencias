@@ -101,8 +101,10 @@
       <div class="row text-center">
         <div class="col-12">
           <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'80vh'" [useBrowserLocale]="true"
-            (pdfLoaded)="disableLoading($event)">
+            (pdfLoaded)="disableLoading()" *ngIf="documentDisplayed ? documentDisplayed.type !=='XML': true">
           </ngx-extended-pdf-viewer>
+          <div class="xml-output" id="dataXML">
+          </div>  
         </div>
       </div>
     </div>

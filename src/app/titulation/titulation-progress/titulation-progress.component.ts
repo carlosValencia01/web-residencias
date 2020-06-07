@@ -1555,8 +1555,7 @@ export class TitulationProgressComponent implements OnInit {
     
   }
 
-  excelExport(){
-    console.log(this.dataSource.filteredData);
+  excelExport(){    
 
     this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Los datos se exportaron con éxito');
     TableToExcel.convert(document.getElementById('table'), {
