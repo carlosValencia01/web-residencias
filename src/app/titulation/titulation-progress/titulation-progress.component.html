@@ -116,7 +116,7 @@
                                 {{p.status}}
                                 <mat-icon matChipRemove>cancel</mat-icon>
                             </mat-chip>
-                            <input placeholder="Filtrar por estatus..." #phaseInput [formControl]="phaseCtrl"
+                            <input placeholder="Filtrar por fase..." #phaseInput [formControl]="phaseCtrl"
                                 [matAutocomplete]="autoPhases" [matChipInputFor]="chipListPhases"
                                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
                                 (matChipInputTokenEnd)="addPhase($event)" (ngModelChange)="filterPhase($event)"
