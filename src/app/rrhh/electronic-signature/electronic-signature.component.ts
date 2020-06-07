@@ -19,9 +19,13 @@ export class ElectronicSignatureComponent implements OnInit {
   public currentPosition;
   public eSignatureStatus;
   public formGroupPsw;
+  public formGroupPswChange;
   public isMatchPasswords = false;
+  public isMatchPasswordsChange = false;
+  public canUpdateSignature = false;
+  public expiredSignature = false;
+  public expiredMessage = '';
   private user;
-  private docString;
   private employee;
   private fileName = '';
 
@@ -42,6 +46,17 @@ export class ElectronicSignatureComponent implements OnInit {
           Validators.required
         ])
       });
+      this.formGroupPswChange = new FormGroup({
+        'pswChange': new FormControl(null, [
+          Validators.required
+        ]),
+        'confPswChange': new FormControl(null, [
+          Validators.required
+        ]),
+        'eSigPswChange': new FormControl(null, [
+          Validators.required
+        ])
+      });
   }
 
   ngOnInit() {
@@ -59,9 +74,19 @@ export class ElectronicSignatureComponent implements OnInit {
 
       this.eSignatureProvider.hasESignature(res.employee.rfc, this.currentPosition._id)
         .subscribe( data => {
-          this.docString = data.docString;
+          const expireDate = moment(new Date(data.expireDate).setHours(0, 0, 0, 0));
+          const today = new Date().setHours(0, 0, 0, 0);
+          const twoWeeksAfter = moment(today).add(2, 'weeks');
+          this.expiredSignature = expireDate.isSameOrBefore(today);
+          this.expiredMessage =  this.expiredSignature ? 'Su firma electrónica ha expirado' : 'Su firma electrónica está por expirar';
+  
+          this.canUpdateSignature = expireDate.isBetween(today, twoWeeksAfter) || expireDate.isSameOrBefore(today)
           this.eSignatureStatus = moment(data.expireDate).format('LL');
-          this.formGroupPsw.disable();
+          if (this.canUpdateSignature) {
+            this.formGroupPsw.enable();
+          } else {
+            this.formGroupPsw.disable();
+          }
         }, error => {
           if (error.status === 404) {
             this.eSignatureStatus = '';
@@ -86,11 +111,34 @@ export class ElectronicSignatureComponent implements OnInit {
     }).subscribe(eSignature => {
       this.formGroupPsw.reset();
       this.formGroupPsw.disable();
-      this.docString = eSignature.docString;
       this.eSignatureStatus = moment(eSignature.expireDate).format('LL');
       this.notification.showNotification(eNotificationType.SUCCESS, 'Firma electrónica creada', '');
     }, error => {
       this.notification.showNotification(eNotificationType.ERROR, 'Contraseña incorrecta', '');
+    });
+  }
+
+  renew() {
+    const passwords = {
+      eSigPsw: this.formGroupPsw.get('loginPsw').value,
+      newPsw: this.formGroupPsw.get('psw').value
+    };
+    this.eSignatureProvider.renewESignature(this.user._id, this.employee.employee._id, this.currentPosition._id, passwords)
+      .subscribe(data => {
+        this.canUpdateSignature = false;
+        this.expiredMessage = '';
+        this.expiredSignature =  false;
+        this.formGroupPsw.reset();
+        this.formGroupPsw.disable();
+        const currentDate = new Date();
+        const year = currentDate.getFullYear() + 2;
+        const month = currentDate.getMonth();
+        const day = currentDate.getDate();
+        const expireDate = new Date(year, month, day);
+        this.eSignatureStatus = moment(expireDate).format('LL');
+        this.notification.showNotification(eNotificationType.SUCCESS, data.message, '');
+    }, error => {
+      this.notification.showNotification(eNotificationType.ERROR, error.message, '');
     });
   }
 
@@ -114,7 +162,33 @@ export class ElectronicSignatureComponent implements OnInit {
     });
   }
 
+  changePassword() {
+    if (this.isMatchPasswordsChange) {
+      this.eSignatureProvider.changeESignaturePassword(this.user._id, this.employee.employee._id, this.currentPosition._id, {
+        eSigPsw: this.formGroupPswChange.get('eSigPswChange').value,
+        newPsw: this.formGroupPswChange.get('pswChange').value,
+      }).subscribe(res => {
+          if (res.status) {
+            this.notification.showNotification(eNotificationType.ERROR, 'Firma electrónica', res.message);
+          } else {
+            this.notification.showNotification(eNotificationType.SUCCESS, 'Firma electrónica', 'Contraseña actualizada correctamente');
+            this.formGroupPswChange.reset();
+          }
+        }, err => {
+          const err_msj = JSON.parse(err && err._body || '').err || '';
+          this.notification.showNotification(eNotificationType.ERROR, 'Firma electrónica', err_msj || 'No se pudo cambiar la contraseña');
+        }
+      );
+    } else {
+      this.notification.showNotification(eNotificationType.ERROR, 'Firma electrónica', 'Las contraseñas no coinciden');
+    }
+  }
+
   validateMatchPassword() {
     this.isMatchPasswords = this.formGroupPsw.get('psw').value === this.formGroupPsw.get('confPsw').value ;
+  }
+
+  validateMatchPasswordChange() {
+    this.isMatchPasswordsChange = this.formGroupPswChange.get('pswChange').value === this.formGroupPswChange.get('confPswChange').value ;
   }
 }
