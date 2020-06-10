@@ -110,7 +110,7 @@ export class RequestProvider {
             .pipe(map(summary => summary.json()));
     }
     uploadSummary(data){
-        return this.api.post(`request/summary`, data).pipe(map(request => request.json()));
+        return this.api.post(`request/summary/upload`, data).pipe(map(summary => summary.json()));
     }
 
     saveStatusExamAct(_id, _status) {

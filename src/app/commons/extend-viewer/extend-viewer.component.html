@@ -12,7 +12,9 @@
     </div>
   </div>
   <div class="card-body" mat-dialog-content>
-    <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'90vh'" [useBrowserLocale]="true">
+    <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'90vh'" [useBrowserLocale]="true" *ngIf="title !=='XML DE CÉDULA'">
     </ngx-extended-pdf-viewer>
+    <div class="xml-output" id="dataXML">
+    </div>  
   </div>
 </div>

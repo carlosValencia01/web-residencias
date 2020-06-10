@@ -85,13 +85,15 @@
             <div class="row">
               <div class="col-12">
                 <ngx-extended-pdf-viewer [src]='pdf' backgroundColor="#ffffff" [height]="'50vh'"
-                  [useBrowserLocale]="true">
+                  [useBrowserLocale]="true" *ngIf="mimeType === 'application/pdf'">
                 </ngx-extended-pdf-viewer>
+                <div class="xml-output" id="dataXML">
+                </div>                             
               </div>
             </div>
             <div class="row">
               <div class="col-12">
-                <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
+                <input #fileUpload type="file" [accept]="mimeType" (change)="onUpload($event)"
                   style="display: none">
                 <button type="button" id="btnUpload" style="background-color: white; border-radius: 8px;"
                   (click)="fileUpload.click()"><small>Reemplazar archivo</small></button>
@@ -114,7 +116,7 @@
             </div>
             <div class="row">
               <div class="col-12" style="padding-top: 10%;">
-                <input #fileUpload type="file" accept="application/pdf" (change)="onUpload($event)"
+                <input #fileUpload type="file" [accept]="mimeType" (change)="onUpload($event)"
                   style="display: none">
                 <button type="button" id="btnUpload" style="background-color: white; border-radius: 8px;"
                   (click)="fileUpload.click()"><small>Elige un

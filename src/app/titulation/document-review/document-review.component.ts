@@ -33,8 +33,7 @@ export class DocumentReviewComponent implements OnInit {
   request: iRequest;
   student;
   uRequest: uRequest;
-  documentDisplayed;
-
+  documentDisplayed;  
   constructor(
     public dialogRef: MatDialogRef<DocumentReviewComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -145,16 +144,26 @@ export class DocumentReviewComponent implements OnInit {
         switch (type) {
           case eFILES.SOLICITUD: {
             this.pdf = this.uRequest.protocolActRequest().output('bloburl');
+            this.disableLoading();
             break;
           }
           case eFILES.REGISTRO: {
             this.pdf = this.uRequest.projectRegistrationOffice().output('bloburl');
+            this.disableLoading();
             break;
           }
           default: {
-            this.requestProvider.getResource(this.request._id, type).subscribe(data => {
-              this.pdf = data;
+            this.requestProvider.getResource(this.request._id, type).subscribe(async (data: Blob) => {             
+              
+              if(type !== 'XML'){
+                this.pdf = data;                                      
+              }else{
+                const text = await data['text']();
+                this.viewXML(text);
+              }
+              this.disableLoading();
             }, error => {
+              this.disableLoading();
               const message = JSON.parse(error._body).message || 'Error al buscar recurso';
               this.notificationService
                 .showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
@@ -254,9 +263,74 @@ export class DocumentReviewComponent implements OnInit {
     this.dialogRef.close({ action: 'close' });
   }
 
-  disableLoading(pdf) {
+  disableLoading() {
     this.loadingService.setLoading(false);
   }
+
+  viewXML(xml: string){
+         
+    let text = this.excludeSpacesInNamesXML(xml);
+    let textArea = document.getElementById('dataXML');
+    let newHTML = "";
+    //change text color to display
+    let keywords = ["<cedulaelectronica","<cedula","</cedulaelectronica>","<profesionista","/>","<institucion","<carrera","<nodosep"];
+    let wordCount  = 0, fordward=false //begin after line <?XML;
+    const hasXMLLabel = text.indexOf('?xml') >-1;
+    text.split(" ").forEach((word: string)=>{                
+      if(fordward || !hasXMLLabel){
+        if(wordCount>=40){ // number of characters x line
+          newHTML+='<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+          wordCount=0;
+        }
+        if (keywords.indexOf(word.trim().toLowerCase()) > -1)
+          newHTML += "<span style='color: maroon;'>" + word.replace('<','&lt;').replace('>','&gt;') + "&nbsp;</span>";
+        else{
+          if(word.indexOf('"') > -1){
+            let asign  = word.split(`"`);                    
+            newHTML += `<span style='color: chocolate;'>${asign[0].replace(/@+/g,' ')}</span><span style='color: blue;'>"${asign[1].replace(/@+/g,' ')}"&nbsp;</span> ${
+              asign[2] ? asign[2].indexOf('>') > -1 ? 
+                "<span style='color: maroon;'>"+asign[2].replace(/@+/g,' ').replace('<','&lt;').replace('>','&gt;')+"</span>":
+                '':'' 
+            }`;
+          }else{
+            newHTML += "<span>" +  word.replace(/@+/g,' ').replace('<','&lt;').replace('>','&gt;') + "&nbsp;</span>";
+          }
+        }
+          if(word.indexOf('>') > -1){// end of property
+            newHTML+='<br>&nbsp;&nbsp;';
+            wordCount=0;
+          }
+        wordCount+=word.length;
+      }
+      if(word.indexOf('?>') > -1) //end line <?XML;
+      {
+        fordward=true;
+      }
+    });              
+    textArea.innerHTML = newHTML;
+  }    
+     
+  excludeSpacesInNamesXML(text: string){
+    let formatedText = '', temporalText='';
+    let count = 0;
+    text.replace(/\r?\n|\r/g,' ').split('').forEach(
+      (character)=>{        
+        if(character==`"`){// spaces into quotes    
+          count++;
+        }        
+        if(count == 1){// text into quotes         
+          temporalText+=character.indexOf(' ') > -1 ? '@' : character;
+        }else if(count==0){
+          formatedText+=character;
+        }else if(count==2){
+          formatedText+=temporalText+`"`;
+          count=0;
+          temporalText='';
+        }
+      }
+    );
+    return formatedText;
+  } 
 }
 
 interface IDocument {

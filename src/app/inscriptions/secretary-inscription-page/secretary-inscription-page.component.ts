@@ -1488,11 +1488,12 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       headStyles: { fillColor: [24, 57, 105], halign: 'center' },
       columnStyles: {
         0: { cellWidth: 40, halign: 'center' },
-        1: { cellWidth: 150, halign: 'center' },
+        1: { cellWidth: 140, halign: 'center' },
         2: { cellWidth: 70, halign: 'center' },
-        3: { cellWidth: 40, halign: 'center' },
-        4: { cellWidth: 80, halign: 'center' },
-        5: { cellWidth: 40, halign: 'center' }
+        3: { cellWidth: 70, halign: 'center' },
+        4: { cellWidth: 70, halign: 'center' },
+        5: { cellWidth: 80, halign: 'center' },
+        6: { cellWidth: 60, halign: 'center' }
       }
     });
 

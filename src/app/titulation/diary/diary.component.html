@@ -127,9 +127,13 @@
     </ng-template>
 
     <context-menu #excludeDayMenu style="padding: 0;">
-      <ng-template contextMenuItem (execute)="disableDay($event.item)" [visible]="canEdit" [enabled]="canEdit">
+      <ng-template contextMenuItem (execute)="disableDay($event.item)" [visible]="isDayFree" [enabled]="canEdit">
         <div style=" border-style: solid; border-width: 1px; color:#525770;">
           <i style="color:#c80000" class="fa fa-calendar-minus-o"></i>Bloquear día</div>
+      </ng-template>      
+      <ng-template contextMenuItem (execute)="disableDay($event.item)" [visible]="isDayBlocked" [enabled]="canEdit">
+        <div style=" border-style: solid; border-width: 1px; color:#525770;">
+          <i style="color:#c80000" class="fa fa-calendar-minus-o"></i>Desbloquear día</div>
       </ng-template>      
     </context-menu>
 

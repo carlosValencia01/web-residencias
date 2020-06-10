@@ -143,18 +143,7 @@ export class DiaryComponent implements OnInit {
         this.Appointments = data.Diary;
         // this.Ranges = data.Ranges;
         this.denyDays = data.denyDays;
-        // this.generateAppointment(month, year);
-        // this._DenyDayProvider.getAll().subscribe(
-        //   (denyDays)=>{
-            
-        //     this.denyDays = denyDays;
-            
-        //   },
-        //   err=>{
-        //     console.warn(err);        
-            
-        //   }
-        // );
+        
         this.loadAppointment();
         this.refresh.next();
       }
@@ -288,7 +277,8 @@ export class DiaryComponent implements OnInit {
           title: 'Día bloqueado',
           start: start,
           end: new Date(date.date),
-          color:  { primary: '#00c853', secondary: '#69f0ae' }
+          color:  { primary: '#00c853', secondary: '#69f0ae' },
+          id:date._id
           });
     });
     this.refresh.next();
@@ -301,7 +291,7 @@ export class DiaryComponent implements OnInit {
                 day.events.filter(e=> e.title == 'Día bloqueado').length > 0
                 ? 'bloqueado' : 'ocupado' : 'libre';
       
-      day.cssClass = ev == 'bloqueado' ? 'deny-day' :'disable-days' ;
+      day.cssClass = ev == 'bloqueado' ? 'deny-day' : ev == 'ocupado' ? 'disable-days' :'free-day' ;
     });
     (async () => {
       await this.delay(100);
@@ -1043,7 +1033,19 @@ export class DiaryComponent implements OnInit {
     });
   }
 
-  async disableDay(event){
+  //check if the day it's blocked for display option in context menu
+  private isDayBlocked = this.dayBlocked.bind(this);  
+  private dayBlocked(day: any): boolean {       
+   return day.events.filter( ev=> ev.title === 'Día bloqueado').length > 0;  
+  }
+  //check if the day it's free for display option in context menu
+  private isDayFree = this.dayFree.bind(this);  
+  private dayFree(day: any): boolean {       
+   return day.events.length == 0;  
+  }
+  //disable or enable a day
+  async disableDay(event){    
+    
     const ev = event.events.length > 0 ? 
                 event.events.filter(e=> e.title == 'Día bloqueado').length > 0
                 ? 'bloqueado' : 'ocupado' : 'libre';
@@ -1054,25 +1056,38 @@ export class DiaryComponent implements OnInit {
       if(event.date < curdate){
         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'No se puede bloquear un día antes de hoy');  
       }else{              
-        event.date.setHours(23,59,59);
-        console.log(event.date);
-        
-        const answer = await this.showAlert('Bloquear el día, no podra deshacer esta operacion');
-        if(answer){
-          this._DenyDayProvider.add({date:event.date}).toPromise().then(
-            res=>{
-              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Día deshabilitado');  
-              this.reload();
-            },
-            err=>this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Algo salió mal')
-          ).catch(err=>this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Algo salió mal'));
-        }
+        event.date.setHours(23,59,59);        
+       
+          const answer = await this.showAlert('Bloquear el día, no podra deshacer esta operacion');
+          if(answer){
+            this._DenyDayProvider.add({date:event.date}).toPromise().then(
+              res=>{
+                this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Día deshabilitado');  
+                this.reload();
+              },
+              err=>this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Algo salió mal')
+            ).catch(err=>this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Algo salió mal'));
+          }        
       }
       
     }else if(ev == 'ocupado'){
       this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ya se agendaron solicitudes ese día');
     }else{
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'El día ya a sido bloqueado');
+      //enable day again
+      const id = event.events[0].id;
+      this._DenyDayProvider.remove(id).toPromise().then(
+        (deleted)=>{
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Día habilitado');  
+                this.reload();
+        },
+        (err)=>{
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Algo salio mal al desbloquear el día'); console.error(err);
+        }
+      ).catch((err)=>{
+        this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Algo salio mal al desbloquear el día'); console.error(err);
+      });
+      
+      // this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'El día ya a sido bloqueado');
     }
     
   }

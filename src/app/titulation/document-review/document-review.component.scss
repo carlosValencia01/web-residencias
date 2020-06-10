@@ -135,3 +135,14 @@ table {
     height: 80vh;
     overflow-y: scroll;
 }
+
+.xml-output{
+    width: 100%;
+    text-align: left;    
+    padding: 10px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    overflow-wrap: break-word;    
+    border-left: 2px solid darkgray;    
+    border-bottom: 2px solid darkgray;
+}
