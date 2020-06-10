@@ -39,6 +39,34 @@
                 <div class="col-xs-12 col-sm-6 col-md-3">
                     <mat-card class="cardStatus"><b>Entregadas</b><br>{{cantActasEntregadas}}</mat-card>
                 </div>
+                <div class="col-xs-12 col-sm-6 col-md-5">
+                    <mat-form-field>
+                        <mat-chip-list #chipListCareers aria-label="Period selection">
+                            <mat-chip *ngFor="let c of usedCareers" selectable="true" removable="true"
+                                (removed)="removeCareer(c)">
+                                {{c.acronym}}
+                                <mat-icon matChipRemove>cancel</mat-icon>
+                            </mat-chip>
+                            <input placeholder="Filtrar por carreras..." #careerInput [formControl]="careerCtrl"
+                                [matAutocomplete]="autoCarrers" [matChipInputFor]="chipListCareers"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
+                                (matChipInputTokenEnd)="addCareer($event)" (ngModelChange)="filterCareer($event)"
+                                matInput>
+                        </mat-chip-list>
+                        <mat-autocomplete #autoCarrers="matAutocomplete">
+                            <mat-option *ngFor="let career of carreras" [value]="career"
+                                (click)="slectedCareer(career)">
+                                {{career.shortName}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </div>
+                <div class="col-xs-12 col-md-1">
+                    <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
+                        (click)="reload()" data-toggle="tooltip" title="Actualizar">
+                        <mat-icon>cached</mat-icon>
+                    </button>
+                </div>
             </div>
             <div class="row text-center p-4 m-0 mt-2" *ngIf="role!=='jefe académico' && role!=='secretaria académica'">
                 <div class="col-xs-12 col-md-3" *ngIf="tabNumber === 1">
@@ -153,7 +181,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="col-11" *ngIf="tabNumber !== 6 && tabNumber !== 1">
+                <div class="col-11" *ngIf="tabNumber !== 6 && tabNumber !== 1 && tabNumber !== 7">
                     <mat-form-field>
                         <mat-chip-list #chipListCareers aria-label="Period selection">
                             <mat-chip *ngFor="let c of usedCareers" selectable="true" removable="true"
@@ -176,7 +204,7 @@
                     </mat-form-field>
                 </div>
 
-                <div class="col-xs-12 col-md-1">
+                <div class="col-xs-12 col-md-1"  *ngIf="tabNumber !== 7">
                     <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
                         (click)="reload()" data-toggle="tooltip" title="Actualizar">
                         <mat-icon>cached</mat-icon>
@@ -311,8 +339,8 @@
                         <ng-container matColumnDef="statusExamAct">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Estatus Acta
                             </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%">
-                                {{getExamActStatus(row) === 'true' ? 'Entregado' : getExamActStatus(row) === 'false' ? 'Pendiente' : ''}}
+                            <td mat-cell *matCellDef="let row" style="width:10%"> 
+                                {{row.examActStatus === true ? 'Entregado' : row.examActStatus === false ? 'Pendiente' : ''}}
                             </td>
                         </ng-container>
 
@@ -491,11 +519,11 @@
                                         <mat-icon>folder_shared</mat-icon>
                                         Expediente
                                     </button>
-                                    <button mat-menu-item (click)="changeStatusExamAct(row._id,true)" *ngIf="getExamActStatus(row) === 'false'">
+                                    <button mat-menu-item (click)="changeStatusExamAct(row._id,true)" *ngIf="row.examActStatus === false">
                                         <mat-icon>check_box</mat-icon>
                                         Marcar Acta Como Entregada
                                     </button>
-                                    <button mat-menu-item (click)="changeStatusExamAct(row._id,false)" *ngIf="getExamActStatus(row) === 'true'">
+                                    <button mat-menu-item (click)="changeStatusExamAct(row._id,false)" *ngIf="row.examActStatus === true">
                                         <mat-icon>indeterminate_check_box</mat-icon>
                                         Marcar Acta Como Pendiente
                                     </button>

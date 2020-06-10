@@ -293,6 +293,8 @@ export class TitulationProgressComponent implements OnInit {
     tmp.registry = element.registry;
     tmp.documents = element.documents;
     tmp.isIntegral = typeof (element.isIntegral) !== 'undefined' ? element.isIntegral : true;
+    tmp.examActStatus = typeof (element.examActStatus) !== 'undefined' ? element.examActStatus : '';
+
     return tmp;
   }
 
@@ -418,8 +420,8 @@ export class TitulationProgressComponent implements OnInit {
         let cantEntregados = 0;
         this.dataSource.data = this.dataSource.data.filter(
           (req: any) => {
-            if(req.documents.filter( doc => doc.nameFile === 'ACTA_EXAMEN')[0]){
-              if(req.documents.filter( doc => doc.nameFile === 'ACTA_EXAMEN')[0].status === 'true'){
+            if(req.examActStatus !== ''){
+              if(req.examActStatus === true){
                 cantEntregados++;
               } else {
                 cantPendientes++;
@@ -1617,11 +1619,6 @@ export class TitulationProgressComponent implements OnInit {
         name: 'Egresados'
       }
     });
-  }
-
-  getExamActStatus(req){
-    const examAct = req.documents.filter( doc => doc.nameFile === 'ACTA_EXAMEN')[0] ? req.documents.filter( doc => doc.nameFile === 'ACTA_EXAMEN')[0] : '';
-    return examAct.status
   }
 
   async changeStatusExamAct(idReq,status){
