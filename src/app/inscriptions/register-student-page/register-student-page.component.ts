@@ -341,8 +341,11 @@ export class RegisterStudentPageComponent implements OnInit {
       this.stepper.next();
     }
     if (index == 6) {
-      //this.router.navigate(['/']);
-      //window.location.assign("/");
+      this.stepper.next();
+      this.stepper.next();
+      this.stepper.next();
+      this.stepper.next();
+      this.stepper.next();
     }
   }
 

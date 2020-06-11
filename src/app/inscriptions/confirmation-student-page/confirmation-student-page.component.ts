@@ -122,6 +122,8 @@ export class ConfirmationStudentPageComponent implements OnInit {
 
   async getIdDocuments() {
     let documents = this.studentData.documents;
+    this.docSolicitud = documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] : '';
+    this.docContrato = documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] : '';
 
     this.docCurp = documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] : '';
     this.docNss = documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] : '';
@@ -159,7 +161,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
     this.loadingService.setLoading(true);
     switch (file) {
       case "Solicitud": {
-        this.inscriptionsProv.getFile(this.docSolicitud[0].fileIdInDrive, this.docSolicitud[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docSolicitud.fileIdInDrive, this.docSolicitud.filename).subscribe(data => {
           var pubSolicitud = data.file;
           let buffSolicitud = new Buffer(pubSolicitud.data);
           var pdfSrcSolicitud = buffSolicitud;
@@ -175,7 +177,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
         break;
       }
       case "Contrato": {
-        this.inscriptionsProv.getFile(this.docContrato[0].fileIdInDrive, this.docContrato[0].filename).subscribe(data => {
+        this.inscriptionsProv.getFile(this.docContrato.fileIdInDrive, this.docContrato.filename).subscribe(data => {
           var pubContrato = data.file;
           let buffContrato = new Buffer(pubContrato.data);
           var pdfSrcContrato = buffContrato;
@@ -222,7 +224,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
   }
 
   async continue() {
-    var newStep = { stepWizard: 6, inscriptionStatus: 'Enviado', printCredential: false, warningAnalysis: false}
+    var newStep = { stepWizard: 7, inscriptionStatus: 'Enviado', printCredential: false, warningAnalysis: false}
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
       //this.router.navigate(['/wizardInscription']);
       window.location.assign("/inscriptions/profileInscription");

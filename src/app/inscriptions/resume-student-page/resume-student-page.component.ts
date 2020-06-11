@@ -167,7 +167,7 @@ export class ResumeStudentPageComponent implements OnInit {
   }
 
   async continue() {
-    var newStep = { stepWizard: 5 }
+    var newStep = { stepWizard: 6 }
     await this.inscriptionsProv.updateStudent(newStep, this._idStudent.toString()).subscribe(res => {
       //this.stepper.next();
       window.location.assign("/inscriptions/wizardInscription");
