@@ -46,7 +46,7 @@ export class UploadDeliveredComponent implements OnInit {
     private imgService: ImageToBase64Service,
   ) {
     this.reqId = this.data.reqId;
-    this.deparment = this.data.deparment;
+    this.deparment = this.data.department;
     this.departmentOut = this.data.departmentOut ? this.data.departmentOut : '' ;
   }
 
@@ -78,7 +78,7 @@ export class UploadDeliveredComponent implements OnInit {
     this.fileName = this.file ? this.file.name : undefined;
   }
 
-  uploadDocument() {
+  uploadDocument() {    
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
       if (this.file.name.substring(this.file.name.length - 3) === 'itt') {
@@ -87,15 +87,15 @@ export class UploadDeliveredComponent implements OnInit {
           encrDocString: fileReader.result,
           employeeId: this.employee.employee._id,
           positionId: this.currentPosition._id,
-          documentCode: this.deparment === eRole.CHIEFACADEMIC ? eFILESCODE.NO_INCONVENIENCE : eFILESCODE.JURY_OFFICE,
-          outDepartmentName: this.deparment === eRole.CHIEFACADEMIC ? 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES': this.departmentOut
+          documentCode: this.deparment === eRole.HEADSCHOOLSERVICE ? eFILESCODE.NO_INCONVENIENCE : eFILESCODE.JURY_OFFICE,
+          outDepartmentName: this.deparment === eRole.HEADSCHOOLSERVICE ? 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES': this.departmentOut
         };
         this.notificationsServ
-          .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', this.deparment === eRole.CHIEFACADEMIC ? 'Firmando constancia de no inconveniencia' : 'Firmando oficio de jurado');
+          .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', this.deparment === eRole.HEADSCHOOLSERVICE ? 'Firmando constancia de no inconveniencia' : 'Firmando oficio de jurado');
         this.eSignatureProvider.sign(data).subscribe(signed => {
           if (signed) {
             this.notificationsServ
-              .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', this.deparment === eRole.CHIEFACADEMIC ? 'Constancia de no inconveniencia firmada con éxito' : 'Oficio de jurado firmado con éxito');
+              .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', this.deparment === eRole.HEADSCHOOLSERVICE ? 'Constancia de no inconveniencia firmada con éxito' : 'Oficio de jurado firmado con éxito');
             this.QR = signed.qrData;
             this.EStamp = signed.eStamp;
             const req = this.request.request[0];
