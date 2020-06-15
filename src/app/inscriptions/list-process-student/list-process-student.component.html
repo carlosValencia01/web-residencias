@@ -94,6 +94,11 @@
               <img src="../../assets/icons/folder.svg" class="action" (click)="viewExpedient(item)">
             </div>
           </td>
+          <td *ngIf="(rolName == 'Administrador' && item.documentsReviewNumber == 7) || (rolName == 'Administrador' && item.documentsReviewNumber == 8)">
+            <div class="div-img" ngbTooltip="Actualizar Estatus Expediente" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/refresh.svg" class="action" (click)="updateExpedientStatus(item)">
+            </div>
+          </td>
         </tr>
   </div>
   </td>
@@ -137,6 +142,11 @@
           <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
             <div class="div-img" ngbTooltip="Documentos a Dictaminar" tooltipClass="my-custom-class">
               <img src="../../assets/icons/folder.svg" class="action" (click)="viewExpedient(item)">
+            </div>
+          </td>
+          <td *ngIf="(rolName == 'Secretaria escolares' && item.documentsReviewNumber == 7) || (rolName == 'Secretaria escolares' && item.documentsReviewNumber == 8)">
+            <div class="div-img" ngbTooltip="Actualizar Estatus Expediente" tooltipClass="my-custom-class">
+              <img src="../../assets/icons/refresh.svg" class="action" (click)="updateExpedientStatus(item)">
             </div>
           </td>
         </tr>
