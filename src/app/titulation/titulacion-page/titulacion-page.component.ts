@@ -80,6 +80,7 @@ export class TitulacionPageComponent implements OnInit {
   AcceptGeneratedMessage: String = 'ACTA DE EXAMEN GENERADA';
   AcceptGeneratedMessageSubtitle: String = 'FAVOR DE PASAR A RECOGER TU DOCUMENTO';
   CompletedGeneratedMessage: String = 'ACTA DE EXAMEN ENTREGADA';
+  ExamActPendingMessage: String = 'ACTA DE EXAMEN PENDIENTE DE ENTREGA';
   ProcessTitledMessage: String = 'EN ESPERA DE NOTIFICACIÓN PARA RECEPCIÓN DEL TÍTULO';
   CompletedTitledMessage: String = 'TÍTULO PROFESIONAL';
   ProcessTitledMessageSubtitle: String = `FAVOR DE GENERAR TU CÉDULA ELECTRÓNICA Y SUBE LOS SIGUIENTES DOCUMENTOS
