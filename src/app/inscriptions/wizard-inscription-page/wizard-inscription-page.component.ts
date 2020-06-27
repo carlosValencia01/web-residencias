@@ -73,25 +73,26 @@ export class WizardInscriptionPageComponent implements OnInit {
   }
 
   getStudentData(id) {
-    this.studentProv.isStudentInscription(this.controlNumberStudent).subscribe(
-      (forInscription)=>{
-        this.inscriptionsProv.getStudent(id).subscribe(res => {
-          this.studentData = res.student[0];
-          this.step = this.studentData.stepWizard ? this.studentData.stepWizard : 0;
-          this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
-          this.validateStudent = true;
-          if(this.studentData.inscriptionStatus){
-             if(this.step == 7){
-               //window.location.assign("/profileInscription");
-               this.router.navigate(['/inscriptions/profileInscription']);
-             }
-           }
-        });
-      },
-      (err)=>{
-        this.validateStudent = false;
-      }
-    );
-
+    this.inscriptionsProv.getStudent(id).subscribe(res => {
+      this.studentData = res.student[0];
+      this.step = this.studentData.stepWizard ? this.studentData.stepWizard : 0;
+      this.semesterStudent = this.studentData.semester ? this.studentData.semester : 0;
+      if(this.studentData.inscriptionStatus){
+        this.validateStudent = true;
+        if(this.step == 7){
+          this.router.navigate(['/inscriptions/profileInscription']);
+        }
+      } else {
+        this.studentProv.isStudentInscription(this.controlNumberStudent).subscribe(
+          (forInscription)=>{
+            this.validateStudent = true;
+          },
+          (err)=>{
+            this.validateStudent = false;
+          }
+        );
+      } 
+    });
   }
+  
 }
