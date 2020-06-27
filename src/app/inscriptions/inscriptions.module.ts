@@ -46,6 +46,9 @@ import { FilterPipe } from './secretary-inscription-page/filter.pipe';
 import { SecretaryInscriptionPageComponent } from './secretary-inscription-page/secretary-inscription-page.component';
 import { StudentInformationComponent } from './student-information/student-information.component';
 import { WizardInscriptionPageComponent } from './wizard-inscription-page/wizard-inscription-page.component';
+import { WelcomeEmailsPageComponent } from './welcome-emails-page/welcome-emails-page.component';
+import { MatTableModule } from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: environment.filesURL,
@@ -78,6 +81,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     MatBadgeModule,
     MatMenuModule,
     MatStepperModule,
+    MatTableModule,
+    MatPaginatorModule,
   ],
   declarations: [
     ConfirmationStudentPageComponent,
@@ -99,6 +104,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ReviewExpedientComponent,
     StudentInformationComponent,
     FilterPipe,
+    WelcomeEmailsPageComponent,
   ],
   entryComponents: [
     DocumentsHelpComponent,

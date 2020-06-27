@@ -100,4 +100,8 @@ export class InscriptionsProvider {
     getArchivedExpedient(){
         return this.api.get('inscription/getArchivedExpedient/').pipe(map( res=>res.json()));
     }
+
+    sendNotificationMail(data){
+        return this.api.post('inscription/sendnotificationmail',data).pipe(map(res => res.json()));
+    }
 }
