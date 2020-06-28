@@ -1034,12 +1034,12 @@ export class DiaryComponent implements OnInit {
   }
 
   //check if the day it's blocked for display option in context menu
-  private isDayBlocked = this.dayBlocked.bind(this);  
+  public isDayBlocked = this.dayBlocked.bind(this);  
   private dayBlocked(day: any): boolean {       
    return day.events.filter( ev=> ev.title === 'Día bloqueado').length > 0;  
   }
   //check if the day it's free for display option in context menu
-  private isDayFree = this.dayFree.bind(this);  
+  public isDayFree = this.dayFree.bind(this);  
   private dayFree(day: any): boolean {       
    return day.events.length == 0;  
   }
