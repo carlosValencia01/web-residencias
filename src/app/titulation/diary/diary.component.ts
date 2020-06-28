@@ -47,7 +47,7 @@ export class DiaryComponent implements OnInit {
   activeDayIsOpen = true;
   maxDate: Date = new Date(2019, 11, 15);
   viewDate = new Date();
-  events: CalendarEvent[];
+  events;
   hour: string;
   excludeDays: number[] = [0, 6];
   employees;
@@ -238,10 +238,12 @@ export class DiaryComponent implements OnInit {
             proposedDate: Date,
             proposedHour: number,
             phase: string,
-            duration: number
+            duration: number,
+            status?:string
           }]
         };
         tmp = this.Appointments.find(x => x._id[0] === career.carrer && career.status);
+        
         if (typeof (tmp) != 'undefined') {
           tmp.values.forEach(element => {
             const vFecha = element.proposedDate.toString().split('T')[0].split('-');
@@ -256,15 +258,18 @@ export class DiaryComponent implements OnInit {
 
             // let hours = element.proposedHour / 60;
             // let minutes = element.proposedHour % 60;
-            // let hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));
+            // let hour = ((hours > 9) ? (hours + "") : ("0" + hours)) + ":" + ((minutes > 9) ? (minutes + "") : ("0" + minutes));                        
             const title = moment(tmpStart).format('LT') + ' ' + career.abbreviation + ' ' + element.student[0];
             this.events.push({
+              phase:element.phase,
+              status:element.status,
               title: title,
               start: tmpStart,
               end: tmpEnd,
               color: (element.phase === 'Asignado'
                 ? career.color
                 : { primary: '#00c853', secondary: '#69f0ae' })
+              
               });
           });
         }
@@ -787,82 +792,54 @@ export class DiaryComponent implements OnInit {
   async documentation($event: any) {
     const AppointmentCareer = this.searchAppointmentByCareer($event.title.split(' ')[1]);
     const tmpAppointment: iAppointment =
-      this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));
+      this.searchAppointmentInGroup(AppointmentCareer, $event.start, $event.title.split(' ').slice(2).join(' '));    
+    const _request: iRequest = await this.getRequestById(tmpAppointment.id);
     this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando documentación');
-    const iRequest: iRequest = await this.getRequestById(tmpAppointment.id);
-    if (iRequest.phase === 'Realizado') {
-      this.loadingService.setLoading(true);
-      const oRequest = new uRequest(iRequest, this._ImageToBase64Service, this._CookiesService);
-      this.getFolder(iRequest.controlNumber);
-      await this.delay(1000);
-      this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando oficio de jurado');
-      const data_oficio = {
-        file: {
-          mimetype: 'application/pdf',
-          data: oRequest.documentSend(eFILES.OFICIO),
-          name: eFILES.OFICIO + '.pdf',
-        },
-        folderId: this.folderId,
-        isJsPdf: true,
-        Document: eFILES.OFICIO,
-        phase: iRequest.phase,
-        IsEdit: 'true'
-      };
-      const response = await new Promise(resolve => {
-        this._RequestProvider.uploadFile(tmpAppointment.id, data_oficio).subscribe(_ => {
-          window.open(oRequest.notificationOffice().output('bloburl'), '_blank');
-          resolve(true);
-        }, _ => {
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
-          resolve(false);
-        });
-      });
+    this.loadingService.setLoading(true);
+    
+    const oRequest = new uRequest(_request, this._ImageToBase64Service, this._CookiesService);
+    this.getFolder(_request.controlNumber);
 
-      if (response) {
-        const fileData = {
-          file: {
-            mimetype: 'application/pdf',
-            data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
-            name: eFILES.JURAMENTO_ETICA + '.pdf',
-          },
-          folderId: this.folderId,
-          isJsPdf: true,
-          Document: eFILES.JURAMENTO_ETICA,
-          phase: iRequest.phase,
-          IsEdit: 'true'
+    await this.delay(2000);
+    const fileData = {
+      file: {
+        mimetype: 'application/pdf',
+        data: oRequest.documentSend(eFILES.JURAMENTO_ETICA),
+        name: eFILES.JURAMENTO_ETICA + '.pdf',
+      },
+      folderId: this.folderId,
+      isJsPdf: true,
+      Document: eFILES.JURAMENTO_ETICA,
+      phase: _request.phase,
+      IsEdit: 'true'
+    };
+    this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto Recepcional', 'Generando código de ética');
+    this._RequestProvider.uploadFile(tmpAppointment.id, fileData).subscribe(_ => {
+      if (_request.status === 'Pendiente') {
+        const data = {
+          doer: this._CookiesService.getData().user.name.fullName,
+          observation: '',
+          phase: eRequest.REALIZED,
+          operation: eStatusRequest.PROCESS
         };
-        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Generando código de ética');
-        this._RequestProvider.uploadFile(iRequest._id, fileData).subscribe(_ => {
-          if (iRequest.status === 'None') {
-            const data = {
-              doer: this._CookiesService.getData().user.name.fullName,
-              observation: '',
-              phase: eRequest.REALIZED,
-              operation: eStatusRequest.PROCESS
-            };
-            this._RequestProvider.updateRequest(iRequest._id, data).subscribe(__ => {
-              this.loadingService.setLoading(false);
-              window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
-            }, error => {
-              console.log('Error', error);
-              this.loadingService.setLoading(false);
-              this._NotificationsServices
-                .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
-            });
-          } else {
-            this.loadingService.setLoading(false);
-            window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
-          }
-        }, _ => {
+        this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(__ => {
+          window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
+          this.reload();
           this.loadingService.setLoading(false);
-          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
+        }, __ => {
+          this.loadingService.setLoading(false);
+          this._NotificationsServices
+            .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
         });
       } else {
+        window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
         this.loadingService.setLoading(false);
       }
-    } else {
-      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'La solicitud ya ha pasado de fase');
-    }
+    }, _ => {
+      this.loadingService.setLoading(false);
+      this._NotificationsServices
+        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al subir archivo');
+    });
   }
 
   async getRequestById(Identificador) {
@@ -1043,6 +1020,13 @@ export class DiaryComponent implements OnInit {
   private dayFree(day: any): boolean {       
    return day.events.length == 0;  
   }
+  //check if the day it's free for display option in context menu
+  public isJuryOfficeSign = this.juryOffice.bind(this);  
+  private juryOffice(day: any): boolean {       
+    console.log(day);
+    
+   return day.phase == 'Realizado' && day.status == 'Process';  
+  }
   //disable or enable a day
   async disableDay(event){    
     
@@ -1144,4 +1128,5 @@ interface iAppointment {
   duration: number;
   option: string;
   product: string;
+  status?:string
 }
