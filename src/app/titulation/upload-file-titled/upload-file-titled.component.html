@@ -198,7 +198,7 @@
             </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <input #fileUploadCert type="file" accept="application/pdf" (change)="onUpload($event,'XML')"
+            <input #fileUploadCert type="file" accept="text/xml" (change)="onUpload($event,'XML')"
               style="display: none">
             <div [ngSwitch]="UploadXML.status">
               <div *ngSwitchCase="'Accept'" class="text-center">

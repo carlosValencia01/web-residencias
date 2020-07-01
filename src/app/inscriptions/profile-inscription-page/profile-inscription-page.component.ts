@@ -229,7 +229,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
       this.obtenerFechaNacimiento(this.curp);
 
-      if(this.step == 6){
+      if(this.step == 7){
         this.getIdDocuments();
       }
 

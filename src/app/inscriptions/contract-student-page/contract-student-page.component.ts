@@ -284,7 +284,7 @@ export class ContractStudentPageComponent implements OnInit {
   }
 
   async nextStep(){
-    var newStep = { stepWizard: 4 }
+    var newStep = { stepWizard: 5 }
       this.inscriptionsProv.updateStudent(newStep,this._idStudent.toString()).subscribe(res => {
         //this.stepper.next();
         window.location.assign("/inscriptions/wizardInscription");

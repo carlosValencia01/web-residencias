@@ -21,3 +21,14 @@ button:hover{
   background-color: rgba(13, 219, 185, 0.2);
   border-color: #0cc9aa;
 }
+.xml-output{
+  width: 100%;
+  text-align: left;
+  border: 1px solid darkgray;
+  padding: 10px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+  max-height: 60vh;
+}
+

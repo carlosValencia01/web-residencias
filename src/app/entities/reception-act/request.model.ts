@@ -71,5 +71,6 @@ export interface iRequest {
         _id:string,
         year:string,
         active:boolean
-    }
+    };
+    examActStatus?: boolean;
 }

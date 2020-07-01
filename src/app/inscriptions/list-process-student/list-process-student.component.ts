@@ -725,55 +725,44 @@ export class ListProcessStudentComponent implements OnInit {
   }
 
   updateExpedientStatus(student){
+    const degree = student.careerId.acronym === 'DCA' ? 'doctorado' : (student.careerId.acronym === 'MCA' || student.careerId.acronym === 'MTI') ? 'maestria' : 'licenciatura';
     this.studentProv.getDocumentsUpload(student._id).subscribe(res => {
-      var comprobante = res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
-      var acta = res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
-      var curp = res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] : '';
-      var nss = res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] : '';
-      var compromiso = res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] : '';
-      var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
-      var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
-      var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+      if(degree === 'licenciatura'){
+        var comprobante = res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
+        var acta = res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
+        var curp = res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] : '';
+        var nss = res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] : '';
+        var compromiso = res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] : '';
+        var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
+        var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
+        var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
 
-      if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
-        // Cambiar estatus a ACEPTADO
-        this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
-        });
-        this.getStudents();
-        return;
-      }
-      if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
-        // Cambiar estatus a VALIDADO
-        this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
-        });
-        this.getStudents();
-        return;
-      }
-
-      var allDiferentProcess = true;
-      var allValidateOrAcept = true;
-
-      for(var i = 0; i < res.documents.length; i++){
-        if(res.documents[i].statusName == "EN PROCESO"){
-          allDiferentProcess = false;
-        }
-        if(res.documents[i].statusName == "VALIDADO" || res.documents[i] == "ACEPTADO"){
-          allValidateOrAcept = true;
-        } else {
-          allValidateOrAcept = false;
-        }
-      }
-
-      if(allDiferentProcess){
-        if(!allValidateOrAcept){
-          // Cambiar estatus a EN PROCESO
-          this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},student._id).subscribe(res => {
+        if ((comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO") || (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && compromiso.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO")){
+          // Cambiar estatus a ACEPTADO
+          this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},student._id).subscribe(res => {
+            if(res){
+              this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Expediente aceptado correctamente.');
+            }
           });
           this.getStudents();
           return;
         }
-        // No cambiar estatus
+        if ((comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO") || (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && compromiso.statusName == "VALIDADO"  && foto.statusName == "VALIDADO")){
+          // Cambiar estatus a VALIDADO
+          this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},student._id).subscribe(res => {
+            if(res){
+              this.notificationService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Expediente verificado correctamente.');
+            }
+          });
+          this.getStudents();
+          return;
+        }
+        this.notificationService.showNotification(eNotificationType.INFORMATION, 'Atención', 'Expediente tiene documentos sin aceptar o validar');
       }
+      // if(degree === 'doctorado'){ }
+      // if(degree === 'maestria'){ }
     });
+
   }
+
 }

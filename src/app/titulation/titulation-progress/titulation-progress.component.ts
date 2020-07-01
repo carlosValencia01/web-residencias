@@ -59,6 +59,7 @@ export class TitulationProgressComponent implements OnInit {
   requestFilter: iRequest[];
   displayedColumns: string[];
   displayedColumnsGestionTitled: string[];
+  displayedColumnsExamAct: string[];
   statusOptions: { icon: string, option: string }[];
   dataSource: MatTableDataSource<iRequestSource>;
   careers: Array<string>;
@@ -77,6 +78,8 @@ export class TitulationProgressComponent implements OnInit {
   cantProceso = 0;
   cantAceptados = 0;
   cantFinalizados = 0;
+  cantActasPendientes = 0;
+  cantActasEntregadas = 0;
   departmentCareers: Array<ICareer>; // Carreras del puesto
   private folderId: string;
   @ViewChild('auto') matAutocomplete: MatAutocomplete;
@@ -145,6 +148,8 @@ export class TitulationProgressComponent implements OnInit {
       'applicationDateLocal', 'lastModifiedLocal', 'action'];
     this.displayedColumnsGestionTitled = ['controlNumber', 'fullName', 'career', 'phase', 'status',
     'titulationDate', 'optionTitled', 'applicationDateLocal', 'lastModifiedLocal', 'action'];
+    this.displayedColumnsExamAct = ['controlNumber', 'fullName', 'career', 'phase', 'status',
+    'applicationDateLocal', 'lastModifiedLocal', 'statusExamAct', 'action'];
     this.statusOptions = [
       { icon: 'accessibility_new', option: 'Todos' },
       { icon: 'mail', option: 'Solicitado' },
@@ -288,6 +293,8 @@ export class TitulationProgressComponent implements OnInit {
     tmp.registry = element.registry;
     tmp.documents = element.documents;
     tmp.isIntegral = typeof (element.isIntegral) !== 'undefined' ? element.isIntegral : true;
+    tmp.examActStatus = typeof (element.examActStatus) !== 'undefined' ? element.examActStatus : '';
+
     return tmp;
   }
 
@@ -406,6 +413,26 @@ export class TitulationProgressComponent implements OnInit {
         this.cantProceso = cantProceso;
         this.cantAceptados = cantAceptados;
         this.cantFinalizados = cantFinalizados;
+      }
+
+      if (this.tabNumber === 7) {
+        let cantPendientes = 0;
+        let cantEntregados = 0;
+        this.dataSource.data = this.dataSource.data.filter(
+          (req: any) => {
+            if(req.examActStatus !== ''){
+              if(req.examActStatus === true){
+                cantEntregados++;
+              } else {
+                cantPendientes++;
+              }
+              return true;
+            }
+            return false;
+          }
+        );
+        this.cantActasPendientes = cantPendientes;
+        this.cantActasEntregadas = cantEntregados;
       }
 
       this.dataSource.paginator = this.paginator;
@@ -923,6 +950,7 @@ export class TitulationProgressComponent implements OnInit {
         type: 'question',
         showCancelButton: true,
         allowOutsideClick: false,
+        allowEscapeKey : false,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         cancelButtonText: buttons.cancel,
@@ -937,13 +965,18 @@ export class TitulationProgressComponent implements OnInit {
     });
   }
 
-  testReportGenerate(Identificador: string, eOperation: eStatusRequest): void {
+  async testReportGenerate(Identificador: string, eOperation: eStatusRequest) {
     const data = {
       doer: this._CookiesService.getData().user.name.fullName,
       observation: '',
       phase: eRequest.GENERATED,
       operation: eOperation // eStatusRequest.PROCESS
     };
+
+    let actaEntregada = false;
+    if(eOperation === eStatusRequest.ACCEPT){
+      actaEntregada = await this.showAlert('¿Estatus del acta?',{accept:'ENTREGADA',cancel:'PENDIENTE'});      
+    }
 
     this.requestProvider.updateRequest(Identificador, data).subscribe(async (_) => {
       if (eOperation === eStatusRequest.PROCESS) {
@@ -998,6 +1031,28 @@ export class TitulationProgressComponent implements OnInit {
             : (eOperation === eStatusRequest.PRINTED)
             ? 'Acta de examen impresa'
             : 'Acta de examen entregada'));
+      
+      if(eOperation === eStatusRequest.ACCEPT){
+        this.requestProvider.saveStatusExamAct(Identificador,actaEntregada)
+        .subscribe( async _ => {
+          this.loadingService.setLoading(false);
+          //this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Estatus de acta guardado correctamente');
+          // Mandar correo con estatus de acta
+          const _request: iRequest = await this.getRequestById(Identificador);
+          this.requestProvider.sendMailExamAct(_request.email,actaEntregada).subscribe(
+            res => {
+              this.loadRequest();
+              //this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Notificación enviada al alumno');
+            }, _ => {
+              this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, no se pudo enviar notificación al alumno');
+            });
+          
+        }, _ => {
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, No se pudo guardar estatus de acta');
+          this.loadingService.setLoading(false);
+        });
+      }
+
       this.loadRequest();
     }, error => {
       const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
@@ -1555,8 +1610,7 @@ export class TitulationProgressComponent implements OnInit {
     
   }
 
-  excelExport(){
-    console.log(this.dataSource.filteredData);
+  excelExport(){    
 
     this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Los datos se exportaron con éxito');
     TableToExcel.convert(document.getElementById('table'), {
@@ -1564,6 +1618,36 @@ export class TitulationProgressComponent implements OnInit {
       sheet: {
         name: 'Egresados'
       }
+    });
+  }
+
+  async changeStatusExamAct(idReq,status){
+    let notificacion = false;
+    let mensaje = status ? 'acta entregada' : 'acta pendiente'; 
+    this.loadingService.setLoading(true);
+    this.requestProvider.changeStatusExamAct(idReq,status)
+    .subscribe( async _ => {
+      this.loadingService.setLoading(false);
+      this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Estatus de acta actualizado correctamente');
+
+      //Preguntar si se desea nitificar al alumno el cambio de estatus
+      notificacion = await this.showAlert('¿Enviar notificación de '+mensaje+'?',{accept:'SI',cancel:'NO'});
+
+      //Mandar notificación
+      if(notificacion){
+      const _request: iRequest = await this.getRequestById(idReq);
+      this.requestProvider.sendMailExamAct(_request.email,status).subscribe(
+        res => {
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Notificación enviada al alumno');
+        }, _ => {
+          this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, no se pudo enviar notificación al alumno');
+        });
+      }
+
+      this.loadRequest();
+    }, _ => {
+      this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, No se pudo actualizar el estatus de acta');
+      this.loadingService.setLoading(false);
     });
   }
 }

@@ -78,7 +78,8 @@ export class UploadFileTitledComponent implements OnInit {
   onUploadNew(file): void {
     const dialogRef = this.dialog.open(StepperDocumentComponent, {
       data: {
-        Documento: file
+        Documento: file,
+        mimeType: file === eFILES.XML ? 'text/xml' : false
       },
       disableClose: true,
       hasBackdrop: true,
@@ -133,7 +134,8 @@ export class UploadFileTitledComponent implements OnInit {
         isBase64 = this.UploadINE.isBase64;
         break;
       }
-      case eFILES.XML: {
+      case eFILES.XML: {        
+        
         pdf = this.UploadXML.file;
         isBase64 = this.UploadXML.isBase64;
         break;

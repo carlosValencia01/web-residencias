@@ -113,4 +113,16 @@ export class RequestProvider {
         return this.api.post(`request/summary/upload`, data).pipe(map(summary => summary.json()));
     }
 
+    saveStatusExamAct(_id, status) {
+        return this.api.put(`request/statusExamAct/${_id}`, {status}).pipe(map(request => request.json()));
+    }
+
+    changeStatusExamAct(_id, status) {
+        return this.api.put(`request/changeStatusExamAct/${_id}`,{status}).pipe(map(request => request.json()));
+    }
+
+    sendMailExamAct(_mail,_actaEntregada) {
+        return this.api.post(`request/mailExamAct`,{ to_email: _mail, status: _actaEntregada }).pipe(map(request => request.json()));
+    }
+
 }

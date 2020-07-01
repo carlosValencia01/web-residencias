@@ -206,11 +206,11 @@ export class ReviewExpedientComponent implements OnInit {
 
       if(this.degree === 'lic'){
          // Cambiar estatus a ACEPTADO
-         if(aceptedDocs === 7){
+         if(aceptedDocs === 7 || aceptedDocs === 8){
            this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => { });
           return;
          }
-         if(validatedDocs === 7){
+         if(validatedDocs === 7 || validatedDocs === 8){
           // Cambiar estatus a VALIDADO
           this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => { });
           return;
