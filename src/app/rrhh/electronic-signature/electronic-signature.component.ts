@@ -124,21 +124,24 @@ export class ElectronicSignatureComponent implements OnInit {
       newPsw: this.formGroupPsw.get('psw').value
     };
     this.eSignatureProvider.renewESignature(this.user._id, this.employee.employee._id, this.currentPosition._id, passwords)
-      .subscribe(data => {
+      .subscribe((data: { doc: string, message: string, expireDate: Date }) => {
         this.canUpdateSignature = false;
         this.expiredMessage = '';
         this.expiredSignature = false;
         this.formGroupPsw.reset();
         this.formGroupPsw.disable();
-        const currentDate = new Date();
-        const year = currentDate.getFullYear() + 2;
-        const month = currentDate.getMonth();
-        const day = currentDate.getDate();
-        const expireDate = new Date(year, month, day);
-        this.eSignatureStatus = moment(expireDate).format('LL');
-        this.notification.showNotification(eNotificationType.SUCCESS, data.message, '');
+
+        this.eSignatureStatus = moment(data.expireDate).format('LL');
+        this.notification.showNotification(eNotificationType.SUCCESS, 'Firma electrónica', data.message);
+
+        if (data.doc) {
+          this._downloadSignatureFile(data.doc);
+        } else {
+          this.notification
+            .showNotification(eNotificationType.INFORMATION, 'Firma electrónica', 'Debe cambiar su documento de firma, para ello solo debe descargarlo nuevamente');
+        }
       }, error => {
-        this.notification.showNotification(eNotificationType.ERROR, error.message, '');
+        this.notification.showNotification(eNotificationType.ERROR, 'Firma electrónica', error.message);
       });
   }
 
