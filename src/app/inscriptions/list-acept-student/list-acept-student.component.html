@@ -1,417 +1,252 @@
-<div class="card-body">
-  <div style="overflow-x:auto; padding-top: 20px;">
-    <div class="row">
-      <div class="col-4" *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
-        <div class="form-group">
-          <input [(ngModel)]="searchText" type="text" class="form-control" placeholder="Buscar Alumno..."
-            (keyup)="eventFilterStatus(searchText)" autocomplete="off">
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="form-group">
-          <select [(ngModel)]="searchCarreer" class="form-control" (change)="eventFilterStatus()">
-            <option value=''>Todas las carreras</option>
-            <option value='INGENIERÍA BIOQUÍMICA'>Ingeniería Bioquímica</option>
-            <option value='INGENIERÍA EN GESTIÓN EMPRESARIAL'>Ingeniería en Gestión Empresarial</option>
-            <option value='INGENIERÍA CIVIL'>Ingeniería Civil</option>
-            <option value='ARQUITECTURA'>Arquitectura</option>
-            <option value='INGENIERÍA QUÍMICA'>Ingeniería Química</option>
-            <option value='INGENIERÍA MECATRÓNICA'>Ingeniería Mecatrónica</option>
-            <option value='INGENIERÍA ELÉCTRICA'>Ingeniería Eléctrica</option>
-            <option value='LICENCIATURA EN ADMINISTRACIÓN'>Licenciatura en Administración</option>
-            <option value='INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIÓN'>Ingeniería en Tecnologías
-              de
-              la Información y Comunicación</option>
-              <option value='INGENIERÍA EN SISTEMAS COMPUTACIONALES'>Ingeniería en Sistemas Computacionales
-              </option>
-              <option value='INGENIERÍA INDUSTRIAL'>Ingeniería Industrial</option>
-              <option value='MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN'>Maestría en Tecnologías de la Información</option>
-              <option value='MAESTRÍA EN CIENCIAS EN ALIMENTOS'>Maestría en Ciencias en Alimentos</option>
-              <option value='DOCTORADO EN CIENCIAS EN ALIMENTOS'>Doctorado en Ciencias en Alimentos</option>
-          </select>
-        </div>
-      </div>
-      <div class="col-2" *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
-        <div class="form-group">
-          <select [(ngModel)]="searchCredential" class="form-control">
-            <option value=''>Credenciales</option>
-            <option value='true'>Impresas</option>
-            <option value='false'>No Impresas</option>
-          </select>
-        </div>
-      </div>
-      <div class="col-2" *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
-        <table class="table table-bordered">
-          <tr>
-            <td id="checkV">
-              <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Verificado"
-                tooltipClass="my-custom-class">
-                <input [(ngModel)]="searchV" type="checkbox" class="custom-control-input" id="defaultInline5"
-                  value="Verificado" (change)="eventFilterStatus()">
-                <label class="custom-control-label" for="defaultInline5">V</label>
-              </div>
-            </td>
-            <td id="checkA">
-              <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Aceptado"
-                tooltipClass="my-custom-class">
-                <input [(ngModel)]="searchA" type="checkbox" class="custom-control-input" id="defaultInline6"
-                  value="Aceptado" (change)="eventFilterStatus()">
-                <label class="custom-control-label" for="defaultInline6">A</label>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-    <table class="table table-striped table-bordered table-hover" id="my-table">
-      <thead>
-        <tr>
-          <th>Número de Control</th>
-          <th>Nombre del Alumno</th>
-          <th>Carrera</th>
-          <th *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">Avance</th>
-          <th *ngIf="rolName == 'Médico'">Dictaminado</th>
-          <th *ngIf="rolName == 'Médico'">Advertencia</th>
-          <th *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">Estatus</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let item of listStudentsAcept | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText} | filter: {observationsAnalysis:searchDictamen} | filter: {warningAnalysis:searchAdvertencia} | paginate: {id:'pagV', itemsPerPage: pageSizeV, currentPage: pageV };">
-          <td>{{item.controlNumber}}</td>
-          <td>{{item.fullName}}</td>
-          <td>{{item.career}}</td>
-          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
-            {{item.documentsReviewNumber}}/{{item.totalDocumentsNumber}}</td>
-          <td *ngIf="rolName == 'Médico' && item.observationsAnalysis">Si</td>
-          <td *ngIf="rolName == 'Médico' && !item.observationsAnalysis">No</td>
-          <td *ngIf="rolName == 'Médico' && item.warningAnalysis">Si</td>
-          <td *ngIf="rolName == 'Médico' && !item.warningAnalysis">No</td>
-          <td
-            *ngIf="item.inscriptionStatus == 'En Captura' && rolName == 'Administrador' || item.inscriptionStatus == 'En Captura' && rolName == 'Secretaria escolares'"
-            class="Captura">{{item.inscriptionStatus}}</td>
-          <td
-            *ngIf="item.inscriptionStatus == 'Enviado' && rolName == 'Administrador' || item.inscriptionStatus == 'Enviado' && rolName == 'Secretaria escolares'"
-            class="Enviado">{{item.inscriptionStatus}}</td>
-          <td
-            *ngIf="item.inscriptionStatus == 'En Proceso' && rolName == 'Administrador' || item.inscriptionStatus == 'En Proceso' && rolName == 'Secretaria escolares'"
-            class="Proceso">{{item.inscriptionStatus}}</td>
-          <td
-            *ngIf="item.inscriptionStatus == 'Verificado' && rolName == 'Administrador' || item.inscriptionStatus == 'Verificado' && rolName == 'Secretaria escolares'"
-            class="Verificado">{{item.inscriptionStatus}}</td>
-          <td
-            *ngIf="item.inscriptionStatus == 'Aceptado' && rolName == 'Administrador' || item.inscriptionStatus == 'Aceptado' && rolName == 'Secretaria escolares'"
-            class="Aceptado">{{item.inscriptionStatus}}</td>
-          <td>
-            <div class="div-actions">
-        <tr *ngIf="item.inscriptionStatus != 'En Captura'">
-          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
-            <div class="div-img" ngbTooltip="Información General" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/observations.svg" class="action" (click)="updateGI(item)">
-            </div>
-          </td>
-          <td *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
-            <div class="div-img" ngbTooltip="Documentos a Dictaminar" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/folder.svg" class="action" (click)="viewExpedient(item)">
-            </div>
-          </td>
-          <td *ngIf="rolName == 'Médico' && item.documents != '' ">
-            <div class="div-img" ngbTooltip="Consultar Análisis Clínicos" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/folder.svg" class="action" (click)="viewAnalysis(item)">
-            </div>
-          </td>
-          <td
-            *ngIf="rolName == 'Administrador' && !item.printCredential || rolName == 'Secretaria escolares' && !item.printCredential">
-            <div class="div-img" ngbTooltip="Registrar Credencial Impresa" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/removePrintCredential.svg" class="action"
-                (click)="registerCredential(item)">
-            </div>
-          </td>
-          <td
-            *ngIf="rolName == 'Administrador' && item.printCredential || rolName == 'Secretaria escolares' && item.printCredential">
-            <div class="div-img" ngbTooltip="Remover Credencial Impresa" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/printCredential.svg" class="action" (click)="removeCredential(item)">
-            </div>
-          </td>
-          <td
-            *ngIf="rolName == 'Administrador' && filterDocuments('Foto',item) != 'SIN ENVÍO' || rolName == 'Secretaria escolares' && filterDocuments('Foto',item) != 'SIN ENVÍO'">
-            <div class="div-img" ngbTooltip="Imprimir Credencial" tooltipClass="my-custom-class">
-              <img src="../../assets/imgs/myCredentials.png" class="action" (click)="generateCredential(item)">
-            </div>
-          </td>
-        </tr>
-  </div>
-  </td>
+<app-expedent-table-component 
+[roleName]='rolName' [tabName]="'acepted'" [students]="studentsForTable" 
+(updateGIEmit) = "updateGI($event)"
+(viewAnalysisEmit) = "viewAnalysis($event)"
+(viewExpedientEmit) = "viewExpedient($event)"
+(registerCredentialEmit) = "registerCredential($event)"
+(removeCredentialEmit) = "removeCredential($event)"            
+(generateCredentialEmit) = "generateCredential($event)"
+(generateCoversEmit) = "generateCovers()"
+(generateLabelsEmit) = "generateLabels()"
+(generateCredentialsEmit) = "generateCredentials()"
+(getExcelExportIMSSEmit) = "excelExportIMSS($event)"      
+(getExcelExportEmit) = "excelExport($event)"
+(excelExportCMEmit) = "excelExportCM($event)"
+(getCareerEmit) = "setSearchCareer($event)"
+(getControlNumberEmit) = "setSearchControlNumber($event)"    
+*ngIf="studentsForTable" ></app-expedent-table-component>
+
+    <!-- Tabla reporte alumnos Excel-->
+<table class="table table-striped table-bordered table-hover" id="tableReportExcel"
+data-cols-width="9,21,46,66,15,30,30,30,30,30,15,15,15,30,15,15" *ngIf="filteredStudents">
+<thead>
+  <tr>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control
+    </th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno
+    </th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Estatus</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF"></th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Acta de Nacimiento
+    </th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Certificado de
+      Estudios
+    </th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Análisis Clínicos
+    </th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Comprobante de Pago
+    </th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Curp</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nss</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Foto</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF"></th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Integrado</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Archivado</th>
   </tr>
-  </tbody>
-  <tfoot align="right" *ngIf="rolName == 'Administrador' || rolName == 'Secretaria escolares'">
-    <td colspan="6">
-      <div class="div-actionsFoot">
-        <tr>
-          <td>
-            <div class="div-img" ngbTooltip="Generar Plantilla IMSS Excel" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/imss.svg" class="action" (click)="excelExportIMSS()">
-            </div>
-          </td>
-          <td>
-            <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
-            </div>
-          </td>
-          <td>
-            <div class="div-img" ngbTooltip="Generar Carátulas" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/cover.svg" class="action" (click)="generateCovers()">
-            </div>
-          </td>
-          <td>
-            <div class="div-img" ngbTooltip="Generar Pestañas" tooltipClass="my-custom-class">
-              <img src="../../assets/icons/label.svg" class="action" (click)="generateLabels()">
-            </div>
-          </td>
-          <td *ngIf="searchCarreer !== '' ">
-            <div class="div-img" ngbTooltip="Generar Credenciales para {{searchCarreer}}"
-              tooltipClass="my-custom-class">
-              <img src="../../assets/icons/generateCredentials.svg" class="action"
-                (click)="generateCredentials()">
-            </div>
-          </td>
-        </tr>
-      </div>
+</thead>
+<tbody>
+  <tr
+    *ngFor="let item of filteredStudents; let indice=index">
+    <td data-f-sz="12" data-t="n">{{indice+1}}</td>
+    <td data-f-sz="12" data-t="s">{{item.controlNumber}}</td>
+    <td data-f-sz="12" data-t="s">{{item.fullName}}</td>
+    <td data-f-sz="12" data-t="s">{{item.career}}</td>
+    <td data-f-sz="12" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="item.inscriptionStatus == 'En Captura' " class="Captura">{{item.inscriptionStatus}}</td>
+    <td data-f-sz="12" data-fill-color="39CEFC" data-f-color="000000"
+      *ngIf="item.inscriptionStatus == 'Enviado' " class="Enviado">{{item.inscriptionStatus}}</td>
+    <td data-f-sz="12" data-fill-color="F08C1B" data-f-color="000000"
+      *ngIf="item.inscriptionStatus == 'En Proceso' " class="Proceso">{{item.inscriptionStatus}}</td>
+    <td data-f-sz="12" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="item.inscriptionStatus == 'Verificado' " class="Verificado">{{item.inscriptionStatus}}</td>
+    <td data-f-sz="12" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="item.inscriptionStatus == 'Aceptado' " class="Aceptado">{{item.inscriptionStatus}}</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="112043" data-f-color="FFFFFF" data-a-h="center">
+      DOCUMENTOS
     </td>
-  </tfoot>
-  </table>
-  <div class='div-pagination'>
-    <pagination-controls id="pagV" directionLinks="true" (pageChange)="pageChanged($event)" responsive="true"
-      previousLabel="Anterior" nextLabel="Siguiente">
-    </pagination-controls>
-  </div>
+    <!--ACTA-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="filterDocuments('Acta',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+      *ngIf="filterDocuments('Acta',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="filterDocuments('Acta',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="filterDocuments('Acta',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+      *ngIf="filterDocuments('Acta',item) != 'EN PROCESO' && filterDocuments('Acta',item) != 'RECHAZADO' && filterDocuments('Acta',item) != 'VALIDADO' && filterDocuments('Acta',item) != 'ACEPTADO'">
+      Sin Envío</td>
+    <!--CERTIFICADO-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="filterDocuments('Certificado',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+      *ngIf="filterDocuments('Certificado',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="filterDocuments('Certificado',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="filterDocuments('Certificado',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+      *ngIf="filterDocuments('Certificado',item) != 'EN PROCESO' && filterDocuments('Certificado',item) != 'RECHAZADO' && filterDocuments('Certificado',item) != 'VALIDADO' && filterDocuments('Certificado',item) != 'ACEPTADO'">
+      Sin Envío</td>
+    <!--ANALISIS-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="filterDocuments('Analisis',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+      *ngIf="filterDocuments('Analisis',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="filterDocuments('Analisis',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="filterDocuments('Analisis',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+      *ngIf="filterDocuments('Analisis',item) != 'EN PROCESO' && filterDocuments('Analisis',item) != 'RECHAZADO' && filterDocuments('Analisis',item) != 'VALIDADO' && filterDocuments('Analisis',item) != 'ACEPTADO'">
+      Sin Envío</td>
+    <!--COMRPOBANTE-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="filterDocuments('Comprobante',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+      *ngIf="filterDocuments('Comprobante',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="filterDocuments('Comprobante',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="filterDocuments('Comprobante',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+      *ngIf="filterDocuments('Comprobante',item) != 'EN PROCESO' && filterDocuments('Comprobante',item) != 'RECHAZADO' && filterDocuments('Comprobante',item) != 'VALIDADO' && filterDocuments('Comprobante',item) != 'ACEPTADO'">
+      Sin Envío</td>
+    <!--CURP-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="filterDocuments('Curp',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+      *ngIf="filterDocuments('Curp',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="filterDocuments('Curp',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="filterDocuments('Curp',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+      *ngIf="filterDocuments('Curp',item) != 'EN PROCESO' && filterDocuments('Curp',item) != 'RECHAZADO' && filterDocuments('Curp',item) != 'VALIDADO' && filterDocuments('Curp',item) != 'ACEPTADO'">
+      Sin Envío</td>
+    <!--NSS-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="filterDocuments('Nss',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+      *ngIf="filterDocuments('Nss',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="filterDocuments('Nss',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="filterDocuments('Nss',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+      *ngIf="filterDocuments('Nss',item) != 'EN PROCESO' && filterDocuments('Nss',item) != 'RECHAZADO' && filterDocuments('Nss',item) != 'VALIDADO' && filterDocuments('Nss',item) != 'ACEPTADO'">
+      Sin Envío</td>
+    <!--FOTO-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="filterDocuments('Foto',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+      *ngIf="filterDocuments('Foto',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="filterDocuments('Foto',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="filterDocuments('Foto',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+      *ngIf="filterDocuments('Foto',item) != 'EN PROCESO' && filterDocuments('Foto',item) != 'RECHAZADO' && filterDocuments('Foto',item) != 'VALIDADO' && filterDocuments('Foto',item) != 'ACEPTADO'">
+      Sin Envío</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="112043" data-f-color="FFFFFF" data-a-h="center">
+      EXPEDIENTE
+    </td>
+    <td data-f-sz="12" data-t="s" data-fill-color="027900" data-f-color="FFFFFF" *ngIf = "item.expStatus == 'Integrado' || item.expStatus == 'Archivado'">Si</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="FFFFFF" *ngIf = "!item.expStatus">No</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="027900" data-f-color="FFFFFF" *ngIf = "item.expStatus === 'Archivado'">Si</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="FFFFFF" *ngIf = "item.expStatus !== 'Archivado'">No</td>
+  </tr>
+</tbody>
+</table>
 
+<!-- Tabla reporte alumnos Excel IMSS-->
+<table class="table table-striped table-bordered table-hover" id="tableReportExcelIMSS"
+  data-cols-width="9,20,20,20,20,20,20,20,20,20,20,25,20,200" *ngIf="filteredStudents">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Registro Patronal
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Dígito Verificador
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número Afiliación
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Dígito Verificador
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Apellido Paterno
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Apellido Materno
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre(s)</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Fecha Movimiento
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">UMF 3</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número Cuenta</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">CURP</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF"></th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">FORMULA</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let item of filteredStudents; let indice=index">
+      <td data-f-sz="12" data-t="n">{{indice+1}}</td>
+      <td data-f-sz="12" data-t="s">D355603932</td>
+      <td data-f-sz="12" data-t="n">8</td>
+      <td data-f-sz="12" data-t="s">{{item.nss.substring(0,10)}}</td>
+      <td data-f-sz="12" data-t="n">{{item.nss.substring(10,11)}}</td>
+      <td data-f-sz="12" data-t="s">{{item.fatherLastName}}</td>
+      <td data-f-sz="12" data-t="s">{{item.motherLastName}}</td>
+      <td data-f-sz="12" data-t="s">{{item.firstName}}</td>
+      <!--<td data-f-sz="12" data-t="s">22082018</td>-->
+      <td data-f-sz="12" data-t="s">{{getDateMov()}}</td>
+      <td data-f-sz="12" data-t="s">000</td>
+      <td data-f-sz="12" data-t="s">{{complete10Dig(indice+1)}}</td>
+      <td data-f-sz="12" data-t="s">{{item.curp}}</td>
+      <td data-f-sz="12" data-t="s"></td>
+      <td data-f-sz="12" data-t="s">
+        =B{{indice+2}}&C{{indice+2}}&D{{indice+2}}&E{{indice+2}}&EXTRAE(ESPACIOS(F{{indice+2}})&"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",1,27)&EXTRAE(ESPACIOS(G{{indice+2}})&"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",1,27)&EXTRAE(ESPACIOS(H{{indice+2}})&"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",1,27)&"000000"&"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;210"&I{{indice+2}}&J{{indice+2}}&"&nbsp;&nbsp;08&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&K{{indice+2}}&"&nbsp;"&L{{indice+2}}&"9"
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-
-  <!-- Tabla reporte alumnos Excel-->
-  <table class="table table-striped table-bordered table-hover" id="tableReportExcel"
-    data-cols-width="9,21,46,66,15,30,30,30,30,30,15,15,15">
-    <thead>
-      <tr>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Estatus</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF"></th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Acta de Nacimiento
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Certificado de
-          Estudios
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Análisis Clínicos
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Comprobante de Pago
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Curp</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nss</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Foto</th>
-
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        *ngFor="let item of listStudentsAcept | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText}; let indice=index">
-        <td data-f-sz="12" data-t="n">{{indice+1}}</td>
-        <td data-f-sz="12" data-t="s">{{item.controlNumber}}</td>
-        <td data-f-sz="12" data-t="s">{{item.fullName}}</td>
-        <td data-f-sz="12" data-t="s">{{item.career}}</td>
-        <td data-f-sz="12" data-fill-color="FCD539" data-f-color="000000"
-          *ngIf="item.inscriptionStatus == 'En Captura' " class="Captura">{{item.inscriptionStatus}}</td>
-        <td data-f-sz="12" data-fill-color="39CEFC" data-f-color="000000"
-          *ngIf="item.inscriptionStatus == 'Enviado' " class="Enviado">{{item.inscriptionStatus}}</td>
-        <td data-f-sz="12" data-fill-color="F08C1B" data-f-color="000000"
-          *ngIf="item.inscriptionStatus == 'En Proceso' " class="Proceso">{{item.inscriptionStatus}}</td>
-        <td data-f-sz="12" data-fill-color="00FF80" data-f-color="000000"
-          *ngIf="item.inscriptionStatus == 'Verificado' " class="Verificado">{{item.inscriptionStatus}}</td>
-        <td data-f-sz="12" data-fill-color="142B58" data-f-color="ffffff"
-          *ngIf="item.inscriptionStatus == 'Aceptado' " class="Aceptado">{{item.inscriptionStatus}}</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="112043" data-f-color="FFFFFF" data-a-h="center">
-          DOCUMENTOS
-        </td>
-        <!--ACTA-->
-        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-          *ngIf="filterDocuments('Acta',item) == 'EN PROCESO'">En Proceso</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-          *ngIf="filterDocuments('Acta',item) == 'RECHAZADO'">Rechazado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-          *ngIf="filterDocuments('Acta',item) == 'VALIDADO'">Validado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-          *ngIf="filterDocuments('Acta',item) == 'ACEPTADO'">Aceptado</td>
-        <td data-f-sz="12" data-t="s"
-          *ngIf="filterDocuments('Acta',item) != 'EN PROCESO' && filterDocuments('Acta',item) != 'RECHAZADO' && filterDocuments('Acta',item) != 'VALIDADO' && filterDocuments('Acta',item) != 'ACEPTADO'">
-          Sin Envío</td>
-        <!--CERTIFICADO-->
-        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-          *ngIf="filterDocuments('Certificado',item) == 'EN PROCESO'">En Proceso</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-          *ngIf="filterDocuments('Certificado',item) == 'RECHAZADO'">Rechazado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-          *ngIf="filterDocuments('Certificado',item) == 'VALIDADO'">Validado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-          *ngIf="filterDocuments('Certificado',item) == 'ACEPTADO'">Aceptado</td>
-        <td data-f-sz="12" data-t="s"
-          *ngIf="filterDocuments('Certificado',item) != 'EN PROCESO' && filterDocuments('Certificado',item) != 'RECHAZADO' && filterDocuments('Certificado',item) != 'VALIDADO' && filterDocuments('Certificado',item) != 'ACEPTADO'">
-          Sin Envío</td>
-        <!--ANALISIS-->
-        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-          *ngIf="filterDocuments('Analisis',item) == 'EN PROCESO'">En Proceso</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-          *ngIf="filterDocuments('Analisis',item) == 'RECHAZADO'">Rechazado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-          *ngIf="filterDocuments('Analisis',item) == 'VALIDADO'">Validado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-          *ngIf="filterDocuments('Analisis',item) == 'ACEPTADO'">Aceptado</td>
-        <td data-f-sz="12" data-t="s"
-          *ngIf="filterDocuments('Analisis',item) != 'EN PROCESO' && filterDocuments('Analisis',item) != 'RECHAZADO' && filterDocuments('Analisis',item) != 'VALIDADO' && filterDocuments('Analisis',item) != 'ACEPTADO'">
-          Sin Envío</td>
-        <!--COMRPOBANTE-->
-        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-          *ngIf="filterDocuments('Comprobante',item) == 'EN PROCESO'">En Proceso</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-          *ngIf="filterDocuments('Comprobante',item) == 'RECHAZADO'">Rechazado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-          *ngIf="filterDocuments('Comprobante',item) == 'VALIDADO'">Validado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-          *ngIf="filterDocuments('Comprobante',item) == 'ACEPTADO'">Aceptado</td>
-        <td data-f-sz="12" data-t="s"
-          *ngIf="filterDocuments('Comprobante',item) != 'EN PROCESO' && filterDocuments('Comprobante',item) != 'RECHAZADO' && filterDocuments('Comprobante',item) != 'VALIDADO' && filterDocuments('Comprobante',item) != 'ACEPTADO'">
-          Sin Envío</td>
-        <!--CURP-->
-        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-          *ngIf="filterDocuments('Curp',item) == 'EN PROCESO'">En Proceso</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-          *ngIf="filterDocuments('Curp',item) == 'RECHAZADO'">Rechazado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-          *ngIf="filterDocuments('Curp',item) == 'VALIDADO'">Validado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-          *ngIf="filterDocuments('Curp',item) == 'ACEPTADO'">Aceptado</td>
-        <td data-f-sz="12" data-t="s"
-          *ngIf="filterDocuments('Curp',item) != 'EN PROCESO' && filterDocuments('Curp',item) != 'RECHAZADO' && filterDocuments('Curp',item) != 'VALIDADO' && filterDocuments('Curp',item) != 'ACEPTADO'">
-          Sin Envío</td>
-        <!--NSS-->
-        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-          *ngIf="filterDocuments('Nss',item) == 'EN PROCESO'">En Proceso</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-          *ngIf="filterDocuments('Nss',item) == 'RECHAZADO'">Rechazado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-          *ngIf="filterDocuments('Nss',item) == 'VALIDADO'">Validado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-          *ngIf="filterDocuments('Nss',item) == 'ACEPTADO'">Aceptado</td>
-        <td data-f-sz="12" data-t="s"
-          *ngIf="filterDocuments('Nss',item) != 'EN PROCESO' && filterDocuments('Nss',item) != 'RECHAZADO' && filterDocuments('Nss',item) != 'VALIDADO' && filterDocuments('Nss',item) != 'ACEPTADO'">
-          Sin Envío</td>
-        <!--FOTO-->
-        <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-          *ngIf="filterDocuments('Foto',item) == 'EN PROCESO'">En Proceso</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-          *ngIf="filterDocuments('Foto',item) == 'RECHAZADO'">Rechazado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-          *ngIf="filterDocuments('Foto',item) == 'VALIDADO'">Validado</td>
-        <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-          *ngIf="filterDocuments('Foto',item) == 'ACEPTADO'">Aceptado</td>
-        <td data-f-sz="12" data-t="s"
-          *ngIf="filterDocuments('Foto',item) != 'EN PROCESO' && filterDocuments('Foto',item) != 'RECHAZADO' && filterDocuments('Foto',item) != 'VALIDADO' && filterDocuments('Foto',item) != 'ACEPTADO'">
-          Sin Envío</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- Tabla reporte alumnos Excel IMSS-->
-  <table class="table table-striped table-bordered table-hover" id="tableReportExcelIMSS"
-    data-cols-width="9,20,20,20,20,20,20,20,20,20,20,25,20,200">
-    <thead>
-      <tr>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Registro Patronal
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Dígito Verificador
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número Afiliación
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Dígito Verificador
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Apellido Paterno
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Apellido Materno
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre(s)</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Fecha Movimiento
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">UMF 3</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número Cuenta</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">CURP</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF"></th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">FORMULA</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        *ngFor="let item of listStudentsAcept | filter:{career:searchCarreer} | filter:{printCredential:searchCredential} | filter: {controlNumber:searchText,fullName:searchText}; let indice=index">
-        <td data-f-sz="12" data-t="n">{{indice+1}}</td>
-        <td data-f-sz="12" data-t="s">D355603932</td>
-        <td data-f-sz="12" data-t="n">8</td>
-        <td data-f-sz="12" data-t="n">{{item.nss.substring(0,10)}}</td>
-        <td data-f-sz="12" data-t="n">{{item.nss.substring(10,11)}}</td>
-        <td data-f-sz="12" data-t="s">{{item.fatherLastName}}</td>
-        <td data-f-sz="12" data-t="s">{{item.motherLastName}}</td>
-        <td data-f-sz="12" data-t="s">{{item.firstName}}</td>
-        <!--<td data-f-sz="12" data-t="s">22082018</td>-->
-        <td data-f-sz="12" data-t="s">{{getDateMov()}}</td>
-        <td data-f-sz="12" data-t="s">000</td>
-        <td data-f-sz="12" data-t="s">{{complete10Dig(indice+1)}}</td>
-        <td data-f-sz="12" data-t="s">{{item.curp}}</td>
-        <td data-f-sz="12" data-t="s"></td>
-        <td data-f-sz="12" data-t="s">
-          =B{{indice+2}}&C{{indice+2}}&D{{indice+2}}&E{{indice+2}}&EXTRAE(ESPACIOS(F{{indice+2}})&"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",1,27)&EXTRAE(ESPACIOS(G{{indice+2}})&"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",1,27)&EXTRAE(ESPACIOS(H{{indice+2}})&"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",1,27)&"000000"&"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;210"&I{{indice+2}}&J{{indice+2}}&"&nbsp;&nbsp;08&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&K{{indice+2}}&"&nbsp;"&L{{indice+2}}&"9"
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <!-- Tabla reporte alumnos Excel CONSULTORIO MÉDICO-->
-  <table class="table table-striped table-bordered table-hover" id="tableReportExcelCM"
-    data-cols-width="9,20,20,20,20,30,20,20,20,150">
-    <thead>
-      <tr>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Apellido Paterno
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Apellido Materno
-        </th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre(s)</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Teléfono</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Correo</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">NSS</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Dictaminado</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Advertencia</th>
-        <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Observaciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        *ngFor="let item of listStudentsAcept | filter:{career:searchCarreer} | filter: {controlNumber:searchText,fullName:searchText} | filter: {observationsAnalysis:searchDictamen} | filter: {warningAnalysis:searchAdvertencia}; let indice=index">
-        <td data-f-sz="12" data-t="n">{{indice+1}}</td>
-        <td data-f-sz="12" data-t="s">{{item.fatherLastName}}</td>
-        <td data-f-sz="12" data-t="s">{{item.motherLastName}}</td>
-        <td data-f-sz="12" data-t="s">{{item.firstName}}</td>
-        <td data-f-sz="12" data-t="n">{{item.phone}}</td>
-        <td data-f-sz="12" data-t="s">{{item.email}}</td>
-        <td data-f-sz="12" data-t="n">{{item.nss}}</td>
-        <td data-f-sz="12" data-t="s" *ngIf="item.observationsAnalysis">Si</td>
-        <td data-f-sz="12" data-t="s" *ngIf="!item.observationsAnalysis">No</td>
-        <td data-f-sz="12" data-t="s" *ngIf="item.warningAnalysis">Si</td>
-        <td data-f-sz="12" data-t="s" *ngIf="!item.warningAnalysis">No</td>
-        <td data-f-sz="12" data-t="s">{{item.observationsAnalysis}}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<!-- Tabla reporte alumnos Excel CONSULTORIO MÉDICO-->
+<table class="table table-striped table-bordered table-hover" id="tableReportExcelCM"
+  data-cols-width="9,20,20,20,20,30,20,20,20,150" *ngIf="filteredStudents">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Apellido Paterno
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Apellido Materno
+      </th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre(s)</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Teléfono</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Correo</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">NSS</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Dictaminado</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Advertencia</th>
+      <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Observaciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let item of filteredStudents; let indice=index">
+      <td data-f-sz="12" data-t="n">{{indice+1}}</td>
+      <td data-f-sz="12" data-t="s">{{item.fatherLastName}}</td>
+      <td data-f-sz="12" data-t="s">{{item.motherLastName}}</td>
+      <td data-f-sz="12" data-t="s">{{item.firstName}}</td>
+      <td data-f-sz="12" data-t="n">{{item.phone}}</td>
+      <td data-f-sz="12" data-t="s">{{item.email}}</td>
+      <td data-f-sz="12" data-t="n">{{item.nss}}</td>
+      <td data-f-sz="12" data-t="s" *ngIf="item.observationsAnalysis">Si</td>
+      <td data-f-sz="12" data-t="s" *ngIf="!item.observationsAnalysis">No</td>
+      <td data-f-sz="12" data-t="s" *ngIf="item.warningAnalysis">Si</td>
+      <td data-f-sz="12" data-t="s" *ngIf="!item.warningAnalysis">No</td>
+      <td data-f-sz="12" data-t="s">{{item.observationsAnalysis}}</td>
+    </tr>
+  </tbody>
+</table>

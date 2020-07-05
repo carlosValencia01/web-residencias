@@ -15,6 +15,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropzoneConfigInterface, DropzoneModule, DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -24,6 +27,7 @@ import { environment } from 'src/environments/environment';
 import { CommonsModule } from '../commons/commons.module';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
 import { StudentProvider } from '../providers/shared/student.prov';
+import { CareerProvider } from '../providers/shared/career.prov';;
 import { ImageToBase64Service } from '../services/app/img.to.base63.service';
 import { ErrorMatcher } from '../services/shared/ErrorMatcher';
 import { ConfirmationStudentPageComponent } from './confirmation-student-page/confirmation-student-page.component';
@@ -46,6 +50,7 @@ import { FilterPipe } from './secretary-inscription-page/filter.pipe';
 import { SecretaryInscriptionPageComponent } from './secretary-inscription-page/secretary-inscription-page.component';
 import { StudentInformationComponent } from './student-information/student-information.component';
 import { WizardInscriptionPageComponent } from './wizard-inscription-page/wizard-inscription-page.component';
+import { ExpedentTableComponentComponent } from './expedent-table-component/expedent-table-component.component';
 
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: environment.filesURL,
@@ -78,6 +83,9 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     MatBadgeModule,
     MatMenuModule,
     MatStepperModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
   ],
   declarations: [
     ConfirmationStudentPageComponent,
@@ -99,6 +107,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ReviewExpedientComponent,
     StudentInformationComponent,
     FilterPipe,
+    ExpedentTableComponentComponent,
   ],
   entryComponents: [
     DocumentsHelpComponent,
@@ -118,6 +127,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ImageToBase64Service,
     InscriptionsProvider,
     StudentProvider,
+    CareerProvider,
 
   ]
 })
