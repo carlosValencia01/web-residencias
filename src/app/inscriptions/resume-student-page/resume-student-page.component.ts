@@ -176,7 +176,7 @@ export class ResumeStudentPageComponent implements OnInit {
 
   async findFoto() {
 
-    await this.inscriptionsProv.getFile(this.docFoto[0].fileIdInDrive, this.docFoto[0].filename).subscribe(
+    await this.inscriptionsProv.getFile(this.docFoto.fileIdInDrive, this.docFoto.filename).subscribe(
       data => {
         this.pub = data.file;
         this.image = this.pub ? 'data:image/png;base64,' + this.pub :  'assets/imgs/profileImgNotFound.jpg';
@@ -220,7 +220,7 @@ export class ResumeStudentPageComponent implements OnInit {
     this.cccedulaMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf')[0] : '';
     this.ccexamActMDoc = documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf')[0] : '';
 
-    if(this.docFoto[0]){
+    if(this.docFoto){
       this.findFoto();
     }else{
       this.image = 'assets/imgs/profileImgNotFound.jpg';
