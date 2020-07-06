@@ -18,6 +18,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropzoneConfigInterface, DropzoneModule, DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -46,7 +48,6 @@ import { ResumeStudentPageComponent } from './resume-student-page/resume-student
 import { ReviewAnalysisComponent } from './review-analysis/review-analysis.component';
 import { ReviewCredentialsComponent } from './review-credentials/review-credentials.component';
 import { ReviewExpedientComponent } from './review-expedient/review-expedient.component';
-import { FilterPipe } from './secretary-inscription-page/filter.pipe';
 import { SecretaryInscriptionPageComponent } from './secretary-inscription-page/secretary-inscription-page.component';
 import { StudentInformationComponent } from './student-information/student-information.component';
 import { WizardInscriptionPageComponent } from './wizard-inscription-page/wizard-inscription-page.component';
@@ -86,6 +87,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    MatAutocompleteModule,
+    MatSelectModule,
   ],
   declarations: [
     ConfirmationStudentPageComponent,
@@ -105,8 +108,7 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ReviewAnalysisComponent,
     ReviewCredentialsComponent,
     ReviewExpedientComponent,
-    StudentInformationComponent,
-    FilterPipe,
+    StudentInformationComponent,    
     ExpedentTableComponentComponent,
   ],
   entryComponents: [

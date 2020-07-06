@@ -100,4 +100,7 @@ export class InscriptionsProvider {
     getArchivedExpedient(){
         return this.api.get('inscription/getArchivedExpedient/').pipe(map( res=>res.json()));
     }
+    getNumberInscriptionStudentsByPeriod(){
+        return this.api.get('inscription/getNumberInscriptionStudentsByPeriod').pipe(map( res=>res.json()));
+    }
 }

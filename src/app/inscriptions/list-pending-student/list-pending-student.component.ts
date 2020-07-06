@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
@@ -20,15 +20,20 @@ import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
 })
 export class ListPendingStudentComponent implements OnInit {
   @Output() countStudentsEmit = new EventEmitter();
+  @Input('periods') periods: Array<any>;
   students;
   listStudentsPending;
-  periods = [];
+  // periods = [];
 
   rolName;
 
   studentsForTable: Array<StudentsExpedient>;
   emptyUInscription: uInscription;
   filteredStudents;
+  readyToShowTable = {
+    students: false,
+    periods:false
+  };
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
     private inscriptionsProv: InscriptionsProvider,
@@ -53,6 +58,12 @@ export class ListPendingStudentComponent implements OnInit {
     setTimeout(() => {      
       this.emptyUInscription = new uInscription(this.imageToBase64Serv,this.cookiesService,this.inscriptionsProv);
     }, 300);
+  }
+  ngOnChanges(changes: SimpleChanges) { // cuando se actualiza algo en el padre            
+    if(changes.periods){
+      this.periods = changes.periods.currentValue ? changes.periods.currentValue : this.periods;
+    }    
+    this.readyToShowTable.periods = true; 
   }
 
   getStudents(){
@@ -82,6 +93,7 @@ export class ListPendingStudentComponent implements OnInit {
           },
           student:st
         }));
+        this.readyToShowTable.students = true;
     });
   }
 
@@ -91,8 +103,9 @@ export class ListPendingStudentComponent implements OnInit {
   getPeriods(){
     let sub = this.inscriptionsProv.getAllPeriods()
       .subscribe(periods => {
-        this.periods=periods.periods;
-        this.periods.reverse();
+        // this.periods=periods.periods;
+        // this.periods.reverse();
+       
         sub.unsubscribe();
       });
   }
