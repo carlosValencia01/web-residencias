@@ -54,28 +54,23 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   cantArchivedExpedient = 0;
   periods = [];
   activPeriod;
-
   listCovers;
-
   rolName;  
-
-  credentialStudents;
-  
-
-  
+  credentialStudents;  
   searchCareer = '';
   searchControlNUmber = '';
-
-
-  //Paginatos Students Logged
-  pageL = 1;
-  pagL;
-  pageSizeL = 10;
 
   listStudentsDebts = [];
   studentsForTable: Array<StudentsExpedient>;
   emptyUInscription: uInscription;
   filteredStudents;
+  readyToShowTable = {
+    students: false,
+    periods:false
+  };
+  usedPeriods=[];
+  showTabs = false;
+  version = 0; //variable para indicar si hubo cambio en el filtro del periodo
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
     private inscriptionsProv: InscriptionsProvider,
@@ -92,9 +87,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.router.navigate(['/']);
     }   
     this.dataSource = new MatTableDataSource();
-    this.getStudents();
     this.getPeriods();
     this.getActivePeriod();
+    this.getStudents();
   }
   
 
@@ -132,24 +127,22 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           },
           student:st
         }));
+      this.readyToShowTable.students = true;
       this.listStudents.forEach(element => {
         if((this.filterDocuments('Comprobante',element) != 'EN PROCESO' && this.filterDocuments('Comprobante',element) != 'VALIDADO' && this.filterDocuments('Comprobante',element) != 'ACEPTADO') || (this.filterDocuments('Certificado',element) != 'EN PROCESO' && this.filterDocuments('Certificado',element) != 'VALIDADO' && this.filterDocuments('Certificado',element) != 'ACEPTADO')){
           this.listStudentsDebts.push(element);
         }
-      });
-      this.cantListStudents = this.listStudents.length;
+      });      
       this.listCovers = this.listStudents;
             
     });
     this.inscriptionsProv.getStudentsLogged().subscribe(res => {
-      this.listStudentsLogged = res.students;
-      this.cantListStudentsLogged = this.listStudentsLogged.length;
+      this.listStudentsLogged = res.students;      
       this.listStudentsLogged.sort(function (a, b) {
         return a.fatherLastName.localeCompare(b.fatherLastName);
       });      
       
-      this.dataSource = new MatTableDataSource(this.listStudentsLogged.map(st=>({controlNumber:st.controlNumber, fullName:st.fullName,career:st.career})));
-      console.log(this.listStudentsLogged);
+      this.dataSource = new MatTableDataSource(this.listStudentsLogged);      
       
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
@@ -163,52 +156,37 @@ export class SecretaryInscriptionPageComponent implements OnInit {
 
   countStudents(index){
         
-    
+    this.inscriptionsProv.getNumberInscriptionStudentsByPeriod().subscribe(
+      res=>{
+        let numberStudentsByPeriod = res.studentsByPeriod;
+        setTimeout(() => {
+          this.processStudent.getStudents();
+          this.pendingStudent.getStudents(); 
+          this.aceptStudent.getStudents();
+          this.cantListStudents = 0;
+          this.cantListStudentsProcess = 0;
+          this.cantListStudentsPendant = 0;
+          this.cantListStudentsAcept = 0;
+          this.cantListStudentsLogged = 0;
+          this.cantIntegratedExpedient = 0;
+          this.cantArchivedExpedient = 0;
+          for(let i = 0; i<this.usedPeriods.length; i++){
+            const students = numberStudentsByPeriod.filter( numS=> numS.periodId+'' == this.usedPeriods[i]._id+'')[0];
+            this.cantListStudents += students ? students.allStudents : 0;
+            this.cantListStudentsProcess += students ? students.processStudents : 0;
+            this.cantListStudentsPendant += students ? students.pendantStudents : 0;
+            this.cantListStudentsAcept += students ? students.acepStudents : 0;
+            this.cantListStudentsLogged += students ? students.loggedStudents : 0;
+            this.cantIntegratedExpedient += students ? students.expedientsIntegrated : 0;
+            this.cantArchivedExpedient += students ? students.expedientsArchived : 0;
+          }
+        }, 200);
+      }
+    );
         
-    // Cantidad Alumnos Total
-    this.inscriptionsProv.getStudents().subscribe(res => {
-      this.cantListStudents = res.students.length;
-    });
-
-    // Cantidad Alumnos En Proceso
-    this.inscriptionsProv.getStudentsProcess().subscribe(res => {
-      this.cantListStudentsProcess = res.students.length;
-      this.processStudent.getStudents();
-    });
-
-    // Cantidad Alumnos Pendientes
-    this.inscriptionsProv.getStudentsPendant().subscribe(res => {
-      this.cantListStudentsPendant = res.students.length;
-      this.pendingStudent.getStudents(); 
-    });
-
-    // Cantidad Alumnos Aceptados
-    this.inscriptionsProv.getStudentsAcept().subscribe(res => {
-      this.cantListStudentsAcept = res.students.length;
-      this.aceptStudent.getStudents(); 
-    });
-
-    // Cantidad Alumnos Logueados
-    this.inscriptionsProv.getStudentsLogged().subscribe(res => {
-      this.cantListStudentsLogged = res.students.length;
-    });
-
-    // Cantidad Expedientes Integrados
-    this.inscriptionsProv.getIntegratedExpedient().subscribe(res => {
-      this.cantIntegratedExpedient = res.expedients.length;
-    });
-
-    // Cantidad Expedientes Archivados
-    this.inscriptionsProv.getArchivedExpedient().subscribe(res => {
-      this.cantArchivedExpedient = res.expedients.length;
-    });
+    
   }
  
-
-  pageChangedL(ev) {
-    this.pageL = ev;
-  }
-
   // FILTRADO POR CARRERA
   filterItemsCarreer(carreer) {
     return this.students.filter(function (student) {
@@ -228,6 +206,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       .subscribe(periods => {
         this.periods=periods.periods;
         this.periods.reverse();
+        this.readyToShowTable.periods = true;
         sub.unsubscribe();
       });
   }
@@ -692,6 +671,41 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   setSearchControlNumber(controlNumber: string){
     this.searchControlNUmber = controlNumber;
   }
+  getUsedPeriods(periods){
+    this.usedPeriods = periods;
+    this.version+=0.001;
+    this.usedPeriods = this.usedPeriods.map((per)=>({      
+      code: per.code,      
+      periodName: per.periodName,
+      year: per.year,      
+      _id: per._id,
+      version:this.version
+    }));    
+    this.filterLoggedStudents();
+    setTimeout(() => {      
+      this.showTabs = true;
+    }, 300);
+    this.countStudents(-1);
+  }
+
+  filterLoggedStudents(){
+    if(this.dataSource.data && this.listStudentsLogged){
+      
+      this.dataSource.data = this.listStudentsLogged;
+      if(this.usedPeriods){
+        if (this.usedPeriods.length > 0) {                
+          this.dataSource.data = this.dataSource.data.filter(
+            (req: any) => this.usedPeriods.map( per => (per._id)).includes((req.idPeriodInscription))
+          );            
+        } else {
+          this.dataSource.data = this.dataSource.data;
+        }
+      }else {
+        this.dataSource.data = this.dataSource.data;
+      }
+    }
+  }
+  
 }
 interface loggedStudents{
   fullName: string;

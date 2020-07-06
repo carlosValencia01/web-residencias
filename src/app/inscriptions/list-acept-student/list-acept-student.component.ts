@@ -1,4 +1,4 @@
-import { Component, OnInit,Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
@@ -19,9 +19,8 @@ import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
   styleUrls: ['./list-acept-student.component.scss']
 })
 export class ListAceptStudentComponent implements OnInit {
- 
-  
-  periods = [];
+  @Input('periods') periods: Array<any>;
+  // periods = [];
   activPeriod;  
   
   rolName;
@@ -36,7 +35,10 @@ export class ListAceptStudentComponent implements OnInit {
   searchCareer = '';
   searchControlNUmber = '';
   filteredStudents;
-  
+  readyToShowTable = {
+    students: false,
+    periods:false
+  };
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
     private inscriptionsProv: InscriptionsProvider,
@@ -54,7 +56,7 @@ export class ListAceptStudentComponent implements OnInit {
     }    
     this.getStudents();
     this.getPeriods();
-    this.getActivePeriod();    
+    // this.getActivePeriod();    
 
   }
   
@@ -62,6 +64,13 @@ export class ListAceptStudentComponent implements OnInit {
     setTimeout(() => {      
       this.emptyUInscription = new uInscription(this.imageToBase64Serv,this.cookiesService,this.inscriptionsProv);
     }, 300);
+  }
+  ngOnChanges(changes: SimpleChanges) { // cuando se actualiza algo en el padre  
+    
+    if(changes.periods){
+      this.periods = changes.periods.currentValue ? changes.periods.currentValue : this.periods;
+    }    
+    this.readyToShowTable.periods = true;    
   }
 
   getStudents(){
@@ -91,6 +100,7 @@ export class ListAceptStudentComponent implements OnInit {
           },
           student:st
         }));
+        this.readyToShowTable.students = true;
       this.listCovers = this.listStudentsAcept;        
     });
 
@@ -115,8 +125,9 @@ export class ListAceptStudentComponent implements OnInit {
   getPeriods(){
     let sub = this.inscriptionsProv.getAllPeriods()
       .subscribe(periods => {
-        this.periods=periods.periods;
-        this.periods.reverse();
+        // this.periods=periods.periods;
+        // this.periods.reverse();
+        
         sub.unsubscribe();
       });
   }
@@ -431,6 +442,6 @@ export class ListAceptStudentComponent implements OnInit {
   }
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
-  }  
+  }
 
 }

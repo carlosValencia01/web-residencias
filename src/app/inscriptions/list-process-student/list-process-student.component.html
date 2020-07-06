@@ -1,10 +1,10 @@
 <app-expedent-table-component 
-  [roleName]='rolName' [tabName]="'process'" [students]="studentsForTable" 
+  [roleName]='rolName' [tabName]="'process'" [students]="studentsForTable" [periods]="periods"
   (updateGIEmit) = "updateGI($event)"      
   (viewExpedientEmit) = "viewExpedient($event)"      
   (updateExpedientStatusEmit) = "updateExpedientStatus($event)"
   (getExcelExportEmit) = "excelExport($event)"         
-  *ngIf="studentsForTable" ></app-expedent-table-component>
+  *ngIf="readyToShowTable.periods && readyToShowTable.students" ></app-expedent-table-component>
 
 <!-- Tabla reporte alumnos Excel-->
 <table class="table table-striped table-bordered table-hover" id="tableReportExcel"

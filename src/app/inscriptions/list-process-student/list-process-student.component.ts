@@ -1,4 +1,4 @@
-import { Component, OnInit, Output,EventEmitter } from '@angular/core';
+import { Component, OnInit, Output,EventEmitter, Input, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
@@ -16,14 +16,18 @@ import { StudentsExpedient } from 'src/app/interfaces/inscriptions.interface';
 })
 export class ListProcessStudentComponent implements OnInit {
   @Output() countStudentsEmit = new EventEmitter();
-  
+  @Input('periods') periods: Array<any>;
   students;
   listStudentsProcess;
-  periods = [];  
+  // periods = [];  
   rolName;      
   
   studentsForTable: Array<StudentsExpedient>;
   filteredStudents;
+  readyToShowTable = {
+    students: false,
+    periods:false
+  };
   constructor(
     private inscriptionsProv: InscriptionsProvider,
     public dialog: MatDialog,
@@ -44,6 +48,13 @@ export class ListProcessStudentComponent implements OnInit {
 
   ngOnInit() {
     
+  }
+  ngOnChanges(changes: SimpleChanges) { // cuando se actualiza algo en el padre  
+           
+    if(changes.periods){
+      this.periods = changes.periods.currentValue ? changes.periods.currentValue : this.periods;
+    }    
+    this.readyToShowTable.periods = true; 
   }
 
   getStudents(){
@@ -74,7 +85,9 @@ export class ListProcessStudentComponent implements OnInit {
           },
           student:st
         }));
+        this.readyToShowTable.students = true;
     });
+
   }
   filterDocuments(document,student){
     switch (document) {
@@ -158,8 +171,9 @@ export class ListProcessStudentComponent implements OnInit {
   getPeriods(){
     let sub = this.inscriptionsProv.getAllPeriods()
       .subscribe(periods => {
-        this.periods=periods.periods;
-        this.periods.reverse();
+        // this.periods=periods.periods;
+        // this.periods.reverse();
+        // this.readyToShowTable.periods = true;
         sub.unsubscribe();
       });
   }

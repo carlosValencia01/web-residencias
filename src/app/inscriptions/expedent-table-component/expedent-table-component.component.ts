@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter, SimpleChanges, ElementRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -14,6 +14,10 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
 import Swal, { SweetAlertType } from 'sweetalert2';
 import { CareerProvider } from 'src/app/providers/shared/career.prov';
+import { MatChipInputEvent } from '@angular/material';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { FormControl } from '@angular/forms';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
 @Component({
   selector: 'app-expedent-table-component',
   templateUrl: './expedent-table-component.component.html',
@@ -24,6 +28,7 @@ export class ExpedentTableComponentComponent implements OnInit {
   @Input('students') students: Array<StudentsExpedient>;
   @Input('tabName') tabName: string;
   @Input('roleName') roleName: string;
+  @Input('periods') periods: Array<any>;
   @Output() updateGIEmit = new EventEmitter();
   @Output() viewAnalysisEmit = new EventEmitter();
   @Output() viewExpedientEmit = new EventEmitter();
@@ -45,6 +50,7 @@ export class ExpedentTableComponentComponent implements OnInit {
   @Output() excelExportCMEmit = new EventEmitter();  
   @Output() getCareerEmit = new EventEmitter();  
   @Output() getControlNumberEmit = new EventEmitter();  
+  @Output() getUsedPeriodsEmit = new EventEmitter();  
 
   displayedColumns: string[] = ['controlNumber', 'fullName', 'career', 'avance','status','exp','actions'];
   dataSource: MatTableDataSource<StudentsExpedient>;
@@ -55,7 +61,9 @@ export class ExpedentTableComponentComponent implements OnInit {
   @ViewChild(MatSort) set sort(sort: MatSort){
     this.dataSource.sort = sort;
   };
-
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
+  @ViewChild('periodInput') periodInput: ElementRef<HTMLInputElement>;
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   showTable: boolean = false;
   formatedStudents: Array<StudentsExpedient>  = [];
   careers: Array<Career>;
@@ -91,6 +99,10 @@ export class ExpedentTableComponentComponent implements OnInit {
     }
   };
   filteredCareer: string;
+  filteredPeriods;
+  usedPeriods = [];
+  localPeriods = [];
+  periodCtrl = new FormControl();
   constructor(
     public dialog: MatDialog,
     private notificationService: NotificationsServices,
@@ -106,15 +118,28 @@ export class ExpedentTableComponentComponent implements OnInit {
   ngOnInit() {
     if(this.roleName == 'Médico'){
       this.displayedColumns = ['controlNumber', 'fullName', 'career', 'medicDict','medicWarn','actions'];
-    }
+    }        
     this.dataSource = new MatTableDataSource(this.students);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.showTable=true;
+    this.localPeriods = this.periods;    
+    this.filteredPeriods = this.periods;
+    this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
+    this.applyFilters();
   }
   ngOnChanges(changes: SimpleChanges) { // cuando se actualiza algo en el padre  
-    this.dataSource.data = changes.students.currentValue;
-    this.applyFilters();
+        
+    if(changes.students){
+      this.dataSource.data = changes.students.currentValue;
+      this.applyFilters();
+    }
+    if(changes.periods){
+      this.usedPeriods = changes.periods.currentValue ? changes.periods.currentValue : this.usedPeriods;
+      this.usedPeriods = this.usedPeriods.filter((item, pos, self)=> self.filter(per=>per.code !== item.code).length==0); //eliminar elementos duplicados            
+      this.applyFilters();
+    }
+    
   }
 
   getCareers(){
@@ -237,10 +262,22 @@ export class ExpedentTableComponentComponent implements OnInit {
       }
       
     }
-    this.applyFilters();    
+    this.applyFilters();
+    
   }
   applyFilters(){ //funcion para aplicar filtros activos
     this.dataSource.data = this.students;
+    if(this.usedPeriods){
+      if (this.usedPeriods.length > 0) {                
+        this.dataSource.data = this.dataSource.data.filter(
+          (req: any) => this.usedPeriods.map( per => (per._id)).includes((req.student.idPeriodInscription))
+        );            
+      } else {
+        this.dataSource.data = this.dataSource.data;
+      }
+    }else {
+      this.dataSource.data = this.dataSource.data;
+    }
     if(this.filters.career.status){
       this.dataSource.data = this.dataSource.data.filter(st=>st.career.toLowerCase() == this.filters.career.value);
     }
@@ -531,5 +568,53 @@ export class ExpedentTableComponentComponent implements OnInit {
   }
   getSearchControlNumber(){
     this.getControlNumberEmit.emit(this.filters.textSearch.value);
+  }
+
+  getUsedPeriods(){
+    const periods = this.usedPeriods.length > 0  ? this.usedPeriods : this.localPeriods;        
+    this.getUsedPeriodsEmit.emit(periods);
+  }
+
+  // FILTRO PERÍODOS
+  slectedPeriod(period){
+    this.updatePeriods(period,'insert');
+  }
+
+  addPeriod(event: MatChipInputEvent): void {
+    if (!this.matAutocomplete.isOpen) {
+      const input = event.input;      
+      if (input) {
+        input.value = '';
+      }
+      this.periodCtrl.setValue(null);
+    }
+  }
+
+  updatePeriods(period, action) {    
+    if(this.tabName == 'all'){
+      if (action === 'delete') {
+        this.filteredPeriods.push(period);
+        this.usedPeriods = this.usedPeriods.filter( per => per._id !== period._id);
+      }
+      if (action === 'insert') {
+        this.usedPeriods.push(period);
+        this.filteredPeriods = this.filteredPeriods.filter(per => per._id !== period._id);
+      }
+      this.localPeriods = this.filteredPeriods;
+      if(this.periodInput) this.periodInput.nativeElement.blur();
+      this.applyFilters();
+      this.getUsedPeriods();      
+    }
+  }
+
+  remove(period): void {
+    this.updatePeriods(period, 'delete');
+  }
+
+  filterPeriod(value) {
+    this.localPeriods = this.filteredPeriods;
+    if (value) {
+      this.localPeriods = this.filteredPeriods.filter( period => (period.periodName + '-' + period.year).toLowerCase().trim().indexOf(value) !== -1);
+    }
   }
 }
