@@ -40,6 +40,7 @@ import { HomeHeaderComponent } from './home/home-header/home-header.component';
 import { HomePageComponent } from './home/home-page/home-page.component';
 import { LoginHeaderComponent } from './login/login-header/login-header.component';
 import { LoginPageComponent } from './login/login-page/login-page.component';
+import { ESignatureProvider } from './providers/electronic-signature/eSignature.prov';
 registerLocaleData(localeEs);
 
 @NgModule({
@@ -92,6 +93,7 @@ registerLocaleData(localeEs);
     EmployeeProvider,
     UserProvider,
     PositionProvider,
+    ESignatureProvider,
 
     // Services
     CurrentPositionService,

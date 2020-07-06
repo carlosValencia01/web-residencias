@@ -12,6 +12,11 @@ export class ESignatureProvider {
       .pipe(map(res => res.json()));
   }
 
+  renewESignature(userId, employeeId, positionId, data) {
+    return this.api.putE(`eSignature/renew/${userId}/${employeeId}/${positionId}`, data)
+      .pipe(map(res => res.json()));
+  }
+
   getDocument(employeeId, positionId) {
     return this.api.getE(`eSignature/${employeeId}/${positionId}`)
       .pipe(map(data => data));
@@ -29,6 +34,11 @@ export class ESignatureProvider {
 
   changeESignatureStatus(employeeId, data) {
     return this.api.putE(`eSignature/changeStatus/${employeeId}`, data)
+      .pipe(map(res => res.json()));
+  }
+
+  changeESignaturePassword(userId, employeeId, positionId, data) {
+    return this.api.putE(`eSignature/changePassword/${userId}/${employeeId}/${positionId}`, data)
       .pipe(map(res => res.json()));
   }
 }

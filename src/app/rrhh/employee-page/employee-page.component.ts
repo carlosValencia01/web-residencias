@@ -1,25 +1,24 @@
-import {ActivatedRoute, Params, Router} from '@angular/router';
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ComponentType} from '@angular/cdk/overlay';
-import {MatDialog, MatPaginator, MatTableDataSource} from '@angular/material';
-import {Location} from '@angular/common';
-import Swal from 'sweetalert2';
-import * as Papa from 'papaparse';
+import { ComponentType } from '@angular/cdk/overlay';
+import { Location } from '@angular/common';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatPaginator, MatTableDataSource } from '@angular/material';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import * as moment from 'moment';
-
-import {EmployeeProvider} from 'src/app/providers/shared/employee.prov';
-import {eNotificationType} from 'src/app/enumerators/app/notificationType.enum';
-import {eOperation} from 'src/app/enumerators/reception-act/operation.enum';
-import {IDepartment} from 'src/app/entities/shared/department.model';
-import {IEmployee} from 'src/app/entities/shared/employee.model';
-import {IGrade} from 'src/app/entities/reception-act/grade.model';
-import {IPosition} from 'src/app/entities/shared/position.model';
-import {LoadCsvDataComponent} from 'src/app/commons/load-csv-data/load-csv-data.component';
-import {NewGradeComponent} from 'src/app/rrhh/new-grade/new-grade.component';
-import {NewPositionComponent} from 'src/app/rrhh/new-position/new-position.component';
-import {NotificationsServices} from 'src/app/services/app/notifications.service';
-import {PositionsHistoryComponent} from 'src/app/rrhh/positions-history/positions-history.component';
-import {ESignatureProvider} from 'src/app/providers/electronic-signature/eSignature.prov';
+import * as Papa from 'papaparse';
+import { LoadCsvDataComponent } from 'src/app/commons/load-csv-data/load-csv-data.component';
+import { IGrade } from 'src/app/entities/reception-act/grade.model';
+import { IDepartment } from 'src/app/entities/shared/department.model';
+import { IEmployee } from 'src/app/entities/shared/employee.model';
+import { IPosition } from 'src/app/entities/shared/position.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { eOperation } from 'src/app/enumerators/reception-act/operation.enum';
+import { ESignatureProvider } from 'src/app/providers/electronic-signature/eSignature.prov';
+import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
+import { NewGradeComponent } from 'src/app/rrhh/new-grade/new-grade.component';
+import { NewPositionComponent } from 'src/app/rrhh/new-position/new-position.component';
+import { PositionsHistoryComponent } from 'src/app/rrhh/positions-history/positions-history.component';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 
 moment.locale('es');
 
@@ -48,7 +47,7 @@ export class EmployeePageComponent implements OnInit {
   public isChangedPositions = false;
   public isChangedGrades = false;
   public employeeeBirthDate: string;
-  private positionIds: Array<string>;
+  private signaturesId: string[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -67,7 +66,7 @@ export class EmployeePageComponent implements OnInit {
     this.displayedColumnsGrades = ['abbreviation', 'title', 'cedula', 'level', 'actions'];
     this.displayedColumnsPositions = ['name', 'ascription', 'canSign', 'actions'];
     this.activatedRoute.params.subscribe((params: Params) => this._getEmployee(params.id));
-    this.positionIds = [];
+    this.signaturesId = [];
   }
 
   public onRowRemoveGrade(row: IGrade) {
@@ -127,7 +126,9 @@ export class EmployeePageComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         const position = this.positions.actives.find(pos => pos.position._id === row._id);
-        this.positionIds.push(position.position._id);
+        if (position.position.canSign && position.eSignatureId) {
+          this.signaturesId.push(position.eSignatureId);
+        }
         this.positions.actives.splice(this.positions.actives.indexOf(position), 1);
         position.deactivateDate = new Date();
         this.positions.inactives.push(position);
@@ -183,7 +184,7 @@ export class EmployeePageComponent implements OnInit {
           .then(_ => {
             this.isChangedPositions = false;
             this.employee.positions = allPositions.slice();
-            this._changeSignatureStatus()
+            this._changeSignatureStatus();
           })
           .catch(_ => {
             this.notifications.showNotification(eNotificationType.ERROR, 'Puestos', '¡Actualización fallida, intente de nuevo!');
@@ -237,28 +238,21 @@ export class EmployeePageComponent implements OnInit {
       if (result.value) {
         const allPositions = this._joinPositions(this.positions);
         await this._callSaveGradesAndPositions('Puestos y grados guardados con éxito', allPositions, this.grades);
-
-        this._changeSignatureStatus();
       }
     });
   }
 
-  private _changeSignatureStatus () {
-    if (this.positionIds) {
-      const msg1 = 'La firma del puesto ha sido deshabilitada';
-      const msg2 = 'Las firmas de los puestos han sido deshabilitadas';
-      let msg;
-      if (this.positionIds.length > 1) {
-        msg = msg2;
-      } else {
-        msg = msg1;
-      }
-      this.eSignatureProvider.changeESignatureStatus(this.employee._id, this.positionIds)
+  private _changeSignatureStatus() {
+    if (this.signaturesId && this.signaturesId.length) {
+      const msg = this.signaturesId.length > 1
+        ? 'Las firmas de los puestos han sido deshabilitadas'
+        : 'La firma del puesto ha sido deshabilitada';
+
+      this.eSignatureProvider.changeESignatureStatus(this.employee._id, this.signaturesId)
         .subscribe(data => {
           this.notifications.showNotification(eNotificationType.SUCCESS, 'Puestos', msg);
         });
-    } else {
-      this.notifications.showNotification(eNotificationType.SUCCESS, 'Puestos', '¡Actualización exitosa!');
+      this.signaturesId = [];
     }
   }
 
@@ -277,7 +271,7 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.positionIds = [];
+        this.signaturesId = [];
         this.positions = this._separatePositions(this.employee.positions);
         this.grades = this.employee.grade.slice();
         this.isChangedPositions = false;
@@ -303,7 +297,7 @@ export class EmployeePageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.positionIds = [];
+        this.signaturesId = [];
         this.positions = this._separatePositions(this.employee.positions);
         this.isChangedPositions = false;
         this._refreshPositionsTable();
@@ -490,9 +484,9 @@ export class EmployeePageComponent implements OnInit {
   private _callSaveGradesAndPositions(messageOk: string, positions: Array<any>, grades: Array<IGrade>) {
     return new Promise(resolve => {
       this._saveEmployeeGradesAndPositions(positions, grades)
-        .then(_ => {
+        .then((_) => {
           // Petición a baja de firma
-          this._changeSignatureStatus()
+          this._changeSignatureStatus();
           this.notifications.showNotification(eNotificationType.SUCCESS, '¡Actualización!', messageOk);
           this.isChangedPositions = false;
           this.isChangedGrades = false;
@@ -520,9 +514,9 @@ export class EmployeePageComponent implements OnInit {
   private _saveEmployeePositions(positions: Array<any>) {
     return new Promise((resolve, reject) => {
       this.employeeProvider.updateEmployeePositions(this.employee._id, positions)
-        .subscribe(_ => {
+        .subscribe((_) => {
           resolve();
-        }, _ => {
+        }, (_) => {
           reject();
         });
     });
@@ -531,9 +525,9 @@ export class EmployeePageComponent implements OnInit {
   private _saveEmployeeGrades(grades: Array<IGrade>) {
     return new Promise((resolve, reject) => {
       this.employeeProvider.updateEmployeeGrades(this.employee._id, grades)
-        .subscribe(_ => {
+        .subscribe((_) => {
           resolve();
-        }, _ => {
+        }, (_) => {
           reject();
         });
     });
@@ -546,9 +540,9 @@ export class EmployeePageComponent implements OnInit {
           positions: positions,
           grades: grades
         })
-        .subscribe(_ => {
+        .subscribe((_) => {
           resolve();
-        }, _ => {
+        }, (_) => {
           reject();
         });
     });
@@ -560,17 +554,17 @@ export class EmployeePageComponent implements OnInit {
 
   private _separatePositions(allPositions: Array<any>): { actives, inactives } {
     return {
-      actives: allPositions.filter(pos => pos.status === 'ACTIVE').map(({status, ...pos}) => pos).slice(),
-      inactives: allPositions.filter(pos => pos.status === 'INACTIVE').map(({status, ...pos}) => pos).slice(),
+      actives: allPositions.filter(pos => pos.status === 'ACTIVE').map(({ status, ...pos }) => pos).slice(),
+      inactives: allPositions.filter(pos => pos.status === 'INACTIVE').map(({ status, ...pos }) => pos).slice(),
     };
   }
 
   private _joinPositions(positions: { actives, inactives }): Array<{ position, status }> {
-    const actives = positions.actives.map(pos => {
+    const actives = positions.actives.map((pos) => {
       pos.status = 'ACTIVE';
       return pos;
     });
-    const inactives = positions.inactives.map(pos => {
+    const inactives = positions.inactives.map((pos) => {
       pos.status = 'INACTIVE';
       return pos;
     });

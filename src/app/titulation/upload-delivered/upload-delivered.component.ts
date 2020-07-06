@@ -47,7 +47,7 @@ export class UploadDeliveredComponent implements OnInit {
   ) {
     this.reqId = this.data.reqId;
     this.deparment = this.data.department;
-    this.departmentOut = this.data.departmentOut ? this.data.departmentOut : '' ;
+    this.departmentOut = this.data.departmentOut ? this.data.departmentOut : '';
   }
 
   ngOnInit() {
@@ -78,7 +78,7 @@ export class UploadDeliveredComponent implements OnInit {
     this.fileName = this.file ? this.file.name : undefined;
   }
 
-  uploadDocument() {    
+  uploadDocument() {
     const fileReader = new FileReader();
     fileReader.onload = (e) => {
       if (this.file.name.substring(this.file.name.length - 3) === 'itt') {
@@ -88,7 +88,7 @@ export class UploadDeliveredComponent implements OnInit {
           employeeId: this.employee.employee._id,
           positionId: this.currentPosition._id,
           documentCode: this.deparment === eRole.HEADSCHOOLSERVICE ? eFILESCODE.NO_INCONVENIENCE : eFILESCODE.JURY_OFFICE,
-          outDepartmentName: this.deparment === eRole.HEADSCHOOLSERVICE ? 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES': this.departmentOut
+          outDepartmentName: this.deparment === eRole.HEADSCHOOLSERVICE ? 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES' : this.departmentOut
         };
         this.notificationsServ
           .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', this.deparment === eRole.HEADSCHOOLSERVICE ? 'Firmando constancia de no inconveniencia' : 'Firmando oficio de jurado');
@@ -103,9 +103,9 @@ export class UploadDeliveredComponent implements OnInit {
             this.oRequest.setRequest(req);
             this.dialogRef.close({ response: true, data: { QR: this.QR, ESTAMP: this.EStamp, RESPONSE: true } });
           }
-        }, err => {
-          const error = (err && !err.ok) ? 'Ocurrió un error' : JSON.parse(err._body).err;
-          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', error);
+        }, (err: { _body: string }) => {
+          const error = err && err._body ? JSON.parse(err._body).err : 'Ocurrió un error';
+          this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', error || 'Ocurrió un error');
         });
       } else {
         this.notificationsServ.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Archivo incorrecto');
