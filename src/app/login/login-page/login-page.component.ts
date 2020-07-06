@@ -123,7 +123,7 @@ export class LoginPageComponent implements OnInit {
 
   public viewInscriptionsVideo() {
     // Tutorial Nuevo Ingreso
-    window.open('https://drive.google.com/file/d/1QlVOPP6_wy89Ld7sJsDKFNNH6gMn3V-B/view?usp=sharing');
+    window.open('https://drive.google.com/file/d/1Zt0L3VmS6fj_tHzAgjpLJRaMeZCh0SIA/view');
   }
 
   public viewReceptionActVideo() {
