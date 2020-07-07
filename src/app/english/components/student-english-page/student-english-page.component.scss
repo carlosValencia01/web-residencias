@@ -1,0 +1,32 @@
+.mat-card-course{
+    padding: 8px;
+}
+
+.buton-register-course{
+    position: absolute; 
+    top: 5%; 
+    right: 5%;
+}
+
+.mat-progress-spinner-empty ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #BBBBBB;
+}
+
+.container-progress-spinners {
+    position: relative;
+    width: 100%;
+  }
+  
+  .center-progress-spinner {
+    position: absolute;
+    top: 0%;
+    width: 100%;
+  }
+
+  .center-description-progress-spinner {
+    position: absolute;
+    top: 40%;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+  }
