@@ -17,6 +17,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 
 import { StudentProvider } from '../providers/shared/student.prov';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
+import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.pro
   ],
   declarations: [
     StudentEnglishPageComponent,
+    EnglishCoursesPageComponent,
   ],
   entryComponents: [
 
