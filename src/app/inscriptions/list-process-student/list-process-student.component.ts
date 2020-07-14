@@ -8,6 +8,7 @@ import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { StudentsExpedient } from 'src/app/interfaces/inscriptions.interface';
+import { LoadingBarService } from 'ngx-loading-bar';
 
 @Component({
   selector: 'app-list-process-student',
@@ -36,6 +37,7 @@ export class ListProcessStudentComponent implements OnInit {
     private routeActive: ActivatedRoute,
     private router: Router,    
     private loadingService: LoadingService,
+    private loadingBar: LoadingBarService,
   ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -58,6 +60,7 @@ export class ListProcessStudentComponent implements OnInit {
   }
 
   getStudents(){
+    this.loadingBar.start();
     this.inscriptionsProv.getStudentsProcess().subscribe(res => {
       this.students = res.students;
 
@@ -85,6 +88,7 @@ export class ListProcessStudentComponent implements OnInit {
           },
           student:st
         }));
+        this.loadingBar.complete();
         this.readyToShowTable.students = true;
     });
 

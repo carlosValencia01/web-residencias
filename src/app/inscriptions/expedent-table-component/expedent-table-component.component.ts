@@ -51,6 +51,7 @@ export class ExpedentTableComponentComponent implements OnInit {
   @Output() getCareerEmit = new EventEmitter();  
   @Output() getControlNumberEmit = new EventEmitter();  
   @Output() getUsedPeriodsEmit = new EventEmitter();  
+  @Output() reloadEmit = new EventEmitter();  
 
   displayedColumns: string[] = ['controlNumber', 'fullName', 'career', 'avance','status','exp','actions'];
   dataSource: MatTableDataSource<StudentsExpedient>;
@@ -121,10 +122,10 @@ export class ExpedentTableComponentComponent implements OnInit {
     }        
     this.dataSource = new MatTableDataSource(this.students);
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.showTable=true;
+    this.dataSource.sort = this.sort;        
     this.localPeriods = this.periods;    
     this.filteredPeriods = this.periods;
+    this.showTable = true;
     this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
     this.applyFilters();
   }
@@ -331,7 +332,6 @@ export class ExpedentTableComponentComponent implements OnInit {
     if(filterStatusFlag){ //si hay filtro por estatus
       this.dataSource.data = tmpData;
     }    
-    
   }
 
   updateGI(row){
@@ -441,23 +441,18 @@ export class ExpedentTableComponentComponent implements OnInit {
     const response = await this.showSwalAlert('Para ' + row.controlNumber,'Actualizar Estatus de Expediente','question');
     if (response) {
       this.studentProv.getDocumentsUpload(row.student._id).subscribe(res => {
-        var comprobante = res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROBANTE') !== -1)[0] : '';
-        var acta = res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('ACTA') !== -1)[0] : '';
-        var curp = res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CURP') !== -1)[0] : '';
-        var nss = res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('NSS') !== -1)[0] : '';
-        var compromiso = res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('COMPROMISO') !== -1)[0] : '';
-        var clinicos = res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CLINICOS') !== -1)[0] : '';
-        var certificado = res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('CERTIFICADO') !== -1)[0] : '';
-        var foto = res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] ? res.documents.filter( docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
+        let numberAceptedDocs = res.documents.filter( docc => docc.statusName == "ACEPTADO").length;
+        let numberValidateddDocs = res.documents.filter( docc => docc.statusName == "VALIDADO").length;
+        let numberProcessDocs = res.documents.filter( docc => docc.statusName == "EN PROCESO").length;
 
-        if (comprobante.statusName == "ACEPTADO"  && acta.statusName == "ACEPTADO"  && curp.statusName == "ACEPTADO"  && nss.statusName == "ACEPTADO"  && clinicos.statusName == "ACEPTADO"  && certificado.statusName == "ACEPTADO"  && foto.statusName == "ACEPTADO"){
+        if (numberAceptedDocs == 11 || numberAceptedDocs == 12){
           // Cambiar estatus a ACEPTADO
           this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},row.student._id).subscribe(res => {
           });
           this.updateExpedientStatusEmit.emit(true);
           return;
         }
-        if (comprobante.statusName == "VALIDADO"  && acta.statusName == "VALIDADO"  && curp.statusName == "VALIDADO"  && nss.statusName == "VALIDADO"  && clinicos.statusName == "VALIDADO"  && certificado.statusName == "VALIDADO"  && foto.statusName == "VALIDADO"){
+        if (numberValidateddDocs == 11 || numberValidateddDocs == 12){
           // Cambiar estatus a VALIDADO
           this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},row.student._id).subscribe(res => {
           });
@@ -465,20 +460,10 @@ export class ExpedentTableComponentComponent implements OnInit {
           return;
         }
 
-        var allDiferentProcess = true;
-        var allValidateOrAcept = true;
-
-        for(var i = 0; i < res.documents.length; i++){
-          if(res.documents[i].statusName == "EN PROCESO"){
-            allDiferentProcess = false;
-          }
-          if(res.documents[i].statusName == "VALIDADO" || res.documents[i] == "ACEPTADO"){
-            allValidateOrAcept = true;
-          } else {
-            allValidateOrAcept = false;
-          }
-        }
-
+        var allDiferentProcess = numberProcessDocs == 0;
+        var allValidateOrAcept = (numberAceptedDocs + numberValidateddDocs) == res.documents.length;        
+        console.log({numberAceptedDocs,numberProcessDocs,numberValidateddDocs,allDiferentProcess,allValidateOrAcept});
+        
         if(allDiferentProcess){
           if(!allValidateOrAcept){
             // Cambiar estatus a EN PROCESO
@@ -570,6 +555,9 @@ export class ExpedentTableComponentComponent implements OnInit {
     this.getControlNumberEmit.emit(this.filters.textSearch.value);
   }
 
+  reload(){
+    this.reloadEmit.emit(true);
+  }
   getUsedPeriods(){
     const periods = this.usedPeriods.length > 0  ? this.usedPeriods : this.localPeriods;        
     this.getUsedPeriodsEmit.emit(periods);
@@ -617,4 +605,5 @@ export class ExpedentTableComponentComponent implements OnInit {
       this.localPeriods = this.filteredPeriods.filter( period => (period.periodName + '-' + period.year).toLowerCase().trim().indexOf(value) !== -1);
     }
   }
+
 }

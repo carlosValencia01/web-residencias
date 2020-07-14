@@ -13,6 +13,7 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
 import { DocumentsHelpComponent } from '../documents-help/documents-help.component';
+import { LoadingBarService } from 'ngx-loading-bar';
 
 declare var jsPDF: any;
 
@@ -48,6 +49,10 @@ export class ProfileInscriptionPageComponent implements OnInit {
   docContrato;
   docAcuse;
   docCompromiso;
+  docSchedule;
+
+  solicitudStudentSend=false; //validate if student upload signed solicitud
+  contratoStudentSend=false; //validate if student upload signed contrato
 
   // Maestria
   certificateLDoc;
@@ -132,6 +137,12 @@ export class ProfileInscriptionPageComponent implements OnInit {
    public config5: DropzoneConfigInterface;
    public config6: DropzoneConfigInterface;
    public config7: DropzoneConfigInterface;
+   public configAcuse: DropzoneConfigInterface;
+   public configSchedule: DropzoneConfigInterface;
+   public configContrato: DropzoneConfigInterface;
+   public configSolicitud: DropzoneConfigInterface;
+
+
 
   // MAESTRIA
   public config8: DropzoneConfigInterface;
@@ -163,6 +174,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
     private modalService: NgbModal,
     private imageToBase64Serv: ImageToBase64Service,
     private loadingService: LoadingService,
+    private loadingBar: LoadingBarService,
   ){
     this.getFonts();
     this.getIdStudent();
@@ -265,7 +277,10 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
         this.docSolicitud = documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] : '';
         this.docContrato = documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] : '';
-
+        this.docAcuse = documents.filter(docc => docc.filename == this.data.email+'-ACUSE.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-ACUSE.pdf')[0] : '';
+        this.docSchedule = documents.filter(docc => docc.filename == this.data.email+'-HORARIO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-HORARIO.pdf')[0] : '';
+        this.solicitudStudentSend = this.docSolicitud.status.length > 1; // if there are 2 or more status
+        this.contratoStudentSend = this.docContrato.status.length > 1; // if there are 2 or more status
         this.docCurp = documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] : '';
         this.docNss = documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] : '';
         this.docFoto = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] ? documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
@@ -315,7 +330,9 @@ export class ProfileInscriptionPageComponent implements OnInit {
         if(this.docSolicitud) this.docSolicitud.status = this.docSolicitud ? this.docSolicitud.status.filter( st=> st.active===true)[0] : '';
 
         if(this.docContrato) this.docContrato.status = this.docContrato ? this.docContrato.status.filter( st=> st.active===true)[0] : '';
-
+        if(this.docAcuse) this.docAcuse.status = this.docAcuse ? this.docAcuse.status.filter( st=> st.active===true)[0] : '';
+        if(this.docSchedule) this.docSchedule.status = this.docSchedule ? this.docSchedule.status.filter( st=> st.active===true)[0] : '';
+        
         // MAESTRIA
         if (this.certificateLDoc) this.certificateLDoc.status = this.certificateLDoc ? this.certificateLDoc.status.filter(st => st.active === true)[0] : '';
         if (this.titledLDoc) this.titledLDoc.status = this.titledLDoc ? this.titledLDoc.status.filter(st => st.active === true)[0] : '';
@@ -972,6 +989,36 @@ export class ProfileInscriptionPageComponent implements OnInit {
       case "Acuse": {
         this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acuse.', '');
         this.generatePDFAcuse();
+        break;
+      }
+      case "AcuseDrive": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Acuse.', '');        
+        this.loadingService.setLoading(true);
+        this.inscriptionsProv.getFile(this.docAcuse.fileIdInDrive, this.docAcuse.filename).subscribe(data => {
+          var pubContrato = data.file;
+          let buffContrato = new Buffer(pubContrato.data);
+          var pdfSrcContrato = buffContrato;
+          var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});
+          this.loadingService.setLoading(false);
+          window.open( URL.createObjectURL(blob) );
+        }, error => {
+          console.log(error);
+        });
+        break;
+      }
+      case "Horario": {
+        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Horario.', '');
+        this.loadingService.setLoading(true);
+        this.inscriptionsProv.getFile(this.docSchedule.fileIdInDrive, this.docSchedule.filename).subscribe(data => {
+          var pubContrato = data.file;
+          let buffContrato = new Buffer(pubContrato.data);
+          var pdfSrcContrato = buffContrato;
+          var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});
+          this.loadingService.setLoading(false);
+          window.open( URL.createObjectURL(blob) );
+        }, error => {
+          console.log(error);
+        });
         break;
       }
 
@@ -1793,6 +1840,26 @@ export class ProfileInscriptionPageComponent implements OnInit {
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO.pdf', 'mimeType': 'application/pdf', newF: this.docCompromiso ? false :true, fileId:this.docCompromiso ? this.docCompromiso.fileIdInDrive :''},
       acceptedFiles:'application/pdf',
     };
+    this.configAcuse = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-ACUSE.pdf', 'mimeType': 'application/pdf', newF: this.docAcuse ? false :true, fileId:this.docAcuse ? this.docAcuse.fileIdInDrive :''},
+      acceptedFiles:'application/pdf',
+    };
+    this.configContrato = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-CONTRATO.pdf', 'mimeType': 'application/pdf', newF: this.docContrato ? false :true, fileId:this.docContrato ? this.docContrato.fileIdInDrive :''},
+      acceptedFiles:'application/pdf',
+    };
+    this.configSchedule = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-HORARIO.pdf', 'mimeType': 'application/pdf', newF: this.docSchedule ? false :true, fileId:this.docSchedule ? this.docSchedule.fileIdInDrive :''},
+      acceptedFiles:'application/pdf',
+    };
+    this.configSolicitud = {
+      clickable: true, maxFiles: 1,
+      params: {folderId:this.folderId, 'filename': this.data.email+'-SOLICITUD.pdf', 'mimeType': 'application/pdf', newF: this.docSolicitud ? false :true, fileId:this.docSolicitud ? this.docSolicitud.fileIdInDrive :''},
+      acceptedFiles:'application/pdf',
+    };
 
     // DROPZONE MAESTRIA
     this.config8 = {
@@ -1927,15 +1994,16 @@ export class ProfileInscriptionPageComponent implements OnInit {
   }
 
   onErrorCommon(args: any) {
-    this.resetDropzoneUploads();
     if (args[1] === `You can't upload files of this type.`) {
       this.notificationsServices.showNotification(eNotificationType.ERROR,
         '!ERROR!', "No se pueden subir archivos con esa extensión!\n Las extensiones permitidas son .pdf");
-
+        
     } else {
       this.notificationsServices.showNotification(eNotificationType.ERROR,
         '!ERROR!', "No se pueden subir archivos tan pesados!\nEl límite es 3MB");
     }
+    this.resetDropzoneUploads();
+    this.resetDropzoneUploads();
   }
 
   onErrored(error: any) {
@@ -2089,5 +2157,13 @@ export class ProfileInscriptionPageComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Aceptar'
     }).then((result) => { });
+  }
+  onMessage(message: string){
+    Swal.fire({
+      type: 'error',
+      title: '¡Observaciones!',
+      text: message,
+      showCloseButton: true,
+    });
   }
 }

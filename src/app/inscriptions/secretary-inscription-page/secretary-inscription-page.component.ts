@@ -21,6 +21,7 @@ import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
 import { ListAceptStudentComponent } from '../list-acept-student/list-acept-student.component';
 import { ListPendingStudentComponent } from '../list-pending-student/list-pending-student.component';
 import { ListProcessStudentComponent } from '../list-process-student/list-process-student.component';
+import { LoadingBarService } from 'ngx-loading-bar';
 @Component({
   selector: 'app-secretary-inscription-page',
   templateUrl: './secretary-inscription-page.component.html',
@@ -81,6 +82,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     private router: Router,
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
+    private loadingBar: LoadingBarService,
   ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -101,6 +103,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
 
   getStudents(){
+    this.loadingBar.start();
     this.inscriptionsProv.getStudents().subscribe(res => {
       this.students = res.students;
 
@@ -127,6 +130,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           },
           student:st
         }));
+      this.loadingBar.complete();
       this.readyToShowTable.students = true;
       this.listStudents.forEach(element => {
         if((this.filterDocuments('Comprobante',element) != 'EN PROCESO' && this.filterDocuments('Comprobante',element) != 'VALIDADO' && this.filterDocuments('Comprobante',element) != 'ACEPTADO') || (this.filterDocuments('Certificado',element) != 'EN PROCESO' && this.filterDocuments('Certificado',element) != 'VALIDADO' && this.filterDocuments('Certificado',element) != 'ACEPTADO')){
@@ -673,7 +677,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   }
   getUsedPeriods(periods){
     this.usedPeriods = periods;
-    this.version+=0.001;
+    this.version+=0.0001;
     this.usedPeriods = this.usedPeriods.map((per)=>({      
       code: per.code,      
       periodName: per.periodName,

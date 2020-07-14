@@ -12,6 +12,7 @@ import { NotificationsServices } from 'src/app/services/app/notifications.servic
 import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
 import { StudentsExpedient } from 'src/app/interfaces/inscriptions.interface';
 import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
+import { LoadingBarService } from 'ngx-loading-bar';
 
 @Component({
   selector: 'app-list-acept-student',
@@ -49,6 +50,7 @@ export class ListAceptStudentComponent implements OnInit {
     private router: Router,
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
+    private loadingBar: LoadingBarService,
   ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -74,6 +76,7 @@ export class ListAceptStudentComponent implements OnInit {
   }
 
   getStudents(){
+    this.loadingBar.start();
     this.inscriptionsProv.getStudentsAcept().subscribe(res => {
       this.students = res.students;
 
@@ -100,7 +103,8 @@ export class ListAceptStudentComponent implements OnInit {
           },
           student:st
         }));
-        this.readyToShowTable.students = true;
+      this.loadingBar.complete();
+      this.readyToShowTable.students = true;
       this.listCovers = this.listStudentsAcept;        
     });
 

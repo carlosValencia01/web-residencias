@@ -1,10 +1,11 @@
 <app-expedent-table-component 
   [roleName]='rolName' [tabName]="'pending'" [students]="studentsForTable" [periods]="periods"
-  (updateGIEmit) = "updateGI($event)"      
-  (viewExpedientEmit) = "viewExpedient($event)"      
+  (updateGIEmit) = "updateGI($event)"
+  (viewExpedientEmit) = "viewExpedient($event)"
   (updateSolicitudEmit) = "updateSolicitud($event)"
   (updateExpedientStatusEmit) = "updateExpedientStatus($event)"
-  (getExcelExportEmit) = "excelExport($event)"          
+  (getExcelExportEmit) = "excelExport($event)"
+  (reloadEmit) = "getStudents()"
   *ngIf="readyToShowTable.periods && readyToShowTable.students" ></app-expedent-table-component>    
     
   <!-- Tabla reporte alumnos Excel-->

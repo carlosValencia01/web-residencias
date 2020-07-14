@@ -45,12 +45,25 @@ th {
     height: 25px;
 }
 .footer-actions{
-    display: flex;
-    justify-content: flex-end;
+    width: 100%;
     background: white;
     box-shadow: 0px 10px 9px #aaa;
-    padding: 0 10px;
+    padding: 10px;
+    margin: 0;   
+}
+.footer-actions-reports{
+    display: flex;
+    justify-content: flex-end;    
     flex-wrap: wrap;
+}
+.filters-bar{
+    align-items: center;
+}
+.filters-bar .search-input{
+    padding-top: 15px;
+}
+.alert{
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 #checkC{
