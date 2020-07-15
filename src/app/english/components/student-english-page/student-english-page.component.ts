@@ -1,9 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { FormRequestCourseComponent } from 'src/app/english/components/student-english-page/form-request-course/form-request-course.component';
+
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-student-english-page',
@@ -11,7 +14,7 @@ import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscription
   styleUrls: ['./student-english-page.component.scss']
 })
 export class StudentEnglishPageComponent implements OnInit {
-  
+
   data;
   currentStudent: any;
   showImg = false;
@@ -19,11 +22,17 @@ export class StudentEnglishPageComponent implements OnInit {
   photoStudent = '';
   totalHoursCoursed = 90;
   actualState = "Sin elección de Curso";
-  courseSelect = 0;
+  requestCourse = {
+    name:"",
+    day:"",
+    schedule:"",
+    actualPhone: "",
+  }
   courses = [
 
-    {name:"Cool Tiger",
-    days:[
+    {
+      name:"Cool Tiger",
+      days:[
       {
         desc:"Lunes a Viernes",
         schedule:[
@@ -104,6 +113,7 @@ export class StudentEnglishPageComponent implements OnInit {
     private loadingService: LoadingService,
     private studentProv: StudentProvider,
     private inscriptionProv : InscriptionsProvider,
+    public dialog: MatDialog,
   ) { 
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -155,6 +165,28 @@ export class StudentEnglishPageComponent implements OnInit {
         }
       }
     );
+  }
+
+  openDialog(courseSelected : any): void {
+    console.log(courseSelected);
+    const dialogRef = this.dialog.open(FormRequestCourseComponent, {
+      data: {
+        courseSelected: courseSelected, 
+        nameCourseSelected: courseSelected.name,
+        daySelected: this.requestCourse.day, 
+        scheduleSelected: this.requestCourse.schedule, 
+        actualPhone: this.requestCourse.actualPhone
+      },
+      hasBackdrop: true,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      this.requestCourse.name = result.nameCourseSelected;
+      this.requestCourse.day = result.daySelected;
+      this.requestCourse.schedule = result.scheduleSelected;
+      this.requestCourse.actualPhone = result.actualPhone;
+    });
   }
 
 }

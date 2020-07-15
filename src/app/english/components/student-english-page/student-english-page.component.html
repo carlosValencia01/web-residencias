@@ -13,8 +13,8 @@
           </mat-card>
       </div>
       <!--DATOS GENERALES-->
-      <div class="col-lg-5 col-md-5 col-sm-5 col-xs-10 mb-2">
-        <mat-card>
+      <div class="col-lg-5 col-md-5 col-sm-6 col-xs-10 mb-2">
+        <mat-card style="background-color: palegoldenrod;">
           <div>
             <label><strong>{{currentStudent.fullName}}</strong></label>
           </div>
@@ -71,38 +71,26 @@
         <div>Aún no cumple con las horas necesarias para liberar el Inglés</div>
       </div>
     </div>
-
-  </mat-tab>
-
-  <!--TAB de Curso Actual-->
-  <mat-tab label="Curso Actual">
-    
-    Aquí se mostrará el curso actual.
-
-  </mat-tab>
-
-  <!--TAB de todos los Cursos-->
-  <mat-tab label="Cursos">
-    
+     <!--Cursos --> 
     <div class="row justify-content-center p-3">
 
       <div *ngFor="let course of courses" class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
     
-        <mat-card class="mat-card-course mb-3">
+        <mat-card class="mat-card-course mb-3 text-white" style="background-color:#183969;">
           <mat-card-header>
-            <mat-card-title>{{course.name}}</mat-card-title>
-            <mat-card-subtitle>{{course.dailyHours}} Horas</mat-card-subtitle>
+            <mat-card-title><strong>{{course.name}}</strong></mat-card-title>
+            <mat-card-subtitle class="text-white">{{course.dailyHours}} Horas</mat-card-subtitle>
           </mat-card-header>
-          <button mat-button class="buton-register-course" color="primary">Inscribirme</button>
+          <button mat-flat-button class="buton-register-course" (click)="openDialog(course)"><strong>Inscribirme</strong></button>
           <mat-card-content class="pl-2 pr-2 m-0">
             <p *ngFor="let period of course.days">{{period.desc}}</p>
           </mat-card-content>
           <mat-card-actions>
-            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" style="background-color: palegoldenrod;">
               <mat-expansion-panel-header>
                 <mat-panel-title></mat-panel-title>
                 <mat-panel-description>
-                  Mas Información
+                  Información... 
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <p><strong>{{course.totalHours}} horas</strong> por semestre</p>
@@ -114,6 +102,13 @@
     
       </div>
     </div>
+
+  </mat-tab>
+
+  <!--TAB de Curso Actual-->
+  <mat-tab label="Curso Actual">
+    
+    Aquí se mostrará el curso actual.
 
   </mat-tab>
 

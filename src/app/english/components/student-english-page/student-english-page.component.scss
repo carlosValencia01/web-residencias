@@ -4,7 +4,7 @@
 
 .buton-register-course{
     position: absolute; 
-    top: 5%; 
+    top: 7%; 
     right: 5%;
 }
 
@@ -22,6 +22,10 @@
     top: 0%;
     width: 100%;
   }
+
+  .center-progress-spinner  ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #183969;
+}
 
   .center-description-progress-spinner {
     position: absolute;
