@@ -2733,22 +2733,16 @@
         </div>
         <hr>
         <!--Solicitud, Contrato y Acuse-->
-        <div class='row' *ngIf="!doctorate && !mastersDegree">
+        <div class='row'>
           
-          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" *ngIf="docSolicitud && solicitudStudentSend">
+          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" >
             <!--Solicitud-->
             <mat-card 
-            [class.accept]="docSolicitud.status.name == 'ACEPTADO'" 
-            [class.reject]="docSolicitud.status.name == 'RECHAZADO'"
-            [class.process]="docSolicitud.status.name == 'EN PROCESO'"            
-            [class.validate]="docSolicitud.status.name == 'VALIDADO'"
+            class="accept"
             >
               <mat-card-header>
                 <mat-card-title
-                [class.acceptText]="docSolicitud.status.name == 'ACEPTADO'" 
-                [class.rejectText]="docSolicitud.status.name == 'RECHAZADO'"
-                [class.processText]="docSolicitud.status.name == 'EN PROCESO'"            
-                [class.validateText]="docSolicitud.status.name == 'VALIDADO'"
+                class="acceptText"
                 >Solicitud</mat-card-title>
               </mat-card-header>
               <mat-card-content (click)="onView('Solicitud')" style="cursor: pointer;" ngbTooltip="Visualizar Solicitud"
@@ -2759,68 +2753,17 @@
                   </div>
                 </div>
               </mat-card-content>
-              <mat-card-actions>
-                <p style="text-align: center;">
-                  <span class="badge"
-                   [class.badge-warning]="docSolicitud.status.name == 'EN PROCESO'"
-                   [class.badge-primary]="docSolicitud.status.name == 'ACEPTADO'"
-                   [class.badge-danger]="docSolicitud.status.name == 'RECHAZADO'"
-                   [class.badge-success]="docSolicitud.status.name == 'VALIDADO'"
-                   >{{docSolicitud.status.name}}</span>
-                </p>
-                <mat-icon *ngIf="docSolicitud.status.name == 'RECHAZADO'" class="mx-1" style="color:#607188" (click)="onMessage(docSolicitud.status.observation)"
-                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-                
-              </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;" *ngIf="docSolicitud.status.name == 'EN PROCESO' || docSolicitud.status.name == 'RECHAZADO'">
-                <dropzone id="dzSolicitud" [config]="configSolicitud" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
+              
             </mat-card>
-          </div>
-          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" *ngIf="!solicitudStudentSend">
-            <!--Solicitud-->
-            <mat-card 
-            class="cardDocumentsNoSend"
-            >
-              <mat-card-header>
-                <mat-card-title
-                class="titleDocumentsNoSend"
-                >Solicitud</mat-card-title>
-              </mat-card-header>
-              <mat-card-content (click)="onView('Solicitud')" style="cursor: pointer;" ngbTooltip="Descargar Solicitud"
-                tooltipClass="my-custom-class">
-                <div>
-                  <div class="text-center">
-                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                  </div>
-                </div>
-              </mat-card-content>
-              <mat-card-actions>
-                <p style="text-align: center;">
-                  <span class="badge badge-secondary">SIN ENVÍO</span>
-                </p>
-              </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;" >
-                <dropzone id="dzSolicitud" [config]="configSolicitud" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
-            </mat-card>
-          </div>
-          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" *ngIf="docContrato && contratoStudentSend">
+          </div>          
+          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" >
             <!--Contrato-->
             <mat-card 
-            [class.accept]="docContrato.status.name == 'ACEPTADO'" 
-            [class.reject]="docContrato.status.name == 'RECHAZADO'"
-            [class.process]="docContrato.status.name == 'EN PROCESO'"            
-            [class.validate]="docContrato.status.name == 'VALIDADO'"
+            class="accept"
             >
               <mat-card-header>
                 <mat-card-title
-                [class.acceptText]="docContrato.status.name == 'ACEPTADO'" 
-                [class.rejectText]="docContrato.status.name == 'RECHAZADO'"
-                [class.processText]="docContrato.status.name == 'EN PROCESO'"            
-                [class.validateText]="docContrato.status.name == 'VALIDADO'"
+                class="acceptText"
                 >Contrato</mat-card-title>
               </mat-card-header>
               <mat-card-content (click)="onView('Contrato')" style="cursor: pointer;" ngbTooltip="Visualizar Contrato"
@@ -2831,67 +2774,18 @@
                   </div>
                 </div>
               </mat-card-content>
-              <mat-card-actions>
-                <p style="text-align: center;">
-                  <span class="badge"
-                   [class.badge-warning]="docContrato.status.name == 'EN PROCESO'"
-                   [class.badge-primary]="docContrato.status.name == 'ACEPTADO'"
-                   [class.badge-danger]="docContrato.status.name == 'RECHAZADO'"
-                   [class.badge-success]="docContrato.status.name == 'VALIDADO'"
-                   >{{docContrato.status.name}}</span>
-                </p>
-                <mat-icon *ngIf="docContrato.status.name == 'RECHAZADO'" class="mx-1" style="color:#607188" (click)="onMessage(docContrato.status.observation)"
-                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-              </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;" *ngIf="docContrato.status.name == 'EN PROCESO' || docContrato.status.name == 'RECHAZADO'">
-                <dropzone id="dzContrato" [config]="configContrato" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
+              
             </mat-card>
           </div>
-          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" *ngIf="!contratoStudentSend">
-            <!--Contrato-->
-            <mat-card 
-            class="cardDocumentsNoSend"
-            >
-              <mat-card-header>
-                <mat-card-title
-                class="titleDocumentsNoSend"
-                >Contrato</mat-card-title>
-              </mat-card-header>
-              <mat-card-content (click)="onView('Contrato')" style="cursor: pointer;" ngbTooltip="Descargar Contrato"
-                tooltipClass="my-custom-class">
-                <div>
-                  <div class="text-center">
-                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                  </div>
-                </div>
-              </mat-card-content>
-              <mat-card-actions>
-                <p style="text-align: center;">
-                  <span class="badge badge-secondary">SIN ENVÍO</span>
-                </p>
-              </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;" >
-                <dropzone id="dzContrato" [config]="configContrato" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
-            </mat-card>
-          </div>
-          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" *ngIf="docAcuse">
+          
+          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;">
             <!--Acuse-->
             <mat-card 
-            [class.accept]="docAcuse.status.name == 'ACEPTADO'" 
-            [class.reject]="docAcuse.status.name == 'RECHAZADO'"
-            [class.process]="docAcuse.status.name == 'EN PROCESO'"            
-            [class.validate]="docAcuse.status.name == 'VALIDADO'"
+            class="accept"
             >
               <mat-card-header>
                 <mat-card-title
-                [class.acceptText]="docAcuse.status.name == 'ACEPTADO'" 
-                [class.rejectText]="docAcuse.status.name == 'RECHAZADO'"
-                [class.processText]="docAcuse.status.name == 'EN PROCESO'"            
-                [class.validateText]="docAcuse.status.name == 'VALIDADO'"
+                class="acceptText"
                 >Acuse</mat-card-title>
               </mat-card-header>
               <mat-card-content (click)="onView('AcuseDrive')" style="cursor: pointer;" ngbTooltip="Visualizar Acuse"
@@ -2901,124 +2795,10 @@
                     <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
                   </div>
                 </div>
-              </mat-card-content>
-              <mat-card-actions>
-                <p style="text-align: center;">
-                  <span class="badge"
-                   [class.badge-warning]="docAcuse.status.name == 'EN PROCESO'"
-                   [class.badge-primary]="docAcuse.status.name == 'ACEPTADO'"
-                   [class.badge-danger]="docAcuse.status.name == 'RECHAZADO'"
-                   [class.badge-success]="docAcuse.status.name == 'VALIDADO'"
-                   >{{docAcuse.status.name}}</span>
-                </p>
-                <mat-icon *ngIf="docAcuse.status.name == 'RECHAZADO'" class="mx-1" style="color:#607188" (click)="onMessage(docAcuse.status.observation)"
-                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-              </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;" *ngIf="docAcuse.status.name == 'EN PROCESO' || docAcuse.status.name == 'RECHAZADO'">
-                <dropzone id="dzAcuse" [config]="configAcuse" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
+              </mat-card-content>              
             </mat-card>
           </div>
-          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" *ngIf="!docAcuse">
-            <!--Acuse-->
-            <mat-card 
-            class="cardDocumentsNoSend"
-            >
-              <mat-card-header>
-                <mat-card-title
-                class="titleDocumentsNoSend"
-                >Acuse</mat-card-title>
-              </mat-card-header>
-              <mat-card-content (click)="onView('Acuse')" style="cursor: pointer;" ngbTooltip="Descargar Acuse"
-                tooltipClass="my-custom-class">
-                <div>
-                  <div class="text-center">
-                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                  </div>
-                </div>
-              </mat-card-content>
-              <mat-card-actions>
-                <p style="text-align: center;">
-                  <span class="badge badge-secondary">SIN ENVÍO</span>
-                </p>
-              </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;" >
-                <dropzone id="dzAcuse" [config]="configAcuse" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
-            </mat-card>
-          </div>
-          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" *ngIf="docSchedule">
-            <!--Horario-->
-            <mat-card 
-            [class.accept]="docSchedule.status.name == 'ACEPTADO'" 
-            [class.reject]="docSchedule.status.name == 'RECHAZADO'"
-            [class.process]="docSchedule.status.name == 'EN PROCESO'"            
-            [class.validate]="docSchedule.status.name == 'VALIDADO'"
-            >
-              <mat-card-header>
-                <mat-card-title
-                [class.acceptText]="docSchedule.status.name == 'ACEPTADO'" 
-                [class.rejectText]="docSchedule.status.name == 'RECHAZADO'"
-                [class.processText]="docSchedule.status.name == 'EN PROCESO'"            
-                [class.validateText]="docSchedule.status.name == 'VALIDADO'"
-                >Horario</mat-card-title>
-              </mat-card-header>
-              <mat-card-content (click)="onView('Horario')" style="cursor: pointer;" ngbTooltip="Visualizar Horario"
-                tooltipClass="my-custom-class">
-                <div>
-                  <div class="text-center">
-                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                  </div>
-                </div>
-              </mat-card-content>
-              <mat-card-actions>
-                <p style="text-align: center;">
-                  <span class="badge"
-                   [class.badge-warning]="docSchedule.status.name == 'EN PROCESO'"
-                   [class.badge-primary]="docSchedule.status.name == 'ACEPTADO'"
-                   [class.badge-danger]="docSchedule.status.name == 'RECHAZADO'"
-                   [class.badge-success]="docSchedule.status.name == 'VALIDADO'"
-                   >{{docSchedule.status.name}}</span>
-                </p>
-                <mat-icon *ngIf="docSchedule.status.name == 'RECHAZADO'" class="mx-1" style="color:#607188" (click)="onMessage(docSchedule.status.observation)"
-                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-              </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;" *ngIf="docSchedule.status.name == 'EN PROCESO' || docSchedule.status.name == 'RECHAZADO'">
-                <dropzone id="dzSchedule" [config]="configSchedule" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
-            </mat-card>
-          </div>
-          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" *ngIf="!docSchedule">
-            <!--Horario-->
-            <mat-card 
-            class="cardDocumentsNoSend"
-            >
-              <mat-card-header>
-                <mat-card-title
-                class="titleDocumentsNoSend"
-                >Horario</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div>
-                  <div class="text-center">
-                    <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                  </div>
-                </div>
-              </mat-card-content>
-              <mat-card-actions>
-                <p style="text-align: center;">
-                  <span class="badge badge-secondary">SIN ENVÍO</span>
-                </p>
-              </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;" >
-                <dropzone id="dzSchedule" [config]="configSchedule" [message]="'Subir Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
-            </mat-card>
-          </div>                    
+                            
         </div>
       </div>
     </div>

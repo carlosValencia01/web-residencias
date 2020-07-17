@@ -47,7 +47,8 @@ export class uInscription {
     private _stamp: any;
     private frontBase64;
     private backBase64;
-    caratulaExpediente
+    private caratulaExpediente;
+    private contratoEstudiante;
     private _student;
     constructor(
          public _getImage: ImageToBase64Service, 
@@ -113,6 +114,9 @@ export class uInscription {
         });
         this._getImage.getBase64('assets/imgs/CaratulaExpediente.png').then(res4 => {
             this.caratulaExpediente = res4;
+        });
+        this._getImage.getBase64('https://i.ibb.co/yy0GrBq/Contrato-Estudiante-ITT.jpg').then(res4 => {
+            this.contratoEstudiante = res4;
         });
     }  
 
@@ -367,7 +371,7 @@ export class uInscription {
         doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
         return doc;
     }
-    generateSolicitud(student){
+    generateSolicitud(student, sign=false, date=new Date()){
         var day = student.curp.substring(8, 10);
         var month = student.curp.substring(6, 8);
         var year = student.curp.substring(4, 6);
@@ -589,11 +593,158 @@ export class uInscription {
         doc.setFont('Montserrat', 'Normal');
         doc.text(student.typeDisability, 85, 245);
 
-        doc.line((pageWidth / 2)-35, 270, (pageWidth / 2)+35, 270);
+        if(sign){
+            let content = 'Solicitud firmada electrónicamente por el alumno el @FECHA a las @HORA Hrs';            
+            content = content.replace('@FECHA', moment(date).format('LL'));
+            content = content.replace('@HORA',moment(date).format('LT'));
+            doc.setFont('Montserrat', 'Bold');
+            doc.setFontSize(10);
+            doc.text(content, pageWidth / 2, 270, 'center');
+        }else{
+            doc.line((pageWidth / 2)-35, 270, (pageWidth / 2)+35, 270);
+            doc.setFont('Montserrat', 'Bold');
+            doc.setFontSize(10);           
+            doc.text("Firma del Estudiante", pageWidth / 2, 280, 'center');
+        }
+        
+        return doc;
+    }
+
+    generateAcuse(student, sign=false, date=new Date()){
+        const doc = new jsPDF();
+        
+        
+        // @ts-ignore
+        doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+        // @ts-ignore
+        doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+        doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+        doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');
+
+        // Header
+        var pageWidth = doc.internal.pageSize.width;
+
+        doc.addImage(this.sepLogo, 'PNG', 5, 5, 74, 15); // Logo SEP
+        doc.addImage(this.tecNacLogo, 'PNG', pageWidth - 47, 2, 19, 17); // Logo TecNM
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(15);
+        doc.text("Instituto Tecnológico de Tepic", pageWidth / 2, 30, 'center');
+
+        doc.setTextColor(0, 0, 0);
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(12);
+        doc.text("Acuse de entrega de documentación para integración de expediente", pageWidth / 2, 37, 'center');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(12);
+        doc.text("Inscripción", pageWidth / 2, 42, 'center');
         doc.setFont('Montserrat', 'Bold');
         doc.setFontSize(10);
-        doc.text("Firma del Estudiante", pageWidth / 2, 280, 'center');
+        doc.text("Nombre del Alumno:",15,55,'left');
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(10);
+        doc.text(student.fullName,57,55,'left');
+        doc.setFont('Montserrat', 'Bold');
+        doc.setFontSize(10);
+        doc.text("Número de contról:",137,55,'left');
+        doc.setFont('Montserrat', 'Normal');
+        doc.setFontSize(10);
+        doc.text(student.controlNumber,177,55,'left');
+        if(sign){
+            let content = 'Acuse firmado electrónicamente por el alumno el @FECHA a las @HORA Hrs';
+            content = content.replace('@FECHA', moment(date).format('LL'));
+            content = content.replace('@HORA',moment(date).format('LT'));
+            doc.setFont('Montserrat', 'Bold');
+            doc.setFontSize(10);
+            doc.text(content, pageWidth / 2, 250, 'center');
+        }else{
+            doc.line((pageWidth / 2)-35, 250, (pageWidth / 2)+35, 250);
+            doc.setFont('Montserrat', 'Bold');
+            doc.setFontSize(10);
+            doc.text("Firma del Estudiante", pageWidth / 2, 260, 'center');
+        }
+
         return doc;
+    }
+
+    generateContrato(fullName, currentDate, sign=false){
+        const doc = new jsPDF();
+        doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
+        // @ts-ignore
+        doc.addFileToVFS('Montserrat-Bold.ttf', this.montserratBold);
+        doc.addFont('Montserrat-Regular.ttf', 'Montserrat', 'Normal');
+        doc.addFont('Montserrat-Bold.ttf', 'Montserrat', 'Bold');  
+        doc.addImage(this.contratoEstudiante, 'JPEG', 0, 0, 200, 295);
+        doc.setFontSize(8);
+        doc.setFontType('bold');
+        if(sign){
+            doc.text(`${fullName}`, 132, 262);
+            let content = 'Contrato firmado electrónicamente';            
+            doc.text(`${content}`, 127, 279);
+            content = 'por el alumno a las @HORA Hrs';
+            content = content.replace('@HORA',moment(currentDate).format('LT'));
+            doc.text(`${content}`, 132, 282);
+        }else{
+            
+            doc.text(`${fullName}`, 132, 262);
+        }
+    
+        doc.addImage(this.directorFirm, 'PNG', 25, 220, 80, 43);
+    
+        doc.setFontSize(8);
+        doc.setFontType('bold');
+        doc.text(currentDate.getDate() + '', 129, 45);
+    
+        doc.setFontSize(8);
+        doc.setFontType('bold');
+        const currentMonth = currentDate.getMonth();
+        let newMonth;
+        switch (currentMonth) {
+          case 0: {
+            newMonth = 'Enero'; break;
+          }
+          case 1: {
+            newMonth = 'Febrero'; break;
+          }
+          case 2: {
+            newMonth = 'Marzo'; break;
+          }
+          case 3: {
+            newMonth = 'Abril'; break;
+          }
+          case 4: {
+            newMonth = 'Mayo'; break;
+          }
+          case 5: {
+            newMonth = 'Junio'; break;
+          }
+          case 6: {
+            newMonth = 'Julio'; break;
+          }
+          case 7: {
+            newMonth = 'Agosto'; break;
+          }
+          case 8: {
+            newMonth = 'Septiembre'; break;
+          }
+          case 9: {
+            newMonth = 'Octubre'; break;
+          }
+          case 10: {
+            newMonth = 'Noviembre'; break;
+          }
+          case 11: {
+            newMonth = 'Diciembre'; break;
+          }
+        }
+        doc.text(newMonth, 149, 45);
+    
+        doc.setFontSize(8);
+        doc.setFontType('bold');
+        doc.text(currentDate.getFullYear() + '', 174, 45);
+        return doc;
+        
     }
 
     reduceCareerString(career: string): string {

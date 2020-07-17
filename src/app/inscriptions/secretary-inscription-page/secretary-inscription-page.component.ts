@@ -16,7 +16,7 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
 import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
-import { StudentsExpedient } from 'src/app/interfaces/inscriptions.interface';
+import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
 import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
 import { ListAceptStudentComponent } from '../list-acept-student/list-acept-student.component';
 import { ListPendingStudentComponent } from '../list-pending-student/list-pending-student.component';
@@ -62,7 +62,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   searchControlNUmber = '';
 
   listStudentsDebts = [];
-  studentsForTable: Array<StudentsExpedient>;
+  studentsForTable: Array<IStudentExpedient>;
   emptyUInscription: uInscription;
   filteredStudents;
   readyToShowTable = {
@@ -444,11 +444,11 @@ export class SecretaryInscriptionPageComponent implements OnInit {
         this.loadingService.setLoading(true);
         const doc = this.emptyUInscription.generateSolicitud(student);
         this.loadingService.setLoading(false);
-        // let document = doc.output('arraybuffer');
-        // let binary = this.bufferToBase64(document);
+        let document = doc.output('arraybuffer');
+        let binary = this.bufferToBase64(document);
 
-        // this.updateDocument(binary,student);
-        window.open(doc.output('bloburl'), '_blank');
+        this.updateDocument(binary,student);
+        // window.open(doc.output('bloburl'), '_blank');
       }
     });
   }
@@ -684,20 +684,24 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       year: per.year,      
       _id: per._id,
       version:this.version
-    }));    
-    this.filterLoggedStudents();
+    }));
+    if(this.version !== 0.0001){
+      this.filterLoggedStudents();
+    }else{
+      setTimeout(() => {
+        this.filterLoggedStudents();        
+      }, 1000);
+    }
     setTimeout(() => {      
       this.showTabs = true;
-    }, 300);
+    }, 500);
     this.countStudents(-1);
   }
 
-  filterLoggedStudents(){
-    if(this.dataSource.data && this.listStudentsLogged){
-      
-      this.dataSource.data = this.listStudentsLogged;
+  filterLoggedStudents(){          
+      this.dataSource.data = this.listStudentsLogged;      
       if(this.usedPeriods){
-        if (this.usedPeriods.length > 0) {                
+        if (this.usedPeriods.length > 0) {
           this.dataSource.data = this.dataSource.data.filter(
             (req: any) => this.usedPeriods.map( per => (per._id)).includes((req.idPeriodInscription))
           );            
@@ -707,7 +711,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       }else {
         this.dataSource.data = this.dataSource.data;
       }
-    }
+    
   }
   
 }

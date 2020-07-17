@@ -10,7 +10,7 @@ import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
-import { StudentsExpedient } from 'src/app/interfaces/inscriptions.interface';
+import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
 import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
 import { LoadingBarService } from 'ngx-loading-bar';
 
@@ -31,7 +31,7 @@ export class ListAceptStudentComponent implements OnInit {
   listCovers;
   credentialStudents;
   
-  studentsForTable: Array<StudentsExpedient>;
+  studentsForTable: Array<IStudentExpedient>;
   emptyUInscription: uInscription;
   searchCareer = '';
   searchControlNUmber = '';

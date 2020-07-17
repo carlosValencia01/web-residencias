@@ -10,7 +10,7 @@ import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import Swal from 'sweetalert2';
-import { StudentsExpedient } from 'src/app/interfaces/inscriptions.interface';
+import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
 import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
 import { LoadingBarService } from 'ngx-loading-bar';
 
@@ -28,7 +28,7 @@ export class ListPendingStudentComponent implements OnInit {
 
   rolName;
 
-  studentsForTable: Array<StudentsExpedient>;
+  studentsForTable: Array<IStudentExpedient>;
   emptyUInscription: uInscription;
   filteredStudents;
   readyToShowTable = {

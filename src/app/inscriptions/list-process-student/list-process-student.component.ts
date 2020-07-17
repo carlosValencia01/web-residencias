@@ -7,8 +7,9 @@ import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscription
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import { StudentsExpedient } from 'src/app/interfaces/inscriptions.interface';
+import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
 import { LoadingBarService } from 'ngx-loading-bar';
+import { iState } from 'src/app/providers/reception-act/State/iState';
 
 @Component({
   selector: 'app-list-process-student',
@@ -23,7 +24,7 @@ export class ListProcessStudentComponent implements OnInit {
   // periods = [];  
   rolName;      
   
-  studentsForTable: Array<StudentsExpedient>;
+  studentsForTable: Array<IStudentExpedient>;
   filteredStudents;
   readyToShowTable = {
     students: false,

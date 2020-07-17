@@ -49,10 +49,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
   docContrato;
   docAcuse;
   docCompromiso;
-  docSchedule;
 
-  solicitudStudentSend=false; //validate if student upload signed solicitud
-  contratoStudentSend=false; //validate if student upload signed contrato
 
   // Maestria
   certificateLDoc;
@@ -137,10 +134,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
    public config5: DropzoneConfigInterface;
    public config6: DropzoneConfigInterface;
    public config7: DropzoneConfigInterface;
-   public configAcuse: DropzoneConfigInterface;
-   public configSchedule: DropzoneConfigInterface;
-   public configContrato: DropzoneConfigInterface;
-   public configSolicitud: DropzoneConfigInterface;
+   
 
 
 
@@ -277,10 +271,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
 
         this.docSolicitud = documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-SOLICITUD.pdf')[0] : '';
         this.docContrato = documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CONTRATO.pdf')[0] : '';
-        this.docAcuse = documents.filter(docc => docc.filename == this.data.email+'-ACUSE.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-ACUSE.pdf')[0] : '';
-        this.docSchedule = documents.filter(docc => docc.filename == this.data.email+'-HORARIO.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-HORARIO.pdf')[0] : '';
-        this.solicitudStudentSend = this.docSolicitud.status.length > 1; // if there are 2 or more status
-        this.contratoStudentSend = this.docContrato.status.length > 1; // if there are 2 or more status
+        this.docAcuse = documents.filter(docc => docc.filename == this.data.email+'-ACUSE.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-ACUSE.pdf')[0] : '';        
         this.docCurp = documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-CURP.pdf')[0] : '';
         this.docNss = documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] ? documents.filter(docc => docc.filename == this.data.email+'-NSS.pdf')[0] : '';
         this.docFoto = documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] ? documents.filter(docc => docc.filename.indexOf('FOTO') !== -1)[0] : '';
@@ -330,8 +321,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         if(this.docSolicitud) this.docSolicitud.status = this.docSolicitud ? this.docSolicitud.status.filter( st=> st.active===true)[0] : '';
 
         if(this.docContrato) this.docContrato.status = this.docContrato ? this.docContrato.status.filter( st=> st.active===true)[0] : '';
-        if(this.docAcuse) this.docAcuse.status = this.docAcuse ? this.docAcuse.status.filter( st=> st.active===true)[0] : '';
-        if(this.docSchedule) this.docSchedule.status = this.docSchedule ? this.docSchedule.status.filter( st=> st.active===true)[0] : '';
+        if(this.docAcuse) this.docAcuse.status = this.docAcuse ? this.docAcuse.status.filter( st=> st.active===true)[0] : '';        
         
         // MAESTRIA
         if (this.certificateLDoc) this.certificateLDoc.status = this.certificateLDoc ? this.certificateLDoc.status.filter(st => st.active === true)[0] : '';
@@ -1006,21 +996,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
         });
         break;
       }
-      case "Horario": {
-        this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Cargando Horario.', '');
-        this.loadingService.setLoading(true);
-        this.inscriptionsProv.getFile(this.docSchedule.fileIdInDrive, this.docSchedule.filename).subscribe(data => {
-          var pubContrato = data.file;
-          let buffContrato = new Buffer(pubContrato.data);
-          var pdfSrcContrato = buffContrato;
-          var blob = new Blob([pdfSrcContrato], {type: "application/pdf"});
-          this.loadingService.setLoading(false);
-          window.open( URL.createObjectURL(blob) );
-        }, error => {
-          console.log(error);
-        });
-        break;
-      }
+      
 
     }
   }
@@ -1839,27 +1815,7 @@ export class ProfileInscriptionPageComponent implements OnInit {
       clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO.pdf', 'mimeType': 'application/pdf', newF: this.docCompromiso ? false :true, fileId:this.docCompromiso ? this.docCompromiso.fileIdInDrive :''},
       acceptedFiles:'application/pdf',
-    };
-    this.configAcuse = {
-      clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-ACUSE.pdf', 'mimeType': 'application/pdf', newF: this.docAcuse ? false :true, fileId:this.docAcuse ? this.docAcuse.fileIdInDrive :''},
-      acceptedFiles:'application/pdf',
-    };
-    this.configContrato = {
-      clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-CONTRATO.pdf', 'mimeType': 'application/pdf', newF: this.docContrato ? false :true, fileId:this.docContrato ? this.docContrato.fileIdInDrive :''},
-      acceptedFiles:'application/pdf',
-    };
-    this.configSchedule = {
-      clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-HORARIO.pdf', 'mimeType': 'application/pdf', newF: this.docSchedule ? false :true, fileId:this.docSchedule ? this.docSchedule.fileIdInDrive :''},
-      acceptedFiles:'application/pdf',
-    };
-    this.configSolicitud = {
-      clickable: true, maxFiles: 1,
-      params: {folderId:this.folderId, 'filename': this.data.email+'-SOLICITUD.pdf', 'mimeType': 'application/pdf', newF: this.docSolicitud ? false :true, fileId:this.docSolicitud ? this.docSolicitud.fileIdInDrive :''},
-      acceptedFiles:'application/pdf',
-    };
+    };    
 
     // DROPZONE MAESTRIA
     this.config8 = {

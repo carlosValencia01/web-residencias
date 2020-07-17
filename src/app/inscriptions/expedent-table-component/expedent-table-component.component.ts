@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild, Input, Output, EventEmitter, SimpleChange
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { StudentsExpedient, Career } from 'src/app/interfaces/inscriptions.interface';
+import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
+import { ICareer } from 'src/app/entities/app/career.model';
 import { StudentInformationComponent } from '../student-information/student-information.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ReviewExpedientComponent } from '../review-expedient/review-expedient.component';
@@ -25,7 +26,7 @@ import { ENTER, COMMA } from '@angular/cdk/keycodes';
 })
 export class ExpedentTableComponentComponent implements OnInit {
 
-  @Input('students') students: Array<StudentsExpedient>;
+  @Input('students') students: Array<IStudentExpedient>;
   @Input('tabName') tabName: string;
   @Input('roleName') roleName: string;
   @Input('periods') periods: Array<any>;
@@ -54,7 +55,7 @@ export class ExpedentTableComponentComponent implements OnInit {
   @Output() reloadEmit = new EventEmitter();  
 
   displayedColumns: string[] = ['controlNumber', 'fullName', 'career', 'avance','status','exp','actions'];
-  dataSource: MatTableDataSource<StudentsExpedient>;
+  dataSource: MatTableDataSource<IStudentExpedient>;
   
   @ViewChild(MatPaginator) set paginator(paginator: MatPaginator){
     this.dataSource.paginator = paginator;
@@ -66,8 +67,8 @@ export class ExpedentTableComponentComponent implements OnInit {
   @ViewChild('periodInput') periodInput: ElementRef<HTMLInputElement>;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   showTable: boolean = false;
-  formatedStudents: Array<StudentsExpedient>  = [];
-  careers: Array<Career>;
+  formatedStudents: Array<IStudentExpedient>  = [];
+  careers: Array<ICareer>;
   filters = { //variable para controlar los filtros que estan activos
     career:{
       status:false,
