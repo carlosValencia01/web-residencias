@@ -1,12 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import * as moment from 'moment';
 import { iRequest } from 'src/app/entities/reception-act/request.model';
-import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
 import { RequestService } from 'src/app/services/reception-act/request.service';
-import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import * as moment from 'moment';
 
 moment.locale('es');
 
@@ -31,24 +31,26 @@ export class ExpedientComponent implements OnInit {
   ) {
     this.role = this._CookiesService.getData().user.rol.name.toLowerCase();
     this.init();
-   }
+  }
 
   ngOnInit() {
   }
 
   init() {
     this.Request = this.data.request;
-    const acronym = this.Request.careerAcronym;
+    console.log(this.Request);
+
+    const acronym = this.Request.student.careerId.acronym;
 
     this.degree = this.Request.phase === eRequest.GENERATED
       || this.Request.phase === eRequest.TITLED
       ? acronym !== 'LA' && acronym !== 'ARQ'
         && acronym !== 'MCA' && acronym !== 'DCA'
-      ? 'ING.' : acronym === 'LA'
-      ? 'LIC.' : acronym === 'ARQ'
-      ? 'ARQ.' : acronym === 'MCA'
-      ? 'M.C.A.' : acronym === 'DCA'
-      ? 'D.C.A.' : 'M.T.I' : '';
+        ? 'ING.' : acronym === 'LA'
+          ? 'LIC.' : acronym === 'ARQ'
+            ? 'ARQ.' : acronym === 'MCA'
+              ? 'M.C.A.' : acronym === 'DCA'
+                ? 'D.C.A.' : 'M.T.I' : '';
   }
 
   onClose() {

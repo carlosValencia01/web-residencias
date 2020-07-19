@@ -20,6 +20,8 @@ import { NotificationsServices } from 'src/app/services/app/notifications.servic
 import { RequestService } from 'src/app/services/reception-act/request.service';
 import { RequestComponentComponent } from 'src/app/titulation/request-component/request-component.component';
 import { ViewerComponentComponent } from 'src/app/titulation/viewer-component/viewer-component.component';
+import { IEmployee } from '../../entities/shared/employee.model';
+import { EmployeeProvider } from '../../providers/shared/employee.prov';
 
 moment.locale('es');
 
@@ -100,6 +102,7 @@ export class TitulacionPageComponent implements OnInit {
   constructor(
     private studentProv: StudentProvider,
     private cookiesService: CookiesService,
+    private employeeProvider: EmployeeProvider,
     private imgService: ImageToBase64Service,
     private router: Router,
     private routeActive: ActivatedRoute,
@@ -112,6 +115,11 @@ export class TitulacionPageComponent implements OnInit {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+
+    const bosses = this.cookiesService.getBosses();
+    if (!bosses) {
+      this._getBosses();
+    }
   }
 
   ngOnInit() {
@@ -123,7 +131,7 @@ export class TitulacionPageComponent implements OnInit {
 
   // tslint:disable-next-line: use-life-cycle-interface
   ngAfterContentInit() {
-    this.studentProv.getStatusById(this.user._id).subscribe( data => {
+    this.studentProv.getStatusById(this.user._id).subscribe(data => {
       this.isGraduate = data.status === eStatus.EGRESADO;
       this.isTitled = data.status === eStatus.TITULADO;
       this.isApprovedEnglish = data.english;
@@ -276,7 +284,7 @@ export class TitulacionPageComponent implements OnInit {
 
   resetSteep(): void {
     this.SteepOneCompleted = false;
-    this.SteepTwoCompleted =  false;
+    this.SteepTwoCompleted = false;
     this.SteepThreeCompleted = false;
     this.SteepFourCompleted = false;
     this.SteepFiveCompleted = false;
@@ -303,4 +311,41 @@ export class TitulacionPageComponent implements OnInit {
     }
     return '';
   }
+
+  // Guarda los datos de los jefes
+  private async _getBosses() {
+    const jDeptoDiv = await this._getBoss({
+      Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES',
+      Position: 'JEFE DE DEPARTAMENTO'
+    });
+    const cDeptoDiv = await this._getBoss({
+      Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES',
+      Position: 'COORDINADOR DE TITULACIÓN'
+    });
+    const jDeptoEsc = await this._getBoss({
+      Department: 'DEPARTAMENTO DE SERVICIOS ESCOLARES',
+      Position: 'JEFE DE DEPARTAMENTO'
+    });
+    const director = await this._getBoss({ Department: 'DIRECCIÓN', Position: 'DIRECTOR' });
+
+    const bosses = {
+      JDeptoDiv: jDeptoDiv,
+      CDeptoDiv: cDeptoDiv,
+      JDeptoEsc: jDeptoEsc,
+      Director: director,
+    };
+    this.cookiesService.saveBosses(bosses);
+  }
+
+  // Obtiene los datos del empleado por el puesto
+  private _getBoss(search: { Department: string, Position: string }): Promise<IEmployee> {
+    return new Promise(resolve => {
+      this.employeeProvider
+        .searchEmployee(search)
+        .subscribe(
+          ({ Employee }) => resolve(Employee),
+          (_) => resolve(null));
+    });
+  }
+
 }

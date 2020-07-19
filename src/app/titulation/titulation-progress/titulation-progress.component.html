@@ -1,608 +1,511 @@
 <div class="row w-100 m-0 p-0" *ngIf="tabNumber">
-    <div class="col-12 p-0">
-        <div class="card">
-            <div class="row text-center p-4 m-0 mt-2" *ngIf="tabNumber === 5" style="padding: 5px;">
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <mat-card class="cardStatus"><b>Pendientes</b><br>{{cantPendientes}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <mat-card class="cardStatus"><b>Impresas</b><br>{{cantImpresos}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <mat-card class="cardStatus"><b>Listas</b><br>{{cantListos}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <mat-card class="cardStatus"><b>Entregadas</b><br>{{cantEntregados}}</mat-card>
-                </div>
-            </div>
-            <div class="row" *ngIf="tabNumber === 6" style="padding: 5px;">
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <mat-card class="cardStatus"><b>Actas Listas</b><br>{{cantListos}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-2">
-                    <mat-card class="cardStatus"><b>Actas Entregadas</b><br>{{cantEntregados}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-2">
-                    <mat-card class="cardStatus"><b>Tít. Registrados</b><br>{{cantProceso}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-2">
-                    <mat-card class="cardStatus"><b>Tít. Listos</b><br>{{cantAceptados}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <mat-card class="cardStatus"><b>Tít. Entregados</b><br>{{cantFinalizados}}</mat-card>
-                </div>
-            </div>
-            <div class="row text-center p-4 m-0 mt-2" *ngIf="tabNumber === 7" style="padding: 5px;">
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <mat-card class="cardStatus"><b>Pendientes</b><br>{{cantActasPendientes}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-3">
-                    <mat-card class="cardStatus"><b>Entregadas</b><br>{{cantActasEntregadas}}</mat-card>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-5">
-                    <mat-form-field>
-                        <mat-chip-list #chipListCareers aria-label="Period selection">
-                            <mat-chip *ngFor="let c of usedCareers" selectable="true" removable="true"
-                                (removed)="removeCareer(c)">
-                                {{c.acronym}}
-                                <mat-icon matChipRemove>cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Filtrar por carreras..." #careerInput [formControl]="careerCtrl"
-                                [matAutocomplete]="autoCarrers" [matChipInputFor]="chipListCareers"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
-                                (matChipInputTokenEnd)="addCareer($event)" (ngModelChange)="filterCareer($event)"
-                                matInput>
-                        </mat-chip-list>
-                        <mat-autocomplete #autoCarrers="matAutocomplete">
-                            <mat-option *ngFor="let career of carreras" [value]="career"
-                                (click)="slectedCareer(career)">
-                                {{career.shortName}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-                <div class="col-xs-12 col-md-1">
-                    <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
-                        (click)="reload()" data-toggle="tooltip" title="Actualizar">
-                        <mat-icon>cached</mat-icon>
-                    </button>
-                </div>
-            </div>
-            <div class="row text-center p-4 m-0 mt-2" *ngIf="role!=='jefe académico' && role!=='secretaria académica'">
-                <div class="col-xs-12 col-md-3" *ngIf="tabNumber === 1">
-                    <mat-form-field *ngIf="periods && tabNumber === 6 || tabNumber === 1">
-                        <mat-chip-list #chipList aria-label="Period selection">
-                            <mat-chip *ngFor="let p of usedPeriods" selectable="true" removable="true"
-                                (removed)="remove(p)">
-                                {{p.periodName}}-{{p.year}}
-                                <mat-icon matChipRemove>cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Filtrar por período..." #periodInput [formControl]="periodCtrl"
-                                [matAutocomplete]="auto" [matChipInputFor]="chipList"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
-                                (matChipInputTokenEnd)="addPeriod($event)" (ngModelChange)="filterPeriod($event)"
-                                matInput>
-                        </mat-chip-list>
-                        <mat-autocomplete #auto="matAutocomplete">
-                            <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
-                                {{period.periodName}}-{{period.year}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-
-                <div class="col-xs-12 col-md-5" *ngIf="tabNumber === 6">
-                    <mat-form-field *ngIf="periods && tabNumber === 6 || tabNumber === 1">
-                        <mat-chip-list #chipList aria-label="Period selection">
-                            <mat-chip *ngFor="let p of usedPeriods" selectable="true" removable="true"
-                                (removed)="remove(p)">
-                                {{p.periodName}}-{{p.year}}
-                                <mat-icon matChipRemove>cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Filtrar por período..." #periodInput [formControl]="periodCtrl"
-                                [matAutocomplete]="auto" [matChipInputFor]="chipList"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
-                                (matChipInputTokenEnd)="addPeriod($event)" (ngModelChange)="filterPeriod($event)"
-                                matInput>
-                        </mat-chip-list>
-                        <mat-autocomplete #auto="matAutocomplete">
-                            <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
-                                {{period.periodName}}-{{period.year}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-
-                <div class="col-xs-12 col-md-4" *ngIf="tabNumber === 1">
-                    <mat-form-field>
-                        <mat-chip-list #chipListCareers aria-label="Period selection">
-                            <mat-chip *ngFor="let c of usedCareers" selectable="true" removable="true"
-                                (removed)="removeCareer(c)">
-                                {{c.acronym}}
-                                <mat-icon matChipRemove>cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Filtrar por carreras..." #careerInput [formControl]="careerCtrl"
-                                [matAutocomplete]="autoCarrers" [matChipInputFor]="chipListCareers"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
-                                (matChipInputTokenEnd)="addCareer($event)" (ngModelChange)="filterCareer($event)"
-                                matInput>
-                        </mat-chip-list>
-                        <mat-autocomplete #autoCarrers="matAutocomplete">
-                            <mat-option *ngFor="let career of carreras" [value]="career"
-                                (click)="slectedCareer(career)">
-                                {{career.shortName}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-
-                <div class="col-xs-12 col-md-4" *ngIf="tabNumber === 1">
-                    <mat-form-field>
-                        <mat-chip-list #chipListPhases aria-label="Period selection">
-                            <mat-chip *ngFor="let p of usedPhases" selectable="true" removable="true"
-                                (removed)="removePhase(p)">
-                                {{p.status}}
-                                <mat-icon matChipRemove>cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Filtrar por fase..." #phaseInput [formControl]="phaseCtrl"
-                                [matAutocomplete]="autoPhases" [matChipInputFor]="chipListPhases"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
-                                (matChipInputTokenEnd)="addPhase($event)" (ngModelChange)="filterPhase($event)"
-                                matInput>
-                        </mat-chip-list>
-                        <mat-autocomplete #autoPhases="matAutocomplete">
-                            <mat-option *ngFor="let phase of fases" [value]="phase" (click)="slectedPhase(phase)">
-                                {{phase.status}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-
-                <div class="col-xs-12 col-md-6" *ngIf="tabNumber === 6">
-                    <mat-form-field>
-                        <mat-chip-list #chipListCareers aria-label="Period selection">
-                            <mat-chip *ngFor="let c of usedCareers" selectable="true" removable="true"
-                                (removed)="removeCareer(c)">
-                                {{c.acronym}}
-                                <mat-icon matChipRemove>cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Filtrar por carreras..." #careerInput [formControl]="careerCtrl"
-                                [matAutocomplete]="autoCarrers" [matChipInputFor]="chipListCareers"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
-                                (matChipInputTokenEnd)="addCareer($event)" (ngModelChange)="filterCareer($event)"
-                                matInput>
-                        </mat-chip-list>
-                        <mat-autocomplete #autoCarrers="matAutocomplete">
-                            <mat-option *ngFor="let career of carreras" [value]="career"
-                                (click)="slectedCareer(career)">
-                                {{career.shortName}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-
-                <div class="col-11" *ngIf="tabNumber !== 6 && tabNumber !== 1 && tabNumber !== 7">
-                    <mat-form-field>
-                        <mat-chip-list #chipListCareers aria-label="Period selection">
-                            <mat-chip *ngFor="let c of usedCareers" selectable="true" removable="true"
-                                (removed)="removeCareer(c)">
-                                {{c.acronym}}
-                                <mat-icon matChipRemove>cancel</mat-icon>
-                            </mat-chip>
-                            <input placeholder="Filtrar por carreras..." #careerInput [formControl]="careerCtrl"
-                                [matAutocomplete]="autoCarrers" [matChipInputFor]="chipListCareers"
-                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
-                                (matChipInputTokenEnd)="addCareer($event)" (ngModelChange)="filterCareer($event)"
-                                matInput>
-                        </mat-chip-list>
-                        <mat-autocomplete #autoCarrers="matAutocomplete">
-                            <mat-option *ngFor="let career of carreras" [value]="career"
-                                (click)="slectedCareer(career)">
-                                {{career.shortName}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                </div>
-
-                <div class="col-xs-12 col-md-1"  *ngIf="tabNumber !== 7">
-                    <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
-                        (click)="reload()" data-toggle="tooltip" title="Actualizar">
-                        <mat-icon>cached</mat-icon>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="row mx-1 mb-3" *ngIf="tabNumber == 1 || tabNumber == 6">
-                <div class="input-group input-group-sm center" [class.col-12]="tabNumber == 6"
-                    [class.col-10]="tabNumber == 1 && canExport">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Filtro</span>
-                    </div>
-                    <input type="text" class="form-control" (keyup)="applyFilter($event.target.value)"
-                        placeholder="Filtro" id="myfilter">
-                </div>
-                <div *ngIf="tabNumber == 1 && canExport" class="col-1 center">
-                    <div class="div-img">
-                        <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()"
-                            style="width: 50px;" data-toggle="tooltip" title="Exportar expedientes" />
-                    </div>
-                </div>
-                <div *ngIf="tabNumber == 1 && role === 'administrador'" class="col-1 text-right">
-                    <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
-                        (click)="uploadSummary()" data-toggle="tooltip" title="GENERAR FICHAS DE SOLICITUDES">
-                        <mat-icon>add_circle</mat-icon>
-                    </button>
-                </div>                
-            </div>
-            <div class="row">
-                <div class="mat-elevation-z8 col-12">
-                    <table mat-table [dataSource]="dataSource" matSort>
-                        <!-- ID Column -->
-                        <ng-container matColumnDef="_id">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-                            <td mat-cell *matCellDef="let row"> {{row._id}} </td>
-                        </ng-container>
-
-                        <!-- Progress Column -->
-                        <ng-container matColumnDef="controlNumber">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Número
-                                Control
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%"> {{row.controlNumber}} </td>
-                        </ng-container>
-
-                        <!-- Name Column -->
-                        <ng-container matColumnDef="fullName">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:20%"> Nombre
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:20%"> {{row.fullName}} </td>
-                        </ng-container>
-
-                        <!-- Color Column -->
-                        <ng-container matColumnDef="career">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Carrera
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%"> {{row.careerAcronym}} </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="phase">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Fase </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%">
-                                <div [ngSwitch]="row.phase">
-                                    <span *ngSwitchCase="'Capturado'"
-                                        class="badge badge-pill badge-captured">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Enviado'"
-                                        class="badge badge-pill badge-sent">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Verificado'"
-                                        class="badge badge-pill badge-verified">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Registrado'"
-                                        class="badge badge-pill badge-registered">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Liberado'"
-                                        class="badge badge-pill badge-released">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Entregado'"
-                                        class="badge badge-pill badge-delivered">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Validado'"
-                                        class="badge badge-pill badge-validated">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Asignado'"
-                                        class="badge badge-pill badge-assigned">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Realizado'"
-                                        class="badge badge-pill badge-realized">{{row.phase}}</span>
-                                    <span *ngSwitchCase="'Generado'"
-                                        class="badge badge-pill badge-generated">{{row.phase}}</span>
-                                    <span *ngSwitchDefault class="badge badge-pill badge-gray">{{row.phase}}</span>
-                                </div>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="status">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Estatus
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%">
-                                {{row.status}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="titulationDate">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Fecha Acto
-                                Recepcional
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%">
-                                {{row.proposedDateLocal}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="optionTitled">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Opción Titulación
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%; text-align: center;">
-                                {{row.titulationOption.split(' ')[0]}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="applicationDateLocal">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Fecha Creación
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%"> {{row.applicationDateLocal}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="lastModifiedLocal">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">Última
-                                Modificación
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%"> {{row.lastModifiedLocal}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="statusExamAct">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Estatus Acta
-                            </th>
-                            <td mat-cell *matCellDef="let row" style="width:10%"> 
-                                {{row.examActStatus === true ? 'Entregado' : row.examActStatus === false ? 'Pendiente' : ''}}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="action" *ngIf="tabNumber !== 7">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:5%"></th>
-                            <td mat-cell *matCellDef="let row" style="width:5%">
-                                <button mat-icon-button [matMenuTriggerFor]="actions">
-                                    <mat-icon>more_vert</mat-icon>
-                                </button>
-                                <mat-menu #actions="matMenu">
-                                    <!-- <button mat-menu-item (click)="seeRequestPDF(row._id)">
-                                                            <mat-icon>visibility</mat-icon>
-                                                            Ver solicitud
-                                                        </button> -->
-                                    <button mat-menu-item (click)="viewHistory(row._id)">
-                                        <mat-icon>assignment</mat-icon>
-                                        Historial de Avance
-                                    </button>
-                                    <button mat-menu-item (click)="seeRecord(row._id, row)">
-                                        <mat-icon>folder_shared</mat-icon>
-                                        Expediente
-                                    </button>
-                                    <div [ngSwitch]="row.phase">
-                                        <div *ngSwitchCase="'Enviado'">
-                                            <button mat-menu-item
-                                                *ngIf="role==='coordinación de titulación' || role==='administrador' || role === 'jefe div. est. prof.'"
-                                                (click)="checkRequest(row._id)">
-                                                <mat-icon>assignment_turned_in</mat-icon>
-                                                Revisar
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Verificado'">
-                                            <button mat-menu-item
-                                                *ngIf="role==='jefe académico' || role==='administrador'"
-                                                (click)="Verified(row._id)">
-                                                <mat-icon>touch_app</mat-icon>
-                                                Firmar Proyecto
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Registrado'">
-                                            <button mat-menu-item
-                                                *ngIf="role==='secretaria académica' || role==='jefe académico' || role==='administrador'"
-                                                (click)="releasedRequest(row._id)">
-                                                <mat-icon>lock_open</mat-icon>
-                                                Liberación
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Liberado'">
-                                            <button mat-menu-item
-                                                *ngIf="role==='servicios estudiantiles' || role==='administrador'"
-                                                (click)="checkReleased(row._id)">
-                                                <mat-icon>thumbs_up_down</mat-icon>
-                                                Validar Liberación
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Entregado'">
-                                            <button
-                                                *ngIf="row.status!=='Pendiente' && (role==='servicios estudiantiles' || role==='administrador')"
-                                                mat-menu-item (click)="Review(row._id, row)">
-                                                <mat-icon>search</mat-icon>
-                                                Revisar
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Validado'">
-                                            <button
-                                                *ngIf="row.status==='Pendiente' && (role==='jefe de servicios escolares' || role==='administrador')"
-                                                mat-menu-item (click)="signProof(row._id)">
-                                                <mat-icon>touch_app</mat-icon>
-                                                Firmar Constancias
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Asignado'">
-                                            <button mat-menu-item (click)="openDiary(row._id)"
-                                                *ngIf="row.status==='Pendiente'  && (role==='coordinación de titulación' || role==='administrador' || role === 'jefe div. est. prof.')">
-                                                <mat-icon>gavel</mat-icon>
-                                                Agenda
-                                            </button>
-                                            <button
-                                                *ngIf="row.status==='Proceso' && (role==='coordinación de titulación' || role==='administrador' || role === 'jefe div. est. prof.')"
-                                                mat-menu-item (click)="openDiary(row._id)">
-                                                <mat-icon>event</mat-icon>
-                                                Confirmación
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Realizado'">
-                                            <button *ngIf="(role==='jefe div. est. prof.'  || role==='administrador') && (row.status==='Pendiente')
-                                                " mat-menu-item (click)="jurySign(row._id)">
-                                                <mat-icon>touch_app</mat-icon>
-                                                Firmar oficio de jurado
-                                            </button>
-                                            <button *ngIf="(role==='coordinación de titulación'  || role==='administrador' || role === 'jefe div. est. prof.') && (row.status==='Proceso')
-                                                " mat-menu-item (click)="juryNotification(row._id)">
-                                                <mat-icon>contact_mail</mat-icon>
-                                                Generar Documentación
-                                            </button>
-                                            <button
-                                                *ngIf="role==='secretaria académica' || role==='jefe académico' || role==='administrador' && (row.status==='Pendiente' || row.status==='Proceso' )"
-                                                mat-menu-item (click)="generateTrades(row._id)">
-                                                <mat-icon>contact_mail</mat-icon>
-                                                Generar Oficio
-                                            </button>
-                                            <button
-                                                *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
-                                                mat-menu-item (click)="approve(row)">
-                                                <mat-icon>gavel</mat-icon>
-                                                Aprobar
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Generado'">
-                                            <button
-                                                *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Pendiente'"
-                                                mat-menu-item (click)="generated(row._id, 'Process')">
-                                                <mat-icon>print</mat-icon>
-                                                Generar Acta
-                                            </button>
-                                            <button
-                                                *ngIf="(role==='servicios estudiantiles' || role==='administrador') && (row.status==='Impreso' || row.status==='Aceptado')"
-                                                mat-menu-item (click)="reImprimir(row._id)">
-                                                <mat-icon>print</mat-icon>
-                                                Reimprimir Acta
-                                            </button>
-                                            <button
-                                                *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Impreso'"
-                                                mat-menu-item (click)="generated(row._id, 'Printed')">
-                                                <mat-icon>contact_mail</mat-icon>
-                                                Acta para entrega
-                                            </button>
-                                            <button
-                                                *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Aceptado'"
-                                                mat-menu-item (click)="generated(row._id, 'Accept')">
-                                                <mat-icon>done_all</mat-icon>
-                                                Estatus del acta
-                                            </button>
-                                        </div>
-                                        <div *ngSwitchCase="'Titulado'">
-                                            <button
-                                                *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Pendiente'"
-                                                mat-menu-item (click)="titled(row._id, 'Process', row)">
-                                                <mat-icon>contact_phone</mat-icon>
-                                                Notificar para entrega de título
-                                            </button>
-                                            <button
-                                                *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
-                                                mat-menu-item (click)="titled(row._id, 'Accept', row)">
-                                                <mat-icon>verified_user</mat-icon>
-                                                Validar Documentos
-                                            </button>
-                                            <button
-                                                *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Aceptado'"
-                                                mat-menu-item (click)="titled(row._id, 'Finalized', row)">
-                                                <mat-icon>school</mat-icon>
-                                                Título Entregado
-                                            </button>
-                                        </div>
-                                        <!-- <button *ngSwitchDefault mat-menu-item (click)="openRequestForm(row._id)">
-                                                                <mat-icon>assignment_turned_in</mat-icon>
-                                                                Revisar
-                                                            </button> -->
-                                    </div>
-                                </mat-menu>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="action" *ngIf="tabNumber === 7">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:5%"></th>
-                            <td mat-cell *matCellDef="let row" style="width:5%">
-                                <button mat-icon-button [matMenuTriggerFor]="actions">
-                                    <mat-icon>more_vert</mat-icon>
-                                </button>
-                                <mat-menu #actions="matMenu">
-                                    <button mat-menu-item (click)="viewHistory(row._id)">
-                                        <mat-icon>assignment</mat-icon>
-                                        Historial de Avance
-                                    </button>
-                                    <button mat-menu-item (click)="seeRecord(row._id, row)">
-                                        <mat-icon>folder_shared</mat-icon>
-                                        Expediente
-                                    </button>
-                                    <button mat-menu-item (click)="changeStatusExamAct(row._id,true)" *ngIf="row.examActStatus === false">
-                                        <mat-icon>check_box</mat-icon>
-                                        Marcar Acta Como Entregada
-                                    </button>
-                                    <button mat-menu-item (click)="changeStatusExamAct(row._id,false)" *ngIf="row.examActStatus === true">
-                                        <mat-icon>indeterminate_check_box</mat-icon>
-                                        Marcar Acta Como Pendiente
-                                    </button>
-                                </mat-menu>
-                            </td>
-                        </ng-container>
-
-                        <ng-template [ngIf]="tabNumber < 4">
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                        </ng-template>
-                        <ng-template [ngIf]="tabNumber >= 4 && tabNumber < 7">
-                            <tr mat-header-row *matHeaderRowDef="displayedColumnsGestionTitled"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumnsGestionTitled;"></tr>
-                        </ng-template>
-                        <ng-template [ngIf]="tabNumber >= 7">
-                            <tr mat-header-row *matHeaderRowDef="displayedColumnsExamAct"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumnsExamAct;"></tr>
-                        </ng-template>
-                    </table>
-                    <mat-paginator [pageSizeOptions]="[5, 10, 15,20]"></mat-paginator>
-                </div>
-            </div>
+  <div class="col-12 p-0">
+    <div class="card px-4 py-3">
+      <div class="row text-center p-0 p-md-3 m-0 m-0" *ngIf="tabNumber === 5" style="padding: 5px;">
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <mat-card class="cardStatus"><b>Pendientes</b><br>{{requestsCount.pendientes}}</mat-card>
         </div>
-    </div>
-</div>
-<table class="table table-striped table-bordered table-hover"
-    data-cols-width="2,20,16,15,35,15,10,50,50,50,50,15,28,15,15" id="table" *ngIf="dataSource && tabNumber === 1">
-    <thead>
-        <tr>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">#</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Opción de titulación</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Num. de control</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Carrera</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Correo</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Teléfono</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Género</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Presidente(a)</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Secretario(a)</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Vocal</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Suplente</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
-                data-f-color="#FFFFFF">Fecha</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center"
-                data-a-v="middle">Período de titulación</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center"
-                data-a-v="middle">Fase</th>
-            <th data-f-bold="true" data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center"
-                data-a-v="middle">Estatus</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let req of dataSource.filteredData; let i = index">
-            <td data-f-sz="12" data-t="n" data-a-h="center" data-a-v="middle">{{i+1}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.titulationOption | slice:0:2}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.controlNumber}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.careerAcronym}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.email}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.telephone}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.student.sex}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.jury[0] ? req.jury[0].name : '---'}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.jury[1] ? req.jury[1].name : '---'}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.jury[2] ? req.jury[2].name : '---'}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.jury[3] ? req.jury[3].name : '---'}}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.proposedDate ? req.proposedDateLocal : '---'}}
-            </td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.period.periodName +'-'+ req.period.year }}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.phase }}</td>
-            <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.status }}</td>
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <mat-card class="cardStatus"><b>Impresas</b><br>{{requestsCount.impresas}}</mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <mat-card class="cardStatus"><b>Listas</b><br>{{requestsCount.listas}}</mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <mat-card class="cardStatus"><b>Entregadas</b><br>{{requestsCount.entregadas}}</mat-card>
+        </div>
+      </div>
+      <div class="row" *ngIf="tabNumber === 6" style="padding: 5px;">
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <mat-card class="cardStatus"><b>Actas Listas</b><br>{{requestsCount.listas}}</mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2">
+          <mat-card class="cardStatus"><b>Actas Entregadas</b><br>{{requestsCount.entregadas}}</mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2">
+          <mat-card class="cardStatus"><b>Tít. Registrados</b><br>{{requestsCount.proceso}}</mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-2">
+          <mat-card class="cardStatus"><b>Tít. Listos</b><br>{{requestsCount.aceptadas}}</mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <mat-card class="cardStatus"><b>Tít. Entregados</b><br>{{requestsCount.finalizadas}}</mat-card>
+        </div>
+      </div>
+      <div class="row text-center p-0 p-md-3 m-0 m-0" *ngIf="tabNumber === 7" style="padding: 5px;">
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <mat-card class="cardStatus"><b>Pendientes</b><br>{{requestsCount.actasPendientes}}</mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-3">
+          <mat-card class="cardStatus"><b>Entregadas</b><br>{{requestsCount.actasEntregadas}}</mat-card>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-5">
+          <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
+        </div>
+        <div class="col-xs-12 col-md-1">
+          <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
+            (click)="reload()" data-toggle="tooltip" title="Actualizar">
+            <mat-icon>cached</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="row text-center p-0 p-md-3 m-0 m-0" *ngIf="role!=='jefe académico' && role!=='secretaria académica'">
+        <div class="col-xs-12 col-md-3" *ngIf="tabNumber === 1">
+          <ng-container *ngIf="data.periods && tabNumber === 6 || tabNumber === 1; then periodsFilter"></ng-container>
+        </div>
 
-        </tr>
-    </tbody>
+        <div class="col-xs-12 col-md-5" *ngIf="tabNumber === 6">
+          <ng-container *ngIf="data.periods && tabNumber === 6 || tabNumber === 1; then periodsFilter"></ng-container>
+        </div>
+
+        <div class="col-xs-12 col-md-4" *ngIf="tabNumber === 1">
+          <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
+        </div>
+
+        <div class="col-xs-12 col-md-4" *ngIf="tabNumber === 1">
+          <ng-container *ngTemplateOutlet="phasesFilter"></ng-container>
+        </div>
+
+        <div class="col-xs-12 col-md-6" *ngIf="tabNumber === 6">
+          <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
+        </div>
+
+        <div class="col-11" *ngIf="tabNumber !== 6 && tabNumber !== 1 && tabNumber !== 7">
+          <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
+        </div>
+
+        <div class="col-xs-12 col-md-1 mb-1" *ngIf="tabNumber !== 7">
+          <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
+            (click)="reload()" data-toggle="tooltip" title="Actualizar">
+            <mat-icon>cached</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="row p-0 p-md-2 mb-2 d-flex justify-content-center" *ngIf="tabNumber===1 || tabNumber===6">
+        <div class="col-12 col-md-10 d-flex justify-content-center">
+          <mat-form-field class="col-12" appearance="fill">
+            <mat-label>Introduzca el texto de su búsqueda</mat-label>
+            <input matInput type="text" (keyup)="applySearchFilter($event.target.value)" placeholder="Texto a buscar..."
+              id="myfilter">
+          </mat-form-field>
+        </div>
+        <div class="row col-12 col-md-2 d-flex justify-content-center" *ngIf="tabNumber === 1">
+          <div *ngIf="tabNumber === 1 && canExport" class="col-6">
+            <button mat-mini-fab type="button" (click)="excelExport()" data-toggle="tooltip"
+              title="Descargar expedientes en excel" color="primary">
+              <mat-icon>cloud_download</mat-icon>
+            </button>
+          </div>
+          <div *ngIf="tabNumber === 1 && role === 'administrador'" class="col-6">
+            <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
+              (click)="uploadSummary()" data-toggle="tooltip" title="GENERAR FICHAS DE SOLICITUDES">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="mat-elevation-z8 col-12">
+          <table mat-table [dataSource]="dataSource" matSort>
+            <!-- ID Column -->
+            <ng-container matColumnDef="_id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+              <td mat-cell *matCellDef="let row"> {{row._id}} </td>
+            </ng-container>
+
+            <!-- Control number Column -->
+            <ng-container matColumnDef="controlNumber">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">
+                Número control
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:10%"> {{row.controlNumber}} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="fullName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:20%">
+                Nombre
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:20%"> {{row.fullName}} </td>
+            </ng-container>
+
+            <!-- Career acronym Column -->
+            <ng-container matColumnDef="career">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">
+                Carrera
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:10%"> {{row.careerAcronym}} </td>
+            </ng-container>
+
+            <!-- Phase column -->
+            <ng-container matColumnDef="phase">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%"> Fase </th>
+              <td mat-cell *matCellDef="let row" style="width:10%">
+                <div [ngSwitch]="row.phase">
+                  <span *ngSwitchCase="'Capturado'" class="badge badge-pill badge-captured">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Enviado'" class="badge badge-pill badge-sent">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Verificado'" class="badge badge-pill badge-verified">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Registrado'" class="badge badge-pill badge-registered">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Liberado'" class="badge badge-pill badge-released">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Entregado'" class="badge badge-pill badge-delivered">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Validado'" class="badge badge-pill badge-validated">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Asignado'" class="badge badge-pill badge-assigned">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Realizado'" class="badge badge-pill badge-realized">{{row.phase}}</span>
+                  <span *ngSwitchCase="'Generado'" class="badge badge-pill badge-generated">{{row.phase}}</span>
+                  <span *ngSwitchDefault class="badge badge-pill badge-gray">{{row.phase}}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Status column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">
+                Estatus
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:10%">
+                {{row.status}}
+              </td>
+            </ng-container>
+
+            <!-- Titulation date column -->
+            <ng-container matColumnDef="titulationDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">
+                Fecha acto recepcional
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:10%">
+                {{row.proposedDateLocal}}
+              </td>
+            </ng-container>
+
+            <!-- Titulation option column -->
+            <ng-container matColumnDef="optionTitled">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">
+                Opción titulación
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:10%; text-align: center;">
+                {{row.titulationOption.split(' ')[0]}}
+              </td>
+            </ng-container>
+
+            <!-- Creation date column -->
+            <ng-container matColumnDef="applicationDateLocal">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">
+                Fecha creación
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:10%"> {{row.applicationDateLocal}}
+              </td>
+            </ng-container>
+
+            <!-- Last modified column -->
+            <ng-container matColumnDef="lastModifiedLocal">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">
+                Última modificación
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:10%"> {{row.lastModifiedLocal}}
+              </td>
+            </ng-container>
+
+            <!-- Exam act status column -->
+            <ng-container matColumnDef="statusExamAct">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:10%">
+                Estatus acta
+              </th>
+              <td mat-cell *matCellDef="let row" style="width:10%">
+                {{row.examActStatus === true ? 'Entregado' : row.examActStatus === false ? 'Pendiente' : ''}}
+              </td>
+            </ng-container>
+
+            <!-- Actions column -->
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="width:5%"></th>
+              <td mat-cell *matCellDef="let row" style="width:5%">
+                <button mat-icon-button [matMenuTriggerFor]="actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #actions="matMenu">
+                  <button mat-menu-item (click)="viewHistory(row._id)">
+                    <mat-icon>assignment</mat-icon>
+                    Historial de avance
+                  </button>
+                  <button mat-menu-item (click)="seeRecord(row._id, row.request)">
+                    <mat-icon>folder_shared</mat-icon>
+                    Expediente
+                  </button>
+                  <div [ngSwitch]="row.phase">
+                    <div *ngSwitchCase="'Enviado'">
+                      <button mat-menu-item
+                        *ngIf="role==='coordinación de titulación' || role==='administrador' || role === 'jefe div. est. prof.'"
+                        (click)="checkRequest(row._id)">
+                        <mat-icon>assignment_turned_in</mat-icon>
+                        Revisar
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Verificado'">
+                      <button mat-menu-item *ngIf="role==='jefe académico' || role==='administrador'"
+                        (click)="verified(row._id)">
+                        <mat-icon>touch_app</mat-icon>
+                        Firmar proyecto
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Registrado'">
+                      <button mat-menu-item
+                        *ngIf="role==='secretaria académica' || role==='jefe académico' || role==='administrador'"
+                        (click)="releasedRequest(row._id)">
+                        <mat-icon>lock_open</mat-icon>
+                        Liberación
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Liberado'">
+                      <button mat-menu-item *ngIf="role==='servicios estudiantiles' || role==='administrador'"
+                        (click)="checkReleased(row._id)">
+                        <mat-icon>thumbs_up_down</mat-icon>
+                        Validar liberación
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Entregado'">
+                      <button
+                        *ngIf="row.status!=='Pendiente' && (role==='servicios estudiantiles' || role==='administrador')"
+                        mat-menu-item (click)="review(row._id, row.request)">
+                        <mat-icon>search</mat-icon>
+                        Revisar
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Validado'">
+                      <button
+                        *ngIf="row.status==='Pendiente' && (role==='jefe de servicios escolares' || role==='administrador')"
+                        mat-menu-item (click)="signProof(row._id)">
+                        <mat-icon>touch_app</mat-icon>
+                        Firmar constancias
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Asignado'">
+                      <button mat-menu-item (click)="openDiary(row._id)"
+                        *ngIf="row.status==='Pendiente'  && (role==='coordinación de titulación' || role==='administrador' || role === 'jefe div. est. prof.')">
+                        <mat-icon>gavel</mat-icon>
+                        Agenda
+                      </button>
+                      <button
+                        *ngIf="row.status==='Proceso' && (role==='coordinación de titulación' || role==='administrador' || role === 'jefe div. est. prof.')"
+                        mat-menu-item (click)="openDiary(row._id)">
+                        <mat-icon>event</mat-icon>
+                        Confirmación
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Realizado'">
+                      <button
+                        *ngIf="(role==='jefe div. est. prof.'  || role==='administrador') && (row.status==='Pendiente')"
+                        mat-menu-item (click)="jurySign(row._id)">
+                        <mat-icon>touch_app</mat-icon>
+                        Firmar oficio de jurado
+                      </button>
+                      <button
+                        *ngIf="(role==='coordinación de titulación'  || role==='administrador' || role === 'jefe div. est. prof.') && (row.status==='Proceso')"
+                        mat-menu-item (click)="juryNotification(row._id)">
+                        <mat-icon>contact_mail</mat-icon>
+                        Generar documentación
+                      </button>
+                      <button
+                        *ngIf="role==='secretaria académica' || role==='jefe académico' || role==='administrador' && (row.status==='Pendiente' || row.status==='Proceso' )"
+                        mat-menu-item (click)="generateTrades(row._id)">
+                        <mat-icon>contact_mail</mat-icon>
+                        Generar oficio
+                      </button>
+                      <button
+                        *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
+                        mat-menu-item (click)="approve(row.request)">
+                        <mat-icon>gavel</mat-icon>
+                        Aprobar
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Generado'">
+                      <button
+                        *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Pendiente'"
+                        mat-menu-item (click)="generated(row._id, 'Process')">
+                        <mat-icon>print</mat-icon>
+                        Generar acta
+                      </button>
+                      <button
+                        *ngIf="(role==='servicios estudiantiles' || role==='administrador') && (row.status==='Impreso' || row.status==='Aceptado')"
+                        mat-menu-item (click)="reImprimir(row._id)">
+                        <mat-icon>print</mat-icon>
+                        Reimprimir acta
+                      </button>
+                      <button
+                        *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Impreso'"
+                        mat-menu-item (click)="generated(row._id, 'Printed')">
+                        <mat-icon>contact_mail</mat-icon>
+                        Acta para entrega
+                      </button>
+                      <button
+                        *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Aceptado'"
+                        mat-menu-item (click)="generated(row._id, 'Accept')">
+                        <mat-icon>done_all</mat-icon>
+                        Estatus del acta
+                      </button>
+                    </div>
+                    <div *ngSwitchCase="'Titulado'">
+                      <button
+                        *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Pendiente'"
+                        mat-menu-item (click)="titled(row._id, 'Process', row.request)">
+                        <mat-icon>contact_phone</mat-icon>
+                        Notificar para entrega de título
+                      </button>
+                      <button
+                        *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Proceso'"
+                        mat-menu-item (click)="titled(row._id, 'Accept', row.request)">
+                        <mat-icon>verified_user</mat-icon>
+                        Validar documentos
+                      </button>
+                      <button
+                        *ngIf="(role==='servicios estudiantiles' || role==='administrador') && row.status==='Aceptado'"
+                        mat-menu-item (click)="titled(row._id, 'Finalized', row.request)">
+                        <mat-icon>school</mat-icon>
+                        Título entregado
+                      </button>
+                    </div>
+                  </div>
+                  <button mat-menu-item *ngIf="!row.examActStatus && tabNumber === 7"
+                    (click)="changeStatusExamAct(row._id, true)">
+                    <mat-icon>check_box</mat-icon>
+                    Marcar acta como entregada
+                  </button>
+                  <button mat-menu-item *ngIf="row.examActStatus && tabNumber === 7"
+                    (click)="changeStatusExamAct(row._id, false)">
+                    <mat-icon>indeterminate_check_box</mat-icon>
+                    Marcar acta como pendiente
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+          <mat-paginator [pageSizeOptions]="[5, 10, 15,20]"></mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #periodsFilter>
+  <mat-form-field>
+    <mat-chip-list #chipList aria-label="Selección de periodos">
+      <mat-chip *ngFor="let period of usedPeriods" removable="true" (removed)="removePeriod(period)">
+        {{period}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input placeholder="Filtrar por periodos..." #periodInput [formControl]="periodCtrl" [matAutocomplete]="auto"
+        [matChipInputFor]="chipList">
+    </mat-chip-list>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="slectedPeriod($event)">
+      <mat-option *ngFor="let period of filteredPeriods | async" [value]="period">
+        {{period}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</ng-template>
+<ng-template #careersFilter>
+  <mat-form-field>
+    <mat-chip-list #chipListCareers aria-label="Selección de carreras">
+      <mat-chip *ngFor="let career of usedCareers" removable="true" (removed)="removeCareer(career)">
+        {{career}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input placeholder="Filtrar por carreras..." #careerInput [formControl]="careerCtrl"
+        [matAutocomplete]="autoCarrers" [matChipInputFor]="chipListCareers">
+    </mat-chip-list>
+    <mat-autocomplete #autoCarrers="matAutocomplete" (optionSelected)="slectedCareer($event)">
+      <mat-option *ngFor="let career of filteredCareers | async" [value]="career">
+        {{getCareerShortName(career)}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</ng-template>
+<ng-template #phasesFilter>
+  <mat-form-field>
+    <mat-chip-list #chipListPhases aria-label="Selección de fases">
+      <mat-chip *ngFor="let phase of usedPhases" removable="true" (removed)="removePhase(phase)">
+        {{getPhaseNameToShow(phase)}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+      <input placeholder="Filtrar por fases..." #phaseInput [formControl]="phaseCtrl" [matAutocomplete]="autoPhases"
+        [matChipInputFor]="chipListPhases">
+    </mat-chip-list>
+    <mat-autocomplete #autoPhases="matAutocomplete" (optionSelected)="slectedPhase($event)">
+      <mat-option *ngFor="let phase of filteredPhases | async" [value]="phase">
+        {{getPhaseNameToShow(phase)}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</ng-template>
+
+<table class="table table-striped table-bordered table-hover"
+  data-cols-width="2,20,16,15,35,15,10,50,50,50,50,15,28,15,15" id="table" *ngIf="dataSource && tabNumber === 1">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">#</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Opción de titulación</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Num. de control</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Carrera</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Correo</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Teléfono</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Género</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Presidente(a)</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Secretario(a)</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Vocal</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Suplente</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-a-h="center" data-a-v="middle" data-f-sz="14"
+        data-f-color="#FFFFFF">Fecha</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center"
+        data-a-v="middle">Período de titulación</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center"
+        data-a-v="middle">Fase</th>
+      <th data-f-bold="true" data-fill-color="#112043" data-f-sz="14" data-f-color="#FFFFFF" data-a-h="center"
+        data-a-v="middle">Estatus</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let req of dataSource.filteredData; let i = index">
+      <td data-f-sz="12" data-t="n" data-a-h="center" data-a-v="middle">{{i+1}}</td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.titulationOption | slice:0:2}}</td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.controlNumber}}</td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.request.student.careerId.acronym}}</td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.request.email}}</td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.request.telephone}}</td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.request.student.sex}}</td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">
+        {{req.request.jury[0] ? req.request.jury[0].name : '---'}}
+      </td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">
+        {{req.request.jury[1] ? req.request.jury[1].name : '---'}}
+      </td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">
+        {{req.request.jury[2] ? req.request.jury[2].name : '---'}}
+      </td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">
+        {{req.request.jury[3] ? req.request.jury[3].name : '---'}}
+      </td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">
+        {{req.request.proposedDate ? req.proposedDateLocal : '---'}}
+      </td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">
+        {{req.request.periodId.periodName +'-'+ req.request.periodId.year }}
+      </td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.phase }}</td>
+      <td data-f-sz="12" data-a-h="center" data-a-v="middle">{{req.status }}</td>
+    </tr>
+  </tbody>
 </table>

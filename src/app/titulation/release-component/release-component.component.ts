@@ -55,8 +55,8 @@ export class ReleaseComponentComponent implements OnInit {
     this.information = data;
     this.isReject = typeof (this.information.observation) !== 'undefined' && this.information.observation.length > 0;
     this.userInformation = this.cookiesService.getData().user;
-    this.studentCareer = this.information.request.career;
-    this.studentCareerAcronym = this.information.request.careerAcronym;
+    this.studentCareer = this.information.request.student.careerId.fullName;
+    this.studentCareerAcronym = this.information.request.student.careerId.acronym;
     this.oRequest = new uRequest(this.information.request, this._ImageToBase64Service, this.cookiesService);
   }
 
