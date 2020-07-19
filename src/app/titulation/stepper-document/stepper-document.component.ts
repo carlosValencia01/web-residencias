@@ -11,7 +11,7 @@ import { eFILES } from 'src/app/enumerators/reception-act/document.enum';
   styleUrls: ['./stepper-document.component.scss']
 })
 export class StepperDocumentComponent implements OnInit {
-  @ViewChild('stepper') stepperComponent: MatStepper; 
+  @ViewChild('stepper') stepperComponent: MatStepper;
   SteepOneCompleted: boolean;
   SteepTwoCompleted: boolean;
   SteepThreeCompleted: boolean;
@@ -27,7 +27,7 @@ export class StepperDocumentComponent implements OnInit {
   private MAX_SIZE_FILE = 2097152;
   private mimeType: string;
   private xmlData;
-  
+
   constructor(
     public dialogRef: MatDialogRef<StepperDocumentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -143,8 +143,8 @@ export class StepperDocumentComponent implements OnInit {
 
 
   onUpload(event): void {
-    this.fileUpload = null;    
-    
+    this.fileUpload = null;
+
     if (event.target.files && event.target.files[0]) {
       if (event.target.files[0].type === this.mimeType) {
         if (event.target.files[0].size > this.MAX_SIZE_FILE) {
@@ -154,8 +154,8 @@ export class StepperDocumentComponent implements OnInit {
           this.fileUpload = event.target.files[0];
           if(event.target.files[0].type == 'text/xml'){
             let reader = new FileReader();
-            
-            reader.onload = data=>{ //get only text              
+
+            reader.onload = data=>{ //get only text
               let text = this.excludeSpacesInNamesXML(data.target.result.toString());
               let textArea = document.getElementById('dataXML');
               let newHTML = "";
@@ -163,9 +163,9 @@ export class StepperDocumentComponent implements OnInit {
               let keywords = ["<cedulaelectronica","<cedula","</cedulaelectronica>","<profesionista","/>","<institucion","<carrera","<nodosep"];
               let wordCount  = 0, fordward=false //begin after line <?XML;
               const hasXMLLabel = text.indexOf('?xml') >-1;
-              text.split(" ").forEach((word: string)=>{                
-                if(fordward || !hasXMLLabel){                  
-                  
+              text.split(" ").forEach((word: string)=>{
+                if(fordward || !hasXMLLabel){
+
                   if(wordCount>=40){ // number of characters x line
                     newHTML+='<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
                     wordCount=0;
@@ -174,11 +174,11 @@ export class StepperDocumentComponent implements OnInit {
                     newHTML += "<span style='color: maroon;'>" + word.replace('<','&lt;').replace('>','&gt;') + "&nbsp;</span>";
                   else{
                     if(word.indexOf('"') > -1){
-                      let asign  = word.split(`"`);                    
+                      let asign  = word.split(`"`);
                       newHTML += `<span style='color: chocolate;'>${asign[0].replace(/@+/g,' ')}</span><span style='color: blue;'>"${asign[1].replace(/@+/g,' ')}"&nbsp;</span> ${
-                        asign[2] ? asign[2].indexOf('>') > -1 ? 
+                        asign[2] ? asign[2].indexOf('>') > -1 ?
                           "<span style='color: maroon;'>"+asign[2].replace(/@+/g,' ').replace('<','&lt;').replace('>','&gt;')+"</span>":
-                          '':'' 
+                          '':''
                       }`;
                     }else{
                       newHTML += "<span>" +  word.replace(/@+/g,' ').replace('<','&lt;').replace('>','&gt;') + "&nbsp;</span>";
@@ -194,12 +194,12 @@ export class StepperDocumentComponent implements OnInit {
                 {
                   fordward=true;
                 }
-              });              
+              });
               textArea.innerHTML = newHTML;
-            };            
-                 
+            };
+
             reader.readAsText(this.fileUpload);
-            
+
           }else{
 
             this.pdf = URL.createObjectURL(this.fileUpload);
@@ -207,7 +207,8 @@ export class StepperDocumentComponent implements OnInit {
         }
       } else {
         this._NotificationsServices
-          .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, su archivo debe ser de tipo PDF');
+          .showNotification(eNotificationType.ERROR, 'Acto recepcional',
+            `Error, su archivo debe ser de tipo ${this.mimeType === 'text/xml' ? 'XML' : 'PDF'}`);
       }
     }
   }
@@ -227,8 +228,8 @@ export class StepperDocumentComponent implements OnInit {
         break;
       }
       case 2: {
-       
-        
+
+
         this.dialogRef.close({ file: this.fileUpload });
         break;
       }
@@ -265,11 +266,11 @@ export class StepperDocumentComponent implements OnInit {
     let formatedText = '', temporalText='';
     let count = 0;
     text.replace(/\r?\n|\r/g,' ').split('').forEach(
-      (character)=>{        
-        if(character==`"`){// spaces into quotes    
+      (character)=>{
+        if(character==`"`){// spaces into quotes
           count++;
-        }        
-        if(count == 1){// text into quotes         
+        }
+        if(count == 1){// text into quotes
           temporalText+=character.indexOf(' ') > -1 ? '@' : character;
         }else if(count==0){
           formatedText+=character;

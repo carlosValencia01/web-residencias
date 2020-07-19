@@ -57,7 +57,6 @@ export class LoginPageComponent implements OnInit {
         this.userProv.sendTokenFromAPI(res.token);
 
         if (res.user.rol && res.user.rol.name && res.user.rol.name.toUpperCase() === 'ESTUDIANTE') {
-          this._getBosses();
           this._studentLogin(res);
           return;
         }
@@ -75,41 +74,6 @@ export class LoginPageComponent implements OnInit {
     this.cookiesServ.saveData(res);
     this.showAlertDiv = false;
     this.session.emit(eSessionStatus.ACTIVE);
-  }
-
-  private async _getBosses() {
-    const JDeptoDiv = await this._getBoss({
-      Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES',
-      Position: 'JEFE DE DEPARTAMENTO'
-    });
-    const CDeptoDiv = await this._getBoss({
-      Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES',
-      Position: 'COORDINADOR DE TITULACIÓN'
-    });
-    const JDeptoEsc = await this._getBoss({
-      Department: 'DEPARTAMENTO DE SERVICIOS ESCOLARES',
-      Position: 'JEFE DE DEPARTAMENTO'
-    });
-    const Director = await this._getBoss({ Department: 'DIRECCIÓN', Position: 'DIRECTOR' });
-    const Bosses = {
-      JDeptoDiv: JDeptoDiv,
-      CDeptoDiv: CDeptoDiv,
-      JDeptoEsc: JDeptoEsc,
-      Director: Director,
-    };
-    this.cookiesServ.saveBosses(Bosses);
-  }
-
-  private _getBoss(search: { Department: string, Position: string }) {
-    return new Promise(resolve => {
-      this.employeeProv.searchEmployee(
-        search
-      ).subscribe(response => {
-        resolve(response.Employee);
-      }, _ => {
-        resolve(null);
-      });
-    });
   }
 
   private _getEmployee(email: string) {
@@ -138,7 +102,6 @@ export class LoginPageComponent implements OnInit {
       : (res.gender === 'M') ? 'masculino' : _defaultGender).toLowerCase();
     res.profileIcon = (res.gender === 'femenino') ? 'assets/icons/woman-student.svg'
       : (res.gender === 'masculino') ? 'assets/icons/man-student.svg' : _defaultProfileIcon;
-    this._getBosses();
     this.loginIsSuccessful(res);
   }
 
@@ -179,7 +142,6 @@ export class LoginPageComponent implements OnInit {
     res.gender = (employee.gender || _defaultGender).toLowerCase();
     res.profileIcon = (res.gender === 'femenino') ? 'assets/icons/woman.svg'
       : (res.gender === 'masculino') ? 'assets/icons/man.svg' : _defaultProfileIcon;
-    this._getBosses();
     this.currentPositionService.setCurrentPosition(selectedPosition);
     res.user.position = selectedPosition._id;
     res.user.eid = employee._id;

@@ -8,3 +8,13 @@ export enum eRole {
     STUDENTSERVICES = 'Servicios Estudiantiles',
     DIVESTPROFCHIEF = 'Jefe Div. Est. Prof.'
 }
+
+export enum ERoleToAcronym {
+    'administrador' = 'administration',
+    'coordinación de titulación' = 'coordinacion',
+    'jefe académico' = 'jefe',
+    'jefe de servicios escolares' = 'escolares',
+    'secretaria académica' = 'secretaria',
+    'servicios estudiantiles' = 'servicios',
+    'jefe div. est. prof.' = 'coordinacion',
+}
