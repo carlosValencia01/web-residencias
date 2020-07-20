@@ -14,7 +14,7 @@
       </div>
       <!--DATOS GENERALES-->
       <div class="col-lg-5 col-md-5 col-sm-6 col-xs-10 mb-2">
-        <mat-card style="background-color: palegoldenrod;">
+        <mat-card>
           <div>
             <label><strong>{{currentStudent.fullName}}</strong></label>
           </div>
@@ -86,7 +86,7 @@
             <p *ngFor="let period of course.days">{{period.desc}}</p>
           </mat-card-content>
           <mat-card-actions>
-            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" style="background-color: palegoldenrod;">
+            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" style="background-color: #C7C7C7;">
               <mat-expansion-panel-header>
                 <mat-panel-title></mat-panel-title>
                 <mat-panel-description>
