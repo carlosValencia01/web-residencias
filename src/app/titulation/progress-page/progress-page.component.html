@@ -29,6 +29,16 @@
       <app-titulation-progress [tab]="7" [phases]="phasesExamAct" [data]="data"></app-titulation-progress>
     </mat-tab>
   </mat-tab-group>
-  <app-titulation-progress [tab]="1" [phases]="[]" [data]="data" *ngIf="canSeeOnlyTitulationProgress()">
-  </app-titulation-progress>
+
+  <mat-tab-group *ngIf="canSeeOnlyTitulationProgress()">
+    <mat-tab label="Todos">
+      <app-titulation-progress [tab]="1" [phases]="[]" [data]="data"></app-titulation-progress>
+    </mat-tab>
+    <mat-tab label="Pendientes de Firma" *ngIf="boss === 'jefe académico' ">
+      <app-titulation-progress [tab]="8" [phases]="phasesAcademicBoss" [data]="data"></app-titulation-progress>
+    </mat-tab>
+    <mat-tab label="Pendientes de Firma" *ngIf="boss === 'jefe div. est. prof.' ">
+      <app-titulation-progress [tab]="9" [phases]="phasesDivEstBoss" [data]="data"></app-titulation-progress>
+    </mat-tab>
+  </mat-tab-group>
 </ng-container>

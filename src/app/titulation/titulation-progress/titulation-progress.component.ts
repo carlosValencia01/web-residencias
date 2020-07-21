@@ -130,7 +130,7 @@ export class TitulationProgressComponent implements OnInit {
       if (this.tabNumber >= 4 && this.tabNumber < 7) {
         this.displayedColumns.push(...['titulationDate', 'optionTitled']);
       }
-      if (this.tabNumber >= 7) {
+      if (this.tabNumber == 7) {
         this.displayedColumns.push('statusExamAct');
       }
       this.displayedColumns.push('action');
@@ -350,6 +350,22 @@ export class TitulationProgressComponent implements OnInit {
               this.requestsCount.actasEntregadas++;
             }
             this.requestsCount.actasPendientes++;
+            return true;
+          }
+        });
+      }
+
+      if (this.tabNumber === 8) {
+        return requests.filter(({ phase, status }) => {
+          if (phase === 'Verificado' && status === 'Pendiente') {
+            return true;
+          }
+        });
+      }
+
+      if (this.tabNumber === 9) {
+        return requests.filter(({ phase, status }) => {
+          if (phase === 'Realizado' && status === 'Pendiente') {
             return true;
           }
         });
