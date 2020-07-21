@@ -7,6 +7,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 export interface DialogData {
   courseSelected: any;
   nameCourseSelected: string;
+  period: string;
   scheduleSelected: string;
   actualPhone: string;
 }

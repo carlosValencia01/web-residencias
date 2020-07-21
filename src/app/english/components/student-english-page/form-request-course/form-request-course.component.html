@@ -30,9 +30,10 @@
     <form style="text-align: center;" [formGroup]="phoneFormGroup">
       <mat-form-field>
       <mat-label>Número celular</mat-label>
-      <input matInput formControlName="phoneCtrl" [(ngModel)]="data.actualPhone" maxlength="10" placeholder="###-###-##-##" required>
+      <input matInput formControlName="phoneCtrl" [(ngModel)]="data.actualPhone" maxlength="10" placeholder="3112223344" required>
       <mat-error *ngIf="this.phoneFormGroup.get('phoneCtrl').invalid">Necesitas ingresar 10 dígitos</mat-error>
       </mat-form-field>
+      <label>*Requerimos contactarle.</label>
       <div class="mt-4">
         <button mat-button class="mr-2" mat-button matStepperPrevious>Anterior</button>
         <button mat-button matStepperNext>Siguiente</button>

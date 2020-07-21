@@ -4,6 +4,8 @@ import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
+import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { FormRequestCourseComponent } from 'src/app/english/components/student-english-page/form-request-course/form-request-course.component';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -17,17 +19,10 @@ export class StudentEnglishPageComponent implements OnInit {
 
   data;
   currentStudent: any;
+  englishStudent: any;
   showImg = false;
   imageDoc;
   photoStudent = '';
-  totalHoursCoursed = 90;
-  actualState = "Sin elección de Curso";
-  requestCourse = {
-    name:"",
-    day:"",
-    schedule:"",
-    actualPhone: "",
-  }
   courses = [
 
     {
@@ -113,6 +108,8 @@ export class StudentEnglishPageComponent implements OnInit {
     private loadingService: LoadingService,
     private studentProv: StudentProvider,
     private inscriptionProv : InscriptionsProvider,
+    private englishStudentProv : EnglishStudentProvider,
+    private requestCourseProv : RequestCourseProvider,
     public dialog: MatDialog,
   ) { 
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
@@ -129,10 +126,32 @@ export class StudentEnglishPageComponent implements OnInit {
       .subscribe(res => {
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0]));
         console.log(this.currentStudent)
+        this.verifyEnglishState(this.currentStudent._id);
       }, error => {
         console.log(error);
       }, () => this.loadingService.setLoading(false));
     
+  }
+
+  verifyEnglishState(studentId: string){
+    this.englishStudentProv.getEnglishStudentByStudentId(studentId).subscribe(res => {
+      console.log(res);
+      if (typeof (res) !== 'undefined' && typeof (res.englishStudent) !== 'undefined' && res.englishStudent.length > 0) {
+        this.englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
+      }else{
+         var englishSudent = {
+           studentId: studentId,
+           actualPhone: this.currentStudent.phone,
+           status: 'Sin elección de Curso',
+           totalHoursCoursed: 0
+         };
+        this.englishStudentProv.createEnglishStudent(englishSudent).subscribe(res => {
+          console.log(res)
+          this.englishStudent = JSON.parse(JSON.stringify(res));
+        }, 
+        error => {console.log(error)});
+      }
+    });
   }
 
   getDocuments(){
@@ -173,19 +192,32 @@ export class StudentEnglishPageComponent implements OnInit {
       data: {
         courseSelected: courseSelected, 
         nameCourseSelected: courseSelected.name,
-        daySelected: this.requestCourse.day, 
-        scheduleSelected: this.requestCourse.schedule, 
-        actualPhone: this.requestCourse.actualPhone
+        period: "2020-3",
+        scheduleSelected: "", 
+        actualPhone: this.englishStudent.actualPhone
       },
       hasBackdrop: true,
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
-      this.requestCourse.name = result.nameCourseSelected;
-      this.requestCourse.day = result.daySelected;
-      this.requestCourse.schedule = result.scheduleSelected;
-      this.requestCourse.actualPhone = result.actualPhone;
+      const request = {
+        name: result.nameCourseSelected,
+        period: result.period,
+        days: result.scheduleSelected.split("@@@",2)[0],
+        hours: result.scheduleSelected.split("@@@",2)[1],
+        studentId: this.currentStudent._id
+      };
+      
+      this.requestCourseProv.updateEnglishState(request).subscribe(res => {
+        if(res.requestCourse.ok == 1){
+          this.englishStudent.actualPhone = result.actualPhone;
+          this.englishStudent.status = "Solicitud de Curso enviada";
+          this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
+            console.log(res2);
+          });
+        }
+      });
     });
   }
 

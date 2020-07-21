@@ -25,6 +25,10 @@ import { Api } from 'src/app/providers/app/api.prov';
 import { UserProvider } from 'src/app/providers/app/user.prov';
 import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
 import { PositionProvider } from 'src/app/providers/shared/position.prov';
+
+
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
+
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { Storage } from 'src/app/services/app/storage.service';
@@ -92,6 +96,7 @@ registerLocaleData(localeEs);
     EmployeeProvider,
     UserProvider,
     PositionProvider,
+    EnglishStudentProvider,
 
     // Services
     CurrentPositionService,

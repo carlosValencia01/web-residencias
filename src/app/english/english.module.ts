@@ -18,8 +18,11 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 
 import { StudentProvider } from '../providers/shared/student.prov';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
+import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 import { FormRequestCourseComponent } from './components/student-english-page/form-request-course/form-request-course.component';
+
 
 @NgModule({
   imports: [
@@ -49,6 +52,8 @@ import { FormRequestCourseComponent } from './components/student-english-page/fo
   providers: [
     StudentProvider,
     InscriptionsProvider,
+    EnglishStudentProvider,
+    RequestCourseProvider,
   ]
 })
 export class EnglishModule { }
