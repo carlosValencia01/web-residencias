@@ -29,7 +29,7 @@ import { environment } from 'src/environments/environment';
 import { CommonsModule } from '../commons/commons.module';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
 import { StudentProvider } from '../providers/shared/student.prov';
-import { CareerProvider } from '../providers/shared/career.prov';;
+import { CareerProvider } from '../providers/shared/career.prov';
 import { ImageToBase64Service } from '../services/app/img.to.base63.service';
 import { ErrorMatcher } from '../services/shared/ErrorMatcher';
 import { ConfirmationStudentPageComponent } from './confirmation-student-page/confirmation-student-page.component';

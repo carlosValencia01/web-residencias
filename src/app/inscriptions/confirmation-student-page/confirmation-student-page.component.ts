@@ -1056,15 +1056,14 @@ export class ConfirmationStudentPageComponent implements OnInit {
               message
             }
           };
-          this.studentProv.uploadDocumentDrive(this.data._id,documentInfo2).subscribe(
-            updated=>{
-              resolve(true);
-              
-            },
-            err=>{
-              console.log(err);  
-            }
-          );
+          if(!newF){            
+            this.studentProv.updateDocumentStatus(this.data._id,{filename:nameInDrive,status:documentInfo2.status}).subscribe(res=>resolve(true), err=>resolve(false));
+          }else{
+            this.studentProv.uploadDocumentDrive(this.data._id,documentInfo2).subscribe(
+              updated=> resolve(true),
+              err=> resolve(false)
+            );
+          }
         },
         err=>{
           console.log(err);          

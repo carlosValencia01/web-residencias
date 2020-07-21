@@ -7,22 +7,22 @@
     display: none;
 }
 
-.statusActivo{
+.badge-active{
+    
     color: white;
     background: rgb(0, 187, 45);
-    font-weight: bold;
-    size: 20px;
+    border: 1px solid #fff;
+
 }
-.statusEspera{
+.badge-wait{
     color: white;
     background: rgb(0, 97, 187);
-    font-weight: bold;
-    size: 20px;
+    border: 1px solid #fff;
+
 }
 
-.statusInactivo{
-    font-weight: bold;
-    size: 20px;
+.badge-inactive{   
+    border: 1px solid #000;   
 }
 
 .icons{
