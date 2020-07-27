@@ -13,6 +13,11 @@ export class EnglishStudentProvider {
             .pipe(map(student => student.json()));
     }
 
+    getEnglishStudentById(id) {
+        return this.api.get(`sg-cle/englishstudent/search/`+id)
+            .pipe(map(student => student.json()));
+    }
+
     createEnglishStudent(englishStudent) {
         return this.api.post('sg-cle/englishstudent/create', englishStudent)
             .pipe(map(created => created.json()));
@@ -20,5 +25,9 @@ export class EnglishStudentProvider {
 
     updateEnglishStudent(data, id){
         return this.api.put('sg-cle/englishstudent/update/'+id, data).pipe(map( res=>res.json()));
+    }
+
+    updateStatus(id, data){
+        return this.api.put('sg-cle/englishstudent/update/status/'+id, data).pipe(map( res=>res.json()));
     }
 }

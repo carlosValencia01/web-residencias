@@ -206,16 +206,20 @@ export class StudentEnglishPageComponent implements OnInit {
         period: result.period,
         days: result.scheduleSelected.split("@@@",2)[0],
         hours: result.scheduleSelected.split("@@@",2)[1],
-        studentId: this.currentStudent._id
+        studentId: this.englishStudent._id
       };
       
-      this.requestCourseProv.updateEnglishState(request).subscribe(res => {
+      this.requestCourseProv.updateRequestCourse(request).subscribe(res => {
         if(res.requestCourse.ok == 1){
           this.englishStudent.actualPhone = result.actualPhone;
-          this.englishStudent.status = "Solicitud de Curso enviada";
+          this.englishStudent.status = 'Solicitud de Curso enviada';
           this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
             console.log(res2);
           });
+          /*
+          const body = {status: "2"};
+          this.englishStudentProv.updateStatus(this.englishStudent._id, body).subscribe(res2 => {console.log(res2)},error => {console.log(error)});
+          this.verifyEnglishState(this.currentStudent._id);*/
         }
       });
     });

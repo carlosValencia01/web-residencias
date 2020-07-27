@@ -1,0 +1,33 @@
+table {
+  width: 100%;
+}
+
+.mat-column-actions{
+  Word-wrap: break-Word !important;
+  white-space: unset !important;
+  flex: 0 0 20% !important;
+  width: 20% !important;
+  overflow-wrap: break-Word;
+  Word-wrap: break-Word;
+
+  Word-break: break-Word;
+
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.course-headers-align .mat-expansion-panel-header-title,
+.course-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.course-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.course-headers-align .mat-form-field + .mat-form-field {
+  margin-left: 8px;
+}

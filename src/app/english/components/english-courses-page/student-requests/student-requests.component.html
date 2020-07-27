@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Alumnos interesados</h2>
+<div *ngIf="creado" mat-dialog-content>
+<table mat-table [dataSource]="englishStudents" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="fullname">
+    <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.studentId.fullName}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="controlNumber">
+    <mat-header-cell *matHeaderCellDef>No. Control</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.studentId.controlNumber}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="career">
+    <mat-header-cell *matHeaderCellDef>Carrera</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.studentId.career}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <mat-header-cell *matHeaderCellDef>Correo Electronico</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.studentId.email}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="actualPhone">
+    <mat-header-cell *matHeaderCellDef>Telefono Celular</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.actualPhone}} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <mat-header-cell  *matHeaderCellDef></mat-header-cell>
+    <mat-cell *matCellDef="let row">
+         <button mat-icon-button>
+          <mat-icon>view_list</mat-icon>
+         </button>
+         <button (click)="deleteStudentRequest(row._id)" mat-icon-button>
+          <mat-icon>delete</mat-icon>
+         </button>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="['fullname', 'controlNumber', 'career', 'email', 'actualPhone', 'actions']"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: ['fullname', 'controlNumber', 'career', 'email', 'actualPhone', 'actions']"></mat-row>
+</table>
+</div>
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cerrar</button>
+  <button mat-button mat-dialog-close>Crear Grupo</button>
+</mat-dialog-actions>

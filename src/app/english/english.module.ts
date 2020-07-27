@@ -15,13 +15,17 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatTableModule} from '@angular/material/table';
+import {MatIconModule} from '@angular/material/icon';
 
 import { StudentProvider } from '../providers/shared/student.prov';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
 import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
+import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 import { FormRequestCourseComponent } from './components/student-english-page/form-request-course/form-request-course.component';
+import { StudentRequestsComponent } from './components/english-courses-page/student-requests/student-requests.component';
 
 
 @NgModule({
@@ -40,20 +44,25 @@ import { FormRequestCourseComponent } from './components/student-english-page/fo
     MatStepperModule,
     MatInputModule,
     MatFormFieldModule,
+    MatTableModule,
+    MatIconModule,
   ],
   declarations: [
     StudentEnglishPageComponent,
     EnglishCoursesPageComponent,
     FormRequestCourseComponent,
+    StudentRequestsComponent,
   ],
-  entryComponents: [
-    FormRequestCourseComponent, //Permite exportar
+  entryComponents: [ //Permite exportar
+    FormRequestCourseComponent,
+    StudentRequestsComponent,
   ],
   providers: [
     StudentProvider,
     InscriptionsProvider,
     EnglishStudentProvider,
     RequestCourseProvider,
+    ClassroomProvider,
   ]
 })
 export class EnglishModule { }

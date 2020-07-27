@@ -81,7 +81,7 @@
             <mat-card-title><strong>{{course.name}}</strong></mat-card-title>
             <mat-card-subtitle class="text-white">{{course.dailyHours}} Horas</mat-card-subtitle>
           </mat-card-header>
-          <button mat-flat-button class="buton-register-course" (click)="openDialog(course)"><strong>Inscribirme</strong></button>
+          <button mat-flat-button class="buton-register-course" (click)="openDialog(course)"><strong>Me interesa</strong></button>
           <mat-card-content class="pl-2 pr-2 m-0">
             <p *ngFor="let period of course.days">{{period.desc}}</p>
           </mat-card-content>
