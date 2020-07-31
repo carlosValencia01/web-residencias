@@ -93,19 +93,19 @@ export class StudentRequestsComponent implements OnInit {
 
   }
 
-  deleteStudentRequest(studentId){
+  deleteStudentRequest(studentId, name){
     // Alert
 
     Swal.fire({
       title: 'Declinar estudiante',
-      text: `La solicitud del estudiante sera descartada. ¿Desea continuar?`,
+      text: `Está por rechazar la solicitud del estudiante `+name+`. ¿Desea continuar?`,
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonColor: 'red',
-      cancelButtonColor: 'blue',
-      confirmButtonText: 'Si',
-      cancelButtonText: 'No',
+      cancelButtonColor: 'green',
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar',
       focusCancel: true
     }).then((result) => {
       if (result.value) {
@@ -137,7 +137,7 @@ export class StudentRequestsComponent implements OnInit {
           this.getDataSource();
           Swal.fire(
             'Eliminado!',
-            'La solicitud del estudiante ha sido declinada.',
+            'La solicitud del estudiante ha sido rechazada.',
             'success'
           )
     
