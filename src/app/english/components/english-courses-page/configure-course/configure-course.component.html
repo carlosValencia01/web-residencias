@@ -1,0 +1,162 @@
+<h1 mat-dialog-title style="text-align: center;"><strong>Configurar Curso</strong></h1>
+<div mat-dialog-content> 
+  <mat-horizontal-stepper linear>
+
+    <!-- Datos del Curso -->
+
+    <mat-step [stepControl]="courseFormGroup" editable="true">
+      <ng-template matStepLabel><strong>Datos del curso</strong></ng-template>
+
+      <form style="text-align: center;" [formGroup]="courseFormGroup">
+        <div>
+        <mat-form-field>
+          <mat-label>Nombre del curso</mat-label>
+          <input matInput formControlName="nameCtrl" [(ngModel)]="data.englishCourse.name" maxlength="10" placeholder="Cool Tiger" required>
+          <mat-error *ngIf="this.courseFormGroup.get('nameCtrl').invalid">Necesitas ingresar un nombre</mat-error>
+        </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="mr-3">
+            <mat-label>Horas diarias</mat-label>
+            <input matInput formControlName="dailyHoursCtrl" [(ngModel)]="data.englishCourse.dailyHours" type="number" maxlength="5" required>
+            <mat-error *ngIf="this.courseFormGroup.get('dailyHoursCtrl').invalid">Necesitas ingresar una cantidad</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Horas por semestre</mat-label>
+            <input matInput formControlName="totalHoursCtrl" [(ngModel)]="data.englishCourse.totalHours" type="number" maxlength="3" required>
+            <mat-error *ngIf="this.courseFormGroup.get('totalHoursCtrl').invalid">Necesitas ingresar una cantidad</mat-error>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field class="mr-3">
+            <mat-label>Cantidad de semestres</mat-label>
+            <input matInput formControlName="totalSemestersCtrl" [(ngModel)]="data.englishCourse.totalSemesters" type="number" maxlength="1" required>
+            <mat-error *ngIf="this.courseFormGroup.get('totalSemestersCtrl').invalid">Necesitas ingresar una cantidad</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Total de horas a cursar</mat-label>
+            <input matInput formControlName="finalHoursCtrl" [(ngModel)]="data.englishCourse.finalHours" type="number" maxlength="3" required>
+            <mat-error *ngIf="this.courseFormGroup.get('finalHoursCtrl').invalid">Necesitas ingresar una cantidad</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="mt-3">
+          <button mat-button class="mr-2" (click)="onNoClick()">Cancelar</button>
+          <button mat-button matStepperNext>Siguiente</button>
+        </div>
+
+      </form>
+
+    </mat-step>
+
+    <!-- Horarios -->
+
+    <mat-step editable="true">
+      <ng-template matStepLabel><strong>Horarios</strong></ng-template>
+
+      <form style="text-align: center;">
+
+        <!-- Dias -->
+
+        <mat-card class="p-0 mb-3" *ngFor="let days of data.courseSchedule.days; index as i; last as isLast; count as c">
+          <p style="text-align: left;"><b>Seleccione los dias</b></p>
+          <div class="row" style="justify-content: center;">
+            <mat-button-toggle-group class="mr-3">
+              <mat-button-toggle *ngFor="let day of weekdays; index as j" [matTooltip]="day" 
+              [class.mat-button-toggle-selected]="days.desc[j] == true" 
+              (click)="days.desc[j]=days.desc[j]?false:true">{{day.charAt(0)}}</mat-button-toggle>
+            </mat-button-toggle-group>
+            <div class="p-1" style="width: 100px;">
+              <button *ngIf="c>1" class="mr-1 button-clear" mat-icon-button (click)="dropDays(i)">
+                <mat-icon>clear</mat-icon>
+              </button>
+              <button *ngIf="isLast" class="ml-1" mat-icon-button (click)="addDays()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+
+              <!--
+          <mat-chip-list>
+            <mat-chip>L</mat-chip>
+            <mat-chip>M</mat-chip>
+            <mat-chip>M</mat-chip>
+            <mat-chip>J</mat-chip>
+            <mat-chip>V</mat-chip>
+            <mat-chip>S</mat-chip>
+            <mat-chip>D</mat-chip>
+          </mat-chip-list>
+          -->
+          
+          <!-- Horas -->
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title></mat-panel-title>
+              <mat-panel-description>
+                Agregue las horas
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <div *ngFor="let hour of data.courseSchedule.days[i].hours; index as j">
+              <label>{{hour.desc}}</label>
+              <a mat-icon-button (click)="dropHour(j, i)">
+                <mat-icon>clear</mat-icon>
+              </a>
+            </div>
+
+            <div>
+              <mat-form-field>
+                <mat-label>Hora de inicio</mat-label>
+                <input #startHour matInput type="time" value="07:00">
+              </mat-form-field>              
+              <a mat-icon-button (click)="addHour(startHour.value, i)">
+                <mat-icon>add</mat-icon>
+              </a>
+            </div>
+
+          </mat-expansion-panel>
+  
+        </mat-card>
+  
+        <div class="mt-3">
+          <button mat-button class="mr-2" matStepperPrevious>Regresar</button>
+          <button mat-button matStepperNext>Siguiente</button>
+        </div>
+
+      </form>
+  
+    </mat-step>
+
+    <!-- Confirmacion del curso -->
+
+    <mat-step editable="true">
+      <ng-template matStepLabel><strong>Confirmar curso</strong></ng-template>
+      <form>
+        <p><b>El curso será guardado, verifique la información</b></p>
+        <div>
+          <label>Curso: <strong>{{data.englishCourse.name}}</strong></label><br>
+          <label>Horas diarias: <strong>{{data.englishCourse.dailyHours}}</strong></label><br>
+          <label>Horas por semestre: <strong>{{data.englishCourse.totalHours}}</strong></label><br>
+          <label>Cantidad de semestres: <strong>{{data.englishCourse.totalSemesters}}</strong></label><br>
+          <label>Total de horas a cursar: <strong>{{data.englishCourse.finalHours}}</strong></label><br>
+          <div *ngFor="let days of data.courseSchedule.days; index as i;">
+            <mat-button-toggle-group class="mr-3">
+              <mat-button-toggle *ngFor="let day of weekdays; index as j" [matTooltip]="day" 
+              [class.mat-button-toggle-selected]="days.desc[j] == true">{{day.charAt(0)}}</mat-button-toggle>
+            </mat-button-toggle-group>
+            <div *ngFor="let hour of data.courseSchedule.days[i].hours;">
+              <label>{{hour.desc}}</label>
+            </div>
+          </div>  
+          <label class="mt-2">¿Los datos del curso son correctos?</label>
+          <div class="mt-4">
+            <button class="mr-2" mat-button [mat-dialog-close]="data" cdkFocusInitial>Sí</button>
+            <button class="mr-2" mat-button class="mr-2" matStepperPrevious>Regresar</button>
+            <button mat-button (click)="onNoClick()">Cancelar</button>
+          </div>
+        </div>
+      </form>
+
+    </mat-step>
+
+  </mat-horizontal-stepper>
+</div>

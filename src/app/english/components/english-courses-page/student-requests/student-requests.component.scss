@@ -14,7 +14,7 @@
     hyphens: auto;
   }
 
-  .mat-column-actualPhone{
+  .mat-column-actualPhone, .mat-column-controlNumber{
     Word-wrap: break-Word !important;
     white-space: unset !important;
     flex: 0 0 88px !important;
@@ -44,4 +44,9 @@
     -moz-hyphens: auto;
     -webkit-hyphens: auto;
     hyphens: auto;
+  }
+
+  .button-blue{
+    background-color: #183969;
+    color: white;
   }

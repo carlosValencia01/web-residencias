@@ -10,6 +10,8 @@ import { FormRequestCourseComponent } from 'src/app/english/components/student-e
 
 import { MatDialog } from '@angular/material/dialog';
 
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-student-english-page',
   templateUrl: './student-english-page.component.html',
@@ -133,6 +135,24 @@ export class StudentEnglishPageComponent implements OnInit {
     
   }
 
+  verifyNotification(){
+    if(this.englishStudent.notification.show){
+      Swal.fire({
+        title: 'Atención',
+        text: this.englishStudent.notification.message,
+        type: 'warning',
+      }).then((result) => {
+        this.englishStudent.notification.show = false;
+        const englishStudent = {
+          $set: {'notification.show': false}
+        };
+        this.loadingService.setLoading(true);
+        this.englishStudentProv.updateEnglishStudent(englishStudent, this.englishStudent._id).subscribe(res => {
+        },error => {}, () => this.loadingService.setLoading(false));
+      });
+    }
+  }
+
   verifyEnglishState(studentId: string){
     this.englishStudentProv.getEnglishStudentByStudentId(studentId).subscribe(res => {
       console.log(res);
@@ -143,6 +163,10 @@ export class StudentEnglishPageComponent implements OnInit {
            studentId: studentId,
            actualPhone: this.currentStudent.phone,
            status: 'Sin elección de Curso',
+           notification: {
+            message: 'Estudiante Nuevo',
+            show: false,
+           },
            totalHoursCoursed: 0
          };
         this.englishStudentProv.createEnglishStudent(englishSudent).subscribe(res => {
@@ -150,7 +174,8 @@ export class StudentEnglishPageComponent implements OnInit {
           this.englishStudent = JSON.parse(JSON.stringify(res));
         }, 
         error => {console.log(error)});
-      }
+      };
+      this.verifyNotification();
     });
   }
 
@@ -215,6 +240,12 @@ export class StudentEnglishPageComponent implements OnInit {
           this.englishStudent.status = 'Solicitud de Curso enviada';
           this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
             console.log(res2);
+            Swal.fire({
+              title: 'Solicitud enviada!',
+              showConfirmButton: false,
+              timer: 1500,
+              type: 'success'
+            })
           });
           /*
           const body = {status: "2"};

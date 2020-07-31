@@ -6,9 +6,10 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
+import { ConfigureCourseComponent } from 'src/app/english/components/english-courses-page/configure-course/configure-course.component';
 
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -35,7 +36,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.classroomForm = this.formBuilder.group({
-      name: ''
+      name: ['', Validators.required]
     });
   }
 
@@ -105,8 +106,7 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   onCreateClassroom(){
     var classromm = {
-      name: this.classroomForm.get('name').value,
-      available: 'Disponible'
+      name: this.classroomForm.get('name').value
     };
    this.classroomProv.createClassroom(classromm).subscribe(res => {
      this.ngOnInit()
@@ -126,7 +126,45 @@ export class EnglishCoursesPageComponent implements OnInit {
   // Cursos
 
   createCourse(){
-    
+    var data = {
+      englishCourse: {
+        name: "",
+        dailyHours: "",
+        totalHours: "",
+        totalSemesters: "",
+        finalHours: "",
+        //status: ""
+      },
+      courseSchedule: {
+        days: [
+          {
+            desc: [false, false, false, false, false, false, false],
+            enable: false,
+            hours: []
+          }
+        ]
+      },
+      newCourse: true
+    }
+
+    this.openDialog(data);
+
+  }
+
+  openDialog(data): void {
+    const dialogRef = this.dialog.open(ConfigureCourseComponent, {
+      data: data,
+      hasBackdrop: true,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      if(result){
+        if(result.newCourse){
+          
+        }
+      };
+    });
   }
 
 }

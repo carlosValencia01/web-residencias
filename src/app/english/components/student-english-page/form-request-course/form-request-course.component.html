@@ -33,9 +33,9 @@
       <input matInput formControlName="phoneCtrl" [(ngModel)]="data.actualPhone" maxlength="10" placeholder="3112223344" required>
       <mat-error *ngIf="this.phoneFormGroup.get('phoneCtrl').invalid">Necesitas ingresar 10 dígitos</mat-error>
       </mat-form-field>
-      <label>*Requerimos contactarle.</label>
+      <div><label>*Requerimos contactarle.</label></div>
       <div class="mt-4">
-        <button mat-button class="mr-2" mat-button matStepperPrevious>Anterior</button>
+        <button mat-button class="mr-2" matStepperPrevious>Anterior</button>
         <button mat-button matStepperNext>Siguiente</button>
       </div>
     </form>

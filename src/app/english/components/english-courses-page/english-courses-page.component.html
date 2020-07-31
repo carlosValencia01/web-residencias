@@ -2,7 +2,7 @@
   
 
 
-  <mat-tab label="Solicitudes">
+  <mat-tab label="Solicitudes" class="p-md-5">
 
 
 
@@ -55,48 +55,41 @@
 
 
   <mat-tab label="Aulas">
-
-    <div>
-      <form style="text-align: center;" [formGroup]="classroomForm" (ngSubmit)="onCreateClassroom()">
-        <mat-form-field>
-        <mat-label>Nombre del Aula:</mat-label>
-        <input matInput formControlName="name" required>
-        </mat-form-field>
-        <div class="mt-4">
-          <button type="submit" mat-button>Crear Aula</button>
-        </div>
-      </form>
+    <div class="row justify-content-center">
+      <div class="col-md-4 col-12 pt-md-5 pt-3">
+        <form style="text-align: center;" [formGroup]="classroomForm" (ngSubmit)="onCreateClassroom()">
+          <mat-form-field>
+          <mat-label>Nombre del Aula:</mat-label>
+          <input matInput formControlName="name" required>
+          </mat-form-field>
+          <div class="mt-0">
+            <button [class.button-create-classroom]="!classroomForm.invalid" type="submit" [disabled]="classroomForm.invalid" mat-button>Crear Aula</button>
+          </div>
+        </form>
+      </div>
+  
+      <div class="col-md-4 pr-md-5 pt-md-5 pt-3">
+        <table mat-table [dataSource]="classrooms" class="mat-elevation-z8">
+      
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+          </ng-container>
+  
+          <ng-container matColumnDef="actions">
+            <mat-header-cell  *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let row">
+                 <button (click)="deleteClassroom(row._id)" mat-icon-button>
+                  <mat-icon>delete</mat-icon>
+                 </button>
+            </mat-cell>
+          </ng-container>
+  
+          <mat-header-row *matHeaderRowDef="['name', 'actions']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['name', 'actions']"></mat-row>
+        </table>
+      </div>
     </div>
-
-    <div>
-
-      <table mat-table [dataSource]="classrooms" class="mat-elevation-z8">
-    
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="available">
-          <mat-header-cell *matHeaderCellDef>Estatua</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.available}} </mat-cell>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <mat-header-cell  *matHeaderCellDef></mat-header-cell>
-          <mat-cell *matCellDef="let row">
-               <button (click)="deleteClassroom(row._id)" mat-icon-button>
-                <mat-icon>delete</mat-icon>
-               </button>
-          </mat-cell>
-        </ng-container>
-
-        <mat-header-row *matHeaderRowDef="['name', 'available', 'actions']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['name', 'available', 'actions']"></mat-row>
-      </table>
-
-    </div>
-    
   </mat-tab>
 
 
@@ -109,18 +102,18 @@
   <mat-tab label="Cursos">
 
 
-    <!--
+    
     <div class="row justify-content-center p-3">
 
       <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
 
-        <button mat-raised-button color="primary" (click)="createCourse()">Crear Curso</button>
+        <button mat-raised-button color="primary" (click)="createCourse()">Nuevo Curso</button>
 
       </div>
 
     </div>
 
-
+    <!--
     <div class="row justify-content-center p-3">
 
       <div *ngFor="let course of courses" class="col-lg-5 col-md-5 col-sm-12 col-xs-12">

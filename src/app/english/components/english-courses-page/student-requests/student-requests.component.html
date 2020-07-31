@@ -1,31 +1,60 @@
 <h2 mat-dialog-title>Alumnos interesados</h2>
 <div *ngIf="creado" mat-dialog-content>
-<table mat-table [dataSource]="englishStudents" class="mat-elevation-z8">
 
-  <ng-container matColumnDef="fullname">
-    <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.studentId.fullName}} </mat-cell>
+  <!--Filtro-->
+
+  <div class="row p-3 justify-content-right">
+    <div class="col text-right">
+      <mat-form-field>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Búsqueda...">
+      </mat-form-field>
+      <button mat-mini-fab class="m-1" color="primary" (click)="getDataSource()" data-toggle="tooltip"
+        title="Recargar">
+        <mat-icon>update</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!--Tabla-->
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+
+  <!--Columna Nombre-->
+
+  <ng-container matColumnDef="fullName">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.fullName}} </mat-cell>
   </ng-container>
+
+  <!--Columna No. Control-->
 
   <ng-container matColumnDef="controlNumber">
-    <mat-header-cell *matHeaderCellDef>No. Control</mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.studentId.controlNumber}} </mat-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header>No. Control</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
   </ng-container>
+
+  <!--Columna Carrera-->
 
   <ng-container matColumnDef="career">
-    <mat-header-cell *matHeaderCellDef>Carrera</mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.studentId.career}} </mat-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
   </ng-container>
+
+  <!--Columna Correo-->
 
   <ng-container matColumnDef="email">
-    <mat-header-cell *matHeaderCellDef>Correo Electronico</mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.studentId.email}} </mat-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electronico</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
   </ng-container>
 
+  <!--Columna Telefono-->
+
   <ng-container matColumnDef="actualPhone">
-    <mat-header-cell *matHeaderCellDef>Telefono Celular</mat-header-cell>
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Telefono Celular</mat-header-cell>
     <mat-cell *matCellDef="let row"> {{row.actualPhone}} </mat-cell>
   </ng-container>
+
+  <!--Columna Opciones-->
 
   <ng-container matColumnDef="actions">
     <mat-header-cell  *matHeaderCellDef></mat-header-cell>
@@ -39,11 +68,26 @@
     </mat-cell>
   </ng-container>
 
-  <mat-header-row *matHeaderRowDef="['fullname', 'controlNumber', 'career', 'email', 'actualPhone', 'actions']"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: ['fullname', 'controlNumber', 'career', 'email', 'actualPhone', 'actions']"></mat-row>
+  <mat-header-row *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'actualPhone', 'actions']"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'actualPhone', 'actions']"></mat-row>
+
+  <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
+
+  <tr class="mat-row" *matNoDataRow>
+    <td class="mat-cell" colspan="6">No se encontraron datos.</td>
+  </tr>
+
 </table>
+
+<!--Paginas-->
+
+<mat-paginator #matPaginatorEnglishStudents [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+
 </div>
+
+<!--Opciones-->
+
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close>Cerrar</button>
-  <button mat-button mat-dialog-close>Crear Grupo</button>
+  <button class="button-blue" mat-button mat-dialog-close>Cerrar</button>
+  <button class="button-blue" mat-button mat-dialog-close>Crear Grupo</button>
 </mat-dialog-actions>
