@@ -9,7 +9,7 @@ export interface DialogData {
   nameCourseSelected: string;
   period: string;
   scheduleSelected: string;
-  actualPhone: string;
+  currentPhone: string;
 }
 
 @Component({

@@ -30,7 +30,7 @@
     <form style="text-align: center;" [formGroup]="phoneFormGroup">
       <mat-form-field>
       <mat-label>Número celular</mat-label>
-      <input matInput formControlName="phoneCtrl" [(ngModel)]="data.actualPhone" maxlength="10" placeholder="3112223344" required>
+      <input matInput formControlName="phoneCtrl" [(ngModel)]="data.currentPhone" maxlength="10" placeholder="3112223344" required>
       <mat-error *ngIf="this.phoneFormGroup.get('phoneCtrl').invalid">Necesitas ingresar 10 dígitos</mat-error>
       </mat-form-field>
       <div><label>*Requerimos contactarle.</label></div>
@@ -48,8 +48,8 @@
       <label>Curso: <strong>{{data.nameCourseSelected}}</strong></label><br>
       <label>Días: <strong>{{data.scheduleSelected.split("@@@",2)[0]}}</strong></label><br>
       <label>Horario: <strong>{{data.scheduleSelected.split("@@@",2)[1]}}</strong></label><br>
-      <label>Número de celular: <strong>{{data.actualPhone}}</strong></label><br>
-      <label class="mt-2">¿Está seguro de inscribirse a este curso?</label>
+      <label>Número de celular: <strong>{{data.currentPhone}}</strong></label><br>
+      <label class="mt-2">¿Está seguro de solicitar este curso?</label>
       <div class="mt-4">
         <button class="mr-2" mat-button [mat-dialog-close]="data" cdkFocusInitial>Sí</button>
         <button mat-button (click)="onNoClick()">Cancelar</button>

@@ -8,6 +8,8 @@ import { EnglishStudentProvider } from 'src/app/english/providers/english-studen
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { FormRequestCourseComponent } from 'src/app/english/components/student-english-page/form-request-course/form-request-course.component';
 
+import { StatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
+
 import { MatDialog } from '@angular/material/dialog';
 
 import Swal from 'sweetalert2';
@@ -25,6 +27,8 @@ export class StudentEnglishPageComponent implements OnInit {
   showImg = false;
   imageDoc;
   photoStudent = '';
+
+  statusEnglishStudent = StatusEnglishStudent;
   courses = [
 
     {
@@ -122,61 +126,78 @@ export class StudentEnglishPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    const _id = this.data._id;
+    const _id = this.data._id; // ID del Estudiante
+
     this.loadingService.setLoading(true);
-    this.studentProv.getStudentById(_id)
-      .subscribe(res => {
-        this.currentStudent = JSON.parse(JSON.stringify(res.student[0]));
-        console.log(this.currentStudent)
-        this.verifyEnglishState(this.currentStudent._id);
+
+    //Obtener el estudiante con la ID
+    this.studentProv.getStudentById(_id).subscribe(res => {
+        this.currentStudent = JSON.parse(JSON.stringify(res.student[0])); //Guardar al estudiante
+        console.log(this.currentStudent);
+        this.verifyEnglishState(this.currentStudent._id); //Verificar el perfil de ingles del estudiante
       }, error => {
         console.log(error);
       }, () => this.loadingService.setLoading(false));
     
   }
 
-  verifyNotification(){
-    if(this.englishStudent.notification.show){
-      Swal.fire({
-        title: 'Atención',
-        text: this.englishStudent.notification.message,
-        type: 'warning',
-      }).then((result) => {
-        this.englishStudent.notification.show = false;
-        const englishStudent = {
-          $set: {'notification.show': false}
-        };
-        this.loadingService.setLoading(true);
-        this.englishStudentProv.updateEnglishStudent(englishStudent, this.englishStudent._id).subscribe(res => {
-        },error => {}, () => this.loadingService.setLoading(false));
-      });
-    }
-  }
 
-  verifyEnglishState(studentId: string){
+  verifyEnglishState(studentId: string){ //Verificar el perfil del estudiante.
+
+    //Obtener el perfil de acuerdo al ID del estudiante.
     this.englishStudentProv.getEnglishStudentByStudentId(studentId).subscribe(res => {
-      console.log(res);
+
       if (typeof (res) !== 'undefined' && typeof (res.englishStudent) !== 'undefined' && res.englishStudent.length > 0) {
+
+        //Obtener el perfil si existe.
         this.englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
+
+        //Verificar si existen notificación a mostrar.
+        this.verifyNotification();
+
       }else{
-         var englishSudent = {
-           studentId: studentId,
-           actualPhone: this.currentStudent.phone,
-           status: 'Sin elección de Curso',
-           notification: {
-            message: 'Estudiante Nuevo',
-            show: false,
-           },
-           totalHoursCoursed: 0
-         };
+
+        //Crear el perfil en caso de no existir.
+        
+        var englishSudent = { //Perfil a crear.
+          studentId: studentId,
+          currentPhone: this.currentStudent.phone,
+          status: 'no_choice',
+          totalHoursCoursed: 0,
+          level: 0
+        };
+
+        //Mandar el perfil a la API para agregarlo a la BD.
         this.englishStudentProv.createEnglishStudent(englishSudent).subscribe(res => {
-          console.log(res)
+          //Obtener el perfil creado.
           this.englishStudent = JSON.parse(JSON.stringify(res));
         }, 
         error => {console.log(error)});
-      };
-      this.verifyNotification();
+      };      
     });
+  }
+
+  verifyNotification(){ //Verificar si existe notificación a mostrar
+
+    if(this.englishStudent.status == 'rejected'){ //En caso de que se haya rechazado la solicitud
+      Swal.fire({
+        title: 'Atención',
+        text: 'El curso en el horario solicitado no fue aperturado, seleccione otra opción',
+        type: 'warning',
+      }).then((result) => {
+
+        const englishStudent = {
+          $set: {status: 'no_choice'} //Cambiar el estatus
+        };
+
+        this.loadingService.setLoading(true);
+
+        // Canbiar el estatus en la BD.
+        this.englishStudentProv.updateEnglishStudent(englishStudent, this.englishStudent._id).subscribe(res => {
+          this.englishStudent.status = 'no_choice'; // Cambiar el estatus en la variable local
+        },error => {}, () => this.loadingService.setLoading(false));
+      });
+    }
   }
 
   getDocuments(){
@@ -219,12 +240,14 @@ export class StudentEnglishPageComponent implements OnInit {
         nameCourseSelected: courseSelected.name,
         period: "2020-3",
         scheduleSelected: "", 
-        actualPhone: this.englishStudent.actualPhone
+        currentPhone: this.englishStudent.actualPhone
       },
       hasBackdrop: true,
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        
       console.log('The dialog was closed');
       const request = {
         name: result.nameCourseSelected,
@@ -236,8 +259,8 @@ export class StudentEnglishPageComponent implements OnInit {
       
       this.requestCourseProv.updateRequestCourse(request).subscribe(res => {
         if(res.requestCourse.ok == 1){
-          this.englishStudent.actualPhone = result.actualPhone;
-          this.englishStudent.status = 'Solicitud de Curso enviada';
+          this.englishStudent.currentPhone = result.currentPhone;
+          this.englishStudent.status = 'selected';
           this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
             console.log(res2);
             Swal.fire({
@@ -247,12 +270,9 @@ export class StudentEnglishPageComponent implements OnInit {
               type: 'success'
             })
           });
-          /*
-          const body = {status: "2"};
-          this.englishStudentProv.updateStatus(this.englishStudent._id, body).subscribe(res2 => {console.log(res2)},error => {console.log(error)});
-          this.verifyEnglishState(this.currentStudent._id);*/
         }
       });
+      }
     });
   }
 
