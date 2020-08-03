@@ -1,18 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
+
+//Importar Servicios
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
+
+//Importar Proveedores
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
 import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
+import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
+
+//Importar Componentes
 import { FormRequestCourseComponent } from 'src/app/english/components/student-english-page/form-request-course/form-request-course.component';
 
+//Importar Enumeradores
 import { StatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
 
-import { MatDialog } from '@angular/material/dialog';
 
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-student-english-page',
@@ -21,91 +29,16 @@ import Swal from 'sweetalert2';
 })
 export class StudentEnglishPageComponent implements OnInit {
 
-  data;
-  currentStudent: any;
-  englishStudent: any;
-  showImg = false;
-  imageDoc;
-  photoStudent = '';
+  data; //Datos del usuario
+  currentStudent: any; //Datos del estuduante
+  englishStudent: any; //Perfil de ingles del estudiante
+  showImg = false; //Mostrar Foto
+  imageDoc; //Imagen del Drive
+  photoStudent = ''; //Foto a mostrar
 
-  statusEnglishStudent = StatusEnglishStudent;
-  courses = [
+  statusEnglishStudent = StatusEnglishStudent; //Enumerador del estatus del perfil de ingles del estudiante
 
-    {
-      name:"Cool Tiger",
-      days:[
-      {
-        desc:"Lunes a Viernes",
-        schedule:[
-          "07:00 a.m. - 09:00 a.m.",
-          "08:00 a.m. - 10:00 a.m.",
-          "09:00 a.m. - 11:00 a.m.",
-          "10:00 a.m. - 12:00 p.m.",
-          "02:00 p.m. - 04:00 p.m.",
-          "03:00 p.m. - 05:00 p.m.",
-          "04:00 p.m. - 06:00 p.m.",
-          "05:00 p.m. - 07:00 p.m.",
-          "06:00 p.m. - 08:00 p.m."
-        ]
-      }
-    ],
-    dailyHours:2,
-    totalHours:150,
-    totalSemesters:3,
-    finalHours:450},
-
-    {name:"Super Tiger",
-    days:[
-      {
-        desc:"Lunes a Viernes",
-        schedule:[
-          "07:00 a.m. - 10:00 a.m.",
-          "08:00 a.m. - 11:00 a.m.",
-          "09:00 a.m. - 12:00 p.m.",
-          "10:00 a.m. - 01:00 p.m.",
-          "02:00 p.m. - 05:00 p.m.",
-          "04:00 p.m. - 07:00 p.m.",
-          "05:00 p.m. - 08:00 p.m.",
-          "06:00 p.m. - 09:00 p.m."
-        ]
-      }
-    ],
-    dailyHours:3,
-    totalHours:225,
-    totalSemesters:2,
-    finalHours:450},
-
-    {name:"Practical Tiger",
-    days:[
-      {
-        desc:"Sábados",
-        schedule:[
-          "08:00 a.m. - 01:00 p.m."
-        ]
-      }
-    ],
-    dailyHours:5,
-    totalHours:90,
-    totalSemesters:5,
-    finalHours:450},
-
-    {name:"Friendly Tiger",
-    days:[
-      {
-        desc:"Martes y Jueves",
-        schedule:[
-          "08:00 a.m. - 10:30 a.m.",
-          "02:00 p.m. - 04:30 a.m.",
-          "04:00 p.m. - 06:30 p.m.",
-          "05:00 p.m. - 07:30 p.m."
-        ]
-      }
-    ],
-    dailyHours:2.5,
-    totalHours:90,
-    totalSemesters:5,
-    finalHours:450}
-  ];
+  englishCourses: any; //Cursos de ingles activos
 
   constructor(
     private _CookiesService: CookiesService,
@@ -115,20 +48,24 @@ export class StudentEnglishPageComponent implements OnInit {
     private studentProv: StudentProvider,
     private inscriptionProv : InscriptionsProvider,
     private englishStudentProv : EnglishStudentProvider,
+    private englishCourseProv: EnglishCourseProvider,
     private requestCourseProv : RequestCourseProvider,
     public dialog: MatDialog,
   ) { 
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-    this.data = _CookiesService.getData().user;
-    this.getDocuments();
+    this.data = _CookiesService.getData().user; //Obtener los datos del usuario
+
+    this.getDocuments(); //Obtener la Foto de perfil
   }
 
   ngOnInit() {
     const _id = this.data._id; // ID del Estudiante
 
     this.loadingService.setLoading(true);
+
+    this.createEnglishCourses(); //Obtener los cursos activos para mostrar
 
     //Obtener el estudiante con la ID
     this.studentProv.getStudentById(_id).subscribe(res => {
@@ -141,6 +78,16 @@ export class StudentEnglishPageComponent implements OnInit {
     
   }
 
+  createEnglishCourses(){ //Obtener los cursos activos para mostrar
+    this.loadingService.setLoading(true);
+    this.englishCourseProv.getAllEnglishCourseActive().subscribe(res => { //Obtener los cursos de la API
+
+      this.englishCourses = res.englishCourses; //Guardar los cursos activos
+
+    },error => {
+
+    }, () => this.loadingService.setLoading(false));
+  }
 
   verifyEnglishState(studentId: string){ //Verificar el perfil del estudiante.
 
@@ -200,30 +147,31 @@ export class StudentEnglishPageComponent implements OnInit {
     }
   }
 
-  getDocuments(){
+  getDocuments(){ //Obtener la Foto de perfil
     this.showImg=false;
-    this.studentProv.getDriveDocuments(this.data._id).subscribe(
+    this.studentProv.getDriveDocuments(this.data._id).subscribe( //Obtener documentos del Drive
       docs=>{
         let documents = docs.documents;
-        if(documents){
+        if(documents){ //Si existen documentos en el Drive
 
+          //Obtener Foto del Drive
           this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];
           if(this.imageDoc){
 
             this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
-              succss=>{
+              succss=>{ //Si existe Foto en el Drive
                 this.showImg=true;
                 const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
                 this.photoStudent = "data:image/"+extension+";base64,"+succss.file;
               },
               err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
             );
-          }else{
+          }else{ //Si no existe Foto en el Drive
             this.loadingService.setLoading(false);
             this.photoStudent = 'assets/imgs/studentAvatar.png';
             this.showImg=true;
           }
-        }else{
+        }else{ //Si no existen documentos en el Drive
           this.loadingService.setLoading(false);
           this.photoStudent = 'assets/imgs/studentAvatar.png';
           this.showImg=true;

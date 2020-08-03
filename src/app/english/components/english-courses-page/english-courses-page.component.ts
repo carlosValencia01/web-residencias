@@ -5,8 +5,12 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 
 import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
+import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
+
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
 import { ConfigureCourseComponent } from 'src/app/english/components/english-courses-page/configure-course/configure-course.component';
+
+import { FormCreateCourseComponent } from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
 
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -22,6 +26,9 @@ export class EnglishCoursesPageComponent implements OnInit {
   classrooms: any;
   classroomForm;
 
+  englishCourses: any;
+  activePeriod: any;
+
   constructor(
     private _CookiesService: CookiesService,
     private _ActivatedRoute: ActivatedRoute,
@@ -30,6 +37,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     private loadingService: LoadingService,
     private requestCourseProv : RequestCourseProvider,
     private classroomProv: ClassroomProvider,
+    private englishCourseProv: EnglishCourseProvider,
     public dialog: MatDialog,
   ) { 
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
@@ -43,6 +51,8 @@ export class EnglishCoursesPageComponent implements OnInit {
   ngOnInit() {
     this.createRequestsCourses();
     this.createClassrooms();
+    this.createEnglishCourses();
+    this.getActivePeriod();
   }
 
   // Solicitudes
@@ -125,6 +135,18 @@ export class EnglishCoursesPageComponent implements OnInit {
   
   // Cursos
 
+  createEnglishCourses(){
+    this.loadingService.setLoading(true);
+    this.englishCourseProv.getAllEnglishCourse().subscribe(res => {
+
+      this.englishCourses = res.englishCourses;
+      console.log(res);
+
+    },error => {
+
+    }, () => this.loadingService.setLoading(false));
+  }
+
   createCourse(){
     var data = {
       englishCourse: {
@@ -147,24 +169,49 @@ export class EnglishCoursesPageComponent implements OnInit {
       newCourse: true
     }
 
-    this.openDialog(data);
+    //this.openDialog(data);
 
   }
 
-  openDialog(data): void {
-    const dialogRef = this.dialog.open(ConfigureCourseComponent, {
-      data: data,
+  openDialogFormCreateCourse(): void {
+    const dialogRef = this.dialog.open(FormCreateCourseComponent, {
       hasBackdrop: true,
     });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
       if(result){
-        if(result.newCourse){
-          
-        }
+        let data = {
+          name: result.nameCtrl,
+          dailyHours: result.dailyHoursCtrl,
+          semesterHours: result.semesterHoursCtrl,
+          totalSemesters: result.totalSemestersCtrl,
+          totalHours: result.totalHoursCtrl,
+          startPeriod: this.activePeriod._id,
+          status: 'active',
+        };
+        this.englishCourseProv.createEnglishCourse(data).subscribe(res => {
+          this.ngOnInit()
+        }, 
+        error => {console.log(error)});
+
       };
     });
+  }
+
+  getActivePeriod(){
+
+    this.loadingService.setLoading(true);
+    this.englishCourseProv.getActivePeriod().subscribe(res => {
+
+      if(res.period){
+        this.activePeriod = res.period;
+      }
+
+    },error => {
+
+    }, () => this.loadingService.setLoading(false));
+
   }
 
 }
