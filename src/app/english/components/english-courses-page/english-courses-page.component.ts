@@ -36,7 +36,9 @@ export class EnglishCoursesPageComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.classroomForm = this.formBuilder.group({
-      name: ['', Validators.required]
+      name: ['', Validators.required],
+      schedule: ['', Validators.required],
+      capacity: ['', Validators.required]
     });
   }
 
@@ -106,7 +108,9 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   onCreateClassroom(){
     var classromm = {
-      name: this.classroomForm.get('name').value
+      name: this.classroomForm.get('name').value,
+      schedule: this.classroomForm.get('schedule').value,
+      capacity: this.classroomForm.get('capacity').value
     };
    this.classroomProv.createClassroom(classromm).subscribe(res => {
      this.ngOnInit()

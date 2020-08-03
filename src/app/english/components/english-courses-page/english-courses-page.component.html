@@ -1,11 +1,8 @@
 <mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;">
   
-
+  <!-- SOLICITUDES -->
 
   <mat-tab label="Solicitudes" class="p-md-5">
-
-
-
     <mat-accordion class="course-headers-align" multi>
       <div *ngFor="let requestsCourse of requestsCourses">
         <mat-expansion-panel *ngFor="let requestsCourseForDay of requestsCourse.days">
@@ -47,21 +44,35 @@
         </mat-expansion-panel>
       </div>
     </mat-accordion>
-
-
-
   </mat-tab>
 
-
+<!-- AULAS -->
 
   <mat-tab label="Aulas">
     <div class="row justify-content-center">
       <div class="col-md-4 col-12 pt-md-5 pt-3">
         <form style="text-align: center;" [formGroup]="classroomForm" (ngSubmit)="onCreateClassroom()">
-          <mat-form-field>
-          <mat-label>Nombre del Aula:</mat-label>
-          <input matInput formControlName="name" required>
-          </mat-form-field>
+          <div>
+            <mat-form-field>
+              <mat-label>Nombre del Aula:</mat-label>
+              <input matInput formControlName="name" required>
+              </mat-form-field>
+          </div>
+
+          <div>
+            <mat-form-field>
+              <mat-label>Horario:</mat-label>
+              <input matInput formControlName="schedule" required>
+              </mat-form-field>
+          </div>
+
+          <div>
+            <mat-form-field>
+              <mat-label>Capacidad:</mat-label>
+              <input matInput formControlName="capacity" required>
+            </mat-form-field>
+          </div>
+
           <div class="mt-0">
             <button [class.button-create-classroom]="!classroomForm.invalid" type="submit" [disabled]="classroomForm.invalid" mat-button>Crear Aula</button>
           </div>
@@ -75,30 +86,44 @@
             <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
           </ng-container>
+
+          <ng-container matColumnDef="schedule">
+            <mat-header-cell *matHeaderCellDef>Horario</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.schedule}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="capacity">
+            <mat-header-cell *matHeaderCellDef>Capacidad</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.capacity}} </mat-cell>
+          </ng-container>
   
           <ng-container matColumnDef="actions">
             <mat-header-cell  *matHeaderCellDef></mat-header-cell>
-            <mat-cell *matCellDef="let row">
+              <mat-cell *matCellDef="let row">
                  <button (click)="deleteClassroom(row._id)" mat-icon-button>
                   <mat-icon>delete</mat-icon>
                  </button>
-            </mat-cell>
+                 <button (click)="deleteClassroom(row._id)" mat-icon-button><!-- ese click es el de eliminar, esta mal--> 
+                  <mat-icon>edit</mat-icon> <!-- Checar el nombre para editar-->
+                </button>
+              </mat-cell>
           </ng-container>
   
-          <mat-header-row *matHeaderRowDef="['name', 'actions']"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: ['name', 'actions']"></mat-row>
+          <mat-header-row *matHeaderRowDef="['name', 'schedule', 'capacity', 'actions']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['name', 'schedule', 'capacity', 'actions']"></mat-row>
         </table>
       </div>
     </div>
   </mat-tab>
 
-
+  <!-- GRUPOS -->
 
   <mat-tab label="Grupos">
     
   </mat-tab>
 
-  
+  <!-- CURSOS -->
+
   <mat-tab label="Cursos">
 
 
