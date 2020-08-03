@@ -4,6 +4,7 @@ import { eSessionStatus } from 'src/app/enumerators/app/sessionStatus.enum';
 import { UserProvider } from 'src/app/providers/app/user.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
+import { WebSocketService } from './services/app/web-socket.service';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +33,7 @@ export class AppComponent {
     private cookiesServ: CookiesService,
     private userProv: UserProvider,
     private loadingService: LoadingService,
+    private webSocketService: WebSocketService
   ) {
     this.checkLogin();
   }
@@ -45,6 +47,11 @@ export class AppComponent {
   ngOnInit() {
     this.configureSideNav();
     this.loadingService.isLoading.subscribe((status) => this.loading = status);
+
+    //guardar el clientId para socket.id
+    this.webSocketService.listen('app:connection').subscribe(
+        data=>this.cookiesServ.saveClientId(data.connectionId)    
+    );
   }
 
   configureSideNav() {

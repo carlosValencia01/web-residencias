@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -38,13 +38,15 @@ import { RequestModalComponent } from 'src/app/titulation/request-modal/request-
 import { SteepComponentComponent } from 'src/app/titulation/steep-component/steep-component.component';
 import { UploadDeliveredComponent } from 'src/app/titulation/upload-delivered/upload-delivered.component';
 import Swal from 'sweetalert2';
-
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
+import { Subscription } from 'rxjs';
+import { eRecActEvents } from 'src/app/enumerators/shared/sockets.enum';
 @Component({
   selector: 'app-titulation-progress',
   templateUrl: './titulation-progress.component.html',
   styleUrls: ['./titulation-progress.component.scss']
 })
-export class TitulationProgressComponent implements OnInit {
+export class TitulationProgressComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line:no-input-rename
   @Input('tab') tabNumber: number;
   // tslint:disable-next-line:no-input-rename
@@ -91,7 +93,8 @@ export class TitulationProgressComponent implements OnInit {
   private fases: string[] = [];
   private emptyoRequest: uRequest;
   private canAccess = true;
-
+  private filterRole: string;
+  private subscriptions: Array<Subscription> = [];
   constructor(
     private requestProvider: RequestProvider,
     private dialog: MatDialog,
@@ -105,6 +108,7 @@ export class TitulationProgressComponent implements OnInit {
     private firebaseService: FirebaseService,
     private bookProvider: BookProvider,
     private loadingService: LoadingService,
+    private webSocketService: WebSocketService
   ) {
     if (!this.cookiesService.isAllowed(this.activatedRoute.snapshot.url[0].path)) {
       this.canAccess = false;
@@ -113,6 +117,7 @@ export class TitulationProgressComponent implements OnInit {
 
     this.dataSource = new MatTableDataSource();
     this.role = this.cookiesService.getData().user.rol.name.toLowerCase();
+    this.filterRole = (ERoleToAcronym as any)[this.role];
     this.canExport = [eRole.ADMINISTRATION.toLowerCase(), eRole.HEADSCHOOLSERVICE.toLowerCase(), eRole.STUDENTSERVICES.toLowerCase()]
       .includes(this.role as eRole);
     // Asigno las carreras asociadas al puesto
@@ -137,6 +142,12 @@ export class TitulationProgressComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(){
+    this.subscriptions.forEach((subscription: Subscription) => {
+      if(!subscription.closed)
+        subscription.unsubscribe();
+    });
+  }
   // Inicializa variables y los observables para los filtros de periodo, carrera y fase
   private async _assignData() {
     this.fases = Object.values(EPhase as any) as string[];
@@ -178,28 +189,38 @@ export class TitulationProgressComponent implements OnInit {
   }
 
   // Manda cargar las solicitudes y muestra el loader mientras se cargan
-  public async reload(isInit: boolean = false) {
-    this.loadingBar.start();
-    await this.loadRequest(isInit);
-    this.loadingBar.complete();
+  public reload(isInit: boolean = false) {
+    
+    //guardar la subscripcion para eliminarla en ngOnDestroy
+    this.subscriptions.push(
+      this.webSocketService.listen(eRecActEvents.REQUEST_BY_ROLE).subscribe((data)=>{
+        this.loadingBar.start();              
+        if (!isInit) {
+          this.loadRequest(data.request);
+        } else {          
+          this.loadRequest(this.data.requests);
+        }        
+        this.loadingBar.complete();
+      })
+    );
+    this.subscriptions.push(
+      this.webSocketService.listen(eRecActEvents.CREATE_OR_CANCEL_TITULATION).subscribe(data=>{
+        this.requestProvider.getAllRequestByStatus(this.filterRole,this.cookiesService.getClientId()).subscribe(request=>{
+        });
+      })
+    );
+    this.requestProvider.getAllRequestByStatus(this.filterRole,this.cookiesService.getClientId()).subscribe(request=>{
+    });
   }
 
   // Obtiene las solicitudes de acuerdo al rol del usuario y las transforma para la tabla
-  private async loadRequest(isInit: boolean = false) {
-    const filterRole = (ERoleToAcronym as any)[this.role];
-    let requests: iRequest[];
-
-    if (!isInit) {
-      requests = await this._getRequestsByRole(filterRole) as iRequest[];
-    } else {
-      requests = this.data.requests;
-    }
-
+  private async loadRequest(requests: iRequest[]) {
+           
     if (!requests) {
       return this.notificationsServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener solicitudes');
-    }
-
+    }    
+    
     this.requestFilter = [];
 
     requests.forEach((element: iRequest) => {
@@ -404,11 +425,11 @@ export class TitulationProgressComponent implements OnInit {
       width: '90em',
     });
 
-    dialogRef
-      .afterClosed()
-      .subscribe((_) => {
-        this.reload();
-      });
+    // dialogRef
+    //   .afterClosed()
+    //   .subscribe((_) => {
+    //     this.reload();
+    //   });
   }
 
   // Abre modal con el historial de observaciones
@@ -439,9 +460,9 @@ export class TitulationProgressComponent implements OnInit {
     ref
       .afterClosed()
       .subscribe((valor: any) => {
-        if (valor) {
-          this.reload();
-        }
+        // if (valor) {
+        //   this.reload();
+        // }
       }, (_) => {
         this.notificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un problema');
       });
@@ -461,9 +482,9 @@ export class TitulationProgressComponent implements OnInit {
     ref
       .afterClosed()
       .subscribe((valor: any) => {
-        if (valor) {
-          this.reload();
-        }
+        // if (valor) {
+        //   this.reload();
+        // }
       }, (_) => {
         this.notificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un problema');
       });
@@ -541,13 +562,13 @@ export class TitulationProgressComponent implements OnInit {
               jury: result.jury
             })
             .subscribe((_) => {
-              this.reload();
+              // this.reload();
             }, (_) => {
               this.notificationsServices
                 .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Ocurrió un error al liberar proyecto');
             });
         } else {
-          this.reload();
+          // this.reload();
         }
       });
     }
@@ -582,10 +603,10 @@ export class TitulationProgressComponent implements OnInit {
                   phase: 'Liberado',
                 };
                 this.requestProvider
-                  .updateRequest(Request._id, data)
+                  .updateRequest(Request._id, data,this.filterRole)
                   .subscribe((_) => {
                     this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
-                    this.reload();
+                    // this.reload();
                   }, (_) => {
                     this.notificationsServices
                       .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
@@ -620,10 +641,10 @@ export class TitulationProgressComponent implements OnInit {
                       phase: Request.phase
                     };
                     this.requestProvider
-                      .updateRequest(Request._id, data)
+                      .updateRequest(Request._id, data,this.filterRole)
                       .subscribe((_) => {
                         this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
-                        this.reload();
+                        // this.reload();
                       }, (_) => {
                         this.notificationsServices
                           .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al actualizar solicitud');
@@ -652,11 +673,11 @@ export class TitulationProgressComponent implements OnInit {
       width: '90em',
     });
 
-    dialogRef
-      .afterClosed()
-      .subscribe((_) => {
-        this.reload();
-      });
+    // dialogRef
+    //   .afterClosed()
+    //   .subscribe((_) => {
+    //     this.reload();
+    //   });
   }
 
   // Abre modal para firmar constancia de no inconveniencia
@@ -690,12 +711,12 @@ export class TitulationProgressComponent implements OnInit {
           };
 
           this.requestProvider
-            .updateRequest(requestId, data)
+            .updateRequest(requestId, data,this.filterRole)
             .subscribe((_) => {
               this.loadingService.setLoading(false);
               this.notificationsServices
                 .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
-              this.reload();
+              // this.reload();
             }, (_) => {
               this.loadingService.setLoading(false);
               this.notificationsServices
@@ -756,12 +777,12 @@ export class TitulationProgressComponent implements OnInit {
             phase: eRequest.REALIZED
           };
 
-          this.requestProvider.updateRequest(requestId, data).subscribe((_) => {
+          this.requestProvider.updateRequest(requestId, data,this.filterRole).subscribe((_) => {
             this.loadingService.setLoading(false);
             this.notificationsServices
               .showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
             window.open(oRequest.notificationOffice(valor.data.QR, valor.data.ESTAMP).output('bloburl'), '_blank');
-            this.reload();
+            // this.reload();
           }, (_) => {
             this.loadingService.setLoading(false);
             this.notificationsServices
@@ -807,9 +828,9 @@ export class TitulationProgressComponent implements OnInit {
             phase: eRequest.REALIZED,
             operation: eStatusRequest.PROCESS
           };
-          this.requestProvider.updateRequest(requestId, data).subscribe((_1) => {
+          this.requestProvider.updateRequest(requestId, data,this.filterRole).subscribe((_1) => {
             window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
-            this.reload();
+            // this.reload();
             this.loadingService.setLoading(false);
           }, (_2) => {
             this.loadingService.setLoading(false);
@@ -901,7 +922,7 @@ export class TitulationProgressComponent implements OnInit {
                 if (book.action === 'create') {
                   this.loadingService.setLoading(true);
                   data.registry = book.data;
-                  this.requestProvider.updateRequest(_id, data).subscribe(_ => {
+                  this.requestProvider.updateRequest(_id, data,this.filterRole).subscribe(_ => {
                     if (data.operation === eStatusRequest.ACCEPT) {
                       this.loadingService.setLoading(true);
                       const sub1 = this.firebaseService.getActivedEvent().subscribe(
@@ -950,7 +971,7 @@ export class TitulationProgressComponent implements OnInit {
                         .showNotification(eNotificationType.SUCCESS,
                           'Acto recepcional', 'Se actualizó la solicitud');
                     }
-                    this.reload();
+                    // this.reload();
                   }, (error) => {
                     this.loadingService.setLoading(false);
                     const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
@@ -1043,7 +1064,7 @@ export class TitulationProgressComponent implements OnInit {
             this.loadingService.setLoading(true);
             this.notificationsServices
               .showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Regenerando oficio de jurado');
-            await this.reload();
+            // await this.reload();
             _Request = this.getRequestById(requestId);
             const oRequest = new uRequest(_Request, this.imageToBase64Service, this.cookiesService);
             const folderId = await this.getFolder(_Request.controlNumber) as string;
@@ -1109,7 +1130,7 @@ export class TitulationProgressComponent implements OnInit {
     }
 
     this.requestProvider
-      .updateRequest(requestId, data)
+      .updateRequest(requestId, data,this.filterRole)
       .subscribe(async (_) => {
         if (eOperation === eStatusRequest.PROCESS) {
           this.notificationsServices
@@ -1169,7 +1190,7 @@ export class TitulationProgressComponent implements OnInit {
               const _request: iRequest = await this.getRequestById(requestId);
               this.requestProvider.sendMailExamAct(_request.email, actaEntregada).subscribe(
                 (_1) => {
-                  this.reload();
+                  // this.reload();
                 }, (_2) => {
                   this.notificationsServices
                     .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error, no se pudo enviar notificación al alumno');
@@ -1182,7 +1203,7 @@ export class TitulationProgressComponent implements OnInit {
             });
         }
 
-        this.reload();
+        // this.reload();
       }, (error) => {
         const message = JSON.parse(error._body).message || 'Error al actualizar solicitud';
         this.notificationsServices.showNotification(eNotificationType.ERROR, 'Acto recepcional', message);
@@ -1256,7 +1277,7 @@ export class TitulationProgressComponent implements OnInit {
               operation: eOperation,
             };
             this.requestProvider
-              .updateRequest(requestId, data)
+              .updateRequest(requestId, data,this.filterRole)
               .subscribe((_) => {
                 this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional',
                   (eOperation === eStatusRequest.PROCESS ? 'Alumno notificado' : 'Título profesional entregado'));
@@ -1514,14 +1535,14 @@ export class TitulationProgressComponent implements OnInit {
   }
 
   // Obtiene las solicitudes en base al rol del usuario
-  private _getRequestsByRole(role: string): Promise<iRequest[]> {
-    return new Promise((resolve) => {
-      this.requestProvider.getAllRequestByStatus(role)
-        .subscribe(
-          (data: { request: iRequest[] }) => resolve(data.request),
-          (_) => resolve(null));
-    });
-  }
+  // private _getRequestsByRole(role: string): Promise<iRequest[]> {
+  //   return new Promise((resolve) => {
+  //     this.requestProvider.getAllRequestByStatus(role)
+  //       .subscribe(
+  //         (data: { request: iRequest[] }) => resolve(data.request),
+  //         (_) => resolve(null));
+  //   });
+  // }
 
   // Obtiene el género de un empleado
   private _getEmployeeGender(data: string): Promise<string> {

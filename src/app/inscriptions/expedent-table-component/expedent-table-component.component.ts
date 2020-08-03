@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, Output, EventEmitter, SimpleChanges, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Output, EventEmitter, SimpleChanges, ElementRef, OnChanges } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,12 +19,14 @@ import { MatChipInputEvent } from '@angular/material';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { FormControl } from '@angular/forms';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { CookiesService } from 'src/app/services/app/cookie.service';
+
 @Component({
   selector: 'app-expedent-table-component',
   templateUrl: './expedent-table-component.component.html',
   styleUrls: ['./expedent-table-component.component.scss']
 })
-export class ExpedentTableComponentComponent implements OnInit {
+export class ExpedentTableComponentComponent implements OnInit, OnChanges {
 
   @Input('students') students: Array<IStudentExpedient>;
   @Input('tabName') tabName: string;
@@ -33,13 +35,8 @@ export class ExpedentTableComponentComponent implements OnInit {
   @Output() updateGIEmit = new EventEmitter();
   @Output() viewAnalysisEmit = new EventEmitter();
   @Output() viewExpedientEmit = new EventEmitter();
-  @Output() registerCredentialEmit = new EventEmitter();
-  @Output() removeCredentialEmit = new EventEmitter();
   @Output() updateSolicitudEmit = new EventEmitter();
-  @Output() generateCredentialEmit = new EventEmitter();
-  @Output() updateExpedientStatusEmit = new EventEmitter();
-  @Output() integratedExpedientEmit = new EventEmitter();
-  @Output() archivedExpedientEmit = new EventEmitter();  
+  @Output() generateCredentialEmit = new EventEmitter(); 
   @Output() generateCoversEmit = new EventEmitter();  
   @Output() generateLabelsEmit = new EventEmitter();  
   @Output() getScheduleEmit = new EventEmitter();  
@@ -51,8 +48,7 @@ export class ExpedentTableComponentComponent implements OnInit {
   @Output() excelExportCMEmit = new EventEmitter();  
   @Output() getCareerEmit = new EventEmitter();  
   @Output() getControlNumberEmit = new EventEmitter();  
-  @Output() getUsedPeriodsEmit = new EventEmitter();  
-  @Output() reloadEmit = new EventEmitter();  
+  @Output() getUsedPeriodsEmit = new EventEmitter();   
 
   displayedColumns: string[] = ['controlNumber', 'fullName', 'career', 'avance','status','exp','actions'];
   dataSource: MatTableDataSource<IStudentExpedient>;
@@ -111,7 +107,8 @@ export class ExpedentTableComponentComponent implements OnInit {
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
     private inscriptionsProv: InscriptionsProvider,
-    private careerProv: CareerProvider
+    private careerProv: CareerProvider,
+    private cookieService: CookiesService
   ) {
     this.dataSource = new MatTableDataSource();
     this.getCareers();
@@ -413,7 +410,7 @@ export class ExpedentTableComponentComponent implements OnInit {
       ()=>{
         this.loadingService.setLoading(false);
         this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Impresión Registrada.');
-        this.registerCredentialEmit.emit(true);
+        
       });
     }
     
@@ -428,7 +425,6 @@ export class ExpedentTableComponentComponent implements OnInit {
         this.loadingService.setLoading(false);
         this.notificationService.showNotification(eNotificationType.SUCCESS, 'Inscripciones', 'Impresión Removida.');
         
-        this.removeCredentialEmit.emit(true);
       });
     }
   }
@@ -449,15 +445,13 @@ export class ExpedentTableComponentComponent implements OnInit {
         if (numberAceptedDocs == 11 || numberAceptedDocs == 12){
           // Cambiar estatus a ACEPTADO
           this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},row.student._id).subscribe(res => {
-          });
-          this.updateExpedientStatusEmit.emit(true);
+          });          
           return;
         }
         if (numberValidateddDocs == 11 || numberValidateddDocs == 12){
           // Cambiar estatus a VALIDADO
           this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},row.student._id).subscribe(res => {
-          });
-          this.updateExpedientStatusEmit.emit(true);
+          });          
           return;
         }
 
@@ -469,8 +463,7 @@ export class ExpedentTableComponentComponent implements OnInit {
           if(!allValidateOrAcept){
             // Cambiar estatus a EN PROCESO
             this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},row.student._id).subscribe(res => {
-            });
-            this.updateExpedientStatusEmit.emit(true);
+            });            
             return;
           }
           // No cambiar estatus
@@ -481,11 +474,11 @@ export class ExpedentTableComponentComponent implements OnInit {
   async integratedExpedient(row){
     const response = await this.showSwalAlert('Para ' + row.controlNumber,'Integrar Expediente','question');
     if (response) {
-      this.inscriptionsProv.updateStudent({expStatus:"Integrado"},row.student._id).subscribe(res => {
+      this.inscriptionsProv.updateStudent({expStatus:"Integrado"},row.student._id, ).subscribe(res => {
       }, err=>{},
       ()=>{
         this.notificationService.showNotification(eNotificationType.SUCCESS, 'Inscripciones', 'Expediente Integrado.');
-        this.integratedExpedientEmit.emit(true);
+        
       });
     }
   }
@@ -496,8 +489,7 @@ export class ExpedentTableComponentComponent implements OnInit {
       }, err=>{},
       ()=>{
         this.notificationService.showNotification(eNotificationType.SUCCESS, 'Éxito', 'Expediente Archivado.');
-        
-        this.archivedExpedientEmit.emit(true);
+                
       });;
     }    
   }
@@ -556,9 +548,7 @@ export class ExpedentTableComponentComponent implements OnInit {
     this.getControlNumberEmit.emit(this.filters.textSearch.value);
   }
 
-  reload(){
-    this.reloadEmit.emit(true);
-  }
+ 
   getUsedPeriods(){
     const periods = this.usedPeriods.length > 0  ? this.usedPeriods : this.localPeriods;        
     this.getUsedPeriodsEmit.emit(periods);

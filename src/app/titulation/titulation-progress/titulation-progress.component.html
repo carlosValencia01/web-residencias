@@ -42,12 +42,7 @@
         <div class="col-xs-12 col-sm-6 col-md-5">
           <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
         </div>
-        <div class="col-xs-12 col-md-1">
-          <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
-            (click)="reload()" data-toggle="tooltip" title="Actualizar">
-            <mat-icon>cached</mat-icon>
-          </button>
-        </div>
+        
       </div>
       <div class="row text-center p-0 p-md-3 m-0 m-0" *ngIf="role!=='jefe académico' && role!=='secretaria académica'">
         <div class="col-xs-12 col-md-3" *ngIf="tabNumber === 1">
@@ -74,12 +69,7 @@
           <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
         </div>
 
-        <div class="col-xs-12 col-md-1 mb-1" *ngIf="tabNumber !== 7">
-          <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
-            (click)="reload()" data-toggle="tooltip" title="Actualizar">
-            <mat-icon>cached</mat-icon>
-          </button>
-        </div>
+        
       </div>
 
       <div class="row p-0 p-md-2 mb-2 d-flex justify-content-center" *ngIf="tabNumber===1 || tabNumber===6">

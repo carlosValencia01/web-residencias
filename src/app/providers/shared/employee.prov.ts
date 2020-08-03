@@ -33,11 +33,6 @@ export class EmployeeProvider {
             .pipe(map(student => student.json()));
     }
 
-    getProfileImage(id) {
-        return this.api.get(`employee/image/${id}`, { responseType: ResponseContentType.Blob })
-            .pipe(map((res: Response) => res.blob()));
-    }
-
     getEmployeesByDepto() {
         return this.api.get(`department/employees`).pipe(map(department => department.json()));
     }

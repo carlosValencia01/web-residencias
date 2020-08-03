@@ -18,6 +18,7 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { ObservationsComponentComponent } from 'src/app/titulation/observations-component/observations-component.component';
 import Swal from 'sweetalert2';
+import { ERoleToAcronym } from 'src/app/enumerators/app/role.enum';
 
 @Component({
   selector: 'app-request-modal',
@@ -35,7 +36,7 @@ export class RequestModalComponent implements OnInit {
   private integrants: Array<iIntegrant> = [];
   private oRequest: uRequest;
   private folderId: string;
-
+  private filterRole: string;
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -49,6 +50,7 @@ export class RequestModalComponent implements OnInit {
     private loadingService: LoadingService,
   ) {
     this.userInformation = this.cookiesService.getData().user;
+    this.filterRole = (ERoleToAcronym as any)[this.userInformation.rol.name.toLowerCase()];
   }
 
   ngOnInit() {
@@ -186,7 +188,7 @@ export class RequestModalComponent implements OnInit {
   updateRequest(data: any) {
     this.loadingService.setLoading(true);
     this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Procesando solicitud');
-    this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
+    this.requestProvider.updateRequest(this.request._id, data,this.filterRole).subscribe(_ => {
       this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
       this.loadingService.setLoading(false);
       this.dialogRef.close(true);
