@@ -20,22 +20,28 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-
 import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatSelectModule} from '@angular/material/select';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
+//Proveedores
 import { StudentProvider } from '../providers/shared/student.prov';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
 import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
+import { GroupProvider } from 'src/app/english/providers/group.prov';
+
+//Componentes
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 import { FormRequestCourseComponent } from './components/student-english-page/form-request-course/form-request-course.component';
 import { StudentRequestsComponent } from './components/english-courses-page/student-requests/student-requests.component';
 //import { ConfigureCourseComponent } from './components/english-courses-page/configure-course/configure-course.component';
 import { FormCreateCourseComponent } from './components/english-courses-page/form-create-course/form-create-course.component';
+import { FormGroupComponent } from './components/english-courses-page/form-group/form-group.component';
 
 
 @NgModule({
@@ -62,6 +68,8 @@ import { FormCreateCourseComponent } from './components/english-courses-page/for
     MatChipsModule,
     MatTooltipModule,
     MatSlideToggleModule,
+    MatSelectModule,
+    MatCheckboxModule,
   ],
   declarations: [
     StudentEnglishPageComponent,
@@ -70,12 +78,14 @@ import { FormCreateCourseComponent } from './components/english-courses-page/for
     StudentRequestsComponent,
     //ConfigureCourseComponent,
     FormCreateCourseComponent,
+    FormGroupComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
     StudentRequestsComponent,
     //ConfigureCourseComponent,
     FormCreateCourseComponent,
+    FormGroupComponent,
   ],
   providers: [
     StudentProvider,
@@ -84,6 +94,7 @@ import { FormCreateCourseComponent } from './components/english-courses-page/for
     RequestCourseProvider,
     ClassroomProvider,
     EnglishCourseProvider,
+    GroupProvider,
   ]
 })
 export class EnglishModule { }

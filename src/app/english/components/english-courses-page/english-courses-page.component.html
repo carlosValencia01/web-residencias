@@ -119,6 +119,56 @@
   <!-- GRUPOS -->
 
   <mat-tab label="Grupos">
+
+    <div class="row justify-content-center p-3">
+
+      <div>
+
+        <button class="button-blue" mat-raised-button (click)="openDialogFormCreateGroup()">Nuevo Grupo</button>
+
+      </div>
+
+    </div>
+
+    <div>
+      <table mat-table [dataSource]="groups" class="mat-elevation-z8">
+    
+        <ng-container matColumnDef="name">
+          <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="course">
+          <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="level">
+          <mat-header-cell *matHeaderCellDef>Nivel</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.level}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="period">
+          <mat-header-cell *matHeaderCellDef>Periodo</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.status}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <mat-header-cell  *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <!--Opciones-->
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'period', 'status', 'actions']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'status', 'actions']"></mat-row>
+      </table>
+    </div>
     
   </mat-tab>
 
@@ -176,7 +226,7 @@
                 >
               Activo
             </mat-slide-toggle>
-               <button (click)="deleteClassroom(row._id)" mat-icon-button>
+               <button (click)="opcion(row._id)" mat-icon-button>
                 <mat-icon>delete</mat-icon>
                </button>
                -->

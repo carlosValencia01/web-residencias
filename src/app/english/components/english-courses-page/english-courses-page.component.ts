@@ -6,11 +6,13 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
+import { GroupProvider } from 'src/app/english/providers/group.prov';
 
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
 import { ConfigureCourseComponent } from 'src/app/english/components/english-courses-page/configure-course/configure-course.component';
 
 import { FormCreateCourseComponent } from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
+import { FormGroupComponent } from 'src/app/english/components/english-courses-page/form-group/form-group.component';
 
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -28,6 +30,7 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   englishCourses: any;
   activePeriod: any;
+  groups: any;
 
   constructor(
     private _CookiesService: CookiesService,
@@ -38,6 +41,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     private requestCourseProv : RequestCourseProvider,
     private classroomProv: ClassroomProvider,
     private englishCourseProv: EnglishCourseProvider,
+    private groupProv: GroupProvider,
     public dialog: MatDialog,
   ) { 
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
@@ -54,6 +58,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.createRequestsCourses();
     this.createClassrooms();
     this.createEnglishCourses();
+    this.createGroups();
     this.getActivePeriod();
   }
 
@@ -135,6 +140,90 @@ export class EnglishCoursesPageComponent implements OnInit {
     },error => {
 
     }, () => this.loadingService.setLoading(false));
+  }
+
+  //Grupos
+
+  createGroups(){
+    this.loadingService.setLoading(true);
+    this.groupProv.getAllGroup().subscribe(res => {
+
+      this.groups = res.groups;
+
+    },error => {
+
+    }, () => this.loadingService.setLoading(false));
+  }
+
+  openDialogFormCreateGroup(): void {
+    const dialogRef = this.dialog.open(FormGroupComponent, {
+      hasBackdrop: true,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      if(result){
+        console.log(result);
+        var data={
+          name: result.a.nameCtrl,
+          schedule: [],
+          level: result.a.levelCtrl,
+          period: this.activePeriod._id,
+          status: 'opened',
+          course: result.a.courseCtrl._id,
+        };
+
+        switch (result.a.scheduleCtrl) {
+          case "1":
+            for (let index = 1; index <= 5; index++) {
+              data.schedule.push(
+                {
+                  day: index, 
+                  startHour: this.getMinutes(result.b.x), 
+                  endDate: this.getMinutes(result.b.y),
+                });
+              
+            }
+            
+            break;
+          case "2":
+            data.schedule.push(
+              {
+                day: 6, 
+                startHour: this.getMinutes(result.b.x), 
+                endDate: this.getMinutes(result.b.y),
+              });
+            break;
+          case "3":
+            result.c.forEach(element => {
+              if (element.active) {
+                data.schedule.push(
+                  {
+                    day: element.day, 
+                    startHour: this.getMinutes(element.startHour), 
+                    endDate: this.getMinutes(element.endDate),
+                  });
+              }
+            });
+            break;
+          default:
+            return;
+            break;
+        };
+
+        this.groupProv.createGroup(data).subscribe(res => {
+          this.ngOnInit()
+        }, 
+        error => {console.log(error)});
+      };
+    });
+  }
+
+  getMinutes(hour):Number{
+    var hh = parseFloat(hour.split(":",2)[0])
+    var mm = parseFloat(hour.split(":",2)[1])
+    var time = mm + (hh*60);
+    return time;
   }
   
   // Cursos
