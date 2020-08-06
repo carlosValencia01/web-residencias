@@ -12,11 +12,15 @@ export class RequestCourseProvider {
         return this.api.get('sg-cle/requestcourse/all').pipe(map(student => student.json()));
     }
 
-    updateRequestCourse(data){
-        return this.api.post('sg-cle/requestcourse/update', data).pipe(map( res=>res.json()));
+    getAllRequestByCourse(course) {
+        return this.api.get('sg-cle/requestcourse/all/'+course).pipe(map(student => student.json()));
     }
 
-    deleteRequestStudent(id, data){
-        return this.api.put('sg-cle/requestcourse/delete/'+id, data).pipe(map( res=>res.json()));
+    createRequestCourse(data){
+        return this.api.post('sg-cle/requestcourse/create', data).pipe(map( res=>res.json()));
+    }
+
+    updateRequestById(id, data) {
+        return this.api.put('sg-cle/requestcourse/update/'+id, data).pipe(map(student => student.json()));
     }
 }

@@ -23,6 +23,11 @@ export class GroupProvider {
             .pipe(map(group => group.json()));
     }
 
+    getAllGroupOpenedByCourseAndLevel(data) {
+        return this.api.get('sg-cle/group/all/opened/by-course-and-level', data)
+            .pipe(map(group => group.json()));
+    }
+
     getActivePeriod(){
         return this.api.get('period/active').pipe(map( res=>res.json()));
     }

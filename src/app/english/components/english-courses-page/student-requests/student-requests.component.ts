@@ -13,13 +13,7 @@ import { RequestCourseProvider } from 'src/app/english/providers/request-course.
 import Swal from 'sweetalert2';
 
 export interface DialogData {
-  requestCourseId: string, 
-  requestCourseName: string,
-  dayId: string,
-  dayDesc: string,
-  hourId: string,
-  hourDesc: string,
-  studentsId: any;
+  group: any
 }
 
 @Component({
@@ -56,44 +50,57 @@ export class StudentRequestsComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  transformFormat(data){
+  transformFormat(data, requestId){
     return {
       _id: data._id,
       fullName: data.studentId.fullName,
       controlNumber: data.studentId.controlNumber,
       career: data.studentId.career,
       email: data.studentId.email,
-      actualPhone: data.actualPhone,
+      currentPhone: data.currentPhone,
+      requestId: requestId,
     };
   }
 
   getDataSource(){
     
     this.englishStudents = [];
+
+    this.loadingService.setLoading(true);
+    this.requestCourseProv.getAllRequestByCourse(this.data.group._id).subscribe(res => {
+
+      console.log(res);
+      res.requestCourses.forEach(element => {
+
+        this.loadingService.setLoading(true);
+        this.englishStudentProv.getEnglishStudentById(element.englishStudent).subscribe(res => {
+
+          var englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
+          this.englishStudents.push(this.transformFormat(englishStudent, element._id));
+          console.log(this.englishStudents);
+          this.createDataSource();
+  
+        },error => {
+  
+          console.log(error);
+  
+        }, () => this.loadingService.setLoading(false));
+
+      });
+
+      this.createDataSource();
+
+    },error => {
+
+      console.log(error);
+
+    }, () => this.loadingService.setLoading(false));
     
-    this.data.studentsId.forEach(id => {
-      
-      this.loadingService.setLoading(true);
-      this.englishStudentProv.getEnglishStudentById(id).subscribe(res => {
-
-        var englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
-        this.englishStudents.push(this.transformFormat(englishStudent));
-        console.log(this.englishStudents);
-        this.createDataSource();
-
-      },error => {
-
-        console.log(error);
-
-      }, () => this.loadingService.setLoading(false));
-    
-    });
-
-    this.createDataSource();
 
   }
 
-  deleteStudentRequest(studentId, name){
+  
+  deleteStudentRequest(studentId, requestId, name){
     // Alert
 
     Swal.fire({
@@ -110,6 +117,37 @@ export class StudentRequestsComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
 
+        const data={
+          status: 'rejected'
+        };
+
+        this.loadingService.setLoading(true);
+        this.requestCourseProv.updateRequestById(requestId, data).subscribe(res => {
+
+          console.log(res);
+
+          const englishStudent = {
+            $set: {status: 'rejected'}
+          }
+          this.englishStudentProv.updateEnglishStudent(englishStudent, studentId).subscribe(res2 => {
+            console.log(res2);
+
+            this.loadingService.setLoading(false);
+            this.getDataSource();
+            Swal.fire(
+              'Eliminado!',
+              'La solicitud del estudiante ha sido rechazada.',
+              'success'
+            );
+   
+          }, () => {
+            this.loadingService.setLoading(false);
+          });
+
+        }, () => {
+          this.loadingService.setLoading(false);
+        });
+        /*
         const data = {
           dayId: this.data.dayId,
           hourId: this.data.hourId,
@@ -117,7 +155,7 @@ export class StudentRequestsComponent implements OnInit {
         }
         //Eliminar estudiante de la solicitud
         this.loadingService.setLoading(true);
-        this.requestCourseProv.deleteRequestStudent(this.data.requestCourseId, data).subscribe(res => {
+        this.requestCourseProv.getAllRequestCourse().subscribe(res => {
           //Eliminar estudiante del arreglo
           if(res.nModified>0){
             for (var i =0; i < this.data.studentsId.length; i++){
@@ -145,6 +183,7 @@ export class StudentRequestsComponent implements OnInit {
           this.loadingService.setLoading(false);
         });
 
+        */
       }
     });
     //

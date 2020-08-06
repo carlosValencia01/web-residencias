@@ -16,6 +16,7 @@ import { FormGroupComponent } from 'src/app/english/components/english-courses-p
 
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -24,13 +25,14 @@ import { FormBuilder, Validators } from '@angular/forms';
 })
 export class EnglishCoursesPageComponent implements OnInit {
 
-  requestsCourses: any;
   classrooms: any;
   classroomForm;
 
   englishCourses: any;
   activePeriod: any;
   groups: any;
+
+  requests: Array<any>;
 
   constructor(
     private _CookiesService: CookiesService,
@@ -55,7 +57,8 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.createRequestsCourses();
+    this.createEnglishCourseActive();
+    //this.createRequestsCourses();
     this.createClassrooms();
     this.createEnglishCourses();
     this.createGroups();
@@ -64,6 +67,50 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   // Solicitudes
 
+  createEnglishCourseActive(){
+    this.loadingService.setLoading(true);
+    this.englishCourseProv.getAllEnglishCourseActive().subscribe(res => {
+
+      res.englishCourses.forEach(course => {
+        this.requests = []; 
+        this.getOpenGroupsByLevel(course);
+      });
+      console.log(this.requests);
+
+    },error => {
+
+    }, () => this.loadingService.setLoading(false));
+  }
+
+  async getOpenGroupsByLevel(course) {
+
+    const x = [];
+
+    for (let i = 1; i <= course.totalSemesters; i++) {
+
+      let data = {
+        courseId: course._id,
+        level: i,
+      };
+  
+      this.loadingService.setLoading(true);
+      await this.groupProv.getAllGroupOpenedByCourseAndLevel(data).subscribe(res => {
+  
+        if(res.groups.length>0){
+          x.push({haveGroups: true, groups: res.groups});
+        }else{  
+          x.push({haveGroups: false, groups: res.groups});
+        }
+  
+      },error => {
+  
+      }, () => this.loadingService.setLoading(false));
+      
+    }
+    this.requests.push({course: course, data:x});
+  }
+
+  /*
   createRequestsCourses(){
     this.loadingService.setLoading(true);
     this.requestCourseProv.getAllRequestCourse().subscribe(res => {
@@ -73,25 +120,20 @@ export class EnglishCoursesPageComponent implements OnInit {
     },error => {
 
     }, () => this.loadingService.setLoading(false));
-  }
-
+  } 
+  
   deleteRequestForHour(requestCourseId,dayId,hourId){
     console.log(requestCourseId);
     console.log(dayId);
     console.log(hourId);
   }
+  */
 
-  openDialogTableStudents(requestCourseId, requestCourseName, dayId, dayDesc, hour): void {
+  openDialogTableStudents(group): void {
 
     const dialogRef = this.dialog.open(StudentRequestsComponent, {
       data: {
-        requestCourseId: requestCourseId, 
-        requestCourseName: requestCourseName,
-        dayId: dayId,
-        dayDesc: dayDesc,
-        hourId: hour._id,
-        hourDesc: hour.desc,
-        studentsId: hour.students
+        group: group
       },
       hasBackdrop: true,
     });

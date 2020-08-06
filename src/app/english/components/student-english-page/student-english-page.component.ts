@@ -184,11 +184,10 @@ export class StudentEnglishPageComponent implements OnInit {
     console.log(courseSelected);
     const dialogRef = this.dialog.open(FormRequestCourseComponent, {
       data: {
-        courseSelected: courseSelected, 
-        nameCourseSelected: courseSelected.name,
-        period: "2020-3",
-        scheduleSelected: "", 
-        currentPhone: this.englishStudent.actualPhone
+        courseSelected: courseSelected,
+        level: this.englishStudent.level,
+        groupId: "",
+        currentPhone: this.englishStudent.currentPhone
       },
       hasBackdrop: true,
     });
@@ -197,16 +196,16 @@ export class StudentEnglishPageComponent implements OnInit {
       if(result){
         
       console.log('The dialog was closed');
-      const request = {
-        name: result.nameCourseSelected,
-        period: result.period,
-        days: result.scheduleSelected.split("@@@",2)[0],
-        hours: result.scheduleSelected.split("@@@",2)[1],
-        studentId: this.englishStudent._id
+      const data = {
+        englishStudent: this.englishStudent._id,
+        group: result.groupId,
+        status: 'requested',
+        requestDate: new Date(),
+        level: this.englishStudent.level + 1
       };
       
-      this.requestCourseProv.updateRequestCourse(request).subscribe(res => {
-        if(res.requestCourse.ok == 1){
+      this.requestCourseProv.createRequestCourse(data).subscribe(res => {
+        if(res){
           this.englishStudent.currentPhone = result.currentPhone;
           this.englishStudent.status = 'selected';
           this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {

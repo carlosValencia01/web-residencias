@@ -49,9 +49,9 @@
 
   <!--Columna Telefono-->
 
-  <ng-container matColumnDef="actualPhone">
+  <ng-container matColumnDef="currentPhone">
     <mat-header-cell *matHeaderCellDef mat-sort-header>Telefono Celular</mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.actualPhone}} </mat-cell>
+    <mat-cell *matCellDef="let row"> {{row.currentPhone}} </mat-cell>
   </ng-container>
 
   <!--Columna Opciones-->
@@ -62,14 +62,14 @@
          <button mat-icon-button>
           <mat-icon>view_list</mat-icon>
          </button>
-         <button (click)="deleteStudentRequest(row._id, row.fullName)" mat-icon-button>
+         <button (click)="deleteStudentRequest(row._id, row.requestId, row.fullName)" mat-icon-button>
           <mat-icon>delete</mat-icon>
          </button>
     </mat-cell>
   </ng-container>
 
-  <mat-header-row *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'actualPhone', 'actions']"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'actualPhone', 'actions']"></mat-row>
+  <mat-header-row *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'actions']"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'actions']"></mat-row>
 
   <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
 
