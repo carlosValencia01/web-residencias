@@ -1,5 +1,7 @@
 <mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;">
   
+  <!-- SOLICITUDES -->
+
   <mat-tab label="Solicitudes" class="p-md-5">
     <mat-accordion class="course-headers-align" multi>
 
@@ -18,7 +20,7 @@
             <ng-container *ngFor="let level of request.data; let i = index">
               <mat-expansion-panel>
                 <mat-expansion-panel-header>
-                  <mat-panel-title>Nivel {{i+1}}</mat-panel-title>
+                  <mat-panel-title>Nivel {{level.level}}</mat-panel-title>
                   <mat-panel-description>
                     {{level.groups.length}} Grupo<ng-container *ngIf="level.groups.length>1||level.groups.length==0">s</ng-container>
                   </mat-panel-description>
@@ -62,53 +64,7 @@
 
     </mat-accordion>
   </mat-tab>
-  
-  <!-- SOLICITUDES 
 
-  <mat-tab label="Solicitudes" class="p-md-5">
-    <mat-accordion class="course-headers-align" multi>
-      <div *ngFor="let activeCourse of englishCourseActive">
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{activeCourse.name}}
-            </mat-panel-title>
-            <mat-panel-description>
-              {{activeCourse.totalSemesters}} ---cantidad de grupos existentes dentro
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-          <table mat-table [dataSource]="requestsCourseForDay.hours" class="mat-elevation-z8">
-    
-            <ng-container matColumnDef="desc">
-              <mat-header-cell *matHeaderCellDef>Horario</mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{row.desc}} </mat-cell>
-            </ng-container>
-    
-            <ng-container matColumnDef="students">
-              <mat-header-cell *matHeaderCellDef>Estudiantes</mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{row.students.length}} </mat-cell>
-            </ng-container>
-    
-            <ng-container matColumnDef="actions">
-              <mat-header-cell  *matHeaderCellDef></mat-header-cell>
-              <mat-cell *matCellDef="let row">
-                   <button (click)="openDialogTableStudents(requestsCourse._id, requestsCourse.name, requestsCourseForDay._id, requestsCourseForDay.desc, row)" mat-icon-button>
-                    <mat-icon>view_list</mat-icon>
-                   </button>
-                   <button (click)="deleteRequestForHour(requestsCourse._id, requestsCourseForDay._id, row._id)" mat-icon-button>
-                    <mat-icon>delete</mat-icon>
-                   </button>
-              </mat-cell>
-            </ng-container>
-    
-            <mat-header-row *matHeaderRowDef="['desc', 'students', 'actions']"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: ['desc', 'students', 'actions']"></mat-row>
-          </table>
-        </mat-expansion-panel>
-      </div>
-    </mat-accordion>
-  </mat-tab>
--->
 
 <!-- AULAS -->
 

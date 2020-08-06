@@ -16,7 +16,8 @@
   </div>
 
   <!--Tabla-->
-
+<div style="position: relative;">
+<div style="position: relative; overflow: auto; max-width: 100%;">
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
   <!--Columna Nombre-->
@@ -54,9 +55,16 @@
     <mat-cell *matCellDef="let row"> {{row.currentPhone}} </mat-cell>
   </ng-container>
 
+  <!--Columna Fecha-->
+
+  <ng-container matColumnDef="requestDate">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.requestDate | date :  "dd/MM/yy HH:mm"}} </mat-cell>
+  </ng-container>
+
   <!--Columna Opciones-->
 
-  <ng-container matColumnDef="actions">
+  <ng-container matColumnDef="actions" stickyEnd>
     <mat-header-cell  *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let row">
          <button mat-icon-button>
@@ -68,8 +76,8 @@
     </mat-cell>
   </ng-container>
 
-  <mat-header-row *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'actions']"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'actions']"></mat-row>
+  <mat-header-row *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']"></mat-row>
 
   <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
 
@@ -78,11 +86,11 @@
   </tr>
 
 </table>
-
+</div>
 <!--Paginas-->
 
 <mat-paginator #matPaginatorEnglishStudents [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
-
+</div>
 </div>
 
 <!--Opciones-->

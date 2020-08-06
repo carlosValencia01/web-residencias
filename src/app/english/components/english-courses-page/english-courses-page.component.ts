@@ -58,7 +58,6 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   ngOnInit() {
     this.createEnglishCourseActive();
-    //this.createRequestsCourses();
     this.createClassrooms();
     this.createEnglishCourses();
     this.createGroups();
@@ -97,9 +96,9 @@ export class EnglishCoursesPageComponent implements OnInit {
       await this.groupProv.getAllGroupOpenedByCourseAndLevel(data).subscribe(res => {
   
         if(res.groups.length>0){
-          x.push({haveGroups: true, groups: res.groups});
+          x.push({level: i, haveGroups: true, groups: res.groups});
         }else{  
-          x.push({haveGroups: false, groups: res.groups});
+          x.push({level: i, haveGroups: false, groups: res.groups});
         }
   
       },error => {
@@ -107,21 +106,11 @@ export class EnglishCoursesPageComponent implements OnInit {
       }, () => this.loadingService.setLoading(false));
       
     }
+    x.sort((a, b) => a.level.localeCompare(b.level));
     this.requests.push({course: course, data:x});
   }
 
   /*
-  createRequestsCourses(){
-    this.loadingService.setLoading(true);
-    this.requestCourseProv.getAllRequestCourse().subscribe(res => {
-
-      this.requestsCourses = res.requestCourses;
-
-    },error => {
-
-    }, () => this.loadingService.setLoading(false));
-  } 
-  
   deleteRequestForHour(requestCourseId,dayId,hourId){
     console.log(requestCourseId);
     console.log(dayId);

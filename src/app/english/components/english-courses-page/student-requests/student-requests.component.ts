@@ -50,7 +50,7 @@ export class StudentRequestsComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  transformFormat(data, requestId){
+  transformFormat(data, requestId, requestDate){
     return {
       _id: data._id,
       fullName: data.studentId.fullName,
@@ -59,6 +59,7 @@ export class StudentRequestsComponent implements OnInit {
       email: data.studentId.email,
       currentPhone: data.currentPhone,
       requestId: requestId,
+      requestDate: requestDate,
     };
   }
 
@@ -76,7 +77,7 @@ export class StudentRequestsComponent implements OnInit {
         this.englishStudentProv.getEnglishStudentById(element.englishStudent).subscribe(res => {
 
           var englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
-          this.englishStudents.push(this.transformFormat(englishStudent, element._id));
+          this.englishStudents.push(this.transformFormat(englishStudent, element._id, element.requestDate));
           console.log(this.englishStudents);
           this.createDataSource();
   
