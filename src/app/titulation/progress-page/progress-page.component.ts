@@ -20,8 +20,11 @@ export class ProgressPageComponent implements OnInit {
   public phasesApprove = ['Realizado'];
   public phasesExamAct = ['Generado', 'Titulado'];
   public phasesContinue = ['Generado', 'Titulado'];
+  public phasesAcademicBoss = ['Verificado', 'Validado'];
+  public phasesDivEstBoss = ['Realizado'];
   public data: { periods: IPeriod[], careers: ICareer[], requests: iRequest[] };
   public role: string;
+  public boss: string;
 
   constructor(
     private cookiesService: CookiesService,
@@ -30,6 +33,7 @@ export class ProgressPageComponent implements OnInit {
     private requestProvider: RequestProvider,
   ) {
     this.role = this.cookiesService.getData().user.rol.name.toLowerCase();
+    this.boss = this.role;
   }
 
   ngOnInit() {
