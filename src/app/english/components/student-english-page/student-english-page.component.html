@@ -70,6 +70,9 @@
             <div class="center-description-progress-spinner">{{englishStudent.totalHoursCoursed}} hrs</div>
           </div>
           <div>Aún no cumple con las horas necesarias para liberar el Inglés</div>
+          <div *ngIf="englishStudent.status=='selected'">
+            <button class="mt-4" mat-raised-button color="warn" (click)="openDialogRejectRequest(englishStudent._id)">Declinar solicitud</button>
+          </div>
         </div>
       </div>
       <!--Cursos --> 

@@ -223,4 +223,55 @@ export class StudentEnglishPageComponent implements OnInit {
     });
   }
 
+  openDialogRejectRequest(englishStudentId){
+    Swal.fire({
+      title: 'Declinar Solicitud',
+      text: `Está por rechazar la solicitud enviada. ¿Desea continuar?`,
+      type: 'warning',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      confirmButtonColor: 'red',
+      cancelButtonColor: 'green',
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: true
+    }).then((result) => {
+      if (result.value) {
+
+        const data={
+          status: 'rejected'
+        };
+
+        this.loadingService.setLoading(true);
+        this.requestCourseProv.updateRequestByStudentId(englishStudentId, data).subscribe(res => {
+
+          console.log(res);
+
+          const englishStudent = {
+            $set: {status: 'no_choice'}
+          }
+          this.englishStudentProv.updateEnglishStudent(englishStudent, englishStudentId).subscribe(res2 => {
+            console.log(res2);
+            this.englishStudent.status = 'no_choice';
+
+            this.loadingService.setLoading(false);
+            Swal.fire(
+              'Solicitud Eliminada!',
+              'La solicitud al curso ha sido declinada.',
+              'success'
+            );
+   
+          }, () => {
+            this.loadingService.setLoading(false);
+          });
+
+        }, () => {
+          this.loadingService.setLoading(false);
+        });
+
+      }
+    });
+      
+  }
+
 }

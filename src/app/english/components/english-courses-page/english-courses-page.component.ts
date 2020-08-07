@@ -100,13 +100,15 @@ export class EnglishCoursesPageComponent implements OnInit {
         }else{  
           x.push({level: i, haveGroups: false, groups: res.groups});
         }
+        x.sort((a, b) => a.level - b.level);
   
       },error => {
   
       }, () => this.loadingService.setLoading(false));
       
-    }
-    x.sort((a, b) => a.level.localeCompare(b.level));
+    };
+    
+    console.log(x);
     this.requests.push({course: course, data:x});
   }
 

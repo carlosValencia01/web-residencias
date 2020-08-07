@@ -23,4 +23,8 @@ export class RequestCourseProvider {
     updateRequestById(id, data) {
         return this.api.put('sg-cle/requestcourse/update/'+id, data).pipe(map(student => student.json()));
     }
+
+    updateRequestByStudentId(id, data) {
+        return this.api.put('sg-cle/requestcourse/update/student/'+id, data).pipe(map(student => student.json()));
+    }
 }
