@@ -42,6 +42,7 @@ import { StudentRequestsComponent } from './components/english-courses-page/stud
 //import { ConfigureCourseComponent } from './components/english-courses-page/configure-course/configure-course.component';
 import { FormCreateCourseComponent } from './components/english-courses-page/form-create-course/form-create-course.component';
 import { FormGroupComponent } from './components/english-courses-page/form-group/form-group.component';
+import { FromGenerateGroupsComponent } from './components/english-courses-page/from-generate-groups/from-generate-groups.component';
 
 
 @NgModule({
@@ -79,6 +80,7 @@ import { FormGroupComponent } from './components/english-courses-page/form-group
     //ConfigureCourseComponent,
     FormCreateCourseComponent,
     FormGroupComponent,
+    FromGenerateGroupsComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
@@ -86,6 +88,7 @@ import { FormGroupComponent } from './components/english-courses-page/form-group
     //ConfigureCourseComponent,
     FormCreateCourseComponent,
     FormGroupComponent,
+    FromGenerateGroupsComponent,
   ],
   providers: [
     StudentProvider,

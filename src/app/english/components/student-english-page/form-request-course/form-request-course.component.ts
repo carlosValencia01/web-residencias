@@ -32,7 +32,8 @@ export class FormRequestCourseComponent implements OnInit {
     private loadingService: LoadingService,
     private groupProv: GroupProvider,
     public dialogRef: MatDialogRef<FormRequestCourseComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData, private _formBuilder: FormBuilder) { }
+    @Inject(MAT_DIALOG_DATA) public data: DialogData, 
+    private _formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.groupFormGroup = this._formBuilder.group({

@@ -1,0 +1,149 @@
+<h1 mat-dialog-title>Generar Grupos</h1>
+
+  <div mat-dialog-content style="text-align: center;">
+
+    <form [formGroup]="groupsFormGroup">
+
+    <div>
+
+      <mat-form-field class="col-md-6 col-12">
+        <mat-label>Curso</mat-label>
+        <mat-select formControlName="courseCtrl" required>
+          <mat-option *ngFor="let course of englishCourses" [value]="course">
+            {{course.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="this.groupsFormGroup.get('courseCtrl').invalid">Necesitas seleccionar un curso</mat-error>
+      </mat-form-field>
+      
+    </div>
+
+    <div class="pt-3">Cantidad de estudiantes:</div>
+
+    <div class="pb-2">
+      <mat-error style="font-size: 75%;" *ngIf="this.groupsFormGroup.hasError('maxCapacityLess') &&
+      this.groupsFormGroup.get('minCapacityCtrl').dirty &&
+      this.groupsFormGroup.get('maxCapacityCtrl').dirty">
+        La cantidad máxima necesita ser mayor que la mínima
+      </mat-error>
+    </div>
+
+    <div class="row">
+
+      <div class="col-6">
+        <mat-form-field class="input-capacity">
+          <mat-label>Mínima</mat-label>
+          <input matInput formControlName="minCapacityCtrl" type="number" required>
+          <mat-error *ngIf="this.groupsFormGroup.get('minCapacityCtrl').invalid">
+            Selecciona un valor entre {{minCapacityStudents}} y {{maxCapacityStudents}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      
+      <div class="col-6">
+        <mat-form-field class="input-capacity">
+          <mat-label>Máxima</mat-label>
+          <input matInput formControlName="maxCapacityCtrl" type="number" required>
+          <mat-error *ngIf="this.groupsFormGroup.get('maxCapacityCtrl').invalid">
+            Selecciona un valor entre {{minCapacityStudents}} y {{maxCapacityStudents}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="pt-3">
+      <mat-form-field>
+        <mat-label>Horarios</mat-label>
+        <mat-select formControlName="scheduleCtrl" required [disabled]="this.groupsFormGroup.get('courseCtrl').invalid">
+          <mat-option value="1">Lunes a Viernes</mat-option>
+          <mat-option value="2">Sabados</mat-option>
+          <mat-option value="3">Personalizado</mat-option>
+          <mat-option value="4">Archivo CSV</mat-option>
+        </mat-select>
+        <mat-error *ngIf="this.groupsFormGroup.get('scheduleCtrl').invalid">Seleccione una opción</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div [ngSwitch]="this.groupsFormGroup.get('scheduleCtrl').value">
+
+      <ng-container *ngSwitchCase="'1'">
+        <mat-form-field class="input-time">
+          <mat-label>Inicio</mat-label>
+          <input matInput type="time" value="07:00" [(ngModel)]="startHours" [ngModelOptions]="{standalone: true}">
+        </mat-form-field>
+        <mat-form-field class="input-time">
+          <mat-label>Término</mat-label>
+          <input matInput type="time" value="07:00" [(ngModel)]="endDates" [ngModelOptions]="{standalone: true}">
+        </mat-form-field> 
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'2'">
+        <mat-form-field>
+          <mat-label>Inicio</mat-label>
+          <input matInput type="time" value="07:00" [(ngModel)]="startHours" [ngModelOptions]="{standalone: true}">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Término</mat-label>
+          <input matInput type="time" value="07:00" [(ngModel)]="endDates" [ngModelOptions]="{standalone: true}">
+        </mat-form-field> 
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'3'">
+        <div>
+          <table class="table table-bordered table-hover mt-2">
+            <thead>
+              <tr>
+                <th scope="col">Horas</th>
+                <th *ngFor="let day of weekdays" scope="col" style="background: white; position: sticky; top: 0;">{{dayschedule[day]}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="table-row clickable-row" *ngFor="let course of dataSchedule; let i = index;">
+                <th (click)="selectHour(i)" scope="row">{{dataHours[i]}}</th>
+                <td *ngFor="let day of weekdays; let j = index;" [class.mat-button-selected]="course[j]==dataHours[i]" 
+                (click)="course[j]=(course[j]=='')?dataHours[i]:''">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'4'">
+        <div>
+          <input #fileUpload (change)="onUpload($event)" accept=".csv" style="display:none" type="file">
+          <button (click)="fileUpload.click()" color="primary" mat-icon-button
+            title="Subir archivo">
+            <mat-icon>cloud_upload</mat-icon>
+          </button>
+        </div>
+        <div>
+          <table *ngIf="showTableCSV" class="table table-bordered mt-2">
+            <thead>
+              <tr>
+                <th *ngFor="let day of weekdays" scope="col">{{dayschedule[day]}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let course of schedule">
+                <td *ngFor="let hour of course">
+                  <ng-container *ngIf="hour.active">
+                    {{getHour(hour.startHour)}} - {{getHour(hour.endDate)}}
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+
+    </div>
+    
+  </form>
+
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-button [mat-dialog-close]="{a: groupsFormGroup.value, b: {x: startHours, y: endDates}, c: schedule}" [disabled]="!groupsFormGroup.valid" cdkFocusInitial>Crear</button>
+  </div>

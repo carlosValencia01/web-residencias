@@ -13,6 +13,7 @@ import { ConfigureCourseComponent } from 'src/app/english/components/english-cou
 
 import { FormCreateCourseComponent } from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
 import { FormGroupComponent } from 'src/app/english/components/english-courses-page/form-group/form-group.component';
+import { FromGenerateGroupsComponent } from 'src/app/english/components/english-courses-page/from-generate-groups/from-generate-groups.component';
 
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -186,6 +187,19 @@ export class EnglishCoursesPageComponent implements OnInit {
     },error => {
 
     }, () => this.loadingService.setLoading(false));
+  }
+
+  openDialogFormGenerateGroups(){
+    const dialogRef = this.dialog.open(FromGenerateGroupsComponent, {
+      hasBackdrop: true,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      if(result){
+        
+      };
+    });
   }
 
   openDialogFormCreateGroup(): void {
