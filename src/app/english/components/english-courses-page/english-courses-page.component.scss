@@ -2,22 +2,6 @@ table {
   width: 100%;
 }
 
-.mat-column-actions{
-  Word-wrap: break-Word !important;
-  white-space: unset !important;
-  flex: 0 0 20% !important;
-  width: 20% !important;
-  overflow-wrap: break-Word;
-  Word-wrap: break-Word;
-
-  Word-break: break-Word;
-
-  -ms-hyphens: auto;
-  -moz-hyphens: auto;
-  -webkit-hyphens: auto;
-  hyphens: auto;
-}
-
 .course-headers-align .mat-expansion-panel-header-title,
 .course-headers-align .mat-expansion-panel-header-description {
   flex-basis: 0;
@@ -35,4 +19,28 @@ table {
 .button-blue{
   background-color: #183969;
   color: white;
+}
+
+.mat-button-selected{
+  background-color: #183969;
+  color: white;
+}
+
+.status-available{
+  background-color: #183969;
+  color: white;
+}
+
+.status-occupied{
+  background-color: green;
+  color: white;
+}
+
+.status-none{
+  background-color: #C7C7C7;
+  color: white;
+}
+
+.table-row{
+  cursor:pointer;
 }

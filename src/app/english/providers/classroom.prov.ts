@@ -18,6 +18,11 @@ export class ClassroomProvider {
             .pipe(map(created => created.json()));
     }
 
+    updateClassroom(_id, classroom) {
+        return this.api.put('sg-cle/classroom/update/'+_id, classroom)
+            .pipe(map(updated => updated.json()));
+    }
+
     deleteClassroom(_id) {
         return this.api.delete(`sg-cle/classroom/remove/${_id}`)
         .pipe(map(classroom => classroom.json()));
