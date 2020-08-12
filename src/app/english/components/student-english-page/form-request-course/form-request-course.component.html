@@ -86,7 +86,7 @@
       <label>Curso: <strong>{{data.courseSelected.name}}</strong></label><br>
       <label>Número de celular: <strong>{{data.currentPhone}}</strong></label><br>
 
-      <div *ngFor="let s of shedule">
+      <div *ngFor="let s of schedule">
         <ng-container *ngIf="s._id == data.groupId">
           <label *ngIf="s.monday">Lunes: {{s.monday}}</label><br>
           <label *ngIf="s.tuesday">Martes: {{s.tuesday}}</label><br>

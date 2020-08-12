@@ -1,22 +1,33 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+
+//TABLA
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
+
+//Importar Servicios
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
 
+//Importar Proveedores
 import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
 
+//Importar Componentes
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
-
 import { FormCreateCourseComponent } from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
 import { FormGroupComponent } from 'src/app/english/components/english-courses-page/form-group/form-group.component';
 import { FromGenerateGroupsComponent } from 'src/app/english/components/english-courses-page/from-generate-groups/from-generate-groups.component';
 
-import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder, Validators } from '@angular/forms';
-import Swal from 'sweetalert2';
+//Importar Enumeradores
+import { StatusGroup } from 'src/app/english/enumerators/status-group.enum';
+import { DaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -25,30 +36,38 @@ import Swal from 'sweetalert2';
 })
 export class EnglishCoursesPageComponent implements OnInit {
 
+  activePeriod: any; //Periodo activo actualmente
+
+  //SOLICITUDES
+  requests: Array<any>;
+
+  //AULAS
   classrooms: any;
   classroomForm;
   updateClassroomForm;
   scheduleClassroom: Array<any>
-
-  englishCourses: any;
-  activePeriod: any;
-  groups: any;
-
-  requests: Array<any>;
-
   weekdays = [1,2,3,4,5,6]; //Dias de la semana
-
-  dayschedule = DaysSchedule; //Enumerador de los dias de la semana
-
   hourStart = "07:00"; //Tiempo de inicio
   hourEnd = "21:00"; //Tiempo de finalización
   segment = 60; //Cantidad en minutos de los segmentos
   dataHours = []; //Horas que se van a mostrar
   dataSchedule = []; //Arreglo de los dias seleccionados
-
+  dialogRef: any;
+  dayschedule = DaysSchedule; //Enumerador de los dias de la semana
+  
   @ViewChild("scheduleClassroomAux") dialogRefScheduleClassroomAux: TemplateRef<any>;
   @ViewChild("viewScheduleClassroom") dialogRefViewScheduleClassroom: TemplateRef<any>;
   @ViewChild("viewUpdateClassroom") dialogRefViewUpdateClassroom: TemplateRef<any>;
+
+  //GRUPOS
+  statusGroup = StatusGroup; //Enumerador del estatus del grupo
+  groups: any;
+  dataSourceGroups: MatTableDataSource<any>;
+  @ViewChild('matPaginatorGroups') paginatorGroups: MatPaginator;
+  @ViewChild(MatSort) sortGroups: MatSort;
+
+  //CURSOS
+  englishCourses: any;
 
   constructor(
     private _CookiesService: CookiesService,
@@ -86,7 +105,6 @@ export class EnglishCoursesPageComponent implements OnInit {
         this.requests = []; 
         this.getOpenGroupsByLevel(course);
       });
-      console.log(this.requests);
 
     },error => {
 
@@ -120,7 +138,6 @@ export class EnglishCoursesPageComponent implements OnInit {
       
     };
     
-    console.log(x);
     this.requests.push({course: course, data:x});
   }
 
@@ -153,7 +170,11 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   }
 
+
+
   // Aulas
+
+
 
   createFormClassroom(){
     this.classroomForm = this.formBuilder.group({
@@ -184,7 +205,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     for (let hour = start; hour < end; hour = hour + this.segment) { //Recorrer de inicio a fin incrementando por segmentos
       this.dataHours.push(this.getHour(hour)); //Guardar el segmento de hora
     }
-    console.log(this.dataHours); //Imprimir en consola todos los seegmentos
 
   }
 
@@ -196,7 +216,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     return hh+':'+mm; //Retorna los minutos en tiempo Ej: "24:00"
   }
 
-  generateShedule(){ //Genera el arreglo en el que se guardaran los valores seleccionados
+  generateSchedule(){ //Genera el arreglo en el que se guardaran los valores seleccionados
     this.dataSchedule = [];
     this.dataHours.forEach(a => { //Recorre cada una de las horas
       let week=[]; //define arreglo de dias de la semana
@@ -227,27 +247,29 @@ export class EnglishCoursesPageComponent implements OnInit {
       case "1":     
         this.segment = 60;
         this.createDataHours();   
-        this.generateShedule();
+        this.generateSchedule();
         view = this.dialogRefScheduleClassroomAux;
         break;
     
       case "2":
         this.segment = 30;
         this.createDataHours();
-        this.generateShedule();
-        this.getShedule(schedule, 'status');
+        this.generateSchedule();
+        this.getSchedule(schedule, 'status');
         view = this.dialogRefViewScheduleClassroom;
         break;
     }
-    const dialogRef = this.dialog.open(view, {hasBackdrop: true});
+    this.dialogRef = this.dialog.open(view, {hasBackdrop: true});
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+    this.dialogRef.afterClosed().subscribe(result => {
+      if(!result){
+        this.classroomForm.get('schedule').setValue('');
+      }
     });
   }
 
-  getShedule(shedule, get){
-    shedule.forEach(element => {
+  getSchedule(schedule, get){
+    schedule.forEach(element => {
       
       const psitionHour = this.dataHours.indexOf(this.getHour(element.startHour));
       
@@ -310,8 +332,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     }, () => this.loadingService.setLoading(false));
   }
 
-  //
-
   createScheduleClassroom(){
 
     this.scheduleClassroom = [];
@@ -344,20 +364,32 @@ export class EnglishCoursesPageComponent implements OnInit {
           }
 
           this.scheduleClassroom.push(endData);
+
         }
       });
     });
 
-    console.log(this.scheduleClassroom);
+    if (this.scheduleClassroom.length==0) {
+      Swal.fire({
+        title: 'ATENCIÓN!',
+        text: 'Es necesario agregar un horario.',
+        showConfirmButton: false,
+        timer: 2000,
+        type: 'warning'
+      })
+      return false;
+    };
+
+    return true;
   }
 
   onCreateClassroom(){
+
     var classroom = {
       name: this.classroomForm.get('name').value,
       schedule: this.scheduleClassroom,
       capacity: this.classroomForm.get('capacity').value
     };
-    console.log(classroom);
   
    this.classroomProv.createClassroom(classroom).subscribe(res => {
      this.ngOnInit();
@@ -403,29 +435,31 @@ export class EnglishCoursesPageComponent implements OnInit {
 
     this.segment = 60;
     this.createDataHours();   
-    this.generateShedule();
-    this.getShedule(classroom.schedule, 'time');
+    this.generateSchedule();
+    this.getSchedule(classroom.schedule, 'time');
 
-    console.log(classroom);
     this.updateClassroomForm = this.formBuilder.group({
       id: [classroom._id, Validators.required],
       name: [classroom.name, Validators.required],
       capacity: [classroom.capacity, [Validators.required, Validators.min(1)]]
     });
 
-    const dialogRef = this.dialog.open(this.dialogRefViewUpdateClassroom, {hasBackdrop: true});
+    this.dialogRef = this.dialog.open(this.dialogRefViewUpdateClassroom, {hasBackdrop: true});
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result=="update") {
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         this.onUpdateClassroom();
       }
-      console.log(result);
     });
   }
 
-  onUpdateClassroom(){
+  verifySchedule(){
+    if (this.createScheduleClassroom()) {
+      this.dialogRef.close(true);
+    }
+  }
 
-    this.createScheduleClassroom();
+  onUpdateClassroom(){
 
     const id = this.updateClassroomForm.get('id').value;
 
@@ -453,10 +487,17 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.groupProv.getAllGroup().subscribe(res => {
 
       this.groups = res.groups;
+      this.createDataSourceGroups();
 
     },error => {
 
     }, () => this.loadingService.setLoading(false));
+  }
+
+  createDataSourceGroups(){
+    this.dataSourceGroups = new MatTableDataSource(this.groups);
+    this.dataSourceGroups.paginator = this.paginatorGroups;
+    this.dataSourceGroups.sort = this.sortGroups;
   }
 
   openDialogFormGenerateGroups(){
@@ -465,9 +506,36 @@ export class EnglishCoursesPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       if(result){
-        
+        let startName = "";
+        result.courseName.split(" ").forEach(word => {
+          startName += word.charAt(0);
+        }); 
+
+        for (let level = 1; level <= result.levels; level++) {
+          
+          result.schedules.forEach(schedule => {
+            
+            let data = {
+              name: startName + level + '-' + (schedule[0].startHour/60),
+              schedule: schedule,
+              level: level,
+              period: this.activePeriod._id,
+              status: 'opened',
+              minCapacity: result.minCapacity,
+              maxCapacity: result.maxCapacity,
+              course: result.courseId,
+            };
+
+            this.groupProv.createGroup(data).subscribe(res => {
+              this.ngOnInit()
+            }, 
+            error => {console.log(error)});
+            
+          });
+
+        }
+
       };
     });
   }
@@ -478,9 +546,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       if(result){
-        console.log(result);
         var data={
           name: result.a.nameCtrl,
           schedule: [],
@@ -550,7 +616,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.englishCourseProv.getAllEnglishCourse().subscribe(res => {
 
       this.englishCourses = res.englishCourses;
-      console.log(res);
 
     },error => {
 
@@ -579,8 +644,6 @@ export class EnglishCoursesPageComponent implements OnInit {
       newCourse: true
     }
 
-    //this.openDialog(data);
-
   }
 
   openDialogFormCreateCourse(): void {
@@ -589,7 +652,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       if(result){
         let data = {
           name: result.nameCtrl,
@@ -624,13 +686,4 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   }
 
-}
-
-export enum DaysSchedule {
-  Lunes = 1,
-  Martes = 2,
-  Miércoles = 3,
-  Jueves = 4,
-  Viernes = 5,
-  Sábado = 6
 }

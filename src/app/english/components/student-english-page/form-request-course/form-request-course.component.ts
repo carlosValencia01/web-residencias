@@ -24,7 +24,7 @@ export class FormRequestCourseComponent implements OnInit {
 
   groupFormGroup: FormGroup;
   phoneFormGroup: FormGroup;
-  shedule: Array<any>;
+  schedule: Array<any>;
 
   dataSource: MatTableDataSource<any>;
 
@@ -57,15 +57,15 @@ export class FormRequestCourseComponent implements OnInit {
     this.groupProv.getAllGroupOpenedByCourseAndLevel(data).subscribe(res => {
 
       console.log(res);
-      this.prepareShedule(res.groups);
+      this.prepareSchedule(res.groups);
 
     },error => {
 
     }, () => this.loadingService.setLoading(false));
   }
 
-  prepareShedule(groups){
-    this.shedule = [];
+  prepareSchedule(groups){
+    this.schedule = [];
     if (groups.length>0) {
       groups.forEach(element => {
         var data = {
@@ -99,7 +99,7 @@ export class FormRequestCourseComponent implements OnInit {
               break;
           }
         });
-        this.shedule.push(data);
+        this.schedule.push(data);
       });
     };
     this.createDataSource();
@@ -114,8 +114,8 @@ export class FormRequestCourseComponent implements OnInit {
   }
 
   createDataSource(){
-    this.dataSource = new MatTableDataSource(this.shedule);
-    console.log(this.shedule);
+    this.dataSource = new MatTableDataSource(this.schedule);
+    console.log(this.schedule);
     console.log(this.dataSource);
   }
 

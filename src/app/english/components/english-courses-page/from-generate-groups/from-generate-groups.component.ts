@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, ValidatorFn, ValidationErrors } from '@angular/forms';
 import * as Papa from 'papaparse';
+import Swal from 'sweetalert2';
 
 //Importar Servicios
 import { LoadingService } from 'src/app/services/app/loading.service';
@@ -26,10 +27,9 @@ export class FromGenerateGroupsComponent implements OnInit {
   minCapacityStudents = 1;
   maxCapacityStudents = 50;
 
-  schedule: Array<any>;
-
   dayschedule = DaysSchedule; //Enumerador de los dias de la semana
   showTableCSV = false;
+  showTableHours = false;
 
   weekdays = [1,2,3,4,5,6]; //Dias de la semana
 
@@ -54,35 +54,44 @@ export class FromGenerateGroupsComponent implements OnInit {
         scheduleCtrl: ['', [Validators.required]],
       },
       {
-        validator: this.MinCapacityLessThanmaxCapacity,
+        validator: this.MinCapacityLessThanMaxCapacity,
       }
     );
 
     this.groupsFormGroup.get('courseCtrl').valueChanges.subscribe(course =>{
-      this.schedule = [];
-      this.showTableCSV = false;
       this.groupsFormGroup.get('scheduleCtrl').setValue('');
+    });
+
+    this.groupsFormGroup.get('scheduleCtrl').valueChanges.subscribe(option =>{
+      this.dataSchedule = [];
+      switch (option) {
+        case '1':
+          this.showTableHours = false;
+          break;
+        case '2':
+          this.showTableCSV = false;
+          break;
+      }
     });
 
     this.createEnglishCourses();
 
-
-    this.createDataHours();
-    this.generateShedule();
   }
 
   createDataHours(){ //Genera las Horas en segmentos
 
+    this.dataHours = [];
     const start = this.getMinutes(this.hourStart); //Convierte la hora de inicio en minutos
-    const end = this.getMinutes(this.hourEnd); //Convierte la hora de fin en minutos
-
-    for (let hour = start; hour < end; hour = hour + this.segment) { //Recorrer de inicio a fin incrementando por segmentos
+    let end = this.getMinutes(this.hourEnd); //Convierte la hora de fin en minutos
+    end -= (this.groupsFormGroup.get('courseCtrl').value.dailyHours*60); //Se resta el tiempo que dura el curso al día
+    for (let hour = start; hour <= end; hour = hour + this.segment) { //Recorrer de inicio a fin incrementando por segmentos
       this.dataHours.push(this.getHour(hour)); //Guardar el segmento de hora
     }
     console.log(this.dataHours); //Imprimir en consola todos los seegmentos
   }
 
-  generateShedule(){ //Genera el arreglo en el que se guardaran los valores seleccionados
+  generateSchedule(){ //Genera el arreglo en el que se guardaran los valores seleccionados
+    this.dataSchedule = [];
     this.dataHours.forEach(a => { //Recorre cada una de las horas
       let week=[]; //define arreglo de dias de la semana
       this.weekdays.forEach(b => { //Recorre cada dia de la semana
@@ -106,7 +115,7 @@ export class FromGenerateGroupsComponent implements OnInit {
        }
   }
 
-   MinCapacityLessThanmaxCapacity: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
+   MinCapacityLessThanMaxCapacity: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
     const minCapacity = control.get("minCapacityCtrl");
     const maxCapacity = control.get("maxCapacityCtrl");
   
@@ -124,12 +133,8 @@ export class FromGenerateGroupsComponent implements OnInit {
     }, () => this.loadingService.setLoading(false));
   }
 
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-
   onUpload(event) {
-    this.schedule = [];
+    this.dataSchedule = [];
     this.showTableCSV = false;
     if (event.target.files && event.target.files[0]) {
       
@@ -137,7 +142,6 @@ export class FromGenerateGroupsComponent implements OnInit {
         complete: async results => {
           if (results.data.length > 0) {
             const elements = results.data;
-            console.log(elements);
             const dailyHours = this.groupsFormGroup.get('courseCtrl').value.dailyHours;
             this.loadingService.setLoading(true);
             await this._asyncForEach(elements, async (element, index) => {
@@ -156,14 +160,18 @@ export class FromGenerateGroupsComponent implements OnInit {
                       endDate: null,
                     }
                     if(element[j]!=""){
-                      hour.active = true,
-                      hour.startHour = this.getMinutes(element[j]);
-                      hour.endDate = hour.startHour + dailyHours*60;
+                      if(this.getMinutes(element[j])>=this.getMinutes(this.hourStart) &&
+                        this.getMinutes(element[j])+(dailyHours*60)<=this.getMinutes(this.hourEnd)){
+
+                          hour.active = true,
+                          hour.startHour = this.getMinutes(element[j]);
+                          hour.endDate = hour.startHour + dailyHours*60;
+
+                        }
                     }
                     week.push(hour);
-                    //week.push(element[j]);
                   }
-                  this.schedule.push(week);
+                  this.dataSchedule.push(week);
                 }              
               }else{
                 
@@ -175,6 +183,16 @@ export class FromGenerateGroupsComponent implements OnInit {
         }
       });
     }
+  }
+
+  showCourse(course):boolean{ //Mostrar el renglon de la hora
+    //Si todos los campos estan inactivos
+    if(!course[0].active && !course[1].active && !course[2].active &&
+      !course[3].active && !course[4].active && !course[5].active){
+         return false; //Ocultar
+       }else{
+        return true; //Mostrar
+       }
   }
 
   private async _asyncForEach(array, callback) {
@@ -196,6 +214,95 @@ export class FromGenerateGroupsComponent implements OnInit {
     let hh = h < 10 ? '0' + h : h; //Asigna un 0 al inicio de la hora si es menor a 10
     let mm = m < 10 ? '0' + m : m; //Asigna un 0 al inicio de los minutos si es menor a 10
     return hh+':'+mm; //Retorna los minutos en tiempo Ej: "24:00"
+  }
+
+  onChangeSegmentHour(value){
+    switch (value) {
+      case '0':
+        this.segment = 60;
+        this.createDataHours();
+        this.generateSchedule();
+        this.showTableHours = true;
+        break;
+      case '1':
+        this.segment = 30;
+        this.createDataHours();
+        this.generateSchedule();
+        this.showTableHours = true;
+        break;
+    }
+  }
+
+  generateData(form){
+
+    var schedules = [];
+
+    this.dataSchedule.forEach(schedule => {
+      let scheduleForCourse = [];
+      this.weekdays.forEach(day => {
+
+        switch (form.scheduleCtrl) {
+
+          case '1':
+
+            if (schedule[day-1]!="") {
+              const data = {
+                day: day,
+                startHour: this.getMinutes(schedule[day-1]),
+                endDate: this.getMinutes(schedule[day-1]) + (this.groupsFormGroup.get('courseCtrl').value.dailyHours*60),
+              };
+              scheduleForCourse.push(data);
+            }
+            break;
+
+          case '2':
+
+            if (schedule[day-1].active) {
+              const data = {
+                day: day,
+                startHour: schedule[day-1].startHour,
+                endDate: schedule[day-1].endDate,
+              };
+              if (this.showCourse(schedule)) {
+                scheduleForCourse.push(data);
+              }
+            }
+            break;
+        }
+      });
+      if (scheduleForCourse.length>0) {
+        schedules.push(scheduleForCourse);
+      }
+    });
+
+    console.log(this.dataSchedule);
+    console.log("schedules:");
+    console.log(schedules);
+
+    if (schedules.length==0) {
+      Swal.fire({
+        title: 'ATENCIÓN!',
+        text: 'Es necesario agregar un horario.',
+        showConfirmButton: false,
+        timer: 2000,
+        type: 'warning'
+      })
+      return;
+    };
+
+    const data = {
+      courseName: form.courseCtrl.name,
+      courseId: form.courseCtrl._id,
+      levels: form.courseCtrl.totalSemesters,
+      minCapacity: form.minCapacityCtrl,
+      maxCapacity: form.maxCapacityCtrl,
+      schedules: schedules,
+    }
+    this.dialogRef.close(data);
+  }
+  
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }

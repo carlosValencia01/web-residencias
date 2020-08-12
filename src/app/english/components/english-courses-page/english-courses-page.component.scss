@@ -2,6 +2,18 @@ table {
   width: 100%;
 }
 
+//Centrar encabezado de la tabla
+.mat-header-cell {
+  flex-direction: column;
+  justify-content: center;
+}
+
+//Centrar el contenido de los renglones de la tabla
+.mat-cell {
+  text-align: center;
+  justify-content:center;
+}
+
 .course-headers-align .mat-expansion-panel-header-title,
 .course-headers-align .mat-expansion-panel-header-description {
   flex-basis: 0;
@@ -43,4 +55,11 @@ table {
 
 .table-row{
   cursor:pointer;
+}
+
+//Grupos
+
+.mat-column-level{
+  max-width: 80px;
+  min-width: 70px;
 }
