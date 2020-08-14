@@ -1,16 +1,20 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormControl } from '@angular/forms';
+import Swal from 'sweetalert2';
 
-import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+//TABLA
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
-import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {MatTableDataSource} from '@angular/material/table';
-
+//SERVICIOS
 import { LoadingService } from 'src/app/services/app/loading.service';
+
+//PROVEEDORES
 import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
-
-import Swal from 'sweetalert2';
+import { GroupProvider } from 'src/app/english/providers/group.prov';
 
 export interface DialogData {
   group: any
@@ -25,32 +29,50 @@ export class StudentRequestsComponent implements OnInit {
 
   dataSource: MatTableDataSource<any>;
 
-  @ViewChild('matPaginatorEnglishStudents') paginator: MatPaginator;
+  @ViewChild('matPaginatorEnglishStudents') paginatorStudents: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('sortStudents') sortStudents: MatSort;
 
   englishStudents: any;
-  creado = true;
+  showCreateGroup = false;
+
+  //
+
+  selectedEnglishStudents: any;
+  englishStudentsWaiting: any;
+  dataSourceSelected: MatTableDataSource<any>;
+  dataSourceWaiting: MatTableDataSource<any>;
+  showButtonAdd = false;
+  showButtonDrop = false;
+  selectedTab: FormControl;
+  @ViewChild('matPaginatorEnglishStudentsSelected') paginatorSelectedStudents: MatPaginator;
+  @ViewChild('matPaginatorEnglishStudentsWaiting') paginatorStudentsWaiting: MatPaginator;
+  @ViewChild('sortStudentsSelected') sortSelectedStudents: MatSort;
+  @ViewChild('sortStudentsWaiting') sortStudentsWaiting: MatSort;
 
   constructor(
     public dialogRef: MatDialogRef<StudentRequestsComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private englishStudentProv: EnglishStudentProvider,
     private requestCourseProv: RequestCourseProvider,
-    private loadingService: LoadingService) { }
+    private groupProv: GroupProvider,
+    private loadingService: LoadingService) {
+    this.selectedTab = new FormControl(0);
+  }
 
   ngOnInit() {
-    setTimeout(() => { 
+    setTimeout(() => {
       this.getDataSource();
     });
   }
 
-  createDataSource(){
+  createDataSource() {
     this.dataSource = new MatTableDataSource(this.englishStudents);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginatorStudents;
+    this.dataSource.sort = this.sortStudents;
   }
 
-  transformFormat(data, requestId, requestDate){
+  transformFormat(data, requestId, requestDate) {
     return {
       _id: data._id,
       fullName: data.studentId.fullName,
@@ -63,14 +85,14 @@ export class StudentRequestsComponent implements OnInit {
     };
   }
 
-  getDataSource(){
-    
+  getDataSource() {
+
     this.englishStudents = [];
 
     this.loadingService.setLoading(true);
     this.requestCourseProv.getAllRequestByCourse(this.data.group._id).subscribe(res => {
 
-      console.log(res);
+
       res.requestCourses.forEach(element => {
 
         this.loadingService.setLoading(true);
@@ -78,35 +100,34 @@ export class StudentRequestsComponent implements OnInit {
 
           var englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
           this.englishStudents.push(this.transformFormat(englishStudent, element._id, element.requestDate));
-          console.log(this.englishStudents);
+          this.englishStudents.sort((a, b) => a._id.localeCompare(b._id));
+
           this.createDataSource();
-  
-        },error => {
-  
+
+        }, error => {
+
           console.log(error);
-  
+
         }, () => this.loadingService.setLoading(false));
 
       });
 
-      this.createDataSource();
-
-    },error => {
+    }, error => {
 
       console.log(error);
 
     }, () => this.loadingService.setLoading(false));
-    
+
 
   }
 
-  
-  deleteStudentRequest(studentId, requestId, name){
+
+  deleteStudentRequest(studentId, requestId, name) {
     // Alert
 
     Swal.fire({
       title: 'Declinar estudiante',
-      text: `Está por rechazar la solicitud del estudiante `+name+`. ¿Desea continuar?`,
+      text: `Está por rechazar la solicitud del estudiante ` + name + `. ¿Desea continuar?`,
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
@@ -118,7 +139,7 @@ export class StudentRequestsComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
 
-        const data={
+        const data = {
           status: 'rejected'
         };
 
@@ -128,7 +149,7 @@ export class StudentRequestsComponent implements OnInit {
           console.log(res);
 
           const englishStudent = {
-            $set: {status: 'rejected'}
+            $set: { status: 'rejected' }
           }
           this.englishStudentProv.updateEnglishStudent(englishStudent, studentId).subscribe(res2 => {
             console.log(res2);
@@ -140,7 +161,7 @@ export class StudentRequestsComponent implements OnInit {
               'La solicitud del estudiante ha sido rechazada.',
               'success'
             );
-   
+
           }, () => {
             this.loadingService.setLoading(false);
           });
@@ -148,46 +169,8 @@ export class StudentRequestsComponent implements OnInit {
         }, () => {
           this.loadingService.setLoading(false);
         });
-        /*
-        const data = {
-          dayId: this.data.dayId,
-          hourId: this.data.hourId,
-          studentId: studentId
-        }
-        //Eliminar estudiante de la solicitud
-        this.loadingService.setLoading(true);
-        this.requestCourseProv.getAllRequestCourse().subscribe(res => {
-          //Eliminar estudiante del arreglo
-          if(res.nModified>0){
-            for (var i =0; i < this.data.studentsId.length; i++){
-              if (this.data.studentsId[i] === studentId) {
-                this.data.studentsId.splice(i, 1);
-              }
-           }
-           // Cambiar estatus del Estudiante
-           const englishStudent = {
-             $set: {status: 'Sin elección de Curso', 'notification.message': 'El curso en el horario solicitado no fue aperturado, seleccione otra opción', 'notification.show': true}
-           }
-           this.englishStudentProv.updateEnglishStudent(englishStudent, studentId).subscribe(res2 => {
-            console.log(res2);
-          });
-          }
-          this.loadingService.setLoading(false);
-          this.getDataSource();
-          Swal.fire(
-            'Eliminado!',
-            'La solicitud del estudiante ha sido rechazada.',
-            'success'
-          )
-    
-        }, () => {
-          this.loadingService.setLoading(false);
-        });
-
-        */
       }
     });
-    //
   }
 
   applyFilter(event: Event) {
@@ -200,6 +183,125 @@ export class StudentRequestsComponent implements OnInit {
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  prepareGroup() {
+    this.selectedEnglishStudents = this.englishStudents.slice(0, this.data.group.maxCapacity);
+    this.englishStudentsWaiting = this.englishStudents.slice(this.data.group.maxCapacity);
+
+    this.showCreateGroup = true;
+
+    setTimeout(() => {
+      this.createDataSourceSelectedAndWaiting();
+    });
+
+  }
+
+  createDataSourceSelectedAndWaiting() {
+    this.dataSourceSelected = new MatTableDataSource(this.selectedEnglishStudents);
+    this.dataSourceSelected.paginator = this.paginatorSelectedStudents;
+    this.dataSourceSelected.sort = this.sortSelectedStudents;
+
+    this.dataSourceWaiting = new MatTableDataSource(this.englishStudentsWaiting);
+    this.dataSourceWaiting.paginator = this.paginatorStudentsWaiting;
+    this.dataSourceWaiting.sort = this.sortStudentsWaiting;
+
+    this.validateButtons();
+
+  }
+
+
+  validateButtons() {
+    if (this.selectedEnglishStudents.length > this.data.group.minCapacity) {
+      this.showButtonDrop = true;
+    } else {
+      this.showButtonDrop = false;
+    }
+    if (this.selectedEnglishStudents.length < this.data.group.maxCapacity) {
+      this.showButtonAdd = true;
+    } else {
+      this.showButtonAdd = false;
+    }
+  }
+
+  changeStudent(student, move) {
+
+    let originArray = [];
+    let destinationArray = [];
+
+    switch (move) {
+      case 0:
+        originArray = this.selectedEnglishStudents;
+        destinationArray = this.englishStudentsWaiting;
+        break;
+      case 1:
+        originArray = this.englishStudentsWaiting;
+        destinationArray = this.selectedEnglishStudents;
+        break;
+    }
+
+    originArray.splice(originArray.indexOf(student), 1);
+    destinationArray.push(student);
+    destinationArray.sort((a, b) => a._id.localeCompare(b._id));
+
+    switch (move) {
+      case 0:
+        this.selectedEnglishStudents = originArray;
+        this.englishStudentsWaiting = destinationArray;
+        break;
+      case 1:
+        this.englishStudentsWaiting = originArray;
+        this.selectedEnglishStudents = destinationArray;
+        break;
+    }
+
+    this.createDataSourceSelectedAndWaiting();
+  }
+
+  cancelGroup() {
+    this.showCreateGroup = false;
+    setTimeout(() => {
+      this.getDataSource();
+    });
+  }
+
+  saveGroup() {
+    let dataGroup = {
+      name: this.data.group.name,
+      schedule: this.data.group.schedule,
+      level: this.data.group.level,
+      period: this.data.group.period,
+      status: 'active',
+      minCapacity: this.data.group.minCapacity,
+      maxCapacity: this.data.group.maxCapacity,
+      course: this.data.group.course,
+    };
+
+    this.groupProv.createGroup(dataGroup).subscribe(async group => {
+
+      for await (const student of this.selectedEnglishStudents) {
+
+        let dataRequest = {
+          group: group._id,
+          status: 'studying',
+        }
+        await this.requestCourseProv.updateRequestById(student.requestId, dataRequest).subscribe(async res => {
+
+          await this.englishStudentProv.updateEnglishStudent({ status: 'studying' }, student._id).subscribe(async res2 => {
+
+          }, () => {
+            this.loadingService.setLoading(false);
+          });
+
+        },
+          error => { console.log(error) });
+
+      }
+
+      this.dialogRef.close();
+
+    },
+      error => { console.log(error) });
   }
 
 }
