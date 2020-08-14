@@ -482,18 +482,6 @@ export class StudentPageComponent implements OnInit {
     }
   }
 
-  getImage() {
-    this.studentProv.getProfileImage(this.currentStudent._id).subscribe(res => {
-      this.haveImage = true;
-    }, error => {
-      if (error.status === 404) {
-        this.haveImage = false;
-        this.photoStudent = 'assets/imgs/studentAvatar.png';
-        this.showImg = true;
-      }
-    });
-  }
-
   async uploadFile() {
     this.loadingService.setLoading(true);
     var folderId = await this.getFolderId(this.currentStudent._id,this.currentStudent.controlNumber);

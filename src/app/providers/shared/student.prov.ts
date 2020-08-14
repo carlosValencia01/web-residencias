@@ -56,10 +56,6 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-    getProfileImage(id) {
-        return this.api.get(`student/image/${id}`, { responseType: ResponseContentType.Blob })
-            .pipe(map((res: Response) => res.blob()));
-    }
 
     updateStudent(id, data) {
         return this.api.put(`student/${id}`, data)

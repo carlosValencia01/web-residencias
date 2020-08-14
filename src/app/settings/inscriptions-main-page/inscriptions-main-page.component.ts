@@ -241,7 +241,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   }
 
   periodDetail(period){
-    let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };    
     Swal.fire({
       html:
         `<h4>General</h4>
@@ -261,6 +261,12 @@ export class InscriptionsMainPageComponent implements OnInit {
           <p style="text-align='left'">
             <h6><b>Fecha inicio:</b> ${new Date(period.arecPerInitDate).toLocaleDateString("es-MX", dateOptions)}</h6>
             <h6><b>Fecha fin:</b> ${new Date(period.arecPerEndDate).toLocaleDateString("es-MX", dateOptions)}</h6>
+            <br>
+          </p>
+          <h4>Período cursos de ingles</h4>
+          <p style="text-align='left'">
+            <h6><b>Fecha inicio:</b> ${new Date(period.englishPerInitDate).toLocaleDateString("es-MX", dateOptions)}</h6>
+            <h6><b>Fecha fin:</b> ${new Date(period.englishPerEndDate).toLocaleDateString("es-MX", dateOptions)}</h6>
             <br>
           </p>
           <h4>Horario acto recepcional</h4>
