@@ -1,5 +1,5 @@
 <mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;">
-  
+
   <!-- SOLICITUDES -->
 
   <mat-tab label="Solicitudes" class="p-md-5">
@@ -22,30 +22,31 @@
                 <mat-expansion-panel-header>
                   <mat-panel-title>Nivel {{level.level}}</mat-panel-title>
                   <mat-panel-description>
-                    {{level.groups.length}} Grupo<ng-container *ngIf="level.groups.length>1||level.groups.length==0">s</ng-container>
+                    {{level.groups.length}} Grupo<ng-container *ngIf="level.groups.length>1||level.groups.length==0">s
+                    </ng-container>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
                 <ng-container *ngIf="level.haveGroups">
 
                   <table mat-table [dataSource]="level.groups" class="mat-elevation-z8">
-    
+
                     <ng-container matColumnDef="name">
                       <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
                       <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
                     </ng-container>
-            
+
                     <ng-container matColumnDef="actions">
-                      <mat-header-cell  *matHeaderCellDef></mat-header-cell>
+                      <mat-header-cell *matHeaderCellDef></mat-header-cell>
                       <mat-cell *matCellDef="let row">
-                           <button (click)="openDialogTableStudents(row)" mat-icon-button>
-                            <mat-icon>view_list</mat-icon>
-                           </button>
-                           <button (click)="deleteRequestForHour(row._id)" mat-icon-button>
-                            <mat-icon>delete</mat-icon>
-                           </button>
+                        <button (click)="openDialogTableStudents(row)" mat-icon-button>
+                          <mat-icon>view_list</mat-icon>
+                        </button>
+                        <button (click)="deleteRequestForHour(row._id)" mat-icon-button>
+                          <mat-icon>delete</mat-icon>
+                        </button>
                       </mat-cell>
                     </ng-container>
-            
+
                     <mat-header-row *matHeaderRowDef="['name', 'actions']"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: ['name', 'actions']"></mat-row>
                   </table>
@@ -53,7 +54,7 @@
                 </ng-container>
                 <ng-container *ngIf="!level.haveGroups">
                   No existen grupos.
-                </ng-container> 
+                </ng-container>
               </mat-expansion-panel>
             </ng-container>
           </mat-accordion>
@@ -66,19 +67,19 @@
   </mat-tab>
 
 
-<!-- AULAS -->
+  <!-- AULAS -->
 
   <mat-tab label="Aulas">
     <div class="row justify-content-center">
       <div class="col-md-4 col-12 pt-md-5 pt-3">
         <form style="text-align: center;" [formGroup]="classroomForm" (ngSubmit)="onCreateClassroom()">
-          
+
           <div>
             <mat-form-field>
               <mat-label>Nombre del Aula</mat-label>
               <input matInput formControlName="name" required>
               <mat-error *ngIf="this.classroomForm.get('name').invalid">Ingrese un nombre</mat-error>
-              </mat-form-field>
+            </mat-form-field>
           </div>
 
           <div>
@@ -100,21 +101,24 @@
             </mat-form-field>
           </div>
 
-          <ng-template #scheduleClassroomAux> 
+          <ng-template #scheduleClassroomAux>
             <h1 mat-dialog-title>Horario</h1>
             <div mat-dialog-content>
               <table class="table table-bordered table-hover mt-2">
                 <thead>
                   <tr>
                     <th scope="col">Horas</th>
-                    <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]" matTooltipPosition= "above" >{{dayschedule[day].charAt(0)}}</th>
+                    <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]"
+                      matTooltipPosition="above">{{dayschedule[day].charAt(0)}}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr class="table-row clickable-row" *ngFor="let course of dataSchedule; let i = index;">
-                    <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}</th>
-                    <td *ngFor="let day of weekdays; let j = index;" [class.mat-button-selected]="course[j]==dataHours[i]" 
-                    (click)="course[j]=(course[j]=='')?dataHours[i]:''">
+                    <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} -
+                      {{getHour(getMinutes(dataHours[i])+segment)}}</th>
+                    <td *ngFor="let day of weekdays; let j = index;"
+                      [class.mat-button-selected]="course[j]==dataHours[i]"
+                      (click)="course[j]=(course[j]=='')?dataHours[i]:''">
                     </td>
                   </tr>
                 </tbody>
@@ -127,7 +131,8 @@
           </ng-template>
 
           <div class="mt-0">
-            <button [class.button-blue]="!classroomForm.invalid" type="submit" [disabled]="classroomForm.invalid" mat-button>Crear Aula</button>
+            <button [class.button-blue]="!classroomForm.invalid" type="submit" [disabled]="classroomForm.invalid"
+              mat-button>Crear Aula</button>
           </div>
         </form>
       </div>
@@ -136,55 +141,55 @@
 
         <div style="position: relative;">
           <div style="position: relative; overflow: auto; max-width: 100%;">
-              <table mat-table [dataSource]="classrooms" class="mat-elevation-z8">
-            
-                <ng-container matColumnDef="name">
-                  <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
-                </ng-container>
-  
-                <ng-container matColumnDef="capacity">
-                  <mat-header-cell *matHeaderCellDef>Capacidad</mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.capacity}} </mat-cell>
-                </ng-container>
-    
-                <ng-container matColumnDef="actions">
-                  <mat-header-cell  *matHeaderCellDef></mat-header-cell>
-                    <mat-cell *matCellDef="let row">
-                      <button (click)="openDialogTableSchedule('2', row.schedule)" mat-icon-button>
-                        <mat-icon>watch_later</mat-icon>
-                      </button>
-                      <button (click)="deleteClassroom(row._id, row.name)" mat-icon-button>
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                      <button (click)="openDialogUpdateClassroom(row)" mat-icon-button> 
-                        <mat-icon>edit</mat-icon>
-                      </button>
-                    </mat-cell>
-                </ng-container>
-    
-                <mat-header-row *matHeaderRowDef="['name', 'capacity', 'actions']"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: ['name', 'capacity', 'actions']"></mat-row>
-              </table>
+            <table mat-table [dataSource]="classrooms" class="mat-elevation-z8">
+
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="capacity">
+                <mat-header-cell *matHeaderCellDef>Capacidad</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.capacity}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <button (click)="openDialogTableSchedule('2', row.schedule)" mat-icon-button>
+                    <mat-icon>watch_later</mat-icon>
+                  </button>
+                  <button (click)="deleteClassroom(row._id, row.name)" mat-icon-button>
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <button (click)="openDialogUpdateClassroom(row)" mat-icon-button>
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="['name', 'capacity', 'actions']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['name', 'capacity', 'actions']"></mat-row>
+            </table>
           </div>
         </div>
-        
+
       </div>
-      
+
     </div>
 
-    <ng-template #viewUpdateClassroom> 
+    <ng-template #viewUpdateClassroom>
       <h1 mat-dialog-title>Horario</h1>
-      
+
       <form style="text-align: center;" [formGroup]="updateClassroomForm">
-      <div mat-dialog-content>
-          
+        <div mat-dialog-content>
+
           <div class="pb-2">
             <mat-form-field>
               <mat-label>Nombre del Aula</mat-label>
               <input matInput formControlName="name" required>
               <mat-error *ngIf="this.updateClassroomForm.get('name').invalid">Ingrese un nombre</mat-error>
-              </mat-form-field>
+            </mat-form-field>
           </div>
 
           <div class="pb-2">
@@ -200,37 +205,41 @@
               <thead>
                 <tr>
                   <th scope="col">Horas</th>
-                  <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]" matTooltipPosition= "above" >{{dayschedule[day].charAt(0)}}</th>
+                  <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]"
+                    matTooltipPosition="above">{{dayschedule[day].charAt(0)}}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="table-row clickable-row" *ngFor="let course of dataSchedule; let i = index;">
-                  <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}</th>
-                  <td *ngFor="let day of weekdays; let j = index;" [class.mat-button-selected]="course[j]==dataHours[i]" 
-                  (click)="course[j]=(course[j]=='')?dataHours[i]:''">
+                  <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} -
+                    {{getHour(getMinutes(dataHours[i])+segment)}}</th>
+                  <td *ngFor="let day of weekdays; let j = index;" [class.mat-button-selected]="course[j]==dataHours[i]"
+                    (click)="course[j]=(course[j]=='')?dataHours[i]:''">
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-      </div>
-      <div mat-dialog-actions>
-        <button mat-button matDialogClose class="button-blue">Salir</button>
-        <button (click)="verifySchedule()" [class.button-blue]="!updateClassroomForm.invalid" [disabled]="updateClassroomForm.invalid" mat-button cdkFocusInitial>Guardar</button>
-      </div>
-      
-    </form>
+        </div>
+        <div mat-dialog-actions>
+          <button mat-button matDialogClose class="button-blue">Salir</button>
+          <button (click)="verifySchedule()" [class.button-blue]="!updateClassroomForm.invalid"
+            [disabled]="updateClassroomForm.invalid" mat-button cdkFocusInitial>Guardar</button>
+        </div>
+
+      </form>
     </ng-template>
 
-    <ng-template #viewScheduleClassroom> 
+    <ng-template #viewScheduleClassroom>
       <h1 mat-dialog-title>Horario</h1>
       <div mat-dialog-content>
         <table class="table table-bordered table-hover mt-2">
           <thead>
             <tr>
               <th scope="col">Horas</th>
-              <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]" matTooltipPosition= "above" >{{dayschedule[day].charAt(0)}}</th>
+              <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]" matTooltipPosition="above">
+                {{dayschedule[day].charAt(0)}}</th>
             </tr>
           </thead>
           <tbody>
@@ -238,7 +247,7 @@
               <tr class="table-row clickable-row" *ngIf="showHour(hour)">
                 <th scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}</th>
                 <td *ngFor="let day of weekdays; let j = index;" [class.status-available]="hour[j]=='available'"
-                [class.status-occupied]="hour[j]=='occupied'" [class.status-none]="hour[j]==''">
+                  [class.status-occupied]="hour[j]=='occupied'" [class.status-none]="hour[j]==''">
                 </td>
               </tr>
             </ng-container>
@@ -256,72 +265,161 @@
 
   <mat-tab label="Grupos">
 
-    <div class="row justify-content-center p-3">
+    <mat-tab-group>
 
-      <div>
+      <mat-tab label="Activo en clases">
+        <!-- tabla -->
+        <div style="position: relative;">
 
-        <button class="button-blue mr-2" mat-raised-button (click)="openDialogFormCreateGroup()">Nuevo Grupo</button>
-        <button class="button-blue ml-2" mat-raised-button (click)="openDialogFormGenerateGroups()">Generar Grupos</button>
+          <div style="position: relative; overflow: auto; max-width: 100%;">
 
-      </div>
+            <table mat-table [dataSource]="dataSourceActiveGroups" class="mat-elevation-z8" matSort>
 
-    </div>
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+              </ng-container>
 
-    <!--Tabla-->
-    <div style="position: relative;">
+              <ng-container matColumnDef="course">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
+              </ng-container>
 
-      <div style="position: relative; overflow: auto; max-width: 100%;">
+              <ng-container matColumnDef="level">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Nivel</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
+              </ng-container>
 
-        <table mat-table [dataSource]="dataSourceGroups" class="mat-elevation-z8" matSort>
-    
-          <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
-          </ng-container>
-  
-          <ng-container matColumnDef="course">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
-          </ng-container>
-  
-          <ng-container matColumnDef="level">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Nivel</mat-header-cell>
-            <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
-          </ng-container>
-  
-          <ng-container matColumnDef="period">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Periodo</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
-          </ng-container>
-  
-          <ng-container matColumnDef="status">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Estatus</mat-header-cell>
-            <mat-cell *matCellDef="let row">
-              <mat-chip-list>
-                <mat-chip>{{statusGroup[row.status]}}</mat-chip>
-              </mat-chip-list>
-            </mat-cell>
-          </ng-container>
-  
-          <ng-container matColumnDef="actions">
-            <mat-header-cell  *matHeaderCellDef></mat-header-cell>
-            <mat-cell *matCellDef="let row">
-              <!--Opciones-->
-            </mat-cell>
-          </ng-container>
-  
-          <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'period', 'status', 'actions']"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'status', 'actions']"></mat-row>
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-icon-button>
+                    <mat-icon>watch_later</mat-icon>
+                  </button>
+                  <button (click)="openDialogshowGroupStudents(row)" mat-icon-button>
+                    <mat-icon>view_list</mat-icon>
+                  </button>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'actions']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'actions']"></mat-row>
+            </table>
+
+          </div>
+
+          <!--Paginas-->
+          <mat-paginator #matPaginatorGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+
+        </div>
+        <!-- tabla -->
+      </mat-tab>
+
+      <mat-tab label="Grupos en general">
+
+        <div class="row justify-content-center p-3">
+
+          <div>
+
+            <button class="button-blue mr-2" mat-raised-button (click)="openDialogFormCreateGroup()">Nuevo
+              Grupo</button>
+            <button class="button-blue ml-2" mat-raised-button (click)="openDialogFormGenerateGroups()">Generar
+              Grupos</button>
+
+          </div>
+
+        </div>
+
+        <!--Tabla-->
+        <div style="position: relative;">
+
+          <div style="position: relative; overflow: auto; max-width: 100%;">
+
+            <table mat-table [dataSource]="dataSourceGroups" class="mat-elevation-z8" matSort>
+
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="course">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="level">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Nivel</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="period">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Periodo</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Estatus</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <mat-chip-list>
+                    <mat-chip>{{statusGroup[row.status]}}</mat-chip>
+                  </mat-chip-list>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <!--Opciones-->
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'period', 'status', 'actions']">
+              </mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'status', 'actions']">
+              </mat-row>
+            </table>
+
+          </div>
+
+          <!--Paginas-->
+
+          <mat-paginator #matPaginatorGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+
+        </div>
+
+      </mat-tab>
+
+    </mat-tab-group>
+
+    <ng-template #viewScheduleGroup>
+      <h1 mat-dialog-title>Horario</h1>
+      <div mat-dialog-content>
+        <table class="table table-bordered table-hover mt-2">
+          <thead>
+            <tr>
+              <th class="text-center" *ngFor="let day of weekdays" scope="col">
+                {{dayschedule[day]}}</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td class="text-center" *ngFor="let day of weekdays; let j = index;">
+                <ng-container *ngFor="let hourForDay of scheduleGroupSelected;">
+                  <ng-container *ngIf="hourForDay.day==day">
+                    {{getHour(hourForDay.startHour)}} - {{getHour(hourForDay.endDate)}}
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
         </table>
-
       </div>
+      <div mat-dialog-actions>
+        <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+      </div>
+    </ng-template>
 
-      <!--Paginas-->
-
-      <mat-paginator #matPaginatorGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
-      
-    </div>
-    
   </mat-tab>
 
   <!-- CURSOS -->
@@ -329,7 +427,7 @@
   <mat-tab label="Cursos">
 
 
-    
+
     <div class="row justify-content-center p-3">
 
       <div>
@@ -342,7 +440,7 @@
 
     <div>
       <table mat-table [dataSource]="englishCourses" class="mat-elevation-z8">
-    
+
         <ng-container matColumnDef="name">
           <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
           <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
@@ -369,7 +467,7 @@
         </ng-container>
 
         <ng-container matColumnDef="actions">
-          <mat-header-cell  *matHeaderCellDef></mat-header-cell>
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
           <mat-cell *matCellDef="let row">
 
             <!--
@@ -385,11 +483,15 @@
           </mat-cell>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="['name', 'dailyHours', 'semesterHours', 'totalSemesters', 'totalHours', 'actions']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['name', 'dailyHours', 'semesterHours', 'totalSemesters', 'totalHours', 'actions']"></mat-row>
+        <mat-header-row
+          *matHeaderRowDef="['name', 'dailyHours', 'semesterHours', 'totalSemesters', 'totalHours', 'actions']">
+        </mat-header-row>
+        <mat-row
+          *matRowDef="let row; columns: ['name', 'dailyHours', 'semesterHours', 'totalSemesters', 'totalHours', 'actions']">
+        </mat-row>
       </table>
     </div>
-    
+
   </mat-tab>
 
 </mat-tab-group>

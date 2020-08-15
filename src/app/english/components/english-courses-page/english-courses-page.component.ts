@@ -24,6 +24,7 @@ import { StudentRequestsComponent } from 'src/app/english/components/english-cou
 import { FormCreateCourseComponent } from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
 import { FormGroupComponent } from 'src/app/english/components/english-courses-page/form-group/form-group.component';
 import { FromGenerateGroupsComponent } from 'src/app/english/components/english-courses-page/from-generate-groups/from-generate-groups.component';
+import { GroupStudentsComponent } from 'src/app/english/components/english-courses-page/group-students/group-students.component';
 
 //Importar Enumeradores
 import { StatusGroup } from 'src/app/english/enumerators/status-group.enum';
@@ -65,6 +66,11 @@ export class EnglishCoursesPageComponent implements OnInit {
   dataSourceGroups: MatTableDataSource<any>;
   @ViewChild('matPaginatorGroups') paginatorGroups: MatPaginator;
   @ViewChild(MatSort) sortGroups: MatSort;
+  activeGroups: any;
+  dataSourceActiveGroups: MatTableDataSource<any>;
+  @ViewChild('matPaginatorGroups') paginatorActiveGroups: MatPaginator;
+  @ViewChild(MatSort) sortActiveGroups: MatSort;
+  @ViewChild("viewScheduleGroup") dialogRefViewScheduleGroup: TemplateRef<any>;
 
   //CURSOS
   englishCourses: any;
@@ -489,6 +495,8 @@ export class EnglishCoursesPageComponent implements OnInit {
       this.groups = res.groups;
       this.createDataSourceGroups();
 
+      this.divideGroups();
+
     },error => {
 
     }, () => this.loadingService.setLoading(false));
@@ -498,6 +506,35 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.dataSourceGroups = new MatTableDataSource(this.groups);
     this.dataSourceGroups.paginator = this.paginatorGroups;
     this.dataSourceGroups.sort = this.sortGroups;
+  }
+
+  divideGroups(){
+    this.activeGroups = [];
+    this.groups.forEach(group => {
+      if (group.status=='active') {
+        this.activeGroups.push(group);
+      }
+    });
+    this.createDataSourceActiveGroups();
+  }
+
+  createDataSourceActiveGroups(){
+    this.dataSourceActiveGroups = new MatTableDataSource(this.activeGroups);
+    this.dataSourceActiveGroups.paginator = this.paginatorActiveGroups;
+    this.dataSourceActiveGroups.sort = this.sortActiveGroups;
+  }
+
+  scheduleGroupSelected: Array<any>;
+
+  openDilogViewScheduleGroup(scheduleSelected){
+    this.scheduleGroupSelected = scheduleSelected;
+    this.dialogRef = this.dialog.open(this.dialogRefViewScheduleGroup, {hasBackdrop: true});
+
+    this.dialogRef.afterClosed().subscribe(result => {
+      if(!result){
+        this.scheduleGroupSelected = [];
+      }
+    });
   }
 
   openDialogFormGenerateGroups(){
@@ -607,6 +644,23 @@ export class EnglishCoursesPageComponent implements OnInit {
     var mm = parseFloat(hour.split(":",2)[1])
     var time = mm + (hh*60);
     return time;
+  }
+
+  openDialogshowGroupStudents(group): void {
+
+    const dialogRef = this.dialog.open(GroupStudentsComponent, {
+      data: {
+        group: group
+      },
+      hasBackdrop: true,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+      }
+      this.ngOnInit();
+    });
+
   }
   
   // Cursos
