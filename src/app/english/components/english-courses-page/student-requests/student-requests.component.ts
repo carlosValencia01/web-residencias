@@ -124,11 +124,11 @@ export class StudentRequestsComponent implements OnInit {
 
   deleteStudentRequest(studentId, requestId, name) {
     // Alert
-
     Swal.fire({
-      title: 'Declinar estudiante',
-      text: `Está por rechazar la solicitud del estudiante ` + name + `. ¿Desea continuar?`,
+      title: `Está por rechazar la solicitud del estudiante ` + name + `. ¿Desea continuar?`,
       type: 'warning',
+      html:
+            '<textarea rows="4" cols="30" id="observaciones" placeholder="Ingrese el motivo del rechazo"></textarea>  ',
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonColor: 'red',
@@ -138,9 +138,11 @@ export class StudentRequestsComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
+        const observations = (<HTMLInputElement>document.getElementById('observaciones')).value;
 
         const data = {
-          status: 'rejected'
+          status: 'rejected',
+          rejectMessage: observations
         };
 
         this.loadingService.setLoading(true);
@@ -149,7 +151,10 @@ export class StudentRequestsComponent implements OnInit {
           console.log(res);
 
           const englishStudent = {
-            $set: { status: 'rejected' }
+            $set: { 
+              status: 'rejected', 
+              rejectMessage: observations
+            }
           }
           this.englishStudentProv.updateEnglishStudent(englishStudent, studentId).subscribe(res2 => {
             console.log(res2);
@@ -157,7 +162,7 @@ export class StudentRequestsComponent implements OnInit {
             this.loadingService.setLoading(false);
             this.getDataSource();
             Swal.fire(
-              'Eliminado!',
+              'Solicitud Rechazada',
               'La solicitud del estudiante ha sido rechazada.',
               'success'
             );

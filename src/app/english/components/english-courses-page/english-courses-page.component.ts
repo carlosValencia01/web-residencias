@@ -56,6 +56,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   dialogRef: any;
   dayschedule = DaysSchedule; //Enumerador de los dias de la semana
   
+  @ViewChild("viewCreateClassroom") dialogRefViewCreateClassroom: TemplateRef<any>;
   @ViewChild("scheduleClassroomAux") dialogRefScheduleClassroomAux: TemplateRef<any>;
   @ViewChild("viewScheduleClassroom") dialogRefViewScheduleClassroom: TemplateRef<any>;
   @ViewChild("viewUpdateClassroom") dialogRefViewUpdateClassroom: TemplateRef<any>;
@@ -186,7 +187,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.classroomForm = this.formBuilder.group({
       name: ['', Validators.required],
       schedule: ['', Validators.required],
-      capacity: ['', [Validators.required, Validators.min(1)]]
+      capacity: ['1', [Validators.required, Validators.min(1)]],
     });
 
     this.classroomForm.get('schedule').valueChanges.subscribe(option => {
@@ -394,12 +395,14 @@ export class EnglishCoursesPageComponent implements OnInit {
     var classroom = {
       name: this.classroomForm.get('name').value,
       schedule: this.scheduleClassroom,
-      capacity: this.classroomForm.get('capacity').value
+      capacity: this.classroomForm.get('capacity').value,
+      
     };
   
    this.classroomProv.createClassroom(classroom).subscribe(res => {
      this.ngOnInit();
-   }, 
+     this.dialogRef.close(true);
+    }, 
    error => {console.log(error)});
   }
 
@@ -437,6 +440,10 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   }
 
+  openDialogCreateClassroom(){
+    this.dialogRef = this.dialog.open(this.dialogRefViewCreateClassroom, {hasBackdrop: false,  height: '70%', width: '40%',});
+  }
+
   openDialogUpdateClassroom(classroom){
 
     this.segment = 60;
@@ -447,10 +454,10 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.updateClassroomForm = this.formBuilder.group({
       id: [classroom._id, Validators.required],
       name: [classroom.name, Validators.required],
-      capacity: [classroom.capacity, [Validators.required, Validators.min(1)]]
+      capacity: [classroom.capacity, [Validators.required, Validators.min(1)]],
     });
 
-    this.dialogRef = this.dialog.open(this.dialogRefViewUpdateClassroom, {hasBackdrop: true});
+    this.dialogRef = this.dialog.open(this.dialogRefViewUpdateClassroom, {hasBackdrop: false,  height: '90%', width: '80%',});
 
     this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -472,7 +479,8 @@ export class EnglishCoursesPageComponent implements OnInit {
     var classroom = {
       name: this.updateClassroomForm.get('name').value,
       schedule: this.scheduleClassroom,
-      capacity: this.updateClassroomForm.get('capacity').value
+      capacity: this.updateClassroomForm.get('capacity').value,
+      
     };
     this.classroomProv.updateClassroom(id, classroom).subscribe(res => {
       this.ngOnInit();

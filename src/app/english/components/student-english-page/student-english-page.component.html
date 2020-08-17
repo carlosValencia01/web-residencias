@@ -1,5 +1,5 @@
 <!--Comienzan los TABs del Estudiante-->
-<mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;">
+<mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;" *ngIf="englishStudent">
   <!--TAB de Perfil-->
   <mat-tab label="Perfil">
     <ng-container *ngIf="englishStudent">
@@ -49,6 +49,10 @@
           <div>
             <label><strong>{{statusEnglishStudent[englishStudent.status]}} </strong></label>
           </div>
+          <div>
+            <label *ngIf="englishStudent.status == 'rejected' && englishStudent.rejectMessage"><a style = "color: red;">{{englishStudent.rejectMessage}}</a></label>
+            <label *ngIf="englishStudent.status == 'cancelled' || englishStudent.status == 'rejected'"><a style = "color: blue; cursor: pointer;" (click)="selectNewCourse()">Selecciona un nuevo curso y horario</a></label>
+          </div>
           <mat-divider></mat-divider>
           <div class="container-progress-spinners mt-3 mb-2">
             <div class="mat-progress-spinner-empty">
@@ -71,56 +75,55 @@
           </div>
           <div>Aún no cumple con las horas necesarias para liberar el Inglés</div>
           <div *ngIf="englishStudent.status=='selected'">
-            <button class="mt-4" mat-raised-button color="warn" (click)="openDialogRejectRequest(englishStudent._id)">Declinar solicitud</button>
+            <button class="mt-4" mat-raised-button color="warn" (click)="openDialogRejectRequest(englishStudent._id)">Cancelar solicitud</button>
           </div>
-        </div>
-      </div>
-      <!--Cursos --> 
-      <div class="row justify-content-center p-3" *ngIf="englishStudent.status=='no_choice'">
-
-        <div *ngFor="let course of englishCourses" class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-      
-          <mat-card class="mat-card-course mb-3 text-white" style="background-color:#183969;">
-            <mat-card-header>
-              <mat-card-title><strong>{{course.name}}</strong></mat-card-title>
-              <mat-card-subtitle class="text-white">{{course.dailyHours}} Horas</mat-card-subtitle>
-            </mat-card-header>
-            <button mat-flat-button class="buton-register-course" (click)="openDialog(course)"><strong>Me interesa</strong></button>
-            <mat-card-content class="pl-2 pr-2 m-0">
-              <!--<p *ngFor="let period of course.days">{{period.desc}}</p>-->
-            </mat-card-content>
-            <mat-card-actions>
-              <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" style="background-color: #C7C7C7;">
-                <mat-expansion-panel-header>
-                  <mat-panel-title></mat-panel-title>
-                  <mat-panel-description>
-                    Información... 
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                <p><strong>{{course.semesterHours}} horas</strong> por semestre</p>
-                <p>Total de semestres: <strong>{{course.totalSemesters}} semestres</strong></p>
-                <p>Total de horas a cursar: <strong>{{course.totalHours}} horas</strong></p>
-              </mat-expansion-panel>
-            </mat-card-actions>
-          </mat-card>
-      
         </div>
       </div>
     </ng-container>
   </mat-tab>
 
-  <!--TAB de Curso Actual-->
-  <mat-tab label="Curso Actual">
-    
-    Aquí se mostrará el curso actual.
+  <!--TAB de Seleccion de Curso-->
+  <mat-tab label="Selección de curso" *ngIf="englishStudent.status=='no_choice' || englishStudent.status=='cancelled' || englishStudent.status=='rejected'">
+    <!--Cursos --> 
+    <div class="row justify-content-center p-3">
+      <div *ngFor="let course of englishCourses" class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+        <mat-card class="mat-card-course mb-3 text-white" style="background-color:#183969;">
+          <mat-card-header>
+            <mat-card-title><strong>{{course.name}}</strong></mat-card-title>
+            <mat-card-subtitle class="text-white">{{course.dailyHours}} Horas</mat-card-subtitle>
+          </mat-card-header>
+          <button mat-flat-button class="buton-register-course" (click)="openDialog(course)"><strong>Me interesa</strong></button>
+          <mat-card-content class="pl-2 pr-2 m-0">
+            <!--<p *ngFor="let period of course.days">{{period.desc}}</p>-->
+          </mat-card-content>
+          <mat-card-actions>
+            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" style="background-color: #C7C7C7;">
+              <mat-expansion-panel-header>
+                <mat-panel-title></mat-panel-title>
+                <mat-panel-description>
+                  Detalles del curso 
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <p><strong>{{course.semesterHours}} horas</strong> por semestre</p>
+              <p>Total de semestres: <strong>{{course.totalSemesters}} semestres</strong></p>
+              <p>Total de horas a cursar: <strong>{{course.totalHours}} horas</strong></p>
+            </mat-expansion-panel>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </mat-tab>
 
+  <!--TAB de Curso Actual-->
+  <mat-tab label="Curso Actual" *ngIf="englishStudent.status == 'studying'">
+    <div class="row justify-content-center p-3">
+      Aquí se mostrará el curso actual
+    </div>
   </mat-tab>
 
   <!--TAB del Avance del Estudiante-->
   <mat-tab label="Avance">
-    
     Aquí se mostrará el avance
-
   </mat-tab>
 
 </mat-tab-group>

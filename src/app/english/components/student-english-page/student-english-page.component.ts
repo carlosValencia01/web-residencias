@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTabGroup } from '@angular/material/tabs';
 import Swal from 'sweetalert2';
 
 //Importar Servicios
@@ -20,8 +21,6 @@ import { FormRequestCourseComponent } from 'src/app/english/components/student-e
 //Importar Enumeradores
 import { StatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
 
-
-
 @Component({
   selector: 'app-student-english-page',
   templateUrl: './student-english-page.component.html',
@@ -29,6 +28,7 @@ import { StatusEnglishStudent } from 'src/app/english/enumerators/status-english
 })
 export class StudentEnglishPageComponent implements OnInit {
 
+  @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
   data; //Datos del usuario
   currentStudent: any; //Datos del estuduante
   englishStudent: any; //Perfil de ingles del estudiante
@@ -70,7 +70,6 @@ export class StudentEnglishPageComponent implements OnInit {
     //Obtener el estudiante con la ID
     this.studentProv.getStudentById(_id).subscribe(res => {
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0])); //Guardar al estudiante
-        console.log(this.currentStudent);
         this.verifyEnglishState(this.currentStudent._id); //Verificar el perfil de ingles del estudiante
       }, error => {
         console.log(error);
@@ -80,8 +79,7 @@ export class StudentEnglishPageComponent implements OnInit {
 
   createEnglishCourses(){ //Obtener los cursos activos para mostrar
     this.loadingService.setLoading(true);
-    this.englishCourseProv.getAllEnglishCourseActive().subscribe(res => { //Obtener los cursos de la API
-
+    this.englishCourseProv.getAllEnglishCourseActive().subscribe(res => { //Obtener los cursos de la API      
       this.englishCourses = res.englishCourses; //Guardar los cursos activos
 
     },error => {
@@ -98,9 +96,13 @@ export class StudentEnglishPageComponent implements OnInit {
 
         //Obtener el perfil si existe.
         this.englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
+        
+        if(this.englishStudent.courseType){
+          this.englishCourses = this.englishCourses.filter( course => course._id == this.englishStudent.courseType);
+        }
 
         //Verificar si existen notificación a mostrar.
-        this.verifyNotification();
+        //this.verifyNotification();
 
       }else{
 
@@ -118,6 +120,9 @@ export class StudentEnglishPageComponent implements OnInit {
         this.englishStudentProv.createEnglishStudent(englishSudent).subscribe(res => {
           //Obtener el perfil creado.
           this.englishStudent = JSON.parse(JSON.stringify(res));
+          if(this.englishStudent.courseType){
+            this.englishCourses = this.englishCourses.filter( course => course._id == this.englishStudent.courseType);
+          }
         }, 
         error => {console.log(error)});
       };      
@@ -215,7 +220,8 @@ export class StudentEnglishPageComponent implements OnInit {
               showConfirmButton: false,
               timer: 1500,
               type: 'success'
-            })
+            });
+            this.tabGroup.selectedIndex = 0;
           });
         }
       });
@@ -225,8 +231,8 @@ export class StudentEnglishPageComponent implements OnInit {
 
   openDialogRejectRequest(englishStudentId){
     Swal.fire({
-      title: 'Declinar Solicitud',
-      text: `Está por rechazar la solicitud enviada. ¿Desea continuar?`,
+      title: 'Cancelar Solicitud',
+      text: `Está por cancelar la solicitud enviada. ¿Desea continuar?`,
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
@@ -239,7 +245,7 @@ export class StudentEnglishPageComponent implements OnInit {
       if (result.value) {
 
         const data={
-          status: 'rejected'
+          status: 'cancelled'
         };
 
         this.loadingService.setLoading(true);
@@ -248,16 +254,16 @@ export class StudentEnglishPageComponent implements OnInit {
           console.log(res);
 
           const englishStudent = {
-            $set: {status: 'no_choice'}
+            $set: {status: 'cancelled'}
           }
           this.englishStudentProv.updateEnglishStudent(englishStudent, englishStudentId).subscribe(res2 => {
             console.log(res2);
-            this.englishStudent.status = 'no_choice';
+            this.englishStudent.status = 'cancelled';
 
             this.loadingService.setLoading(false);
             Swal.fire(
-              'Solicitud Eliminada!',
-              'La solicitud al curso ha sido declinada.',
+              'Solicitud Cancelada',
+              'La solicitud al curso ha sido cancelada.',
               'success'
             );
    
@@ -272,6 +278,10 @@ export class StudentEnglishPageComponent implements OnInit {
       }
     });
       
+  }
+
+  selectNewCourse(){
+    this.tabGroup.selectedIndex = 1;
   }
 
 }
