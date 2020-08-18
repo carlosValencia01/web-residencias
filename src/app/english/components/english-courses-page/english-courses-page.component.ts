@@ -187,7 +187,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.classroomForm = this.formBuilder.group({
       name: ['', Validators.required],
       schedule: ['', Validators.required],
-      capacity: ['1', [Validators.required, Validators.min(1)]],
+      capacity: ['30', [Validators.required, Validators.min(1)]],
     });
 
     this.classroomForm.get('schedule').valueChanges.subscribe(option => {
