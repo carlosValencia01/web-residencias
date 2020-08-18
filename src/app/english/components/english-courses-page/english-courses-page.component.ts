@@ -266,7 +266,7 @@ export class EnglishCoursesPageComponent implements OnInit {
         view = this.dialogRefViewScheduleClassroom;
         break;
     }
-    this.dialogRef = this.dialog.open(view, {hasBackdrop: true});
+    this.dialogRef = this.dialog.open(view, {hasBackdrop: false});
 
     this.dialogRef.afterClosed().subscribe(result => {
       if(!result){
@@ -400,8 +400,9 @@ export class EnglishCoursesPageComponent implements OnInit {
     };
   
    this.classroomProv.createClassroom(classroom).subscribe(res => {
+     this.dialog.closeAll();
      this.ngOnInit();
-     this.dialogRef.close(true);
+
     }, 
    error => {console.log(error)});
   }
@@ -536,7 +537,7 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   openDilogViewScheduleGroup(scheduleSelected){
     this.scheduleGroupSelected = scheduleSelected;
-    this.dialogRef = this.dialog.open(this.dialogRefViewScheduleGroup, {hasBackdrop: true});
+    this.dialogRef = this.dialog.open(this.dialogRefViewScheduleGroup, {hasBackdrop: false});
 
     this.dialogRef.afterClosed().subscribe(result => {
       if(!result){
