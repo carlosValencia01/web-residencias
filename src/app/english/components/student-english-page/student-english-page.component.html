@@ -33,7 +33,7 @@
               <label>Correo institucional: <strong>{{currentStudent.email}}</strong></label>
             </div>
             <mat-divider></mat-divider>
-            <div class="pt-2"> 
+            <div class="pt-2">
               <label>Número teléfonico: <strong>{{englishStudent.currentPhone}}</strong></label>
             </div>
             <div>
@@ -47,7 +47,7 @@
         <!--ESTATUS-->
         <div class="col-lg-3 col-md-9 col-sm-9 col-xs-8 text-center pt-2">
           <div>
-            <label><strong>{{statusEnglishStudent[englishStudent.status]}} </strong></label>
+            <label><strong>{{getStudentStatusMessage()}} </strong></label>
           </div>
           <div>
             <label *ngIf="englishStudent.status == 'rejected' && englishStudent.rejectMessage"><a style = "color: red;">{{englishStudent.rejectMessage}}</a></label>
@@ -57,17 +57,17 @@
           <div class="container-progress-spinners mt-3 mb-2">
             <div class="mat-progress-spinner-empty">
               <mat-progress-spinner style="margin:0 auto;"
-                                  mode="determinate" 
+                                  mode="determinate"
                                   value="100"
-                                  strokeWidth="25" 
+                                  strokeWidth="25"
                                   diameter="150">
               </mat-progress-spinner>
             </div>
             <div class="center-progress-spinner">
               <mat-progress-spinner style="margin:0 auto;"
-                                  mode="determinate" 
+                                  mode="determinate"
                                   [value]="englishStudent.totalHoursCoursed/450*100"
-                                  strokeWidth="25" 
+                                  strokeWidth="25"
                                   diameter="150">
               </mat-progress-spinner>
             </div>
@@ -84,7 +84,7 @@
 
   <!--TAB de Seleccion de Curso-->
   <mat-tab label="Selección de curso" *ngIf="englishStudent.status=='no_choice' || englishStudent.status=='cancelled' || englishStudent.status=='rejected'">
-    <!--Cursos --> 
+    <!--Cursos -->
     <div class="row justify-content-center p-3">
       <div *ngFor="let course of englishCourses" class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
         <mat-card class="mat-card-course mb-3 text-white" style="background-color:#183969;">
@@ -101,7 +101,7 @@
               <mat-expansion-panel-header>
                 <mat-panel-title></mat-panel-title>
                 <mat-panel-description>
-                  Detalles del curso 
+                  Detalles del curso
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <p><strong>{{course.semesterHours}} horas</strong> por semestre</p>

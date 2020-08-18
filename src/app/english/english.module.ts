@@ -46,6 +46,7 @@ import { FormCreateCourseComponent } from './components/english-courses-page/for
 import { FormGroupComponent } from './components/english-courses-page/form-group/form-group.component';
 import { FromGenerateGroupsComponent } from './components/english-courses-page/from-generate-groups/from-generate-groups.component';
 import { GroupStudentsComponent } from './components/english-courses-page/group-students/group-students.component';
+import { SelectCourseLevelComponent } from './components/select-course-level/select-course-level.component';
 import { CoursesRequestTableComponent } from './components/courses-request-table/courses-request-table.component';
 
 
@@ -89,6 +90,7 @@ import { CoursesRequestTableComponent } from './components/courses-request-table
     FormGroupComponent,
     FromGenerateGroupsComponent,
     GroupStudentsComponent,
+    SelectCourseLevelComponent,
     CoursesRequestTableComponent,
   ],
   entryComponents: [ //Permite exportar
@@ -99,6 +101,7 @@ import { CoursesRequestTableComponent } from './components/courses-request-table
     FormGroupComponent,
     FromGenerateGroupsComponent,
     GroupStudentsComponent,
+    SelectCourseLevelComponent,
   ],
   providers: [
     StudentProvider,

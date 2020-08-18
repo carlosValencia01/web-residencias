@@ -1,3 +1,13 @@
+export enum EStatusEnglishStudentDB {
+  NO_CHOICE = 'no_choice',
+  SELECTED = 'selected',
+  CANCELLED = 'cancelled',
+  REJECTED = 'rejected',
+  STUDYNG = 'studying',
+  NOT_RELEASED = 'not_released',
+  RELEASED = 'released',
+}
+
 export enum StatusEnglishStudent {
     no_choice = "Sin elección de curso",
     selected = "Solicitud de curso enviada",
