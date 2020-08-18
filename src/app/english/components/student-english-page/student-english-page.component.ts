@@ -41,7 +41,7 @@ export class StudentEnglishPageComponent implements OnInit {
   showImg = false; //Mostrar Foto
   imageDoc; //Imagen del Drive
   photoStudent = ''; //Foto a mostrar
-
+  activePeriod: any;
   statusEnglishStudent = StatusEnglishStudent; //Enumerador del estatus del perfil de ingles del estudiante
 
   englishCourses: ICourse[]; //Cursos de ingles activos
@@ -87,7 +87,7 @@ export class StudentEnglishPageComponent implements OnInit {
         }
 
         if (this.englishStudent && this.englishStudent.courseType) {
-          this.englishCourses = this.englishCourses.filter(({ _id }) => _id === this.englishStudent.courseType._id);
+          this.englishCourses = this.englishCourses.filter( course => course._id === this.englishStudent.courseType._id);
         }
       }, (_) => {
         this.notification.showNotification(eNotificationType.ERROR, 'Cursos inglés', 'Ocurrió un error al obtener el estudiante');
@@ -169,17 +169,16 @@ export class StudentEnglishPageComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async result => {
       if(result){
-        const activePeriod: any = await new Promise((resolve)=>{
+        this.activePeriod = await new Promise((resolve)=>{
           this.englishCourseProv.getActivePeriod().subscribe(data=>resolve(data.period));
         });
-        console.log('The dialog was closed');
         const data = {
           englishStudent: this.englishStudent._id,
           group: result.groupId,
           status: 'requested',
           requestDate: new Date(),
           level: this.englishStudent.level + 1,
-          period: activePeriod._id
+          period: this.activePeriod._id
         };
 
         this.requestCourseProv.createRequestCourse(data).subscribe(res => {
