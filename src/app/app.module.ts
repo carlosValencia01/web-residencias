@@ -45,7 +45,8 @@ import { HomePageComponent } from './home/home-page/home-page.component';
 import { LoginHeaderComponent } from './login/login-header/login-header.component';
 import { LoginPageComponent } from './login/login-page/login-page.component';
 registerLocaleData(localeEs);
-
+import { getSpanishPaginatorIntl } from 'src/app/services/shared/mat-paginator-labels';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 @NgModule({
   declarations: [
     AppComponent,
@@ -88,6 +89,7 @@ registerLocaleData(localeEs);
   ],
   providers: [
     { provide: ErrorStateMatcher, useClass: ErrorMatcher },
+    { provide: MatPaginatorIntl, useValue: getSpanishPaginatorIntl() },
     // Ngx
     CookieService,
 
