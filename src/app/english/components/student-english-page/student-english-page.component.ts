@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 //Importar Servicios
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 //Importar Proveedores
 import { StudentProvider } from 'src/app/providers/shared/student.prov';
@@ -19,7 +20,12 @@ import { EnglishCourseProvider } from 'src/app/english/providers/english-course.
 import { FormRequestCourseComponent } from 'src/app/english/components/student-english-page/form-request-course/form-request-course.component';
 
 //Importar Enumeradores
-import { StatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
+import { StatusEnglishStudent, EStatusEnglishStudentDB } from 'src/app/english/enumerators/status-english-student.enum';
+import { ICourse } from '../../entities/course.model';
+import { SelectCourseLevelComponent } from '../select-course-level/select-course-level.component';
+import { eNotificationType } from '../../../enumerators/app/notificationType.enum';
+import { IEnglishStudent } from '../../entities/english-student.model';
+import { IStudent } from '../../../entities/shared/student.model';
 
 @Component({
   selector: 'app-student-english-page',
@@ -30,15 +36,15 @@ export class StudentEnglishPageComponent implements OnInit {
 
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
   data; //Datos del usuario
-  currentStudent: any; //Datos del estuduante
-  englishStudent: any; //Perfil de ingles del estudiante
+  currentStudent: IStudent; //Datos del estuduante
+  englishStudent: IEnglishStudent; //Perfil de ingles del estudiante
   showImg = false; //Mostrar Foto
   imageDoc; //Imagen del Drive
   photoStudent = ''; //Foto a mostrar
 
   statusEnglishStudent = StatusEnglishStudent; //Enumerador del estatus del perfil de ingles del estudiante
 
-  englishCourses: any; //Cursos de ingles activos
+  englishCourses: ICourse[]; //Cursos de ingles activos
 
   constructor(
     private _CookiesService: CookiesService,
@@ -46,12 +52,13 @@ export class StudentEnglishPageComponent implements OnInit {
     private router: Router,
     private loadingService: LoadingService,
     private studentProv: StudentProvider,
-    private inscriptionProv : InscriptionsProvider,
-    private englishStudentProv : EnglishStudentProvider,
+    private inscriptionProv: InscriptionsProvider,
+    private englishStudentProv: EnglishStudentProvider,
     private englishCourseProv: EnglishCourseProvider,
-    private requestCourseProv : RequestCourseProvider,
+    private requestCourseProv: RequestCourseProvider,
     public dialog: MatDialog,
-  ) { 
+    private notification: NotificationsServices,
+  ) {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
@@ -63,75 +70,38 @@ export class StudentEnglishPageComponent implements OnInit {
   ngOnInit() {
     const _id = this.data._id; // ID del Estudiante
 
-    this.loadingService.setLoading(true);
-
-    this.createEnglishCourses(); //Obtener los cursos activos para mostrar
-
     //Obtener el estudiante con la ID
-    this.studentProv.getStudentById(_id).subscribe(res => {
-        this.currentStudent = JSON.parse(JSON.stringify(res.student[0])); //Guardar al estudiante
-        this.verifyEnglishState(this.currentStudent._id); //Verificar el perfil de ingles del estudiante
-      }, error => {
-        console.log(error);
-      }, () => this.loadingService.setLoading(false));
-    
-  }
+    this.studentProv.getStudentById(_id)
+      .subscribe(async (res) => {
+        this.currentStudent = JSON.parse(JSON.stringify(res.student[0])); // Guardar al estudiante
 
-  createEnglishCourses(){ //Obtener los cursos activos para mostrar
-    this.loadingService.setLoading(true);
-    this.englishCourseProv.getAllEnglishCourseActive().subscribe(res => { //Obtener los cursos de la API      
-      this.englishCourses = res.englishCourses; //Guardar los cursos activos
+        this.englishStudent = await this._getEnglishStudent(this.currentStudent._id as string);
+        this.englishCourses = await this._getAllActiveEnglishCourses();
 
-    },error => {
-
-    }, () => this.loadingService.setLoading(false));
-  }
-
-  verifyEnglishState(studentId: string){ //Verificar el perfil del estudiante.
-
-    //Obtener el perfil de acuerdo al ID del estudiante.
-    this.englishStudentProv.getEnglishStudentByStudentId(studentId).subscribe(res => {
-
-      if (typeof (res) !== 'undefined' && typeof (res.englishStudent) !== 'undefined' && res.englishStudent.length > 0) {
-
-        //Obtener el perfil si existe.
-        this.englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
-        
-        if(this.englishStudent.courseType){
-          this.englishCourses = this.englishCourses.filter( course => course._id == this.englishStudent.courseType);
+        if (!this.englishCourses || !this.englishCourses.length) {
+          return this.notification.showNotification(eNotificationType.INFORMATION, 'Cursos de inglés', 'No hay cursos activos para selección');
         }
 
-        //Verificar si existen notificación a mostrar.
-        //this.verifyNotification();
+        if (!this.englishStudent) {
+          await this._getPreviousInfoEnglishCourses();
+        }
 
-      }else{
+        if (this.englishStudent && this.englishStudent.courseType) {
+          this.englishCourses = this.englishCourses.filter(({ _id }) => _id === this.englishStudent.courseType._id);
+        }
+      }, (_) => {
+        this.notification.showNotification(eNotificationType.ERROR, 'Cursos inglés', 'Ocurrió un error al obtener el estudiante');
+      });
 
-        //Crear el perfil en caso de no existir.
-        
-        var englishSudent = { //Perfil a crear.
-          studentId: studentId,
-          currentPhone: this.currentStudent.phone,
-          status: 'no_choice',
-          totalHoursCoursed: 0,
-          level: 0
-        };
-
-        //Mandar el perfil a la API para agregarlo a la BD.
-        this.englishStudentProv.createEnglishStudent(englishSudent).subscribe(res => {
-          //Obtener el perfil creado.
-          this.englishStudent = JSON.parse(JSON.stringify(res));
-          if(this.englishStudent.courseType){
-            this.englishCourses = this.englishCourses.filter( course => course._id == this.englishStudent.courseType);
-          }
-        }, 
-        error => {console.log(error)});
-      };      
-    });
   }
 
-  verifyNotification(){ //Verificar si existe notificación a mostrar
+  public getStudentStatusMessage(): string {
+    return this.statusEnglishStudent[this.englishStudent.status];
+  }
 
-    if(this.englishStudent.status == 'rejected'){ //En caso de que se haya rechazado la solicitud
+  public verifyNotification(): void { //Verificar si existe notificación a mostrar
+
+    if (this.englishStudent.status == 'rejected') { //En caso de que se haya rechazado la solicitud
       Swal.fire({
         title: 'Atención',
         text: 'El curso en el horario solicitado no fue aperturado, seleccione otra opción',
@@ -139,7 +109,7 @@ export class StudentEnglishPageComponent implements OnInit {
       }).then((result) => {
 
         const englishStudent = {
-          $set: {status: 'no_choice'} //Cambiar el estatus
+          $set: { status: 'no_choice' } //Cambiar el estatus
         };
 
         this.loadingService.setLoading(true);
@@ -147,45 +117,45 @@ export class StudentEnglishPageComponent implements OnInit {
         // Canbiar el estatus en la BD.
         this.englishStudentProv.updateEnglishStudent(englishStudent, this.englishStudent._id).subscribe(res => {
           this.englishStudent.status = 'no_choice'; // Cambiar el estatus en la variable local
-        },error => {}, () => this.loadingService.setLoading(false));
+        }, error => { }, () => this.loadingService.setLoading(false));
       });
     }
   }
 
-  getDocuments(){ //Obtener la Foto de perfil
-    this.showImg=false;
+  private getDocuments(): void { //Obtener la Foto de perfil
+    this.showImg = false;
     this.studentProv.getDriveDocuments(this.data._id).subscribe( //Obtener documentos del Drive
-      docs=>{
+      docs => {
         let documents = docs.documents;
-        if(documents){ //Si existen documentos en el Drive
+        if (documents) { //Si existen documentos en el Drive
 
           //Obtener Foto del Drive
-          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 ||  docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 ||  docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];
-          if(this.imageDoc){
+          this.imageDoc = documents.filter(docc => docc.filename.indexOf('png') !== -1 || docc.filename.indexOf('jpg') !== -1 || docc.filename.indexOf('PNG') !== -1 || docc.filename.indexOf('JPG') !== -1 || docc.filename.indexOf('jpeg') !== -1 || docc.filename.indexOf('JPEG') !== -1)[0];
+          if (this.imageDoc) {
 
-            this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive,this.imageDoc.filename).subscribe(
-              succss=>{ //Si existe Foto en el Drive
-                this.showImg=true;
-                const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length-3,this.imageDoc.filename.length);
-                this.photoStudent = "data:image/"+extension+";base64,"+succss.file;
+            this.inscriptionProv.getFile(this.imageDoc.fileIdInDrive, this.imageDoc.filename).subscribe(
+              succss => { //Si existe Foto en el Drive
+                this.showImg = true;
+                const extension = this.imageDoc.filename.substr(this.imageDoc.filename.length - 3, this.imageDoc.filename.length);
+                this.photoStudent = "data:image/" + extension + ";base64," + succss.file;
               },
-              err=>{this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg=true;}
+              err => { this.photoStudent = 'assets/imgs/studentAvatar.png'; this.showImg = true; }
             );
-          }else{ //Si no existe Foto en el Drive
+          } else { //Si no existe Foto en el Drive
             this.loadingService.setLoading(false);
             this.photoStudent = 'assets/imgs/studentAvatar.png';
-            this.showImg=true;
+            this.showImg = true;
           }
-        }else{ //Si no existen documentos en el Drive
+        } else { //Si no existen documentos en el Drive
           this.loadingService.setLoading(false);
           this.photoStudent = 'assets/imgs/studentAvatar.png';
-          this.showImg=true;
+          this.showImg = true;
         }
       }
     );
   }
 
-  openDialog(courseSelected : any): void {
+  public openDialog(courseSelected: any): void {
     console.log(courseSelected);
     const dialogRef = this.dialog.open(FormRequestCourseComponent, {
       data: {
@@ -198,38 +168,38 @@ export class StudentEnglishPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        
-      console.log('The dialog was closed');
-      const data = {
-        englishStudent: this.englishStudent._id,
-        group: result.groupId,
-        status: 'requested',
-        requestDate: new Date(),
-        level: this.englishStudent.level + 1
-      };
-      
-      this.requestCourseProv.createRequestCourse(data).subscribe(res => {
-        if(res){
-          this.englishStudent.currentPhone = result.currentPhone;
-          this.englishStudent.status = 'selected';
-          this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
-            console.log(res2);
-            Swal.fire({
-              title: 'Solicitud enviada!',
-              showConfirmButton: false,
-              timer: 1500,
-              type: 'success'
+      if (result) {
+
+        console.log('The dialog was closed');
+        const data = {
+          englishStudent: this.englishStudent._id,
+          group: result.groupId,
+          status: 'requested',
+          requestDate: new Date(),
+          level: this.englishStudent.level + 1
+        };
+
+        this.requestCourseProv.createRequestCourse(data).subscribe(res => {
+          if (res) {
+            this.englishStudent.currentPhone = result.currentPhone;
+            this.englishStudent.status = 'selected';
+            this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
+              console.log(res2);
+              Swal.fire({
+                title: 'Solicitud enviada!',
+                showConfirmButton: false,
+                timer: 1500,
+                type: 'success'
+              });
+              this.tabGroup.selectedIndex = 0;
             });
-            this.tabGroup.selectedIndex = 0;
-          });
-        }
-      });
+          }
+        });
       }
     });
   }
 
-  openDialogRejectRequest(englishStudentId){
+  public openDialogRejectRequest(englishStudentId) {
     Swal.fire({
       title: 'Cancelar Solicitud',
       text: `Está por cancelar la solicitud enviada. ¿Desea continuar?`,
@@ -244,7 +214,7 @@ export class StudentEnglishPageComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
 
-        const data={
+        const data = {
           status: 'cancelled'
         };
 
@@ -254,7 +224,7 @@ export class StudentEnglishPageComponent implements OnInit {
           console.log(res);
 
           const englishStudent = {
-            $set: {status: 'cancelled'}
+            $set: { status: 'cancelled' }
           }
           this.englishStudentProv.updateEnglishStudent(englishStudent, englishStudentId).subscribe(res2 => {
             console.log(res2);
@@ -266,7 +236,7 @@ export class StudentEnglishPageComponent implements OnInit {
               'La solicitud al curso ha sido cancelada.',
               'success'
             );
-   
+
           }, () => {
             this.loadingService.setLoading(false);
           });
@@ -277,11 +247,111 @@ export class StudentEnglishPageComponent implements OnInit {
 
       }
     });
-      
+
   }
 
-  selectNewCourse(){
+  public selectNewCourse() {
     this.tabGroup.selectedIndex = 1;
+  }
+
+  private async _getPreviousInfoEnglishCourses(): Promise<void> {
+    await Swal
+      .fire({
+        title: 'Cursos de inglés',
+        text: '¿Tienes cursado algún módulo de inglés?',
+        type: 'question',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonText: 'Si, tengo módulos cursados',
+        cancelButtonText: 'No tengo módulos cursados',
+        confirmButtonColor: 'green',
+        cancelButtonColor: 'red',
+      })
+      .then(async ({ value, dismiss }) => {
+        let previousCourseData: { course: ICourse, level: number } = {
+          course: undefined,
+          level: 0,
+        };
+
+        if (!value && dismiss.toString() === 'close') {
+          return this.router.navigate(['/']);
+        }
+
+        if (value) {
+          const dialogRef = this.dialog.open(SelectCourseLevelComponent,
+            { disableClose: true, hasBackdrop: true, maxWidth: '95vw', data: { courses: this.englishCourses } });
+
+          dialogRef
+            .afterClosed()
+            .subscribe(async (data: { course: ICourse, level: number }) => {
+              if (data) {
+                this.englishStudent = await this._saveEnglishStudent(data);
+                if (this.englishStudent && this.englishStudent.courseType) {
+                  this.englishCourses = this.englishCourses.filter(({ _id }) => _id === this.englishStudent.courseType._id);
+                }
+              } else {
+                this._getPreviousInfoEnglishCourses();
+              }
+            });
+        } else {
+          this.englishStudent = await this._saveEnglishStudent(previousCourseData);
+        }
+      });
+  }
+
+  private async _saveEnglishStudent(data: { course: ICourse, level: number }): Promise<IEnglishStudent> {
+    // Crear el perfil en caso de no existir.
+    const englishStudent: IEnglishStudent = {
+      studentId: this.currentStudent._id as string,
+      courseType: data.course,
+      currentPhone: this.currentStudent.phone as string,
+      status: data.course &&
+        data.level === data.course.totalSemesters
+        ? EStatusEnglishStudentDB.NOT_RELEASED : EStatusEnglishStudentDB.NO_CHOICE,
+      totalHoursCoursed: data.course
+        ? data.level * data.course.semesterHours
+        : data.level,
+      level: data.level,
+    };
+
+    const newEnglishStudent = await this._createEnglishStudent(englishStudent);
+    newEnglishStudent.courseType = data.course;
+    newEnglishStudent.studentId = this.currentStudent;
+
+    return newEnglishStudent;
+  }
+
+  private _getEnglishStudent(studentId: string): Promise<IEnglishStudent> {
+    return new Promise((resolve) => {
+      this.englishStudentProv.getEnglishStudentByStudentId(studentId)
+        .subscribe(
+          (res: { englishStudent: IEnglishStudent }) => resolve(res.englishStudent),
+          (_) => resolve(null)
+        );
+    });
+  }
+
+  private _createEnglishStudent(englishStudent: IEnglishStudent): Promise<IEnglishStudent> {
+    return new Promise((resolve) => {
+      this.englishStudentProv.createEnglishStudent(englishStudent)
+        .subscribe(
+          (student: IEnglishStudent) => resolve(student),
+          (_) => resolve(null)
+        );
+    });
+  }
+
+  private _getAllActiveEnglishCourses(): Promise<ICourse[]> {
+    return new Promise((resolve) => {
+      this.englishCourseProv
+        .getAllEnglishCourseActive()
+        .subscribe(
+          (res: { englishCourses: ICourse[] }) => resolve(res.englishCourses),
+          (_) => resolve([])
+        );
+    });
   }
 
 }
