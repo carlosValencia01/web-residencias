@@ -20,6 +20,7 @@ import { FormRequestCourseComponent } from 'src/app/english/components/student-e
 
 //Importar Enumeradores
 import { StatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
+import { resolve } from 'url';
 
 @Component({
   selector: 'app-student-english-page',
@@ -197,34 +198,37 @@ export class StudentEnglishPageComponent implements OnInit {
       hasBackdrop: true,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(async result => {
       if(result){
+        const activePeriod: any = await new Promise((resolve)=>{
+          this.englishCourseProv.getActivePeriod().subscribe(data=>resolve(data.period));
+        });
+        console.log('The dialog was closed');
+        const data = {
+          englishStudent: this.englishStudent._id,
+          group: result.groupId,
+          status: 'requested',
+          requestDate: new Date(),
+          level: this.englishStudent.level + 1,
+          period: activePeriod._id
+        };
         
-      console.log('The dialog was closed');
-      const data = {
-        englishStudent: this.englishStudent._id,
-        group: result.groupId,
-        status: 'requested',
-        requestDate: new Date(),
-        level: this.englishStudent.level + 1
-      };
-      
-      this.requestCourseProv.createRequestCourse(data).subscribe(res => {
-        if(res){
-          this.englishStudent.currentPhone = result.currentPhone;
-          this.englishStudent.status = 'selected';
-          this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
-            console.log(res2);
-            Swal.fire({
-              title: 'Solicitud enviada!',
-              showConfirmButton: false,
-              timer: 1500,
-              type: 'success'
+        this.requestCourseProv.createRequestCourse(data).subscribe(res => {
+          if(res){
+            this.englishStudent.currentPhone = result.currentPhone;
+            this.englishStudent.status = 'selected';
+            this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
+              console.log(res2);
+              Swal.fire({
+                title: 'Solicitud enviada!',
+                showConfirmButton: false,
+                timer: 1500,
+                type: 'success'
+              });
+              this.tabGroup.selectedIndex = 0;
             });
-            this.tabGroup.selectedIndex = 0;
-          });
-        }
-      });
+          }
+        });
       }
     });
   }
