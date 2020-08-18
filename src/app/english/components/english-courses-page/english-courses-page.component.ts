@@ -66,9 +66,11 @@ export class EnglishCoursesPageComponent implements OnInit {
   groups: any;
   dataSourceGroups: MatTableDataSource<any>;
   @ViewChild('matPaginatorGroups') paginatorGroups: MatPaginator;
+  @ViewChild('matPaginatorClassrooms') paginatorClassrooms: MatPaginator;
   @ViewChild(MatSort) sortGroups: MatSort;
   activeGroups: any;
   dataSourceActiveGroups: MatTableDataSource<any>;
+  dataSourceClassrooms: MatTableDataSource<any>;
   @ViewChild('matPaginatorGroups') paginatorActiveGroups: MatPaginator;
   @ViewChild(MatSort) sortActiveGroups: MatSort;
   @ViewChild("viewScheduleGroup") dialogRefViewScheduleGroup: TemplateRef<any>;
@@ -333,7 +335,8 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.classroomProv.getAllClassroom().subscribe(res => {
 
       this.classrooms = res.classrooms;
-      
+      this.dataSourceClassrooms = new MatTableDataSource(this.classrooms);
+      this.dataSourceClassrooms.paginator = this.paginatorClassrooms;
     },error => {
 
     }, () => this.loadingService.setLoading(false));
