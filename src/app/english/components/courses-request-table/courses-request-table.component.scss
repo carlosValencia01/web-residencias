@@ -1,0 +1,65 @@
+th {
+  background-color: rgb(21, 43, 84);
+  color: #fff;
+  font-size: 14pt;
+}
+.badge-requested {
+  background-color: #f8f5cd;
+  color: #000000;
+}
+
+.badge-rejected {
+  background-color: #ff2d2d;
+  color: #fff;
+}
+
+.badge-studying {
+  background-color: #ffc49d;
+  color: #000000;
+}
+
+.badge-finalized {
+  background-color: #76c8ff;
+  color: #000000;
+}
+
+.badge-approved {
+  background-color: #58ff8a;
+  color: #000000;
+}
+
+.badge-not_approved {
+  background-color: #dadada;
+  color: #000000;
+}
+#tableReportExcel{
+  display: none;
+}
+.div-img{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  flex-basis: 5%;
+  transition: all 0.5s;
+}
+.div-img:hover{
+  background-color: rgba($color: #ccc, $alpha: 0.7);
+}
+.action{
+  width: 25px; 
+  height: 25px;
+}
+.footer-actions{
+  width: 100%;
+  background: white;
+  box-shadow: 0px 10px 9px #aaa;
+  padding: 10px;
+  margin: 0;
+  height: 70px;
+}
+.footer-actions-reports{
+  display: flex;
+  justify-content: flex-end;    
+  flex-wrap: wrap;
+}

@@ -25,7 +25,9 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSelectModule} from '@angular/material/select';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-
+import { MatMenuModule } from '@angular/material/menu';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 //Proveedores
 import { StudentProvider } from '../providers/shared/student.prov';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
@@ -34,7 +36,7 @@ import { RequestCourseProvider } from 'src/app/english/providers/request-course.
 import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
-
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 //Componentes
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 import { FormRequestCourseComponent } from './components/student-english-page/form-request-course/form-request-course.component';
@@ -45,6 +47,7 @@ import { FormGroupComponent } from './components/english-courses-page/form-group
 import { FromGenerateGroupsComponent } from './components/english-courses-page/from-generate-groups/from-generate-groups.component';
 import { GroupStudentsComponent } from './components/english-courses-page/group-students/group-students.component';
 import { SelectCourseLevelComponent } from './components/select-course-level/select-course-level.component';
+import { CoursesRequestTableComponent } from './components/courses-request-table/courses-request-table.component';
 
 
 @NgModule({
@@ -73,6 +76,9 @@ import { SelectCourseLevelComponent } from './components/select-course-level/sel
     MatSlideToggleModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatMenuModule,
+    MatBadgeModule,
+    MatAutocompleteModule,
   ],
   declarations: [
     StudentEnglishPageComponent,
@@ -85,6 +91,7 @@ import { SelectCourseLevelComponent } from './components/select-course-level/sel
     FromGenerateGroupsComponent,
     GroupStudentsComponent,
     SelectCourseLevelComponent,
+    CoursesRequestTableComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
@@ -104,6 +111,7 @@ import { SelectCourseLevelComponent } from './components/select-course-level/sel
     ClassroomProvider,
     EnglishCourseProvider,
     GroupProvider,
+    RequestProvider
   ]
 })
 export class EnglishModule { }

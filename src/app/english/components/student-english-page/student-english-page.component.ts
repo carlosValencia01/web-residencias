@@ -167,20 +167,23 @@ export class StudentEnglishPageComponent implements OnInit {
       hasBackdrop: true,
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-
+    dialogRef.afterClosed().subscribe(async result => {
+      if(result){
+        const activePeriod: any = await new Promise((resolve)=>{
+          this.englishCourseProv.getActivePeriod().subscribe(data=>resolve(data.period));
+        });
         console.log('The dialog was closed');
         const data = {
           englishStudent: this.englishStudent._id,
           group: result.groupId,
           status: 'requested',
           requestDate: new Date(),
-          level: this.englishStudent.level + 1
+          level: this.englishStudent.level + 1,
+          period: activePeriod._id
         };
 
         this.requestCourseProv.createRequestCourse(data).subscribe(res => {
-          if (res) {
+          if(res){
             this.englishStudent.currentPhone = result.currentPhone;
             this.englishStudent.status = 'selected';
             this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {

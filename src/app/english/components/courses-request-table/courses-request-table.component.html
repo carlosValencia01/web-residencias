@@ -1,0 +1,174 @@
+<mat-card>
+  <mat-card-content>
+    <div class="filters">
+      <div class="row text-center p-4 m-0 mt-2" style="align-items: center;">
+        <div class="col-xs-12 col-md-4">
+          <mat-form-field *ngIf="periods" class="w-100">
+            <mat-chip-list #chipList aria-label="Period selection">
+                <mat-chip *ngFor="let p of usedPeriods" selectable="true" removable="true"
+                    (removed)="removePeriod(p)">
+                    {{p.periodName}}-{{p.year}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+                <input placeholder="Filtrar por período..." #periodInput [formControl]="periodCtrl"
+                    [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
+                    (matChipInputTokenEnd)="addPeriod($event)" (ngModelChange)="filterPeriod($event)"
+                    matInput>
+            </mat-chip-list>
+            <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
+                    {{period.periodName}}-{{period.year}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+        </div>
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <select (change)="filter('courses',$event)" class="form-control">
+              <option value='default'>Todos los cursos</option>
+              <option value="18">18 o más solicitudes</option>     
+              <option [value]="course._id" *ngFor="let course of activeCourses">{{course.name}}</option>          
+            </select>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <select (change)="filter('level',$event)" class="form-control">
+              <option value='default'>Todos los niveles</option>
+              <option value="1">Nivel 1</option>
+              <option value="2">Nivel 2</option>
+              <option value="3">Nivel 3</option>
+              <option value="4">Nivel 4</option>              
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>  
+    <div class="courses-requests-table">
+      <div class="mat-elevation-z8" >
+        <table mat-table [dataSource]="dataSource" matSort class="w-100">
+            
+            <!-- # control-->
+            <ng-container matColumnDef="controlNumber">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">NC</th>
+              <td mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.controlNumber}} </td>
+            </ng-container>
+
+            <!-- Nombre -->
+            <ng-container matColumnDef="fullName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Nombre</th>
+              <td mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.fullName}} </td>
+            </ng-container>                                          
+
+            <!-- Teléfono -->
+            <ng-container matColumnDef="phone">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Teléfono</th>
+              <td mat-cell *matCellDef="let row"> {{row.englishStudent.currentPhone}} </td>
+            </ng-container>                                          
+
+            <!-- Carrera -->
+            <ng-container matColumnDef="career">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Carrera</th>
+              <td mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.careerId.acronym}} </td>
+            </ng-container>                                          
+
+            <!-- Curso -->
+            <ng-container matColumnDef="course">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Curso</th>
+              <td mat-cell *matCellDef="let row"> 
+                {{row.group.course.name}} 
+              </td>
+            </ng-container>                                          
+
+            <!-- nivel -->
+            <ng-container matColumnDef="level">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Nivel</th>
+              <td mat-cell *matCellDef="let row">
+                  {{row.level}}                        
+              </td>
+            </ng-container>                                          
+
+            <!-- status -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Estatus</th>
+              <td mat-cell *matCellDef="let row"> 
+                <div [ngSwitch]="row.status">
+                    <span *ngSwitchCase="'requested'"
+                        class="badge badge-pill badge-requested">Solicitado</span>
+                    <span *ngSwitchCase="'rejected'"
+                        class="badge badge-pill badge-rejected">Rechazado</span>
+                    <span *ngSwitchCase="'studying'"
+                        class="badge badge-pill badge-studying">Cursando</span>
+                    <span *ngSwitchCase="'finalized'"
+                        class="badge badge-pill badge-finalized">Finalizado</span>
+                    <span *ngSwitchCase="'approved'"
+                        class="badge badge-pill badge-approved">Aprobado</span>
+                    <span *ngSwitchCase="'not_approved'"
+                        class="badge badge-pill badge-not_approved">No aprovado</span>                    
+                </div>
+              </td>
+            </ng-container>                                          
+
+            <!-- actions -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center; width: 5%;">Acciones</th>
+              <td mat-cell *matCellDef="let row">
+                <button mat-icon-button [matMenuTriggerFor]="actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #actions="matMenu">                   
+                    <button style="color: rgb(160, 23, 23);" mat-menu-item (click)="declineRequest(row)" *ngIf="row.status == 'requested'">
+                        <mat-icon style="color: red;">close</mat-icon>
+                        Declinar
+                    </button>
+                </mat-menu>
+              </td>
+            </ng-container>                                          
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+            </tr>
+          </table>
+
+          <mat-paginator #paginator [showFirstLastButtons]="true" [pageSizeOptions]="[5,15,30]"></mat-paginator>
+      </div>
+      <div class="footer-actions row text-center">
+        <div class="col-12 footer-actions-reports">
+          <div class="div-img" ngbTooltip="Exportar a Excel" >
+            <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
+          </div>  
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<!-- Tabla reporte alumnos Excel -->
+<table class="table table-striped table-bordered table-hover" id="tableReportExcel"
+data-cols-width="9,21,9,26,26,46,21,21" *ngIf="dataSource.filteredData.length>0">
+<thead>
+  <tr>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No.</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Curso</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nivel</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Hora de solicitud</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Hora del curso</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del alumno</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de control</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Teléfono</th>
+  </tr>
+</thead>
+<tbody>
+  <tr *ngFor="let item of dataSource.filteredData; let i=index">
+      <td data-f-sz="12" data-t="n">{{i+1}}</td>
+      <td data-f-sz="12" data-t="s">{{item.group.course.name}}</td>
+      <td data-f-sz="12" data-t="s">{{item.level}}</td>
+      <td data-f-sz="12" data-t="s">{{item.requestDate | date:"hh:mm a"}}</td>
+      <td data-f-sz="12" data-t="s">{{item.courseHour | date:"hh:mm a"}}</td>
+      <td data-f-sz="12" data-t="s">{{item.englishStudent.studentId.fullName}}</td>
+      <td data-f-sz="12" data-t="s">{{item.englishStudent.studentId.controlNumber}}</td>
+      <td data-f-sz="12" data-t="s">{{item.englishStudent.currentPhone}}</td>      
+  </tr>
+</tbody>
+</table>

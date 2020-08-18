@@ -3,67 +3,7 @@
   <!-- SOLICITUDES -->
 
   <mat-tab label="Solicitudes" class="p-md-5">
-    <mat-accordion class="course-headers-align" multi>
-
-      <div *ngFor="let request of requests">
-
-        <mat-expansion-panel>
-
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{request.course.name}}
-            </mat-panel-title>
-            <mat-panel-description></mat-panel-description>
-          </mat-expansion-panel-header>
-
-          <mat-accordion class="course-headers-align" multi>
-            <ng-container *ngFor="let level of request.data; let i = index">
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>Nivel {{level.level}}</mat-panel-title>
-                  <mat-panel-description>
-                    {{level.groups.length}} Grupo<ng-container *ngIf="level.groups.length>1||level.groups.length==0">s
-                    </ng-container>
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-                <ng-container *ngIf="level.haveGroups">
-
-                  <table mat-table [dataSource]="level.groups" class="mat-elevation-z8">
-
-                    <ng-container matColumnDef="name">
-                      <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
-                      <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
-                    </ng-container>
-
-                    <ng-container matColumnDef="actions">
-                      <mat-header-cell *matHeaderCellDef></mat-header-cell>
-                      <mat-cell *matCellDef="let row">
-                        <button (click)="openDialogTableStudents(row)" mat-icon-button>
-                          <mat-icon>view_list</mat-icon>
-                        </button>
-                        <button (click)="deleteRequestForHour(row._id)" mat-icon-button>
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      </mat-cell>
-                    </ng-container>
-
-                    <mat-header-row *matHeaderRowDef="['name', 'actions']"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: ['name', 'actions']"></mat-row>
-                  </table>
-
-                </ng-container>
-                <ng-container *ngIf="!level.haveGroups">
-                  No existen grupos.
-                </ng-container>
-              </mat-expansion-panel>
-            </ng-container>
-          </mat-accordion>
-
-        </mat-expansion-panel>
-
-      </div>
-
-    </mat-accordion>
+    <app-courses-request-table></app-courses-request-table>
   </mat-tab>
 
 
@@ -169,8 +109,8 @@
               </table>
             </div>
             <div mat-dialog-actions>
-              <button mat-button matDialogClose class="button-blue">Cancelar</button>
               <button mat-button cdkFocusInitial (click)="verifySchedule()" class="button-blue">Guardar</button>
+              <button mat-button matDialogClose class="button-blue">Cancelar</button>
             </div>
           </ng-template>
 
