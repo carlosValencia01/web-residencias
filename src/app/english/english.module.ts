@@ -48,7 +48,7 @@ import { FromGenerateGroupsComponent } from './components/english-courses-page/f
 import { GroupStudentsComponent } from './components/english-courses-page/group-students/group-students.component';
 import { SelectCourseLevelComponent } from './components/select-course-level/select-course-level.component';
 import { CoursesRequestTableComponent } from './components/courses-request-table/courses-request-table.component';
-import { UploadCsvPayComponent } from './components/upload-csv-pay/upload-csv-pay.component';
+import { StudyingCourseDetailComponent } from './components/studying-course-detail/studying-course-detail.component';
 
 
 @NgModule({
@@ -93,7 +93,7 @@ import { UploadCsvPayComponent } from './components/upload-csv-pay/upload-csv-pa
     GroupStudentsComponent,
     SelectCourseLevelComponent,
     CoursesRequestTableComponent,
-    UploadCsvPayComponent,
+    StudyingCourseDetailComponent,    
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,

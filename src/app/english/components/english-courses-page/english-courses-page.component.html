@@ -197,7 +197,21 @@
           </ng-template>
       
           <ng-template #viewScheduleClassroom>
-            <h1 mat-dialog-title>Horario</h1>
+            <div mat-dialog-header class="detail-schedule-header">
+              <h1 mat-dialog-title>Horario</h1>
+              <div class="indicator-container">
+                <div class="indicator-label">Horas ocupadas</div>
+                <div class="occupied-indicator-shape"></div>
+              </div>
+              <div class="indicator-container">
+                <div class="indicator-label">Horas disponibles</div>
+                <div class="free-indicator-shape"></div>
+              </div>
+              <div class="indicator-container">
+                <div class="indicator-label">Horas sin asignar</div>
+                <div class="none-indicator-shape"></div>
+              </div>
+            </div>
             <div mat-dialog-content>
               <table class="table table-bordered table-hover mt-2">
                 <thead>
