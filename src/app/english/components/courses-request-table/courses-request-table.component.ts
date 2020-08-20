@@ -12,7 +12,7 @@ import TableToExcel from '@linways/table-to-excel';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
-import * as moment from 'moment';
+import * as Papa from 'papaparse';
 import { EnglishStudentProvider } from '../../providers/english-student.prov';
 @Component({
   selector: 'app-courses-request-table',
@@ -31,7 +31,7 @@ export class CoursesRequestTableComponent implements OnInit {
   periodCtrl = new FormControl();
 
   // table sources
-  displayedColumns: string[] = ['controlNumber', 'fullName', 'phone', 'career','course','level','status', 'actions'];
+  displayedColumns: string[] = ['controlNumber', 'fullName', 'phone', 'career','course','level','status','paid', 'actions'];
   dataSource: MatTableDataSource<any>;  
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -53,6 +53,7 @@ export class CoursesRequestTableComponent implements OnInit {
   };
 
   activeCourses: Array<any> = [];
+  notPaidRequests = [];
   constructor(
     private requestCourseProv: RequestCourseProvider,
     private requestProvider: RequestProvider,
@@ -83,13 +84,14 @@ export class CoursesRequestTableComponent implements OnInit {
     return new Promise((resolve)=>{
       this.requestCourseProv.getAllRequestCourse().subscribe((data)=>{
         // read the request
-        this.requestsCourses = data.requestCourses.filter(co=>co.status == 'requested').map(req=>{
+        this.requestsCourses = data.requestCourses.filter(cour=>(cour.englishStudent.status == 'requested' || cour.englishStudent.status == 'paid')).map(req=>{
           let tmpDate = new Date();
           const startHour = req.group.schedule[0].startHour;
           tmpDate.setHours(startHour / 60, startHour % 60, 0, 0); // set the start hour of course for export
           req.courseHour = tmpDate;
           return req;
         });
+        this.notPaidRequests = this.requestsCourses.filter(req=>(req.englishStudent.status == 'requested'));        
         
         // create table data
         this.dataSource = new MatTableDataSource(this.requestsCourses);
@@ -315,6 +317,38 @@ export class CoursesRequestTableComponent implements OnInit {
       }
     });
     this.loadingService.setLoading(false);
+  }
+  public async onUpload(event) {
+    this.loadingService.setLoading(true);
+    await this.getData();
+    let csvData = [];// save the controlNumber
+    if (event.target.files && event.target.files[0]) {
+
+      Papa.parse(event.target.files[0], {
+        complete: async (results) => {
+          if (results.data.length > 0) {
+            results.data.slice(1).forEach(element => {
+              if(element[0].toLowerCase() == 'si'){
+                csvData.push(element[3]);
+              }
+            });
+            this.notPaidRequests = this.notPaidRequests.filter(req=>csvData.includes(req.englishStudent.studentId.controlNumber));
+            
+            if(this.notPaidRequests.length>0){
+              await this.englishStudentProv.setPaidStatus(this.notPaidRequests).toPromise().then(ok=>{});
+              await this.getData();
+              this.notificationService.showNotification(eNotificationType.SUCCESS,'ÍNGLES','Pago registrado');
+            }else{
+              this.notificationService.showNotification(eNotificationType.INFORMATION,'ÍNGLES','No hay nuevos pagos por registrar');
+              
+            }
+            this.loadingService.setLoading(false);
+          }
+        },
+        encoding:'utf8',
+        skipEmptyLines:true
+      });
+    }
   }
 
 }
