@@ -55,7 +55,8 @@ export class EnglishCoursesPageComponent implements OnInit {
   dataSchedule = []; //Arreglo de los dias seleccionados
   dialogRef: any;
   dayschedule = DaysSchedule; //Enumerador de los dias de la semana
-  
+  searchClassroom = '';
+
   @ViewChild("viewCreateClassroom") dialogRefViewCreateClassroom: TemplateRef<any>;
   @ViewChild("scheduleClassroomAux") dialogRefScheduleClassroomAux: TemplateRef<any>;
   @ViewChild("viewScheduleClassroom") dialogRefViewScheduleClassroom: TemplateRef<any>;
@@ -67,6 +68,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   dataSourceGroups: MatTableDataSource<any>;
   @ViewChild('matPaginatorGroups') paginatorGroups: MatPaginator;
   @ViewChild('matPaginatorClassrooms') paginatorClassrooms: MatPaginator;
+  @ViewChild(MatSort) sortClassrooms: MatSort;
   @ViewChild(MatSort) sortGroups: MatSort;
   activeGroups: any;
   dataSourceActiveGroups: MatTableDataSource<any>;
@@ -268,8 +270,7 @@ export class EnglishCoursesPageComponent implements OnInit {
         view = this.dialogRefViewScheduleClassroom;
         break;
     }
-    this.dialogRef = this.dialog.open(view, {hasBackdrop: false});
-
+    this.dialogRef = this.dialog.open(view, {hasBackdrop: false, height: '90%', width: '80%'});
     this.dialogRef.afterClosed().subscribe(result => {
       if(!result){
         this.classroomForm.get('schedule').setValue('');
@@ -337,6 +338,8 @@ export class EnglishCoursesPageComponent implements OnInit {
       this.classrooms = res.classrooms;
       this.dataSourceClassrooms = new MatTableDataSource(this.classrooms);
       this.dataSourceClassrooms.paginator = this.paginatorClassrooms;
+      this.dataSourceClassrooms.sort = this.sortClassrooms; 
+      this.applyFilter();
     },error => {
 
     }, () => this.loadingService.setLoading(false));
@@ -405,7 +408,12 @@ export class EnglishCoursesPageComponent implements OnInit {
    this.classroomProv.createClassroom(classroom).subscribe(res => {
      this.dialog.closeAll();
      this.ngOnInit();
-
+     Swal.fire({
+      title: 'Aula registrada con exito!',
+      showConfirmButton: false,
+      timer: 2500,
+      type: 'success'
+      });
     }, 
    error => {console.log(error)});
   }
@@ -445,7 +453,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   openDialogCreateClassroom(){
-    this.dialogRef = this.dialog.open(this.dialogRefViewCreateClassroom, {hasBackdrop: false,  height: '70%', width: '40%',});
+    this.dialogRef = this.dialog.open(this.dialogRefViewCreateClassroom, {hasBackdrop: false,  height: '70%', width: '40%'});
   }
 
   openDialogUpdateClassroom(classroom){
@@ -461,7 +469,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       capacity: [classroom.capacity, [Validators.required, Validators.min(1)]],
     });
 
-    this.dialogRef = this.dialog.open(this.dialogRefViewUpdateClassroom, {hasBackdrop: false,  height: '90%', width: '80%',});
+    this.dialogRef = this.dialog.open(this.dialogRefViewUpdateClassroom, {hasBackdrop: false,  height: '90%', width: '80%'});
 
     this.dialogRef.afterClosed().subscribe(result => {
       if (result) {
@@ -493,7 +501,7 @@ export class EnglishCoursesPageComponent implements OnInit {
         showConfirmButton: false,
         timer: 2500,
         type: 'success'
-      })
+      });
     }, 
     error => {console.log(error)});
   }
@@ -750,6 +758,16 @@ export class EnglishCoursesPageComponent implements OnInit {
 
     }, () => this.loadingService.setLoading(false));
 
+  }
+
+  setupFilter(){
+    this.dataSourceClassrooms.filterPredicate = (data, filterValue: string) =>
+      data.name.trim().toLowerCase().indexOf(filterValue) !== -1 || data.capacity == filterValue;
+  }
+  
+  applyFilter() {
+    this.dataSourceClassrooms.filter = this.searchClassroom.trim().toLowerCase();
+    
   }
 
 }

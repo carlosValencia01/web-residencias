@@ -11,6 +11,17 @@
   <mat-tab label="Aulas">
     <mat-card>
       <mat-card-content>
+        <div class="filters">
+          <div class="row text-center p-4 m-0 mt-2" style="align-items: center;">
+            <div class="input-group input-group-sm center">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Buscar</span>
+              </div>
+              <input type="text" class="form-control" [(ngModel)]="searchClassroom" (keyup)="applyFilter()"
+                placeholder="Ingrese aula o capacidad..." id="myfilter" (focus)="setupFilter()">
+            </div>
+          </div>
+        </div>  
           <div style="position: relative;">
             <div style="position: relative; overflow: auto; max-width: 100%;">
               <div style="text-align: right;">
@@ -29,19 +40,30 @@
                 </ng-container>
   
                 <ng-container matColumnDef="actions">
-                  <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                  <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
                   <mat-cell *matCellDef="let row">
-                    <button (click)="openDialogTableSchedule('2', row.schedule)" mat-icon-button>
-                      <mat-icon>watch_later</mat-icon>
+                    <button mat-icon-button [matMenuTriggerFor]="actions">
+                      <mat-icon>more_vert</mat-icon>
                     </button>
-                    <button (click)="deleteClassroom(row._id, row.name)" mat-icon-button>
+
+                    <mat-menu #actions="matMenu">
+                      <button (click)="openDialogTableSchedule('2', row.schedule)" mat-menu-item>
+                        <mat-icon>watch_later</mat-icon>
+                        <span>Horario Disponible</span>
+                      </button>
+                      <button (click)="openDialogUpdateClassroom(row)" mat-menu-item>
+                        <mat-icon>edit</mat-icon>
+                        <span>Editar</span>
+                      </button>
+                      <button (click)="deleteClassroom(row._id, row.name)" mat-menu-item>
                         <mat-icon>delete</mat-icon>
-                    </button>
-                    <button (click)="openDialogUpdateClassroom(row)" mat-icon-button>
-                      <mat-icon>edit</mat-icon>
-                    </button>
+                        <span>Eliminar</span>
+                      </button>
+                    </mat-menu>
+                    
                   </mat-cell>
-                </ng-container>
+                </ng-container>                                          
+
   
                 <mat-header-row *matHeaderRowDef="['name', 'capacity', 'actions']"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: ['name', 'capacity', 'actions']"></mat-row>
@@ -83,7 +105,8 @@
                 </div>
       
                 <ng-template #scheduleClassroomAux>
-                  <h1 mat-dialog-title>Horario</h1>
+                  <h1 mat-dialog-title>Horario de Aula</h1>
+                  <h5>Marca las casillas con las horas disponibles del aula</h5>
                   <div mat-dialog-content>
                     <table class="table table-bordered table-hover mt-2">
                       <thead>
