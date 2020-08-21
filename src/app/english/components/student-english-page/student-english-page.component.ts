@@ -89,6 +89,7 @@ export class StudentEnglishPageComponent implements OnInit {
         if (this.englishStudent && this.englishStudent.courseType) {
           this.englishCourses = this.englishCourses.filter( course => course._id === this.englishStudent.courseType._id);
         }
+        
       }, (_) => {
         this.notification.showNotification(eNotificationType.ERROR, 'Cursos inglés', 'Ocurrió un error al obtener el estudiante');
       });

@@ -1,0 +1,62 @@
+<mat-card class="w-100">
+  <mat-card-content *ngIf="requestCourse">
+    <div class="row text-center">
+      <div class="col-3"></div>
+      <div class="col-2">
+        <mat-card class="orange-card-info flex-align-center p-0">
+          <mat-card-header>
+            <mat-card-subtitle class="m-0">CURSO</mat-card-subtitle>
+            <mat-card-title>{{requestCourse.group.course.name | uppercase}}</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+      </div>
+      <div class="col-2">
+        <mat-card class="orange-card-info flex-align-center p-0">
+          <mat-card-header>
+            <mat-card-subtitle class="m-0">GRUPO</mat-card-subtitle>
+            <mat-card-title>{{requestCourse.group.name | uppercase}}</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+      </div>
+      <div class="col-2">
+        <mat-card class="orange-card-info flex-align-center p-0">
+          <mat-card-header>
+            <mat-card-subtitle class="m-0">DOCENTE</mat-card-subtitle>
+            <mat-card-title *ngIf="requestCourse.group.teacher">{{requestCourse.group.teacher.name | uppercase}}</mat-card-title>
+            <mat-card-title *ngIf="!requestCourse.group.teacher">SIN ASIGNAR</mat-card-title>
+          </mat-card-header>
+        </mat-card>
+      </div>
+      <div class="col-3"></div>
+    </div>
+
+    <table class="table table-bordered table-hover mt-2" >
+      <thead>
+        <tr>
+          <th class="text-center" *ngFor="let day of weekdays" scope="col">
+            {{dayschedule[day]}}</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td class="text-center" *ngFor="let day of weekdays; let j = index;">
+            <ng-container *ngFor="let hourForDay of requestCourse.group.schedule;">
+              <ng-container *ngIf="hourForDay.day==day">
+                {{getHour(hourForDay.startHour)}} - {{getHour(hourForDay.endDate)}}
+                <br>
+                <div *ngIf="hourForDay.classroom">
+                  Aula: {{hourForDay.classroom}}
+                </div>
+                <div *ngIf="!hourForDay.classroom">
+                  Aula sin asignar
+                </div>
+              </ng-container>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+  </mat-card-content>
+</mat-card>

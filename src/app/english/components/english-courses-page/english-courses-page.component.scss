@@ -41,17 +41,28 @@ table {
   color: white;
 }
 
-.status-available{
+.status-available,.free-indicator-shape{
   background-color: #183969;
   color: white;
 }
 
-.status-occupied{
-  background-color: green;
+.status-occupied,.occupied-indicator-shape{
+  background-color: red;
   color: white;
 }
-
-.status-none{
+.indicator-container, .detail-schedule-header{
+  display: flex;
+  justify-content: space-around;
+  align-items: center
+}
+.occupied-indicator-shape,.free-indicator-shape, .none-indicator-shape{
+  height: 40px;
+  width: 100px;
+}
+.indicator-label{
+  padding: 5px;
+}
+.status-none, .none-indicator-shape{
   background-color: #C7C7C7;
   color: white;
 }

@@ -49,9 +49,14 @@
           <div>
             <label><strong>{{getStudentStatusMessage()}} </strong></label>
           </div>
-          <div>
+          <div *ngIf="!englishStudent.paidNumber || englishStudent.paidNumber == 0">
             <label *ngIf="englishStudent.status == 'rejected' && englishStudent.rejectMessage"><a style = "color: black;">Detalles: {{englishStudent.rejectMessage}}</a></label>
+            
             <label *ngIf="englishStudent.status == 'cancelled' || englishStudent.status == 'rejected'"><a style = "color: blue; cursor: pointer;" (click)="selectNewCourse()">Selecciona un nuevo curso y horario</a></label>
+          </div>
+          <div *ngIf="englishStudent.paidNumber && englishStudent.paidNumber > 0" class="paid-label">
+            <label *ngIf="englishStudent.paidNumber == 1"><a>Primer pago registrado</a></label>
+            <label *ngIf="englishStudent.paidNumber == 2"><a>Segundo pago registrado</a></label>
           </div>
           <mat-divider></mat-divider>
           <div class="container-progress-spinners mt-3 mb-2">
@@ -129,9 +134,7 @@
 
   <!--TAB de Curso Actual-->
   <mat-tab label="Curso Actual" *ngIf="englishStudent.status == 'studying'">
-    <div class="row justify-content-center p-3">
-      Aquí se mostrará el curso actual
-    </div>
+    <app-studying-course-detail [englishStudent]="englishStudent"></app-studying-course-detail>
   </mat-tab>
 
   <!--TAB del Avance del Estudiante-->

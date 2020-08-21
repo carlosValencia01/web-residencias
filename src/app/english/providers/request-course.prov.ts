@@ -19,6 +19,10 @@ export class RequestCourseProvider {
     getAllRequestStudyingByCourse(course) {
         return this.api.get('sg-cle/requestcourse/all/studying/'+course).pipe(map(student => student.json()));
     }
+    
+    getRequestCourseByEnglishStudentId(englishStudentId) {
+        return this.api.get('sg-cle/requestcourse/by/englishstudent/'+englishStudentId).pipe(map(student => student.json()));
+    }
 
     createRequestCourse(data){
         return this.api.post('sg-cle/requestcourse/create', data).pipe(map( res=>res.json()));

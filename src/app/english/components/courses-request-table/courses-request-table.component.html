@@ -23,7 +23,7 @@
             </mat-autocomplete>
         </mat-form-field>
         </div>
-        <div class="col-xs-12 col-md-4">
+        <div class="col-xs-12 col-md-3">
           <div class="form-group">
             <select (change)="filter('courses',$event)" class="form-control">
               <option value='default'>Todos los cursos</option>
@@ -32,16 +32,24 @@
             </select>
           </div>
         </div>
-        <div class="col-xs-12 col-md-4">
+        <div class="col-xs-12 col-md-3">
           <div class="form-group">
             <select (change)="filter('level',$event)" class="form-control">
-              <option value='default'>Todos los niveles</option>
-              <option value="1">Nivel 1</option>
-              <option value="2">Nivel 2</option>
-              <option value="3">Nivel 3</option>
-              <option value="4">Nivel 4</option>              
+              <option value='default'>Todos los bloques</option>
+              <option value="1">Bloque 1</option>
+              <option value="2">Bloque 2</option>
+              <option value="3">Bloque 3</option>
+              <option value="4">Bloque 4</option>              
             </select>
           </div>
+        </div>
+        <div class="col-xs-12 col-md-2">
+          <input #fileUpload type="file" accept=".csv" (change)="onUpload($event)" style="display: none">
+          <p>Cargar archivo csv</p>
+          <button mat-mini-fab class="mr-3" color="primary" (click)="fileUpload.click()" data-toggle="tooltip"
+            title="Cargar archivo csv">
+            <mat-icon>attachment</mat-icon>
+          </button>
         </div>
       </div>
     </div>  
@@ -83,7 +91,7 @@
 
             <!-- nivel -->
             <ng-container matColumnDef="level">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Nivel</th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Bloque</th>
               <td mat-cell *matCellDef="let row">
                   {{row.level}}                        
               </td>
@@ -93,23 +101,40 @@
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Estatus</th>
               <td mat-cell *matCellDef="let row"> 
-                <div [ngSwitch]="row.status">
+                <div [ngSwitch]="row.englishStudent.status">
                     <span *ngSwitchCase="'requested'"
                         class="badge badge-pill badge-requested">Solicitado</span>
+                    <span *ngSwitchCase="'selected'"
+                        class="badge badge-pill badge-finalized">Grupo seleccionado</span>
+                    <span *ngSwitchCase="'cancelled'"
+                        class="badge badge-pill badge-requested">Cancelado</span>
                     <span *ngSwitchCase="'rejected'"
                         class="badge badge-pill badge-rejected">Rechazado</span>
                     <span *ngSwitchCase="'studying'"
                         class="badge badge-pill badge-studying">Cursando</span>
-                    <span *ngSwitchCase="'finalized'"
-                        class="badge badge-pill badge-finalized">Finalizado</span>
-                    <span *ngSwitchCase="'approved'"
-                        class="badge badge-pill badge-approved">Aprobado</span>
-                    <span *ngSwitchCase="'not_approved'"
-                        class="badge badge-pill badge-not_approved">No aprovado</span>                    
+                    <span *ngSwitchCase="'not_released'"
+                        class="badge badge-pill badge-approved">Liberado</span>
+                    <span *ngSwitchCase="'paid'"
+                        class="badge badge-pill badge-approved">Pagado</span>
+                    <span *ngSwitchCase="'released'"
+                        class="badge badge-pill badge-not_approved">No liberado</span>                    
                 </div>
               </td>
             </ng-container>                                          
-
+            <!-- paid -->
+            <ng-container matColumnDef="paid">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Pagado</th>
+              <td mat-cell *matCellDef="let row">
+                <div [ngSwitch]="row.englishStudent.paidNumber">
+                  <span *ngSwitchCase="1"
+                      class="badge badge-pill badge-approved">Primer pago</span>
+                  <span *ngSwitchCase="2"
+                      class="badge badge-pill badge-approved">Segundo pago</span>
+                  <span *ngSwitchDefault
+                      class="badge badge-pill badge-rejected">No</span>                                     
+                </div>                        
+              </td>
+            </ng-container>
             <!-- actions -->
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center; width: 5%;">Acciones</th>

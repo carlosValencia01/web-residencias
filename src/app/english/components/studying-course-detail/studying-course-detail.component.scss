@@ -1,0 +1,21 @@
+.orange-card-info{
+    background: #ff760c;
+    color: white;
+    height: 104px;
+    margin-bottom: 5%;
+    margin-top: 15px;
+}
+.orange-card-info .mat-card-header .mat-card-title{
+    font-weight: 800 !important;
+}
+.orange-card-info .mat-card-header .mat-card-subtitle{
+    color: #143c67;
+    font-weight: 600 !important;
+    font-size: 13pt;
+}
+.table thead th {    
+    border-bottom: none;
+    background: #143c67;
+    color: white;
+    font-weight: 600;
+}
