@@ -21,7 +21,7 @@ export class FormCreateCourseComponent implements OnInit {
       dailyHoursCtrl: ['', [Validators.required, Validators.min(1)]],
       semesterHoursCtrl: ['', [Validators.required, Validators.min(1)]],
       totalSemestersCtrl: ['', [Validators.required, Validators.min(1)]],
-      totalHoursCtrl: ['', [Validators.required, Validators.min(1)]],
+      totalHoursCtrl: ['450', [Validators.required, Validators.min(1)]],
     });
   }
 

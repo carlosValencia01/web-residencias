@@ -7,7 +7,7 @@
   </mat-tab>
 
 
-  <!-- AULAS -->  
+  <!-- AULAS -->
   <mat-tab label="Aulas">
     <mat-card>
       <mat-card-content>
@@ -21,24 +21,24 @@
                 placeholder="Ingrese aula o capacidad..." id="myfilter" (focus)="setupFilter()">
             </div>
           </div>
-        </div>  
+        </div>
           <div style="position: relative;">
             <div style="position: relative; overflow: auto; max-width: 100%;">
               <div style="text-align: right;">
                 <button style="margin-bottom:5px;" class="btn btn-success" (click)="openDialogCreateClassroom()">Nueva Aula</button>
               </div>
               <table mat-table [dataSource]="dataSourceClassrooms" class="mat-elevation-z8">
-  
+
                 <ng-container matColumnDef="name">
                   <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
                   <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
                 </ng-container>
-  
+
                 <ng-container matColumnDef="capacity">
                   <mat-header-cell *matHeaderCellDef>Capacidad</mat-header-cell>
                   <mat-cell *matCellDef="let row"> {{row.capacity}} </mat-cell>
                 </ng-container>
-  
+
                 <ng-container matColumnDef="actions">
                   <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
                   <mat-cell *matCellDef="let row">
@@ -60,11 +60,11 @@
                         <span>Eliminar</span>
                       </button>
                     </mat-menu>
-                    
-                  </mat-cell>
-                </ng-container>                                          
 
-  
+                  </mat-cell>
+                </ng-container>
+
+
                 <mat-header-row *matHeaderRowDef="['name', 'capacity', 'actions']"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: ['name', 'capacity', 'actions']"></mat-row>
               </table>
@@ -76,7 +76,7 @@
             <h1 mat-dialog-title>Registrar Aula</h1>
             <div class="col-md-12 col-12 pt-md-5 pt-3">
               <form style="text-align: center;" [formGroup]="classroomForm" (ngSubmit)="onCreateClassroom()">
-      
+
                 <div>
                   <mat-form-field>
                     <mat-label>Nombre del Aula</mat-label>
@@ -84,7 +84,7 @@
                     <mat-error *ngIf="this.classroomForm.get('name').invalid">Ingrese un nombre</mat-error>
                   </mat-form-field>
                 </div>
-      
+
                 <div>
                   <mat-form-field>
                     <mat-label>Capacidad Máxima</mat-label>
@@ -92,7 +92,7 @@
                     <mat-error *ngIf="this.classroomForm.get('capacity').invalid">Valor mayor a 0</mat-error>
                   </mat-form-field>
                 </div>
-      
+
                 <div>
                   <mat-form-field>
                     <mat-label>Tipo de aula</mat-label>
@@ -103,7 +103,7 @@
                     <mat-error *ngIf="this.classroomForm.get('schedule').invalid">Seleccione un típo de aula</mat-error>
                   </mat-form-field>
                 </div>
-      
+
                 <ng-template #scheduleClassroomAux>
                   <h1 mat-dialog-title>Horario de Aula</h1>
                   <h5>Marca las casillas con las horas disponibles del aula</h5>
@@ -133,7 +133,7 @@
                     <button mat-button matDialogClose class="button-blue">Cancelar</button>
                   </div>
                 </ng-template>
-      
+
                 <div class="mt-0">
                   <button [class.button-blue]="!classroomForm.invalid" type="submit" [disabled]="classroomForm.invalid"
                     mat-button>Registrar Aula</button>
@@ -142,13 +142,13 @@
               </form>
             </div>
           </ng-template>
-      
+
           <ng-template #viewUpdateClassroom>
             <h1 mat-dialog-title>Actualizar Aula</h1>
-      
+
             <form style="text-align: center;" [formGroup]="updateClassroomForm">
               <div mat-dialog-content>
-      
+
                 <div class="pb-2">
                   <mat-form-field>
                     <mat-label>Nombre del Aula</mat-label>
@@ -156,7 +156,7 @@
                     <mat-error *ngIf="this.updateClassroomForm.get('name').invalid">Ingrese un nombre</mat-error>
                   </mat-form-field>
                 </div>
-      
+
                 <div class="pb-2">
                   <mat-form-field>
                     <mat-label>Capacidad</mat-label>
@@ -164,7 +164,7 @@
                     <mat-error *ngIf="this.updateClassroomForm.get('capacity').invalid">Valor mayor a 0</mat-error>
                   </mat-form-field>
                 </div>
-      
+
                 <div>
                   <table class="table table-bordered table-hover mt-2">
                     <thead>
@@ -185,17 +185,17 @@
                     </tbody>
                   </table>
                 </div>
-      
+
               </div>
               <div mat-dialog-actions>
                 <button (click)="verifySchedule()" [class.button-blue]="!updateClassroomForm.invalid"
                   [disabled]="updateClassroomForm.invalid" mat-button cdkFocusInitial>Guardar</button>
                 <button mat-button matDialogClose class="button-blue">Cancelar</button>
               </div>
-      
+
             </form>
           </ng-template>
-      
+
           <ng-template #viewScheduleClassroom>
             <div mat-dialog-header class="detail-schedule-header">
               <h1 mat-dialog-title>Horario</h1>
@@ -236,7 +236,7 @@
             <div mat-dialog-actions>
               <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
             </div>
-          </ng-template>  
+          </ng-template>
       </mat-card-content>
     </mat-card>
   </mat-tab>
@@ -256,17 +256,17 @@
             <table mat-table [dataSource]="dataSourceActiveGroups" class="mat-elevation-z8" matSort>
 
               <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="course">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="level">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Nivel</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Bloque</mat-header-cell>
                 <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
               </ng-container>
 
@@ -289,7 +289,7 @@
           </div>
 
           <!--Paginas-->
-          <mat-paginator #matPaginatorGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+          <mat-paginator #matPaginatorActiveGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
 
         </div>
         <!-- tabla -->
@@ -301,10 +301,12 @@
 
           <div>
 
-            <button class="button-blue mr-2" mat-raised-button (click)="openDialogFormCreateGroup()">Nuevo
-              Grupo</button>
-            <button class="button-blue ml-2" mat-raised-button (click)="openDialogFormGenerateGroups()">Generar
-              Grupos</button>
+            <button class="button-blue mr-2" mat-raised-button (click)="openDialogFormCreateGroup()">
+              Nuevo grupo
+            </button>
+            <button class="button-blue ml-2" mat-raised-button (click)="openDialogFormGenerateGroups()">
+              Generar grupos
+            </button>
 
           </div>
 
@@ -318,22 +320,22 @@
             <table mat-table [dataSource]="dataSourceGroups" class="mat-elevation-z8" matSort>
 
               <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="course">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="level">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Bloque</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Bloque</mat-header-cell>
                 <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="schedule">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Horario</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Horario</mat-header-cell>
                 <mat-cell *matCellDef="let row" style="display: inline-grid;">
                   <p *ngFor="let item of getScheduleDaysGroup(row.schedule);" style="margin:0;">
                   {{item}}
@@ -342,22 +344,20 @@
               </ng-container>
 
               <ng-container matColumnDef="period">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Periodo</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Período</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
               </ng-container>
 
 
               <ng-container matColumnDef="request">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Solicitudes</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Solicitudes</mat-header-cell>
                 <mat-cell *matCellDef="let row">{{row.reqCount}}</mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="status">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Estatus</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
                 <mat-cell *matCellDef="let row">
-                  <mat-chip-list>
-                    <mat-chip>{{statusGroup[row.status]}}</mat-chip>
-                  </mat-chip-list>
+                  <mat-chip class="small">{{statusGroup[row.status]}}</mat-chip>
                 </mat-cell>
               </ng-container>
 
@@ -374,9 +374,9 @@
                       <span>Activar Grupo</span>
                     </button>
                   </mat-menu>
-                  
+
                 </mat-cell>
-              </ng-container> 
+              </ng-container>
 
               <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'schedule', 'period', 'request', 'status', 'actions']">
               </mat-header-row>
@@ -388,7 +388,7 @@
 
           <!--Paginas-->
 
-          <mat-paginator #matPaginatorGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+          <mat-paginator #matPaginatorCreatedGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
 
         </div>
 
@@ -462,7 +462,7 @@
         </ng-container>
 
         <ng-container matColumnDef="totalSemesters">
-          <mat-header-cell *matHeaderCellDef>Semestres</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef>Bloques</mat-header-cell>
           <mat-cell *matCellDef="let row"> {{row.totalSemesters}} </mat-cell>
         </ng-container>
 
