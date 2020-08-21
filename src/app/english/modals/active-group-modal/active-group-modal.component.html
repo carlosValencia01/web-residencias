@@ -1,0 +1,77 @@
+<div class="content-general">
+  <div class="card card-shadow">
+    <div class="card-header text-white bg-secondary">
+      <div class="row">
+        <div class="col-10">
+          <h1 mat-dialog-title>Activar Grupo</h1>
+        </div>
+        <div class="col-2">
+          <button mat-icon-button (click)="onClose()" class="float-right">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="example-container">
+      <div style="display: flex; align-items: baseline; justify-content: flex-end;">
+        <mat-form-field>
+          <mat-label>Tamaño del grupo</mat-label>
+          <input matInput type="number" min="18" [(ngModel)]="groupSize" value="18">
+        </mat-form-field>
+        <button class="button-blue mr-2" mat-raised-button style="margin-left:10px;" (click)="activeGroup()">
+          Activar Grupo
+        </button>
+      </div>
+      <div style="position: relative;">
+        <div style="position: relative; overflow: auto; max-width: 100%;">
+          <table mat-table [dataSource]="dataSourceRequest" class="mat-elevation-z8" matSort>
+
+            <ng-container matColumnDef="nc">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Número de Control</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.controlNumber}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.fullName}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="phone">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.englishStudent.currentPhone}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="career">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.englishStudent.studentId.careerId.shortName}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Rechazar Solicitud</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <button mat-icon-button [matMenuTriggerFor]="actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <mat-menu #actions="matMenu">
+                  <button mat-menu-item (click)="declineRequest(row)">
+                    <mat-icon>delete</mat-icon>
+                    <span>Declinar Solicitud</span>
+                  </button>
+                </mat-menu>
+                
+              </mat-cell>
+            </ng-container>    
+
+            <mat-header-row *matHeaderRowDef="['nc', 'name', 'phone', 'career', 'actions']">
+            </mat-header-row>
+            <mat-row *matRowDef="let row; columns: ['nc', 'name', 'phone', 'career', 'actions']">
+            </mat-row>
+          </table>
+        </div>
+        <mat-paginator #matPaginatorRequest [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+      </div>
+
+    </div>
+  </div>
+</div>

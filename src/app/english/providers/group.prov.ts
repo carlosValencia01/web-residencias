@@ -31,4 +31,8 @@ export class GroupProvider {
     getActivePeriod(){
         return this.api.get('period/active').pipe(map( res=>res.json()));
     }
+
+    getAllStudentsGroup(_groupId){
+        return this.api.get('sg-cle/group/students/' + _groupId).pipe(map(res => res.json()));
+    }
 }

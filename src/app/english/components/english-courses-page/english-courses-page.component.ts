@@ -18,6 +18,7 @@ import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov'
 
 //Importar Componentes
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
@@ -29,6 +30,9 @@ import { GroupStudentsComponent } from 'src/app/english/components/english-cours
 //Importar Enumeradores
 import { StatusGroup } from 'src/app/english/enumerators/status-group.enum';
 import { DaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
+
+//Importar Modales
+import { ActiveGroupModalComponent } from '../../modals/active-group-modal/active-group-modal.component';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -90,6 +94,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     private classroomProv: ClassroomProvider,
     private englishCourseProv: EnglishCourseProvider,
     private groupProv: GroupProvider,
+    private studentEnglishProv: EnglishStudentProvider,
     public dialog: MatDialog,
   ) { 
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
@@ -512,10 +517,10 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.loadingService.setLoading(true);
     this.groupProv.getAllGroup().subscribe(res => {
 
-      this.groups = res.groups;
+      this.groups = res.groups;    
+      this.divideGroups();
       this.createDataSourceGroups();
 
-      this.divideGroups();
 
     },error => {
 
@@ -523,6 +528,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   createDataSourceGroups(){
+    this.groups = this.groups.filter(group => group.status != 'active');
     this.dataSourceGroups = new MatTableDataSource(this.groups);
     this.dataSourceGroups.paginator = this.paginatorGroups;
     this.dataSourceGroups.sort = this.sortGroups;
@@ -767,7 +773,59 @@ export class EnglishCoursesPageComponent implements OnInit {
   
   applyFilter() {
     this.dataSourceClassrooms.filter = this.searchClassroom.trim().toLowerCase();
-    
+  }
+
+  getScheduleDaysGroup(schedules){
+    var horario = [];
+    schedules.forEach((schedule,index) => {
+      horario.push(DaysSchedule[schedule.day]+' : '+this.getHour(schedule.startHour)+' - '+this.getHour(schedule.endDate));
+    });
+    return horario;
+  }
+
+  activeGroup(_groupId){
+    this.getPaidStudentsRequest(_groupId);
+  }
+
+  getPaidStudentsRequest(group){
+    this.groupProv.getAllStudentsGroup(group._id).subscribe(res => {
+      if(res){
+        const students = res.students;
+        const cantPaid = students.length
+        // if(cantPaid < 18){
+        //   Swal.fire({
+        //     title: 'Atención',
+        //     text: 'El grupo solo tiene '+cantPaid+' solicitudes pagadas, el mínimo para abrir el grupo es de 18',
+        //     type: 'warning',
+        //     allowOutsideClick: false,
+        //     showCancelButton: false,
+        //     confirmButtonColor: 'green',
+        //     confirmButtonText: 'Aceptar',
+        //   }).then((result) => {
+        //     if (result.value) {
+      
+        //     }});
+        // }
+        const linkModal = this.dialog.open(ActiveGroupModalComponent, {
+          data: {
+            operation: 'view',
+            students:students,
+            group: group
+          },
+          disableClose: true,
+          hasBackdrop: true,
+          width: '90%',
+          height: '80%'
+        });
+        let sub = linkModal.afterClosed().subscribe(
+          information=>{
+            this.ngOnInit();
+          },
+          err=>console.log(err), ()=> sub.unsubscribe()
+        );
+      }
+    },error => {
+    });
   }
 
 }

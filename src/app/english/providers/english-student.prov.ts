@@ -31,4 +31,5 @@ export class EnglishStudentProvider {
   updateStatus(id, data) {
     return this.api.put('sg-cle/englishstudent/update/status/' + id, data).pipe(map(res => res.json()));
   }
+
 }

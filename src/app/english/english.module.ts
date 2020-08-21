@@ -48,6 +48,7 @@ import { FromGenerateGroupsComponent } from './components/english-courses-page/f
 import { GroupStudentsComponent } from './components/english-courses-page/group-students/group-students.component';
 import { SelectCourseLevelComponent } from './components/select-course-level/select-course-level.component';
 import { CoursesRequestTableComponent } from './components/courses-request-table/courses-request-table.component';
+import { ActiveGroupModalComponent } from '../english/modals/active-group-modal/active-group-modal.component';
 
 
 @NgModule({
@@ -92,6 +93,7 @@ import { CoursesRequestTableComponent } from './components/courses-request-table
     GroupStudentsComponent,
     SelectCourseLevelComponent,
     CoursesRequestTableComponent,
+    ActiveGroupModalComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
@@ -102,6 +104,7 @@ import { CoursesRequestTableComponent } from './components/courses-request-table
     FromGenerateGroupsComponent,
     GroupStudentsComponent,
     SelectCourseLevelComponent,
+    ActiveGroupModalComponent
   ],
   providers: [
     StudentProvider,

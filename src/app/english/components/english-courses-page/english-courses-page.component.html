@@ -233,7 +233,7 @@
 
     <mat-tab-group>
 
-      <mat-tab label="Activo en clases">
+      <mat-tab label="Activos en clases">
         <!-- tabla -->
         <div style="position: relative;">
 
@@ -314,13 +314,28 @@
               </ng-container>
 
               <ng-container matColumnDef="level">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Nivel</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Bloque</mat-header-cell>
                 <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="schedule">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Horario</mat-header-cell>
+                <mat-cell *matCellDef="let row" style="display: inline-grid;">
+                  <p *ngFor="let item of getScheduleDaysGroup(row.schedule);" style="margin:0;">
+                  {{item}}
+                  </p>
+                </mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="period">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Periodo</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
+              </ng-container>
+
+
+              <ng-container matColumnDef="request">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Solicitudes</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.reqCount}}</mat-cell>
               </ng-container>
 
               <ng-container matColumnDef="status">
@@ -333,15 +348,25 @@
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
                 <mat-cell *matCellDef="let row">
-                  <!--Opciones-->
-                </mat-cell>
-              </ng-container>
+                  <button mat-icon-button [matMenuTriggerFor]="actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
 
-              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'period', 'status', 'actions']">
+                  <mat-menu #actions="matMenu">
+                    <button (click)="activeGroup(row)" mat-menu-item>
+                      <mat-icon>done</mat-icon>
+                      <span>Activar Grupo</span>
+                    </button>
+                  </mat-menu>
+                  
+                </mat-cell>
+              </ng-container> 
+
+              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'schedule', 'period', 'request', 'status', 'actions']">
               </mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'status', 'actions']">
+              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'schedule', 'period', 'request', 'status', 'actions']">
               </mat-row>
             </table>
 
