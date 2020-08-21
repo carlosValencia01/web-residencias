@@ -1,7 +1,7 @@
 <section>
   <div class="row">
     <div class="col-10">
-      <h1 mat-dialog-title>Selección de curso y nivel actual</h1>
+      <h1 mat-dialog-title>Selección de curso y bloque actual</h1>
     </div>
     <div class="col-2">
       <button mat-icon-button [mat-dialog-close] class="float-right">
@@ -25,10 +25,10 @@
         </mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline" class="col-11">
-        <mat-label>Seleccione el último nivel cursado</mat-label>
+        <mat-label>Seleccione el último bloque cursado</mat-label>
         <mat-select [formControl]="courseForm.get('level')" [disabled]="!canSelectLevel()" required>
           <mat-option *ngFor="let level of courseLevels" [value]="level">
-            Nivel {{level}}
+            Bloque {{level}}
           </mat-option>
         </mat-select>
         <mat-error *ngIf="courseForm.get('level').errors">

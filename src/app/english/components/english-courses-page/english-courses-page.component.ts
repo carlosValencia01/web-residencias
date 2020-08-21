@@ -70,14 +70,18 @@ export class EnglishCoursesPageComponent implements OnInit {
   statusGroup = StatusGroup; //Enumerador del estatus del grupo
   groups: any;
   dataSourceGroups: MatTableDataSource<any>;
-  @ViewChild('matPaginatorGroups') paginatorGroups: MatPaginator;
+  @ViewChild('matPaginatorCreatedGroups') set matPaginatorGroups(paginator: MatPaginator) {
+    this.dataSourceGroups.paginator = paginator;
+  };
   @ViewChild('matPaginatorClassrooms') paginatorClassrooms: MatPaginator;
   @ViewChild(MatSort) sortClassrooms: MatSort;
   @ViewChild(MatSort) sortGroups: MatSort;
   activeGroups: any;
   dataSourceActiveGroups: MatTableDataSource<any>;
   dataSourceClassrooms: MatTableDataSource<any>;
-  @ViewChild('matPaginatorGroups') paginatorActiveGroups: MatPaginator;
+  @ViewChild('matPaginatorActiveGroups') set paginatorActiveGroups(paginator: MatPaginator) {
+    this.dataSourceActiveGroups.paginator = paginator;
+  }
   @ViewChild(MatSort) sortActiveGroups: MatSort;
   @ViewChild("viewScheduleGroup") dialogRefViewScheduleGroup: TemplateRef<any>;
 
@@ -96,10 +100,12 @@ export class EnglishCoursesPageComponent implements OnInit {
     private groupProv: GroupProvider,
     private studentEnglishProv: EnglishStudentProvider,
     public dialog: MatDialog,
-  ) { 
+  ) {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
+    this.dataSourceGroups = new MatTableDataSource();
+    this.dataSourceActiveGroups = new MatTableDataSource();
   }
 
   ngOnInit() {
@@ -111,14 +117,14 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.getActivePeriod();
   }
 
-  // Solicitudes
+  // #region Solicitudes
 
   createEnglishCourseActive(){
     this.loadingService.setLoading(true);
     this.englishCourseProv.getAllEnglishCourseActive().subscribe(res => {
 
       res.englishCourses.forEach(course => {
-        this.requests = []; 
+        this.requests = [];
         this.getOpenGroupsByLevel(course);
       });
 
@@ -137,23 +143,23 @@ export class EnglishCoursesPageComponent implements OnInit {
         courseId: course._id,
         level: i,
       };
-  
+
       this.loadingService.setLoading(true);
       await this.groupProv.getAllGroupOpenedByCourseAndLevel(data).subscribe(res => {
-  
+
         if(res.groups.length>0){
           x.push({level: i, haveGroups: true, groups: res.groups});
-        }else{  
+        }else{
           x.push({level: i, haveGroups: false, groups: res.groups});
         }
         x.sort((a, b) => a.level - b.level);
-  
+
       },error => {
-  
+
       }, () => this.loadingService.setLoading(false));
-      
+
     };
-    
+
     this.requests.push({course: course, data:x});
   }
 
@@ -185,10 +191,10 @@ export class EnglishCoursesPageComponent implements OnInit {
     });
 
   }
+  // #endregion
 
 
-
-  // Aulas
+  // #region Aulas
 
 
 
@@ -260,13 +266,13 @@ export class EnglishCoursesPageComponent implements OnInit {
   openDialogTableSchedule(type, schedule) {
     let view: any;
     switch (type) {
-      case "1":     
+      case "1":
         this.segment = 60;
-        this.createDataHours();   
+        this.createDataHours();
         this.generateSchedule();
         view = this.dialogRefScheduleClassroomAux;
         break;
-    
+
       case "2":
         this.segment = 30;
         this.createDataHours();
@@ -285,17 +291,17 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   getSchedule(schedule, get){
     schedule.forEach(element => {
-      
+
       const psitionHour = this.dataHours.indexOf(this.getHour(element.startHour));
-      
+
       if (psitionHour>-1) {
 
         switch (get) {
-          case 'status':    
+          case 'status':
             this.dataSchedule[psitionHour][element.day-1] = element.status;
             break;
-        
-          case 'time':    
+
+          case 'time':
             this.dataSchedule[psitionHour][element.day-1] = this.dataHours[psitionHour];
             break;
         }
@@ -343,7 +349,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       this.classrooms = res.classrooms;
       this.dataSourceClassrooms = new MatTableDataSource(this.classrooms);
       this.dataSourceClassrooms.paginator = this.paginatorClassrooms;
-      this.dataSourceClassrooms.sort = this.sortClassrooms; 
+      this.dataSourceClassrooms.sort = this.sortClassrooms;
       this.applyFilter();
     },error => {
 
@@ -357,7 +363,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.segment = 30;
 
     this.dataSchedule.forEach(hourForDay => {
-      
+
       this.weekdays.forEach(day => {
         if (hourForDay[day-1]) {
 
@@ -407,9 +413,9 @@ export class EnglishCoursesPageComponent implements OnInit {
       name: this.classroomForm.get('name').value,
       schedule: this.scheduleClassroom,
       capacity: this.classroomForm.get('capacity').value,
-      
+
     };
-  
+
    this.classroomProv.createClassroom(classroom).subscribe(res => {
      this.dialog.closeAll();
      this.ngOnInit();
@@ -419,7 +425,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       timer: 2500,
       type: 'success'
       });
-    }, 
+    },
    error => {console.log(error)});
   }
 
@@ -464,7 +470,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   openDialogUpdateClassroom(classroom){
 
     this.segment = 60;
-    this.createDataHours();   
+    this.createDataHours();
     this.generateSchedule();
     this.getSchedule(classroom.schedule, 'time');
 
@@ -497,7 +503,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       name: this.updateClassroomForm.get('name').value,
       schedule: this.scheduleClassroom,
       capacity: this.updateClassroomForm.get('capacity').value,
-      
+
     };
     this.classroomProv.updateClassroom(id, classroom).subscribe(res => {
       this.ngOnInit();
@@ -507,17 +513,18 @@ export class EnglishCoursesPageComponent implements OnInit {
         timer: 2500,
         type: 'success'
       });
-    }, 
+    },
     error => {console.log(error)});
   }
+  // #endregion
 
-  //Grupos
+  // #region Grupos
 
   createGroups(){
     this.loadingService.setLoading(true);
     this.groupProv.getAllGroup().subscribe(res => {
 
-      this.groups = res.groups;    
+      this.groups = res.groups;
       this.divideGroups();
       this.createDataSourceGroups();
 
@@ -528,9 +535,8 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   createDataSourceGroups(){
-    this.groups = this.groups.filter(group => group.status != 'active');
-    this.dataSourceGroups = new MatTableDataSource(this.groups);
-    this.dataSourceGroups.paginator = this.paginatorGroups;
+    this.groups = this.groups.filter(group => group.status !== 'active');
+    this.dataSourceGroups.data = this.groups;
     this.dataSourceGroups.sort = this.sortGroups;
   }
 
@@ -545,8 +551,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   createDataSourceActiveGroups(){
-    this.dataSourceActiveGroups = new MatTableDataSource(this.activeGroups);
-    this.dataSourceActiveGroups.paginator = this.paginatorActiveGroups;
+    this.dataSourceActiveGroups.data = this.activeGroups;
     this.dataSourceActiveGroups.sort = this.sortActiveGroups;
   }
 
@@ -573,12 +578,12 @@ export class EnglishCoursesPageComponent implements OnInit {
         let startName = "";
         result.courseName.split(" ").forEach(word => {
           startName += word.charAt(0);
-        }); 
+        });
 
         for (let level = 1; level <= result.levels; level++) {
-          
+
           result.schedules.forEach(schedule => {
-            
+
             let data = {
               name: startName + level + '-' + (schedule[0].startHour/60),
               schedule: schedule,
@@ -592,9 +597,9 @@ export class EnglishCoursesPageComponent implements OnInit {
 
             this.groupProv.createGroup(data).subscribe(res => {
               this.ngOnInit()
-            }, 
+            },
             error => {console.log(error)});
-            
+
           });
 
         }
@@ -624,19 +629,19 @@ export class EnglishCoursesPageComponent implements OnInit {
             for (let index = 1; index <= 5; index++) {
               data.schedule.push(
                 {
-                  day: index, 
-                  startHour: this.getMinutes(result.b.x), 
+                  day: index,
+                  startHour: this.getMinutes(result.b.x),
                   endDate: this.getMinutes(result.b.y),
                 });
-              
+
             }
-            
+
             break;
           case "2":
             data.schedule.push(
               {
-                day: 6, 
-                startHour: this.getMinutes(result.b.x), 
+                day: 6,
+                startHour: this.getMinutes(result.b.x),
                 endDate: this.getMinutes(result.b.y),
               });
             break;
@@ -645,8 +650,8 @@ export class EnglishCoursesPageComponent implements OnInit {
               if (element.active) {
                 data.schedule.push(
                   {
-                    day: element.day, 
-                    startHour: this.getMinutes(element.startHour), 
+                    day: element.day,
+                    startHour: this.getMinutes(element.startHour),
                     endDate: this.getMinutes(element.endDate),
                   });
               }
@@ -659,7 +664,7 @@ export class EnglishCoursesPageComponent implements OnInit {
 
         this.groupProv.createGroup(data).subscribe(res => {
           this.ngOnInit()
-        }, 
+        },
         error => {console.log(error)});
       };
     });
@@ -688,8 +693,9 @@ export class EnglishCoursesPageComponent implements OnInit {
     });
 
   }
-  
-  // Cursos
+  //#endregion
+
+  // #region Cursos
 
   createEnglishCourses(){
     this.loadingService.setLoading(true);
@@ -744,7 +750,7 @@ export class EnglishCoursesPageComponent implements OnInit {
         };
         this.englishCourseProv.createEnglishCourse(data).subscribe(res => {
           this.ngOnInit()
-        }, 
+        },
         error => {console.log(error)});
 
       };
@@ -770,7 +776,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.dataSourceClassrooms.filterPredicate = (data, filterValue: string) =>
       data.name.trim().toLowerCase().indexOf(filterValue) !== -1 || data.capacity == filterValue;
   }
-  
+
   applyFilter() {
     this.dataSourceClassrooms.filter = this.searchClassroom.trim().toLowerCase();
   }
@@ -803,7 +809,7 @@ export class EnglishCoursesPageComponent implements OnInit {
         //     confirmButtonText: 'Aceptar',
         //   }).then((result) => {
         //     if (result.value) {
-      
+
         //     }});
         // }
         const linkModal = this.dialog.open(ActiveGroupModalComponent, {
@@ -834,5 +840,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     },error => {
     });
   }
+  //#endregion
 
 }

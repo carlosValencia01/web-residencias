@@ -24,13 +24,13 @@
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label>Nivel</mat-label>
+        <mat-label>Bloque</mat-label>
         <mat-select formControlName="levelCtrl" [disabled]="this.groupFormGroup.get('courseCtrl').invalid" required>
           <mat-option *ngFor="let level of levels" [value]="level">
-            {{level}}
+            Bloque {{level}}
           </mat-option>
         </mat-select>
-        <mat-error *ngIf="this.groupFormGroup.get('levelCtrl').invalid">Necesitas seleccionar un Nivel</mat-error>
+        <mat-error *ngIf="this.groupFormGroup.get('levelCtrl').invalid">Necesitas seleccionar un bloque</mat-error>
       </mat-form-field>
     </div>
 
@@ -45,8 +45,8 @@
         </div>
       </mat-radio-group>
     </div>
-    
-    <div *ngIf="this.groupFormGroup.get('scheduleCtrl').value == '1' || 
+
+    <div *ngIf="this.groupFormGroup.get('scheduleCtrl').value == '1' ||
                 this.groupFormGroup.get('scheduleCtrl').value == '2'" class="pt-3">
       <mat-form-field>
         <mat-label>Inicio</mat-label>
@@ -55,7 +55,7 @@
       <mat-form-field>
         <mat-label>Término</mat-label>
         <input matInput type="time" value="07:00" [(ngModel)]="endDates" [ngModelOptions]="{standalone: true}">
-      </mat-form-field> 
+      </mat-form-field>
     </div>
 
     <ng-container *ngIf="this.groupFormGroup.get('scheduleCtrl').value == '3'">
@@ -71,12 +71,12 @@
         <mat-form-field>
           <mat-label>Término</mat-label>
           <input matInput type="time" value="07:00" [(ngModel)]="day.endDate" [ngModelOptions]="{standalone: true}">
-        </mat-form-field> 
-      </div> 
+        </mat-form-field>
+      </div>
       </div>
     </ng-container>
 
-    
+
 
 
   </form>

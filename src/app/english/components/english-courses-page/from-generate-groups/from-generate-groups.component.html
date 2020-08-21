@@ -15,7 +15,7 @@
         </mat-select>
         <mat-error *ngIf="this.groupsFormGroup.get('courseCtrl').invalid">Necesitas seleccionar un curso</mat-error>
       </mat-form-field>
-      
+
     </div>
 
     <div class="pt-3">Cantidad de estudiantes:</div>
@@ -33,17 +33,19 @@
       <div class="col-6 text-right">
         <mat-form-field class="input-capacity">
           <mat-label>Mínima</mat-label>
-          <input matInput formControlName="minCapacityCtrl" type="number" required>
+          <input matInput formControlName="minCapacityCtrl" type="number" [min]="minCapacityStudents"
+            [max]="maxCapacityStudents" required>
           <mat-error *ngIf="this.groupsFormGroup.get('minCapacityCtrl').invalid">
             Selecciona un valor entre {{minCapacityStudents}} y {{maxCapacityStudents}}
           </mat-error>
         </mat-form-field>
       </div>
-      
+
       <div class="col-6 text-left">
         <mat-form-field class="input-capacity">
           <mat-label>Máxima</mat-label>
-          <input matInput formControlName="maxCapacityCtrl" type="number" required>
+          <input matInput formControlName="maxCapacityCtrl" type="number" [min]="minCapacityStudents"
+            [max]="maxCapacityStudents" required>
           <mat-error *ngIf="this.groupsFormGroup.get('maxCapacityCtrl').invalid">
             Selecciona un valor entre {{minCapacityStudents}} y {{maxCapacityStudents}}
           </mat-error>
@@ -69,7 +71,7 @@
           <mat-radio-group (change)="onChangeSegmentHour($event.value)" name="gender">
             <mat-radio-button value="0">1 Hora</mat-radio-button>
             <mat-radio-button class="ml-3" value="1">30 minutos</mat-radio-button>
-          </mat-radio-group> 
+          </mat-radio-group>
         </div>
         <div *ngIf="showTableHours">
           <table class="table table-bordered table-hover mt-2">
@@ -82,7 +84,7 @@
             <tbody>
               <tr class="table-row clickable-row" *ngFor="let course of dataSchedule; let i = index;">
                 <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+(this.groupsFormGroup.get('courseCtrl').value.dailyHours*60))}}</th>
-                <td *ngFor="let day of weekdays; let j = index;" [class.mat-button-selected]="course[j]==dataHours[i]" 
+                <td *ngFor="let day of weekdays; let j = index;" [class.mat-button-selected]="course[j]==dataHours[i]"
                 (click)="course[j]=(course[j]=='')?dataHours[i]:''">
                 </td>
               </tr>
@@ -124,7 +126,7 @@
       </ng-container>
 
     </div>
-    
+
   </form>
 
   </div>
