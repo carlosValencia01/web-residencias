@@ -45,7 +45,6 @@ export class GroupStudentsComponent implements OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.getDataSource();
-      console.log(this.data);
     });
   }
 
@@ -55,9 +54,6 @@ export class GroupStudentsComponent implements OnInit {
 
     this.loadingService.setLoading(true);
     this.requestCourseProv.getAllRequestStudyingByCourse(this.data.group._id).subscribe(res => {
-
-      
-      console.log(res.requestCourses)
 
       res.requestCourses.forEach(element => {
 

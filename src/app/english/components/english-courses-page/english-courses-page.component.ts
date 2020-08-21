@@ -819,6 +819,13 @@ export class EnglishCoursesPageComponent implements OnInit {
         });
         let sub = linkModal.afterClosed().subscribe(
           information=>{
+            Swal.fire({
+              title: 'Éxito!',
+              text: 'Grupo activado',
+              showConfirmButton: false,
+              timer: 2500,
+              type: 'success'
+            })
             this.ngOnInit();
           },
           err=>console.log(err), ()=> sub.unsubscribe()

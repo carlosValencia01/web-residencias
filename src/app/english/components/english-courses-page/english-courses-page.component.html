@@ -11,22 +11,17 @@
   <mat-tab label="Aulas">
     <mat-card>
       <mat-card-content>
-        <div class="filters">
-          <div class="row text-center p-4 m-0 mt-2" style="align-items: center;">
-            <div class="input-group input-group-sm center">
-              <div class="input-group-prepend">
-                <span class="input-group-text">Buscar</span>
-              </div>
-              <input type="text" class="form-control" [(ngModel)]="searchClassroom" (keyup)="applyFilter()"
-                placeholder="Ingrese aula o capacidad..." id="myfilter" (focus)="setupFilter()">
+        <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+            <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+              <input matInput (keyup)="applyFilter($event)" placeholder="Ingrese aula o capacidad..." [(ngModel)]="searchClassroom" (keyup)="applyFilter()" (focus)="setupFilter()">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+            <div style="text-align: right;">
+              <button style="margin-bottom:5px;" class="btn btn-success" (click)="openDialogCreateClassroom()">Nueva Aula</button>
             </div>
-          </div>
         </div>  
           <div style="position: relative;">
             <div style="position: relative; overflow: auto; max-width: 100%;">
-              <div style="text-align: right;">
-                <button style="margin-bottom:5px;" class="btn btn-success" (click)="openDialogCreateClassroom()">Nueva Aula</button>
-              </div>
               <table mat-table [dataSource]="dataSourceClassrooms" class="mat-elevation-z8">
   
                 <ng-container matColumnDef="name">
@@ -271,16 +266,25 @@
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
                 <mat-cell *matCellDef="let row">
-                  <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-icon-button>
-                    <mat-icon>watch_later</mat-icon>
+                  <button mat-icon-button [matMenuTriggerFor]="actions">
+                    <mat-icon>more_vert</mat-icon>
                   </button>
-                  <button (click)="openDialogshowGroupStudents(row)" mat-icon-button>
-                    <mat-icon>view_list</mat-icon>
-                  </button>
+
+                  <mat-menu #actions="matMenu">
+                    <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
+                      <mat-icon>watch_later</mat-icon>
+                      <span>Ver Horario</span>
+                    </button>
+                    <button (click)="openDialogshowGroupStudents(row)" mat-menu-item>
+                      <mat-icon>view_list</mat-icon>
+                      <span>Ver Alumnos Inscritos</span>
+                    </button>
+                  </mat-menu>
+                  
                 </mat-cell>
-              </ng-container>
+              </ng-container> 
 
               <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'actions']"></mat-header-row>
               <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'actions']"></mat-row>
@@ -332,15 +336,6 @@
                 <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
               </ng-container>
 
-              <ng-container matColumnDef="schedule">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Horario</mat-header-cell>
-                <mat-cell *matCellDef="let row" style="display: inline-grid;">
-                  <p *ngFor="let item of getScheduleDaysGroup(row.schedule);" style="margin:0;">
-                  {{item}}
-                  </p>
-                </mat-cell>
-              </ng-container>
-
               <ng-container matColumnDef="period">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Periodo</mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
@@ -369,6 +364,10 @@
                   </button>
 
                   <mat-menu #actions="matMenu">
+                    <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
+                      <mat-icon>watch_later</mat-icon>
+                      <span>Ver Horario</span>
+                    </button>
                     <button (click)="activeGroup(row)" mat-menu-item>
                       <mat-icon>done</mat-icon>
                       <span>Activar Grupo</span>
@@ -378,9 +377,9 @@
                 </mat-cell>
               </ng-container> 
 
-              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'schedule', 'period', 'request', 'status', 'actions']">
+              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
               </mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'schedule', 'period', 'request', 'status', 'actions']">
+              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
               </mat-row>
             </table>
 
