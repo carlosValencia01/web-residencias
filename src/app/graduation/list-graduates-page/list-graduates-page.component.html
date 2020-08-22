@@ -1,795 +1,1036 @@
-<div class="content-general" *ngIf = "role !== 'asistenciaInvitados'">
-   <div class="card card-shadow">
-      <mat-tab-group>
-         <mat-tab *ngIf="role === 'administration' || role === 'comunication' || role === 'coordinator'">
-            <ng-template matTabLabel>
-               <span>Graduación {{collection.toUpperCase()}}</span>
-            </ng-template>
-            <div class="card-body">
-               <div style="overflow-x:auto; padding-top: 20px;">
-                  <div class="row">
-                     <div class="col-sm-3">
-                        <mat-card class = "cardEgresados"><b>Egresados</b>
-                           <!-- <br>{{totalEgresados}} -->
-                           <mat-card-content>
-                              <div class="row text-center">
-                                 <div class="col">
-                                    H: {{totalEgresadosH}}
-                                 </div>
-                                 <div class="col">
-                                    M: {{totalEgresadosM}}
-                                 </div>
-                              </div>
-                           </mat-card-content>
-                        </mat-card>
-                     </div>
-                     <div class="col-sm-3">
-                        <mat-card class = "cardCListos"><b>Verificados</b><br>{{totalVerificados}}</mat-card>
-                     </div>
-                     <div class="col-sm-3" *ngIf="role === 'administration' || role === 'comunication'">
-                        <mat-card class = "cardCPendientes"><b>Boletos Totales</b><br>{{boletosTotales}}</mat-card>
-                     </div>
-                     <div class="col-sm-3" *ngIf="role === 'administration' || role === 'comunication'">
-                        <mat-card class = "cardRestantes"><b>Boletos Restantes</b><br>{{boletosRestantes}}</mat-card>
-                     </div>
-                   </div><br>
-                  <div class="row">
-                     <div class="col-2">
-                        <div class="form-group">
-                           <input [(ngModel)]="searchText" type="text" class="form-control"
-                              placeholder="Buscar Alumno..." (keyup)="eventFilter(searchText)">
-                        </div>
-                     </div>
-                     <div class="col-2">
-                        <div class="form-group">
-                           <select [(ngModel)]="searchSurvey" class="form-control" (focusout)="getSurvey()">
-                              <option value=''>Encuestas</option>
-                              <option value='true'>Contestadas</option>
-                              <option value='false'>No Contestadas</option>
-                           </select>
-                        </div>
-                     </div>
-                     <div class="col-3">
-                        <div class="form-group">
-                           <select [(ngModel)]="searchCarreer" class="form-control" (change)="eventFilterReport()">
-                              <option value=''>Todas las carreras</option>
-                              <option value='IBQ'>Ingeniería Bioquímica</option>
-                              <option value='IGE'>Ingeniería en Gestión Empresarial</option>
-                              <option value='IC '>Ingeniería Civil</option>
-                              <option value='ARQ'>Arquitectura</option>
-                              <option value='IQ'>Ingeniería Química</option>
-                              <option value='IM'>Ingeniería Mecatrónica</option>
-                              <option value='IE'>Ingeniería Eléctrica</option>
-                              <option value='LA'>Licenciatura en Administración</option>
-                              <option value='ITIC'>Ingeniería en Tecnologías de la Información y Comunicación</option>
-                              <option value='ISC'>Ingeniería en Sistemas Computacionales</option>
-                              <option value='II'>Ingeniería Industrial</option>
-                              <option value='MCA'>Maestría en Ciencias en Alimentos</option>
-                              <option value='MTI'>Maestría en Tecnologías de la Información</option>
-                              <option value='DCA'>Doctorado en Ciencias en Alimentos</option>
-                           </select>
-                        </div>
-                     </div>
-                     <div class="col-2">
-                        <table class="table table-bordered">
-                           <tr>
-                              <td id="checkRegistrado">
-                                 <div class="custom-control custom-checkbox custom-control-inline"
-                                    ngbTooltip="Registrado" tooltipClass="my-custom-class">
-                                    <input [(ngModel)]="searchSRC" type="checkbox" class="custom-control-input"
-                                       id="defaultInline2" value="Registrado" (change)="eventFilterReport()">
-                                    <label class="custom-control-label" for="defaultInline2">R</label>
-                                 </div>
-                              </td>
-                              <!--<td id="checkPagado">
-                                 <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Pagado"
-                                    tooltipClass="my-custom-class">
-                                    <input [(ngModel)]="searchSPC" type="checkbox" class="custom-control-input"
-                                       id="defaultInline3" value="Pagado" (change)="eventFilterReport()">
-                                    <label class="custom-control-label" for="defaultInline3">P</label>
-                                 </div>
-                              </td>-->
-                              <td id="checkVerificado">
-                                 <div class="custom-control custom-checkbox custom-control-inline"
-                                    ngbTooltip="Verificado" tooltipClass="my-custom-class">
-                                    <input [(ngModel)]="searchSVC" type="checkbox" class="custom-control-input"
-                                       id="defaultInline4" value="Verificado" (change)="eventFilterReport()">
-                                    <label class="custom-control-label" for="defaultInline4">V</label>
-                                 </div>
-                              </td>
-                              <td id="checkAsistio">
-                                 <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Asistió"
-                                    tooltipClass="my-custom-class">
-                                    <input [(ngModel)]="searchSAC" type="checkbox" class="custom-control-input"
-                                       id="defaultInline5" value="Asistió" (change)="eventFilterReport()">
-                                    <label class="custom-control-label" for="defaultInline5">A</label>
-                                 </div>
-                              </td>
-                              <td id="checkMencionado">
-                                 <div class="custom-control custom-checkbox custom-control-inline"
-                                    ngbTooltip="Mencionado" tooltipClass="my-custom-class">
-                                    <input [(ngModel)]="searchSMC" type="checkbox" class="custom-control-input"
-                                       id="defaultInline6" value="Mencionado" (change)="eventFilterReport()">
-                                    <label class="custom-control-label" for="defaultInline6">M</label>
-                                 </div>
-                              </td>
-                           </tr>
-                        </table>
-                     </div>
-                  </div>
-
-                  <table class="table table-striped table-bordered table-hover" id="my-table">
-                     <thead>
-                        <tr>
-                           <th>Número de Control</th>
-                           <th>Nombre del Alumno</th>
-                           <th>Carrera</th>
-                           <th *ngIf="role === 'administration' || role === 'comunication'">Boletos</th>
-                           <th>Estatus</th>
-                           <th *ngIf="role === 'administration' || role === 'comunication'">Acciones</th>
-                        </tr>
-                     </thead>
-                     <tbody>
-                        <tr *ngFor="let item of alumnosReport | filter:{survey:searchSurvey} | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText} | paginate: {id:pag, itemsPerPage: pageSize,
-                  currentPage: page };">
-                           <td (click)="observationsModal(item)">{{item.nc}} </td>
-                           <td (click)="observationsModal(item)"
-                              *ngIf="item.degree && item.carreer != 'LA' && item.carreer != 'ARQ' && item.carreer != 'MCA' && item.carreer != 'DCA'">
-                              <b>ING.</b> {{item.name}}</td>
-                           <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer == 'LA'"><b>LIC.</b>
-                              {{item.name}}</td>
-                           <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer == 'ARQ'">
-                              <b>ARQ.</b>
-                              {{item.name}}</td>
-                           <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer == 'MCA'">
-                              <b>MCA.</b>
-                              {{item.name}}</td>
-                           <td (click)="observationsModal(item)" *ngIf="item.degree && item.carreer == 'DCA'">
-                              <b>DCA.</b>
-                              {{item.name}}</td>
-                           <td (click)="observationsModal(item)" *ngIf="!item.degree">{{item.name}}</td>
-                           <td (click)="observationsModal(item)">{{item.carreer}}</td>
-                           <td *ngIf="role === 'administration' || role === 'comunication'">
-                              <div *ngIf="item.status == 'Verificado'" class="div-actions">
-                                 <tr>
-                                    <td>
-                                       <div class="div-img" ngbTooltip="Quitar" tooltipClass="my-custom-class">
-                                          <img src="../../assets/icons/menos.svg" class="action"
-                                             (click)="delTicket(item)">
-                                       </div>
-                                    </td>
-                                    <td>
-                                       {{item.numInvitados}}
-                                    </td>
-                                    <td>
-                                       <div class="div-img" ngbTooltip="Agregar" tooltipClass="my-custom-class">
-                                          <img src="../../assets/icons/mas.svg" class="action"
-                                             (click)="addTicket(item)">
-                                       </div>
-                                    </td>
-                                 </tr>
-                              </div>
-                           </td>
-                           <!--<td class="{{item.status}}">{{item.status}}</td>-->
-                              <td *ngIf="item.status == 'Registrado'" style="text-align: center;">
-                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(71,178,218); color: white; width: 90px;">{{item.status}}</span>
-                              </td>
-                              <td *ngIf="item.status == 'Pagado'" style="text-align: center;">
-                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(250,157,0); color: white; width: 90px;">{{item.status}}</span>
-                              </td>
-                              <td *ngIf="item.status == 'Verificado'" style="text-align: center;">
-                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(202,0,10); color: white; width: 90px;">{{item.status}}</span>
-                              </td>
-                              <td *ngIf="item.status == 'Asistió'" style="text-align: center;">
-                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(26,111,0); color: white; width: 90px;">{{item.status}}</span>
-                              </td>
-                              <td *ngIf="item.status == 'Mencionado'" style="text-align: center;">
-                                 <span class = "badge badge-pill" style="text-align: center; background-color: rgb(0,0,116); color: white; width: 90px;">{{item.status}}</span>
-                              </td>
-                           <td *ngIf="role === 'administration' || role === 'comunication'">
-                              <div class="div-actions" id="{{item.status}}">
-                        <tr *ngIf="item.email && status == 1">
-                           <td *ngIf="item.status == 'Registrado' && role === 'comunication' || item.status === 'Registrado' && role === 'administration'">
-                              <div class="div-img" ngbTooltip="Confirmar Pago" tooltipClass="my-custom-class"
-                                 *ngIf="item.email">
-                                 <img src="../../assets/icons/paid.svg" class="action" (click)="verifyStudent(item)">
-                              </div>
-                           </td>
-                           <!-- <td *ngIf="item.status === 'Verificado' && role === 'administration'">
-                              <div class="div-img" ngbTooltip="Enviar Invitación" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/sendEmail.svg" class="action"
-                                    (click)="confirmSendEmail(item)">
-                              </div>
-                           </td> -->
-                           <!-- <td *ngIf="item.status === 'Verificado' && role === 'administration'">
-                              <div class="div-img" ngbTooltip="Enviar Encuesta" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/survey.svg" class="action"
-                                    (click)="confirmSendEmailSurvey(item)">
-                              </div>
-                           </td> -->
-                           <td
-                              *ngIf="(item.status === 'Pagado' || item.status === 'Verificado') && role === 'administration'">
-                              <div class="div-img" ngbTooltip="Registrar Asistencia" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/presence.svg" class="action"
-                                    (click)="confirmPresenceEvent(item)">
-                              </div>
-                           </td>
-                           <td *ngIf="item.status == 'Pagado' && role === 'comunication'">
-                              <div class="div-img" ngbTooltip="Remover Pago" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/remove-paid.svg" class="action"
-                                    (click)="confirmRemovePaidEvent(item)">
-                              </div>
-                           </td>
-                           <td *ngIf="role === 'administration' && item.degree !== true">
-                              <div class="div-img" ngbTooltip="No Titulado" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/degreeNo.svg" class="action"
-                                    (click)="confirmDegree(item)">
-                              </div>
-                           </td>
-                           <td *ngIf="role === 'administration' && item.degree === true">
-                              <div class="div-img" ngbTooltip="Titulado" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/degreeYes.svg" class="action"
-                                    (click)="confirmRemoveDegree(item)">
-                              </div>
-                           </td>
-                           <td *ngIf=" role === 'administration' && item.observations !== '' ">
-                              <div class="div-img" ngbTooltip="Observaciones" tooltipClass="my-custom-class">
-                                 <img src="../../assets/imgs/logros.png" class="action"
-                                    (click)="observationsModal(item)">
-                              </div>
-                           </td>
-                           <td *ngIf=" role === 'administration' && item.bestAverage !== true ">
-                              <div class="div-img" ngbTooltip="Mejor Promedio" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/bestAverage.svg" class="action"
-                                    (click)="confirmBestAverage(item)">
-                              </div>
-                           </td>
-                           <td *ngIf=" role === 'administration' ">
-                              <div class="div-img" ngbTooltip="Actualizar Correo" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/graduate.svg" class="action" (click)="emailModal(item)">
-                              </div>
-                           </td>
-                           <td *ngIf="item.status === 'Mencionado' && role === 'administration'">
-                              <div class="div-img" ngbTooltip="Regresar a Asistió" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/back.svg" class="action"
-                                    (click)="confirmReturnStatusA(item)">
-                              </div>
-                           </td>
-                           <td *ngIf="item.status === 'Asistió' && role === 'administration'">
-                              <div class="div-img" ngbTooltip="Regresar a Verificado" tooltipClass="my-custom-class">
-                                 <img src="../../assets/imgs/backVerified.png" class="action"
-                                    (click)="confirmReturnStatusV(item)">
-                              </div>
-                           </td>
-                           <td *ngIf="item.status === 'Verificado' && role === 'administration'">
-                              <div class="div-img" ngbTooltip="Regresar a Registrado" tooltipClass="my-custom-class">
-                                 <img src="../../assets/imgs/backVerified.png" class="action"
-                                    (click)="confirmReturnStatusR(item)">
-                              </div>
-                           </td>
-                        </tr>
-               </div>
-               </td>
-               </tr>
-               </tbody>
-               <tfoot align="right">
-                  <td>
-                     <div style="color:rgb(55, 89, 149); text-align: center;">
-                        <h6 *ngIf="showTotal">Total de alumnos: {{totalAlumnos}}</h6>
-                        <h6 *ngIf="!showTotal">Total de alumnos: {{totalAlumnosFilter}}</h6>
-                     </div>
-                  </td>
-                  <td colspan="5">
-                     <div class="div-actionsFoot">
-                        <tr>
-                           <!-- <td *ngIf="role === 'administration'">
-                              <div class="div-img" ngbTooltip="Cambiar Estatus a Asistió"
-                                 tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/presence.svg" class="action"
-                                    (click)="confirmAllAsistence()">
-                              </div>
-                           </td> -->
-                           <!-- <td *ngIf="role === 'administration' && searchCarreer !== '' ">
-                              <div class="div-img" ngbTooltip="Regresar {{searchCarreer}} a Verificado"
-                                 tooltipClass="my-custom-class">
-                                 <img src="../../assets/imgs/backVerified.png" class="action"
-                                    (click)="confirmReturnStatusCarreerV()">
-                              </div>
-                           </td> -->
-                           <!-- <td *ngIf="role === 'administration' && searchCarreer !== '' ">
-                              <div class="div-img" ngbTooltip="Regresar {{searchCarreer}} a Asistió"
-                                 tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/back.svg" class="action"
-                                    (click)="confirmReturnStatusCarreerA()">
-                              </div>
-                           </td> -->
-                           <td
-                              *ngIf="role === 'administration' && searchCarreer !== '' || role === 'coordinator' && searchCarreer !== '' ">
-                              <div class="div-img" ngbTooltip="Generar Papeletas para {{searchCarreer}}"
-                                 tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/ballotPaper.svg" class="action"
-                                    (click)="generateBallotPaper()">
-                              </div>
-                           </td>
-                           <td>
-                              <div class="div-img" ngbTooltip="Exportar a Excel" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
-                              </div>
-                           </td>
-                           <td *ngIf="role === 'administration' || role === 'comunication'">
-                              <div class="div-img" ngbTooltip="Generar Reporte Mejor Promedio"
-                                 tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/bestAverage.svg" class="action"
-                                    (click)="generateReportBestAverage()">
-                              </div>
-                           </td>
-                           <td>
-                              <div class="div-img" ngbTooltip="Generar Reporte" tooltipClass="my-custom-class">
-                                 <img src="../../assets/icons/pdfReport.svg" class="action" (click)="generateReport()">
-                              </div>
-                           </td>
-                        </tr>
-                     </div>
-                  </td>
-               </tfoot>
-               </table>
-               <div class='div-pagination'>
-                  <pagination-controls [id]="pag" directionLinks="true" (pageChange)="pageChanged($event)"
-                     responsive="true" previousLabel="Anterior" nextLabel="Siguiente">
-                  </pagination-controls>
-               </div>
-            </div>
-
-            <!-- Tabla reporte alumnos PDF-->
-            <table class="table table-striped table-bordered table-hover" id="tableReport">
-               <thead>
-                  <tr>
-                     <th>No</th>
-                     <th>Número de Control</th>
-                     <th>Nombre del Alumno</th>
-                     <th>Carrera</th>
-                     <th>Estatus</th>
-                     <th>Observaciones</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr
-                     *ngFor="let alumno of alumnosReport | filter:{survey:searchSurvey} |filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText}; let indice=index">
-                     <td>{{indice+1}}</td>
-                     <td>{{alumno.nc}} </td>
-                     <td
-                        *ngIf="alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA' && alumno.carreer != 'DCA'">
-                        <b>ING.</b> {{alumno.name}}</td>
-                     <td *ngIf="alumno.degree && alumno.carreer == 'LA'"><b>LIC.</b> {{alumno.name}}</td>
-                     <td *ngIf="alumno.degree && alumno.carreer == 'ARQ'"><b>ARQ.</b> {{alumno.name}}</td>
-                     <td *ngIf="alumno.degree && alumno.carreer == 'MCA'"><b>MCA.</b> {{alumno.name}}</td>
-                     <td *ngIf="alumno.degree && alumno.carreer == 'DCA'"><b>DCA.</b> {{alumno.name}}</td>
-                     <td *ngIf="!alumno.degree">{{alumno.name}}</td>
-                     <td>{{alumno.carreer}}</td>
-                     <td class="{{alumno.status}}">{{alumno.status}}</td>
-                     <td>{{alumno.observations}}</td>
-                  </tr>
-               </tbody>
-            </table>
-
-            <!-- Tabla reporte alumnos Excel-->
-            <table class="table table-striped table-bordered table-hover" id="tableReportExcel"
-               data-cols-width="9,21,21,46,66,28,15,15,11,100">
-               <thead>
-                  <tr>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de
-                        Control
-                     </th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">NSS</th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del
-                        Alumno
-                     </th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Correo</th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Titulado</th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Estatus</th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Encuesta</th>
-                     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Observaciones
-                     </th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr
-                     *ngFor="let alumno of alumnosReport | filter:{carreer:searchCarreer} | filter: {nc:searchText,name:searchText,email:searchText}; let indice=index">
-                     <td data-f-sz="12">{{indice+1}}</td>
-                     <td data-f-sz="12">{{alumno.nc}} </td>
-                     <td data-f-sz="12">{{alumno.nss}} </td>
-                     <td data-f-sz="12"
-                        *ngIf="alumno.degree && alumno.carreer != 'LA' && alumno.carreer != 'ARQ' && alumno.carreer != 'MCA' && alumno.carreer != 'DCA'">
-                        <b>ING.</b> {{alumno.name}}</td>
-                     <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'LA'"><b>LIC.</b>
-                        {{alumno.name}}
-                     </td>
-                     <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'ARQ'"><b>ARQ.</b>
-                        {{alumno.name}}</td>
-                     <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'MCA'"><b>MCA.</b>
-                        {{alumno.name}}</td>
-                     <td data-f-sz="12" *ngIf="alumno.degree && alumno.carreer == 'DCA'"><b>DCA.</b>
-                        {{alumno.name}}</td>
-                     <td data-f-sz="12" *ngIf="!alumno.degree">{{alumno.name}}</td>
-                     <td data-f-sz="12">{{alumno.carreerComplete}}</td>
-                     <td data-f-sz="12">{{alumno.email}}</td>
-                     <td data-f-sz="12" *ngIf="alumno.degree">Si</td>
-                     <td data-f-sz="12" *ngIf="!alumno.degree">No</td>
-                     <td data-f-sz="12" class="{{alumno.status}}">{{alumno.status}}</td>
-                     <td data-f-sz="12" *ngIf="alumno.survey">Si</td>
-                     <td data-f-sz="12" *ngIf="!alumno.survey">No</td>
-                     <td data-f-sz="12">{{alumno.observations}}</td>
-                  </tr>
-               </tbody>
-            </table>
-
-
-            <!-- Tabla reporte alumnos mejor promedio PDF-->
-            <table class="table table-striped table-bordered table-hover" id="tableReportBestAverageIn">
-               <thead>
-                  <tr>
-                     <td colspan="3" class="text-center">ASISTIÓ</td>
-                  </tr>
-                  <tr>
-                     <th>Carrera</th>
-                     <th>Nombre del Alumno</th>
-                     <th>Promedio</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let alumno of studentIn">
-                     <td>{{alumno.data.carreraCompleta}}</td>
-                     <td
-                        *ngIf="(alumno.data.degree && alumno.data.carrera != 'LA' && alumno.data.carrera != 'ARQ' && alumno.data.carrera != 'MCA' && alumno.data.carrera != 'DCA')">
-                        <b>ING.</b> {{alumno.data.nombre}}</td>
-                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'LA')"><b>LIC.</b> {{alumno.data.nombre}}
-                     </td>
-                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'ARQ')"><b>ARQ.</b> {{alumno.data.nombre}}
-                     </td>
-                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'MCA')"><b>MCA.</b> {{alumno.data.nombre}}
-                     </td>
-                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'DCA')"><b>DCA.</b> {{alumno.data.nombre}}
-                     </td>
-                     <td *ngIf="!alumno.data.degree">{{alumno.data.nombre}}</td>
-                     <td>{{alumno.data.promedio}}</td>
-                  </tr>
-               </tbody>
-            </table>
-            <table class="table table-striped table-bordered table-hover" id="tableReportBestAverageOut">
-               <thead>
-                  <tr>
-                     <td colspan="3" class="text-center">NO ASISTIÓ</td>
-                  </tr>
-                  <tr>
-                     <th>Carrera</th>
-                     <th>Nombre del Alumno</th>
-                     <th>Promedio</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let alumno of studentOut">
-                     <td>{{alumno.data.carreraCompleta}}</td>
-                     <td
-                        *ngIf="(alumno.data.degree && alumno.data.carrera != 'LA' && alumno.data.carrera != 'ARQ' && alumno.data.carrera != 'MCA' && alumno.data.carrera != 'DCA')">
-                        <b>ING.</b> {{alumno.data.nombre}}</td>
-                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'LA')"><b>LIC.</b> {{alumno.data.nombre}}
-                     </td>
-                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'ARQ')"><b>ARQ.</b> {{alumno.data.nombre}}
-                     </td>
-                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'MCA')"><b>MCA.</b> {{alumno.data.nombre}}
-                     </td>
-                     <td *ngIf="(alumno.data.degree && alumno.data.carrera == 'DCA')"><b>DCA.</b> {{alumno.data.nombre}}
-                     </td>
-                     <td *ngIf="!alumno.data.degree">{{alumno.data.nombre}}</td>
-                     <td>{{alumno.data.promedio}}</td>
-                  </tr>
-               </tbody>
-            </table>
-            <table class="table table-striped table-bordered table-hover" id="tableReportBestAverage" >
-               <thead>
-                  <tr>
-                     <td colspan="3" class="text-center">MEJORES PROMEDIOS DE LA GENERACIÓN</td>
-                  </tr>
-                  <tr>
-                     <th>Carrera</th>
-                     <th>Nombre del Alumno</th>
-                     <th>Promedio</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let alumno of bestStudents">
-                     <td>{{alumno.career}}</td>
-                     <td
-                        *ngIf="(alumno.degree && alumno.careerS != 'LA' && alumno.careerS != 'ARQ' && alumno.careerS != 'MCA' && alumno.careerS != 'DCA')">
-                        <b>ING.</b> {{alumno.name}}</td>
-                     <td *ngIf="(alumno.degree && alumno.careerS == 'LA')"><b>LIC.</b> {{alumno.name}}
-                     </td>
-                     <td *ngIf="(alumno.degree && alumno.careerS == 'ARQ')"><b>ARQ.</b> {{alumno.name}}
-                     </td>
-                     <td *ngIf="(alumno.degree && alumno.careerS == 'MCA')"><b>MCA.</b> {{alumno.name}}
-                     </td>
-                     <td *ngIf="(alumno.degree && alumno.careerS == 'DCA')"><b>DCA.</b> {{alumno.name}}
-                     </td>
-                     <td *ngIf="!alumno.degree">{{alumno.name}}</td>
-                     <td>{{alumno.avg}}</td>
-                  </tr>
-               </tbody>
-            </table>
-   </div>
-   </mat-tab>
-   <mat-tab *ngIf="role === 'administration' || role === 'secretary'">
-      <ng-template matTabLabel>
-         <span>Documentación</span>
-      </ng-template>
-      <div class="card-body">
-         <div style="overflow-x:auto; padding-top: 20px;">
+<div class="content-general" *ngIf="role !== 'asistenciaInvitados'">
+  <div class="card card-shadow">
+    <mat-tab-group>
+      <mat-tab
+        *ngIf="
+          role === 'administration' ||
+          role === 'comunication' ||
+          role === 'coordinator'
+        "
+      >
+        <ng-template matTabLabel>
+          <span>Graduación {{ collection.toUpperCase() }}</span>
+        </ng-template>
+        <div class="card-body">
+          <div style="overflow-x: auto; padding-top: 20px;">
             <div class="row">
-               <div class="col-sm-4">
-                  <mat-card class = "cardEgresados"><b>Egresados</b><br>{{totalEgresados}}</mat-card>
-               </div>
-               <div class="col-sm-2">
-                  <mat-card class = "cardCPendientes"><b>Pendientes</b><br>{{certificadosPendientes}}</mat-card>
-               </div>
-               <div class="col-sm-2">
-                  <mat-card class = "cardCImpresos"><b>Impresos</b><br>{{certificadosImpresos}}</mat-card>
-               </div>
-               <div class="col-sm-2">
-                  <mat-card class = "cardCListos"><b>Listos</b><br>{{certificadosListos}}</mat-card>
-               </div>
-               <div class="col-sm-2">
-                  <mat-card class = "cardEgresados"><b>Entregados</b><br>{{certificadosEntregados}}</mat-card>
-               </div>
-             </div><br>
-            <div class="row">
-               <div class="col-6">
-                  <div class="form-group">
-                     <input [(ngModel)]="searchTextDocumentation" type="text" class="form-control"
-                        placeholder="Buscar Alumno..." (keyup)="eventFilter(searchText)">
-                  </div>
-               </div>
-               <div class="col-3">
-                  <div class="form-group">
-                     <select [(ngModel)]="searchCarreerDocumentation" class="form-control" (change)="eventFilterReportDocumentation()">
-                        <option value=''>Todas las carreras</option>
-                        <option value='IBQ'>Ingeniería Bioquímica</option>
-                        <option value='IGE'>Ingeniería en Gestión Empresarial</option>
-                        <option value='IC '>Ingeniería Civil</option>
-                        <option value='ARQ'>Arquitectura</option>
-                        <option value='IQ'>Ingeniería Química</option>
-                        <option value='IM'>Ingeniería Mecatrónica</option>
-                        <option value='IE'>Ingeniería Eléctrica</option>
-                        <option value='LA'>Licenciatura en Administración</option>
-                        <option value='ITIC'>Ingeniería en Tecnologías de la Información y Comunicación</option>
-                        <option value='ISC'>Ingeniería en Sistemas Computacionales</option>
-                        <option value='II'>Ingeniería Industrial</option>
-                        <option value='MCA'>Maestría en Ciencias en Alimentos</option>
-                        <option value='MTI'>Maestría en Tecnologías de la Información</option>
-                        <option value='DCA'>Doctorado en Ciencias en Alimentos</option>
-                     </select>
-                  </div>
-               </div>
-               <div class="col-3">
-                  <div class="form-group">
-                     <select [(ngModel)]="searchStatusDocumentation" class="form-control">
-                        <option value=''>Todos los estatus</option>
-                        <option value='Fotos y Recibo'>Fotos y Recibo</option>
-                        <option value='Impreso'>Impreso</option>
-                        <option value='Listo'>Listo</option>
-                        <option value='Entregado'>Entregado</option>
-                     </select>
-                  </div>
-               </div>
+              <div class="col-sm-3">
+                <mat-card class="cardEgresados"
+                  ><b>Egresados</b>
+                  <!-- <br>{{totalEgresados}} -->
+                  <mat-card-content>
+                    <div class="row text-center">
+                      <div class="col">H: {{ totalEgresadosH }}</div>
+                      <div class="col">M: {{ totalEgresadosM }}</div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <div class="col-sm-3">
+                <mat-card class="cardCListos"
+                  ><b>Verificados</b><br />{{ totalVerificados }}</mat-card
+                >
+              </div>
+              <div
+                class="col-sm-3"
+                *ngIf="role === 'administration' || role === 'comunication'"
+              >
+                <mat-card class="cardCPendientes"
+                  ><b>Boletos Totales</b><br />{{ boletosTotales }}</mat-card
+                >
+              </div>
+              <div
+                class="col-sm-3"
+                *ngIf="role === 'administration' || role === 'comunication'"
+              >
+                <mat-card class="cardRestantes"
+                  ><b>Boletos Restantes</b><br />{{
+                    boletosRestantes
+                  }}</mat-card
+                >
+              </div>
             </div>
-               <!--Tabla de documentacion aquí-->
-               <table class="table table-striped table-bordered table-hover" id="my-table">
-                  <thead>
-                     <tr>
-                        <th>Número de Control</th>
-                        <th>Nombre del Alumno</th>
-                        <th>Carrera</th>
-                        <th>Estatus</th>
-                        <th>Acciones</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr
-                        *ngFor="let item of alumnosReportDocumentation | filter:{carreer:searchCarreerDocumentation} | filter: {nc:searchTextDocumentation,name:searchTextDocumentation} | filter: {documentationStatus:searchStatusDocumentation} | paginate: {id:'pag2', itemsPerPage: pageSize2, currentPage: page2 };">
-                        <td>{{item.nc}} </td>
-                        <td
-                           *ngIf="item.degree && item.carreer != 'LA' && item.carreer != 'ARQ' && item.carreer != 'MCA' && item.carreer != 'DCA'">
-                           <b>ING.</b> {{item.name}}</td>
-                        <td *ngIf="item.degree && item.carreer == 'LA'"><b>LIC.</b>
-                           {{item.name}}</td>
-                        <td *ngIf="item.degree && item.carreer == 'ARQ'">
-                           <b>ARQ.</b>
-                           {{item.name}}</td>
-                        <td *ngIf="item.degree && item.carreer == 'MCA'">
-                           <b>MCA.</b>
-                           {{item.name}}</td>
-                        <td *ngIf="item.degree && item.carreer == 'DCA'">
-                           <b>DCA.</b>
-                           {{item.name}}</td>
-                        <td *ngIf="!item.degree">{{item.name}}</td>
-                        <td>{{item.carreer}}</td>
-                        <td>{{item.documentationStatus}}</td>
-                        <td>
-                           <div class="div-actions" id="{{item.status}}">
-                              <tr>
-                                 <td *ngIf="item.documentationStatus == ' '">
-                                    <div class="div-img" ngbTooltip="Fotos y Recibo" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/foto.svg" class="action" (click)="changeStatusDocumentation(item,'Fotos y Recibo')">
-                                    </div>
-                                 </td>
-                                 <td *ngIf="item.documentationStatus == 'Fotos y Recibo'">
-                                    <div class="div-img" ngbTooltip="Impreso" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/impreso.svg" class="action" (click)="changeStatusDocumentation(item,'Impreso')">
-                                    </div>
-                                 </td>
-                                 <td *ngIf="item.documentationStatus == 'Impreso'">
-                                    <div class="div-img" ngbTooltip="Listo" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/listo.svg" class="action" (click)="changeStatusDocumentation(item,'Listo')">
-                                    </div>
-                                 </td>
-                                 <td *ngIf="item.documentationStatus == 'Listo'">
-                                    <div class="div-img" ngbTooltip="Entregado" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/entregado.svg" class="action" (click)="changeStatusDocumentation(item,'Entregado')">
-                                    </div>
-                                 </td>
-                                 <td *ngIf="item.documentationStatus == 'Fotos y Recibo'">
-                                    <div class="div-img" ngbTooltip="Regresar Estatus a Sin Entrega" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/regresar.svg" class="action" (click)="changeStatusDocumentation(item,'Regresar')">
-                                    </div>
-                                 </td>
-                                 <td *ngIf="item.documentationStatus == 'Impreso'">
-                                    <div class="div-img" ngbTooltip="Regresar Estatus a Fotos y Recibo" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/regresar.svg" class="action" (click)="changeStatusDocumentation(item,'Regresar')">
-                                    </div>
-                                 </td>
-                                 <td *ngIf="item.documentationStatus == 'Listo'">
-                                    <div class="div-img" ngbTooltip="Regresar Estatus a Impreso" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/regresar.svg" class="action" (click)="changeStatusDocumentation(item,'Regresar')">
-                                    </div>
-                                 </td>
-                                 <td *ngIf="item.documentationStatus == 'Entregado'">
-                                    <div class="div-img" ngbTooltip="Regresar Estatus a Listo" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/regresar.svg" class="action" (click)="changeStatusDocumentation(item,'Regresar')">
-                                    </div>
-                                 </td>
-                                 <td>
-                                    <div class="div-img" ngbTooltip="Generar Constancia" tooltipClass="my-custom-class" *ngIf="item.email">
-                                       <img src="../../assets/icons/documentacion/generarConstancia.svg" class="action" (click)="generateConstancy(item)">
-                                    </div>
-                                 </td>
-                              </tr>
-                           </div>
+            <br />
+            <div class="row" style="align-items: center;">
+               <div class="col-2 search-input">        
+                  <mat-form-field class="w-100">
+                    <mat-label>Buscar...</mat-label>
+                    <input matInput (keyup)="filter('search',$event)" placeholder="Ej. 17400001">
+                  </mat-form-field>    
+                </div>
+                <div class="col-2">
+                  <div class="form-group">
+                    <select (change)="filter('surveys',$event)" class="form-control">
+                      <option value='default'>Encuestas</option>
+                      <option value='true'>Contestadas</option>
+                      <option value='false'>No Contestadas</option>
+                    </select>
+                  </div>
+                </div>
+              
+              <div class="col-3">
+                <div class="form-group">
+                  <select
+                    class="form-control"
+                    (change)="filter('career', $event)"
+                    *ngIf="careers"
+                  >
+                    <option value="default" selected>Todas las carreras</option>
+                    <option
+                      *ngFor="let career of careers"
+                      [value]="career.acronym"
+                      >{{ career.shortName }}</option
+                    >
+                  </select>
+                </div>
+              </div>
+              <div class="col-2">
+                <table class="table">
+                  <tr>
+                     <td id="checkRegistrado">
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Registrado"
+                          tooltipClass="my-custom-class">
+                          <input type="checkbox" class="custom-control-input" id="defaultInline1"
+                            value="registrado" (change)="filter('check',$event)">
+                          <label class="custom-control-label" for="defaultInline1">R</label>
+                        </div>
+                     </td>
+                     <td id="checkVerificado">
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Verificado"
+                          tooltipClass="my-custom-class">
+                          <input type="checkbox" class="custom-control-input" id="defaultInline2"
+                            value="verificado" (change)="filter('check',$event)">
+                          <label class="custom-control-label" for="defaultInline2">V</label>
+                        </div>
+                     </td>
+                     <td id="checkAsistio">
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Asistió"
+                          tooltipClass="my-custom-class">
+                          <input type="checkbox" class="custom-control-input" id="defaultInline3"
+                            value="asistió" (change)="filter('check',$event)">
+                          <label class="custom-control-label" for="defaultInline3">A</label>
+                        </div>
+                     </td>                    
+                     <td id="checkMencionado">
+                        <div class="custom-control custom-checkbox custom-control-inline" ngbTooltip="Mencionado"
+                          tooltipClass="my-custom-class">
+                          <input type="checkbox" class="custom-control-input" id="defaultInline4"
+                            value="mencionado" (change)="filter('check',$event)">
+                          <label class="custom-control-label" for="defaultInline4">M</label>
+                        </div>
+                     </td>                    
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div *ngIf="dataSource.data.length > 0;else empty">
+
+               <div class="mat-elevation-z8">
+                  <table mat-table [dataSource]="dataSource" matSort>
+                    
+                    <!-- Número de control -->
+                    <ng-container matColumnDef="nc">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">  Número de control </th>
+                      <td mat-cell *matCellDef="let row" (click)="observationsModal(row)"> 
+                      <div class="bestavg">
+                        <mat-icon class="text-warning" *ngIf="row.bestAverage">stars</mat-icon>
+                        {{row.nc}}
+                      </div>   
+                      </td>
+                    </ng-container>
+        
+                    <!-- Nombre -->
+                    <ng-container matColumnDef="name">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Nombre del Alumno</th>
+                      <td mat-cell *matCellDef="let row" (click)="observationsModal(row)">
+                        <b *ngIf="
+                        row.degree &&
+                        row.carreer != 'LA' &&
+                        row.carreer != 'ARQ' &&
+                        row.carreer != 'MCA' &&
+                        row.carreer != 'DCA'
+                      ">ING.</b>
+                      <b *ngIf="row.degree && row.carreer == 'LA'">LIC.</b>
+                      <b *ngIf="row.degree && row.carreer == 'ARQ'">ARQ.</b>
+                      <b *ngIf="row.degree && row.carreer == 'MCA'">MCA.</b>
+                      <b *ngIf="row.degree && row.carreer == 'DCA'">DCA.</b>
+                      <b *ngIf="row.degree && row.carreer == 'MTI'">MTI.</b>
+                        {{row.name}} 
                         </td>
-                     </tr>
-                  </tbody>
-                  <tfoot align="right">
-                     <td colspan="5">
-                        <div class="div-actionsFoot">
+                    </ng-container>
+        
+        
+                    <!-- Carrera -->
+                    <ng-container matColumnDef="carreer">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Carrera </th>
+                      <td mat-cell *matCellDef="let row" (click)="observationsModal(row)"> {{row.carreer}} </td>
+                    </ng-container>
+        
+                    <!-- boletos -->
+                    <ng-container matColumnDef="numInvitados" *ngIf="role === 'administration' || role === 'comunication'">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Boletos </th>
+                        <td mat-cell *matCellDef="let row">
                            <tr>
-                              <td *ngIf="searchCarreerDocumentation != '' ">
-                                 <div class="div-img" ngbTooltip="Generar Constancias para {{searchCarreerDocumentation}}" tooltipClass="my-custom-class">
-                                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-                                       <img src="../../assets/icons/documentacion/generarConstancia.svg" class="action">
-                                     </button>
-                                     <mat-menu #menu="matMenu">
-                                       <button mat-menu-item (click)="generateAllConstancys()">
-                                         <mat-icon>done_all</mat-icon>
-                                         <span>Todas</span>
-                                       </button>
-                                       <button mat-menu-item (click)="generateRegisteredConstancys()">
-                                         <mat-icon>done</mat-icon>
-                                         <span>Solo Registrados</span>
-                                       </button>
-                                       <button mat-menu-item (click)="generateVerifiedConstancys()">
-                                         <mat-icon>forward</mat-icon>
-                                         <span>Verificados en Adelante</span>
-                                       </button>
-                                     </mat-menu>
-                                 </div>
+                              <td>
+                                 <div
+                                    class="div-img"
+                                    ngbTooltip="Quitar"
+                                    tooltipClass="my-custom-class"
+                                 >
+                                    <img
+                                    src="../../assets/icons/menos.svg"
+                                    class="action"
+                                    (click)="delTicket(row)"
+                                    />
+                                 </div>                                  
                               </td>
-                              <td  *ngIf="searchCarreerDocumentation != '' ">
-                                 <div class="div-img" ngbTooltip="Generar Pestañas  para {{searchCarreerDocumentation}}" tooltipClass="my-custom-class">
-                                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-                                   <img src="../../assets/icons/label.svg" class="action">
-                                     </button>
-                                     <mat-menu #menu="matMenu">
-                                       <button mat-menu-item (click)="generateAllLabels()">
-                                         <mat-icon>done_all</mat-icon>
-                                         <span>Todas</span>
-                                       </button>
-                                       <button mat-menu-item (click)="generateRegisteredLabels()">
-                                         <mat-icon>done</mat-icon>
-                                         <span>Solo Registrados</span>
-                                       </button>
-                                       <button mat-menu-item (click)="generateVerifiedLabels()">
-                                         <mat-icon>forward</mat-icon>
-                                         <span>Verificados en Adelante</span>
-                                       </button>
-                                     </mat-menu>
-                                 </div>
-                               </td>
-                           </tr>
+                              <td>
+                                 {{row.numInvitados}}
+                              </td>
+                              <td>
+                                 <div
+                               class="div-img"
+                               ngbTooltip="Agregar"
+                               tooltipClass="my-custom-class"
+                             >
+                              <img
+                                 src="../../assets/icons/mas.svg"
+                                 class="action"
+                                 (click)="addTicket(row)"
+                               />
+                           </div> 
+                              </td>
+                           </tr>                   
+                        </td>
+                    </ng-container>
+        
+                    <!-- estatus -->
+                    <ng-container matColumnDef="status" >
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Estatus </th>
+                      <td mat-cell *matCellDef="let row" (click)="observationsModal(row)"> 
+                        <div [ngSwitch]="row.status">
+                            <span *ngSwitchCase="'Registrado'"
+                                class="badge badge-pill badge-r">{{row.status}}</span>
+                            <span *ngSwitchCase="'Verificado'"
+                                class="badge badge-pill badge-v">{{row.status}}</span>
+                            <span *ngSwitchCase="'Asistió'"
+                                class="badge badge-pill badge-a">{{row.status}}</span>
+                            <span *ngSwitchCase="'Mencionado'"
+                                class="badge badge-pill badge-m">{{row.status}}</span>                                                         
+                        </div>        
+                      
+                      </td>
+                    </ng-container>                     
+        
+                    <!-- acciones -->
+                    <ng-container matColumnDef="actions" *ngIf="role === 'administration' || role === 'comunication'">
+                      <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Acciones </th>
+                      <td mat-cell *matCellDef="let row" style="width:5%" > 
+                        <div *ngIf="row.email && status == 1">
+   
+                           <button mat-icon-button [matMenuTriggerFor]="actions2" *ngIf="role === 'comunication'">
+                             <mat-icon>more_vert</mat-icon>
+                            </button>
+                            <mat-menu #actions2="matMenu">
+                              <button mat-menu-item *ngIf="row.status == 'Registrado'" (click)="verifyStudent(row)">
+                                 <mat-icon>shopping_cart</mat-icon>
+                                 Confirmar Pago
+                               </button>
+                              <button mat-menu-item *ngIf="row.status == 'Pagado'" (click)="confirmRemovePaidEvent(row)">
+                                 <mat-icon>remove_shopping_cart</mat-icon>
+                                 Remover Pago
+                               </button>
+                            </mat-menu>
+                           <button mat-icon-button [matMenuTriggerFor]="actions" *ngIf="role === 'administration'">
+                             <mat-icon>more_vert</mat-icon>
+                            </button>
+                         
+                         <mat-menu #actions="matMenu">
+                           
+                           <button mat-menu-item *ngIf="row.status == 'Registrado'" (click)="verifyStudent(row)">
+                             <mat-icon>shopping_cart</mat-icon>
+                             Confirmar Pago
+                           </button>
+                           <button mat-menu-item *ngIf="(row.status === 'Pagado' || row.status === 'Verificado')" (click)="confirmPresenceEvent(row)">
+                             <mat-icon>playlist_add_check</mat-icon>
+                             Registrar Asistencia
+                           </button>
+                           
+                           <button mat-menu-item *ngIf="row.degree !== true" (click)="confirmDegree(row)">
+                             <mat-icon class="text-success">verified_user</mat-icon>
+                             No Titulado
+                           </button>
+                           <button mat-menu-item *ngIf="row.degree === true"  (click)="confirmRemoveDegree(row)" class="text-danger">
+                             <mat-icon class="text-danger">backspace</mat-icon>
+                             Titulado
+                           </button>
+                           <button mat-menu-item *ngIf="row.observations !== ''" (click)="observationsModal(row)">
+                             <mat-icon>remove_red_eye</mat-icon>
+                             Observaciones
+                           </button>
+                           <button mat-menu-item *ngIf="row.bestAverage !== true" (click)="confirmBestAverage(row)">
+                             <mat-icon class="text-warning">stars</mat-icon>
+                             Mejor Promedio
+                           </button>
+                           <button mat-menu-item (click)="emailModal(row)"> 
+                             <mat-icon>update</mat-icon>
+                             Actualizar Correo
+                           </button>
+                           <button mat-menu-item *ngIf="row.status === 'Mencionado'" (click)="confirmReturnStatusA(row)" class="text-danger">
+                             <mat-icon class="text-danger">restore </mat-icon>
+                             Regresar a Asistió
+                           </button>
+                           <button mat-menu-item *ngIf="row.status === 'Asistió'" (click)="confirmReturnStatusV(row)"  class="text-danger">
+                             <mat-icon class="text-danger">restore </mat-icon>
+                             Regresar a Verificado
+                           </button>
+                           <button mat-menu-item *ngIf="row.status === 'Verificado'" (click)="confirmReturnStatusR(row)"  class="text-danger">
+                             <mat-icon class="text-danger">restore </mat-icon>
+                             Regresar a Registrado
+                           </button>
+                         </mat-menu>
                         </div>
-                     </td>
-                  </tfoot>
-               </table>
-               <div class='div-pagination'>
-                  <pagination-controls id='pag2' directionLinks="true" (pageChange)="pageChanged2($event)"
-                     responsive="true" previousLabel="Anterior" nextLabel="Siguiente">
-                  </pagination-controls>
-               </div>
+                      </td>
+                    </ng-container>
+        
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                    </tr>
+                  </table>
+        
+                  <mat-paginator #paginator1
+                  [showFirstLastButtons]="true" [pageSizeOptions]="[5, 10, 25, 100]"               
+                  ></mat-paginator>
+                </div>
+                <div class="footer-actions" > 
+                  <div  *ngIf="(filteredCareer ? filteredCareer !== 'default' : false) && (role === 'administration' || role === 'coordinator')" class="div-img" ngbTooltip="Generar Papeletas para {{filteredCareer.toUpperCase()}}" >
+                    <img src="../../assets/icons/ballotPaper.svg" class="action" (click)="generateBallotPaper()">
+                  </div>
+                  <div class="div-img" ngbTooltip="Exportar a Excel" >
+                    <img src="../../assets/icons/excelExport.svg" class="action" (click)="excelExport()">
+                  </div>
+                  <div *ngIf="role === 'administration' || role === 'comunication'" class="div-img" ngbTooltip="Generar Reporte Mejor Promedio" >
+                    <img src="../../assets/icons/bestAverage.svg" class="action" (click)="generateReportBestAverage()">
+                  </div>
+                  <div class="div-img" ngbTooltip="Generar Reporte" >
+                    <img src="../../assets/icons/pdfReport.svg" class="action" (click)="generateReport()">
+                  </div>
+                </div>
             </div>
+           
+             <ng-template #empty>            
+               <h3 class="alert alert-warning text-center">NO HAY ESTUDIANTES PARA MOSTRAR</h3>         
+           </ng-template>  
+
+          <!-- Tabla reporte alumnos PDF-->
+          <table
+            class="table table-striped table-bordered table-hover"
+            id="tableReport"
+          >
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Número de Control</th>
+                <th>Nombre del Alumno</th>
+                <th>Carrera</th>
+                <th>Estatus</th>
+                <th>Observaciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let alumno of dataSource.filteredData; let indice = index
+                "
+              >
+                <td>{{ indice + 1 }}</td>
+                <td>{{ alumno.nc }}</td>
+                <td
+                  *ngIf="
+                    alumno.degree &&
+                    alumno.carreer != 'LA' &&
+                    alumno.carreer != 'ARQ' &&
+                    alumno.carreer != 'MCA' &&
+                    alumno.carreer != 'DCA'
+                  "
+                >
+                  <b>ING.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="alumno.degree && alumno.carreer == 'LA'">
+                  <b>LIC.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="alumno.degree && alumno.carreer == 'ARQ'">
+                  <b>ARQ.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="alumno.degree && alumno.carreer == 'MCA'">
+                  <b>MCA.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="alumno.degree && alumno.carreer == 'DCA'">
+                  <b>DCA.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="!alumno.degree">{{ alumno.name }}</td>
+                <td>{{ alumno.carreer }}</td>
+                <td class="{{ alumno.status }}">{{ alumno.status }}</td>
+                <td>{{ alumno.observations }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Tabla reporte alumnos Excel-->
+          <table
+            class="table table-striped table-bordered table-hover"
+            id="tableReportExcel"
+            data-cols-width="9,21,21,46,66,28,15,15,11,100"
+          >
+            <thead>
+              <tr>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  No
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  Número de Control
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  NSS
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  Nombre del Alumno
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  Carrera
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  Correo
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  Titulado
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  Estatus
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  Encuesta
+                </th>
+                <th
+                  data-f-bold="true"
+                  data-f-sz="14"
+                  data-fill-color="112043"
+                  data-f-color="FFFFFF"
+                >
+                  Observaciones
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let alumno of dataSource.filteredData;
+                  let indice = index
+                "
+              >
+                <td data-f-sz="12">{{ indice + 1 }}</td>
+                <td data-f-sz="12">{{ alumno.nc }}</td>
+                <td data-f-sz="12">{{ alumno.nss }}</td>
+                <td
+                  data-f-sz="12"
+                  *ngIf="
+                    alumno.degree &&
+                    alumno.carreer != 'LA' &&
+                    alumno.carreer != 'ARQ' &&
+                    alumno.carreer != 'MCA' &&
+                    alumno.carreer != 'DCA'
+                  "
+                >
+                  <b>ING.</b> {{ alumno.name }}
+                </td>
+                <td
+                  data-f-sz="12"
+                  *ngIf="alumno.degree && alumno.carreer == 'LA'"
+                >
+                  <b>LIC.</b>
+                  {{ alumno.name }}
+                </td>
+                <td
+                  data-f-sz="12"
+                  *ngIf="alumno.degree && alumno.carreer == 'ARQ'"
+                >
+                  <b>ARQ.</b> {{ alumno.name }}
+                </td>
+                <td
+                  data-f-sz="12"
+                  *ngIf="alumno.degree && alumno.carreer == 'MCA'"
+                >
+                  <b>MCA.</b> {{ alumno.name }}
+                </td>
+                <td
+                  data-f-sz="12"
+                  *ngIf="alumno.degree && alumno.carreer == 'DCA'"
+                >
+                  <b>DCA.</b> {{ alumno.name }}
+                </td>
+                <td data-f-sz="12" *ngIf="!alumno.degree">{{ alumno.name }}</td>
+                <td data-f-sz="12">{{ alumno.carreerComplete }}</td>
+                <td data-f-sz="12">{{ alumno.email }}</td>
+                <td data-f-sz="12" *ngIf="alumno.degree">Si</td>
+                <td data-f-sz="12" *ngIf="!alumno.degree">No</td>
+                <td data-f-sz="12" class="{{ alumno.status }}">
+                  {{ alumno.status }}
+                </td>
+                <td data-f-sz="12" *ngIf="alumno.survey">Si</td>
+                <td data-f-sz="12" *ngIf="!alumno.survey">No</td>
+                <td data-f-sz="12">{{ alumno.observations }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Tabla reporte alumnos mejor promedio PDF-->
+          <table
+            class="table table-striped table-bordered table-hover"
+            id="tableReportBestAverageIn"
+          >
+            <thead>
+              <tr>
+                <td colspan="3" class="text-center">ASISTIÓ</td>
+              </tr>
+              <tr>
+                <th>Carrera</th>
+                <th>Nombre del Alumno</th>
+                <th>Promedio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let alumno of studentIn">
+                <td>{{ alumno.data.carreraCompleta }}</td>
+                <td
+                  *ngIf="
+                    alumno.data.degree &&
+                    alumno.data.carrera != 'LA' &&
+                    alumno.data.carrera != 'ARQ' &&
+                    alumno.data.carrera != 'MCA' &&
+                    alumno.data.carrera != 'DCA'
+                  "
+                >
+                  <b>ING.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="alumno.data.degree && alumno.data.carrera == 'LA'">
+                  <b>LIC.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="alumno.data.degree && alumno.data.carrera == 'ARQ'">
+                  <b>ARQ.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="alumno.data.degree && alumno.data.carrera == 'MCA'">
+                  <b>MCA.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="alumno.data.degree && alumno.data.carrera == 'DCA'">
+                  <b>DCA.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="!alumno.data.degree">{{ alumno.data.nombre }}</td>
+                <td>{{ alumno.data.promedio }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table
+            class="table table-striped table-bordered table-hover"
+            id="tableReportBestAverageOut"
+          >
+            <thead>
+              <tr>
+                <td colspan="3" class="text-center">NO ASISTIÓ</td>
+              </tr>
+              <tr>
+                <th>Carrera</th>
+                <th>Nombre del Alumno</th>
+                <th>Promedio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let alumno of studentOut">
+                <td>{{ alumno.data.carreraCompleta }}</td>
+                <td
+                  *ngIf="
+                    alumno.data.degree &&
+                    alumno.data.carrera != 'LA' &&
+                    alumno.data.carrera != 'ARQ' &&
+                    alumno.data.carrera != 'MCA' &&
+                    alumno.data.carrera != 'DCA'
+                  "
+                >
+                  <b>ING.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="alumno.data.degree && alumno.data.carrera == 'LA'">
+                  <b>LIC.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="alumno.data.degree && alumno.data.carrera == 'ARQ'">
+                  <b>ARQ.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="alumno.data.degree && alumno.data.carrera == 'MCA'">
+                  <b>MCA.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="alumno.data.degree && alumno.data.carrera == 'DCA'">
+                  <b>DCA.</b> {{ alumno.data.nombre }}
+                </td>
+                <td *ngIf="!alumno.data.degree">{{ alumno.data.nombre }}</td>
+                <td>{{ alumno.data.promedio }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <table
+            class="table table-striped table-bordered table-hover"
+            id="tableReportBestAverage"
+          >
+            <thead>
+              <tr>
+                <td colspan="3" class="text-center">
+                  MEJORES PROMEDIOS DE LA GENERACIÓN
+                </td>
+              </tr>
+              <tr>
+                <th>Carrera</th>
+                <th>Nombre del Alumno</th>
+                <th>Promedio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let alumno of bestStudents">
+                <td>{{ alumno.career }}</td>
+                <td
+                  *ngIf="
+                    alumno.degree &&
+                    alumno.careerS != 'LA' &&
+                    alumno.careerS != 'ARQ' &&
+                    alumno.careerS != 'MCA' &&
+                    alumno.careerS != 'DCA'
+                  "
+                >
+                  <b>ING.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="alumno.degree && alumno.careerS == 'LA'">
+                  <b>LIC.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="alumno.degree && alumno.careerS == 'ARQ'">
+                  <b>ARQ.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="alumno.degree && alumno.careerS == 'MCA'">
+                  <b>MCA.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="alumno.degree && alumno.careerS == 'DCA'">
+                  <b>DCA.</b> {{ alumno.name }}
+                </td>
+                <td *ngIf="!alumno.degree">{{ alumno.name }}</td>
+                <td>{{ alumno.avg }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+      </mat-tab>
+      <mat-tab *ngIf="role === 'administration' || role === 'secretary'">
+        <ng-template matTabLabel>
+          <span>Documentación</span>
+        </ng-template>
+        <div class="card-body">
+          <div style="overflow-x: auto; padding-top: 20px;">
+            <div class="row">
+              <div class="col-sm-4">
+                <mat-card class="cardEgresados"
+                  ><b>Egresados</b><br />{{ totalEgresados }}</mat-card
+                >
+              </div>
+              <div class="col-sm-2">
+                <mat-card class="cardCPendientes"
+                  ><b>Pendientes</b><br />{{ certificadosPendientes }}</mat-card
+                >
+              </div>
+              <div class="col-sm-2">
+                <mat-card class="cardCImpresos"
+                  ><b>Impresos</b><br />{{ certificadosImpresos }}</mat-card
+                >
+              </div>
+              <div class="col-sm-2">
+                <mat-card class="cardCListos"
+                  ><b>Listos</b><br />{{ certificadosListos }}</mat-card
+                >
+              </div>
+              <div class="col-sm-2">
+                <mat-card class="cardEgresados"
+                  ><b>Entregados</b><br />{{ certificadosEntregados }}</mat-card
+                >
+              </div>
+            </div>
+            <br />
+            <div class="row" style="align-items: center;">
+              <div class="col-6 search-input">                
+                <mat-form-field class="w-100">
+                  <mat-label>Buscar...</mat-label>
+                  <input matInput (keyup)="filterDoc('search',$event)" placeholder="Ej. 17400001">
+                </mat-form-field>                
+              </div>
+              <div class="col-3">
+                <div class="form-group">
+                  <select
+                    class="form-control"
+                    (change)="filterDoc('career', $event)"
+                    *ngIf="careers"
+                  >
+                    <option value="default" selected>Todas las carreras</option>
+                    <option
+                      *ngFor="let career of careers"
+                      [value]="career.acronym"
+                      >{{ career.shortName }}</option
+                    >
+                  </select>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group">
+                  <select (change)="filterDoc('status',$event)" class="form-control">
+                    <option value='default'>Todos los estatus</option>
+                    <option value="fotos y recibo">Fotos y Recibo</option>
+                    <option value="impreso">Impreso</option>
+                    <option value="listo">Listo</option>
+                    <option value="entregado">Entregado</option>
+                  </select>
+                </div>                
+              </div>
+            </div>
+            <!--Tabla de documentacion aquí-->
+            <div *ngIf="dataSource.data.length > 0;else empty2">
+
+              <div class="mat-elevation-z8">
+                 <table mat-table [dataSource]="dataSourceDoc" matSort>
+                   
+                   <!-- Número de control -->
+                   <ng-container matColumnDef="nc">
+                     <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">  Número de control </th>
+                     <td mat-cell *matCellDef="let row" > {{row.nc}} </td>
+                   </ng-container>
+       
+                   <!-- Nombre -->
+                   <ng-container matColumnDef="name">
+                     <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Nombre del Alumno</th>
+                     <td mat-cell *matCellDef="let row" >
+                       <b *ngIf="
+                       row.degree &&
+                       row.carreer != 'LA' &&
+                       row.carreer != 'ARQ' &&
+                       row.carreer != 'MCA' &&
+                       row.carreer != 'DCA'
+                     ">ING.</b>
+                     <b *ngIf="row.degree && row.carreer == 'LA'">LIC.</b>
+                     <b *ngIf="row.degree && row.carreer == 'ARQ'">ARQ.</b>
+                     <b *ngIf="row.degree && row.carreer == 'MCA'">MCA.</b>
+                     <b *ngIf="row.degree && row.carreer == 'DCA'">DCA.</b>
+                     <b *ngIf="row.degree && row.carreer == 'MTI'">MTI.</b>
+                       {{row.name}} 
+                       </td>
+                   </ng-container>
+       
+       
+                   <!-- Carrera -->
+                   <ng-container matColumnDef="carreer">
+                     <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Carrera </th>
+                     <td mat-cell *matCellDef="let row" > {{row.carreer}} </td>
+                   </ng-container>       
+       
+                   <!-- estatus -->
+                   <ng-container matColumnDef="status" >
+                     <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Estatus </th>
+                     <td mat-cell *matCellDef="let row" > 
+                       <div [ngSwitch]="row.documentationStatus">
+                           <span *ngSwitchCase="'Fotos y Recibo'"
+                               class="badge badge-pill badge-photos">{{row.documentationStatus}}</span>
+                           <span *ngSwitchCase="'Impreso'"
+                               class="badge badge-pill badge-printed">{{row.documentationStatus}}</span>
+                           <span *ngSwitchCase="'Listo'"
+                               class="badge badge-pill badge-ready">{{row.documentationStatus}}</span>
+                           <span *ngSwitchCase="'Entregado'"
+                               class="badge badge-pill badge-delivered">{{row.documentationStatus}}</span>                                                         
+                       </div>        
+                     
+                     </td>
+                   </ng-container>                     
+       
+                   <!-- acciones -->
+                   <ng-container matColumnDef="actions">
+                     <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Acciones </th>
+                     <td mat-cell *matCellDef="let row" style="width:5%">
+                      <div *ngIf="row.email">
+
+                        <button mat-icon-button [matMenuTriggerFor]="actions">
+                          <mat-icon>more_vert</mat-icon>
+                        </button>
+                      
+                        <mat-menu #actions="matMenu">
+                          <button mat-menu-item *ngIf="row.documentationStatus == ' '" (click)="changeStatusDocumentation(row,'Fotos y Recibo')">
+                            <mat-icon>recent_actors</mat-icon>
+                            Fotos y Recibo
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'Fotos y Recibo'" (click)="changeStatusDocumentation(row,'Impreso')">
+                            <mat-icon>print</mat-icon>
+                            Impreso
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'Impreso'" (click)="changeStatusDocumentation(row,'Listo')">
+                            <mat-icon>library_add_check</mat-icon>
+                            Listo
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'Listo'" (click)="changeStatusDocumentation(row,'Entregado')">
+                            <mat-icon>pending_actions</mat-icon>
+                            Entregado
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'Fotos y Recibo'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                            <mat-icon class="text-danger">settings_backup_restore</mat-icon>
+                            Regresar Estatus a Sin Entrega
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'Impreso'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                            <mat-icon class="text-danger">settings_backup_restore</mat-icon>
+                            Regresar Estatus a Fotos y Recibo
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'Listo'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                            <mat-icon class="text-danger">settings_backup_restore</mat-icon>
+                            Regresar Estatus a Impreso
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'Entregado'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                            <mat-icon class="text-danger">settings_backup_restore</mat-icon>
+                            Regresar Estatus a Listo
+                          </button>
+                          <button mat-menu-item (click)="generateConstancy(row)">
+                            <mat-icon>library_books</mat-icon>
+                            Generar Constancia
+                          </button>                                                    
+                        </mat-menu>                       
+                      </div>
+                     </td>
+                   </ng-container>
+       
+                   <tr mat-header-row *matHeaderRowDef="displayedColumnsDoc"></tr>
+                   <tr mat-row *matRowDef="let row; columns: displayedColumnsDoc;">
+                   </tr>
+                 </table>
+       
+                 <mat-paginator #paginator2
+                 [showFirstLastButtons]="true" [pageSizeOptions]="[5, 10, 25, 100]"               
+                 ></mat-paginator>
+               </div>
+               <div class="footer-actions" *ngIf="(filteredCareerDoc ? filteredCareerDoc !== 'default' : false)" style="justify-content: center;"> 
+                 <div  class="div-img" ngbTooltip="Generar Constancias para {{filteredCareerDoc.toUpperCase()}}" >
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                      <img src="../../assets/icons/documentacion/generarConstancia.svg" class="action">
+                    </button>
+                    <mat-menu #menu="matMenu">
+                      <button mat-menu-item (click)="generateAllConstancys()">
+                        <mat-icon>done_all</mat-icon>
+                        <span>Todas</span>
+                      </button>
+                      <button mat-menu-item (click)="generateRegisteredConstancys()">
+                        <mat-icon>done</mat-icon>
+                        <span>Solo Registrados</span>
+                      </button>
+                      <button mat-menu-item (click)="generateVerifiedConstancys()">
+                        <mat-icon>forward</mat-icon>
+                        <span>Verificados en Adelante</span>
+                      </button>
+                  </mat-menu>
+                 </div>
+                 <div class="div-img" ngbTooltip="Generar Pestañas  para {{filteredCareerDoc.toUpperCase()}}" tooltipClass="my-custom-class">
+                  <button mat-icon-button [matMenuTriggerFor]="menu2" aria-label="Example icon-button with a menu">
+                 <img src="../../assets/icons/label.svg" class="action">
+                   </button>
+                   <mat-menu #menu2="matMenu">
+                     <button mat-menu-item (click)="generateAllLabels()">
+                       <mat-icon>done_all</mat-icon>
+                       <span>Todas</span>
+                     </button>
+                     <button mat-menu-item (click)="generateRegisteredLabels()">
+                       <mat-icon>done</mat-icon>
+                       <span>Solo Registrados</span>
+                     </button>
+                     <button mat-menu-item (click)="generateVerifiedLabels()">
+                       <mat-icon>forward</mat-icon>
+                       <span>Verificados en Adelante</span>
+                     </button>
+                   </mat-menu>
+                </div>
+              </div>
+            </div>
+            <ng-template #empty2>            
+              <h3 class="alert alert-warning text-center">NO HAY ESTUDIANTES PARA MOSTRAR</h3>         
+            </ng-template>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>
+<div *ngIf="role === 'asistenciaInvitados'">
+  <div class="card card-shadow" style="padding: 5px;">
+    <div class="container">
+      <div class="row justify-content-md-center">
+        <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
+          <mat-label>Nombre o número de control</mat-label>
+          <input
+            matInput
+            [(ngModel)]="findStudentTickets"
+            oninput="this.value = this.value.toUpperCase()"
+          />
+          <button matSuffix mat-icon-button (click)="searchStudent()">
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
       </div>
-</mat-tab>
-</mat-tab-group>
-</div>
-</div>
-<div *ngIf = "role === 'asistenciaInvitados'">
-   <div class="card card-shadow" style="padding: 5px;">
-      <div class="container">
-         <div class="row justify-content-md-center">
-               <mat-form-field class="col-sm-12 col-lg-6" appearance="outline">
-                  <mat-label>Nombre o número de control</mat-label>
-                  <input matInput [(ngModel)]="findStudentTickets" oninput="this.value = this.value.toUpperCase()">
-                  <button matSuffix mat-icon-button (click)="searchStudent()">
-                     <mat-icon>search</mat-icon>
-                  </button>
-               </mat-form-field>
-         </div>
-       </div>
-   </div>
-   <div class="row justify-content-md-center" *ngIf = "findStudentTickets !== '' || guests">
-      <mat-selection-list class="student-list">
-         <mat-list-item *ngFor="let alumno of studentsTickets" class="student-card">
-           <mat-card *ngIf = "alumno.status !== 'Registrado'">
-             <mat-card-header>
-               <mat-card-title>
-                  <span class = "badge badge-pill" style="text-align: center; background-color:  rgb(202,0,10); color: white; width: 90px;">{{alumno.status}}</span><br>
-                  {{ alumno.name }}<br>
-                  {{ alumno.nc }}<br>
-                  {{ alumno.carreerComplete}}<br><br>
-               </mat-card-title>
-             </mat-card-header>
-             <mat-card-actions align="center">
-               <button mat-button color="warn" (click)="callStudent(alumno)" mat-button>Llamar</button>
-               <button mat-button color="primary" (click)="viewTickets(alumno)" mat-button>Ver boletos</button>
-             </mat-card-actions>
-           </mat-card>
-           <mat-card *ngIf = "alumno.status === 'Registrado'">
-            <mat-card-header>
-              <mat-card-title>
-                  <span class = "badge badge-pill" style="text-align: center; background-color:  rgb(71,178,218); color: white; width: 90px;">{{alumno.status}}</span><br>
-                  {{ alumno.name }}<br>
-                  {{ alumno.nc }}<br>
-                  {{ alumno.carreerComplete}}<br><br>
-               </mat-card-title>
+    </div>
+  </div>
+  <div
+    class="row justify-content-md-center"
+    *ngIf="findStudentTickets !== '' || guests"
+  >
+    <mat-selection-list class="student-list">
+      <mat-list-item
+        *ngFor="let alumno of studentsTickets"
+        class="student-card"
+      >
+        <mat-card *ngIf="alumno.status !== 'Registrado'">
+          <mat-card-header>
+            <mat-card-title>
+              <span
+                class="badge badge-pill"
+                style="
+                  text-align: center;
+                  background-color: rgb(202, 0, 10);
+                  color: white;
+                  width: 90px;
+                "
+                >{{ alumno.status }}</span
+              ><br />
+              {{ alumno.name }}<br />
+              {{ alumno.nc }}<br />
+              {{ alumno.carreerComplete }}<br /><br />
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-actions align="center">
+            <button
+              mat-button
+              color="warn"
+              (click)="callStudent(alumno)"
+              mat-button
+            >
+              Llamar
+            </button>
+            <button
+              mat-button
+              color="primary"
+              (click)="viewTickets(alumno)"
+              mat-button
+            >
+              Ver boletos
+            </button>
+          </mat-card-actions>
+        </mat-card>
+        <mat-card *ngIf="alumno.status === 'Registrado'">
+          <mat-card-header>
+            <mat-card-title>
+              <span
+                class="badge badge-pill"
+                style="
+                  text-align: center;
+                  background-color: rgb(71, 178, 218);
+                  color: white;
+                  width: 90px;
+                "
+                >{{ alumno.status }}</span
+              ><br />
+              {{ alumno.name }}<br />
+              {{ alumno.nc }}<br />
+              {{ alumno.carreerComplete }}<br /><br />
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-actions align="center">
+            <button
+              mat-button
+              color="warn"
+              (click)="callStudent(alumno)"
+              mat-button
+            >
+              Llamar
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-list-item>
+    </mat-selection-list>
+  </div>
+  <div *ngIf="guests">
+    <div class="row justify-content-md-center">
+      <mat-selection-list class="ticket-list">
+        <mat-list-item
+          *ngFor="let guest of guests; let indice = index"
+          class="ticket-card"
+        >
+          <mat-card>
+            <mat-card-header style="text-align: center;">
+              <mat-card-title
+                >Invitado -
+                {{
+                  guest.ticketFor.slice(8, guest.ticketFor.length)
+                }}</mat-card-title
+              >
             </mat-card-header>
             <mat-card-actions align="center">
-               <button mat-button color="warn" (click)="callStudent(alumno)" mat-button>Llamar</button>
-             </mat-card-actions>
+              <button
+                mat-button
+                color="accent"
+                (click)="changeStatusTicket(guest)"
+                mat-button
+              >
+                Registrar asistencia
+              </button>
+            </mat-card-actions>
           </mat-card>
-         </mat-list-item>
-       </mat-selection-list>
-   </div>
-   <div *ngIf="guests">
-      <div class="row justify-content-md-center">
-         <mat-selection-list class="ticket-list">
-            <mat-list-item *ngFor="let guest of guests; let indice = index;" class="ticket-card">
-              <mat-card>
-                <mat-card-header style="text-align: center;">
-                  <mat-card-title>Invitado - {{guest.ticketFor.slice(8,guest.ticketFor.length)}}</mat-card-title>
-                </mat-card-header>
-                <mat-card-actions align="center">
-                  <button mat-button color="accent" (click)="changeStatusTicket(guest)" mat-button>Registrar asistencia</button>
-                </mat-card-actions>
-              </mat-card>
-            </mat-list-item>
-          </mat-selection-list>
-      </div>
-   </div>
+        </mat-list-item>
+      </mat-selection-list>
+    </div>
+  </div>
 </div>

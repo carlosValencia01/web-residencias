@@ -49,7 +49,7 @@ export class Storage {
 
     public deleteAllCookieData(): boolean {
         try {
-            this.cookieService.deleteAll();
+            this.cookieService.deleteAll('/');
             return true;
         } catch (_) {
             return false;

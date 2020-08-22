@@ -129,7 +129,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{docComprobante.status.name}}</span>
                 </p>
-                <span>{{docComprobante.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(docComprobante.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
                 <div class="row text-center" style="color: red; cursor: pointer;"
                   (click)="help('LA COPIA DEL COMPROBANTE DE PAGO DE INSCRIPCIÓN','assets/pdf/help_comprobante.pdf')">
                   <div class="col-12">
@@ -255,7 +256,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{docCertificado.status.name}}</span>
                 </p>
-                <span>{{docCertificado.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(docCertificado.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
                 <div class="row text-center" style="color: red; cursor: pointer;"
                   (click)="help('EL CERTIFICADO DE BACHILLERATO O EQUIVALENTE','assets/pdf/help_certificado.pdf')">
                   <div class="col-12">
@@ -387,7 +389,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{certificateLDoc.status.name}}</span>
                 </p>
-                <span>{{certificateLDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(certificateLDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config8" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -498,7 +501,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{titledLDoc.status.name}}</span>
                 </p>
-                <span>{{titledLDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(titledLDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config9" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -609,7 +613,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{cedulaLDoc.status.name}}</span>
                 </p>
-                <span>{{cedulaLDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(cedulaLDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config10" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -720,7 +725,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{examActLDoc.status.name}}</span>
                 </p>
-                <span>{{examActLDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(examActLDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config11" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -831,7 +837,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{certificateMDoc.status.name}}</span>
                 </p>
-                <span>{{certificateMDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(certificateMDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config16" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -941,7 +948,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{titledMDoc.status.name}}</span>
                 </p>
-                <span>{{titledMDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(titledMDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config17" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -1050,7 +1058,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{cedulaMDoc.status.name}}</span>
                 </p>
-                <span>{{cedulaMDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(cedulaMDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config18" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -1159,7 +1168,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{examActMDoc.status.name}}</span>
                 </p>
-                <span>{{examActMDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(examActMDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config19" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -1264,7 +1274,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{docCurp.status.name}}</span>
                 </p>
-                <span>{{docCurp.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(docCurp.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
                 <div class="row text-center" style="color: red; cursor: pointer;"
                   (click)="help('LA CURP','assets/pdf/help_curp.pdf')">
                   <div class="col-12">
@@ -1401,7 +1412,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{docActa.status.name}}</span>
                 </p>
-                <span>{{docActa.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(docActa.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
                 <div class="row text-center" style="color: red; cursor: pointer;"
                   (click)="help('EL ACTA DE NACIMIENTO','assets/pdf/help_acta.pdf')">
                   <div class="col-12">
@@ -1554,7 +1566,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{docAnalisis.status.name}}</span>
                 </p>
-                <span>{{docAnalisis.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(docAnalisis.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
                 <div class="row text-center" style="color: red; cursor: pointer;"
                   (click)="help('LOS RESULTADOS DE ANÁLISIS CLÍNICOS','assets/pdf/help_clinicos.pdf')">
                   <div class="col-12">
@@ -1696,7 +1709,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{docFoto.status.name}}</span>
                 </p>
-                <span>{{docFoto.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(docFoto.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
                 <div class="row text-center" style="color: red; cursor: pointer;" (click)="helpPhoto()">
                   <div class="col-12">
                     <div>
@@ -1845,7 +1859,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{docNss.status.name}}</span>
                 </p>
-                <span>{{docNss.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(docNss.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
                 <div class="row text-center" style="color: red; cursor: pointer;"
                   (click)="help('EL NÚMERO DE SEGURO SOCIAL','assets/pdf/help_nss.pdf')">
                   <div class="col-12">
@@ -1976,7 +1991,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{docCompromiso.status.name}}</span>
                 </p>
-                <span>{{docCompromiso.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(docCompromiso.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz7" [config]="config7" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2080,7 +2096,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{cccertificateLDoc.status.name}}</span>
                 </p>
-                <span>{{cccertificateLDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(cccertificateLDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config12" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2166,7 +2183,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{cctitledLDoc.status.name}}</span>
                 </p>
-                <span>{{cctitledLDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(cctitledLDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config13" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2252,7 +2270,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{cccedulaLDoc.status.name}}</span>
                 </p>
-                <span>{{cccedulaLDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(cccedulaLDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config14" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2338,7 +2357,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{ccexamActLDoc.status.name}}</span>
                 </p>
-                <span>{{ccexamActLDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(ccexamActLDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config15" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2424,7 +2444,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{cccertificateMDoc.status.name}}</span>
                 </p>
-                <span>{{cccertificateMDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(cccertificateMDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config20" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2509,7 +2530,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{cctitledMDoc.status.name}}</span>
                 </p>
-                <span>{{cctitledMDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(cctitledMDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config21" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2594,7 +2616,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{cccedulaMDoc.status.name}}</span>
                 </p>
-                <span>{{cccedulaMDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(cccedulaMDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config22" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2680,7 +2703,8 @@
                 <p style="text-align: center;">
                   <span class="badge badge-danger">{{ccexamActMDoc.status.name}}</span>
                 </p>
-                <span>{{ccexamActMDoc.status.observation}}</span>
+                <mat-icon class="mx-1" style="color:#607188" (click)="onMessage(ccexamActMDoc.status.observation)"
+                      data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
               </mat-card-actions>
               <mat-card-footer style="text-align: center; color: black;">
                 <dropzone id="dz2" [config]="config23" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
@@ -2710,11 +2734,16 @@
         <hr>
         <!--Solicitud, Contrato y Acuse-->
         <div class='row'>
-          <div class='col-xs-12 col-sm-6 col-md-4' style="padding-top: 5px;">
+          
+          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" >
             <!--Solicitud-->
-            <mat-card class="accept">
+            <mat-card 
+            class="accept"
+            >
               <mat-card-header>
-                <mat-card-title class="acceptText">Solicitud</mat-card-title>
+                <mat-card-title
+                class="acceptText"
+                >Solicitud</mat-card-title>
               </mat-card-header>
               <mat-card-content (click)="onView('Solicitud')" style="cursor: pointer;" ngbTooltip="Visualizar Solicitud"
                 tooltipClass="my-custom-class">
@@ -2724,15 +2753,18 @@
                   </div>
                 </div>
               </mat-card-content>
-              <mat-card-actions>
-              </mat-card-actions>
+              
             </mat-card>
-          </div>
-          <div class='col-xs-12 col-sm-6 col-md-4' style="padding-top: 5px;">
+          </div>          
+          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;" >
             <!--Contrato-->
-            <mat-card class="accept">
+            <mat-card 
+            class="accept"
+            >
               <mat-card-header>
-                <mat-card-title class="acceptText">Contrato</mat-card-title>
+                <mat-card-title
+                class="acceptText"
+                >Contrato</mat-card-title>
               </mat-card-header>
               <mat-card-content (click)="onView('Contrato')" style="cursor: pointer;" ngbTooltip="Visualizar Contrato"
                 tooltipClass="my-custom-class">
@@ -2742,28 +2774,31 @@
                   </div>
                 </div>
               </mat-card-content>
-              <mat-card-actions>
-              </mat-card-actions>
+              
             </mat-card>
           </div>
-          <div class='col-xs-12 col-sm-6 col-md-4' style="padding-top: 5px;">
+          
+          <div class='col-xs-12 col-sm-6 col-md-3' style="padding-top: 5px;">
             <!--Acuse-->
-            <mat-card class="accept">
+            <mat-card 
+            class="accept"
+            >
               <mat-card-header>
-                <mat-card-title class="acceptText">Acuse</mat-card-title>
+                <mat-card-title
+                class="acceptText"
+                >Acuse</mat-card-title>
               </mat-card-header>
-              <mat-card-content (click)="onView('Acuse')" style="cursor: pointer;" ngbTooltip="Visualizar Acuse"
+              <mat-card-content (click)="onView('AcuseDrive')" style="cursor: pointer;" ngbTooltip="Visualizar Acuse"
                 tooltipClass="my-custom-class">
                 <div>
                   <div class="text-center">
                     <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
                   </div>
                 </div>
-              </mat-card-content>
-              <mat-card-actions>
-              </mat-card-actions>
+              </mat-card-content>              
             </mat-card>
           </div>
+                            
         </div>
       </div>
     </div>

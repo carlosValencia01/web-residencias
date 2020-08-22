@@ -8,8 +8,7 @@ import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
-
-const jsPDF = require('jspdf');
+import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
 
 @Component({
   selector: 'app-contract-student-page',
@@ -35,12 +34,9 @@ export class ContractStudentPageComponent implements OnInit {
   currentDate: Date;
   currentMonth: String;
 
-  // Imagenes para Reportes
-  public logoTecNM: any;
-  public logoSep: any;
-  public logoTecTepic: any;
-  public firmaDirector: any;
+  
 
+  emptyUInscription: uInscription;
   constructor(
     private cookiesServ: CookiesService,
     private stepper: MatStepper,
@@ -60,19 +56,10 @@ export class ContractStudentPageComponent implements OnInit {
     this.data = this.cookiesServ.getData().user;
     this.nameStudent = this.data.name.fullName;
     this.acceptedTerms = false;
-    // Convertir imágenes a base 64 para los reportes
-    this.imageToBase64Serv.getBase64('assets/imgs/logoTecNM.png').then(res1 => {
-      this.logoTecNM = res1;
-    });
-    this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
-      this.logoSep = res2;
-    });
-    this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
-      this.logoTecTepic = res3;
-    });
-    this.imageToBase64Serv.getBase64('assets/imgs/firmaDirector.png').then(res4 => {
-      this.firmaDirector = res4;
-    })
+    setTimeout(() => {      
+      this.emptyUInscription = new uInscription(this.imageToBase64Serv,this.cookiesServ,this.inscriptionsProv);
+    }, 300);
+   
   }
 
   getIdStudent() {
@@ -151,77 +138,17 @@ export class ContractStudentPageComponent implements OnInit {
   }
 
   async generatePDF() {
-    const currentDate = new Date();
-    const img = new Image();
-    img.src = 'https://i.ibb.co/yy0GrBq/Contrato-Estudiante-ITT.jpg';
-    const doc = new jsPDF();
-
-    doc.addImage(img, 'jpg', 0, 0, 200, 295);
-
-    doc.setFontSize(8);
-    doc.setFontType('bold');
-    doc.text(`${this.data.name.fullName}`, 132, 262);
-
-    doc.addImage(this.firmaDirector, 'jpg', 25, 220, 80, 43);
-
-    doc.setFontSize(8);
-    doc.setFontType('bold');
-    doc.text(currentDate.getDate() + '', 129, 45);
-
-    doc.setFontSize(8);
-    doc.setFontType('bold');
-    const currentMonth = currentDate.getMonth();
-    let newMonth;
-    switch (currentMonth) {
-      case 0: {
-        newMonth = 'Enero'; break;
-      }
-      case 1: {
-        newMonth = 'Febrero'; break;
-      }
-      case 2: {
-        newMonth = 'Marzo'; break;
-      }
-      case 3: {
-        newMonth = 'Abril'; break;
-      }
-      case 4: {
-        newMonth = 'Mayo'; break;
-      }
-      case 5: {
-        newMonth = 'Junio'; break;
-      }
-      case 6: {
-        newMonth = 'Julio'; break;
-      }
-      case 7: {
-        newMonth = 'Agosto'; break;
-      }
-      case 8: {
-        newMonth = 'Septiembre'; break;
-      }
-      case 9: {
-        newMonth = 'Octubre'; break;
-      }
-      case 10: {
-        newMonth = 'Noviembre'; break;
-      }
-      case 11: {
-        newMonth = 'Diciembre'; break;
-      }
-    }
-    doc.text(newMonth, 149, 45);
-
-    doc.setFontSize(8);
-    doc.setFontType('bold');
-    doc.text(currentDate.getFullYear() + '', 174, 45);
-
+    const currentDate = new Date();    
+    
+    
     //window.open(doc.output('bloburl'), '_blank');
-
+    const doc = this.emptyUInscription.generateContrato(this.data.name.fullName,currentDate);
     let document = doc.output('arraybuffer');
     let binary = this.bufferToBase64(document);
     await this.saveDocument(binary);
   }
+
+  
 
   bufferToBase64(buffer) {
     return btoa(new Uint8Array(buffer).reduce((data, byte)=> {

@@ -93,7 +93,7 @@ export class Api {
         }
     }
 
-    putE(endpoint: string, body: any) {
+    putE(endpoint: string, body?: any) {
         const options = new RequestOptions({ headers: this.headers });
         return this.http.put(this.urlE + '/' + endpoint, body, options);
     }

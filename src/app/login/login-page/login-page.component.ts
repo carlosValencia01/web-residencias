@@ -1,17 +1,19 @@
-import { IPosition } from 'src/app/entities/shared/position.model';
-import { IEmployee } from 'src/app/entities/shared/employee.model';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import Swal from 'sweetalert2';
-
+import { Router } from '@angular/router';
+import * as moment from 'moment';
 import { SelectPositionComponent } from 'src/app/commons/select-position/select-position.component';
+import { IEmployee } from 'src/app/entities/shared/employee.model';
+import { IPosition } from 'src/app/entities/shared/position.model';
+import { eSessionStatus } from 'src/app/enumerators/app/sessionStatus.enum';
 import { UserProvider } from 'src/app/providers/app/user.prov';
 import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { CurrentPositionService } from 'src/app/services/shared/current-position.service';
 import { RoleService } from 'src/app/services/shared/role.service';
-import { eSessionStatus } from 'src/app/enumerators/app/sessionStatus.enum';
+import Swal from 'sweetalert2';
+import { ESignatureProvider } from '../../providers/electronic-signature/eSignature.prov';
 
 @Component({
   selector: 'app-login-page',
@@ -32,6 +34,8 @@ export class LoginPageComponent implements OnInit {
     public dialog: MatDialog,
     private currentPositionService: CurrentPositionService,
     private roleServ: RoleService,
+    private eSignatureProvider: ESignatureProvider,
+    private router: Router,
   ) {
     this.formLogin = new FormGroup({
       'usernameInput': new FormControl(null, Validators.required),
@@ -53,7 +57,6 @@ export class LoginPageComponent implements OnInit {
         this.userProv.sendTokenFromAPI(res.token);
 
         if (res.user.rol && res.user.rol.name && res.user.rol.name.toUpperCase() === 'ESTUDIANTE') {
-          this._getBosses();
           this._studentLogin(res);
           return;
         }
@@ -73,41 +76,6 @@ export class LoginPageComponent implements OnInit {
     this.session.emit(eSessionStatus.ACTIVE);
   }
 
-  private async _getBosses() {
-    const JDeptoDiv = await this._getBoss({
-      Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES',
-      Position: 'JEFE DE DEPARTAMENTO'
-    });
-    const CDeptoDiv = await this._getBoss({
-      Department: 'DEPARTAMENTO DE DIVISIÓN DE ESTUDIOS PROFESIONALES',
-      Position: 'COORDINADOR DE TITULACIÓN'
-    });
-    const JDeptoEsc = await this._getBoss({
-      Department: 'DEPARTAMENTO DE SERVICIOS ESCOLARES',
-      Position: 'JEFE DE DEPARTAMENTO'
-    });
-    const Director = await this._getBoss({ Department: 'DIRECCIÓN', Position: 'DIRECTOR' });
-    const Bosses = {
-      JDeptoDiv: JDeptoDiv,
-      CDeptoDiv: CDeptoDiv,
-      JDeptoEsc: JDeptoEsc,
-      Director: Director,
-    };
-    this.cookiesServ.saveBosses(Bosses);
-  }
-
-  private _getBoss(search: { Department: string, Position: string }) {
-    return new Promise(resolve => {
-      this.employeeProv.searchEmployee(
-        search
-      ).subscribe(response => {
-        resolve(response.Employee);
-      }, _ => {
-        resolve(null);
-      });
-    });
-  }
-
   private _getEmployee(email: string) {
     return new Promise(resolve => {
       this.employeeProv.getEmployee(email).subscribe(
@@ -119,7 +87,7 @@ export class LoginPageComponent implements OnInit {
 
   public viewInscriptionsVideo() {
     // Tutorial Nuevo Ingreso
-    window.open('https://drive.google.com/file/d/1QlVOPP6_wy89Ld7sJsDKFNNH6gMn3V-B/view?usp=sharing');
+    window.open('https://drive.google.com/file/d/1Zt0L3VmS6fj_tHzAgjpLJRaMeZCh0SIA/view');
   }
 
   public viewReceptionActVideo() {
@@ -134,7 +102,6 @@ export class LoginPageComponent implements OnInit {
       : (res.gender === 'M') ? 'masculino' : _defaultGender).toLowerCase();
     res.profileIcon = (res.gender === 'femenino') ? 'assets/icons/woman-student.svg'
       : (res.gender === 'masculino') ? 'assets/icons/man-student.svg' : _defaultProfileIcon;
-    this._getBosses();
     this.loginIsSuccessful(res);
   }
 
@@ -175,7 +142,6 @@ export class LoginPageComponent implements OnInit {
     res.gender = (employee.gender || _defaultGender).toLowerCase();
     res.profileIcon = (res.gender === 'femenino') ? 'assets/icons/woman.svg'
       : (res.gender === 'masculino') ? 'assets/icons/man.svg' : _defaultProfileIcon;
-    this._getBosses();
     this.currentPositionService.setCurrentPosition(selectedPosition);
     res.user.position = selectedPosition._id;
     res.user.eid = employee._id;
@@ -183,6 +149,53 @@ export class LoginPageComponent implements OnInit {
     this.cookiesServ.saveEmployeePositions(<IPosition[]>employee.positions);
     this.cookiesServ.savePosition(selectedPosition);
     this.loginIsSuccessful(res);
+    this._verifyESignatureExpiration(selectedPosition, employee);
+  }
+
+  private _verifyESignatureExpiration(currentPosition: IPosition, employee: IEmployee) {
+    this.eSignatureProvider.hasESignature(employee.rfc, currentPosition._id)
+      .subscribe(data => {
+        moment.locale('es');
+
+        let showAlert = false;
+        let message = 'Su firma electrónica @DAYS_MSJ. Favor de renovarla.';
+        const expireDate = moment(new Date(data.expireDate).setHours(0, 0, 0, 0));
+        const today = new Date().setHours(0, 0, 0, 0);
+        const twoWeeksAfter = moment(today).add(2, 'weeks');
+        const daysExpired = Math.abs(moment(expireDate).diff(today, 'days'));
+        const message_days = daysExpired > 1 ? 'días' : 'día';
+
+        if (expireDate.isBetween(today, twoWeeksAfter)) {
+          message = message.replace('@DAYS_MSJ', `vencerá en ${daysExpired} ${message_days}`);
+          showAlert = true;
+        }
+        if (expireDate.isBefore(today)) {
+          message = message.replace('@DAYS_MSJ', `venció hace ${daysExpired} ${message_days}`);
+          showAlert = true;
+        }
+        if (expireDate.isSame(today)) {
+          message = message.replace('@DAYS_MSJ', 'venció hoy');
+          showAlert = true;
+        }
+        if (showAlert) {
+          Swal.fire({
+            title: 'Firma electrónica',
+            text: message,
+            type: 'info',
+            showCancelButton: true,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            confirmButtonColor: 'green',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ir a renovarla',
+            cancelButtonText: 'Dejar para después'
+          }).then((result) => {
+            if (result.value) {
+              this.router.navigate(['/rrhh/electronicSignature']);
+            }
+          });
+        }
+      });
   }
 
 }

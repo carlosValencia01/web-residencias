@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { FirebaseService } from 'src/app/services/graduation/firebase.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
@@ -9,26 +9,38 @@ import Swal from 'sweetalert2';
 import { NewGraduationEventComponent } from 'src/app/graduation/new-graduation-event/new-graduation-event.component';
 import { MatDialog } from '@angular/material';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+import { IGraduationEvent } from 'src/app/entities/graduation/graduation-event.model';
 @Component({
   selector: 'app-graduation-events-page',
   templateUrl: './graduation-events-page.component.html',
   styleUrls: ['./graduation-events-page.component.scss']
 })
 export class GraduationEventsPageComponent implements OnInit, OnDestroy {
-  events = [];
+  
+  displayedColumns: string[] = ['period', 'status', 'actions'];
+  dataSource: MatTableDataSource<IGraduationEvent>;
+  
+  @ViewChild(MatPaginator) set paginator(paginator: MatPaginator){
+    this.dataSource.paginator = paginator;
+  };
+  @ViewChild(MatSort) set sort(sort: MatSort){
+    this.dataSource.sort = sort;
+  };
+  events: Array<IGraduationEvent> = [];
   today = new Date();
   year = '';
   closeResult = '';
   periodo = '';
-  public role: string;
-  model;
+  public role: string;  
   yearsOptions = {
     count: 50
   };
   newYears = [];
   eventYear = '';
-  eventsSub : Subscription;
+  eventsSub : Subscription;  
   constructor(
     private firestoreService: FirebaseService,
     private router: Router,
@@ -40,27 +52,8 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
-
-     this.eventsSub = this.firestoreService.getAllEvents().subscribe(
-        ev => {
-          this.events = ev.map( data => (
-            {
-              id: data.payload.doc.id, 
-              status: data.payload.doc.get('estatus'),
-              date: data.payload.doc.get('date'),
-              limitDate: data.payload.doc.get('limitDate'),
-              hour: data.payload.doc.get('hour'),              
-              directorName: data.payload.doc.get('directorName'),              
-              directorMessage: data.payload.doc.get('directorMessage'),              
-              totalTickets: data.payload.doc.get('totalTickets'),              
-              studentTickets: data.payload.doc.get('studentTickets'),
-              observationsMessage: data.payload.doc.get('observationsMessage'),
-              hourGallery: data.payload.doc.get('hourGallery')             
-            }) );
-          this.year = this.today.getFullYear() + '';
-        }
-      );
-      this.newYears = years(this.yearsOptions);
+    
+    this.init();
   }
 
   ngOnDestroy(): void {
@@ -69,6 +62,32 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
     this.eventsSub.unsubscribe();
   }
 
+  init(){
+    this.dataSource = new MatTableDataSource();
+    this.eventsSub = this.firestoreService.getAllEvents().subscribe(
+      ev => {
+        this.events = ev.map( data => (
+          {
+            id: data.payload.doc.id, 
+            status: data.payload.doc.get('estatus') == 1 ? 'Activo' : data.payload.doc.get('estatus') == 2 ? 'Espera' : 'Inactivo',
+            date: data.payload.doc.get('date'),
+            limitDate: data.payload.doc.get('limitDate'),
+            hour: data.payload.doc.get('hour'),              
+            directorName: data.payload.doc.get('directorName'),              
+            directorMessage: data.payload.doc.get('directorMessage'),              
+            totalTickets: data.payload.doc.get('totalTickets'),              
+            studentTickets: data.payload.doc.get('studentTickets'),
+            observationsMessage: data.payload.doc.get('observationsMessage'),
+            hourGallery: data.payload.doc.get('hourGallery')             
+        }) );       
+        this.dataSource = new MatTableDataSource(this.events);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;        
+        this.year = this.today.getFullYear() + '';
+      }
+    );
+    this.newYears = years(this.yearsOptions);
+  }
   ngOnInit() {
     switch (this.cookiesService.getData().user.role) {
       case 0:
@@ -154,10 +173,13 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       }
     );
   }
+  import(route){
+    this.router.navigate(route);
+  }
 
   changeEventStatus(ev) {
     let i = 0, oldEvent = '';
-    if (ev.status === 2) {
+    if (ev.status === 'Espera') {
 
       const sub = this.firestoreService.getActivedEvent().subscribe(
         res => {

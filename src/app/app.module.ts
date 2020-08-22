@@ -44,6 +44,7 @@ import { HomeHeaderComponent } from './home/home-header/home-header.component';
 import { HomePageComponent } from './home/home-page/home-page.component';
 import { LoginHeaderComponent } from './login/login-header/login-header.component';
 import { LoginPageComponent } from './login/login-page/login-page.component';
+import { ESignatureProvider } from './providers/electronic-signature/eSignature.prov';
 registerLocaleData(localeEs);
 import { getSpanishPaginatorIntl } from 'src/app/services/shared/mat-paginator-labels';
 import { MatPaginatorIntl } from '@angular/material/paginator';
@@ -98,6 +99,7 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
     EmployeeProvider,
     UserProvider,
     PositionProvider,
+    ESignatureProvider,
     EnglishStudentProvider,
 
     // Services

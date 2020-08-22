@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
 import * as crypto from "crypto-js";
@@ -12,7 +12,12 @@ import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { FirebaseService } from 'src/app/services/graduation/firebase.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2';
+import { ICareer } from 'src/app/entities/app/career.model';
+import { CareerProvider } from 'src/app/providers/shared/career.prov';
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -23,24 +28,7 @@ require('jspdf-autotable');
   styleUrls: ['./list-graduates-page.component.scss']
 })
 export class ListGraduatesPageComponent implements OnInit {
-  public searchText: string;
-  public searchTextDocumentation: string;
-
-  // Variables para filtrar alumnos y generar reporte
-  public searchSurvey = '';
-  public searchCarreer = '';
-  public searchCarreerDocumentation = '';
-  public searchStatusDocumentation = '';
-
-  public searchSRC = false;
-  public searchSVC = false;
-  public searchSAC = false;
-  public searchSMC = false;
-
-  public searchSR = '';
-  public searchSV = '';
-  public searchSA = '';
-  public searchSM = '';
+  
 
   public showTotal = true;
 
@@ -82,13 +70,6 @@ export class ListGraduatesPageComponent implements OnInit {
 
   public role: string;
   public no = 0;
-  page = 1;
-  pag;
-  pageSize = 10;
-
-  page2 = 1;
-  pag2;
-  pageSize2 = 10;
 
   collection = null;
   public status = 0;
@@ -110,6 +91,57 @@ export class ListGraduatesPageComponent implements OnInit {
   guests = [];
   phoneStudent = null;
 
+  displayedColumns: string[] = ['nc', 'name', 'carreer', 'numInvitados','status','actions'];
+  dataSource: MatTableDataSource<any>;
+  displayedColumnsDoc: string[] = ['nc', 'name', 'carreer','status','actions'];
+  dataSourceDoc: MatTableDataSource<any>;
+  
+  @ViewChild('paginator1') set paginator(paginator: MatPaginator){
+    this.dataSource.paginator = paginator;    
+  };
+  @ViewChild(MatSort) set sort(sort: MatSort){
+    this.dataSource.sort = sort;
+    this.dataSourceDoc.sort = sort;  
+  };
+  @ViewChild('paginator2') set paginator2(paginator: MatPaginator){    
+    this.dataSourceDoc.paginator = paginator;
+  };
+
+  careers: Array<ICareer>;
+  filters = { //variable para controlar los filtros que estan activos del evento
+    career:{
+      status:false,
+      value:''
+    },
+    checkR: false,
+    checkV: false,
+    checkA: false,
+    checkM: false,    
+    survey:{
+      answered:false,      
+      all:true      
+    },    
+    textSearch:{
+      status:false,
+      value:''
+    }
+  };
+  filteredCareer: string;
+  filtersDoc = { //variable para controlar los filtros que estan activos del evento
+    career:{
+      status:false,
+      value:''
+    },   
+    status:{
+      value:'',
+      all:true      
+    },    
+    textSearch:{
+      status:false,
+      value:''
+    }
+  };
+  filteredCareerDoc: string;
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
@@ -119,6 +151,7 @@ export class ListGraduatesPageComponent implements OnInit {
     private imageToBase64Serv: ImageToBase64Service,
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
+    private careerProv: CareerProvider
   ) {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
@@ -126,6 +159,60 @@ export class ListGraduatesPageComponent implements OnInit {
       rol !== 9 && rol !== 20) {
       this.router.navigate(['/']);
     }
+    this.init();
+    
+  }
+
+  ngOnInit() {
+    switch (this.cookiesService.getData().user.role) {
+      case 0:
+        this.role = 'administration';
+        break;
+      case 1:
+        this.role = 'secretary';
+        break;
+      case 2:
+        this.role = 'student';
+        break;
+      case 3:
+        this.role = 'employee';
+        break;
+      case 4:
+        this.role = 'rechumanos';
+        break;
+      case 5:
+        this.role = 'comunication';
+        break;
+      case 6:
+        this.role = 'coordinator';
+        break;
+      case 9:
+        this.role = 'recfinancieros';
+        break;
+      case 20:
+        this.role = 'asistenciaInvitados';
+        break;
+    }
+    this.getCareers();
+    this.readEmail();
+
+    // Convertir imágenes a base 64 para los reportes
+    this.imageToBase64Serv.getBase64('assets/imgs/logoTecNM.png').then(res1 => {
+      this.logoTecNM = res1;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
+      this.logoSep = res2;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
+      this.logoTecTepic = res3;
+    });
+    this.imageToBase64Serv.getBase64('assets/imgs/firms/director.png').then(res4 => {
+      this.firmaDirector = res4;
+    });
+  }
+  init(){
+    this.dataSource = new MatTableDataSource();
+    this.dataSourceDoc = new MatTableDataSource();
     this.collection = this.router.url.split('/')[3];
     const sub = this.firestoreService.getEvent(this.collection).subscribe(
       ev => {
@@ -160,54 +247,6 @@ export class ListGraduatesPageComponent implements OnInit {
       }
     );
   }
-
-  ngOnInit() {
-    switch (this.cookiesService.getData().user.role) {
-      case 0:
-        this.role = 'administration';
-        break;
-      case 1:
-        this.role = 'secretary';
-        break;
-      case 2:
-        this.role = 'student';
-        break;
-      case 3:
-        this.role = 'employee';
-        break;
-      case 4:
-        this.role = 'rechumanos';
-        break;
-      case 5:
-        this.role = 'comunication';
-        break;
-      case 6:
-        this.role = 'coordinator';
-        break;
-      case 9:
-        this.role = 'recfinancieros';
-        break;
-      case 20:
-        this.role = 'asistenciaInvitados';
-        break;
-    }
-    this.readEmail();
-
-    // Convertir imágenes a base 64 para los reportes
-    this.imageToBase64Serv.getBase64('assets/imgs/logoTecNM.png').then(res1 => {
-      this.logoTecNM = res1;
-    });
-    this.imageToBase64Serv.getBase64('assets/imgs/logoEducacionSEP.png').then(res2 => {
-      this.logoSep = res2;
-    });
-    this.imageToBase64Serv.getBase64('assets/imgs/logoITTepic.png').then(res3 => {
-      this.logoTecTepic = res3;
-    });
-    this.imageToBase64Serv.getBase64('assets/imgs/firms/director.png').then(res4 => {
-      this.firmaDirector = res4;
-    });
-  }
-
   getFonts() {
     this.imageToBase64Serv.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
       this.montserratNormal = base64.toString().split(',')[1];
@@ -219,7 +258,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   readEmail() {
-    this.firestoreService.getGraduates(this.collection).subscribe(async (alumnosSnapshot) => {
+    this.firestoreService.getGraduates(this.collection).subscribe((alumnosSnapshot) => {
       this.alumnos = alumnosSnapshot.map((alumno) => {
         return {
           id: alumno.payload.doc.id,
@@ -251,13 +290,16 @@ export class ListGraduatesPageComponent implements OnInit {
       });
 
       this.alumnosReport = this.alumnos;
-      this.totalAlumnos = this.alumnosReport.length;
-      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
-      this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation, '');
-      this.alumnosConstanciaRegistrados = this.filterItemsVerified(this.searchCarreerDocumentation, 'Registrado');
-      this.alumnosConstanciaVerificados = this.filterItemsVerifiedForward(this.searchCarreerDocumentation);
+      this.dataSource = new MatTableDataSource(this.alumnosReport);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;       
+      this.applyFilters();
+      this.totalAlumnos = this.alumnosReport.length;      
       this.alumnosReportDocumentation = this.alumnos;
-      this.eventFilterReport();
+      this.dataSourceDoc = new MatTableDataSource(this.alumnosReportDocumentation);
+      this.dataSourceDoc.paginator = this.paginator2;
+      this.dataSourceDoc.sort = this.sort;
+      this.applyFiltersDoc();
       // Contar total de alumnos
       this.totalEgresados = this.alumnos.length;
       this.totalEgresadosH = this.alumnos.filter(st => st.genero === 'M').length;
@@ -282,7 +324,7 @@ export class ListGraduatesPageComponent implements OnInit {
   // Cambias estatus a Registrado
   removePaidEvent(item) {
     this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Registrado'}, this.collection).then(() => {
-      this.eventFilterReport();
+      
       this.notificationsServices.showNotification(0, 'Pago removido para:', item.nc);
     });
   }
@@ -290,7 +332,7 @@ export class ListGraduatesPageComponent implements OnInit {
   // Cambias estatus a Asistió
   asistenceEvent(item) {
     this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Asistió'}, this.collection).then(() => {
-      this.eventFilterReport();
+      
       this.notificationsServices.showNotification(0, 'Asistencia registrada para:', item.nc);
     });
   }
@@ -304,7 +346,7 @@ export class ListGraduatesPageComponent implements OnInit {
     this.firestoreService
       .updateFieldGraduate(item.id, {estatus: 'Verificado', numInvitados: this.boletosXAlumno, invitados}, this.collection)
       .then(() => {
-        this.eventFilterReport();
+        
         this.notificationsServices.showNotification(0, 'Verificación registrada para:', item.nc);
       });
   }
@@ -479,107 +521,28 @@ export class ListGraduatesPageComponent implements OnInit {
         await this.sendOneMail(student);
       }
     });
-  }
-
-  // Obetener Valor del checkbox de Estatus
-  eventFilterReport() {
-    if (this.searchSRC) {
-      this.searchSR = 'Registrado';
-    } else {
-      this.searchSR = '~';
-    }
-    if (this.searchSVC) {
-      this.searchSV = 'Verificado';
-    } else {
-      this.searchSV = '~';
-    }
-    if (this.searchSAC) {
-      this.searchSA = 'Asistió';
-    } else {
-      this.searchSA = '~';
-    }
-    if (this.searchSMC) {
-      this.searchSM = 'Mencionado';
-    } else {
-      this.searchSM = '~';
-    }
-    this.alumnosReport = this.filterItems(
-      this.searchCarreer,
-      this.searchSR,
-      this.searchSV,
-      this.searchSA,
-      this.searchSM
-    );
-
-    const cantidadStatus = this.filterItems(
-      this.searchCarreer,
-      this.searchSR,
-      this.searchSV,
-      this.searchSA,
-      this.searchSM
-    ).length;
-
-    const cantidadCarrera = this.filterItemsCarreer(this.searchCarreer).length;
-
-    if (cantidadStatus === 0) {
-      if (this.searchSRC || this.searchSVC || this.searchSAC || this.searchSMC) {
-        this.totalAlumnos = 0;
-      } else {
-        this.totalAlumnos = cantidadCarrera;
-      }
-    } else {
-      if (this.searchSRC || this.searchSVC || this.searchSAC || this.searchSMC) {
-        this.totalAlumnos = cantidadStatus;
-      } else {
-        this.totalAlumnos = cantidadCarrera;
-      }
-    }
-
-    if (Object.keys(this.alumnosReport).length === 0) {
-      if (!this.searchSRC && !this.searchSVC && !this.searchSAC && !this.searchSMC) {
-        this.alumnosReport = this.alumnos;
-      }
-    }
-    this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
-  }
+  }  
 
   eventFilterReportDocumentation() {
-    this.alumnosConstancia = this.filterItemsVerified(this.searchCarreerDocumentation, '');
-    this.alumnosConstanciaRegistrados = this.filterItemsVerified(this.searchCarreerDocumentation, 'Registrado');
-    this.alumnosConstanciaVerificados = this.filterItemsVerifiedForward(this.searchCarreerDocumentation);
-  }
-
-  // FILTRADO POR CARRERA O ESTATUS
-  filterItems(carreer, sR, sV, sA, sM) {
-    return this.alumnos.filter(function (alumno) {
-      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 && (
-        alumno.status.toLowerCase().indexOf(sR.toLowerCase()) > -1 ||
-        alumno.status.toLowerCase().indexOf(sV.toLowerCase()) > -1 ||
-        alumno.status.toLowerCase().indexOf(sA.toLowerCase()) > -1 ||
-        alumno.status.toLowerCase().indexOf(sM.toLowerCase()) > -1);
-    });
-  }
-
-  filterItemsCarreer(carreer) {
-    return this.alumnos.filter(function (alumno) {
-      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1;
-    });
+    this.alumnosConstancia = this.filterItemsVerified(this.filteredCareerDoc, '');
+    this.alumnosConstanciaRegistrados = this.filterItemsVerified(this.filteredCareerDoc, 'Registrado');
+    this.alumnosConstanciaVerificados = this.filterItemsVerifiedForward(this.filteredCareerDoc);
   }
 
   filterItemsVerified(carreer, status) {
     return this.alumnos.filter(function (alumno) {
-      return alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1 &&
+      return alumno.carreer.toLowerCase().indexOf(carreer) > -1 &&
         alumno.status.toLowerCase().indexOf(status.toLowerCase()) > -1;
     });
   }
 
   filterItemsVerifiedForward(carreer) {
     return this.alumnos.filter(function (alumno) {
-      return (alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1
+      return (alumno.carreer.toLowerCase().indexOf(carreer) > -1
         && alumno.status.toLowerCase().indexOf('Verificado'.toLowerCase()) > -1)
-        || (alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1
+        || (alumno.carreer.toLowerCase().indexOf(carreer) > -1
          && alumno.status.toLowerCase().indexOf('Asistió'.toLowerCase()) > -1)
-        || (alumno.carreer.toLowerCase().indexOf(carreer.toLowerCase()) > -1
+        || (alumno.carreer.toLowerCase().indexOf(carreer) > -1
         && alumno.status.toLowerCase().indexOf('Mencionado'.toLowerCase()) > -1);
     });
   }
@@ -611,7 +574,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.addImage(this.logoSep, 'PNG', 36, 5, 110, 27); // Logo SEP
     doc.addImage(this.logoTecNM, 'PNG', pageWidth - 120, 2, 82, 35); // Logo TecNM
 
-    let header = 'Reporte Alumnos Graduados ' + this.searchCarreer;
+    let header = 'Reporte Alumnos Graduados ' + this.filteredCareer;
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(15);
     doc.setFontStyle('bold');
@@ -683,7 +646,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
     window.open(doc.output('bloburl'), '_blank');
     this.loadingService.setLoading(false);
-    // doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
+    // doc.save("Reporte Graduacion "+this.filteredCareer+".pdf");
   }
 
   // Exportar alumnos a excel
@@ -701,7 +664,7 @@ export class ListGraduatesPageComponent implements OnInit {
   generateBallotPaper() {
     if (this.alumnosBallotPaper.length !== 0) {
       // Obtener alumnos cuyo estatus sea 'Verificado' && Carrera = al filtro seleccionado
-      this.alumnosBallotPaper = this.filterItemsVerified(this.searchCarreer, 'Verificado');
+      this.alumnosBallotPaper = this.filterItemsVerified(this.filteredCareer, 'Verificado');
 
       // Dividir total de alumnos verificados en segmentos de 4
       let divAlumnosBallotPaper = [];
@@ -823,7 +786,7 @@ export class ListGraduatesPageComponent implements OnInit {
       window.open(doc.output('bloburl'), '_blank'); // Abrir el pdf en una nueva ventana
     } else {
       this.notificationsServices
-        .showNotification(2, 'Atención', 'No hay alumnos en estatus Verificado de la carrera ' + this.searchCarreer);
+        .showNotification(2, 'Atención', 'No hay alumnos en estatus Verificado de la carrera ' + this.filteredCareer.toLocaleUpperCase());
     }
   }
 
@@ -872,7 +835,7 @@ export class ListGraduatesPageComponent implements OnInit {
   // Asignar titulo
   degreeEvent(item) {
     this.firestoreService.updateFieldGraduate(item.id, {degree: true}, this.collection).then(() => {
-      this.eventFilterReport();
+      
       Swal.fire('Título Asignado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
       console.log(error);
@@ -882,7 +845,7 @@ export class ListGraduatesPageComponent implements OnInit {
   // Remover titulo
   degreeRemoveEvent(item) {
     this.firestoreService.updateFieldGraduate(item.id, {degree: false}, this.collection).then(() => {
-      this.eventFilterReport();
+      
       Swal.fire('Título Removido', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
       console.log(error);
@@ -942,30 +905,13 @@ export class ListGraduatesPageComponent implements OnInit {
   // Guardar observaciones
   saveObservations(item, newObservations) {
     this.firestoreService.updateFieldGraduate(item.id, {observations: newObservations}, this.collection).then(() => {
-      this.eventFilterReport();
+      
       Swal.fire('Observaciones Guardadas', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
       console.log(error);
     });
   }
 
-  pageChanged(ev) {
-    this.page = ev;
-  }
-
-  pageChanged2(ev) {
-    this.page2 = ev;
-  }
-
-  eventFilter(item) {
-    if (item !== '') {
-      this.showTotal = false;
-      const total = this.getNumberFilterItems(item).length;
-      this.totalAlumnosFilter = total;
-    } else {
-      this.showTotal = true;
-    }
-  }
 
   getNumberFilterItems(item) {
     return this.alumnos.filter(function (alumno) {
@@ -1001,7 +947,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   asignBestAverage(item, average) {
     this.firestoreService.updateFieldGraduate(item.id, {mejorPromedio: true, promedio: average}, this.collection).then(() => {
-      this.eventFilterReport();
+      
       Swal.fire('Promedio Asignado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
       console.log(error);
@@ -1084,7 +1030,7 @@ export class ListGraduatesPageComponent implements OnInit {
       this.loadingService.setLoading(false);
       window.open(doc.output('bloburl'), '_blank');
     }, 500);
-    // doc.save("Reporte Graduacion "+this.searchCarreer+".pdf");
+    // doc.save("Reporte Graduacion "+this.filteredCareer+".pdf");
   }
 
   // ordenar los alumnos con mejor promedio por la posicion de la carrera
@@ -1127,7 +1073,7 @@ export class ListGraduatesPageComponent implements OnInit {
   confirmReturnStatusCarreerA() {
     Swal.fire({
       title: 'Regresar Estatus \n Mencionado → Asistió',
-      text: 'Para ' + this.searchCarreer,
+      text: 'Para ' + this.filteredCareer.toUpperCase(),
       type: 'question',
       showCancelButton: true,
       allowOutsideClick: false,
@@ -1146,7 +1092,7 @@ export class ListGraduatesPageComponent implements OnInit {
   asistenceEventCarreer() {
     let changeStatus = false;
     this.alumnos.forEach(async student => {
-      if (student.carreer === this.searchCarreer) {
+      if (student.carreer.toLowerCase() === this.filteredCareer) {
         if (student.status === 'Mencionado') {
           changeStatus = true;
           await this.returnAsistenceEvent(student);
@@ -1157,7 +1103,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   returnAsistenceEvent(item) {
     this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Asistió'}, this.collection).then(() => {
-      this.eventFilterReport();
+      
     }, (error) => {
       console.log(error);
     });
@@ -1215,7 +1161,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   saveEmail(item, newEmail) {
     this.firestoreService.updateFieldGraduate(item.id, {correo: newEmail}, this.collection).then(() => {
-      this.eventFilterReport();
+      
       Swal.fire('Correo Actualizado', 'Para: ' + item.nameLastName, 'success');
     }, (error) => {
       console.log(error);
@@ -1261,7 +1207,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   returnVerifiedEvent(item) {
     this.firestoreService.updateFieldGraduate(item.id, {estatus: 'Verificado'}, this.collection).then(() => {
-      this.eventFilterReport();
+      
     }, (error) => {
       console.log(error);
     });
@@ -1269,7 +1215,7 @@ export class ListGraduatesPageComponent implements OnInit {
   returnRegisterEvent(item) {
     this.firestoreService
       .updateFieldGraduate(item.id, {estatus: 'Registrado', invitados: [], numInvitados: 0}, this.collection).then(() => {
-      this.eventFilterReport();
+      
     }, (error) => {
       console.log(error);
     });
@@ -1279,7 +1225,7 @@ export class ListGraduatesPageComponent implements OnInit {
   confirmReturnStatusCarreerV() {
     Swal.fire({
       title: 'Regresar Estatus \n Asistió → Verificado',
-      text: 'Para ' + this.searchCarreer,
+      text: 'Para ' + this.filteredCareer.toUpperCase(),
       type: 'question',
       showCancelButton: true,
       allowOutsideClick: false,
@@ -1296,7 +1242,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   verifiedEventCarreer() {
     this.alumnos.forEach(async student => {
-      if (student.carreer === this.searchCarreer) {
+      if (student.carreer.toLowerCase() === this.filteredCareer) {
         if (student.status === 'Asistió') {
           await this.returnVerifiedEvent(student);
         }
@@ -1691,10 +1637,6 @@ export class ListGraduatesPageComponent implements OnInit {
       invitados.pop();
       this.firestoreService.updateFieldGraduate(item.id, {numInvitados: (item.numInvitados - 1), invitados}, this.collection);
     }
-  }
-
-  assignTicketsStudent() {
-
   }
 
   sendNotification(title: string, body: string, nc: string) {
@@ -2177,6 +2119,185 @@ export class ListGraduatesPageComponent implements OnInit {
           this.notificationsServices.showNotification(eNotificationType.INFORMATION,'No tiene número registrado','');
         }
       }
+    );
+  }
+  filter(type: string, event: Event){ //funcion para controlar los filtros activos
+    const filterValue: string = (event.target as HTMLInputElement).value.trim().toLowerCase();  
+    
+    switch(type){
+      case 'career':{ //filtrar por carrera
+        if(filterValue == 'default'){          
+          this.filters.career.status = false;
+          this.filters.career.value = '';
+          this.filteredCareer = '';
+        }else{
+          this.filters.career.status = true;
+          this.filters.career.value = filterValue;  
+          this.filteredCareer = filterValue;        
+        }        
+        break;
+      }
+      case 'surveys':{ //quienes ya contestaron o no la encuesta
+        if(filterValue == 'default'){
+          this.filters.survey.all = true;          
+        }else{
+          this.filters.survey.all = false;
+          if(filterValue == 'false'){
+            this.filters.survey.answered = false;
+          }else{
+            this.filters.survey.answered = true;
+          }
+        }
+        break;
+      }    
+      case 'check':{ //checkbox con los estatus     
+        
+        switch(filterValue){
+          case 'registrado':{ //cambiamos el estado del filtro para los checks
+            this.filters.checkR = !this.filters.checkR;
+            break;
+          }
+          case 'verificado':{
+            this.filters.checkV = !this.filters.checkV;
+            break;
+          }
+          case 'asistió':{
+            this.filters.checkA = !this.filters.checkA;
+            break;
+          }
+          case 'mencionado':{
+            this.filters.checkM = !this.filters.checkM;
+            break;
+          }          
+        }
+        console.log(this.filters);        
+        break;
+      }      
+      case 'search':{ //para el cuadro de texto
+        if(filterValue !== ''){
+          this.filters.textSearch.status = true;
+          this.filters.textSearch.value = filterValue;
+        }else{
+          this.filters.textSearch.status = false;
+          this.filters.textSearch.value = '';
+        }        
+        break;
+      }
+      
+    }
+    this.applyFilters();
+    
+  }
+  applyFilters(){ //funcion para aplicar filtros activos
+    this.dataSource.data = this.alumnosReport;
+    
+    if(this.filters.career.status){
+      this.dataSource.data = this.dataSource.data.filter(st=>st.carreer.toLowerCase() == this.filters.career.value);
+    }
+    if(this.filters.textSearch.status){
+      this.dataSource.filter = this.filters.textSearch.value;
+    }
+    if(!this.filters.survey.all){ //si no se quieren ver todos
+      if(this.filters.survey.answered){ //solo encuestas contestadas
+        this.dataSource.data = this.dataSource.data.filter( (st:any)=>st.survey);
+      }else{
+        this.dataSource.data = this.dataSource.data.filter( (st:any)=>!st.survey);
+      }
+    }    
+    let tmpA=[],tmpR=[],tmpM=[],tmpV=[]; //variables temporales para guardar los alumnos por su estatus
+    let filterStatusFlag = false; //variable para ver si al menos se filtro por un estatus
+    if(this.filters.checkA){ //filtrar por status
+      tmpA = this.dataSource.data.filter((st)=>st.status.toLowerCase() == 'asistió'); 
+      filterStatusFlag = true;           
+    }
+    if(this.filters.checkR){
+      tmpR = this.dataSource.data.filter((st)=>st.status.toLowerCase() == 'registrado');  
+      filterStatusFlag = true;               
+    }
+    if(this.filters.checkM){
+      tmpM = this.dataSource.data.filter((st)=>st.status.toLowerCase() == 'mencionado');
+      filterStatusFlag = true;           
+    }
+    if(this.filters.checkV){
+      tmpV = this.dataSource.data.filter((st)=>st.status.toLowerCase() == 'verificado'); 
+      filterStatusFlag = true;                
+    }    
+    //se unen todos los arrays temporales para hacer un 'OR' de los status
+    let tmpData = [].concat(tmpR,tmpV);    
+    tmpData = tmpData.concat(tmpA);
+    tmpData = tmpData.concat(tmpM);    
+    tmpData.sort(function (a, b) { //ordenar por apellidos
+      return a.nameLastName.localeCompare(b.nameLastName);
+    });
+    if(filterStatusFlag){ //si hay filtro por estatus
+      this.dataSource.data = tmpData;
+    }
+    this.alumnosBallotPaper = this.filterItemsVerified(this.filteredCareer, 'Verificado');
+  }
+  filterDoc(type: string, event: Event){ //funcion para controlar los filtros activos
+    const filterValue: string = (event.target as HTMLInputElement).value.trim().toLowerCase();  
+    
+    switch(type){
+      case 'career':{ //filtrar por carrera
+        if(filterValue == 'default'){          
+          this.filtersDoc.career.status = false;
+          this.filtersDoc.career.value = '';
+          this.filteredCareerDoc = '';
+        }else{
+          this.filtersDoc.career.status = true;
+          this.filtersDoc.career.value = filterValue;  
+          this.filteredCareerDoc = filterValue;        
+        }        
+        break;
+      }
+      case 'status':{ // filtrar por estatus de la documentacion       
+        if(filterValue == 'default'){
+          this.filtersDoc.status.all = true;   
+          this.filtersDoc.status.value = '';       
+        }else{
+          this.filtersDoc.status.all = false;
+          this.filtersDoc.status.value = filterValue;                   
+        }
+        break;
+      }               
+      case 'search':{ //para el cuadro de texto
+        if(filterValue !== ''){
+          this.filtersDoc.textSearch.status = true;
+          this.filtersDoc.textSearch.value = filterValue;
+        }else{
+          this.filtersDoc.textSearch.status = false;
+          this.filtersDoc.textSearch.value = '';
+        }        
+        break;
+      }
+      
+    }
+    this.applyFiltersDoc();
+    
+  }
+  applyFiltersDoc(){ //funcion para aplicar filtros activos
+    this.dataSourceDoc.data = this.alumnosReportDocumentation;
+    
+    if(this.filtersDoc.career.status){
+      this.dataSourceDoc.data = this.dataSourceDoc.data.filter(st=>st.carreer.toLowerCase() == this.filtersDoc.career.value);
+    }
+    if(this.filtersDoc.textSearch.status){
+      this.dataSourceDoc.filter = this.filtersDoc.textSearch.value;
+    }
+    if(!this.filtersDoc.status.all){ //si no se quieren ver todos
+      this.dataSourceDoc.data = this.dataSourceDoc.data.filter( (st:any)=>st.documentationStatus.toLowerCase() == this.filtersDoc.status.value);
+      
+    }
+    this.eventFilterReportDocumentation();
+  }
+  getCareers(){
+    this.careerProv.getAllCareers().subscribe(
+      (res)=>{       
+        
+        this.careers = res.careers;        
+      },
+      err=>console.warn(err)
+      
     );
   }
 }

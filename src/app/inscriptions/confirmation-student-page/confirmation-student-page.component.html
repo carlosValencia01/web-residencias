@@ -7,12 +7,11 @@
       <table>
         <td>
           <mat-card class="cardData" (click)="onView('Solicitud')" style="cursor: pointer; height: 227px;"
-            ngbTooltip="Descargar Solicitud" tooltipClass="my-custom-class">
+            ngbTooltip="Visualizar Solicitud" tooltipClass="my-custom-class">
             <mat-card-header>
               <h4>Solicitud de Inscripción</h4>
             </mat-card-header>
-            <mat-card-content>
-              <p>Contiene la información general, dirección y datos académicos del estudiante.</p>
+            <mat-card-content>              
               <div>
                 <div class="text-center">
                   <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
@@ -23,12 +22,11 @@
         </td>
         <td>
           <mat-card class="cardData" (click)="onView('Contrato')" style="cursor: pointer; height: 227px;"
-            ngbTooltip="Descargar Contrato" tooltipClass="my-custom-class">
+            ngbTooltip="Visualizar Contrato" tooltipClass="my-custom-class">
             <mat-card-header>
               <h4>Contrato con el Estudiante</h4>
             </mat-card-header>
-            <mat-card-content>
-              <p>Debe ser impreso y entregar firmado al momento de la inscripción.</p>
+            <mat-card-content>              
               <div>
                 <div class="text-center">
                   <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
@@ -38,13 +36,12 @@
           </mat-card>
         </td>
         <td>
-          <mat-card class="cardData" (click)="onView('Acuse')" style="cursor: pointer; height: 227px;" ngbTooltip="Descargar Acuse"
+          <mat-card class="cardData" (click)="onView('Acuse')" style="cursor: pointer; height: 227px;" ngbTooltip="Visualizar Acuse"
             tooltipClass="my-custom-class">
             <mat-card-header>
               <h4>Acuse de Documentos</h4>
             </mat-card-header>
-            <mat-card-content>
-              <p>El acuse contiene la lista de los documentos a entregar.</p>
+            <mat-card-content>              
               <div>
                 <div class="text-center">
                   <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
@@ -56,7 +53,7 @@
       </table>
       <div class="row justify-content-center mt-3">
         <div>
-          <button type="submit" (click)="mostrarAdvertencia()" class="btn btn-success">Terminar</button>
+          <button type="submit" (click)="mostrarAdvertencia()" class="btn btn-success">Firmar Documentación</button>
         </div>
       </div>
     </div>

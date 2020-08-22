@@ -15,10 +15,13 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
-import { FilterPipe } from 'src/app/graduation/list-graduates-page/filter.pipe';
 import { FirebaseService } from 'src/app/services/graduation/firebase.service';
 import { environment } from 'src/environments/environment';
 import { CommonsModule } from '../commons/commons.module';
@@ -39,7 +42,7 @@ import { SurveyListPageComponent } from './survey-list-page/survey-list-page.com
 import { SurveyPageComponent } from './survey-page/survey-page.component';
 import { SurveyQuestionsPageComponent } from './survey-questions-page/survey-questions-page.component';
 import { SurveyRegisterPageComponent } from './survey-register-page/survey-register-page.component';
-
+import { CareerProvider } from '../providers/shared/career.prov';
 @NgModule({
   imports: [
     CommonsModule,
@@ -62,6 +65,10 @@ import { SurveyRegisterPageComponent } from './survey-register-page/survey-regis
     MatDialogModule,
     MatNativeDateModule,
     MatInputModule,
+    MatBadgeModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule
   ],
   declarations: [
     SurveyListPageComponent,
@@ -76,7 +83,7 @@ import { SurveyRegisterPageComponent } from './survey-register-page/survey-regis
     SurveyGraduatesPageComponent,
     SurveyQuestionsPageComponent,
     NewGraduationEventComponent,
-    FilterPipe,
+    
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -87,6 +94,7 @@ import { SurveyRegisterPageComponent } from './survey-register-page/survey-regis
     GraduationProvider,
     ImageToBase64Service,
     StudentProvider,
+    CareerProvider,
   ],
   entryComponents: [
     NewGraduationEventComponent,
