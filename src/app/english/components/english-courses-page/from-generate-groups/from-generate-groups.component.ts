@@ -4,14 +4,17 @@ import { FormBuilder, FormGroup, Validators, ValidatorFn, ValidationErrors } fro
 import * as Papa from 'papaparse';
 import Swal from 'sweetalert2';
 
-//Importar Servicios
+// Importar Servicios
 import { LoadingService } from 'src/app/services/app/loading.service';
 
-//Importar Proveedores
+// Importar Proveedores
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 
-//Importar Enumeradores
-import { DaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
+// Importar Enumeradores
+import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
+
+// Importar modelos
+import { ICourse } from '../../../entities/course.model';
 
 @Component({
   selector: 'app-from-generate-groups',
@@ -22,16 +25,16 @@ export class FromGenerateGroupsComponent implements OnInit {
 
   groupsFormGroup: FormGroup;
 
-  englishCourses: any; //Cursos de ingles activos
+  englishCourses: ICourse[]; //Cursos de ingles activos
 
   minCapacityStudents = 1;
   maxCapacityStudents = 50;
 
-  dayschedule = DaysSchedule; //Enumerador de los dias de la semana
+  dayschedule = EDaysSchedule; //Enumerador de los dias de la semana
   showTableCSV = false;
   showTableHours = false;
 
-  weekdays = [1,2,3,4,5,6]; //Dias de la semana
+  weekdays = [1, 2, 3, 4, 5, 6]; //Dias de la semana
 
   hourStart = "07:00"; //Tiempo de inicio
   hourEnd = "21:00"; //Tiempo de finalización
@@ -43,7 +46,8 @@ export class FromGenerateGroupsComponent implements OnInit {
     private loadingService: LoadingService,
     private englishCourseProv: EnglishCourseProvider,
     public dialogRef: MatDialogRef<FromGenerateGroupsComponent>,
-    private _formBuilder: FormBuilder) { }
+    private _formBuilder: FormBuilder,
+  ) { }
 
   ngOnInit() {
     this.groupsFormGroup = this._formBuilder.group(
@@ -58,11 +62,11 @@ export class FromGenerateGroupsComponent implements OnInit {
       }
     );
 
-    this.groupsFormGroup.get('courseCtrl').valueChanges.subscribe(course =>{
+    this.groupsFormGroup.get('courseCtrl').valueChanges.subscribe(course => {
       this.groupsFormGroup.get('scheduleCtrl').setValue('');
     });
 
-    this.groupsFormGroup.get('scheduleCtrl').valueChanges.subscribe(option =>{
+    this.groupsFormGroup.get('scheduleCtrl').valueChanges.subscribe(option => {
       this.dataSchedule = [];
       switch (option) {
         case '1':
@@ -78,22 +82,21 @@ export class FromGenerateGroupsComponent implements OnInit {
 
   }
 
-  createDataHours(){ //Genera las Horas en segmentos
+  createDataHours() { //Genera las Horas en segmentos
 
     this.dataHours = [];
     const start = this.getMinutes(this.hourStart); //Convierte la hora de inicio en minutos
     let end = this.getMinutes(this.hourEnd); //Convierte la hora de fin en minutos
-    end -= (this.groupsFormGroup.get('courseCtrl').value.dailyHours*60); //Se resta el tiempo que dura el curso al día
+    end -= (this.groupsFormGroup.get('courseCtrl').value.dailyHours * 60); //Se resta el tiempo que dura el curso al día
     for (let hour = start; hour <= end; hour = hour + this.segment) { //Recorrer de inicio a fin incrementando por segmentos
       this.dataHours.push(this.getHour(hour)); //Guardar el segmento de hora
     }
-    console.log(this.dataHours); //Imprimir en consola todos los seegmentos
   }
 
-  generateSchedule(){ //Genera el arreglo en el que se guardaran los valores seleccionados
+  generateSchedule() { //Genera el arreglo en el que se guardaran los valores seleccionados
     this.dataSchedule = [];
     this.dataHours.forEach(a => { //Recorre cada una de las horas
-      let week=[]; //define arreglo de dias de la semana
+      let week = []; //define arreglo de dias de la semana
       this.weekdays.forEach(b => { //Recorre cada dia de la semana
         week.push(""); //Agrega valor al dia
       });
@@ -101,34 +104,34 @@ export class FromGenerateGroupsComponent implements OnInit {
     });
   }
 
-  selectHour(hour){ //Seleccionar hora de la Tabla
+  selectHour(hour) { //Seleccionar hora de la Tabla
     //Si todos los campos estan vacios
-    if(this.dataSchedule[hour][0]=="" && this.dataSchedule[hour][1]=="" && this.dataSchedule[hour][2]=="" &&
-       this.dataSchedule[hour][3]=="" && this.dataSchedule[hour][4]=="" && this.dataSchedule[hour][5]==""){
-         for (let i = 0; i < 5; i++) {//De Lunes a Viernes
-          this.dataSchedule[hour][i] = this.dataHours[hour]; //Asignar la hora seleccionada
-         }
-       }else{//Si no
-        for (let i = 0; i < 6; i++) { //De lunes a Sabado
-          this.dataSchedule[hour][i] = ""; //Dejar de seleccionar esos dias
-         }
-       }
+    if (this.dataSchedule[hour][0] == "" && this.dataSchedule[hour][1] == "" && this.dataSchedule[hour][2] == "" &&
+      this.dataSchedule[hour][3] == "" && this.dataSchedule[hour][4] == "" && this.dataSchedule[hour][5] == "") {
+      for (let i = 0; i < 5; i++) {//De Lunes a Viernes
+        this.dataSchedule[hour][i] = this.dataHours[hour]; //Asignar la hora seleccionada
+      }
+    } else {//Si no
+      for (let i = 0; i < 6; i++) { //De lunes a Sabado
+        this.dataSchedule[hour][i] = ""; //Dejar de seleccionar esos dias
+      }
+    }
   }
 
-   MinCapacityLessThanMaxCapacity: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
+  MinCapacityLessThanMaxCapacity: ValidatorFn = (control: FormGroup): ValidationErrors | null => {
     const minCapacity = control.get("minCapacityCtrl");
     const maxCapacity = control.get("maxCapacityCtrl");
-  
+
     return minCapacity.value < maxCapacity.value ? null : { maxCapacityLess: true };
   }
 
-  createEnglishCourses(){ //Obtener los cursos activos para mostrar
+  createEnglishCourses() { //Obtener los cursos activos para mostrar
     this.loadingService.setLoading(true);
     this.englishCourseProv.getAllEnglishCourseActive().subscribe(res => { //Obtener los cursos de la API
 
       this.englishCourses = res.englishCourses; //Guardar los cursos activos
 
-    },error => {
+    }, error => {
 
     }, () => this.loadingService.setLoading(false));
   }
@@ -137,7 +140,7 @@ export class FromGenerateGroupsComponent implements OnInit {
     this.dataSchedule = [];
     this.showTableCSV = false;
     if (event.target.files && event.target.files[0]) {
-      
+
       Papa.parse(event.target.files[0], {
         complete: async results => {
           if (results.data.length > 0) {
@@ -159,22 +162,22 @@ export class FromGenerateGroupsComponent implements OnInit {
                       startHour: null,
                       endDate: null,
                     }
-                    if(element[j]!=""){
-                      if(this.getMinutes(element[j])>=this.getMinutes(this.hourStart) &&
-                        this.getMinutes(element[j])+(dailyHours*60)<=this.getMinutes(this.hourEnd)){
+                    if (element[j] != "") {
+                      if (this.getMinutes(element[j]) >= this.getMinutes(this.hourStart) &&
+                        this.getMinutes(element[j]) + (dailyHours * 60) <= this.getMinutes(this.hourEnd)) {
 
-                          hour.active = true,
+                        hour.active = true,
                           hour.startHour = this.getMinutes(element[j]);
-                          hour.endDate = hour.startHour + dailyHours*60;
+                        hour.endDate = hour.startHour + dailyHours * 60;
 
-                        }
+                      }
                     }
                     week.push(hour);
                   }
                   this.dataSchedule.push(week);
-                }              
-              }else{
-                
+                }
+              } else {
+
               }
             });
             this.loadingService.setLoading(false);
@@ -185,14 +188,14 @@ export class FromGenerateGroupsComponent implements OnInit {
     }
   }
 
-  showCourse(course):boolean{ //Mostrar el renglon de la hora
+  showCourse(course): boolean { //Mostrar el renglon de la hora
     //Si todos los campos estan inactivos
-    if(!course[0].active && !course[1].active && !course[2].active &&
-      !course[3].active && !course[4].active && !course[5].active){
-         return false; //Ocultar
-       }else{
-        return true; //Mostrar
-       }
+    if (!course[0].active && !course[1].active && !course[2].active &&
+      !course[3].active && !course[4].active && !course[5].active) {
+      return false; //Ocultar
+    } else {
+      return true; //Mostrar
+    }
   }
 
   private async _asyncForEach(array, callback) {
@@ -201,22 +204,22 @@ export class FromGenerateGroupsComponent implements OnInit {
     }
   }
 
-  getMinutes(hour):number{ //Convertir en minutos un tiempo Ej: "01:00" = 60
-    var hh = parseFloat(hour.split(":",2)[0]) //Convierte las horas en tipo number.
-    var mm = parseFloat(hour.split(":",2)[1]) //Convierte los minutos en tipo number.
-    var time = mm + (hh*60); //Convierte las horas y minutos y suma el total de minutos
+  getMinutes(hour): number { //Convertir en minutos un tiempo Ej: "01:00" = 60
+    var hh = parseFloat(hour.split(":", 2)[0]) //Convierte las horas en tipo number.
+    var mm = parseFloat(hour.split(":", 2)[1]) //Convierte los minutos en tipo number.
+    var time = mm + (hh * 60); //Convierte las horas y minutos y suma el total de minutos
     return time; //Retorna los minutos
   }
 
-  getHour(minutes):String{ //Convierte minutos a tiempo en formato 24-h
+  getHour(minutes): String { //Convierte minutos a tiempo en formato 24-h
     let h = Math.floor(minutes / 60); //Consigue las horas
     let m = minutes % 60; //Consigue los minutos
     let hh = h < 10 ? '0' + h : h; //Asigna un 0 al inicio de la hora si es menor a 10
     let mm = m < 10 ? '0' + m : m; //Asigna un 0 al inicio de los minutos si es menor a 10
-    return hh+':'+mm; //Retorna los minutos en tiempo Ej: "24:00"
+    return hh + ':' + mm; //Retorna los minutos en tiempo Ej: "24:00"
   }
 
-  onChangeSegmentHour(value){
+  onChangeSegmentHour(value) {
     switch (value) {
       case '0':
         this.segment = 60;
@@ -233,7 +236,7 @@ export class FromGenerateGroupsComponent implements OnInit {
     }
   }
 
-  generateData(form){
+  generateData(form) {
 
     var schedules = [];
 
@@ -245,11 +248,11 @@ export class FromGenerateGroupsComponent implements OnInit {
 
           case '1':
 
-            if (schedule[day-1]!="") {
+            if (schedule[day - 1] != "") {
               const data = {
                 day: day,
-                startHour: this.getMinutes(schedule[day-1]),
-                endDate: this.getMinutes(schedule[day-1]) + (this.groupsFormGroup.get('courseCtrl').value.dailyHours*60),
+                startHour: this.getMinutes(schedule[day - 1]),
+                endDate: this.getMinutes(schedule[day - 1]) + (this.groupsFormGroup.get('courseCtrl').value.dailyHours * 60),
               };
               scheduleForCourse.push(data);
             }
@@ -257,11 +260,11 @@ export class FromGenerateGroupsComponent implements OnInit {
 
           case '2':
 
-            if (schedule[day-1].active) {
+            if (schedule[day - 1].active) {
               const data = {
                 day: day,
-                startHour: schedule[day-1].startHour,
-                endDate: schedule[day-1].endDate,
+                startHour: schedule[day - 1].startHour,
+                endDate: schedule[day - 1].endDate,
               };
               if (this.showCourse(schedule)) {
                 scheduleForCourse.push(data);
@@ -270,16 +273,12 @@ export class FromGenerateGroupsComponent implements OnInit {
             break;
         }
       });
-      if (scheduleForCourse.length>0) {
+      if (scheduleForCourse.length > 0) {
         schedules.push(scheduleForCourse);
       }
     });
 
-    console.log(this.dataSchedule);
-    console.log("schedules:");
-    console.log(schedules);
-
-    if (schedules.length==0) {
+    if (schedules.length == 0) {
       Swal.fire({
         title: 'ATENCIÓN!',
         text: 'Es necesario agregar un horario.',
@@ -300,7 +299,7 @@ export class FromGenerateGroupsComponent implements OnInit {
     }
     this.dialogRef.close(data);
   }
-  
+
   onNoClick(): void {
     this.dialogRef.close();
   }

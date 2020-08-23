@@ -20,12 +20,15 @@ import { EnglishCourseProvider } from 'src/app/english/providers/english-course.
 import { FormRequestCourseComponent } from 'src/app/english/components/student-english-page/form-request-course/form-request-course.component';
 
 //Importar Enumeradores
-import { StatusEnglishStudent, EStatusEnglishStudentDB } from 'src/app/english/enumerators/status-english-student.enum';
+import { EStatusEnglishStudent, EStatusEnglishStudentDB } from 'src/app/english/enumerators/status-english-student.enum';
 import { ICourse } from '../../entities/course.model';
 import { SelectCourseLevelComponent } from '../select-course-level/select-course-level.component';
 import { eNotificationType } from '../../../enumerators/app/notificationType.enum';
+
+// Importar modelos
 import { IEnglishStudent } from '../../entities/english-student.model';
 import { IStudent } from '../../../entities/shared/student.model';
+import { IPeriod } from '../../../entities/shared/period.model';
 
 @Component({
   selector: 'app-student-english-page',
@@ -41,8 +44,8 @@ export class StudentEnglishPageComponent implements OnInit {
   showImg = false; //Mostrar Foto
   imageDoc; //Imagen del Drive
   photoStudent = ''; //Foto a mostrar
-  activePeriod: any;
-  statusEnglishStudent = StatusEnglishStudent; //Enumerador del estatus del perfil de ingles del estudiante
+  activePeriod: IPeriod;
+  statusEnglishStudent = EStatusEnglishStudent; //Enumerador del estatus del perfil de ingles del estudiante
 
   englishCourses: ICourse[]; //Cursos de ingles activos
 
@@ -87,9 +90,9 @@ export class StudentEnglishPageComponent implements OnInit {
         }
 
         if (this.englishStudent && this.englishStudent.courseType) {
-          this.englishCourses = this.englishCourses.filter( course => course._id === this.englishStudent.courseType._id);
+          this.englishCourses = this.englishCourses.filter(course => course._id === this.englishStudent.courseType._id);
         }
-        
+
       }, (_) => {
         this.notification.showNotification(eNotificationType.ERROR, 'Cursos inglés', 'Ocurrió un error al obtener el estudiante');
       });
@@ -157,7 +160,6 @@ export class StudentEnglishPageComponent implements OnInit {
   }
 
   public openDialog(courseSelected: any): void {
-    console.log(courseSelected);
     const dialogRef = this.dialog.open(FormRequestCourseComponent, {
       data: {
         courseSelected: courseSelected,
@@ -169,10 +171,10 @@ export class StudentEnglishPageComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(async result => {
-      if(result){
-        this.activePeriod = await new Promise((resolve)=>{
-          this.englishCourseProv.getActivePeriod().subscribe(data=>resolve(data.period));
-        });
+      if (result) {
+        this.activePeriod = await new Promise((resolve) => {
+          this.englishCourseProv.getActivePeriod().subscribe(data => resolve(data.period));
+        }) as IPeriod;
         const data = {
           englishStudent: this.englishStudent._id,
           group: result.groupId,
@@ -183,11 +185,10 @@ export class StudentEnglishPageComponent implements OnInit {
         };
 
         this.requestCourseProv.createRequestCourse(data).subscribe(res => {
-          if(res){
+          if (res) {
             this.englishStudent.currentPhone = result.currentPhone;
             this.englishStudent.status = 'selected';
             this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
-              console.log(res2);
               Swal.fire({
                 title: 'Solicitud enviada!',
                 showConfirmButton: false,
@@ -224,13 +225,10 @@ export class StudentEnglishPageComponent implements OnInit {
         this.loadingService.setLoading(true);
         this.requestCourseProv.updateRequestByStudentId(englishStudentId, data).subscribe(res => {
 
-          console.log(res);
-
           const englishStudent = {
             $set: { status: 'cancelled' }
           }
           this.englishStudentProv.updateEnglishStudent(englishStudent, englishStudentId).subscribe(res2 => {
-            console.log(res2);
             this.englishStudent.status = 'cancelled';
 
             this.loadingService.setLoading(false);
@@ -312,7 +310,7 @@ export class StudentEnglishPageComponent implements OnInit {
       currentPhone: this.currentStudent.phone as string,
       status: data.course &&
         data.level === data.course.totalSemesters
-        ? EStatusEnglishStudentDB.NOT_RELEASED : EStatusEnglishStudentDB.NO_CHOICE,
+        ? EStatusEnglishStudentDB.NOT_RELEASED : undefined,
       totalHoursCoursed: data.course
         ? data.level * data.course.semesterHours
         : data.level,

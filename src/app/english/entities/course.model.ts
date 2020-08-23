@@ -1,3 +1,5 @@
+import { IPeriod } from '../../entities/shared/period.model';
+
 export interface ICourse {
   _id?: string;
   name: string;
@@ -5,7 +7,7 @@ export interface ICourse {
   semesterHours: number;
   totalSemesters: number;
   totalHours: number;
-  startPeriod: any; // Cambiar a IPeriod
-  endPeriod: any; // Cambiar a IPeriod
+  startPeriod: IPeriod;
+  endPeriod?: IPeriod;
   status: string;
 }

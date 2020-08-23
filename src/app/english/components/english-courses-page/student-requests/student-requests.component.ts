@@ -3,21 +3,24 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
 
-//TABLA
+// TABLA
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
-//SERVICIOS
+// SERVICIOS
 import { LoadingService } from 'src/app/services/app/loading.service';
 
-//PROVEEDORES
+// PROVEEDORES
 import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
 
+// MODELOS
+import { IGroup } from '../../../entities/group.model';
+
 export interface DialogData {
-  group: any
+  group: IGroup
 }
 
 @Component({
@@ -56,7 +59,8 @@ export class StudentRequestsComponent implements OnInit {
     private englishStudentProv: EnglishStudentProvider,
     private requestCourseProv: RequestCourseProvider,
     private groupProv: GroupProvider,
-    private loadingService: LoadingService) {
+    private loadingService: LoadingService,
+  ) {
     this.selectedTab = new FormControl(0);
   }
 
@@ -106,15 +110,11 @@ export class StudentRequestsComponent implements OnInit {
 
         }, error => {
 
-          console.log(error);
-
         }, () => this.loadingService.setLoading(false));
 
       });
 
     }, error => {
-
-      console.log(error);
 
     }, () => this.loadingService.setLoading(false));
 
@@ -128,7 +128,7 @@ export class StudentRequestsComponent implements OnInit {
       title: `Está por rechazar la solicitud del estudiante ` + name + `. ¿Desea continuar?`,
       type: 'warning',
       html:
-            '<textarea rows="4" cols="30" id="observaciones" placeholder="Ingrese el motivo del rechazo"></textarea>  ',
+        '<textarea rows="4" cols="30" id="observaciones" placeholder="Ingrese el motivo del rechazo"></textarea>  ',
       allowOutsideClick: false,
       showCancelButton: true,
       confirmButtonColor: 'red',
@@ -148,16 +148,13 @@ export class StudentRequestsComponent implements OnInit {
         this.loadingService.setLoading(true);
         this.requestCourseProv.updateRequestById(requestId, data).subscribe(res => {
 
-          console.log(res);
-
           const englishStudent = {
-            $set: { 
-              status: 'rejected', 
+            $set: {
+              status: 'rejected',
               rejectMessage: observations
             }
           }
           this.englishStudentProv.updateEnglishStudent(englishStudent, studentId).subscribe(res2 => {
-            console.log(res2);
 
             this.loadingService.setLoading(false);
             this.getDataSource();
@@ -299,14 +296,14 @@ export class StudentRequestsComponent implements OnInit {
           });
 
         },
-          error => { console.log(error) });
+          error => {  });
 
       }
 
       this.dialogRef.close();
 
     },
-      error => { console.log(error) });
+      error => {  });
   }
 
 }

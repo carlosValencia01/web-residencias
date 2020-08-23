@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-form-create-course',
@@ -13,7 +13,8 @@ export class FormCreateCourseComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<FormCreateCourseComponent>,
-    private _formBuilder: FormBuilder) { }
+    private _formBuilder: FormBuilder,
+  ) { }
 
   ngOnInit() {
     this.courseFormGroup = this._formBuilder.group({

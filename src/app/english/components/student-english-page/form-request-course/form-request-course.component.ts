@@ -1,15 +1,14 @@
-import { Component, OnInit, Inject } from '@angular/core';
-
-import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatTableDataSource} from '@angular/material/table';
-
-import { LoadingService } from 'src/app/services/app/loading.service';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
+import { LoadingService } from 'src/app/services/app/loading.service';
+import { ICourse } from '../../../entities/course.model';
+import { IGroup } from '../../../entities/group.model';
 
 export interface DialogData {
-  courseSelected: any;
+  courseSelected: ICourse;
   level: number;
   groupId: string;
   currentPhone: string;
@@ -32,41 +31,38 @@ export class FormRequestCourseComponent implements OnInit {
     private loadingService: LoadingService,
     private groupProv: GroupProvider,
     public dialogRef: MatDialogRef<FormRequestCourseComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData, 
-    private _formBuilder: FormBuilder) { }
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    private _formBuilder: FormBuilder,
+  ) { }
 
   ngOnInit() {
     this.groupFormGroup = this._formBuilder.group({
       groupCtrl: ['', Validators.required]
     });
     this.phoneFormGroup = this._formBuilder.group({
-      phoneCtrl: ['', [ Validators.pattern('^[0-9]{10}$'), Validators.required]]
+      phoneCtrl: ['', [Validators.pattern('^[0-9]{10}$'), Validators.required]]
     });
     this.getGroups();
-    console.log(this.groupFormGroup.value);
-    console.log(this.data);
   }
 
-  getGroups(){
+  getGroups() {
     let data = {
       courseId: this.data.courseSelected._id,
       level: this.data.level + 1,
     }
-    console.log(data);
     this.loadingService.setLoading(true);
     this.groupProv.getAllGroupOpenedByCourseAndLevel(data).subscribe(res => {
 
-      console.log(res);
       this.prepareSchedule(res.groups);
 
-    },error => {
+    }, error => {
 
     }, () => this.loadingService.setLoading(false));
   }
 
-  prepareSchedule(groups){
+  prepareSchedule(groups: IGroup[]) {
     this.schedule = [];
-    if (groups.length>0) {
+    if (groups.length > 0) {
       groups.forEach(element => {
         var data = {
           _id: element._id,
@@ -93,7 +89,7 @@ export class FormRequestCourseComponent implements OnInit {
               break;
             case 5:
               data.Fryday = this.getHour(day.startHour) + " - " + this.getHour(day.endDate);
-              break; 
+              break;
             case 6:
               data.saturday = this.getHour(day.startHour) + " - " + this.getHour(day.endDate);
               break;
@@ -105,18 +101,16 @@ export class FormRequestCourseComponent implements OnInit {
     this.createDataSource();
   }
 
-  getHour(minutes):String{
+  getHour(minutes): String {
     let h = Math.floor(minutes / 60);
     let m = minutes % 60;
     let hh = h < 10 ? '0' + h : h;
     let mm = m < 10 ? '0' + m : m;
-    return hh+':'+mm;
+    return hh + ':' + mm;
   }
 
-  createDataSource(){
+  createDataSource() {
     this.dataSource = new MatTableDataSource(this.schedule);
-    console.log(this.schedule);
-    console.log(this.dataSource);
   }
 
   onNoClick(): void {

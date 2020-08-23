@@ -2,20 +2,24 @@ import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 
-//TABLA
+// TABLA
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 
-//SERVICIOS
+// SERVICIOS
 import { LoadingService } from 'src/app/services/app/loading.service';
 
-//PROVEEDORES
+// PROVEEDORES
 import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 
+// MODELOS
+import { IGroup } from '../../../entities/group.model';
+import { IEnglishStudent } from '../../../entities/english-student.model';
+
 export interface DialogData {
-  group: any
+  group: IGroup
 }
 
 @Component({
@@ -68,15 +72,11 @@ export class GroupStudentsComponent implements OnInit {
 
         }, error => {
 
-          console.log(error);
-
         }, () => this.loadingService.setLoading(false));
 
       });
 
     }, error => {
-
-      console.log(error);
 
     }, () => this.loadingService.setLoading(false));
 
@@ -152,13 +152,10 @@ export class GroupStudentsComponent implements OnInit {
         this.loadingService.setLoading(true);
         this.requestCourseProv.updateRequestById(requestId, data).subscribe(res => {
 
-          console.log(res);
-
           const englishStudent = {
             $set: { status: 'rejected' }
           }
           this.englishStudentProv.updateEnglishStudent(englishStudent, studentId).subscribe(res2 => {
-            console.log(res2);
 
             this.loadingService.setLoading(false);
             this.getDataSource();

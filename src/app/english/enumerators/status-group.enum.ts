@@ -5,7 +5,7 @@ export enum EStatusGroupDB {
   FINALIZED = 'finalized',
 }
 
-export enum StatusGroup {
+export enum EStatusGroup {
   opened = 'Abierto para demanda',
   active = 'Activo en clases',
   closed = 'Cerrado sin iniciar',
