@@ -28,11 +28,12 @@ import { FromGenerateGroupsComponent } from 'src/app/english/components/english-
 import { GroupStudentsComponent } from 'src/app/english/components/english-courses-page/group-students/group-students.component';
 
 // Importar Enumeradores
-import { EStatusGroup } from 'src/app/english/enumerators/status-group.enum';
+import { EStatusGroupDB, EStatusGroup } from 'src/app/english/enumerators/status-group.enum';
 import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
 
 // Importar Modales
 import { ActiveGroupModalComponent } from '../../modals/active-group-modal/active-group-modal.component';
+import { AssignEnglishTeacherComponent } from '../../modals/assign-english-teacher/assign-english-teacher.component';
 
 // Importar modelos
 import { IPeriod } from '../../../entities/shared/period.model';
@@ -73,7 +74,6 @@ export class EnglishCoursesPageComponent implements OnInit {
   @ViewChild("viewUpdateClassroom") dialogRefViewUpdateClassroom: TemplateRef<any>;
 
   // GRUPOS
-  statusGroup = EStatusGroup; //Enumerador del estatus del grupo
   groups: IGroup[];
   dataSourceGroups: MatTableDataSource<any>;
   @ViewChild('matPaginatorCreatedGroups') set matPaginatorGroups(paginator: MatPaginator) {
@@ -83,7 +83,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   @ViewChild(MatSort) sortClassrooms: MatSort;
   @ViewChild(MatSort) sortGroups: MatSort;
   activeGroups: IGroup[];
-  dataSourceActiveGroups: MatTableDataSource<any>;
+  dataSourceActiveGroups: MatTableDataSource<IGroup>;
   dataSourceClassrooms: MatTableDataSource<any>;
   @ViewChild('matPaginatorActiveGroups') set paginatorActiveGroups(paginator: MatPaginator) {
     this.dataSourceActiveGroups.paginator = paginator;
@@ -538,24 +538,23 @@ export class EnglishCoursesPageComponent implements OnInit {
     }, () => this.loadingService.setLoading(false));
   }
 
+  public getStatusGroupName(status: string): string {
+    return (EStatusGroup as any)[status];
+  }
+
   createDataSourceGroups() {
-    this.groups = this.groups.filter(group => group.status !== 'active');
+    this.groups = this.groups.filter(({ status }) => status !== EStatusGroupDB.ACTIVE);
     this.dataSourceGroups.data = this.groups;
     this.dataSourceGroups.sort = this.sortGroups;
   }
 
   divideGroups() {
-    this.activeGroups = [];
-    this.groups.forEach(group => {
-      if (group.status == 'active') {
-        this.activeGroups.push(group);
-      }
-    });
-    this.createDataSourceActiveGroups();
+    this.activeGroups = this.groups.filter(({ status }) => status === EStatusGroupDB.ACTIVE);
+    this.createDataSourceActiveGroups(this.activeGroups);
   }
 
-  createDataSourceActiveGroups() {
-    this.dataSourceActiveGroups.data = this.activeGroups;
+  createDataSourceActiveGroups(groups: IGroup[]): void {
+    this.dataSourceActiveGroups.data = groups;
     this.dataSourceActiveGroups.sort = this.sortActiveGroups;
   }
 
@@ -696,6 +695,28 @@ export class EnglishCoursesPageComponent implements OnInit {
       this.ngOnInit();
     });
 
+  }
+
+  public getEnglishTeacherItemName(group: IGroup): string {
+    return group.teacher ? 'Cambiar docente' : 'Asignar docente';
+  }
+
+  public openDialogshowEnglishTeachers(group: IGroup): void {
+    const dialogRef = this.dialog.open(AssignEnglishTeacherComponent, {
+      data: { group, teacherId: group.teacher },
+      hasBackdrop: true,
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((group: IGroup) => {
+        if (group) {
+          const index = this.activeGroups.findIndex(({ _id }) => _id === group._id);
+          if (index !== -1) {
+            this.activeGroups.splice(index, 1, group);
+            this.createDataSourceActiveGroups(this.activeGroups);
+          }
+        }
+      });
   }
   //#endregion
 
