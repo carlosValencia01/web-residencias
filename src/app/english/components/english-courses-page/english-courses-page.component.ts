@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
+import TableToExcel from '@linways/table-to-excel';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 // TABLA
 import { MatPaginator } from '@angular/material/paginator';
@@ -18,7 +20,8 @@ import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
-import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov'
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
+import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
 
 // Importar Componentes
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
@@ -40,6 +43,7 @@ import { IPeriod } from '../../../entities/shared/period.model';
 import { IClassroom } from '../../entities/classroom.model';
 import { IGroup } from '../../entities/group.model';
 import { ICourse } from '../../entities/course.model';
+import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -52,6 +56,7 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   // SOLICITUDES
   requests: Array<any>;
+  dataExcel;
 
   // AULAS
   classrooms: IClassroom[];
@@ -105,7 +110,9 @@ export class EnglishCoursesPageComponent implements OnInit {
     private englishCourseProv: EnglishCourseProvider,
     private groupProv: GroupProvider,
     private studentEnglishProv: EnglishStudentProvider,
+    private employeeProvider: EmployeeProvider,
     public dialog: MatDialog,
+    private notificationsServices: NotificationsServices,
   ) {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -807,15 +814,50 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   getScheduleDaysGroup(schedules) {
-    var horario = [];
+    var horario = {
+      Lunes : '',
+      Martes : '',
+      Miercoles : '',
+      Jueves : '',
+      Viernes : '',
+      Sabado : ''
+    };
     schedules.forEach((schedule, index) => {
-      horario.push(EDaysSchedule[schedule.day] + ' : ' + this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate));
+      switch (EDaysSchedule[schedule.day]) {
+        case 'Lunes':
+          horario.Lunes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+          break;
+        case 'Martes':
+          horario.Martes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+          break;
+        case 'Miércoles':
+          horario.Miercoles = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+          break;
+        case 'Jueves':
+          horario.Jueves = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+          break;
+        case 'Viernes':
+          horario.Viernes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+          break;
+        case 'Sábado':
+          horario.Sabado = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+          break;      
+      }
     });
     return horario;
   }
 
   activeGroup(_groupId) {
     this.getPaidStudentsRequest(_groupId);
+  }
+
+  async getTeacher(_idTeacher){
+    return new Promise(async resolve => {
+      this.employeeProvider.getEmployeeById(_idTeacher).subscribe(res => {
+        const teacher = res.employee;
+        resolve(teacher);
+      })
+    });
   }
 
   getPaidStudentsRequest(group) {
@@ -868,5 +910,26 @@ export class EnglishCoursesPageComponent implements OnInit {
     });
   }
   //#endregion
+
+  // #region Reportes Excel 
+  generateExcelActiveGroup(_group){
+    this.notificationsServices.showNotification(eNotificationType.INFORMATION, '', 'Generando Reporte...');
+    this.requestCourseProv.getAllRequestActiveCourse(_group._id).subscribe(async res => {
+      this.dataExcel = {
+        group: _group,
+        teacher: await this.getTeacher(_group.teacher),
+        schedule: await this.getScheduleDaysGroup(_group.schedule),
+        students: res.requestCourses,
+      }
+      setTimeout(() => {
+        TableToExcel.convert(document.getElementById('tableActiveGroupReportExcel'), {
+          name: 'Reporte Inglés Grupo '+this.dataExcel.group.name+'.xlsx',
+          sheet: {
+            name: 'Alumnos'
+          }
+        });
+      }, 1500);
+    });
+  }
 
 }
