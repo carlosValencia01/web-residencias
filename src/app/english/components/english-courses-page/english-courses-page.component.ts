@@ -852,12 +852,16 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   async getTeacher(_idTeacher){
-    return new Promise(async resolve => {
-      this.employeeProvider.getEmployeeById(_idTeacher).subscribe(res => {
-        const teacher = res.employee;
-        resolve(teacher);
-      })
-    });
+    if(_idTeacher){
+      return new Promise(async resolve => {
+        this.employeeProvider.getEmployeeById(_idTeacher).subscribe(res => {
+          const teacher = res.employee;
+          resolve(teacher);
+        })
+      });
+    } else {
+      return '';
+    }
   }
 
   getPaidStudentsRequest(group) {

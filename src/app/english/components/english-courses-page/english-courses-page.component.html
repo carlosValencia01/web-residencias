@@ -603,7 +603,8 @@
       <th data-a-h="center">{{ dataExcel.group.level }}</th>
       <th data-a-h="center">{{ dataExcel.group.name }}</th>
       <th data-a-h="center">{{ dataExcel.group.course.name }}</th>
-      <th data-a-h="center">{{ dataExcel.teacher.name.fullName}}</th>
+      <th data-a-h="center" *ngIf="dataExcel.teacher != ''">{{ dataExcel.teacher.name.fullName}}</th>
+      <th data-a-h="center" *ngIf="dataExcel.teacher == ''">Sin Asignar</th>
       <th data-a-h="center">{{dataExcel.schedule.Lunes}}</th>
       <th data-a-h="center">{{dataExcel.schedule.Martes}}</th>
       <th data-a-h="center">{{dataExcel.schedule.Miercoles}}</th>
