@@ -9,5 +9,6 @@ export enum EStatusEnglishStudent {
   cancelled = "Solicitud de curso cancelada por estudiante",
   studying = "Cursando",
   not_released = "Ingles sin liberar",
-  released = "Ingles liberado"
+  released = "Ingles liberado",
+  rejected = "Solicitud rechazada"
 }

@@ -29,6 +29,7 @@ import { eNotificationType } from '../../../enumerators/app/notificationType.enu
 import { IEnglishStudent } from '../../entities/english-student.model';
 import { IStudent } from '../../../entities/shared/student.model';
 import { IPeriod } from '../../../entities/shared/period.model';
+import { IRequestCourse } from '../../entities/request-course.model';
 
 @Component({
   selector: 'app-student-english-page',
@@ -41,6 +42,8 @@ export class StudentEnglishPageComponent implements OnInit {
   data; //Datos del usuario
   currentStudent: IStudent; //Datos del estuduante
   englishStudent: IEnglishStudent; //Perfil de ingles del estudiante
+  requestStudent: IRequestCourse []; 
+  lastRequestStudent: IRequestCourse; 
   showImg = false; //Mostrar Foto
   imageDoc; //Imagen del Drive
   photoStudent = ''; //Foto a mostrar
@@ -89,6 +92,9 @@ export class StudentEnglishPageComponent implements OnInit {
           await this._getPreviousInfoEnglishCourses();
         }
 
+        this.requestStudent = await this._getRequests(this.englishStudent._id) as IRequestCourse[];
+        this.lastRequestStudent = this.requestStudent[this.requestStudent.length-1];
+
         if (this.englishStudent && this.englishStudent.courseType) {
           this.englishCourses = this.englishCourses.filter(course => course._id === this.englishStudent.courseType._id);
         }
@@ -100,7 +106,9 @@ export class StudentEnglishPageComponent implements OnInit {
   }
 
   public getStudentStatusMessage(): string {
-    return this.statusEnglishStudent[this.englishStudent.status];
+    if(this.lastRequestStudent){
+      return this.statusEnglishStudent[this.lastRequestStudent.status];
+    }
   }
 
   public verifyNotification(): void { //Verificar si existe notificación a mostrar
@@ -178,7 +186,6 @@ export class StudentEnglishPageComponent implements OnInit {
         const data = {
           englishStudent: this.englishStudent._id,
           group: result.groupId,
-          status: 'requested',
           requestDate: new Date(),
           level: this.englishStudent.level + 1,
           period: this.activePeriod._id
@@ -187,7 +194,7 @@ export class StudentEnglishPageComponent implements OnInit {
         this.requestCourseProv.createRequestCourse(data).subscribe(res => {
           if (res) {
             this.englishStudent.currentPhone = result.currentPhone;
-            this.englishStudent.status = 'selected';
+            this.englishStudent.status = 'waiting';
             this.englishStudentProv.updateEnglishStudent(this.englishStudent, this.englishStudent._id).subscribe(res2 => {
               Swal.fire({
                 title: 'Solicitud enviada!',
@@ -196,6 +203,7 @@ export class StudentEnglishPageComponent implements OnInit {
                 type: 'success'
               });
               this.tabGroup.selectedIndex = 0;
+              this.ngOnInit();
             });
           }
         });
@@ -219,17 +227,17 @@ export class StudentEnglishPageComponent implements OnInit {
       if (result.value) {
 
         const data = {
-          status: 'cancelled'
+          status: 'cancelled',
+          active: false
         };
 
         this.loadingService.setLoading(true);
-        this.requestCourseProv.updateRequestByStudentId(englishStudentId, data).subscribe(res => {
+        this.requestCourseProv.updateRequestById(this.lastRequestStudent._id, data).subscribe(res => {
 
           const englishStudent = {
-            $set: { status: 'cancelled' }
+            $set: { status: 'no_choice' }
           }
           this.englishStudentProv.updateEnglishStudent(englishStudent, englishStudentId).subscribe(res2 => {
-            this.englishStudent.status = 'cancelled';
 
             this.loadingService.setLoading(false);
             Swal.fire(
@@ -237,7 +245,7 @@ export class StudentEnglishPageComponent implements OnInit {
               'La solicitud al curso ha sido cancelada.',
               'success'
             );
-
+            this.ngOnInit();
           }, () => {
             this.loadingService.setLoading(false);
           });
@@ -329,6 +337,15 @@ export class StudentEnglishPageComponent implements OnInit {
       this.englishStudentProv.getEnglishStudentByStudentId(studentId)
         .subscribe(
           (res: { englishStudent: IEnglishStudent }) => resolve(res.englishStudent),
+          (_) => resolve(null)
+        );
+    });
+  }
+  private _getRequests(studentId: string): Promise<IRequestCourse[]> {
+    return new Promise((resolve) => {
+      this.requestCourseProv.getRequestCourse(studentId)
+        .subscribe(
+          (res: { requestCourses: IRequestCourse[] }) => resolve(res.requestCourses),
           (_) => resolve(null)
         );
     });

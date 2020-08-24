@@ -69,8 +69,7 @@ export class ActiveGroupModalComponent implements OnInit {
         // Actualizar group id de la solicitud de curso
         this.requestCourseProv.activeRequest(data).subscribe(updated => {
           if (updated) {
-            this.dialogRef.close({ action: 'close' });
-            // Recargar datos
+            this.dialogRef.close({ action: 'saved' });
           }
         });
       }
