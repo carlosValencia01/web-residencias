@@ -11,7 +11,7 @@
   </div>
   <mat-dialog-content class="px-0 px-sm-1 px-md-3">
     <div class="row d-flex justify-content-center">
-      <mat-form-field appearance="outline" class="col-11">
+      <mat-form-field appearance="outline" class="col-11 col-md-6">
         <mat-label>Seleccione el tipo de curso</mat-label>
         <mat-select [formControl]="courseForm.get('course')" (selectionChange)="selectCourse()" required>
           <mat-option *ngFor="let course of courses" [value]="course._id">
@@ -24,7 +24,7 @@
           </span>
         </mat-error>
       </mat-form-field>
-      <mat-form-field appearance="outline" class="col-11">
+      <mat-form-field appearance="outline" class="col-11 col-md-6">
         <mat-label>Seleccione el último bloque cursado</mat-label>
         <mat-select [formControl]="courseForm.get('level')" [disabled]="!canSelectLevel()" required>
           <mat-option *ngFor="let level of courseLevels" [value]="level">
@@ -33,6 +33,47 @@
         </mat-select>
         <mat-error *ngIf="courseForm.get('level').errors">
           <span *ngIf="courseForm.get('level').errors['required']">
+            ¡El campo es obligatorio!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <div class="row col-11 col-md-12 p-0">
+        <mat-label class="col-11 col-md-12 mb-1">Horario cursado</mat-label>
+        <mat-form-field appearance="outline" class="col-12 col-md-6">
+          <mat-label>Hora de inicio</mat-label>
+          <input matInput type="time" [formControl]="courseForm.get('startHour')" required>
+          <mat-error *ngIf="courseForm.get('startHour').errors">
+            <span *ngIf="courseForm.get('startHour').errors['required']">
+              ¡El campo es obligatorio!
+            </span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="col-12 col-md-6">
+          <mat-label>Hora de fin</mat-label>
+          <input matInput type="time" [formControl]="courseForm.get('endHour')" required>
+          <mat-error *ngIf="courseForm.get('endHour').errors">
+            <span *ngIf="courseForm.get('endHour').errors['required']">
+              ¡El campo es obligatorio!
+            </span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <mat-form-field appearance="outline" class="col-11 col-md-6">
+        <mat-label>Docente</mat-label>
+        <input matInput type="text" [formControl]="courseForm.get('teacher')"
+          placeholder="Nombre completo del docente que impartió el curso" required>
+        <mat-error *ngIf="courseForm.get('teacher').errors">
+          <span *ngIf="courseForm.get('teacher').errors['required']">
+            ¡El campo es obligatorio!
+          </span>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="col-11 col-md-6">
+        <mat-label>Período</mat-label>
+        <input matInput type="text" [formControl]="courseForm.get('period')"
+          placeholder="Período en que cursó, ejemplo: Enero-Junio 2020 " required>
+        <mat-error *ngIf="courseForm.get('period').errors">
+          <span *ngIf="courseForm.get('period').errors['required']">
             ¡El campo es obligatorio!
           </span>
         </mat-error>

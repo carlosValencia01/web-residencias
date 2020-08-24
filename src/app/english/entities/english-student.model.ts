@@ -9,4 +9,12 @@ export interface IEnglishStudent {
   totalHoursCoursed: number;
   courseType?: ICourse;
   level: number;
+  lastLevelInfo?: ILastLevelInfo;
+}
+
+interface ILastLevelInfo {
+  startHour: number;
+  endHour: number;
+  teacher: string;
+  period: string;
 }

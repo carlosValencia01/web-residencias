@@ -23,6 +23,11 @@ export class EmployeeProvider {
             .pipe(map(students => students.json()));
     }
 
+    public getEmployeesByPosition(positionName: string) {
+      return this.api.get(`employee/position/${positionName}`)
+        .pipe(map(res => res.json()));
+    }
+
     getStudentById(_id) {
         return this.api.get(`employee/${_id}`)
             .pipe(map(student => student.json()));

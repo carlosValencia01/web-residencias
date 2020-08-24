@@ -19,7 +19,7 @@
             <div style="text-align: right;">
               <button style="margin-bottom:5px;" class="btn btn-success" (click)="openDialogCreateClassroom()">Nueva Aula</button>
             </div>
-        </div>  
+        </div>
           <div style="position: relative;">
             <div style="position: relative; overflow: auto; max-width: 100%;">
               <table mat-table [dataSource]="dataSourceClassrooms" class="mat-elevation-z8">
@@ -281,10 +281,14 @@
                       <mat-icon>view_list</mat-icon>
                       <span>Ver Alumnos Inscritos</span>
                     </button>
+                    <button (click)="openDialogshowEnglishTeachers(row)" mat-menu-item>
+                      <mat-icon>person_add</mat-icon>
+                      <span>{{ getEnglishTeacherItemName(row) }}</span>
+                    </button>
                   </mat-menu>
-                  
+
                 </mat-cell>
-              </ng-container> 
+              </ng-container>
 
               <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'actions']"></mat-header-row>
               <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'actions']"></mat-row>
@@ -352,7 +356,7 @@
               <ng-container matColumnDef="status">
                 <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
                 <mat-cell *matCellDef="let row">
-                  <mat-chip class="small">{{statusGroup[row.status]}}</mat-chip>
+                  <mat-chip class="small">{{ getStatusGroupName(row.status) }}</mat-chip>
                 </mat-cell>
               </ng-container>
 

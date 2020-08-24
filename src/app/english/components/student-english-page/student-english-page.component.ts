@@ -279,9 +279,10 @@ export class StudentEnglishPageComponent implements OnInit {
         cancelButtonColor: 'red',
       })
       .then(async ({ value, dismiss }) => {
-        let previousCourseData: { course: ICourse, level: number } = {
+        let previousCourseData: IProfileInfo = {
           course: undefined,
           level: 0,
+          lastLevelInfo: undefined,
         };
 
         if (!value && dismiss.toString() === 'close') {
@@ -310,7 +311,7 @@ export class StudentEnglishPageComponent implements OnInit {
       });
   }
 
-  private async _saveEnglishStudent(data: { course: ICourse, level: number }): Promise<IEnglishStudent> {
+  private async _saveEnglishStudent(data: IProfileInfo): Promise<IEnglishStudent> {
     // Crear el perfil en caso de no existir.
     const englishStudent: IEnglishStudent = {
       studentId: this.currentStudent._id as string,
@@ -323,6 +324,7 @@ export class StudentEnglishPageComponent implements OnInit {
         ? data.level * data.course.semesterHours
         : data.level,
       level: data.level,
+      lastLevelInfo: data.lastLevelInfo,
     };
 
     const newEnglishStudent = await this._createEnglishStudent(englishStudent);
@@ -372,4 +374,15 @@ export class StudentEnglishPageComponent implements OnInit {
     });
   }
 
+}
+
+interface IProfileInfo {
+  course: ICourse;
+  level: number;
+  lastLevelInfo?: {
+    startHour: number;
+    endHour: number;
+    teacher: string;
+    period: string;
+  }
 }

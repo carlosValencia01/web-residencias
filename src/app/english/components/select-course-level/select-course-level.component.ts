@@ -45,13 +45,18 @@ export class SelectCourseLevelComponent implements OnInit {
     if (!this.courseForm.valid) {
       return this.notification.showNotification(eNotificationType.INFORMATION, 'Selección de curso', 'Llene todos los campos obligatorios');
     }
-    this.dialogRef.close({ course: this.selectedCourse, level: this.courseForm.get('level').value });
+    const data = this._getFormData();
+    this.dialogRef.close(data);
   }
 
   private _init(): void {
     this.courseForm = new FormGroup({
       course: new FormControl(null, Validators.required),
-      level: new FormControl(null, Validators.required)
+      level: new FormControl(null, Validators.required),
+      startHour: new FormControl(null, Validators.required),
+      endHour: new FormControl(null, Validators.required),
+      teacher: new FormControl(null, Validators.required),
+      period: new FormControl(null, Validators.required),
     });
   }
 
@@ -59,4 +64,30 @@ export class SelectCourseLevelComponent implements OnInit {
     return this.courses.find(({ _id }) => _id === courseId) as ICourse;
   }
 
+  private _getFormData(): IProfileInfo {
+    const startHour = (this.courseForm.get('startHour').value || '').split(':', 2);
+    const endHour = (this.courseForm.get('endHour').value || '').split(':', 2);
+    return {
+      course: this.selectedCourse,
+      level: this.courseForm.get('level').value,
+      lastLevelInfo: {
+        startHour: (Number(startHour[0]) * 60) + Number(startHour[1]),
+        endHour: (Number(endHour[0]) * 60) + Number(endHour[1]),
+        teacher: this.courseForm.get('teacher').value,
+        period: this.courseForm.get('period').value,
+      },
+    };
+  }
+
+}
+
+interface IProfileInfo {
+  course: ICourse;
+  level: number;
+  lastLevelInfo: {
+    startHour: number;
+    endHour: number;
+    teacher: string;
+    period: string;
+  }
 }

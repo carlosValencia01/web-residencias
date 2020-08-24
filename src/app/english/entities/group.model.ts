@@ -12,7 +12,7 @@ export interface IGroup {
   status: string;
   minCapacity: number;
   maxCapacity: number;
-  teacher?: IEmployee;
+  teacher?: IEmployee | string;
   course: ICourse;
 }
 
