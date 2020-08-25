@@ -51,6 +51,7 @@ import { CoursesRequestTableComponent } from './components/courses-request-table
 import { ActiveGroupModalComponent } from '../english/modals/active-group-modal/active-group-modal.component';
 import { StudyingCourseDetailComponent } from './components/studying-course-detail/studying-course-detail.component';
 import { AssignEnglishTeacherComponent } from './modals/assign-english-teacher/assign-english-teacher.component';
+import { UploadExternalStudentsComponent } from './components/upload-external-students/upload-external-students.component';
 
 
 @NgModule({
@@ -98,6 +99,7 @@ import { AssignEnglishTeacherComponent } from './modals/assign-english-teacher/a
     ActiveGroupModalComponent,
     StudyingCourseDetailComponent,
     AssignEnglishTeacherComponent,
+    UploadExternalStudentsComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
