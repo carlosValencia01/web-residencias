@@ -86,15 +86,15 @@
       </mat-dialog-content>
       <mat-dialog-actions class="d-flex justify-content-end">
         <button mat-stroked-button class="m-1" type="button" color="primary" [disabled]="!courseForm.valid"
-          (click)="accept()">
+          (click)="accept()" style="background: green; color: white;">
           Validar Información 
         </button>
         <button mat-stroked-button class="m-1" type="button" color="primary" [disabled]="!courseForm.valid"
-          (click)="reject()">
+          (click)="reject()" style="background: red; color: white;">
           Rechazar Información
         </button>
         <button mat-stroked-button class="m-1" type="button" color="primary" [disabled]="!courseForm.valid"
-          (click)="saveData()">
+          (click)="saveData()" style="background: dodgerblue; color: white;">
           Actualizar y Validar
         </button>
       </mat-dialog-actions>
