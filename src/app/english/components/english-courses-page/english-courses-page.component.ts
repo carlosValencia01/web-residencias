@@ -712,6 +712,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     const dialogRef = this.dialog.open(AssignEnglishTeacherComponent, {
       data: { group, teacherId: group.teacher },
       hasBackdrop: true,
+      maxWidth: '85vw',
     });
 
     dialogRef.afterClosed()
@@ -815,12 +816,12 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   getScheduleDaysGroup(schedules) {
     var horario = {
-      Lunes : '',
-      Martes : '',
-      Miercoles : '',
-      Jueves : '',
-      Viernes : '',
-      Sabado : ''
+      Lunes: '',
+      Martes: '',
+      Miercoles: '',
+      Jueves: '',
+      Viernes: '',
+      Sabado: ''
     };
     schedules.forEach((schedule, index) => {
       switch (EDaysSchedule[schedule.day]) {
@@ -841,7 +842,7 @@ export class EnglishCoursesPageComponent implements OnInit {
           break;
         case 'Sábado':
           horario.Sabado = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;      
+          break;
       }
     });
     return horario;
@@ -851,8 +852,8 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.getPaidStudentsRequest(_groupId);
   }
 
-  async getTeacher(_idTeacher){
-    if(_idTeacher){
+  async getTeacher(_idTeacher) {
+    if (_idTeacher) {
       return new Promise(async resolve => {
         this.employeeProvider.getEmployeeById(_idTeacher).subscribe(res => {
           const teacher = res.employee;
@@ -896,7 +897,7 @@ export class EnglishCoursesPageComponent implements OnInit {
         });
         let sub = linkModal.afterClosed().subscribe(
           information => {
-            if(information.action == 'saved'){
+            if (information.action == 'saved') {
               Swal.fire({
                 title: 'Éxito!',
                 text: 'Grupo activado',
@@ -915,8 +916,8 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
   //#endregion
 
-  // #region Reportes Excel 
-  generateExcelActiveGroup(_group){
+  // #region Reportes Excel
+  generateExcelActiveGroup(_group) {
     this.notificationsServices.showNotification(eNotificationType.INFORMATION, '', 'Generando Reporte...');
     this.requestCourseProv.getAllRequestActiveCourse(_group._id).subscribe(async res => {
       this.dataExcel = {
@@ -927,7 +928,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       }
       setTimeout(() => {
         TableToExcel.convert(document.getElementById('tableActiveGroupReportExcel'), {
-          name: 'Reporte Inglés Grupo '+this.dataExcel.group.name+'.xlsx',
+          name: 'Reporte Inglés Grupo ' + this.dataExcel.group.name + '.xlsx',
           sheet: {
             name: 'Alumnos'
           }

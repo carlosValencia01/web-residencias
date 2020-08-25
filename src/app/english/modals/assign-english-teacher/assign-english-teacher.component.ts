@@ -21,7 +21,7 @@ export class AssignEnglishTeacherComponent implements OnInit {
   }
   public englishTeachersDataSource: MatTableDataSource<IEnglishTeacher>;
   private ENGLISH_TEACHER_POSITION = 'DOCENTE INGLÉS';
-  private currentTeacher: IEnglishTeacher;
+  private currentTeacher: string;
   private englishTeachers: IEmployee[];
 
   public get groupName(): string {
@@ -46,10 +46,13 @@ export class AssignEnglishTeacherComponent implements OnInit {
     return !!this.currentTeacher;
   }
 
-  public selecTeacher(row: IEnglishTeacher): void {
-    if (row) {
-      this.currentTeacher = row;
+  public applySearch(search: string): void {
+    let data = this.englishTeachers;
+    if (search) {
+      data = this.englishTeachers
+        .filter(({ name }) => name.fullName.toLowerCase().includes(search.toLowerCase()));
     }
+    this._fillTable(data);
   }
 
   public assignTeacher(): void {
@@ -57,11 +60,11 @@ export class AssignEnglishTeacherComponent implements OnInit {
       return this.notification.showNotification(eNotificationType.INFORMATION, 'Asignación de docente', 'Debe seleccionar un docente');
     }
 
-    this.groupProv.assignGroupEnglishTeacher(this.data.group._id, this.currentTeacher._id)
+    this.groupProv.assignGroupEnglishTeacher(this.data.group._id, this.currentTeacher)
       .subscribe(
         (res: { ok_msj: string }) => {
           this.notification.showNotification(eNotificationType.SUCCESS, 'Asignación de docente', res.ok_msj || 'Docente asignado con éxito');
-          this.data.group.teacher = this.currentTeacher._id;
+          this.data.group.teacher = this.currentTeacher;
           this.dialogRef.close(this.data.group);
         }
       );
@@ -71,13 +74,14 @@ export class AssignEnglishTeacherComponent implements OnInit {
     this.englishTeachers = await this._getEnglishTeachers();
 
     if (this.data.teacherId) {
-      const index = this.englishTeachers.findIndex(({ _id }) => _id === this.data.teacherId);
-      if (index !== -1) {
-        this.englishTeachers.splice(index, 1);
-      }
+      this.currentTeacher = this.data.teacherId;
     }
 
-    this.englishTeachersDataSource.data = this.englishTeachers.map((teacher) => this._parseEnglishTeacherToTable(teacher));
+    this._fillTable(this.englishTeachers);
+  }
+
+  private _fillTable(teachers: IEmployee[]): void {
+    this.englishTeachersDataSource.data = teachers.map((teacher) => this._parseEnglishTeacherToTable(teacher));
   }
 
   private _parseEnglishTeacherToTable(teacher: IEmployee): IEnglishTeacher {
