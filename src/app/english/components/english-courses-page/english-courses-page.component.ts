@@ -44,6 +44,7 @@ import { IClassroom } from '../../entities/classroom.model';
 import { IGroup } from '../../entities/group.model';
 import { ICourse } from '../../entities/course.model';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
+import { IEmployee } from '../../../entities/shared/employee.model';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -72,6 +73,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   dialogRef: any;
   dayschedule = EDaysSchedule; //Enumerador de los dias de la semana
   searchClassroom = '';
+  searchGA = '';
 
   @ViewChild("viewCreateClassroom") dialogRefViewCreateClassroom: TemplateRef<any>;
   @ViewChild("scheduleClassroomAux") dialogRefScheduleClassroomAux: TemplateRef<any>;
@@ -812,6 +814,18 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   applyFilter() {
     this.dataSourceClassrooms.filter = this.searchClassroom.trim().toLowerCase();
+  }
+
+  setupFilterG() {
+    this.dataSourceActiveGroups.filterPredicate = (data, filterValue: string) =>
+      data.course.name.trim().toLowerCase().indexOf(filterValue) !== -1 ||
+      data.name.trim().toLowerCase().indexOf(filterValue) !== -1 ||
+      data.level == parseInt(filterValue) ||
+      (data.teacher as IEmployee).name.fullName.trim().toLowerCase().indexOf(filterValue) !== -1
+  }
+
+  applyFilterG() {
+    this.dataSourceActiveGroups.filter = this.searchGA.trim().toLowerCase();
   }
 
   getScheduleDaysGroup(schedules) {

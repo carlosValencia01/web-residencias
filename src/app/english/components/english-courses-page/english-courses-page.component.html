@@ -244,8 +244,13 @@
 
       <mat-tab label="Activos en clases">
         <!-- tabla -->
-        <div style="position: relative;">
-
+        <div style="position: relative; background: white;">
+          <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+            <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+              <input matInput (keyup)="applyFilterG($event)" placeholder="Buscar..." [(ngModel)]="searchGA" (keyup)="applyFilterG()" (focus)="setupFilterG()">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </div>
           <div style="position: relative; overflow: auto; max-width: 100%;">
 
             <table mat-table [dataSource]="dataSourceActiveGroups" class="mat-elevation-z8" matSort>
