@@ -10,6 +10,7 @@ export interface IEnglishStudent {
   courseType?: ICourse;
   level: number;
   lastLevelInfo?: ILastLevelInfo;
+  verified?: Boolean;
 }
 
 interface ILastLevelInfo {

@@ -693,7 +693,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       data: {
         group: group
       },
-      hasBackdrop: true,
+      hasBackdrop: false, height: '70%', width: '90%'
     });
 
     dialogRef.afterClosed().subscribe(result => {

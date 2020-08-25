@@ -45,7 +45,12 @@
           </mat-card>
         </div>
         <!--ESTATUS-->
-        <div class="col-lg-3 col-md-9 col-sm-9 col-xs-8 text-center pt-2">
+        <div class="col-lg-3 col-md-9 col-sm-9 col-xs-8 text-center pt-2" *ngIf="!englishStudent.verified">
+          <div>
+            <label><a style = "color: black;">La información que brindaste de tu último curso aprobado, está siendo verificada</a></label>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-9 col-sm-9 col-xs-8 text-center pt-2" *ngIf="englishStudent.verified">
           <div *ngIf="lastRequestStudent">
             <label><strong>{{getStudentStatusMessage()}} </strong></label>
           </div>
@@ -87,7 +92,7 @@
   </mat-tab>
 
   <!--TAB de Seleccion de Curso-->
-  <mat-tab label="Selección de curso" *ngIf="(englishStudent.status == 'no_choice') ">
+  <mat-tab label="Selección de curso" *ngIf="(englishStudent.verified && englishStudent.status == 'no_choice') ">
     <!--Cursos -->
     <div class="row justify-content-center p-3">
       

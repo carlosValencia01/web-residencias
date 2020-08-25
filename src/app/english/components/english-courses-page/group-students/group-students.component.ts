@@ -38,6 +38,7 @@ export class GroupStudentsComponent implements OnInit {
   englishStudents: any;
   showButtonAdd = false;
   showButtonDrop = false;
+  searchStudent = '';
 
   constructor(
     public dialogRef: MatDialogRef<GroupStudentsComponent>,
@@ -54,28 +55,11 @@ export class GroupStudentsComponent implements OnInit {
 
   getDataSource() {
 
-    this.englishStudents = [];
-
     this.loadingService.setLoading(true);
-    this.requestCourseProv.getAllRequestStudyingByCourse(this.data.group._id).subscribe(res => {
 
-      res.requestCourses.forEach(element => {
-
-        this.loadingService.setLoading(true);
-        this.englishStudentProv.getEnglishStudentById(element.englishStudent).subscribe(res => {
-
-          var englishStudent = JSON.parse(JSON.stringify(res.englishStudent[0]));
-          this.englishStudents.push(this.transformFormat(englishStudent, element._id, element.requestDate));
-          this.englishStudents.sort((a, b) => a._id.localeCompare(b._id));
-
-          this.createDataSource();
-
-        }, error => {
-
-        }, () => this.loadingService.setLoading(false));
-
-      });
-
+    this.requestCourseProv.getAllRequestActiveCourse(this.data.group._id).subscribe(async res => { 
+      this.englishStudents = res.requestCourses;
+      this.createDataSource();
     }, error => {
 
     }, () => this.loadingService.setLoading(false));
@@ -116,12 +100,17 @@ export class GroupStudentsComponent implements OnInit {
     }
   }
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+  setupFilter() {
+    this.dataSource.filterPredicate = (data, filterValue: string) =>  
+      data.englishStudent.studentId.fullName.trim().toLowerCase().indexOf(filterValue) !== -1 ||
+      data.englishStudent.studentId.controlNumber.indexOf(filterValue) !== -1 ||
+      data.englishStudent.studentId.careerId.shortName.trim().toLowerCase().indexOf(filterValue) !== -1 ||
+      data.englishStudent.studentId.email.trim().toLowerCase().indexOf(filterValue) !== -1 ||
+      data.englishStudent.currentPhone.indexOf(filterValue) !== -1
+  }
+
+  applyFilter() {
+    this.dataSource.filter = this.searchStudent.trim().toLowerCase();
   }
 
   onNoClick(): void {

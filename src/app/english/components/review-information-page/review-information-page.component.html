@@ -1,0 +1,64 @@
+<mat-card>
+  <mat-card-content>
+    <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+        
+    </div>
+      <div style="position: relative;">
+        <div style="position: relative; overflow: auto; max-width: 100%;">
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="no">
+              <mat-header-cell *matHeaderCellDef>No</mat-header-cell>
+              <mat-cell *matCellDef="let row; index as i;">{{(i + 1) + (paginator.pageIndex * paginator.pageSize)}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef>Nombre Alumno</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.studentId.fullName}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+              <mat-header-cell *matHeaderCellDef>Tipo Curso</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.courseType.name}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="phone">
+              <mat-header-cell *matHeaderCellDef>Teléfono Alumno</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.currentPhone}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <button mat-icon-button [matMenuTriggerFor]="actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <mat-menu #actions="matMenu">
+                  <button  (click)="viewDetails(row)" mat-menu-item>
+                    <mat-icon>visibility</mat-icon>
+                    <span>Detalles Solicitud</span>
+                  </button>
+                  <button  (click)="acceptReq(row._id)" mat-menu-item>
+                    <mat-icon>check</mat-icon>
+                    <span>Aceptar</span>
+                  </button>
+                  <button  (click)="declineReq(row._id)" mat-menu-item>
+                    <mat-icon>clear</mat-icon>
+                    <span>Rechazar</span>
+                  </button>
+                </mat-menu>
+
+              </mat-cell>
+            </ng-container>
+
+
+            <mat-header-row *matHeaderRowDef="['no', 'name', 'type', 'phone', 'actions']"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: ['no', 'name', 'type', 'phone', 'actions']"></mat-row>
+          </table>
+          <mat-paginator #matPaginator [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+        </div>
+      </div>
+
+  </mat-card-content>
+</mat-card>

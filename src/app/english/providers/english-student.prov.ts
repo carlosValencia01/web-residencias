@@ -35,4 +35,8 @@ export class EnglishStudentProvider {
   setPaidStatus(data){
     return this.api.put('sg-cle/englishstudent/set/paidstatus', data).pipe(map(res => res.json()));
   }
+
+  getEnglishStudentNoVerified() {
+    return this.api.get('sg-cle/englishstudent/students/noverified').pipe(map(student => student.json()));
+  }
 }

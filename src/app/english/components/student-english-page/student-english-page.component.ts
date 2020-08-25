@@ -283,6 +283,7 @@ export class StudentEnglishPageComponent implements OnInit {
           course: undefined,
           level: 0,
           lastLevelInfo: undefined,
+          verified: true
         };
 
         if (!value && dismiss.toString() === 'close') {
@@ -295,7 +296,7 @@ export class StudentEnglishPageComponent implements OnInit {
 
           dialogRef
             .afterClosed()
-            .subscribe(async (data: { course: ICourse, level: number }) => {
+            .subscribe(async (data: { course: ICourse, level: number, verified: Boolean}) => {
               if (data) {
                 this.englishStudent = await this._saveEnglishStudent(data);
                 if (this.englishStudent && this.englishStudent.courseType) {
@@ -324,6 +325,7 @@ export class StudentEnglishPageComponent implements OnInit {
         ? data.level * data.course.semesterHours
         : data.level,
       level: data.level,
+      verified: data.verified ? true : false,
       lastLevelInfo: data.lastLevelInfo,
     };
 
@@ -379,6 +381,7 @@ export class StudentEnglishPageComponent implements OnInit {
 interface IProfileInfo {
   course: ICourse;
   level: number;
+  verified: Boolean;
   lastLevelInfo?: {
     startHour: number;
     endHour: number;

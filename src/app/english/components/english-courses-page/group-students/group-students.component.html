@@ -14,7 +14,7 @@
     </div>
     <div class="col text-right">
       <mat-form-field>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Búsqueda...">
+        <input matInput [(ngModel)]="searchStudent" (keyup)="applyFilter()" (focus)="setupFilter()" placeholder="Búsqueda...">
       </mat-form-field>
       <button mat-mini-fab class="m-1" color="primary" (click)="getDataSource()" data-toggle="tooltip" title="Recargar">
         <mat-icon>update</mat-icon>
@@ -32,35 +32,35 @@
 
         <ng-container matColumnDef="fullName">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.fullName}} </mat-cell>
+          <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.fullName}} </mat-cell>
         </ng-container>
 
         <!--Columna No. Control-->
 
         <ng-container matColumnDef="controlNumber">
           <mat-header-cell *matHeaderCellDef mat-sort-header>No. Control</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
+          <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.controlNumber}} </mat-cell>
         </ng-container>
 
         <!--Columna Carrera-->
 
         <ng-container matColumnDef="career">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
+          <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.careerId.shortName}} </mat-cell>
         </ng-container>
 
         <!--Columna Correo-->
 
         <ng-container matColumnDef="email">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electronico</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
+          <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.email}} </mat-cell>
         </ng-container>
 
         <!--Columna Telefono-->
 
         <ng-container matColumnDef="currentPhone">
           <mat-header-cell *matHeaderCellDef mat-sort-header>Telefono Celular</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.currentPhone}} </mat-cell>
+          <mat-cell *matCellDef="let row"> {{row.englishStudent.currentPhone}} </mat-cell>
         </ng-container>
 
         <!--Columna Fecha-->
