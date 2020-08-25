@@ -265,6 +265,11 @@
                 <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
               </ng-container>
 
+              <ng-container matColumnDef="teacher">
+                <mat-header-cell *matHeaderCellDef>Maestro</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.teacher ? row.teacher.name.fullName : 'Sin asignar'}}</mat-cell>
+              </ng-container>
+
               <ng-container matColumnDef="actions">
                 <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
                 <mat-cell *matCellDef="let row">
@@ -294,8 +299,8 @@
                 </mat-cell>
               </ng-container>
 
-              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'actions']"></mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'actions']"></mat-row>
+              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'actions']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'actions']"></mat-row>
             </table>
 
           </div>
@@ -609,7 +614,7 @@
       <th data-a-h="center">{{ dataExcel.group.level }}</th>
       <th data-a-h="center">{{ dataExcel.group.name }}</th>
       <th data-a-h="center">{{ dataExcel.group.course.name }}</th>
-      <th data-a-h="center" *ngIf="dataExcel.teacher != ''">{{ dataExcel.teacher.name.fullName}}</th>
+      <th data-a-h="center" *ngIf="dataExcel.teacher != ''">{{ dataExcel.teacher}}</th>
       <th data-a-h="center" *ngIf="dataExcel.teacher == ''">Sin Asignar</th>
       <th data-a-h="center">{{dataExcel.schedule.Lunes}}</th>
       <th data-a-h="center">{{dataExcel.schedule.Martes}}</th>

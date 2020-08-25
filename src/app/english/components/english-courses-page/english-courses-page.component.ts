@@ -852,19 +852,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.getPaidStudentsRequest(_groupId);
   }
 
-  async getTeacher(_idTeacher) {
-    if (_idTeacher) {
-      return new Promise(async resolve => {
-        this.employeeProvider.getEmployeeById(_idTeacher).subscribe(res => {
-          const teacher = res.employee;
-          resolve(teacher);
-        })
-      });
-    } else {
-      return '';
-    }
-  }
-
   getPaidStudentsRequest(group) {
     this.groupProv.getAllStudentsGroup(group._id).subscribe(res => {
       if (res) {
@@ -922,7 +909,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.requestCourseProv.getAllRequestActiveCourse(_group._id).subscribe(async res => {
       this.dataExcel = {
         group: _group,
-        teacher: await this.getTeacher(_group.teacher),
+        teacher: _group.teacher.name.fullName,
         schedule: await this.getScheduleDaysGroup(_group.schedule),
         students: res.requestCourses,
       }
@@ -933,8 +920,9 @@ export class EnglishCoursesPageComponent implements OnInit {
             name: 'Alumnos'
           }
         });
-      }, 1500);
+      }, 2000);
     });
   }
+  //#endregion
 
 }
