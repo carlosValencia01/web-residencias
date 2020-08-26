@@ -122,16 +122,22 @@ export class WelcomeEmailsPageComponent implements OnInit {
       confirmButtonText: 'Aceptar'
     }).then((result) => {
       if (result.value) {
+        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Inscripciones', 'Enviando notificaciones...');
         this.sendEmails();
       }
     });
   }
 
   public sendEmails(){
+    this.loadingService.setLoading(true);
     this.inscriptionsProv.sendNotificationMail(this.listStudents).subscribe(
       res => {
-        this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Inscripciones', 'Notificación enviada a los alumnos');
+        if(res){
+          this.loadingService.setLoading(false);
+          this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Inscripciones', 'Notificación enviada a los alumnos');
+        }
       }, _ => {
+        this.loadingService.setLoading(false);
         this._NotificationsServices.showNotification(eNotificationType.ERROR, 'Inscripciones', 'Error, no se pudo enviar notificaciones');
       });
   }
