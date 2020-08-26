@@ -121,7 +121,7 @@ import { UploadExternalStudentsComponent } from './components/upload-external-st
     ClassroomProvider,
     EnglishCourseProvider,
     GroupProvider,
-    RequestProvider
+    RequestProvider,
   ]
 })
 export class EnglishModule { }

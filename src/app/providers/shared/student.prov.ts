@@ -273,4 +273,8 @@ export class StudentProvider {
     notificateDebtsStudents(students) {
         return this.api.post('student/inscriptions/register/debts/',{students}, true).pipe(map(res => res.json()));
     }
+
+    registerExternalStudents(data) {
+        return this.api.post('student/register/external', data).pipe(map(res => res.json()));
+    }
 }
