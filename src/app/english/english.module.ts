@@ -53,6 +53,7 @@ import { StudyingCourseDetailComponent } from './components/studying-course-deta
 import { AssignEnglishTeacherComponent } from './modals/assign-english-teacher/assign-english-teacher.component';
 import { ReviewInformationPageComponent } from './components/review-information-page/review-information-page.component';
 import { ReviewInformationModalComponent } from './modals/review-information-modal/review-information-modal.component';
+import { UploadExternalStudentsComponent } from './components/upload-external-students/upload-external-students.component';
 
 
 @NgModule({
@@ -102,6 +103,7 @@ import { ReviewInformationModalComponent } from './modals/review-information-mod
     AssignEnglishTeacherComponent,
     ReviewInformationPageComponent,
     ReviewInformationModalComponent,
+    UploadExternalStudentsComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
@@ -124,7 +126,7 @@ import { ReviewInformationModalComponent } from './modals/review-information-mod
     ClassroomProvider,
     EnglishCourseProvider,
     GroupProvider,
-    RequestProvider
+    RequestProvider,
   ]
 })
 export class EnglishModule { }
