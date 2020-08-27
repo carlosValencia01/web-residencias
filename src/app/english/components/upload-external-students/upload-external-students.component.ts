@@ -33,6 +33,7 @@ export class UploadExternalStudentsComponent implements OnInit {
     
     this.notificationService.showNotification(eNotificationType.INFORMATION,'ÍNGLES','Cargando datos');
     let csvData = [];// save the data of student
+    
     if (event.target.files && event.target.files[0]) {
       Papa.parse(event.target.files[0], {
         complete: async (results) => {
@@ -46,31 +47,31 @@ export class UploadExternalStudentsComponent implements OnInit {
               // save only students verified
               if(isVerified.toLowerCase() == 's'){ 
                 // age only to show in table
-                const age = parseInt((today.getFullYear() - parseInt(element[4].substr(4,2))).toString().substr(2,2));
+                const age = parseInt((today.getFullYear() - parseInt(element[5].substr(4,2))).toString().substr(2,2));
                 // get the student info
-                const fatherLastName = element[1].toUpperCase();
-                const motherLastName = element[2].toUpperCase();
-                const firstName = element[3].toUpperCase();
+                const fatherLastName = element[2].toUpperCase();
+                const motherLastName = element[3].toUpperCase();
+                const firstName = element[4].toUpperCase();
                 // complete the year with 19 or 20
-                const studentBirthYear = element[4].substr(4,1) == '0' ? '20' : '19'; 
+                const studentBirthYear = element[5].substr(4,1) == '0' ? '20' : '19'; 
                 // create the student birth date
-                const dateBirth = new Date(`${studentBirthYear}${element[4].substr(4,2)}-${element[4].substr(6,2)}-${element[4].substr(8,2)}`);
+                const dateBirth = new Date(`${studentBirthYear}${element[5].substr(4,2)}-${element[5].substr(6,2)}-${element[5].substr(8,2)}`);
                 // push the student in the array
                 csvData.push({
                   fullName:`${firstName} ${fatherLastName} ${motherLastName}`,
                   fatherLastName,
                   motherLastName,
                   firstName,
-                  phone:element[11],
-                  email:element[10],
-                  curp:element[4],
-                  sex:element[4].substr(10,1) == 'H' ? 'M' : 'F',
-                  age: parseInt(element[4].substr(6,2)) < today.getMonth() ? age : parseInt(element[4].substr(6,2)) > today.getMonth() ? age-1 : element[4].substr(6,2) == today.getMonth() ? parseInt(element[4].substr(8,2)) <= today.getDate() ? age : age-1 : age,
-                  cp:element[9],
-                  street: element[5],
-                  suburb:element[6],
-                  city:element[7],
-                  state:element[8],
+                  phone:element[8],
+                  email:element[7],
+                  curp:element[5],
+                  sex:element[5].substr(10,1) == 'H' ? 'M' : 'F',
+                  age: parseInt(element[5].substr(6,2)) < today.getMonth() ? age : parseInt(element[5].substr(6,2)) > today.getMonth() ? age-1 : element[5].substr(6,2) == today.getMonth() ? parseInt(element[5].substr(8,2)) <= today.getDate() ? age : age-1 : age,
+                  cp:element[13],
+                  street: element[9],
+                  suburb:element[10],
+                  city:element[11],
+                  state:element[12],
                   dateBirth
                 });
               }

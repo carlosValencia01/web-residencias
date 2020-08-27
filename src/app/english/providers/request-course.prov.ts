@@ -55,4 +55,8 @@ export class RequestCourseProvider {
     addRequest(data) {
         return this.api.post('sg-cle/requestcourse/add/request',data).pipe(map(res => res.json()));
     }
+    
+    setPaidStatus(data){
+        return this.api.put('sg-cle/requestcourse/paidstatus', data).pipe(map(res => res.json()));
+    }
 }
