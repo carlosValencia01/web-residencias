@@ -89,15 +89,15 @@ export class CoursesRequestTableComponent implements OnInit {
   getData() {
     return new Promise((resolve) => {
       this.requestCourseProv.getAllRequestCourse().subscribe((data) => {
-        // read the request
-        this.requestsCourses = data.requestCourses.filter(cour => (cour.englishStudent.status == 'requested' || cour.englishStudent.status == 'paid')).map(req => {
+        // read the request      
+        this.requestsCourses = data.requestCourses.filter(cour => (cour.status == 'requested' || cour.status == 'paid')).map(req => {
           let tmpDate = new Date();
           const startHour = req.group.schedule[0].startHour;
           tmpDate.setHours(startHour / 60, startHour % 60, 0, 0); // set the start hour of course for export
           req.courseHour = tmpDate;
           return req;
         });
-        this.notPaidRequests = this.requestsCourses.filter(req => (req.englishStudent.status == 'requested'));
+        this.notPaidRequests = this.requestsCourses.filter(req => (req.status == 'requested'));
 
         // create table data
         this.dataSource = new MatTableDataSource(this.requestsCourses);
@@ -119,7 +119,6 @@ export class CoursesRequestTableComponent implements OnInit {
     if (confirmdialog) {
       const data = { status: 'rejected', rejectMessage: confirmdialog };
       this.requestCourseProv.updateRequestById(request._id, data).subscribe(updated => { });
-      this.englishStudentProv.updateEnglishStudent(data, request.englishStudent._id).subscribe(updated => { });
       await this.getData();
       this.applyFilters();
     }
@@ -340,7 +339,7 @@ export class CoursesRequestTableComponent implements OnInit {
             this.notPaidRequests = this.notPaidRequests.filter(req => csvData.includes((req.englishStudent.studentId as IStudent).controlNumber));
 
             if (this.notPaidRequests.length > 0) {
-              await this.englishStudentProv.setPaidStatus(this.notPaidRequests).toPromise().then(ok => { });
+              await this.requestCourseProv.setPaidStatus(this.notPaidRequests).toPromise().then(ok => { });
               await this.getData();
               this.notificationService.showNotification(eNotificationType.SUCCESS, 'ÍNGLES', 'Pago registrado');
             } else {

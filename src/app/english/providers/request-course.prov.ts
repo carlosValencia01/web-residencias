@@ -47,4 +47,8 @@ export class RequestCourseProvider {
     getAllRequestActiveCourse(course) {
         return this.api.get('sg-cle/requestcourse/all/active/'+course).pipe(map(student => student.json()));
     }
+
+    setPaidStatus(data){
+        return this.api.put('sg-cle/requestcourse/paidstatus', data).pipe(map(res => res.json()));
+    }
 }
