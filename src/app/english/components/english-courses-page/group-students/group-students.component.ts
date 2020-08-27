@@ -117,6 +117,10 @@ export class GroupStudentsComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  onClose() {
+    this.dialogRef.close({ action: 'close' });
+  }
+
   declineStudentRequest(student){
     Swal.fire({
       title: 'Declinar estudiante',

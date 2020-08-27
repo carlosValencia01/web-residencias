@@ -1,7 +1,7 @@
 import { IEmployee } from '../../entities/shared/employee.model';
 import { IPeriod } from '../../entities/shared/period.model';
-import { ICourse } from './course.model';
 import { IClassroom } from './classroom.model';
+import { ICourse } from './course.model';
 
 export interface IGroup {
   _id?: string;
@@ -12,7 +12,7 @@ export interface IGroup {
   status: string;
   minCapacity: number;
   maxCapacity: number;
-  teacher?: IEmployee | string;
+  teacher?: IEmployee;
   course: ICourse;
 }
 

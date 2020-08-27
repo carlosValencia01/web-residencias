@@ -3,7 +3,7 @@
     <div class="card-header text-white bg-secondary">
       <div class="row">
         <div class="col-10">
-          <h1 mat-dialog-title>Agregar Alumnos</h1>
+          <h1 mat-dialog-title>Agregar Alumnos a Grupo Activo</h1>
         </div>
         <div class="col-2">
           <button mat-icon-button (click)="onClose()" class="float-right">
@@ -13,14 +13,12 @@
       </div>
     </div>
     
-    <div class="row p-3 justify-content-right">
-      <div class="col text-right">
+      <div style="text-align: right;">
         <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
-          <input matInput (keyup)="applyFilter($event)" placeholder="Ingrese aula o capacidad..." [(ngModel)]="searchStudent" (keyup)="applyFilter()" (focus)="setupFilter()">
+          <input matInput (keyup)="applyFilter($event)" placeholder="Buscar..." [(ngModel)]="searchStudent" (keyup)="applyFilter()" (focus)="setupFilter()">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
-    </div>
 
     <div class="example-container">
       <div style="position: relative;">
@@ -48,7 +46,7 @@
             </ng-container>
 
             <ng-container matColumnDef="type">
-              <mat-header-cell *matHeaderCellDef mat-sort-header>Típo</mat-header-cell>
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.controlNumber.substring(0,3) == 'CLE' ? 'Externo' : 'Interno' }} </mat-cell>
             </ng-container>
 
