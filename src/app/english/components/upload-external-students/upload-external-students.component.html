@@ -1,0 +1,67 @@
+<mat-card>
+  <mat-card-header>
+    <div class="row text-center w-100">
+      <div class="col-xs-12 col-md-5 p-3">
+        <input #fileUpload type="file" accept=".csv" (change)="onUpload($event)" style="display: none">
+        <span class="p-2">Cargar archivo csv</span>
+        <button mat-mini-fab class="mr-3" color="primary" (click)="fileUpload.click()" data-toggle="tooltip"
+          title="Cargar archivo csv" style="display: inline;">
+          <mat-icon>attachment</mat-icon>
+        </button>
+      </div>
+      <div class="col-xs-12 col-md-5 p-3" *ngIf="dataSource.data.length > 0">        
+        <span class="p-2">Enviar datos</span>
+        <button mat-mini-fab class="mr-3" color="secondary" (click)="sendExternalStudents()" data-toggle="tooltip"
+          title="Enviar datos" style="display: inline;">
+          <mat-icon>cloud_upload</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="mat-elevation-z8" >
+      <table mat-table [dataSource]="dataSource" matSort class="w-100">
+
+          <!-- Nombre -->
+          <ng-container matColumnDef="fullName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Nombre</th>
+            <td mat-cell *matCellDef="let row"> {{row.fullName}} </td>
+          </ng-container>                                          
+
+          <!-- Genero -->
+          <ng-container matColumnDef="sex">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Género</th>
+            <td mat-cell *matCellDef="let row"> 
+              <span *ngIf="row.sex == 'M'">Masculino</span>
+              <span *ngIf="row.sex == 'F'">Femenino</span>
+            </td>
+          </ng-container>                                          
+
+          <!-- Edad -->
+          <ng-container matColumnDef="age">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Edad</th>
+            <td mat-cell *matCellDef="let row"> {{row.age}} </td>
+          </ng-container>                                          
+
+          <!-- Correo -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Correo electrónico</th>
+            <td mat-cell *matCellDef="let row"> {{row.email}} </td>
+          </ng-container> 
+
+          <!-- Teléfono -->
+          <ng-container matColumnDef="phone">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Teléfono</th>
+            <td mat-cell *matCellDef="let row"> {{row.phone}} </td>
+          </ng-container>                                                                                       
+                          
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+          </tr>
+        </table>
+
+        <mat-paginator #paginator [showFirstLastButtons]="true" [pageSizeOptions]="[5,15,30]"></mat-paginator>
+    </div>
+  </mat-card-content>
+</mat-card>
