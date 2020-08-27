@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MatPaginator, MatSort, MatTableDataSource, MAT_DIALOG_DATA } from '@angular/material';
+import Swal from 'sweetalert2';
 import { IEmployee } from '../../../entities/shared/employee.model';
 import { eNotificationType } from '../../../enumerators/app/notificationType.enum';
 import { EmployeeProvider } from '../../../providers/shared/employee.prov';
@@ -43,7 +44,7 @@ export class AssignEnglishTeacherComponent implements OnInit {
   ngOnInit() { }
 
   public canAssign(): boolean {
-    return !!this.currentTeacher;
+    return !!this.currentTeacher && this.currentTeacher !== this.data.teacherId;
   }
 
   public applySearch(search: string): void {
@@ -60,14 +61,35 @@ export class AssignEnglishTeacherComponent implements OnInit {
       return this.notification.showNotification(eNotificationType.INFORMATION, 'Asignación de docente', 'Debe seleccionar un docente');
     }
 
-    this.groupProv.assignGroupEnglishTeacher(this.data.group._id, this.currentTeacher)
-      .subscribe(
-        (res: { ok_msj: string }) => {
-          this.notification.showNotification(eNotificationType.SUCCESS, 'Asignación de docente', res.ok_msj || 'Docente asignado con éxito');
-          this.data.group.teacher = this.currentTeacher;
-          this.dialogRef.close(this.data.group);
-        }
-      );
+    if (this.data.teacherId && this.currentTeacher === this.data.teacherId) {
+      return this.dialogRef.close();
+    }
+
+    const teacher = this._getTeacherById(this.currentTeacher);
+
+    Swal.fire({
+      title: 'Asignación de docente',
+      text: `¿Está seguro de asignar el docente ${teacher.name.fullName} al grupo ${this.data.group.name}?`,
+      type: 'warning',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Asignar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: true
+    }).then((result) => {
+      if (result.value) {
+        this.groupProv.assignGroupEnglishTeacher(this.data.group._id, this.currentTeacher)
+          .subscribe(
+            (res: { ok_msj: string }) => {
+              this.notification.showNotification(eNotificationType.SUCCESS, 'Asignación de docente', res.ok_msj || 'Docente asignado con éxito');
+              this.data.group.teacher = teacher;
+              this.dialogRef.close(this.data.group);
+            }
+          );
+      }
+    });
   }
 
   private async _init(): Promise<void> {
@@ -90,6 +112,10 @@ export class AssignEnglishTeacherComponent implements OnInit {
       name: teacher.name.fullName,
       position: this.ENGLISH_TEACHER_POSITION,
     };
+  }
+
+  private _getTeacherById(teacherId: string): IEmployee {
+    return this.englishTeachers.find(({ _id }) => _id === teacherId);
   }
 
   private _getEnglishTeachers(): Promise<IEmployee[]> {

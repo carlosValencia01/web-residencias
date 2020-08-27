@@ -712,9 +712,10 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   public openDialogshowEnglishTeachers(group: IGroup): void {
     const dialogRef = this.dialog.open(AssignEnglishTeacherComponent, {
-      data: { group, teacherId: group.teacher },
+      data: { group, teacherId: group.teacher && group.teacher._id },
       hasBackdrop: true,
       maxWidth: '85vw',
+      disableClose: true,
     });
 
     dialogRef.afterClosed()

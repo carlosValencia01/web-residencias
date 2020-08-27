@@ -1,18 +1,9 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { GroupProvider } from 'src/app/english/providers/group.prov';
-import Swal from 'sweetalert2';
-import { IGroup } from '../../entities/group.model';
-import { IRequestCourse } from '../../entities/request-course.model';
-import { EnglishStudentProvider } from '../../providers/english-student.prov';
-import { RequestCourseProvider } from '../../providers/request-course.prov';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ICourse } from '../../entities/course.model';
-import { NotificationsServices } from '../../../services/app/notifications.service';
-import { eNotificationType } from '../../../enumerators/app/notificationType.enum';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
+import Swal from 'sweetalert2';
+import { ICourse } from '../../entities/course.model';
 
 @Component({
   selector: 'app-review-information-modal',
@@ -26,7 +17,7 @@ export class ReviewInformationModalComponent implements OnInit {
   public period;
   public startHour;
   public endHour;
-  
+
   public courseForm: FormGroup;
   public courses: ICourse[];
   public courseLevels: number[];
@@ -35,9 +26,8 @@ export class ReviewInformationModalComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
     public dialogRef: MatDialogRef<ReviewInformationModalComponent>,
-    private notification: NotificationsServices,
     private englishCourseProv: EnglishCourseProvider,
-  ) { 
+  ) {
     this.getCourses();
   }
 
@@ -92,7 +82,7 @@ export class ReviewInformationModalComponent implements OnInit {
       },
     };
   }
-  
+
   onClose() {
     this.dialogRef.close({ action: 'close' });
   }
@@ -112,7 +102,7 @@ export class ReviewInformationModalComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         const data = this._getFormData();
-        this.dialogRef.close({action: 'update', data:data, id:this.data.student._id});      
+        this.dialogRef.close({ action: 'update', data: data, id: this.data.student._id });
       }
     });
   }
@@ -131,7 +121,7 @@ export class ReviewInformationModalComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.dialogRef.close({ action: 'accept', id:this.data.student._id});
+        this.dialogRef.close({ action: 'accept', id: this.data.student._id });
       }
     });
   }
@@ -150,13 +140,13 @@ export class ReviewInformationModalComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.dialogRef.close({ action: 'reject', id:this.data.student._id });
+        this.dialogRef.close({ action: 'reject', id: this.data.student._id });
       }
     });
   }
 
 
-  async getCourses(){
+  async getCourses() {
     this.courses = await this._getAllActiveEnglishCourses();
     this._init();
   }
