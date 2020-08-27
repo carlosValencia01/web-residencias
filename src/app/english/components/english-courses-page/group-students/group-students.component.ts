@@ -117,6 +117,31 @@ export class GroupStudentsComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  declineStudentRequest(student){
+    Swal.fire({
+      title: 'Declinar estudiante',
+      text: `Está por rechazar la solicitud del estudiante ` + student.englishStudent.studentId.fullName + `. ¿Desea continuar?`,
+      type: 'warning',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: true
+    }).then((result) => {
+      if (result.value) {
+        this.loadingService.setLoading(true);
+        this.requestCourseProv.declineRequest(student).subscribe(updated => {
+          if (updated) {
+            this.getDataSource();
+          }
+        });
+        this.loadingService.setLoading(false);
+      }
+    });
+  }
+
   deleteStudentRequest(studentId, requestId, name) {
     // Alert
 

@@ -37,6 +37,7 @@ import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
 // Importar Modales
 import { ActiveGroupModalComponent } from '../../modals/active-group-modal/active-group-modal.component';
 import { AssignEnglishTeacherComponent } from '../../modals/assign-english-teacher/assign-english-teacher.component';
+import { AddStudentsGroupModalComponent } from '../../modals/add-students-group-modal/add-students-group-modal.component';
 
 // Importar modelos
 import { IPeriod } from '../../../entities/shared/period.model';
@@ -701,7 +702,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
       }
-      this.ngOnInit();
+      //this.ngOnInit();
     });
 
   }
@@ -727,6 +728,27 @@ export class EnglishCoursesPageComponent implements OnInit {
           }
         }
       });
+  }
+
+  openDialogAddGroupStudents(group){
+    const linkModal = this.dialog.open(AddStudentsGroupModalComponent, {
+      data: {
+        operation: 'view',
+        groupOrigin: group.groupOrigin,
+        groupActive: group._id
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90%',
+      height: '90%'
+    });
+
+    let sub = linkModal.afterClosed().subscribe(
+      information => {
+
+      },
+      err => { }, () => sub.unsubscribe()
+    );
   }
   //#endregion
 
@@ -821,7 +843,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       data.course.name.trim().toLowerCase().indexOf(filterValue) !== -1 ||
       data.name.trim().toLowerCase().indexOf(filterValue) !== -1 ||
       data.level == parseInt(filterValue) ||
-      (data.teacher as IEmployee).name.fullName.trim().toLowerCase().indexOf(filterValue) !== -1
+      (data.teacher ? (data.teacher as IEmployee).name.fullName.trim().toLowerCase().indexOf(filterValue) !== -1 : false)
   }
 
   applyFilterG() {
@@ -923,7 +945,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.requestCourseProv.getAllRequestActiveCourse(_group._id).subscribe(async res => {
       this.dataExcel = {
         group: _group,
-        teacher: _group.teacher.name.fullName,
+        teacher: _group.teacher ? _group.teacher.name.fullName : '',
         schedule: await this.getScheduleDaysGroup(_group.schedule),
         students: res.requestCourses,
       }

@@ -72,12 +72,20 @@
 
         <!--Columna Opciones-->
 
-        <ng-container matColumnDef="actions" stickyEnd>
-          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+        <ng-container matColumnDef="actions">
+          <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
           <mat-cell *matCellDef="let row">
-            <button *ngIf="showButtonDrop" (click)="deleteStudentRequest(row._id, row.requestId, row.fullName)" mat-icon-button>
-              <mat-icon>delete</mat-icon>
+            <button mat-icon-button [matMenuTriggerFor]="actions">
+              <mat-icon>more_vert</mat-icon>
             </button>
+
+            <mat-menu #actions="matMenu">
+              <button (click)="declineStudentRequest(row)" mat-menu-item>
+                <mat-icon>clear</mat-icon>
+                <span>Declinar Alumno</span>
+              </button>
+            </mat-menu>
+
           </mat-cell>
         </ng-container>
 

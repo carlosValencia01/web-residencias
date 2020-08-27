@@ -47,4 +47,12 @@ export class RequestCourseProvider {
     getAllRequestActiveCourse(course) {
         return this.api.get('sg-cle/requestcourse/all/active/'+course).pipe(map(student => student.json()));
     }
+
+    declineRequest(data) {
+        return this.api.post('sg-cle/requestcourse/decline/request',data).pipe(map(res => res.json()));
+    }
+
+    addRequest(data) {
+        return this.api.post('sg-cle/requestcourse/add/request',data).pipe(map(res => res.json()));
+    }
 }

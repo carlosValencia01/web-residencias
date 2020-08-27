@@ -56,6 +56,7 @@ export class ActiveGroupModalComponent implements OnInit {
       level: baseGroup.level,
       period: baseGroup.period._id,
       course: baseGroup.course._id,
+      groupOrigin: baseGroup._id
     }
     const studentsGroup = this.request.slice(0, this.groupSize);
 
