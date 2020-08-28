@@ -43,8 +43,8 @@ export class AddStudentsGroupModalComponent implements OnInit {
   getRequest(idOriginGroup) {
     if(idOriginGroup){
       this.loadingService.setLoading(true);
-      this.requestCourseProv.getAllRequestActiveCourse(idOriginGroup).subscribe(async res => { 
-        this.dataSource.data = res.requestCourses;
+      this.groupProv.getAllStudentsGroup(idOriginGroup).subscribe(res => {
+        this.dataSource.data = res.students;
         this.dataSource.paginator = this.paginatorStudents;
         this.dataSource.sort = this.sortStudents;
       }, error => {
