@@ -702,7 +702,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
       }
-      //this.ngOnInit();
+      this.ngOnInit();
     });
 
   }
@@ -746,7 +746,7 @@ export class EnglishCoursesPageComponent implements OnInit {
 
     let sub = linkModal.afterClosed().subscribe(
       information => {
-
+        this.ngOnInit();
       },
       err => { }, () => sub.unsubscribe()
     );

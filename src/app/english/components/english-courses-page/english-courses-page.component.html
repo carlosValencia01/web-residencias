@@ -275,6 +275,11 @@
                 <mat-cell *matCellDef="let row">{{row.teacher ? row.teacher.name.fullName : 'Sin asignar'}}</mat-cell>
               </ng-container>
 
+              <ng-container matColumnDef="request">
+                <mat-header-cell *matHeaderCellDef>Solicitudes</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.reqActCount}}</mat-cell>
+              </ng-container>
+
               <ng-container matColumnDef="actions">
                 <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
                 <mat-cell *matCellDef="let row">
@@ -308,8 +313,8 @@
                 </mat-cell>
               </ng-container>
 
-              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'actions']"></mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'actions']"></mat-row>
+              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'request', 'actions']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'request', 'actions']"></mat-row>
             </table>
 
           </div>

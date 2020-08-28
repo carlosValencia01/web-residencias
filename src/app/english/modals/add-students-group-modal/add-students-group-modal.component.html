@@ -42,7 +42,7 @@
 
             <ng-container matColumnDef="career">
               <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.careerId.shortName}} </mat-cell>
+              <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.careerId ? row.englishStudent.studentId.careerId.shortName : ''}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="type">

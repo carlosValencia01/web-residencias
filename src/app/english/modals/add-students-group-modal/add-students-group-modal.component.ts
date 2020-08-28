@@ -80,6 +80,12 @@ export class AddStudentsGroupModalComponent implements OnInit {
         this.requestCourseProv.addRequest(data).subscribe(updated => {
           if (updated) {
             this.getRequest(this.data.groupOrigin);
+            Swal.fire({
+              title: 'Alumno agregado con exito!',
+              showConfirmButton: false,
+              timer: 2500,
+              type: 'success'
+            });
           }
         });
         this.loadingService.setLoading(false);
@@ -91,7 +97,7 @@ export class AddStudentsGroupModalComponent implements OnInit {
     this.dataSource.filterPredicate = (data, filterValue: string) =>  
       data.englishStudent.studentId.fullName.trim().toLowerCase().indexOf(filterValue) !== -1 ||
       data.englishStudent.studentId.controlNumber.indexOf(filterValue) !== -1 ||
-      data.englishStudent.studentId.careerId.shortName.trim().toLowerCase().indexOf(filterValue) !== -1 ||
+      (data.englishStudent.studentId.careerId ? data.englishStudent.studentId.careerId.shortName.trim().toLowerCase().indexOf(filterValue) !== -1 : false) ||
       data.englishStudent.studentId.email.trim().toLowerCase().indexOf(filterValue) !== -1 ||
       data.englishStudent.currentPhone.indexOf(filterValue) !== -1
   }

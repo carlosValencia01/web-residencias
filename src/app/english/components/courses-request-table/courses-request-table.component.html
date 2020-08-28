@@ -78,7 +78,7 @@
             <!-- Carrera -->
             <ng-container matColumnDef="career">
               <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;">Carrera</th>
-              <td mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.careerId.acronym}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.careerId ? row.englishStudent.studentId.careerId.acronym : ''}} </td>
             </ng-container>                                          
 
             <!-- Curso -->

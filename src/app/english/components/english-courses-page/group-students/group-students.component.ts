@@ -104,7 +104,7 @@ export class GroupStudentsComponent implements OnInit {
     this.dataSource.filterPredicate = (data, filterValue: string) =>  
       data.englishStudent.studentId.fullName.trim().toLowerCase().indexOf(filterValue) !== -1 ||
       data.englishStudent.studentId.controlNumber.indexOf(filterValue) !== -1 ||
-      data.englishStudent.studentId.careerId.shortName.trim().toLowerCase().indexOf(filterValue) !== -1 ||
+      (data.englishStudent.studentId.careerId ? data.englishStudent.studentId.careerId.shortName.trim().toLowerCase().indexOf(filterValue) !== -1 : false) ||
       data.englishStudent.studentId.email.trim().toLowerCase().indexOf(filterValue) !== -1 ||
       data.englishStudent.currentPhone.indexOf(filterValue) !== -1
   }
@@ -138,6 +138,12 @@ export class GroupStudentsComponent implements OnInit {
         this.loadingService.setLoading(true);
         this.requestCourseProv.declineRequest(student).subscribe(updated => {
           if (updated) {
+            Swal.fire({
+              title: 'Alumno declinado con exito!',
+              showConfirmButton: false,
+              timer: 2500,
+              type: 'success'
+            });
             this.getDataSource();
           }
         });
