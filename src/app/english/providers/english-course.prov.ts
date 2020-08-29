@@ -26,4 +26,19 @@ export class EnglishCourseProvider {
     getActivePeriod(){
         return this.api.get('period/active').pipe(map( res=>res.json()));
     }
+
+    getEnBossMessage() {
+        return this.api.get('sg-cle/englishcourse/boss/message')
+            .pipe(map(englishCourse => englishCourse.json()));
+    }
+
+    createEnBossMessage(data) {
+        return this.api.post('sg-cle/englishcourse/boss/message',data)
+            .pipe(map(englishCourse => englishCourse.json()));
+    }
+
+    updateEnBossMessage(id,data) {
+        return this.api.put(`sg-cle/englishcourse/boss/message/${id}`,data)
+            .pipe(map(englishCourse => englishCourse.json()));
+    }
 }

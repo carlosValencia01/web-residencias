@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { StudentEnglishPageComponent } from './components/student-english-page/student-english-page.component';
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
-import { CoursesRequestTableComponent } from './components/courses-request-table/courses-request-table.component';
+import { BossMessageComponent } from './components/boss-message/boss-message.component';
 
 const routes: Routes = [
   {
@@ -17,9 +17,9 @@ const routes: Routes = [
     component: EnglishCoursesPageComponent
   },
   {
-    path: 'requests',
+    path: 'message',
     pathMatch: 'full',
-    component: CoursesRequestTableComponent
+    component: BossMessageComponent
   },
 ];
 

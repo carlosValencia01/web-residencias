@@ -14,4 +14,5 @@ export interface IStudent {
   document?: { filename?: string, releseDate?: Date, type?: string, status?: string };
   sex?: string;
   phone?: string;
+  status?:string;
 }
