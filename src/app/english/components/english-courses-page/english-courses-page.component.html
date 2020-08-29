@@ -12,155 +12,100 @@
     <mat-card>
       <mat-card-content>
         <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
-            <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
-              <input matInput (keyup)="applyFilter($event)" placeholder="Ingrese aula o capacidad..." [(ngModel)]="searchClassroom" (keyup)="applyFilter()" (focus)="setupFilter()">
-              <mat-icon matSuffix>search</mat-icon>
-            </mat-form-field>
-            <div style="text-align: right;">
-              <button style="margin-bottom:5px;" class="btn btn-success" (click)="openDialogCreateClassroom()">Nueva Aula</button>
-            </div>
-        </div>
-          <div style="position: relative;">
-            <div style="position: relative; overflow: auto; max-width: 100%;">
-              <table mat-table [dataSource]="dataSourceClassrooms" class="mat-elevation-z8">
-
-                <ng-container matColumnDef="name">
-                  <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="capacity">
-                  <mat-header-cell *matHeaderCellDef>Capacidad</mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.capacity}} </mat-cell>
-                </ng-container>
-
-                <ng-container matColumnDef="actions">
-                  <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <button mat-icon-button [matMenuTriggerFor]="actions">
-                      <mat-icon>more_vert</mat-icon>
-                    </button>
-
-                    <mat-menu #actions="matMenu">
-                      <button (click)="openDialogTableSchedule('2', row.schedule)" mat-menu-item>
-                        <mat-icon>watch_later</mat-icon>
-                        <span>Horario Disponible</span>
-                      </button>
-                      <button (click)="openDialogUpdateClassroom(row)" mat-menu-item>
-                        <mat-icon>edit</mat-icon>
-                        <span>Editar</span>
-                      </button>
-                      <button (click)="deleteClassroom(row._id, row.name)" mat-menu-item>
-                        <mat-icon>delete</mat-icon>
-                        <span>Eliminar</span>
-                      </button>
-                    </mat-menu>
-
-                  </mat-cell>
-                </ng-container>
-
-
-                <mat-header-row *matHeaderRowDef="['name', 'capacity', 'actions']"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: ['name', 'capacity', 'actions']"></mat-row>
-              </table>
-              <mat-paginator #matPaginatorClassrooms [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
-            </div>
+          <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+            <input matInput (keyup)="applyFilter($event)" placeholder="Ingrese aula o capacidad..."
+              [(ngModel)]="searchClassroom" (keyup)="applyFilter()" (focus)="setupFilter()">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+          <div style="text-align: right;">
+            <button style="margin-bottom:5px;" class="btn btn-success" (click)="openDialogCreateClassroom()">Nueva
+              Aula</button>
           </div>
+        </div>
+        <div style="position: relative;">
+          <div style="position: relative; overflow: auto; max-width: 100%;">
+            <table mat-table [dataSource]="dataSourceClassrooms" class="mat-elevation-z8">
 
-          <ng-template #viewCreateClassroom>
-            <h1 mat-dialog-title>Registrar Aula</h1>
-            <div class="col-md-12 col-12 pt-md-5 pt-3">
-              <form style="text-align: center;" [formGroup]="classroomForm" (ngSubmit)="onCreateClassroom()">
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+              </ng-container>
 
-                <div>
-                  <mat-form-field>
-                    <mat-label>Nombre del Aula</mat-label>
-                    <input matInput formControlName="name" required>
-                    <mat-error *ngIf="this.classroomForm.get('name').invalid">Ingrese un nombre</mat-error>
-                  </mat-form-field>
-                </div>
+              <ng-container matColumnDef="capacity">
+                <mat-header-cell *matHeaderCellDef>Capacidad</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.capacity}} </mat-cell>
+              </ng-container>
 
-                <div>
-                  <mat-form-field>
-                    <mat-label>Capacidad Máxima</mat-label>
-                    <input matInput type="number" min="1" formControlName="capacity" required>
-                    <mat-error *ngIf="this.classroomForm.get('capacity').invalid">Valor mayor a 0</mat-error>
-                  </mat-form-field>
-                </div>
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <button mat-icon-button [matMenuTriggerFor]="actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
 
-                <div>
-                  <mat-form-field>
-                    <mat-label>Tipo de aula</mat-label>
-                    <mat-select formControlName="schedule" required>
-                      <mat-option value="1">CLE</mat-option>
-                      <mat-option value="2">Auxiliar</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="this.classroomForm.get('schedule').invalid">Seleccione un típo de aula</mat-error>
-                  </mat-form-field>
-                </div>
+                  <mat-menu #actions="matMenu">
+                    <button (click)="openDialogTableSchedule('2', row.schedule)" mat-menu-item>
+                      <mat-icon>watch_later</mat-icon>
+                      <span>Horario Disponible</span>
+                    </button>
+                    <button (click)="openDialogUpdateClassroom(row)" mat-menu-item>
+                      <mat-icon>edit</mat-icon>
+                      <span>Editar</span>
+                    </button>
+                    <button (click)="deleteClassroom(row._id, row.name)" mat-menu-item>
+                      <mat-icon>delete</mat-icon>
+                      <span>Eliminar</span>
+                    </button>
+                  </mat-menu>
 
-                <ng-template #scheduleClassroomAux>
-                  <h1 mat-dialog-title>Horario de Aula</h1>
-                  <h5>Marca las casillas con las horas disponibles del aula</h5>
-                  <div mat-dialog-content>
-                    <table class="table table-bordered table-hover mt-2">
-                      <thead>
-                        <tr>
-                          <th scope="col">Horas</th>
-                          <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]"
-                            matTooltipPosition="above">{{dayschedule[day].charAt(0)}}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="table-row clickable-row" *ngFor="let course of dataSchedule; let i = index;">
-                          <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} -
-                            {{getHour(getMinutes(dataHours[i])+segment)}}</th>
-                          <td *ngFor="let day of weekdays; let j = index;"
-                            [class.mat-button-selected]="course[j]==dataHours[i]"
-                            (click)="course[j]=(course[j]=='')?dataHours[i]:''">
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div mat-dialog-actions>
-                    <button mat-button cdkFocusInitial (click)="verifySchedule()" class="button-blue">Guardar</button>
-                    <button mat-button matDialogClose class="button-blue">Cancelar</button>
-                  </div>
-                </ng-template>
+                </mat-cell>
+              </ng-container>
 
-                <div class="mt-0">
-                  <button [class.button-blue]="!classroomForm.invalid" type="submit" [disabled]="classroomForm.invalid"
-                    mat-button>Registrar Aula</button>
-                  <button style="margin-left:5px;" mat-button matDialogClose class="button-blue">Cancelar</button>
-                </div>
-              </form>
-            </div>
-          </ng-template>
 
-          <ng-template #viewUpdateClassroom>
-            <h1 mat-dialog-title>Actualizar Aula</h1>
+              <mat-header-row *matHeaderRowDef="['name', 'capacity', 'actions']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['name', 'capacity', 'actions']"></mat-row>
+            </table>
+            <mat-paginator #matPaginatorClassrooms [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+          </div>
+        </div>
 
-            <form style="text-align: center;" [formGroup]="updateClassroomForm">
-              <div mat-dialog-content>
+        <ng-template #viewCreateClassroom>
+          <h1 mat-dialog-title>Registrar Aula</h1>
+          <div class="col-md-12 col-12 pt-md-5 pt-3">
+            <form style="text-align: center;" [formGroup]="classroomForm" (ngSubmit)="onCreateClassroom()">
 
-                <div class="pb-2">
-                  <mat-form-field>
-                    <mat-label>Nombre del Aula</mat-label>
-                    <input matInput formControlName="name" required>
-                    <mat-error *ngIf="this.updateClassroomForm.get('name').invalid">Ingrese un nombre</mat-error>
-                  </mat-form-field>
-                </div>
+              <div>
+                <mat-form-field>
+                  <mat-label>Nombre del Aula</mat-label>
+                  <input matInput formControlName="name" required>
+                  <mat-error *ngIf="this.classroomForm.get('name').invalid">Ingrese un nombre</mat-error>
+                </mat-form-field>
+              </div>
 
-                <div class="pb-2">
-                  <mat-form-field>
-                    <mat-label>Capacidad</mat-label>
-                    <input matInput type="number" min="1" formControlName="capacity" required>
-                    <mat-error *ngIf="this.updateClassroomForm.get('capacity').invalid">Valor mayor a 0</mat-error>
-                  </mat-form-field>
-                </div>
+              <div>
+                <mat-form-field>
+                  <mat-label>Capacidad Máxima</mat-label>
+                  <input matInput type="number" min="1" formControlName="capacity" required>
+                  <mat-error *ngIf="this.classroomForm.get('capacity').invalid">Valor mayor a 0</mat-error>
+                </mat-form-field>
+              </div>
 
-                <div>
+              <div>
+                <mat-form-field>
+                  <mat-label>Tipo de aula</mat-label>
+                  <mat-select formControlName="schedule" required>
+                    <mat-option value="1">CLE</mat-option>
+                    <mat-option value="2">Auxiliar</mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="this.classroomForm.get('schedule').invalid">Seleccione un típo de aula</mat-error>
+                </mat-form-field>
+              </div>
+
+              <ng-template #scheduleClassroomAux>
+                <h1 mat-dialog-title>Horario de Aula</h1>
+                <h5>Marca las casillas con las horas disponibles del aula</h5>
+                <div mat-dialog-content>
                   <table class="table table-bordered table-hover mt-2">
                     <thead>
                       <tr>
@@ -173,65 +118,125 @@
                       <tr class="table-row clickable-row" *ngFor="let course of dataSchedule; let i = index;">
                         <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} -
                           {{getHour(getMinutes(dataHours[i])+segment)}}</th>
-                        <td *ngFor="let day of weekdays; let j = index;" [class.mat-button-selected]="course[j]==dataHours[i]"
+                        <td *ngFor="let day of weekdays; let j = index;"
+                          [class.mat-button-selected]="course[j]==dataHours[i]"
                           (click)="course[j]=(course[j]=='')?dataHours[i]:''">
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+                <div mat-dialog-actions>
+                  <button mat-button cdkFocusInitial (click)="verifySchedule()" class="button-blue">Guardar</button>
+                  <button mat-button matDialogClose class="button-blue">Cancelar</button>
+                </div>
+              </ng-template>
 
+              <div class="mt-0">
+                <button [class.button-blue]="!classroomForm.invalid" type="submit" [disabled]="classroomForm.invalid"
+                  mat-button>Registrar Aula</button>
+                <button style="margin-left:5px;" mat-button matDialogClose class="button-blue">Cancelar</button>
               </div>
-              <div mat-dialog-actions>
-                <button (click)="verifySchedule()" [class.button-blue]="!updateClassroomForm.invalid"
-                  [disabled]="updateClassroomForm.invalid" mat-button cdkFocusInitial>Guardar</button>
-                <button mat-button matDialogClose class="button-blue">Cancelar</button>
-              </div>
-
             </form>
-          </ng-template>
+          </div>
+        </ng-template>
 
-          <ng-template #viewScheduleClassroom>
-            <div mat-dialog-header class="detail-schedule-header">
-              <h1 mat-dialog-title>Horario</h1>
-              <div class="indicator-container">
-                <div class="indicator-label">Horas ocupadas</div>
-                <div class="occupied-indicator-shape"></div>
-              </div>
-              <div class="indicator-container">
-                <div class="indicator-label">Horas disponibles</div>
-                <div class="free-indicator-shape"></div>
-              </div>
-              <div class="indicator-container">
-                <div class="indicator-label">Horas sin asignar</div>
-                <div class="none-indicator-shape"></div>
-              </div>
-            </div>
+        <ng-template #viewUpdateClassroom>
+          <h1 mat-dialog-title>Actualizar Aula</h1>
+
+          <form style="text-align: center;" [formGroup]="updateClassroomForm">
             <div mat-dialog-content>
-              <table class="table table-bordered table-hover mt-2">
-                <thead>
-                  <tr>
-                    <th scope="col">Horas</th>
-                    <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]" matTooltipPosition="above">
-                      {{dayschedule[day].charAt(0)}}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container *ngFor="let hour of dataSchedule; let i = index;">
-                    <tr class="table-row clickable-row" *ngIf="showHour(hour)">
-                      <th scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}</th>
-                      <td *ngFor="let day of weekdays; let j = index;" [class.status-available]="hour[j]=='available'"
-                        [class.status-occupied]="hour[j]=='occupied'" [class.status-none]="hour[j]==''">
+
+              <div class="pb-2">
+                <mat-form-field>
+                  <mat-label>Nombre del Aula</mat-label>
+                  <input matInput formControlName="name" required>
+                  <mat-error *ngIf="this.updateClassroomForm.get('name').invalid">Ingrese un nombre</mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="pb-2">
+                <mat-form-field>
+                  <mat-label>Capacidad</mat-label>
+                  <input matInput type="number" min="1" formControlName="capacity" required>
+                  <mat-error *ngIf="this.updateClassroomForm.get('capacity').invalid">Valor mayor a 0</mat-error>
+                </mat-form-field>
+              </div>
+
+              <div>
+                <table class="table table-bordered table-hover mt-2">
+                  <thead>
+                    <tr>
+                      <th scope="col">Horas</th>
+                      <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]"
+                        matTooltipPosition="above">{{dayschedule[day].charAt(0)}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="table-row clickable-row" *ngFor="let course of dataSchedule; let i = index;">
+                      <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} -
+                        {{getHour(getMinutes(dataHours[i])+segment)}}</th>
+                      <td *ngFor="let day of weekdays; let j = index;"
+                        [class.mat-button-selected]="course[j]==dataHours[i]"
+                        (click)="course[j]=(course[j]=='')?dataHours[i]:''">
                       </td>
                     </tr>
-                  </ng-container>
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
+
             </div>
             <div mat-dialog-actions>
-              <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+              <button (click)="verifySchedule()" [class.button-blue]="!updateClassroomForm.invalid"
+                [disabled]="updateClassroomForm.invalid" mat-button cdkFocusInitial>Guardar</button>
+              <button mat-button matDialogClose class="button-blue">Cancelar</button>
             </div>
-          </ng-template>
+
+          </form>
+        </ng-template>
+
+        <ng-template #viewScheduleClassroom>
+          <div mat-dialog-header class="detail-schedule-header">
+            <h1 mat-dialog-title>Horario</h1>
+            <div class="indicator-container">
+              <div class="indicator-label">Horas ocupadas</div>
+              <div class="occupied-indicator-shape"></div>
+            </div>
+            <div class="indicator-container">
+              <div class="indicator-label">Horas disponibles</div>
+              <div class="free-indicator-shape"></div>
+            </div>
+            <div class="indicator-container">
+              <div class="indicator-label">Horas sin asignar</div>
+              <div class="none-indicator-shape"></div>
+            </div>
+          </div>
+          <div mat-dialog-content>
+            <table class="table table-bordered table-hover mt-2">
+              <thead>
+                <tr>
+                  <th scope="col">Horas</th>
+                  <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]"
+                    matTooltipPosition="above">
+                    {{dayschedule[day].charAt(0)}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let hour of dataSchedule; let i = index;">
+                  <tr class="table-row clickable-row" *ngIf="showHour(hour)">
+                    <th scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}</th>
+                    <td *ngFor="let day of weekdays; let j = index;" [class.status-available]="hour[j]=='available'"
+                      [class.status-occupied]="hour[j]=='occupied'" [class.status-none]="hour[j]==''">
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+          <div mat-dialog-actions>
+            <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+          </div>
+        </ng-template>
       </mat-card-content>
     </mat-card>
   </mat-tab>
@@ -247,10 +252,11 @@
         <div style="position: relative; background: white;">
           <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
             <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
-              <input matInput (keyup)="applyFilterG($event)" placeholder="Buscar..." [(ngModel)]="searchGA" (keyup)="applyFilterG()" (focus)="setupFilterG()">
+              <input matInput (keyup)="applyFilterG($event)" placeholder="Buscar..." [(ngModel)]="searchGA"
+                (keyup)="applyFilterG()" (focus)="setupFilterG()">
               <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
-        </div>
+          </div>
           <div style="position: relative; overflow: auto; max-width: 100%;">
 
             <table mat-table [dataSource]="dataSourceActiveGroups" class="mat-elevation-z8" matSort>
@@ -281,7 +287,8 @@
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+                </mat-header-cell>
                 <mat-cell *matCellDef="let row">
                   <button mat-icon-button [matMenuTriggerFor]="actions">
                     <mat-icon>more_vert</mat-icon>
@@ -313,8 +320,10 @@
                 </mat-cell>
               </ng-container>
 
-              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'request', 'actions']"></mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'request', 'actions']"></mat-row>
+              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'request', 'actions']">
+              </mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'request', 'actions']">
+              </mat-row>
             </table>
 
           </div>
@@ -384,7 +393,8 @@
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
+                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+                </mat-header-cell>
                 <mat-cell *matCellDef="let row">
                   <button mat-icon-button [matMenuTriggerFor]="actions">
                     <mat-icon>more_vert</mat-icon>
@@ -399,6 +409,10 @@
                       <mat-icon>done</mat-icon>
                       <span>Activar Grupo</span>
                     </button>
+                    <button (click)="generateExcelGroupRequests(row)" mat-menu-item>
+                      <mat-icon>cloud_download</mat-icon>
+                      <span>Descargar solicitudes en excel</span>
+                    </button>
                   </mat-menu>
 
                 </mat-cell>
@@ -406,7 +420,8 @@
 
               <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
               </mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
+              <mat-row
+                *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
               </mat-row>
             </table>
 
@@ -539,91 +554,38 @@
 </mat-tab-group>
 
 <!-- Tabla reporte alumnos Excel-->
-<table
-  class="table table-striped table-bordered table-hover"
-  id="tableActiveGroupReportExcel"
-  data-cols-width="9,21,35,35,17,17,17,17,17,17"
-  *ngIf="dataExcel">
+<table class="table table-striped table-bordered table-hover" id="tableActiveGroupReportExcel"
+  data-cols-width="9,21,35,35,17,17,17,17,17,17" *ngIf="dataExcel">
   <thead>
     <tr>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Bloque
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Grupo
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Curso
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Docente
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Lunes
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Martes
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Miércoles
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Jueves
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Viernes
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Sábado
       </th>
     </tr>
@@ -659,57 +621,35 @@
   </thead>
   <thead>
     <tr>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         No
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Número de Control
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Nombre
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Carrera
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Correo
       </th>
-      <th
-        data-f-bold="true"
-        data-a-h="center"
-        data-f-sz="14"
-        data-fill-color="112043"
-        data-f-color="FFFFFF">
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
         Teléfono
       </th>
     </tr>
   </thead>
   <tbody>
-    <tr
-      *ngFor="
+    <tr *ngFor="
         let alumno of dataExcel.students;
         let indice = index;
       ">
       <td data-f-sz="12" data-a-h="center">{{ indice + 1 }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.controlNumber }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.fullName }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.career || '---' }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.email }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.currentPhone }}</td>
     </tr>
