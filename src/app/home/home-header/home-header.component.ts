@@ -42,7 +42,7 @@ export class HomeHeaderComponent implements OnInit {
     private loadingService: LoadingService,
   ) {
     const fulturi = window.location.href;
-    this.survey = fulturi.indexOf('survey') !== -1;
+    this.survey = fulturi.indexOf('survey') !== -1 || fulturi.indexOf('welcome-students') !== -1;
   }
 
   ngOnInit() {

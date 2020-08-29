@@ -20,8 +20,8 @@ export class HomePageComponent implements OnInit {
     private roleServ: RoleService,
   ) {
     this.menu = this.cookiesServ.getMenu();
-    this.rol = this.cookiesServ.getData().user.rol;
-  }
+    const data = this.cookiesServ.getData()
+    this.rol = data && data.user && data.user.rol;  }
 
   ngOnInit() {
     this.homeItems = this._generateHomeItems(this.menu);

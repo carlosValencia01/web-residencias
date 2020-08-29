@@ -32,7 +32,7 @@ export class SidebarContentComponent implements OnInit {
   ) {
     this.DEFAULT_PROFILE_IMG = this.cookiesServ.getProfileIcon() || this.DEFAULT_PROFILE_IMG;
     const fulturi = window.location.href;
-    this.survey = fulturi.indexOf('survey') !== -1;
+    this.survey = fulturi.includes('survey') || fulturi.includes('welcome-students');    
     if (!this.survey) {
       this.data = this.cookiesServ.getData().user;
       this.status = this.data.status;

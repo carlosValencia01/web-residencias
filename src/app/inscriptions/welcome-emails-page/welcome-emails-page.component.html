@@ -21,6 +21,12 @@
           <mat-icon>email</mat-icon>
         </button>
       </div>
+      <div class="text-center" *ngIf="showTable">
+        <button mat-mini-fab class="m-1" color="primary" (click)="saveData()" data-toggle="tooltip"
+          title="Guardar datos">
+          <mat-icon>save</mat-icon>
+        </button>
+      </div>
     </div>
 
     <div class="row p-3" *ngIf="showTable">
