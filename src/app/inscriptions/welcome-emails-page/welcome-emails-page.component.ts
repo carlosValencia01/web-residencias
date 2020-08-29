@@ -142,6 +142,32 @@ export class WelcomeEmailsPageComponent implements OnInit {
       });
   }
 
+  public saveData(){
+    Swal.fire({
+      title: 'Guardar Datos',
+      text: `¿Está seguro de guardar los datos de estudiantes?`,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Aceptar'
+    }).then((result) => {
+      if (result.value) {
+        this._NotificationsServices.showNotification(eNotificationType.INFORMATION, 'Inscripciones', 'Guardando información...');
+        const data = {
+          students: this.listStudents
+        }
+        this.inscriptionsProv.saveWelcomeData(data).subscribe(
+          res => {
+            if (res){
+              this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Inscripciones', 'Éxito al guardar información...');
+            }
+          });
+      }
+    });
+  }
+
 }
 
 interface StudentTable {
