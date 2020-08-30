@@ -112,4 +112,12 @@ export class InscriptionsProvider {
     inEnglishPeriod(){
         return this.api.get('period/english').pipe(map( res=>res.json()));
     }
+    
+    getWelcomeStudentInformation(curp){
+        return this.api.get('inscription/welcomeStudent/'+curp).pipe(map( res=>res.json()));
+    }
+
+    saveWelcomeData(data){
+        return this.api.post('inscription/welcomeStudent',data).pipe(map( res=>res.json()));
+    }
 }

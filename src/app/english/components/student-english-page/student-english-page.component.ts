@@ -53,6 +53,13 @@ export class StudentEnglishPageComponent implements OnInit {
 
   englishCourses: ICourse[]; //Cursos de ingles activos
 
+  // variables para bloquear o permitir acceso al modúlo
+  isExternalStudent: boolean = false;
+  isTitled: boolean = false;
+  isActive: boolean = false;
+  activeStudents = [];
+  bossMessage: string = '';
+  studentActiveRequestCourse;
   constructor(
     private _CookiesService: CookiesService,
     private _ActivatedRoute: ActivatedRoute,
@@ -82,23 +89,36 @@ export class StudentEnglishPageComponent implements OnInit {
     this.studentProv.getStudentById(_id)
       .subscribe(async (res) => {
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0])); // Guardar al estudiante
+        // verifica si el estudiante es externo
+        this.isExternalStudent = this.currentStudent.controlNumber.indexOf('CLE') > -1;
+        // verifica si tiene estatus de titulado
+        this.isTitled = this.currentStudent.status == 'TIT';
+        // verifica si el alumno es activo
+        this.activeStudents = await this._getActiveStudents();
+        this.isActive = this.activeStudents.filter((st)=>st.controlNumber == this.data.email)[0] ? true : false;
+        if(!this.isTitled && (this.isActive || this.isExternalStudent)){
 
-        this.englishStudent = await this._getEnglishStudent(this.currentStudent._id as string);
-        this.englishCourses = await this._getAllActiveEnglishCourses();
-
-        if (!this.englishCourses || !this.englishCourses.length) {
-          return this.notification.showNotification(eNotificationType.INFORMATION, 'Cursos de inglés', 'No hay cursos activos para selección');
-        }
-
-        if (!this.englishStudent) {
-          await this._getPreviousInfoEnglishCourses();
-        }
-
-        this.requestStudent = await this._getRequests(this.englishStudent._id) as IRequestCourse[];
-        this.lastRequestStudent = this.requestStudent[this.requestStudent.length-1];
-
-        if (this.englishStudent && this.englishStudent.courseType) {
-          this.englishCourses = this.englishCourses.filter(course => course._id === this.englishStudent.courseType._id);
+          this.englishStudent = await this._getEnglishStudent(this.currentStudent._id as string);
+          this.englishCourses = await this._getAllActiveEnglishCourses();
+          this.studentActiveRequestCourse = await this._getRequestCourseByEnglisShtudentId();
+          
+          this.englishCourseProv.getEnBossMessage().toPromise().then((data)=>{  
+            this.bossMessage = data.message.message;
+          }).catch(err=>{});
+          if (this.thereAreNotCourses()) {
+            return this.notification.showNotification(eNotificationType.INFORMATION, 'Cursos de inglés', 'No hay cursos activos para selección');
+          }
+  
+          if (!this.englishStudent) {
+            await this._getPreviousInfoEnglishCourses();
+          }
+  
+          this.requestStudent = await this._getRequests(this.englishStudent._id) as IRequestCourse[];
+          this.lastRequestStudent = this.requestStudent[this.requestStudent.length-1];
+  
+          if (this.englishStudent && this.englishStudent.courseType) {
+            this.englishCourses = this.englishCourses.filter(course => course._id === this.englishStudent.courseType._id);
+          }
         }
 
       }, (_) => {
@@ -106,11 +126,30 @@ export class StudentEnglishPageComponent implements OnInit {
       });
 
   }
+  public thereAreNotCourses(){
+    return !this.englishCourses || !this.englishCourses.length;
+  }
 
   public getStudentStatusMessage(): string {
     if(this.lastRequestStudent){
       return this.statusEnglishStudent[this.lastRequestStudent.status];
     }
+  }
+
+  _getActiveStudents():Promise<Array<any>>{
+    return new Promise((resolve)=>{
+      this.studentProv.getAllActiveStudents().subscribe(((data)=>{
+        resolve(data.activeStudents);
+      }));
+    });
+  }
+
+  _getRequestCourseByEnglisShtudentId():Promise<Array<any>>{
+    return new Promise((resolve)=>{
+      this.requestCourseProv.getRequestCourseByEnglishStudentId(this.englishStudent._id).subscribe(((data)=>{
+        resolve(data.requestCourse);
+      }));
+    });
   }
 
   public verifyNotification(): void { //Verificar si existe notificación a mostrar

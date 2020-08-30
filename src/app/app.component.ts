@@ -72,7 +72,7 @@ export class AppComponent {
     if (_session && _session.user && _session.token && _status === eSessionStatus.ACTIVE) {
       this._setSessionStatus(eSessionStatus.ACTIVE);
       this.userProv.sendTokenFromAPI(_session.token);
-    } else if (fullurl.indexOf('survey') !== -1) { // para saber si se esta ingresando por la encuesta
+    } else if (fullurl.indexOf('survey') !== -1 || fullurl.indexOf('welcome-students') !== -1) { // para saber si se esta ingresando por la encuesta
       this._setSessionStatus(eSessionStatus.ACTIVE);
     } else {
       const _allStatus = Object.values(eSessionStatus);

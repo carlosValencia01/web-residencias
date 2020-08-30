@@ -20,8 +20,6 @@ import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
-import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
-import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
 
 // Importar Componentes
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
@@ -46,6 +44,7 @@ import { IGroup } from '../../entities/group.model';
 import { ICourse } from '../../entities/course.model';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { IEmployee } from '../../../entities/shared/employee.model';
+import { IRequestCourse } from '../../entities/request-course.model';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -112,8 +111,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     private classroomProv: ClassroomProvider,
     private englishCourseProv: EnglishCourseProvider,
     private groupProv: GroupProvider,
-    private studentEnglishProv: EnglishStudentProvider,
-    private employeeProvider: EmployeeProvider,
     public dialog: MatDialog,
     private notificationsServices: NotificationsServices,
   ) {
@@ -731,7 +728,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       });
   }
 
-  openDialogAddGroupStudents(group){
+  openDialogAddGroupStudents(group) {
     const linkModal = this.dialog.open(AddStudentsGroupModalComponent, {
       data: {
         operation: 'view',
@@ -960,6 +957,38 @@ export class EnglishCoursesPageComponent implements OnInit {
       }, 2000);
     });
   }
+
+  public async generateExcelGroupRequests(row: IGroup): Promise<void> {
+    this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Solicitudes de grupo', 'Generando reporte');
+    const requests = await this._getRequestedRequestByGroup(row._id as string);
+
+    this.dataExcel = {
+      group: row,
+      teacher: row.teacher ? row.teacher.name.fullName : 'Sin docente',
+      schedule: await this.getScheduleDaysGroup(row.schedule),
+      students: requests,
+    }
+    setTimeout(() => {
+      TableToExcel.convert(document.getElementById('tableActiveGroupReportExcel'), {
+        name: 'Solicitudes a grupo ' + this.dataExcel.group.name + '.xlsx',
+        sheet: {
+          name: 'Solicitudes'
+        }
+      });
+    }, 2000);
+  }
   //#endregion
+
+  // #region Peticiones al server
+  private _getRequestedRequestByGroup(groupId: string): Promise<IRequestCourse[]> {
+    return new Promise((resolve) => {
+      this.requestCourseProv.getRequestedGroupRequest(groupId)
+        .subscribe(
+          (requests: IRequestCourse[]) => resolve(requests),
+          (_) => resolve([])
+        );
+    });
+  }
+  // #endregion
 
 }

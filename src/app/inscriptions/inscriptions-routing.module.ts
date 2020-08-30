@@ -11,6 +11,7 @@ import { InscriptionsUploadFilesPageComponent } from './inscriptions-upload-file
 import { ProfileInscriptionPageComponent } from './profile-inscription-page/profile-inscription-page.component';
 import { SecretaryInscriptionPageComponent } from './secretary-inscription-page/secretary-inscription-page.component';
 import { WelcomeEmailsPageComponent } from './welcome-emails-page/welcome-emails-page.component';
+import { WelcomeStudentsPageComponent } from './welcome-students-page/welcome-students-page.component';
 
 const routes: Routes = [
   {
@@ -62,6 +63,11 @@ const routes: Routes = [
     path: 'newStudentsEmails',
     pathMatch: 'full',
     component: WelcomeEmailsPageComponent
+  },
+  {
+    path: 'welcome-students',
+    pathMatch: 'full',
+    component: WelcomeStudentsPageComponent
   },
 ];
 
