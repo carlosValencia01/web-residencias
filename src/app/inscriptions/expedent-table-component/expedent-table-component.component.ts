@@ -439,42 +439,70 @@ export class ExpedentTableComponentComponent implements OnInit {
     this.generateCredentialEmit.emit(row.student);
   }
   async updateExpedientStatus(row){
+    console.log(row);
+    
     const response = await this.showSwalAlert('Para ' + row.controlNumber,'Actualizar Estatus de Expediente','question');
     if (response) {
-      this.studentProv.getDocumentsUpload(row.student._id).subscribe(res => {
-        let numberAceptedDocs = res.documents.filter( docc => docc.statusName == "ACEPTADO").length;
-        let numberValidateddDocs = res.documents.filter( docc => docc.statusName == "VALIDADO").length;
-        let numberProcessDocs = res.documents.filter( docc => docc.statusName == "EN PROCESO").length;
-
-        if (numberAceptedDocs == 11 || numberAceptedDocs == 12){
-          // Cambiar estatus a ACEPTADO
-          this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},row.student._id).subscribe(res => {
-          });
-          this.updateExpedientStatusEmit.emit(true);
-          return;
-        }
-        if (numberValidateddDocs == 11 || numberValidateddDocs == 12){
-          // Cambiar estatus a VALIDADO
-          this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},row.student._id).subscribe(res => {
-          });
-          this.updateExpedientStatusEmit.emit(true);
-          return;
-        }
-
-        var allDiferentProcess = numberProcessDocs == 0;
-        var allValidateOrAcept = (numberAceptedDocs + numberValidateddDocs) == res.documents.length;        
-        console.log({numberAceptedDocs,numberProcessDocs,numberValidateddDocs,allDiferentProcess,allValidateOrAcept});
-        
-        if(allDiferentProcess){
-          if(!allValidateOrAcept){
-            // Cambiar estatus a EN PROCESO
-            this.inscriptionsProv.updateStudent({inscriptionStatus:"En Proceso"},row.student._id).subscribe(res => {
-            });
-            this.updateExpedientStatusEmit.emit(true);
+      const degree = row.student.careerId.acronym === 'DCA' ? 'doc' : row.student.careerId.acronym === 'MCA' || row.student.careerId.acronym === 'MTI' ? 'mas' : 'lic';
+      this.studentProv.getDocumentsUpload(row.student._id).subscribe(res => {        
+        const aceptedDocs = res.documents.filter( docc => docc.statusName == "ACEPTADO").length;
+        const validatedDocs = res.documents.filter( docc => docc.statusName == "VALIDADO").length;
+        const processDocs = res.documents.filter( docc => docc.statusName == "EN PROCESO").length;
+        const totalDocs = processDocs + validatedDocs + aceptedDocs;
+        if(degree === 'lic'){
+            // Cambiar estatus a ACEPTADO
+            if(aceptedDocs === 7 || aceptedDocs === 8 ){
+              this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},row.student._id).subscribe(res => { });
+              this.reload();
             return;
-          }
-          // No cambiar estatus
+            }
+            if(validatedDocs === 7 || validatedDocs === 8){
+            // Cambiar estatus a VALIDADO
+            this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},row.student._id).subscribe(res => { });
+            this.reload();
+            return;
+            }
         }
+        if(degree === 'mas'){
+            // Cambiar estatus a ACEPTADO
+            if(aceptedDocs === 10){
+              this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},row.student._id).subscribe(res => { });
+              this.reload();
+            return;
+            }
+            if(validatedDocs === 10){
+            // Cambiar estatus a VALIDADO
+            this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},row.student._id).subscribe(res => { });
+            this.reload();
+            return;
+            }
+        }
+        if(degree === 'doc'){
+            // Cambiar estatus a ACEPTADO
+            if(aceptedDocs === 10){
+              this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},row.student._id).subscribe(res => { });
+              this.reload();
+            return;
+            }
+            if(validatedDocs === 10){
+            // Cambiar estatus a VALIDADO
+            this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},row.student._id).subscribe(res => { });
+            this.reload();
+            return;
+            }
+        }
+        if(processDocs === 0){
+          // Cambiar estatus a EN PROCESO
+          let query = { inscriptionStatus:"En Proceso" };
+          const _student = row && row.student;
+          if (totalDocs === 2 && validatedDocs === 2 && _student && _student.stepWizard === 2) {
+            query['stepWizard'] = 3;
+          }
+          this.inscriptionsProv.updateStudent(query, row.student._id).subscribe(res => {  });
+          this.reload();
+          return;
+        }
+        
       });
     }    
   }

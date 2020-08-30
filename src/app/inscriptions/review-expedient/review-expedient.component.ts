@@ -206,11 +206,11 @@ export class ReviewExpedientComponent implements OnInit {
 
       if(this.degree === 'lic'){
          // Cambiar estatus a ACEPTADO
-         if(aceptedDocs === 11 || aceptedDocs === 12){
+         if(aceptedDocs === 7 || aceptedDocs === 8 ){
            this.inscriptionsProv.updateStudent({inscriptionStatus:"Aceptado"},this.data.student._id).subscribe(res => { });
           return;
          }
-         if(validatedDocs === 11 || validatedDocs === 12){
+         if(validatedDocs === 7 || validatedDocs === 8){
           // Cambiar estatus a VALIDADO
           this.inscriptionsProv.updateStudent({inscriptionStatus:"Verificado"},this.data.student._id).subscribe(res => { });
           return;
@@ -244,7 +244,7 @@ export class ReviewExpedientComponent implements OnInit {
         // Cambiar estatus a EN PROCESO
         let query = { inscriptionStatus:"En Proceso" };
         const _student = this.data && this.data.student;
-        if (totalDocs === 2 && aceptedDocs === 2 && _student && _student.stepWizard === 2) {
+        if (totalDocs === 2 && validatedDocs === 2 && _student && _student.stepWizard === 2) {
           query['stepWizard'] = 3;
         }
        this.inscriptionsProv.updateStudent(query, this.data.student._id).subscribe(res => {  });

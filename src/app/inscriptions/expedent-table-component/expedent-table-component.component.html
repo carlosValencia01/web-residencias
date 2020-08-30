@@ -206,10 +206,10 @@
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Acciones </th>
                 <td mat-cell *matCellDef="let row" style="width:5%"> 
-                  <button mat-icon-button [matMenuTriggerFor]="medicActions" *ngIf="roleName == 'Médico'">
+                  <button mat-icon-button [matMenuTriggerFor]="medicActions" *ngIf="roleName == 'Médico' && row.actions.inscriptionStatus != 'En Captura'">
                     <mat-icon>more_vert</mat-icon>
                 </button>
-                  <button mat-icon-button [matMenuTriggerFor]="actions" *ngIf="(roleName == 'Administrador' || roleName == 'Secretaria escolares') && row.actions.inscriptionStatus != 'En Captura'">
+                  <button mat-icon-button [matMenuTriggerFor]="actions" *ngIf="(roleName == 'Administrador' || roleName == 'Secretaria escolares')">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #medicActions="matMenu" >
@@ -231,11 +231,11 @@
                     <mat-icon>library_books</mat-icon>
                     Documentos a Dictaminar
                   </button>
-                  <button mat-menu-item *ngIf="!row.actions.printCredential" (click)="registerCredential(row)">
+                  <button mat-menu-item *ngIf="!row.actions.printCredential && row.actions.inscriptionStatus != 'En Captura'" (click)="registerCredential(row)">
                     <mat-icon>person_add</mat-icon>
                     Registrar Credencial Impresa
                   </button>
-                  <button mat-menu-item *ngIf="row.actions.printCredential" (click)="removeCredential(row)">
+                  <button mat-menu-item *ngIf="row.actions.printCredential && row.actions.inscriptionStatus != 'En Captura'" (click)="removeCredential(row)">
                     <mat-icon>person_add_disabled</mat-icon>
                     Remover Credencial Impresa
                   </button>

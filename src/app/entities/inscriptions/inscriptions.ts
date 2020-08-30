@@ -10,12 +10,7 @@ import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscription
 moment.locale('es');
 
 export class uInscription {
-    private ENCABEZADO = '"2020, Año de Leona Vicario, Benemérita Madre de la Patria"';
-    private FONT_SIZE: {
-        BODY: 9,
-        BOLD: 10,
-        MIN: 8
-    };
+
     private WIDTH = 216;
     private HEIGHT = 279;
     private FONT = 'Montserrat';
@@ -34,44 +29,27 @@ export class uInscription {
     private tecNacLogo: any;
     private tecNacLogoTitle: any;
     private tecLogo: any;
-    private serviceFirm: any;
+
     private directorFirm: any;
     private montserratNormal: any;
     private montserratBold: any;
-    private JDeptoDiv: IBoss;
-    private CDeptoDiv: IBoss;
-    private JDeptoEsc: IBoss;
-    private Director: IBoss;
-    private bosses: any;
-    private _qrCode: any;
-    private _stamp: any;
+
     private frontBase64;
     private backBase64;
     private caratulaExpediente;
     private contratoEstudiante;
-    private _student;
+
     constructor(
          public _getImage: ImageToBase64Service, 
          public _CookiesService: CookiesService,
          public inscriptionsProv: InscriptionsProvider
          ) {
-        this.bosses = this._CookiesService.getBosses();
-        this.JDeptoDiv = this.bosses.JDeptoDiv;
-        this.CDeptoDiv = this.bosses.CDeptoDiv;
-        this.JDeptoEsc = this.bosses.JDeptoEsc;
-        this.Director = this.bosses.Director;
+
         
         this._getImageToPdf();
     }
 
-    public setStudent(student) {
-        this._student = student;
-    }
 
-    public setCode(qrCode: any, eStamp: any) {
-        this._qrCode = qrCode;
-        this._stamp = eStamp;
-    }
 
     private _getImageToPdf() {
         this._getImage.getBase64('assets/imgs/logo.jpg').then(logo => {
@@ -102,9 +80,6 @@ export class uInscription {
             this.directorFirm = firm;
         });
 
-        this._getImage.getBase64('assets/imgs/firms/servicios.png').then(firm => {
-            this.serviceFirm = firm;
-        });
         this._getImage.getBase64('assets/imgs/front45A.jpg').then(res1 => {
             this.frontBase64 = res1;
         });
