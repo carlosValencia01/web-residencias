@@ -23,7 +23,7 @@ export class StudyingCourseDetailComponent implements OnInit {
 
   ngOnInit() {
     this.requestCourseProv.getRequestCourseByEnglishStudentId(this.englishStudent._id).subscribe((data) => {
-      this.requestCourse = data.requestCourse[0];
+      this.requestCourse = data.requestCourse;
     });
   }
 

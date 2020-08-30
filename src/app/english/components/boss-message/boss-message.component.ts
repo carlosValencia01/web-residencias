@@ -34,7 +34,13 @@ export class BossMessageComponent implements OnInit {
       setTimeout(() => {
         this.messageIn.nativeElement.focus();
       }, 600);
-    }).catch(err=>{this.edit = false; this.loaded = true;});
+    }).catch(err=>{
+      this.form = new FormGroup({
+        message: new FormControl('', Validators.required)
+      });
+      this.edit = false; 
+      this.loaded = true;
+    });
 
   }
 
