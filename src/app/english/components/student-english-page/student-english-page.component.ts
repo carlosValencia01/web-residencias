@@ -24,6 +24,7 @@ import { EStatusEnglishStudent, EStatusEnglishStudentDB } from 'src/app/english/
 import { ICourse } from '../../entities/course.model';
 import { SelectCourseLevelComponent } from '../select-course-level/select-course-level.component';
 import { eNotificationType } from '../../../enumerators/app/notificationType.enum';
+import { eStatus } from '../../../enumerators/reception-act/status.enum';
 
 // Importar modelos
 import { IEnglishStudent } from '../../entities/english-student.model';
@@ -42,8 +43,8 @@ export class StudentEnglishPageComponent implements OnInit {
   data; //Datos del usuario
   currentStudent: IStudent; //Datos del estuduante
   englishStudent: IEnglishStudent; //Perfil de ingles del estudiante
-  requestStudent: IRequestCourse []; 
-  lastRequestStudent: IRequestCourse; 
+  requestStudent: IRequestCourse[];
+  lastRequestStudent: IRequestCourse;
   showImg = false; //Mostrar Foto
   imageDoc; //Imagen del Drive
   photoStudent = ''; //Foto a mostrar
@@ -57,9 +58,12 @@ export class StudentEnglishPageComponent implements OnInit {
   isExternalStudent: boolean = false;
   isTitled: boolean = false;
   isActive: boolean = false;
+  public accessStatus: EAccessStatus = EAccessStatus.LOADING;
+  private hasEnglishReleased = false;
   activeStudents = [];
   bossMessage: string = '';
   studentActiveRequestCourse;
+
   constructor(
     private _CookiesService: CookiesService,
     private _ActivatedRoute: ActivatedRoute,
@@ -85,37 +89,47 @@ export class StudentEnglishPageComponent implements OnInit {
   ngOnInit() {
     const _id = this.data._id; // ID del Estudiante
 
-    //Obtener el estudiante con la ID
+    // Obtener el estudiante con la ID
     this.studentProv.getStudentById(_id)
       .subscribe(async (res) => {
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0])); // Guardar al estudiante
+        // verifica si el alumno es activo
+        this.isActive = this.currentStudent.status === eStatus.ACTIVO;
+        this.accessStatus = this.isActive ? EAccessStatus.ACTIVE : EAccessStatus.NOT_ACTIVE;
         // verifica si el estudiante es externo
         this.isExternalStudent = this.currentStudent.controlNumber.indexOf('CLE') > -1;
+        this.accessStatus = this.isExternalStudent ? EAccessStatus.ACTIVE : this.accessStatus;
         // verifica si tiene estatus de titulado
-        this.isTitled = this.currentStudent.status == 'TIT';
-        // verifica si el alumno es activo
-        this.activeStudents = await this._getActiveStudents();
-        this.isActive = this.activeStudents.filter((st)=>st.controlNumber == this.data.email)[0] ? true : false;
-        if(!this.isTitled && (this.isActive || this.isExternalStudent)){
+        this.isTitled = this.currentStudent.status == eStatus.TITULADO;
+        this.accessStatus = this.isTitled ? EAccessStatus.TITLED : this.accessStatus;
+        // Verificar si tiene el inglés liberado
+        this.hasEnglishReleased = !!this.currentStudent.documents.find(({ type, status }) => type === 'Ingles' && status[0].active);
+        this.accessStatus = this.hasEnglishReleased ? EAccessStatus.RELEASED : this.accessStatus;
 
+        if (!this.isTitled && (this.isActive || this.isExternalStudent)) {
           this.englishStudent = await this._getEnglishStudent(this.currentStudent._id as string);
           this.englishCourses = await this._getAllActiveEnglishCourses();
-          this.studentActiveRequestCourse = await this._getRequestCourseByEnglisShtudentId();
-          
-          this.englishCourseProv.getEnBossMessage().toPromise().then((data)=>{  
+
+          if (this.englishStudent) {
+            this.studentActiveRequestCourse = await this._getRequestCourseByEnglisShtudentId(this.englishStudent._id);
+          }
+
+          this.englishCourseProv.getEnBossMessage().toPromise().then((data) => {
             this.bossMessage = data.message.message;
-          }).catch(err=>{});
+          }).catch(err => { });
           if (this.thereAreNotCourses()) {
             return this.notification.showNotification(eNotificationType.INFORMATION, 'Cursos de inglés', 'No hay cursos activos para selección');
           }
-  
+
           if (!this.englishStudent) {
             await this._getPreviousInfoEnglishCourses();
           }
-  
-          this.requestStudent = await this._getRequests(this.englishStudent._id) as IRequestCourse[];
-          this.lastRequestStudent = this.requestStudent[this.requestStudent.length-1];
-  
+
+          if (this.englishStudent) {
+            this.requestStudent = await this._getRequests(this.englishStudent._id) as IRequestCourse[];
+            this.lastRequestStudent = this.requestStudent[this.requestStudent.length - 1];
+          }
+
           if (this.englishStudent && this.englishStudent.courseType) {
             this.englishCourses = this.englishCourses.filter(course => course._id === this.englishStudent.courseType._id);
           }
@@ -126,29 +140,23 @@ export class StudentEnglishPageComponent implements OnInit {
       });
 
   }
-  public thereAreNotCourses(){
+
+  public thereAreNotCourses() {
     return !this.englishCourses || !this.englishCourses.length;
   }
 
   public getStudentStatusMessage(): string {
-    if(this.lastRequestStudent){
+    if (this.lastRequestStudent) {
       return this.statusEnglishStudent[this.lastRequestStudent.status];
     }
   }
 
-  _getActiveStudents():Promise<Array<any>>{
-    return new Promise((resolve)=>{
-      this.studentProv.getAllActiveStudents().subscribe(((data)=>{
-        resolve(data.activeStudents);
-      }));
-    });
-  }
-
-  _getRequestCourseByEnglisShtudentId():Promise<Array<any>>{
-    return new Promise((resolve)=>{
-      this.requestCourseProv.getRequestCourseByEnglishStudentId(this.englishStudent._id).subscribe(((data)=>{
-        resolve(data.requestCourse);
-      }));
+  private _getRequestCourseByEnglisShtudentId(englishStudentId: string): Promise<Array<any>> {
+    return new Promise((resolve) => {
+      this.requestCourseProv.getRequestCourseByEnglishStudentId(englishStudentId)
+        .subscribe(((data) => {
+          resolve(data.requestCourse);
+        }), (_) => resolve([]));
     });
   }
 
@@ -337,7 +345,7 @@ export class StudentEnglishPageComponent implements OnInit {
 
           dialogRef
             .afterClosed()
-            .subscribe(async (data: { course: ICourse, level: number, verified: Boolean}) => {
+            .subscribe(async (data: { course: ICourse, level: number, verified: Boolean }) => {
               if (data) {
                 this.englishStudent = await this._saveEnglishStudent(data);
                 if (this.englishStudent && this.englishStudent.courseType) {
@@ -386,6 +394,7 @@ export class StudentEnglishPageComponent implements OnInit {
         );
     });
   }
+
   private _getRequests(studentId: string): Promise<IRequestCourse[]> {
     return new Promise((resolve) => {
       this.requestCourseProv.getRequestCourse(studentId)
@@ -417,11 +426,11 @@ export class StudentEnglishPageComponent implements OnInit {
     });
   }
 
-  private getInEnglishPeriod(){
+  private getInEnglishPeriod() {
     this.inscriptionProv.inEnglishPeriod().subscribe(
-      period=>{
-        if(period){
-          if(period.active){
+      period => {
+        if (period) {
+          if (period.active) {
             this.inPeriod = true;
           } else {
             this.inPeriod = false;
@@ -441,4 +450,12 @@ interface IProfileInfo {
     teacher: string;
     period: string;
   }
+}
+
+enum EAccessStatus {
+  ACTIVE = 'active',
+  NOT_ACTIVE = 'not_active',
+  TITLED = 'titled',
+  RELEASED = 'released',
+  LOADING = 'loading',
 }

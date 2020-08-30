@@ -1,204 +1,228 @@
-
-<div *ngIf="isTitled">
-  <div class="row justify-content-md-center">
-    <div class="col-12 col-lg-8">
-      <div class="title">
-        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
-        <h2>¡Aviso, Inscripción de inglés!</h2><br>
-        <span>Este modúlo solo puede ser accesado por alumnos no titulados.</span><br>        
-      </div>
-    </div>
-  </div>
-</div>
-<div *ngIf="!isTitled && (englishStudent && englishStudent.status == 'released')">
-  <div class="row justify-content-md-center">
-    <div class="col-12 col-lg-8">
-      <div class="title">
-        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
-        <h2>¡Aviso, Inscripción de inglés!</h2><br>
-        <span>Ya has aprobado todos los bloques de tu curso.</span><br>        
-      </div>
-    </div>
-  </div>
-</div>
-<div *ngIf="!isTitled && !isActive && !isExternalStudent">
-  <div class="row justify-content-md-center">
-    <div class="col-12 col-lg-8">
-      <div class="title">
-        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
-        <h2>¡Aviso, Inscripción de inglés!</h2><br>
-        <span>Solo alumnos activos pueden ingresar al modúlo de inglés</span><br>        
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--Comienzan los TABs del Estudiante-->
-<mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;" *ngIf="(englishStudent && englishStudent.status !== 'released') && !isTitled && (isActive || isExternalStudent)">
-  <!--TAB de Perfil-->
-  <mat-tab label="Perfil">
-    <ng-container *ngIf="englishStudent">
-      <div class="row text-center p-3" *ngIf="studentActiveRequestCourse && studentActiveRequestCourse.group.status == 'opened' && bossMessage !== ''">
-        <div class="col-12">
-          <div class="alert alert-danger">
-            <h4 class="alert-heading">Mensaje de la Coordinación de Lenguas Extranjeras</h4>
-            <hr>
-            <p class="text-size-15">{{bossMessage}}</p>                      
-          </div>
+<ng-container [ngSwitch]="accessStatus">
+  <div *ngSwitchCase="'titled'">
+    <div class="row justify-content-md-center">
+      <div class="col-12 col-lg-8">
+        <div class="title">
+          <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+          <h2>¡Aviso, cursos de inglés!</h2><br>
+          <span>Este modúlo solo puede ser accesado por alumnos no titulados.</span><br>
         </div>
       </div>
-      <div class="row justify-content-center p-3">
-        <!--FOTO-->
-        <div class="col-lg-3 col-md-4 col-sm-4 col-xs-8 mb-2">
-            <mat-card>
+    </div>
+  </div>
+  <div *ngSwitchCase="'released'">
+    <div class="row justify-content-md-center">
+      <div class="col-12 col-lg-8">
+        <div class="title">
+          <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+          <h2>¡Aviso, cursos de inglés!</h2><br>
+          <span>Ya tiene el inglés liberado</span><br>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngSwitchCase="'not_active'">
+    <div class="row justify-content-md-center">
+      <div class="col-12 col-lg-8">
+        <div class="title">
+          <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+          <h2>¡Aviso, cursos de inglés!</h2><br>
+          <span>Solo alumnos activos pueden ingresar al modúlo de inglés</span><br>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngSwitchCase="'active'">
+    <!--Comienzan los TABs del Estudiante-->
+    <mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;"
+      *ngIf="(englishStudent && englishStudent.status !== 'released') && !isTitled && (isActive || isExternalStudent)">
+      <!--TAB de Perfil-->
+      <mat-tab label="Perfil">
+        <ng-container *ngIf="englishStudent">
+          <div class="row text-center p-3"
+            *ngIf="studentActiveRequestCourse && studentActiveRequestCourse.group.status == 'opened' && bossMessage !== ''">
+            <div class="col-12">
+              <div class="alert alert-danger">
+                <h4 class="alert-heading">Mensaje de la Coordinación de Lenguas Extranjeras</h4>
+                <hr>
+                <p class="text-size-15">{{bossMessage}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-center p-3">
+            <!--FOTO-->
+            <div class="col-lg-3 col-md-4 col-sm-4 col-xs-8 mb-2">
+              <mat-card>
                 <div *ngIf="showImg==true">
-                  <img mat-card-image [src]="photoStudent" class="mb-0"> <!--Mostrar foto cargada-->
+                  <img mat-card-image [src]="photoStudent" class="mb-0">
+                  <!--Mostrar foto cargada-->
                 </div>
-                <div *ngIf="showImg==false"><!--Imagen antes de cargar foto--></div>
+                <div *ngIf="showImg==false">
+                  <!--Imagen antes de cargar foto-->
+                </div>
+              </mat-card>
+            </div>
+            <!--DATOS GENERALES-->
+            <div class="col-lg-5 col-md-5 col-sm-6 col-xs-10 mb-2">
+              <mat-card>
+                <div>
+                  <label><strong>{{currentStudent.fullName}}</strong></label>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="pt-2">
+                  <label>Número de Control: <strong>{{currentStudent.controlNumber}}</strong></label>
+                </div>
+                <div>
+                  <label>Carrera: <strong>{{currentStudent.career}}</strong></label>
+                </div>
+                <div>
+                  <label>Semestre: <strong>{{currentStudent.semester}}</strong></label>
+                </div>
+                <div>
+                  <label>Correo institucional: <strong>{{currentStudent.email}}</strong></label>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="pt-2">
+                  <label>Número teléfonico: <strong>{{englishStudent.currentPhone}}</strong></label>
+                </div>
+                <div>
+                  <label>CURP: <strong>{{currentStudent.curp}}</strong></label>
+                </div>
+                <div>
+                  <label>NSS: <strong>{{currentStudent.nss}}</strong></label>
+                </div>
+              </mat-card>
+            </div>
+            <!--ESTATUS-->
+            <div class="col-lg-3 col-md-9 col-sm-9 col-xs-8 text-center pt-2" *ngIf="!englishStudent.verified">
+              <div>
+                <label><a style="color: black;">La información que brindaste de tu último curso aprobado, está siendo
+                    verificada</a></label>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-9 col-sm-9 col-xs-8 text-center pt-2" *ngIf="englishStudent.verified">
+              <div *ngIf="lastRequestStudent">
+                <label><strong>{{getStudentStatusMessage()}} </strong></label>
+              </div>
+              <div
+                *ngIf="lastRequestStudent && !lastRequestStudent.paidNumber || lastRequestStudent && lastRequestStudent.paidNumber == 0">
+                <label *ngIf="lastRequestStudent.status == 'rejected' && lastRequestStudent.rejectMessage"><a
+                    style="color: black;">Detalles: {{lastRequestStudent.rejectMessage}}</a></label>
+                <label *ngIf="lastRequestStudent.status == 'cancelled' || lastRequestStudent.status == 'rejected'"><a
+                    style="color: blue; cursor: pointer;" (click)="selectNewCourse()">Selecciona un nuevo curso y
+                    horario</a></label>
+              </div>
+              <div *ngIf="lastRequestStudent && lastRequestStudent.paidNumber && lastRequestStudent.paidNumber > 0"
+                class="paid-label">
+                <label *ngIf="lastRequestStudent.paidNumber == 1"><a>Primer pago registrado</a></label>
+                <label *ngIf="lastRequestStudent.paidNumber == 2"><a>Segundo pago registrado</a></label>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="container-progress-spinners mt-3 mb-2">
+                <div class="mat-progress-spinner-empty">
+                  <mat-progress-spinner style="margin:0 auto;" mode="determinate" value="100" strokeWidth="25"
+                    diameter="150">
+                  </mat-progress-spinner>
+                </div>
+                <div class="center-progress-spinner">
+                  <mat-progress-spinner style="margin:0 auto;" mode="determinate"
+                    [value]="englishStudent.totalHoursCoursed/450*100" strokeWidth="25" diameter="150">
+                  </mat-progress-spinner>
+                </div>
+                <div class="center-description-progress-spinner">{{englishStudent.totalHoursCoursed}} hrs</div>
+              </div>
+              <div>Aún no cumple con las horas necesarias para liberar el Inglés</div>
+              <div *ngIf="lastRequestStudent">
+                <button *ngIf="lastRequestStudent.status=='requested'" class="mt-4" mat-raised-button color="warn"
+                  (click)="openDialogRejectRequest(englishStudent._id)">Cancelar solicitud</button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </mat-tab>
+
+      <!--TAB de Seleccion de Curso-->
+      <mat-tab label="Selección de curso" *ngIf="(englishStudent.verified && englishStudent.status == 'no_choice') ">
+        <!--Cursos -->
+        <div class="row justify-content-center p-3" *ngIf="inPeriod">
+
+          <div *ngIf="!englishCourses || (englishCourses && !englishCourses.length)">
+            <div class="row justify-content-md-center">
+              <div class="col-12 col-lg-8">
+                <div class="title" style="text-align: center; background-color:#ffffff;">
+                  <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top"
+                    alt=""><br>
+                  <h2>¡ATENCIÓN!</h2><br>
+                  <span>Aún no se han registrado cursos de Inglés, favor de acudir al Departamento de Lenguas
+                    Extranjeras.</span><br><br>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngFor="let course of englishCourses" class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+            <mat-card class="mat-card-course mb-3 text-white" style="background-color:#183969;">
+              <mat-card-header>
+                <mat-card-title><strong>{{course.name}}</strong></mat-card-title>
+                <mat-card-subtitle class="text-white">{{course.dailyHours}} Horas</mat-card-subtitle>
+              </mat-card-header>
+              <button mat-flat-button class="buton-register-course" (click)="openDialog(course)"><strong>Me
+                  interesa</strong></button>
+              <mat-card-content class="pl-2 pr-2 m-0">
+                <!--<p *ngFor="let period of course.days">{{period.desc}}</p>-->
+              </mat-card-content>
+              <mat-card-actions>
+                <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false"
+                  style="background-color: #C7C7C7;">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title></mat-panel-title>
+                    <mat-panel-description>
+                      Detalles del curso
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+                  <p><strong>{{course.semesterHours}} horas</strong> por semestre</p>
+                  <p>Total de semestres: <strong>{{course.totalSemesters}} semestres</strong></p>
+                  <p>Total de horas a cursar: <strong>{{course.totalHours}} horas</strong></p>
+                </mat-expansion-panel>
+              </mat-card-actions>
             </mat-card>
-        </div>
-        <!--DATOS GENERALES-->
-        <div class="col-lg-5 col-md-5 col-sm-6 col-xs-10 mb-2">
-          <mat-card>
-            <div>
-              <label><strong>{{currentStudent.fullName}}</strong></label>
-            </div>
-            <mat-divider></mat-divider>
-            <div class="pt-2">
-              <label>Número de Control: <strong>{{currentStudent.controlNumber}}</strong></label>
-            </div>
-            <div>
-              <label>Carrera: <strong>{{currentStudent.career}}</strong></label>
-            </div>
-            <div>
-              <label>Semestre: <strong>{{currentStudent.semester}}</strong></label>
-            </div>
-            <div>
-              <label>Correo institucional: <strong>{{currentStudent.email}}</strong></label>
-            </div>
-            <mat-divider></mat-divider>
-            <div class="pt-2">
-              <label>Número teléfonico: <strong>{{englishStudent.currentPhone}}</strong></label>
-            </div>
-            <div>
-              <label>CURP: <strong>{{currentStudent.curp}}</strong></label>
-            </div>
-            <div>
-              <label>NSS: <strong>{{currentStudent.nss}}</strong></label>
-            </div>
-          </mat-card>          
-        </div>
-        <!--ESTATUS-->
-        <div class="col-lg-3 col-md-9 col-sm-9 col-xs-8 text-center pt-2" *ngIf="!englishStudent.verified">
-          <div>
-            <label><a style = "color: black;">La información que brindaste de tu último curso aprobado, está siendo verificada</a></label>
           </div>
         </div>
-        <div class="col-lg-3 col-md-9 col-sm-9 col-xs-8 text-center pt-2" *ngIf="englishStudent.verified">
-          <div *ngIf="lastRequestStudent">
-            <label><strong>{{getStudentStatusMessage()}} </strong></label>
-          </div>
-          <div *ngIf="lastRequestStudent && !lastRequestStudent.paidNumber || lastRequestStudent && lastRequestStudent.paidNumber == 0">
-            <label *ngIf="lastRequestStudent.status == 'rejected' && lastRequestStudent.rejectMessage"><a style = "color: black;">Detalles: {{lastRequestStudent.rejectMessage}}</a></label>
-            <label *ngIf="lastRequestStudent.status == 'cancelled' || lastRequestStudent.status == 'rejected'"><a style = "color: blue; cursor: pointer;" (click)="selectNewCourse()">Selecciona un nuevo curso y horario</a></label>
-          </div>
-          <div *ngIf="lastRequestStudent && lastRequestStudent.paidNumber && lastRequestStudent.paidNumber > 0" class="paid-label">
-            <label *ngIf="lastRequestStudent.paidNumber == 1"><a>Primer pago registrado</a></label>
-            <label *ngIf="lastRequestStudent.paidNumber == 2"><a>Segundo pago registrado</a></label>
-          </div>
-          <mat-divider></mat-divider>
-          <div class="container-progress-spinners mt-3 mb-2">
-            <div class="mat-progress-spinner-empty">
-              <mat-progress-spinner style="margin:0 auto;"
-                                  mode="determinate"
-                                  value="100"
-                                  strokeWidth="25"
-                                  diameter="150">
-              </mat-progress-spinner>
+        <div class="row justify-content-center p-3" *ngIf="!inPeriod">
+          <div class="row justify-content-md-center">
+            <div class="col-12">
+              <div class="title" style="text-align: center; background-color:#ffffff; padding:20px">
+                <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top"
+                  alt=""><br>
+                <h2>¡ATENCIÓN!</h2><br>
+                <span>El periodo de solicitudes ha terminado</span><br>
+              </div>
             </div>
-            <div class="center-progress-spinner">
-              <mat-progress-spinner style="margin:0 auto;"
-                                  mode="determinate"
-                                  [value]="englishStudent.totalHoursCoursed/450*100"
-                                  strokeWidth="25"
-                                  diameter="150">
-              </mat-progress-spinner>
-            </div>
-            <div class="center-description-progress-spinner">{{englishStudent.totalHoursCoursed}} hrs</div>
-          </div>
-          <div>Aún no cumple con las horas necesarias para liberar el Inglés</div>
-          <div *ngIf="lastRequestStudent">
-            <button  *ngIf="lastRequestStudent.status=='requested'" class="mt-4" mat-raised-button color="warn" (click)="openDialogRejectRequest(englishStudent._id)">Cancelar solicitud</button>
           </div>
         </div>
-      </div>
-    </ng-container>
-  </mat-tab>
+      </mat-tab>
 
-  <!--TAB de Seleccion de Curso-->
-  <mat-tab label="Selección de curso" *ngIf="(englishStudent.verified && englishStudent.status == 'no_choice') ">
-    <!--Cursos -->
-    <div class="row justify-content-center p-3" *ngIf="inPeriod">
-      
-      <div *ngIf="!englishCourses || (englishCourses && !englishCourses.length)">
-        <div class="row justify-content-md-center">
-          <div class="col-12 col-lg-8">
-            <div class="title" style="text-align: center; background-color:#ffffff;">
-              <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
-              <h2>¡ATENCIÓN!</h2><br>
-              <span>Aún no se han registrado cursos de Inglés, favor de acudir al Departamento de Lenguas Extranjeras.</span><br><br>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!--TAB de Curso Actual-->
+      <mat-tab label="Curso Actual" *ngIf="englishStudent.status == 'studying'">
+        <app-studying-course-detail [englishStudent]="englishStudent"></app-studying-course-detail>
+      </mat-tab>
 
-      <div *ngFor="let course of englishCourses" class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
-        <mat-card class="mat-card-course mb-3 text-white" style="background-color:#183969;">
-          <mat-card-header>
-            <mat-card-title><strong>{{course.name}}</strong></mat-card-title>
-            <mat-card-subtitle class="text-white">{{course.dailyHours}} Horas</mat-card-subtitle>
-          </mat-card-header>
-          <button mat-flat-button class="buton-register-course" (click)="openDialog(course)"><strong>Me interesa</strong></button>
-          <mat-card-content class="pl-2 pr-2 m-0">
-            <!--<p *ngFor="let period of course.days">{{period.desc}}</p>-->
-          </mat-card-content>
-          <mat-card-actions>
-            <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" style="background-color: #C7C7C7;">
-              <mat-expansion-panel-header>
-                <mat-panel-title></mat-panel-title>
-                <mat-panel-description>
-                  Detalles del curso
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              <p><strong>{{course.semesterHours}} horas</strong> por semestre</p>
-              <p>Total de semestres: <strong>{{course.totalSemesters}} semestres</strong></p>
-              <p>Total de horas a cursar: <strong>{{course.totalHours}} horas</strong></p>
-            </mat-expansion-panel>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    </div>
-    <div class="row justify-content-center p-3" *ngIf="!inPeriod">
-      <div class="row justify-content-md-center">
-        <div class="col-12">
-          <div class="title" style="text-align: center; background-color:#ffffff; padding:20px">
-            <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
-            <h2>¡ATENCIÓN!</h2><br>
-            <span>El periodo de solicitudes ha terminado</span><br>
-          </div>
+      <!--TAB del Avance del Estudiante-->
+      <mat-tab label="Avance" *ngIf="englishStudent.status == 'studying'">
+        Aquí se mostrará el avance
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+  <div *ngSwitchDefault>
+    <div class="row justify-content-md-center">
+      <div class="col-12 col-lg-8">
+        <div class="title">
+          <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+          <h2>¡Aviso, cursos de inglés!</h2><br>
+          <span>Cargando...</span><br>
         </div>
       </div>
     </div>
-  </mat-tab>
-
-  <!--TAB de Curso Actual-->
-  <mat-tab label="Curso Actual" *ngIf="englishStudent.status == 'studying'">
-    <app-studying-course-detail [englishStudent]="englishStudent"></app-studying-course-detail>
-  </mat-tab>
-
-  <!--TAB del Avance del Estudiante-->
-  <mat-tab label="Avance" *ngIf="englishStudent.status == 'studying'">
-    Aquí se mostrará el avance
-  </mat-tab>
-
-</mat-tab-group>
+  </div>
+</ng-container>
