@@ -48,6 +48,7 @@ export class StudentEnglishPageComponent implements OnInit {
   imageDoc; //Imagen del Drive
   photoStudent = ''; //Foto a mostrar
   activePeriod: IPeriod;
+  inPeriod: Boolean;
   statusEnglishStudent = EStatusEnglishStudent; //Enumerador del estatus del perfil de ingles del estudiante
 
   englishCourses: ICourse[]; //Cursos de ingles activos
@@ -71,6 +72,7 @@ export class StudentEnglishPageComponent implements OnInit {
     this.data = _CookiesService.getData().user; //Obtener los datos del usuario
 
     this.getDocuments(); //Obtener la Foto de perfil
+    this.getInEnglishPeriod(); //Obtener periodo activo ingles
   }
 
   ngOnInit() {
@@ -376,6 +378,18 @@ export class StudentEnglishPageComponent implements OnInit {
     });
   }
 
+  private getInEnglishPeriod(){
+    this.inscriptionProv.inEnglishPeriod().subscribe(
+      period=>{
+        if(period){
+          if(period.active){
+            this.inPeriod = true;
+          } else {
+            this.inPeriod = false;
+          }
+        }
+      });
+  }
 }
 
 interface IProfileInfo {

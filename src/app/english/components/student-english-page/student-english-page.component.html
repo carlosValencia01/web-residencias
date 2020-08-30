@@ -94,7 +94,7 @@
   <!--TAB de Seleccion de Curso-->
   <mat-tab label="Selección de curso" *ngIf="(englishStudent.verified && englishStudent.status == 'no_choice') ">
     <!--Cursos -->
-    <div class="row justify-content-center p-3">
+    <div class="row justify-content-center p-3" *ngIf="inPeriod">
       
       <div *ngIf="!englishCourses || (englishCourses && !englishCourses.length)">
         <div class="row justify-content-md-center">
@@ -132,6 +132,17 @@
             </mat-expansion-panel>
           </mat-card-actions>
         </mat-card>
+      </div>
+    </div>
+    <div class="row justify-content-center p-3" *ngIf="!inPeriod">
+      <div class="row justify-content-md-center">
+        <div class="col-12">
+          <div class="title" style="text-align: center; background-color:#ffffff; padding:20px">
+            <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+            <h2>¡ATENCIÓN!</h2><br>
+            <span>El periodo de solicitudes ha terminado</span><br>
+          </div>
+        </div>
       </div>
     </div>
   </mat-tab>
