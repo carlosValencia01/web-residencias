@@ -15,7 +15,7 @@
     
       <div style="text-align: right;">
         <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
-          <input matInput (keyup)="applyFilter($event)" placeholder="Buscar..." [(ngModel)]="searchStudent" (keyup)="applyFilter()" (focus)="setupFilter()">
+          <input matInput (keyup)="applyFilter()" placeholder="Buscar..." [(ngModel)]="searchStudent" (keyup)="applyFilter()" (focus)="setupFilter()">
           <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>

@@ -22,7 +22,7 @@ export class AssignEnglishTeacherComponent implements OnInit {
   }
   public englishTeachersDataSource: MatTableDataSource<IEnglishTeacher>;
   private ENGLISH_TEACHER_POSITION = 'DOCENTE INGLÉS';
-  private currentTeacher: string;
+  public currentTeacher: string;
   private englishTeachers: IEmployee[];
 
   public get groupName(): string {

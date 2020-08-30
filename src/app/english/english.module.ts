@@ -41,7 +41,7 @@ import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 import { FormRequestCourseComponent } from './components/student-english-page/form-request-course/form-request-course.component';
 import { StudentRequestsComponent } from './components/english-courses-page/student-requests/student-requests.component';
-//import { ConfigureCourseComponent } from './components/english-courses-page/configure-course/configure-course.component';
+import { ConfigureCourseComponent } from './components/english-courses-page/configure-course/configure-course.component';
 import { FormCreateCourseComponent } from './components/english-courses-page/form-create-course/form-create-course.component';
 import { FormGroupComponent } from './components/english-courses-page/form-group/form-group.component';
 import { FromGenerateGroupsComponent } from './components/english-courses-page/from-generate-groups/from-generate-groups.component';
@@ -93,7 +93,7 @@ import { BossMessageComponent } from './components/boss-message/boss-message.com
     EnglishCoursesPageComponent,
     FormRequestCourseComponent,
     StudentRequestsComponent,
-    //ConfigureCourseComponent,
+    ConfigureCourseComponent,
     FormCreateCourseComponent,
     FormGroupComponent,
     FromGenerateGroupsComponent,
@@ -112,7 +112,7 @@ import { BossMessageComponent } from './components/boss-message/boss-message.com
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
     StudentRequestsComponent,
-    //ConfigureCourseComponent,
+    ConfigureCourseComponent,
     FormCreateCourseComponent,
     FormGroupComponent,
     FromGenerateGroupsComponent,

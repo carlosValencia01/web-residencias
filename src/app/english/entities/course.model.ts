@@ -4,6 +4,7 @@ export interface ICourse {
   _id?: string;
   name: string;
   dailyHours: number;
+  finalHours?: number;
   semesterHours: number;
   totalSemesters: number;
   totalHours: number;

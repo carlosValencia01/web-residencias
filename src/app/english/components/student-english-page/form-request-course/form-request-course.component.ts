@@ -26,14 +26,16 @@ export class FormRequestCourseComponent implements OnInit {
   schedule: Array<any>;
 
   dataSource: MatTableDataSource<any>;
-
+  data;
   constructor(
     private loadingService: LoadingService,
     private groupProv: GroupProvider,
     public dialogRef: MatDialogRef<FormRequestCourseComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA) public dialogData: DialogData,
     private _formBuilder: FormBuilder,
-  ) { }
+  ) { 
+    this.data = dialogData;
+  }
 
   ngOnInit() {
     this.groupFormGroup = this._formBuilder.group({
