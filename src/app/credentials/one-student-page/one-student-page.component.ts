@@ -235,17 +235,6 @@ export class OneStudentPageComponent implements OnInit {
     }
   }
 
-  getImage() {
-    this.loadingService.setLoading(true);
-    this.studentProv.getProfileImage(this.currentStudent._id).subscribe(res => {
-    }, error => {
-      console.log(error);
-      if (error.status === 404) {
-        this.photoStudent = 'assets/imgs/studentAvatar.png';
-      }
-    }, () => this.loadingService.setLoading(false));
-  }
-
   uploadFile() {
     this.loadingService.setLoading(true);
     const red = new FileReader;

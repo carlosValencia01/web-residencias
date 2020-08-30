@@ -1,0 +1,45 @@
+table {
+  width: 100%;
+}
+
+//Centrar encabezado de la tabla
+.mat-header-cell {
+  flex-direction: column;
+  justify-content: center;
+}
+
+//Centrar el contenido de los renglones de la tabla
+.mat-cell {
+  text-align: center;
+  justify-content:center;
+}
+
+.mat-column-actions{
+  max-width: 80px;
+  min-width: 80px;
+  padding-right: 0px;
+  }
+
+.mat-column-requestDate{
+  max-width: 150px;
+  min-width: 80px;
+}
+
+  .mat-column-currentPhone, .mat-column-controlNumber{
+    max-width: 88px;
+    min-width: 88px;
+  }
+
+  .mat-column-email{
+    max-width: 250px;
+    min-width: 200px;
+  }
+
+  .mat-column-fullName, .mat-column-career{
+    min-width: 150px;
+  }
+
+  .button-blue{
+    background-color: #183969;
+    color: white;
+  }

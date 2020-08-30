@@ -45,7 +45,9 @@ export class NewPeriodComponent implements OnInit {
         'arecPerEndDate': new FormControl((this.data.period.arecPerEndDate ? new Date(this.data.period.arecPerEndDate) : null),[Validators.required]),
         'arecInitShed': new FormControl((this.data.period.arecInitShed ? parseInt( this.data.period.arecInitShed+'') : null),[Validators.required, Validators.min(1), Validators.max(24)]),
         'arecEndShed': new FormControl((this.data.period.arecEndShed ? parseInt(this.data.period.arecEndShed+'') : null),[Validators.required, Validators.min(1), Validators.max(24)]),
-        'certificateDeliveryDate': new FormControl((this.data.period.certificateDeliveryDate ? this.data.period.certificateDeliveryDate : null),[Validators.required]),
+        'certificateDeliveryDate': new FormControl((this.data.period.certificateDeliveryDate ? this.data.period.certificateDeliveryDate : null),[Validators.required]),        
+        'englishPerInitDate': new FormControl((this.data.period.englishPerInitDate ? new Date(this.data.period.englishPerInitDate) : null),[Validators.required]),
+        'englishPerEndDate': new FormControl((this.data.period.englishPerEndDate ? new Date(this.data.period.englishPerEndDate) : null),[Validators.required]),
       });  
       this.minDate = new Date(this.formPeriod.get('year').value);
 
@@ -62,21 +64,10 @@ export class NewPeriodComponent implements OnInit {
         'arecInitShed': new FormControl(null,[Validators.required]),
         'arecEndShed': new FormControl(null,[Validators.required]),
         'certificateDeliveryDate': new FormControl(null,[Validators.required]),
+        'englishPerInitDate': new FormControl(null,[Validators.required]),
+        'englishPerEndDate': new FormControl(null,[Validators.required]),
       });
     }
-    // else{
-    //   this.formPeriod = new FormGroup({        
-    //     'initDate': new FormControl(null,[Validators.required]),
-    //     'endDate': new FormControl(null,[Validators.required]),
-    //     'insPerInitDate': new FormControl(null,[Validators.required]),
-    //     'insPerEndDate': new FormControl(null,[Validators.required]),
-    //     'arecPerInitDate': new FormControl(null,[Validators.required]),
-    //     'arecPerEndDate': new FormControl(null,[Validators.required]),
-    //     'arecInitShed': new FormControl(null,[Validators.required]),
-    //     'arecEndShed': new FormControl(null,[Validators.required]),
-    //     'certificateDeliveryDate': new FormControl(null,[Validators.required]),
-    //   });
-    // }
   }
 
   onClose(){

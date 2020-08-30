@@ -66,6 +66,12 @@ dropzone > .dropzone.dz-wrapper .dz-message{
 .mat-cell{    
   text-align: center;
 }
+.flex-align-center{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 /* SCROLL BAR */
 ::-webkit-scrollbar {
   width: 13px;

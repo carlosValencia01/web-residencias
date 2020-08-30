@@ -25,6 +25,10 @@ import { Api } from 'src/app/providers/app/api.prov';
 import { UserProvider } from 'src/app/providers/app/user.prov';
 import { EmployeeProvider } from 'src/app/providers/shared/employee.prov';
 import { PositionProvider } from 'src/app/providers/shared/position.prov';
+
+
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
+
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { Storage } from 'src/app/services/app/storage.service';
@@ -42,7 +46,8 @@ import { LoginHeaderComponent } from './login/login-header/login-header.componen
 import { LoginPageComponent } from './login/login-page/login-page.component';
 import { ESignatureProvider } from './providers/electronic-signature/eSignature.prov';
 registerLocaleData(localeEs);
-
+import { getSpanishPaginatorIntl } from 'src/app/services/shared/mat-paginator-labels';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 @NgModule({
   declarations: [
     AppComponent,
@@ -85,6 +90,7 @@ registerLocaleData(localeEs);
   ],
   providers: [
     { provide: ErrorStateMatcher, useClass: ErrorMatcher },
+    { provide: MatPaginatorIntl, useValue: getSpanishPaginatorIntl() },
     // Ngx
     CookieService,
 
@@ -94,6 +100,7 @@ registerLocaleData(localeEs);
     UserProvider,
     PositionProvider,
     ESignatureProvider,
+    EnglishStudentProvider,
 
     // Services
     CurrentPositionService,

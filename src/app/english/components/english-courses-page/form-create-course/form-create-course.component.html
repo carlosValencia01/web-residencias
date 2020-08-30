@@ -1,0 +1,50 @@
+<h1 mat-dialog-title>Crear Curso</h1>
+
+  <div mat-dialog-content>
+
+    <form [formGroup]="courseFormGroup">
+
+    <div>
+      <mat-form-field>
+        <mat-label>Nombre del curso</mat-label>
+        <input matInput formControlName="nameCtrl" maxlength="30" placeholder="Cool Tiger" required>
+        <mat-error *ngIf="this.courseFormGroup.get('nameCtrl').invalid">Necesitas ingresar un nombre</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="mr-3">
+        <mat-label>Horas diarias</mat-label>
+        <input matInput formControlName="dailyHoursCtrl" type="number" min="1" maxlength="5" required>
+        <mat-error *ngIf="this.courseFormGroup.get('dailyHoursCtrl').invalid">Necesitas ingresar una cantidad</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Horas por semestre</mat-label>
+        <input matInput formControlName="semesterHoursCtrl" type="number" min="1" maxlength="3" required>
+        <mat-error *ngIf="this.courseFormGroup.get('semesterHoursCtrl').invalid">Necesitas ingresar una cantidad</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="mr-3">
+        <mat-label>Bloques</mat-label>
+        <input matInput formControlName="totalSemestersCtrl" type="number" min="1" maxlength="1" required>
+        <mat-error *ngIf="this.courseFormGroup.get('totalSemestersCtrl').invalid">Necesitas ingresar una cantidad</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Total de horas a cursar</mat-label>
+        <input matInput formControlName="totalHoursCtrl" type="number" min="1" maxlength="3" required>
+        <mat-error *ngIf="this.courseFormGroup.get('totalHoursCtrl').invalid">Necesitas ingresar una cantidad</mat-error>
+      </mat-form-field>
+    </div>
+
+  </form>
+
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-button [mat-dialog-close]="courseFormGroup.value" [disabled]="!courseFormGroup.valid" cdkFocusInitial>Crear</button>
+  </div>

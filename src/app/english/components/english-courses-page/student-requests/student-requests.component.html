@@ -1,0 +1,319 @@
+<h2 mat-dialog-title>Alumnos interesados</h2>
+<div mat-dialog-content>
+
+  <!--Filtro-->
+
+  <div class="row p-3 justify-content-right">
+    <div class="col text-right">
+      <mat-form-field>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Búsqueda...">
+      </mat-form-field>
+      <button mat-mini-fab class="m-1" color="primary" (click)="getDataSource()" data-toggle="tooltip" title="Recargar">
+        <mat-icon>update</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!showCreateGroup">
+
+    <!--Tabla-->
+    <div style="position: relative;">
+      <div style="position: relative; overflow: auto; max-width: 100%;">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort #sortStudents="matSort" matSortActive="ID" matSortDirection="asc">
+
+          <!--Columna Nombre-->
+
+          <ng-container matColumnDef="fullName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.fullName}} </mat-cell>
+          </ng-container>
+
+          <!--Columna No. Control-->
+
+          <ng-container matColumnDef="controlNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>No. Control</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
+          </ng-container>
+
+          <!--Columna Carrera-->
+
+          <ng-container matColumnDef="career">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
+          </ng-container>
+
+          <!--Columna Correo-->
+
+          <ng-container matColumnDef="email">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electronico</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
+          </ng-container>
+
+          <!--Columna Telefono-->
+
+          <ng-container matColumnDef="currentPhone">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Telefono Celular</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.currentPhone}} </mat-cell>
+          </ng-container>
+
+          <!--Columna Fecha-->
+
+          <ng-container matColumnDef="requestDate">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.requestDate | date :  "dd/MM/yy HH:mm"}} </mat-cell>
+          </ng-container>
+
+          <!--Columna Opciones-->
+
+          <ng-container matColumnDef="actions" stickyEnd>
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button (click)="deleteStudentRequest(row._id, row.requestId, row.fullName)" mat-icon-button>
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row
+            *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']">
+          </mat-header-row>
+          <mat-row
+            *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']">
+          </mat-row>
+
+          <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="6">No se encontraron datos.</td>
+          </tr>
+
+        </table>
+      </div>
+      <!--Paginas-->
+
+      <mat-paginator #matPaginatorEnglishStudents [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+    </div>
+  </ng-container>
+
+
+
+
+
+  <ng-container *ngIf="showCreateGroup">
+
+
+
+
+    <mat-tab-group>
+
+      <mat-tab label="Grupo">
+
+
+        <!--Tabla-->
+        <div style="position: relative;">
+          <div style="position: relative; overflow: auto; max-width: 100%;">
+            <table mat-table [dataSource]="dataSourceSelected" class="mat-elevation-z8" matSort #sortStudentsSelected="matSort" matSortActive="ID" matSortDirection="asc">
+
+              <!--Columna Nombre-->
+
+              <ng-container matColumnDef="fullName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.fullName}} </mat-cell>
+              </ng-container>
+
+              <!--Columna No. Control-->
+
+              <ng-container matColumnDef="controlNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>No. Control</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Carrera-->
+
+              <ng-container matColumnDef="career">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Correo-->
+
+              <ng-container matColumnDef="email">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electronico</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Telefono-->
+
+              <ng-container matColumnDef="currentPhone">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Telefono Celular</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.currentPhone}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Fecha-->
+
+              <ng-container matColumnDef="requestDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.requestDate | date :  "dd/MM/yy HH:mm"}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Opciones-->
+
+              <ng-container matColumnDef="actions" stickyEnd>
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <button (click)="changeStudent(row, 0)" *ngIf="showButtonDrop" mat-icon-button>
+                    <mat-icon>clear</mat-icon>
+                  </button>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row
+                *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']">
+              </mat-header-row>
+              <mat-row
+                *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']">
+              </mat-row>
+
+              <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="6">No se encontraron datos.</td>
+              </tr>
+
+            </table>
+          </div>
+          <!--Paginas-->
+
+          <mat-paginator #matPaginatorEnglishStudentsSelected [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+        </div>
+
+
+
+
+
+
+
+
+
+
+      </mat-tab>
+
+      <mat-tab label="Solicitudes">
+
+
+
+
+
+        <!--Tabla-->
+        <div style="position: relative;">
+          <div style="position: relative; overflow: auto; max-width: 100%;">
+            <table mat-table [dataSource]="dataSourceWaiting" class="mat-elevation-z8" matSort #sortStudentsWaiting="matSort" matSortActive="ID" matSortDirection="asc">
+
+              <!--Columna Nombre-->
+
+              <ng-container matColumnDef="fullName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.fullName}} </mat-cell>
+              </ng-container>
+
+              <!--Columna No. Control-->
+
+              <ng-container matColumnDef="controlNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>No. Control</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Carrera-->
+
+              <ng-container matColumnDef="career">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Correo-->
+
+              <ng-container matColumnDef="email">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electronico</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Telefono-->
+
+              <ng-container matColumnDef="currentPhone">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Telefono Celular</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.currentPhone}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Fecha-->
+
+              <ng-container matColumnDef="requestDate">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.requestDate | date :  "dd/MM/yy HH:mm"}} </mat-cell>
+              </ng-container>
+
+              <!--Columna Opciones-->
+
+              <ng-container matColumnDef="actions" stickyEnd>
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <button (click)="changeStudent(row, 1)" *ngIf="showButtonAdd" mat-icon-button>
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row
+                *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']">
+              </mat-header-row>
+              <mat-row
+                *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']">
+              </mat-row>
+
+              <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="6">No se encontraron datos.</td>
+              </tr>
+
+            </table>
+          </div>
+          <!--Paginas-->
+
+          <mat-paginator #matPaginatorEnglishStudentsWaiting [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+        </div>
+
+
+
+
+
+
+
+      </mat-tab>
+
+    </mat-tab-group>
+
+
+  </ng-container>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--Opciones-->
+
+<mat-dialog-actions>
+  <button class="button-blue" mat-button mat-dialog-close>Cerrar</button>
+  <button *ngIf="!showCreateGroup" (click)="prepareGroup()" class="button-blue" mat-button>Crear Grupo</button>
+  <button *ngIf="showCreateGroup" (click)="cancelGroup()" class="button-blue" mat-button>Cancelar</button>
+  <button *ngIf="showCreateGroup" (click)="saveGroup()" class="button-blue" mat-button>Crear</button>
+</mat-dialog-actions>

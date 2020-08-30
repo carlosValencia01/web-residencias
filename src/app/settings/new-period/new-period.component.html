@@ -180,6 +180,38 @@
       </mat-error> 
     </div>
     <div class="col-md-3"></div>
+  </div><hr/>
+  <div class="row text-center">
+    <div class="col-12">
+      <h5>Datos del período para cursos de ingles</h5>
+    </div>
+  </div>
+  <div class="row text-center">
+      <div class="col-md-3"></div>
+    <div class="col-md-3"> 
+      <mat-form-field>
+        <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="englishInit" placeholder="Fecha inicio" formControlName="englishPerInitDate">
+        <mat-datepicker-toggle matSuffix [for]="englishInit"></mat-datepicker-toggle>
+        <mat-datepicker #englishInit></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('englishPerInitDate').valid && formPeriod.get('englishPerInitDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+      
+    </div>
+    <div class="col-md-3">
+      <mat-form-field>
+        <input [min]="formPeriod.get('englishPerInitDate').valid ? formPeriod.get('englishPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="englishEnd" placeholder="Fecha fin" formControlName="englishPerEndDate">
+        <mat-datepicker-toggle matSuffix [for]="englishEnd"></mat-datepicker-toggle>
+        <mat-datepicker #englishEnd></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!formPeriod.get('englishPerEndDate').valid && formPeriod.get('englishPerEndDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+    </div>
+    <div class="col-md-3"></div>
   </div>
   <hr/>
   <div class="row text-center">
@@ -193,5 +225,6 @@
     </div>
     <div class="col-md-4"></div>
   </div>
+  
 </form>
 

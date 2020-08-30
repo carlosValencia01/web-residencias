@@ -1,0 +1,83 @@
+table {
+  width: 100%;
+}
+
+//Centrar encabezado de la tabla
+.mat-header-cell {
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgb(21, 43, 84);
+  color: #fff;
+  font-size: 14pt;
+}
+
+//Centrar el contenido de los renglones de la tabla
+.mat-cell {
+  text-align: center;
+  justify-content:center;
+}
+
+.course-headers-align .mat-expansion-panel-header-title,
+.course-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.course-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.course-headers-align .mat-form-field + .mat-form-field {
+  margin-left: 8px;
+}
+
+.button-blue{
+  background-color: #183969;
+  color: white;
+}
+
+.mat-button-selected{
+  background-color: #183969;
+  color: white;
+}
+
+.status-available,.free-indicator-shape{
+  background-color: #183969;
+  color: white;
+}
+
+.status-occupied,.occupied-indicator-shape{
+  background-color: red;
+  color: white;
+}
+.indicator-container, .detail-schedule-header{
+  display: flex;
+  justify-content: space-around;
+  align-items: center
+}
+.occupied-indicator-shape,.free-indicator-shape, .none-indicator-shape{
+  height: 40px;
+  width: 100px;
+}
+.indicator-label{
+  padding: 5px;
+}
+.status-none, .none-indicator-shape{
+  background-color: #C7C7C7;
+  color: white;
+}
+
+.table-row{
+  cursor:pointer;
+}
+
+//Grupos
+
+.mat-column-level{
+  max-width: 80px;
+  min-width: 70px;
+}
+
+#tableActiveGroupReportExcel{
+  display: none;
+}

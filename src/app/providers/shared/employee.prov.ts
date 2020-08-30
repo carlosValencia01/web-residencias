@@ -23,6 +23,11 @@ export class EmployeeProvider {
             .pipe(map(students => students.json()));
     }
 
+    public getEmployeesByPosition(positionName: string) {
+      return this.api.get(`employee/position/${positionName}`)
+        .pipe(map(res => res.json()));
+    }
+
     getStudentById(_id) {
         return this.api.get(`employee/${_id}`)
             .pipe(map(student => student.json()));
@@ -33,10 +38,6 @@ export class EmployeeProvider {
             .pipe(map(student => student.json()));
     }
 
-    getProfileImage(id) {
-        return this.api.get(`employee/image/${id}`, { responseType: ResponseContentType.Blob })
-            .pipe(map((res: Response) => res.blob()));
-    }
 
     getEmployeesByDepto() {
         return this.api.get(`department/employees`).pipe(map(department => department.json()));

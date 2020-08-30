@@ -1,0 +1,109 @@
+<h1 mat-dialog-title style="text-align: center;"><strong>{{data.nameCourseSelected}}</strong></h1>
+<div mat-dialog-content> 
+<mat-horizontal-stepper linear>
+
+  <!--SELECCIONAR HORARIO-->
+
+  <mat-step [stepControl]="groupFormGroup" editable="true">
+    <ng-template matStepLabel><strong>Seleccione un horario</strong></ng-template>
+    <form style="text-align: center;" [formGroup]="groupFormGroup">
+      <mat-radio-group formControlName="groupCtrl" [(ngModel)]="data.groupId">
+
+        <div>
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="select">
+              <mat-header-cell *matHeaderCellDef></mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <mat-radio-button [value]="row._id">
+                </mat-radio-button>
+              </mat-cell>
+            </ng-container>
+        
+            <ng-container matColumnDef="monday">
+              <mat-header-cell *matHeaderCellDef>Lunes</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.monday}}</mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="tuesday">
+              <mat-header-cell *matHeaderCellDef>Martes</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.tuesday}} </mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="wednesday">
+              <mat-header-cell *matHeaderCellDef>Miércoles</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.wednesday}} </mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="thursday">
+              <mat-header-cell *matHeaderCellDef>Jueves</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.thursday}}</mat-cell>
+            </ng-container>
+    
+            <ng-container matColumnDef="Fryday">
+              <mat-header-cell *matHeaderCellDef>Viernes</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.Fryday}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="saturday">
+              <mat-header-cell *matHeaderCellDef>Sábado</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.saturday}} </mat-cell>
+            </ng-container>
+    
+            <mat-header-row *matHeaderRowDef="['select', 'monday', 'tuesday', 'wednesday', 'thursday', 'Fryday', 'saturday']"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: ['select', 'monday', 'tuesday', 'wednesday', 'thursday', 'Fryday', 'saturday']"></mat-row>
+          </table>
+        </div>
+      </mat-radio-group>
+      <div class="mt-3">
+        <button mat-button class="mr-2" (click)="onNoClick()">Cancelar</button>
+        <button mat-button matStepperNext>Siguiente</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!--PROPORCIONAR TELEFONO ACTUAL-->
+  <mat-step [stepControl]="phoneFormGroup" editable="true">
+    <ng-template matStepLabel><strong>Proporcione su número de celular actual</strong></ng-template>
+    <form style="text-align: center;" [formGroup]="phoneFormGroup">
+      <mat-form-field>
+      <mat-label>Número celular</mat-label>
+      <input matInput formControlName="phoneCtrl" [(ngModel)]="data.currentPhone" maxlength="10" placeholder="3112223344" required>
+      <mat-error *ngIf="this.phoneFormGroup.get('phoneCtrl').invalid">Necesitas ingresar 10 dígitos</mat-error>
+      </mat-form-field>
+      <div><label>*Requerimos contactarle.</label></div>
+      <div class="mt-4">
+        <button mat-button class="mr-2" matStepperPrevious>Anterior</button>
+        <button mat-button matStepperNext>Siguiente</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <!--Mensaje de adveretencia antes de seleccionarse el curso-->
+  <mat-step editable="true">
+    <ng-template matStepLabel><strong>Finalizar</strong></ng-template>
+    <div style="text-align: center;">
+      <label>Curso: <strong>{{data.courseSelected.name}}</strong></label><br>
+      <label>Número de celular: <strong>{{data.currentPhone}}</strong></label><br>
+
+      <div *ngFor="let s of schedule">
+        <ng-container *ngIf="s._id == data.groupId">
+          <label *ngIf="s.monday">Lunes: {{s.monday}}</label><br>
+          <label *ngIf="s.tuesday">Martes: {{s.tuesday}}</label><br>
+          <label *ngIf="s.wednesday">Miércoles: {{s.wednesday}}</label><br>
+          <label *ngIf="s.thursday">Jueves: {{s.thursday}}</label><br>
+          <label *ngIf="s.Fryday">Viernes: {{s.Fryday}}</label><br>
+          <label *ngIf="s.saturday">Sábado: {{s.saturday}}</label>
+        </ng-container>
+      </div>
+
+      <label class="mt-2">¿Está seguro de solicitar este curso?</label>
+      <div class="mt-4">
+        <button class="mr-2" mat-button [mat-dialog-close]="{groupId: data.groupId, currentPhone: data.currentPhone}" cdkFocusInitial>Sí</button>
+        <button mat-button (click)="onNoClick()">Cancelar</button>
+      </div>
+    </div>
+  </mat-step>
+  
+</mat-horizontal-stepper>
+</div>

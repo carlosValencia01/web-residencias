@@ -1,0 +1,65 @@
+.mat-card-course{
+    padding: 8px;
+}
+
+.buton-register-course{
+    position: absolute; 
+    top: 7%; 
+    right: 5%;
+}
+
+.mat-progress-spinner-empty ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #C7C7C7;
+}
+
+.container-progress-spinners {
+    position: relative;
+    width: 100%;
+  }
+  
+  .center-progress-spinner {
+    position: absolute;
+    top: 0%;
+    width: 100%;
+  }
+
+  .center-progress-spinner  ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #183969;
+}
+
+  .center-description-progress-spinner {
+    position: absolute;
+    top: 40%;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+  }
+
+.paid-label{
+  background: #143c67;
+  color: #f4f4f4;
+  font-size: 14pt;
+  font-weight: 600;
+}
+
+.title {
+  justify-content: center;
+  text-align: center;
+  font-size: 18px;
+  padding: 30px;
+  font-weight: bold;
+  color: black;
+  background-color: white !important;
+  margin: 30px 50px 10px 50px;
+  border-radius: 10px;
+}
+.title > h2 {
+  margin: 0;
+}
+
+.title > span {
+  font-weight: lighter;
+}
+.text-size-15{
+  font-size: 15pt;
+}

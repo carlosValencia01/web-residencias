@@ -1,0 +1,89 @@
+<h1 mat-dialog-title>Crear Grupo</h1>
+
+  <div mat-dialog-content>
+
+    <form [formGroup]="groupFormGroup">
+
+    <div>
+      <mat-form-field>
+        <mat-label>Nombre del grupo</mat-label>
+        <input matInput formControlName="nameCtrl" maxlength="30" required>
+        <mat-error *ngIf="this.groupFormGroup.get('nameCtrl').invalid">Necesitas ingresar un nombre</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label>Curso</mat-label>
+        <mat-select formControlName="courseCtrl" required>
+          <mat-option *ngFor="let course of englishCourses" [value]="course">
+            {{course.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="this.groupFormGroup.get('courseCtrl').invalid">Necesitas seleccionar un curso</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Bloque</mat-label>
+        <mat-select formControlName="levelCtrl" [disabled]="this.groupFormGroup.get('courseCtrl').invalid" required>
+          <mat-option *ngFor="let level of levels" [value]="level">
+            Bloque {{level}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="this.groupFormGroup.get('levelCtrl').invalid">Necesitas seleccionar un bloque</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="pt-4">
+      <mat-radio-group
+        [disabled]="this.groupFormGroup.get('courseCtrl').invalid"
+        formControlName="scheduleCtrl">
+        <div>
+          <mat-radio-button value="1">Lunes a Viernes</mat-radio-button>
+          <mat-radio-button value="2">Sabados</mat-radio-button>
+          <mat-radio-button value="3">Personalizado</mat-radio-button>
+        </div>
+      </mat-radio-group>
+    </div>
+
+    <div *ngIf="this.groupFormGroup.get('scheduleCtrl').value == '1' ||
+                this.groupFormGroup.get('scheduleCtrl').value == '2'" class="pt-3">
+      <mat-form-field>
+        <mat-label>Inicio</mat-label>
+        <input matInput type="time" value="07:00" [(ngModel)]="startHours" [ngModelOptions]="{standalone: true}">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Término</mat-label>
+        <input matInput type="time" value="07:00" [(ngModel)]="endDates" [ngModelOptions]="{standalone: true}">
+      </mat-form-field>
+    </div>
+
+    <ng-container *ngIf="this.groupFormGroup.get('scheduleCtrl').value == '3'">
+      <div *ngFor="let day of schedule" class="pt-3">
+        <mat-checkbox [(ngModel)]="day.active" [ngModelOptions]="{standalone: true}">
+          {{day.desc}}
+        </mat-checkbox>
+      <div  *ngIf="day.active">
+        <mat-form-field>
+          <mat-label>Inicio</mat-label>
+          <input matInput type="time" value="07:00" [(ngModel)]="day.startHour" [ngModelOptions]="{standalone: true}">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Término</mat-label>
+          <input matInput type="time" value="07:00" [(ngModel)]="day.endDate" [ngModelOptions]="{standalone: true}">
+        </mat-form-field>
+      </div>
+      </div>
+    </ng-container>
+
+
+
+
+  </form>
+
+  </div>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-button [mat-dialog-close]="{a: groupFormGroup.value, b: {x: startHours, y: endDates}, c: schedule}" [disabled]="!groupFormGroup.valid" cdkFocusInitial>Crear</button>
+  </div>

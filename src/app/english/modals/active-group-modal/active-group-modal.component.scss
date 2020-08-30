@@ -1,0 +1,16 @@
+table {
+    width: 100%;
+  }
+  
+.mat-header-cell {
+flex-direction: column;
+justify-content: center;
+background-color: rgb(21, 43, 84);
+color: #fff;
+font-size: 14pt;
+}
+
+.mat-cell {
+text-align: center;
+justify-content:center;
+}
