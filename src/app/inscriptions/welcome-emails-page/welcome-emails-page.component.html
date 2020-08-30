@@ -1,0 +1,55 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-home"></i> Home</li>
+    <li class="breadcrumb-item active" aria-current="page"><i class="fa fa-globe"></i> Correos Bienvenida</li>
+  </ol>
+</nav>
+
+<mat-card class="row m-1">
+  <mat-card-content>
+    <div class="row justify-content-end mr-2">
+      <div class="text-center">
+        <input #fileUpload type="file" accept=".csv" (change)="uploadCsv($event)" style="display: none">
+        <button mat-mini-fab class="m-1" style="background:green;" (click)="fileUpload.click()" data-toggle="tooltip"
+          title="Cargar archivo de excel">
+          <mat-icon>cloud_upload</mat-icon>
+        </button>
+      </div>
+      <div class="text-center" *ngIf="showTable">
+        <button mat-mini-fab class="m-1" color="primary" (click)="confirmSendEmails()" data-toggle="tooltip"
+          title="Enviar correos">
+          <mat-icon>email</mat-icon>
+        </button>
+      </div>
+      <div class="text-center" *ngIf="showTable">
+        <button mat-mini-fab class="m-1" color="primary" (click)="saveData()" data-toggle="tooltip"
+          title="Guardar datos">
+          <mat-icon>save</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="row p-3" *ngIf="showTable">
+      <div class="col-11">
+        <mat-form-field>
+          <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..." oninput="this.value=this.value.toUpperCase()">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="showTable">
+      <div class="col-12 mat-elevation-z8">
+        <table mat-table [dataSource]="dataSourceStudents" matSort>
+          <ng-container *ngFor="let item of displayedColumnsStudents;let index=index" [matColumnDef]="item">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsStudentsName[index]}}</th>
+            <td *matCellDef="let row" mat-cell style="width:25%;">{{row[item]}}</td>
+          </ng-container>
+          <tr *matHeaderRowDef="displayedColumnsStudents" mat-header-row></tr>
+          <tr *matRowDef="let row; columns: displayedColumnsStudents;" mat-row></tr>
+        </table>
+        <mat-paginator #matPaginator [pageSizeOptions]="[5, 10, 50, 100]"></mat-paginator>
+      </div>
+    </div>
+
+  </mat-card-content>
+</mat-card>

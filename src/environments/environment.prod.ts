@@ -9,7 +9,7 @@ export const environment = {
     messagingSenderId: '178833379222',
     appId: '1:178833379222:web:c6b59ef3d0579784'
   },
-  filesURL: 'https://api.cideti.com.mx/escolares/credenciales/drive/upload/file',
+  filesURL: 'https://api.mitec.ittepic.edu.mx/escolares/credenciales/drive/upload/file',
   documentHelper: {
 
     // https://drive.google.com/open?id=1OZNev3eyn5MHwZWIFjM4DxAaqWNNBMek
@@ -26,6 +26,6 @@ export const environment = {
     xml: { video: 'https://drive.google.com/file/d/1tW9yFLHElNJ7-OajkJChmngqPDcVVu7E/preview', file: 'https://drive.google.com/file/d/1ft6l_BbYRgFZrIuxJKhsiH9HGI0yWtsp/preview' },
     professionalID: { video: 'https://drive.google.com/file/d/1zGMcltxpHDiws9gnvfSDrBuXZ-M36OHA/preview', file: 'https://drive.google.com/file/d/1gQFiul1eFSat-FLv8mPVX2wrABfzt1FT/preview' }
   },
-  apiURL: 'https://api.cideti.com.mx/escolares/credenciales',
-  eSignatureURL: 'https://api.cideti.com.mx/firma/v1',
+  apiURL: 'https://api.mitec.ittepic.edu.mx/escolares/credenciales',
+  eSignatureURL: 'https://api.mitec.ittepic.edu.mx/firma/v1',
 };

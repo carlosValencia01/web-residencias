@@ -52,7 +52,8 @@ import { SecretaryInscriptionPageComponent } from './secretary-inscription-page/
 import { StudentInformationComponent } from './student-information/student-information.component';
 import { WizardInscriptionPageComponent } from './wizard-inscription-page/wizard-inscription-page.component';
 import { ExpedentTableComponentComponent } from './expedent-table-component/expedent-table-component.component';
-
+import { WelcomeEmailsPageComponent } from './welcome-emails-page/welcome-emails-page.component';
+import { WelcomeStudentsPageComponent } from './welcome-students-page/welcome-students-page.component';
 const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   url: environment.filesURL,
   maxFilesize: 3,
@@ -110,6 +111,9 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ReviewExpedientComponent,
     StudentInformationComponent,    
     ExpedentTableComponentComponent,
+    StudentInformationComponent,
+    WelcomeEmailsPageComponent,
+    WelcomeStudentsPageComponent,
   ],
   entryComponents: [
     DocumentsHelpComponent,

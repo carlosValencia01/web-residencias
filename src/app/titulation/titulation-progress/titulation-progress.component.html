@@ -1,3 +1,6 @@
+<div class="col-xs-12 col-md-3"><br>
+  <ng-container *ngIf="data.periods; then periodsFilter"></ng-container>
+</div>
 <div class="row w-100 m-0 p-0" *ngIf="tabNumber">
   <div class="col-12 p-0">
     <div class="card px-4 py-3">
@@ -49,14 +52,14 @@
           </button>
         </div>
       </div>
-      <div class="row text-center p-0 p-md-3 m-0 m-0" *ngIf="role!=='jefe académico' && role!=='secretaria académica'">
-        <div class="col-xs-12 col-md-3" *ngIf="tabNumber === 1">
+      <div class="row text-center p-0 p-md-3 m-0 m-0" *ngIf="role!=='jefe académico' && role!=='secretaria académica' && tabNumber !== 9">
+        <!-- <div class="col-xs-12 col-md-3" *ngIf="tabNumber === 1">
           <ng-container *ngIf="data.periods && tabNumber === 6 || tabNumber === 1; then periodsFilter"></ng-container>
-        </div>
+        </div> -->
 
-        <div class="col-xs-12 col-md-5" *ngIf="tabNumber === 6">
+        <!-- <div class="col-xs-12 col-md-5" *ngIf="tabNumber === 6">
           <ng-container *ngIf="data.periods && tabNumber === 6 || tabNumber === 1; then periodsFilter"></ng-container>
-        </div>
+        </div> -->
 
         <div class="col-xs-12 col-md-4" *ngIf="tabNumber === 1">
           <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
@@ -70,11 +73,11 @@
           <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
         </div>
 
-        <div class="col-11" *ngIf="tabNumber !== 6 && tabNumber !== 1 && tabNumber !== 7">
+        <div class="col-11" *ngIf="tabNumber !== 6 && tabNumber !== 1 && tabNumber !== 7 && tabNumber !== 9">
           <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
         </div>
 
-        <div class="col-xs-12 col-md-1 mb-1" *ngIf="tabNumber !== 7">
+        <div class="col-xs-12 col-md-1 mb-1" *ngIf="tabNumber !== 7 && tabNumber !== 9">
           <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
             (click)="reload()" data-toggle="tooltip" title="Actualizar">
             <mat-icon>cached</mat-icon>
@@ -82,6 +85,30 @@
         </div>
       </div>
 
+      <div class="row text-center p-0 p-md-3 m-0 m-0" *ngIf="tabNumber === 9">
+        <!-- <div class="col-xs-12 col-md-5">
+          <ng-container *ngTemplateOutlet="periodsFilter"></ng-container>
+        </div> -->
+
+        <div class="col-xs-12 col-md-5">
+          <ng-container *ngTemplateOutlet="careersFilter"></ng-container>
+        </div>
+
+        <div class="col-xs-12 col-md-2 mb-1">
+          <button mat-mini-fab mat-icon-button color="primary" style="float: right; margin-left: 5px;"
+            (click)="reload()" data-toggle="tooltip" title="Actualizar">
+            <mat-icon>cached</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-10 d-flex justify-content-center" *ngIf="tabNumber === 8 || tabNumber === 9">
+        <mat-form-field class="col-12" appearance="fill">
+          <mat-label>Introduzca el texto de su búsqueda</mat-label>
+          <input matInput type="text" (keyup)="applySearchFilter($event.target.value)" placeholder="Texto a buscar..."
+            id="myfilter">
+        </mat-form-field>
+      </div>
       <div class="row p-0 p-md-2 mb-2 d-flex justify-content-center" *ngIf="tabNumber===1 || tabNumber===6">
         <div class="col-12 col-md-10 d-flex justify-content-center">
           <mat-form-field class="col-12" appearance="fill">
