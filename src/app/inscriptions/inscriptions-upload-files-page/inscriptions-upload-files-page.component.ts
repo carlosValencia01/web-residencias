@@ -234,8 +234,8 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   getIdStudent() {
     this.data = this.cookiesService.getData().user;
     this._idStudent = this.data._id;
-    this.doctorate = (this.data.career === 'DCA') ? true : false;
-    this.mastersDegree = (this.data.career === 'MCA' || this.data.career === 'MTI') ? true : false;
+    this.doctorate = (this.data.career === 'DOCTORADO EN CIENCIAS DE ALIMENTOS') ? true : false;
+    this.mastersDegree = (this.data.career === 'MAESTRÍA EN CIENCIAS DE ALIMENTOS' || this.data.career === 'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN') ? true : false;
     this.inscriptionsProv.getStudent(this.data._id).subscribe(res => {
       var studentData = res.student[0];
       this.nombre = studentData.fullName ? studentData.fullName : '';

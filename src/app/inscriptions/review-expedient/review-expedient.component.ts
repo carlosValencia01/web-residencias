@@ -101,7 +101,57 @@ export class ReviewExpedientComponent implements OnInit {
         this.pendings = this.documents.filter( (doc)=> doc.status !== 'ACEPTADO').length;
         this.selectPendings = 0;
         if(this.docto == null){
-          this.cardClick('COMPROBANTE');
+          switch (this.degree) {
+            case 'lic':
+              console.log('Licenciatura');
+              const payDoc = this.documents.filter(docc => docc.file.shortName === 'COMPROBANTE')[0] ? this.documents.filter(docc => docc.file.shortName === 'COMPROBANTE')[0].file.shortName : null;
+              const certificateDoc = this.documents.filter(docc => docc.file.fullName === 'CERTIFICADO BACHILLERATO')[0] ? this.documents.filter(docc => docc.file.fullName === 'CERTIFICADO BACHILLERATO')[0].file.shortName : null;
+              const cc = this.documents.filter(docc => docc.file.fullName === 'CARTA COMPROMISO CERTIFICADO BACHILLERATO')[0] ? this.documents.filter(docc => docc.file.fullName === 'CARTA COMPROMISO CERTIFICADO BACHILLERATO')[0].file.shortName : null;
+              const foto = this.documents.filter(docc => docc.file.fullName === 'FOTO')[0] ? this.documents.filter(docc => docc.file.fullName === 'FOTO')[0].file.shortName : null;
+              if(payDoc){
+                this.cardClick(payDoc);
+              } else if (certificateDoc){
+                this.cardClick(certificateDoc);
+              } else if (cc) {
+                this.cardClick(cc);
+              } else if(foto){
+                this.cardClick(foto);
+              }
+            break;
+            case 'mas':
+              console.log('Maestria');
+              const payDocL = this.documents.filter(docc => docc.file.shortName === 'COMPROBANTE')[0] ? this.documents.filter(docc => docc.file.shortName === 'COMPROBANTE')[0].file.shortName : null;
+              const certificateLDoc = this.documents.filter(docc => docc.file.fullName === 'CERTIFICADO LICENCIATURA')[0] ? this.documents.filter(docc => docc.file.fullName === 'CERTIFICADO LICENCIATURA')[0].file.shortName : null;
+              const ccL = this.documents.filter(docc => docc.file.fullName === 'CARTA COMPROMISO CERTIFICADO LICENCIATURA')[0] ? this.documents.filter(docc => docc.file.fullName === 'CARTA COMPROMISO CERTIFICADO LICENCIATURA')[0].file.shortName : null;
+              const fotoL = this.documents.filter(docc => docc.file.fullName === 'FOTO')[0] ? this.documents.filter(docc => docc.file.fullName === 'FOTO')[0].file.shortName : null;
+              if(payDocL){
+                this.cardClick(payDocL);
+              } else if (certificateLDoc){
+                this.cardClick(certificateLDoc);
+              } else if (ccL) {
+                this.cardClick(ccL);
+              } else if(fotoL){
+                this.cardClick(fotoL);
+              }
+            break;
+            case 'doc':
+              console.log('Doctorado');
+              const payDocM = this.documents.filter(docc => docc.file.shortName === 'COMPROBANTE')[0] ? this.documents.filter(docc => docc.file.shortName === 'COMPROBANTE')[0].file.shortName : null;
+              const certificateMDoc = this.documents.filter(docc => docc.file.fullName === 'CERTIFICADO MAESTRÍA')[0] ? this.documents.filter(docc => docc.file.fullName === 'CERTIFICADO MAESTRÍA')[0].file.shortName : null;
+              const ccM = this.documents.filter(docc => docc.file.fullName === 'CARTA COMPROMISO CERTIFICADO MAESTRÍA')[0] ? this.documents.filter(docc => docc.file.fullName === 'CARTA COMPROMISO CERTIFICADO MAESTRÍA')[0].file.shortName : null;
+              const fotoM = this.documents.filter(docc => docc.file.fullName === 'FOTO')[0] ? this.documents.filter(docc => docc.file.fullName === 'FOTO')[0].file.shortName : null;
+              if(payDocM){
+                this.cardClick(payDocM);
+              } else if (certificateMDoc){
+                this.cardClick(certificateMDoc);
+              } else if (ccM) {
+                this.cardClick(ccM);
+              } else if(fotoM){
+                this.cardClick(fotoM);
+              }
+            break;
+          }
+          //this.cardClick('COMPROBANTE');
         }
       }
     );
