@@ -155,14 +155,13 @@ export class ReviewExpedientComponent implements OnInit {
   async changeStatus(action) {
 
     this.refused = '';
-    const msg = action === 'RECHAZADO' ? 'rechazar' : this.data.user === 'Secretaria escolares' ? 'validar' : 'aceptar';
+    const msg = action === 'RECHAZADO' ? 'rechazar' : 'aceptar';
     let confirmdialog = false;
     if(action === 'ACEPTADO' || action === 'VALIDADO'){
       confirmdialog = await this.swalDialog(`¿ Está seguro de ${msg} el documento ?`, '', 'question');
     } else {
       confirmdialog = await this.swalDialogInput('RECHAZAR '+this.docDisplayName,'Especifique el motivo');
     }
-    console.log(this.docto.file);
 
     if (confirmdialog) {
       const documentInfo = {
@@ -170,7 +169,7 @@ export class ReviewExpedientComponent implements OnInit {
         status: {
           name: action,
           active: true,
-          message: action === 'RECHAZADO' ? 'Documento rechazado' : this.data.user === 'Secretaria escolares' ? 'Documento validado' : 'Documento aceptado',
+          message: action === 'RECHAZADO' ? 'Documento rechazado' :  'Documento aceptado',
           observation: action === 'RECHAZADO' ? confirmdialog : ''
         }
       };
@@ -178,7 +177,6 @@ export class ReviewExpedientComponent implements OnInit {
         res => {
           this.notificationsServices.showNotification(eNotificationType.SUCCESS,
             'Exito', 'Estatus actualizado correctamente.');
-           console.log(this.data.student);
 
           if (action == "RECHAZADO") {
             this.inscriptionsProv.sendNotification(this.data.student.email, "Documento Rechazado para Expediente", this.data.student.fullName, "El documento "+this.docto.file.fullName+" fue RECHAZADO y necesita ser cambiado desde la opción 'Mi Expediente' en https://mitec.ittepic.edu.mx/", "Documento para Expediente Rechazado", "Servicios Escolares <servescolares@ittepic.edu.mx>").subscribe(
@@ -190,7 +188,10 @@ export class ReviewExpedientComponent implements OnInit {
               }
             );
           }
-          this.changeExpedientStatus();
+          setTimeout(() => {
+            
+            this.changeExpedientStatus();
+          }, 300);
         },
         err => console.log(err)
       );
@@ -244,7 +245,7 @@ export class ReviewExpedientComponent implements OnInit {
         // Cambiar estatus a EN PROCESO
         let query = { inscriptionStatus:"En Proceso" };
         const _student = this.data && this.data.student;
-        if (totalDocs === 2 && validatedDocs === 2 && _student && _student.stepWizard === 2) {
+        if (totalDocs === 2 && (validatedDocs === 2 || aceptedDocs === 2) && _student && _student.stepWizard === 2) {
           query['stepWizard'] = 3;
         }
        this.inscriptionsProv.updateStudent(query, this.data.student._id).subscribe(res => {  });
@@ -255,7 +256,7 @@ export class ReviewExpedientComponent implements OnInit {
 
   history() {
 
-    const linkModal = this.dialog.open(ExpedientHistoryComponent, {
+    this.dialog.open(ExpedientHistoryComponent, {
       data: {
         student: this.data.student._id,
         filename: this.docDisplayName,
@@ -291,7 +292,7 @@ export class ReviewExpedientComponent implements OnInit {
 
     if (confirmdialog) {
       this.pendings = 0;
-      for await (const doc of updateDocs){
+      for (const doc of updateDocs){
         const documentInfo = {
           filename: doc.file.filename,
           status: {
@@ -301,7 +302,7 @@ export class ReviewExpedientComponent implements OnInit {
             observation: ''
           }
         };
-        this.studentProv.updateDocumentStatus(this.data.student._id, documentInfo).toPromise().then(
+        await this.studentProv.updateDocumentStatus(this.data.student._id, documentInfo).toPromise().then(
           res => {
             this.notificationsServices.showNotification(eNotificationType.SUCCESS,
               'Exito', 'Estatus actualizado correctamente.');
@@ -309,7 +310,10 @@ export class ReviewExpedientComponent implements OnInit {
           err => console.log(err)
         );
       }
-      this.changeExpedientStatus();
+      setTimeout(() => {
+        
+        this.changeExpedientStatus();
+      }, 500);
     }
   }
   updateCurp(){
