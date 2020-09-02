@@ -128,6 +128,7 @@ export class StudentEnglishPageComponent implements OnInit {
           if (this.englishStudent) {
             this.requestStudent = await this._getRequests(this.englishStudent._id) as IRequestCourse[];
             this.lastRequestStudent = this.requestStudent[this.requestStudent.length - 1];
+            this.showCoursePrices();
           }
 
           if (this.englishStudent && this.englishStudent.courseType) {
@@ -312,6 +313,19 @@ export class StudentEnglishPageComponent implements OnInit {
     this.tabGroup.selectedIndex = 1;
   }
 
+  private showCoursePrices(): void {
+    const IMAGE_URL = 'https://drive.google.com/file/d/1QwBVngxetPXS018nUNuxX8iVMi9LydEz/preview';
+    Swal
+      .fire({
+        title: '<strong>Precios de cursos de inglés</strong>',
+        html:
+          `<iframe class="w-100" src=${IMAGE_URL} height="480"></iframe>`,
+        showCloseButton: true,
+        width: 800,
+        showConfirmButton: false,
+      });
+  }
+
   private async _getPreviousInfoEnglishCourses(): Promise<void> {
     await Swal
       .fire({
@@ -351,12 +365,14 @@ export class StudentEnglishPageComponent implements OnInit {
                 if (this.englishStudent && this.englishStudent.courseType) {
                   this.englishCourses = this.englishCourses.filter(({ _id }) => _id === this.englishStudent.courseType._id);
                 }
+                this.showCoursePrices();
               } else {
                 this._getPreviousInfoEnglishCourses();
               }
             });
         } else {
           this.englishStudent = await this._saveEnglishStudent(previousCourseData);
+          this.showCoursePrices();
         }
       });
   }
