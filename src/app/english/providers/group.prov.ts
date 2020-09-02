@@ -39,4 +39,8 @@ export class GroupProvider {
   getAllStudentsGroup(_groupId) {
     return this.api.get('sg-cle/group/students/' + _groupId).pipe(map(res => res.json()));
   }
+
+  getAllGroupByTeacher(_teacherId) {
+    return this.api.get('sg-cle/group/teacher/' + _teacherId).pipe(map(res => res.json()));
+  }
 }

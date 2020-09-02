@@ -77,11 +77,19 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
     
-                <mat-menu #actions="matMenu">
-                  <button (click)="declineStudentRequest(row)" mat-menu-item>
-                    <mat-icon>clear</mat-icon>
-                    <span>Declinar Alumno</span>
-                  </button>
+                <mat-menu #actions="matMenu" [ngSwitch]="data.type">
+                  <ng-container *ngSwitchCase="'teacher'">
+
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+
+                    <button (click)="declineStudentRequest(row)" mat-menu-item>
+                      <mat-icon>clear</mat-icon>
+                      <span>Declinar Alumno</span>
+                    </button>
+
+                  </ng-container>
+                
                 </mat-menu>
     
               </mat-cell>

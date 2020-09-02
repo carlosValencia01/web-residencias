@@ -5,6 +5,8 @@ import { StudentEnglishPageComponent } from './components/student-english-page/s
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 import { BossMessageComponent } from './components/boss-message/boss-message.component';
 
+import { EnglishGroupsPageComponent } from './components/english-groups-page/english-groups-page.component';
+
 const routes: Routes = [
   {
     path: 'profile-student',
@@ -20,6 +22,11 @@ const routes: Routes = [
     path: 'message',
     pathMatch: 'full',
     component: BossMessageComponent
+  },
+  {
+    path: 'english-groups',
+    pathMatch: 'full',
+    component: EnglishGroupsPageComponent
   },
 ];
 

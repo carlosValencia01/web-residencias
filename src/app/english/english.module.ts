@@ -56,6 +56,7 @@ import { ReviewInformationModalComponent } from './modals/review-information-mod
 import { UploadExternalStudentsComponent } from './components/upload-external-students/upload-external-students.component';
 import { AddStudentsGroupModalComponent } from './modals/add-students-group-modal/add-students-group-modal.component';
 import { BossMessageComponent } from './components/boss-message/boss-message.component';
+import { EnglishGroupsPageComponent } from './components/english-groups-page/english-groups-page.component';
 
 
 @NgModule({
@@ -108,6 +109,7 @@ import { BossMessageComponent } from './components/boss-message/boss-message.com
     UploadExternalStudentsComponent,
     AddStudentsGroupModalComponent,
     BossMessageComponent,
+    EnglishGroupsPageComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
