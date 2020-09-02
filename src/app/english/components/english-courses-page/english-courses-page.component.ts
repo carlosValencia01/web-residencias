@@ -20,6 +20,7 @@ import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
+import { EmployeeProvider } from '../../../providers/shared/employee.prov';
 
 // Importar Componentes
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
@@ -113,6 +114,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     private groupProv: GroupProvider,
     public dialog: MatDialog,
     private notificationsServices: NotificationsServices,
+    private employeeProv: EmployeeProvider,
   ) {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -128,6 +130,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.createEnglishCourses();
     this.createGroups();
     this.getActivePeriod();
+    this._initTeachers();
   }
 
   // #region Solicitudes
@@ -991,4 +994,71 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
   // #endregion
 
+  // #region Docentes
+
+  private ENGLISH_TEACHER_POSITION = 'DOCENTE INGLÉS';
+  private englishTeachers: IEmployee[];
+  public englishTeachersDataSource: MatTableDataSource<IEnglishTeacher>;
+  public dataSourceActiveGroupsOfTeacher: MatTableDataSource<IGroup>;
+  @ViewChild("viewGroupOfTeacher") dialogRefViewGroupOfTeacher: TemplateRef<any>;
+
+  private async _initTeachers(): Promise<void> {
+    this.englishTeachersDataSource = new MatTableDataSource();
+    this.englishTeachers = await this._getEnglishTeachers();
+
+    this._fillTable(this.englishTeachers);
+  }
+
+  private _getEnglishTeachers(): Promise<IEmployee[]> {
+    return new Promise((resolve) => {
+      this.employeeProv.getEmployeesByPosition(this.ENGLISH_TEACHER_POSITION)
+        .subscribe(
+          (employees: IEmployee[]) => resolve(employees),
+          (_) => resolve([])
+        );
+    });
+  }
+
+  private _fillTable(teachers: IEmployee[]): void {
+    this.englishTeachersDataSource.data = teachers.map((teacher) => this._parseEnglishTeacherToTable(teacher));
+  }
+
+  private _parseEnglishTeacherToTable(teacher: IEmployee): IEnglishTeacher {
+    let groupsActive = [];
+    this.activeGroups.forEach(group => {
+      if (group.teacher) {
+        if (group.teacher._id == teacher._id) {
+          groupsActive.push(group)
+        }
+      }
+      
+    });
+    return {
+      _id: teacher._id,
+      name: teacher.name.fullName,
+      countGroups: groupsActive.length,
+      groups: groupsActive,
+    };
+  }
+
+  openViewTableGroups(groups: IGroup[]){
+    this.dataSourceActiveGroupsOfTeacher = new MatTableDataSource();
+    this.dataSourceActiveGroupsOfTeacher.data = groups;
+    this.dataSourceActiveGroupsOfTeacher.sort = this.sortActiveGroups;
+    let dialogRef = this.dialog.open(this.dialogRefViewGroupOfTeacher, { hasBackdrop: false, height: '90%', width: '80%' });
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+      }
+    });
+  }
+
+  // #endregion
+
+}
+
+interface IEnglishTeacher {
+  _id: string;
+  name: string;
+  countGroups: number;
+  groups: ICourse[];
 }
