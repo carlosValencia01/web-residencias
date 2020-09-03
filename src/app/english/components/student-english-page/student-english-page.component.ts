@@ -94,7 +94,7 @@ export class StudentEnglishPageComponent implements OnInit {
       .subscribe(async (res) => {
         this.currentStudent = JSON.parse(JSON.stringify(res.student[0])); // Guardar al estudiante
         // verifica si el alumno es activo
-        this.isActive = this.currentStudent.status === eStatus.ACTIVO;
+        this.isActive = [eStatus.ACTIVO, eStatus.EGRESADO].includes(this.currentStudent.status as eStatus);
         this.accessStatus = this.isActive ? EAccessStatus.ACTIVE : EAccessStatus.NOT_ACTIVE;
         // verifica si el estudiante es externo
         this.isExternalStudent = this.currentStudent.controlNumber.indexOf('CLE') > -1;
