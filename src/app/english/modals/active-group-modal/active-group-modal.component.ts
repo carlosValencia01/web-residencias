@@ -20,7 +20,7 @@ export class ActiveGroupModalComponent implements OnInit {
     this.dataSourceRequest.paginator = paginator;
   }
   request: IRequestCourse[];
-  public groupSize = 18;
+  public groupSize = 20;
 
   constructor(
     public dialogRef: MatDialogRef<ActiveGroupModalComponent>,
@@ -47,34 +47,71 @@ export class ActiveGroupModalComponent implements OnInit {
   }
 
   activeGroup() {
-    const size = this.groupSize;
-    const baseGroup = this.data.group;
-    const newGroup = {
-      status: 'active',
-      name: baseGroup.name,
-      schedule: baseGroup.schedule,
-      level: baseGroup.level,
-      period: baseGroup.period._id,
-      course: baseGroup.course._id,
-      groupOrigin: baseGroup._id
-    }
-    const studentsGroup = this.request.slice(0, this.groupSize);
+    const cantReq = this.data.students.length;
+    if(this.groupSize < 20){
+      Swal.fire({
+        title: 'Atención',
+        text: 'El tamaño mínimo del grupo debe ser de 20 alumnos',
+        type: 'warning',
+        allowOutsideClick: false,
+        showCancelButton: false,
+        confirmButtonColor: 'green',
+        confirmButtonText: 'Aceptar',
+      }).then((result) => {
+        if (result.value) { }});
+    } else if(cantReq < this.groupSize){
+        Swal.fire({
+          title: 'Atención',
+          text: 'El grupo solo tiene '+cantReq+' solicitudes, el tamaño seleccionado es de '+this.groupSize,
+          type: 'warning',
+          allowOutsideClick: false,
+          showCancelButton: false,
+          confirmButtonColor: 'green',
+          confirmButtonText: 'Aceptar',
+        }).then((result) => {
+          if (result.value) { }});
+      } else {
+        Swal.fire({
+          title: 'Atención',
+          text: 'El grupo será activado con '+this.groupSize+' solicitudes',
+          type: 'warning',
+          allowOutsideClick: false,
+          showCancelButton: true,
+          confirmButtonColor: 'green',
+          confirmButtonText: 'Aceptar',
+          cancelButtonColor: 'red',
+          cancelButtonText: 'Cancelar',
+        }).then((result) => {
+          if (result.value) { 
+            const baseGroup = this.data.group;
+            const newGroup = {
+              status: 'active',
+              name: baseGroup.name,
+              schedule: baseGroup.schedule,
+              level: baseGroup.level,
+              period: baseGroup.period._id,
+              course: baseGroup.course._id,
+              groupOrigin: baseGroup._id
+            }
+            const studentsGroup = this.request.slice(0, this.groupSize);
 
-    // Registrar nuevo grupo
-    this.groupProv.createGroup(newGroup).subscribe(res => {
-      if (res) {
-        const data = {
-          groupId: res._id,
-          students: studentsGroup
-        }
-        // Actualizar group id de la solicitud de curso
-        this.requestCourseProv.activeRequest(data).subscribe(updated => {
-          if (updated) {
-            this.dialogRef.close({ action: 'saved' });
-          }
-        });
+            // Registrar nuevo grupo
+            this.groupProv.createGroup(newGroup).subscribe(res => {
+              if (res) {
+                const data = {
+                  groupId: res._id,
+                  students: studentsGroup
+                }
+                // Actualizar group id de la solicitud de curso
+                this.requestCourseProv.activeRequest(data).subscribe(updated => {
+                  if (updated) {
+                    this.dialogRef.close({ action: 'saved' });
+                  }
+                });
+              }
+            });
+          }});
       }
-    });
 
   }
 

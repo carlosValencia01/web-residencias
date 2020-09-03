@@ -439,8 +439,7 @@ export class ExpedentTableComponentComponent implements OnInit {
     this.generateCredentialEmit.emit(row.student);
   }
   async updateExpedientStatus(row){
-    console.log(row);
-    
+  
     const response = await this.showSwalAlert('Para ' + row.controlNumber,'Actualizar Estatus de Expediente','question');
     if (response) {
       const degree = row.student.careerId.acronym === 'DCA' ? 'doc' : row.student.careerId.acronym === 'MCA' || row.student.careerId.acronym === 'MTI' ? 'mas' : 'lic';
@@ -495,7 +494,7 @@ export class ExpedentTableComponentComponent implements OnInit {
           // Cambiar estatus a EN PROCESO
           let query = { inscriptionStatus:"En Proceso" };
           const _student = row && row.student;
-          if (totalDocs === 2 && validatedDocs === 2 && _student && _student.stepWizard === 2) {
+          if (totalDocs === 2 && (validatedDocs === 2 || aceptedDocs === 2) && _student && _student.stepWizard === 2) {
             query['stepWizard'] = 3;
           }
           this.inscriptionsProv.updateStudent(query, row.student._id).subscribe(res => {  });

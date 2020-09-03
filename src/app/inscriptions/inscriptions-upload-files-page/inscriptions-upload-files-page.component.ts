@@ -234,8 +234,8 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
   getIdStudent() {
     this.data = this.cookiesService.getData().user;
     this._idStudent = this.data._id;
-    this.doctorate = (this.data.career === 'DCA') ? true : false;
-    this.mastersDegree = (this.data.career === 'MCA' || this.data.career === 'MTI') ? true : false;
+    this.doctorate = (this.data.career === 'DOCTORADO EN CIENCIAS DE ALIMENTOS') ? true : false;
+    this.mastersDegree = (this.data.career === 'MAESTRÍA EN CIENCIAS DE ALIMENTOS' || this.data.career === 'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN') ? true : false;
     this.inscriptionsProv.getStudent(this.data._id).subscribe(res => {
       var studentData = res.student[0];
       this.nombre = studentData.fullName ? studentData.fullName : '';
@@ -296,33 +296,33 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
         if (this.clinicDoc) this.clinicDoc.status = this.clinicDoc ? this.clinicDoc.status.filter(st => st.active === true)[0].name : '';
 
-        if (this.certificateDoc) this.certificateDoc.status = this.certificateDoc ? this.certificateDoc.status.filter(st => st.active === true)[0].name : '';
+        if (this.certificateDoc) this.certificateDoc.status = this.certificateDoc ? this.certificateDoc.status.filter(st => st.active === true)[0] : '';
 
-        if (this.payDoc) this.payDoc.status = this.payDoc ? this.payDoc.status.filter(st => st.active === true)[0].name : '';
+        if (this.payDoc) this.payDoc.status = this.payDoc ? this.payDoc.status.filter(st => st.active === true)[0] : '';
 
         if (this.nssDoc) this.nssDoc.status = this.nssDoc ? this.nssDoc.status.filter(st => st.active === true)[0].name : '';
 
-        if (this.ccDoc) this.ccDoc.status = this.ccDoc ? this.ccDoc.status.filter(st => st.active === true)[0].name : '';
+        if (this.ccDoc) this.ccDoc.status = this.ccDoc ? this.ccDoc.status.filter(st => st.active === true)[0] : '';
 
         // MAESTRIA
-        if (this.certificateLDoc) this.certificateLDoc.status = this.certificateLDoc ? this.certificateLDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.titledLDoc) this.titledLDoc.status = this.titledLDoc ? this.titledLDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.cedulaLDoc) this.cedulaLDoc.status = this.cedulaLDoc ? this.cedulaLDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.examActLDoc) this.examActLDoc.status = this.examActLDoc ? this.examActLDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.cccertificateLDoc) this.cccertificateLDoc.status = this.cccertificateLDoc ? this.cccertificateLDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.cctitledLDoc) this.cctitledLDoc.status = this.cctitledLDoc ? this.cctitledLDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.cccedulaLDoc) this.cccedulaLDoc.status = this.cccedulaLDoc ? this.cccedulaLDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.ccexamActLDoc) this.ccexamActLDoc.status = this.ccexamActLDoc ? this.ccexamActLDoc.status.filter(st => st.active === true)[0].name : '';
+        if (this.certificateLDoc) this.certificateLDoc.status = this.certificateLDoc ? this.certificateLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.titledLDoc) this.titledLDoc.status = this.titledLDoc ? this.titledLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cedulaLDoc) this.cedulaLDoc.status = this.cedulaLDoc ? this.cedulaLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.examActLDoc) this.examActLDoc.status = this.examActLDoc ? this.examActLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cccertificateLDoc) this.cccertificateLDoc.status = this.cccertificateLDoc ? this.cccertificateLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cctitledLDoc) this.cctitledLDoc.status = this.cctitledLDoc ? this.cctitledLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cccedulaLDoc) this.cccedulaLDoc.status = this.cccedulaLDoc ? this.cccedulaLDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.ccexamActLDoc) this.ccexamActLDoc.status = this.ccexamActLDoc ? this.ccexamActLDoc.status.filter(st => st.active === true)[0] : '';
 
         // DOCTORADO
-        if (this.certificateMDoc) this.certificateMDoc.status = this.certificateMDoc ? this.certificateMDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.titledMDoc) this.titledMDoc.status = this.titledMDoc ? this.titledMDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.cedulaMDoc) this.cedulaMDoc.status = this.cedulaMDoc ? this.cedulaMDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.examActMDoc) this.examActMDoc.status = this.examActMDoc ? this.examActMDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.cccertificateMDoc) this.cccertificateMDoc.status = this.cccertificateMDoc ? this.cccertificateMDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.cctitledMDoc) this.cctitledMDoc.status = this.cctitledMDoc ? this.cctitledMDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.cccedulaMDoc) this.cccedulaMDoc.status = this.cccedulaMDoc ? this.cccedulaMDoc.status.filter(st => st.active === true)[0].name : '';
-        if (this.ccexamActMDoc) this.ccexamActMDoc.status = this.ccexamActMDoc ? this.ccexamActMDoc.status.filter(st => st.active === true)[0].name : '';
+        if (this.certificateMDoc) this.certificateMDoc.status = this.certificateMDoc ? this.certificateMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.titledMDoc) this.titledMDoc.status = this.titledMDoc ? this.titledMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cedulaMDoc) this.cedulaMDoc.status = this.cedulaMDoc ? this.cedulaMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.examActMDoc) this.examActMDoc.status = this.examActMDoc ? this.examActMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cccertificateMDoc) this.cccertificateMDoc.status = this.cccertificateMDoc ? this.cccertificateMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cctitledMDoc) this.cctitledMDoc.status = this.cctitledMDoc ? this.cctitledMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.cccedulaMDoc) this.cccedulaMDoc.status = this.cccedulaMDoc ? this.cccedulaMDoc.status.filter(st => st.active === true)[0] : '';
+        if (this.ccexamActMDoc) this.ccexamActMDoc.status = this.ccexamActMDoc ? this.ccexamActMDoc.status.filter(st => st.active === true)[0] : '';
 
         this.checkFolders();
 
@@ -960,6 +960,15 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
   private addArroba(Text: string): string {
     return Text.split(' ').map(word => { return '@' + word + '@'; }).join(' ');
+  }
+
+  onMessage(message: string){
+    Swal.fire({
+      type: 'error',
+      title: '¡Observaciones!',
+      text: message,
+      showCloseButton: true,
+    });
   }
 
 }

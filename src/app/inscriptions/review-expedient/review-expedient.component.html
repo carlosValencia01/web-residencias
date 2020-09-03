@@ -148,36 +148,10 @@
                 </div>
                 <div class="col-6">
                   <div class="row" *ngIf="docto">
-                    <div
-                      class="col-12"
-                      *ngIf="
-                        data.user === 'Secretaria escolares' &&
-                        docto.status !== 'ACEPTADO' &&
-                        docto.status !== 'VALIDADO'
-                      "
-                    >
-                      <div class="row text-center">
-                        <div class="col-6">
-                          <div
-                            (click)="changeStatus('VALIDADO')"
-                            class="btn-rounded btn-rounded-success"
-                          >
-                            <mat-icon>done</mat-icon> Validar
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <div
-                            (click)="changeStatus('RECHAZADO')"
-                            class="btn-rounded btn-rounded-danger"
-                          >
-                            <mat-icon>close</mat-icon> Rechazar
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    
                       <div
                         class="col-12"
-                        *ngIf="data.user === 'Administrador' && docto.status !== 'ACEPTADO'"
+                        *ngIf="docto.status !== 'ACEPTADO'"
                       >
                       <div class="row text-center">
 

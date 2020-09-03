@@ -893,21 +893,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.groupProv.getAllStudentsGroup(group._id).subscribe(res => {
       if (res) {
         const students = res.students;
-        const cantPaid = students.length
-        // if(cantPaid < 18){
-        //   Swal.fire({
-        //     title: 'Atención',
-        //     text: 'El grupo solo tiene '+cantPaid+' solicitudes pagadas, el mínimo para abrir el grupo es de 18',
-        //     type: 'warning',
-        //     allowOutsideClick: false,
-        //     showCancelButton: false,
-        //     confirmButtonColor: 'green',
-        //     confirmButtonText: 'Aceptar',
-        //   }).then((result) => {
-        //     if (result.value) {
-
-        //     }});
-        // }
         const linkModal = this.dialog.open(ActiveGroupModalComponent, {
           data: {
             operation: 'view',

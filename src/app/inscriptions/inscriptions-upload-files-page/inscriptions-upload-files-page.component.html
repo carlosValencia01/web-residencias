@@ -55,14 +55,18 @@
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="payDoc">
-                    <span *ngIf="payDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="payDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="payDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="payDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span *ngIf="payDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="payDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="payDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="payDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <span *ngIf="!payDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
+            </div>
+            <div *ngIf="payDoc && payDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(payDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
             </div>
 
             <div class="card-body c-body" id="collapsePAGO" style="max-height: 235px; padding: 10px;">
@@ -110,26 +114,38 @@
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="certificateDoc && !ccDoc">
-                    <span *ngIf="certificateDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="certificateDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="certificateDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="certificateDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span *ngIf="certificateDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="certificateDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="certificateDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="certificateDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <div *ngIf="ccDoc && !certificateDoc">
-                    <span *ngIf="ccDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="ccDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="ccDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="ccDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span *ngIf="ccDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="ccDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="ccDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="ccDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <div *ngIf="ccDoc && certificateDoc">
-                    <span *ngIf="certificateDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="certificateDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="certificateDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="certificateDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span *ngIf="certificateDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="certificateDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="certificateDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="certificateDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <span *ngIf="!ccDoc && !certificateDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
+            </div>
+            <div *ngIf="!ccDoc && certificateDoc && certificateDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(certificateDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!certificateDoc && ccDoc && ccDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(ccDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="ccDoc && certificateDoc && certificateDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(certificateDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
             </div>
             <div class="card-body c-body" id="collapseCERT">
               <div class="row text-center" *ngIf="!certificateDoc && !ccDoc">
@@ -198,26 +214,38 @@
               <div class="row text-center">
                 <div class="col-12">
                   <div *ngIf="certificateLDoc && !cccertificateLDoc">
-                    <span *ngIf="certificateLDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="certificateLDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="certificateLDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="certificateLDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span *ngIf="certificateLDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="certificateLDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="certificateLDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="certificateLDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <div *ngIf="cccertificateLDoc && !certificateLDoc">
-                    <span *ngIf="cccertificateLDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="cccertificateLDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="cccertificateLDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="cccertificateLDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span *ngIf="cccertificateLDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="cccertificateLDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="cccertificateLDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="cccertificateLDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <div *ngIf="cccertificateLDoc && certificateLDoc">
-                    <span *ngIf="certificateLDoc.status === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="certificateLDoc.status === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="certificateLDoc.status === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="certificateLDoc.status === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    <span *ngIf="certificateLDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="certificateLDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="certificateLDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="certificateLDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
                   <span *ngIf="!cccertificateLDoc && !certificateLDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
+            </div>
+            <div *ngIf="!cccertificateLDoc && certificateLDoc && certificateLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(certificateLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!certificateLDoc && cccertificateLDoc && cccertificateLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cccertificateLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="cccertificateLDoc && certificateLDoc && certificateLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(certificateLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
             </div>
             <div class="card-body c-body" id="collapseCERTLIC">
               <div class="row text-center" *ngIf="!certificateLDoc && !cccertificateLDoc">
@@ -298,6 +326,18 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="!cctitledLDoc && titledLDoc && titledLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(titledLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!titledLDoc && cctitledLDoc && cctitledLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cctitledLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="cctitledLDoc && titledLDoc && titledLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(titledLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
             <div class="card-body c-body" id="collapseTITLIC">
               <div class="row text-center" *ngIf="!titledLDoc && !cctitledLDoc">
                 <div class="col-12">
@@ -375,6 +415,18 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="!cccedulaLDoc && cedulaLDoc && cedulaLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cedulaLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!cedulaLDoc && cccedulaLDoc && cccedulaLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cccedulaLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="cccedulaLDoc && cedulaLDoc && cedulaLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cedulaLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
             <div class="card-body c-body" id="collapseCEDLIC">
               <div class="row text-center" *ngIf="!cedulaLDoc && !cccedulaLDoc">
                 <div class="col-12">
@@ -451,6 +503,18 @@
                   <span *ngIf="!ccexamActLDoc && !examActLDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
+            </div>
+            <div *ngIf="!ccexamActLDoc && examActLDoc && examActLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(examActLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!examActLDoc && ccexamActLDoc && ccexamActLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(ccexamActLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="ccexamActLDoc && examActLDoc && examActLDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(examActLDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
             </div>
             <div class="card-body c-body" id="collapseEXALIC">
               <div class="row text-center" *ngIf="!examActLDoc && !ccexamActLDoc">
@@ -530,6 +594,18 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="!cccertificateMDoc && certificateMDoc && certificateMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(certificateMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!certificateMDoc && cccertificateMDoc && cccertificateMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cccertificateMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="cccertificateMDoc && certificateMDoc && certificateMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(certificateMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
             <div class="card-body c-body" id="collapseCERTMAE">
               <div class="row text-center" *ngIf="!certificateMDoc && !cccertificateMDoc">
                 <div class="col-12">
@@ -608,6 +684,18 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="!cctitledMDoc && titledMDoc && titledMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(titledMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!titledMDoc && cctitledMDoc && cctitledMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cctitledMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="cctitledMDoc && titledMDoc && titledMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(titledMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
             <div class="card-body c-body" id="collapseTITMAE">
               <div class="row text-center" *ngIf="!titledMDoc && !cctitledMDoc">
                 <div class="col-12">
@@ -685,6 +773,18 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="!cccedulaMDoc && cedulaMDoc && cedulaMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cedulaMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!cedulaMDoc && cccedulaMDoc && cccedulaMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cccedulaMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="cccedulaMDoc && cedulaMDoc && cedulaMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(cedulaMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
             <div class="card-body c-body" id="collapseCEDMAE">
               <div class="row text-center" *ngIf="!cedulaMDoc && !cccedulaMDoc">
                 <div class="col-12">
@@ -761,6 +861,18 @@
                   <span *ngIf="!ccexamActMDoc && !examActMDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
+            </div>
+            <div *ngIf="!ccexamActMDoc && examActMDoc && examActMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(examActMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="!examActMDoc && ccexamActMDoc && ccexamActMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(ccexamActMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+            </div>
+            <div *ngIf="ccexamActMDoc && examActMDoc && examActMDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+              <mat-icon class="mx-1" style="color:white" (click)="onMessage(examActMDoc.status.observation)"
+              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
             </div>
             <div class="card-body c-body" id="collapseEXAMAE">
               <div class="row text-center" *ngIf="!examActMDoc && !ccexamActMDoc">

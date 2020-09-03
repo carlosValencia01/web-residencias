@@ -690,7 +690,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     }else{
       setTimeout(() => {
         this.filterLoggedStudents();        
-      }, 1000);
+      }, 1500);
     }
     setTimeout(() => {      
       this.showTabs = true;
