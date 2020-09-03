@@ -57,7 +57,8 @@ import { UploadExternalStudentsComponent } from './components/upload-external-st
 import { AddStudentsGroupModalComponent } from './modals/add-students-group-modal/add-students-group-modal.component';
 import { BossMessageComponent } from './components/boss-message/boss-message.component';
 import { EnglishGroupsPageComponent } from './components/english-groups-page/english-groups-page.component';
-
+// Services
+import { ImageToBase64Service } from '../services/app/img.to.base63.service';
 
 @NgModule({
   imports: [
@@ -134,6 +135,7 @@ import { EnglishGroupsPageComponent } from './components/english-groups-page/eng
     EnglishCourseProvider,
     GroupProvider,
     RequestProvider,
+    ImageToBase64Service,
   ]
 })
 export class EnglishModule { }
