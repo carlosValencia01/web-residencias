@@ -10,6 +10,8 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
+import * as moment from 'moment';
+moment.locale('es');
 
 // Importar Servicios
 import { CookiesService } from 'src/app/services/app/cookie.service';
@@ -24,7 +26,6 @@ import { RequestCourseProvider } from 'src/app/english/providers/request-course.
 // Importar Enumeradores
 import { EStatusGroup } from 'src/app/english/enumerators/status-group.enum';
 import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
-import { a } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-english-groups-page',
@@ -47,6 +48,7 @@ export class EnglishGroupsPageComponent implements OnInit {
   excelData;
   pdfData;
   scheduleData;
+  actData;
   teacher;
 
   // Imagenes para Reportes
@@ -104,9 +106,7 @@ export class EnglishGroupsPageComponent implements OnInit {
   getData() {
     return new Promise((resolve) => {
       this.groupProvider.getAllGroupByTeacher(this._CookiesService.getData().user.eid).subscribe((data) => {
-  
         this.groups = data.groups;
-
         resolve(true);
       });
     });
@@ -157,7 +157,7 @@ export class EnglishGroupsPageComponent implements OnInit {
     if (this.usedPeriods) {
       if (this.usedPeriods.length > 0) {
         this.showGroups = this.showGroups.filter(
-          (req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period))
+          (req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period._id))
         );
       } else {
         this.showGroups = this.showGroups;
@@ -244,9 +244,22 @@ export class EnglishGroupsPageComponent implements OnInit {
     }, 2000);
   }
 
+  async generateAct(group){
+    this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'INGLÉS', 'Generando Acta Calificaciones');
+    this.actData = {
+      students : await this.getStudentsGroup(group._id),
+      group: group,
+      schedule: await this.getScheduleDaysGroup(group.schedule),
+      teacher: this.teacher
+    }    
+    setTimeout(() => {
+      this.generatePDFAct();
+    }, 2000);
+  }
+
   generatePDFReport() {
     this.loadingService.setLoading(true);
-    var doc = new jsPDF('l', 'pt');
+    var doc = new jsPDF('p', 'pt');
 
     // Header
     var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
@@ -265,14 +278,15 @@ export class EnglishGroupsPageComponent implements OnInit {
       html: '#tablePdfReportHead',
       theme: 'plain',
       headStyles: { fillColor: [20, 43, 88], textColor: [255,255,255] },
-      styles: { halign: 'center', valign: 'middle' },
+      styles: { halign: 'center', valign: 'middle', fontSize: 6, fontStyle: 'bold', cellPadding:2 },
       margin: { top: 70 },
     });
     doc.autoTable({
       html: '#tablePdfReport',
       theme: 'striped',
-      headStyles: { fillColor: [20, 43, 88] },
-      styles: { halign: 'center', valign: 'middle' },
+      headStyles: { fillColor: [20, 43, 88], textColor: [255,255,255] },
+      styles: { halign: 'center', valign: 'middle', fontSize: 6, fontStyle: 'bold', cellPadding:2 },
+      startY: 110
     });
 
     // FOOTER
@@ -295,6 +309,84 @@ export class EnglishGroupsPageComponent implements OnInit {
     doc.setFontStyle('bold');
     doc.setFontSize(7);
     doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
+    window.open(doc.output('bloburl'), '_blank');
+    this.loadingService.setLoading(false);
+    //doc.save("Reporte Alumnos Inglés Grupo "+this.pdfData.group.name+".pdf");
+  }
+
+  generatePDFAct() {
+    this.loadingService.setLoading(true);
+    var doc = new jsPDF('p', 'pt');
+
+    // Header
+    var pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
+    var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+    doc.addImage(this.logoSep, 'PNG', 36, 5, 163, 40); // Logo SEP
+    doc.addImage(this.logoTecNM, 'PNG', pageWidth - 145, 2, 103, 44); // Logo TecNM
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(15);
+    doc.setFontStyle('bold');
+    doc.text('Instituto Tecnológico de Tepic', pageWidth / 2, 59, 'center');
+    doc.setFontSize(10);
+    doc.text('ACTA DE CALIFICACIONES', 40, 75, 'left');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(7);
+    doc.setFontStyle('normal');
+    doc.text('CURSO:', 40, 85, 'left');
+    doc.text('BLOQUE:', 40, 95, 'left');
+    doc.text('PROFESOR:', 40, 105, 'left');
+    doc.text('GRUPO:', pageWidth - 145, 105, 'left');
+    doc.text('PERIODO:', 40, 115, 'left');
+    doc.text('ALUMNOS:', pageWidth - 145, 115, 'left');
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(7);
+    doc.setFontStyle('bold');
+    doc.text(this.actData.group.course.name, 100, 85, 'left');
+    doc.text(this.actData.group.level.toString(), 100, 95, 'left');
+    doc.text(this.actData.teacher.name.fullName, 100, 105, 'left');
+    doc.text(this.actData.group.name, pageWidth - 85, 105, 'left');
+    doc.text(this.actData.group.period.periodName+'/'+this.actData.group.period.year, 100, 115, 'left');
+    doc.text(this.actData.group.reqActCount.toString(), pageWidth - 85, 115, 'left');
+
+    doc.autoTable({
+      html: '#tablePdfActHead',
+      theme: 'grid',
+      headStyles: { fillColor: [20, 43, 88], textColor: [255,255,255] },
+      styles: { halign: 'center', valign: 'middle', fontSize: 7, fontStyle: 'bold', cellPadding:1},
+      margin: { top: 120 }
+    });
+
+    doc.autoTable({
+      html: '#tablePdfAct',
+      theme: 'grid',
+      headStyles: { fillColor: [20, 43, 88], textColor: [255,255,255] },
+      styles: { halign: 'center', valign: 'middle' , fontSize: 7, fontStyle: 'bold', cellPadding:1},
+      startY: 159
+    });
+
+
+
+    // FOOTER
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.setFontStyle('normal');
+    doc.text('Este documento no es válido si tiene tachaduras o enmendaduras', 40, pageHeight - 60, 'left');
+    doc.text('Tepic, Nay., a '+moment(new Date()).format('LL'), 40, pageHeight - 50, 'left');
+    doc.text("Firma del Profesor:",(pageWidth/2)+40, pageHeight - 60, 'left');
+    doc.setDrawColor(0, 0, 0);
+    doc.line((pageWidth/2)+120, (pageHeight - 60), (pageWidth / 2)+257, (pageHeight - 60));
+
+    doc.addImage(this.logoTecTepic, 'PNG', (pageWidth / 2) - 25, pageHeight - 60, 50, 50); // Logo SEP
+    let footer = '© ITT Instituto Tecnológico de Tepic\nTepic, Nayarit, México \n';
+    doc.setTextColor(0, 0, 0);
+    doc.setFontStyle('bold');
+    doc.setFontSize(7);
+    doc.text(footer, pageWidth / 2, pageHeight - 12, 'center');
+
     window.open(doc.output('bloburl'), '_blank');
     this.loadingService.setLoading(false);
     //doc.save("Reporte Alumnos Inglés Grupo "+this.pdfData.group.name+".pdf");
