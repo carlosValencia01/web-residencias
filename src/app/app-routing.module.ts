@@ -47,6 +47,10 @@ const routes: Routes = [
     loadChildren: './english/english.module#EnglishModule'
   },
   {
+    path: 'social-service',
+    loadChildren: './social-service/social-service.module#SocialServiceModule'
+  },
+  {
     path: '**',
     redirectTo: ''
   },
