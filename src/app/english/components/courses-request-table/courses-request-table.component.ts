@@ -6,18 +6,20 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import TableToExcel from '@linways/table-to-excel';
 import * as Papa from 'papaparse';
+import Swal from 'sweetalert2';
+// services
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import Swal from 'sweetalert2';
+// providers
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { EnglishCourseProvider } from '../../providers/english-course.prov';
+import { RequestCourseProvider } from '../../providers/request-course.prov';
+// models
 import { IPeriod } from '../../../entities/shared/period.model';
 import { IStudent } from '../../../entities/shared/student.model';
 import { ICourse } from '../../entities/course.model';
 import { IRequestCourse } from '../../entities/request-course.model';
-import { EnglishCourseProvider } from '../../providers/english-course.prov';
-import { EnglishStudentProvider } from '../../providers/english-student.prov';
-import { RequestCourseProvider } from '../../providers/request-course.prov';
 
 @Component({
   selector: 'app-courses-request-table',
@@ -66,7 +68,6 @@ export class CoursesRequestTableComponent implements OnInit {
     private englishCourseProv: EnglishCourseProvider,
     private notificationService: NotificationsServices,
     private loadingService: LoadingService,
-    private englishStudentProv: EnglishStudentProvider,
   ) {
     this.dataSource = new MatTableDataSource();
   }

@@ -61,12 +61,20 @@
               <mat-cell *matCellDef="let row"> {{row.englishStudent.currentPhone}} </mat-cell>
             </ng-container>
     
+            <!--Columna promedio-->
+    
+            <ng-container matColumnDef="average" >
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Promedio</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.average}} </mat-cell>
+            </ng-container>
+
             <!--Columna Fecha-->
     
-            <ng-container matColumnDef="requestDate">
+            <ng-container matColumnDef="requestDate" >
               <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.requestDate | date :  "dd/MM/yy HH:mm"}} </mat-cell>
             </ng-container>
+    
     
             <!--Columna Opciones-->
     
@@ -79,10 +87,16 @@
     
                 <mat-menu #actions="matMenu" [ngSwitch]="data.type">
                   <ng-container *ngSwitchCase="'teacher'">
-
+                    <button *ngIf="!row.average" (click)="setRequestAverage(row)" mat-menu-item>
+                      <mat-icon>edit</mat-icon>
+                      <span>Asignar calificación</span>
+                    </button>
                   </ng-container>
                   <ng-container *ngSwitchDefault>
-
+                    <button *ngIf="row.average" (click)="setRequestAverage(row)" mat-menu-item>
+                      <mat-icon>edit</mat-icon>
+                      <span>Editar calificación</span>
+                    </button>
                     <button (click)="declineStudentRequest(row)" mat-menu-item>
                       <mat-icon>clear</mat-icon>
                       <span>Declinar Alumno</span>
@@ -94,13 +108,12 @@
     
               </mat-cell>
             </ng-container>
-    
-            <mat-header-row
-              *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']">
+            <mat-header-row 
+              *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone','average', 'requestDate', 'actions']">
             </mat-header-row>
             <mat-row
-              *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'requestDate', 'actions']">
-            </mat-row>
+              *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'average', 'requestDate','actions']">
+            </mat-row>            
     
             <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
     

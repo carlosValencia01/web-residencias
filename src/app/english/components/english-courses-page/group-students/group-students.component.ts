@@ -17,9 +17,13 @@ import { RequestCourseProvider } from 'src/app/english/providers/request-course.
 // MODELOS
 import { IGroup } from '../../../entities/group.model';
 import { IEnglishStudent } from '../../../entities/english-student.model';
+import { IRequestCourse } from 'src/app/english/entities/request-course.model';
+import { ERequestCourseStatus } from 'src/app/english/enumerators/request-course-status.enum';
+import { EStatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
 
 export interface DialogData {
-  group: IGroup
+  group: IGroup,
+  type?: string
 }
 
 @Component({
@@ -197,6 +201,122 @@ export class GroupStudentsComponent implements OnInit {
           this.loadingService.setLoading(false);
         });
       }
+    });
+  }
+
+  async setRequestAverage(row){
+
+    const avg = this.data.type == 'teacher' ? await this.showAverageWarningForTeacher(row.englishStudent.studentId.fullName) : await this.swalDialogInput('CALIFICACIÓN PARA', row.englishStudent.studentId.fullName);
+    console.log(avg);
+    
+
+    if(avg){
+      let query = {
+        average:avg,
+        status: 'approved'
+      };
+      if(avg < 70){
+        query.status = 'not_approved';
+      }
+      this.requestCourseProv.updateRequestById(row._id,query).subscribe(res => this.getDataSource());
+      let studentQuery = {
+        level: row.level,
+        status: 'no_choice'
+      };
+      if(row.level == row.group.course.totalSemesters){
+        studentQuery.status = query.status == 'approved' ?  'released' :'not_released';
+      }
+      this.englishStudentProv.updateEnglishStudent(studentQuery, row.englishStudent._id).subscribe(res=>{});
+    }
+    
+  }
+
+  showAverageWarningForTeacher(studentName: string) {
+    return new Promise((resolve)=>{
+
+      Swal.mixin({
+        allowOutsideClick: false,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Aceptar',     
+        showCancelButton: true,
+        progressSteps: ['1', '2'],
+        type: 'warning'
+      }).queue([
+        {
+          title: 'ATENCIÓN',
+          text: 'Ya no podras modificar la calificación',
+          type:'info'
+        },
+        {
+          title: 'Calificación del alumno',
+          text: studentName,
+          confirmButtonText: 'Aceptar',
+          showCancelButton: false,
+          input:'text',
+          inputPlaceholder:'Ingresa la calificación',
+          inputAttributes:{          
+            autocapitalize: 'off',
+            autocorrect: 'off'
+          },        
+          inputValidator: (value) => {
+            if (!value) {//validar que no este vacio
+              return '¡Ingresa una calificación!';
+            }else{            
+              if(!value.match((/^\d{1,3}(\.\d{1,2})?$/))){//validar numeros 
+                if(value.match((/^\d{1,3}(\.\d{3,10})?$/))) return '¡Solo dos decimales!'
+  
+                return '¡Ingresa un promedio valido!';
+              }else if(parseFloat(value)>100){
+                return '¡El promedio no puede ser mayor a 100!';
+              }
+            }
+          }            
+        },      
+      ]).then((result) => {
+        if (result.value) {
+          const avg = parseFloat(result.value[1]);
+          resolve(avg);           
+        }else{
+          resolve(false);
+        }
+      });
+
+    });
+    
+  }
+  /**
+   * Open a swal modal with an input text
+   * @param title title of the message
+   * @param msg message
+   */
+  swalDialogInput(title: string, msg: string) {
+    return Swal.fire({
+      title: title,
+      text: msg,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar',
+      input: 'text',
+      inputValidator: (value) => {
+        if (!value) {// validate empty input
+          return '¡Ingrese la calificación!';
+        }else{            
+          if(!value.match((/^\d{1,3}(\.\d{1,2})?$/))){//validar numeros 
+            if(value.match((/^\d{1,3}(\.\d{3,10})?$/))) return '¡Solo dos decimales!'
+
+            return '¡Ingresa un promedio valido!';
+          }else if(parseFloat(value)>100){
+            return '¡El promedio no puede ser mayor a 100!';
+          }
+        }
+      }
+    }).then((result) => {
+      return result.value ? parseFloat(result.value) : false;
     });
   }
 

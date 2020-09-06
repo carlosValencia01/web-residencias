@@ -64,4 +64,8 @@ export class RequestCourseProvider {
   setPaidStatus(data) {
     return this.api.put('sg-cle/requestcourse/paidstatus', data).pipe(map(res => res.json()));
   }
+
+  saveAverages(data) {
+    return this.api.put('sg-cle/requestcourse/students/average', data).pipe(map(res => res.json()));
+  }
 }

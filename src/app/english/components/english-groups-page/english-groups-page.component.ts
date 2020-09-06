@@ -26,6 +26,8 @@ import { RequestCourseProvider } from 'src/app/english/providers/request-course.
 // Importar Enumeradores
 import { EStatusGroup } from 'src/app/english/enumerators/status-group.enum';
 import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
+import { UploadAvgsModalComponent } from '../upload-avgs-modal/upload-avgs-modal.component';
+import { IRequestCourse } from '../../entities/request-course.model';
 
 @Component({
   selector: 'app-english-groups-page',
@@ -153,7 +155,8 @@ export class EnglishGroupsPageComponent implements OnInit {
 
   applyFilters() {
 
-    this.showGroups = this.groups;
+    this.showGroups = this.groups.slice(0); // copia del array
+
     if (this.usedPeriods) {
       if (this.usedPeriods.length > 0) {
         this.showGroups = this.showGroups.filter(
@@ -200,14 +203,16 @@ export class EnglishGroupsPageComponent implements OnInit {
 
     const dialogRef = this.dialog.open(GroupStudentsComponent, {
       data: {
-        group: group,
+        group: group, 
         type: 'teacher'
       },
       hasBackdrop: true, height: '70%', width: '90%'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(async result => {
       if (result) {
+        await this.getData();
+        this.applyFilters();
       }
     });
 
@@ -392,7 +397,7 @@ export class EnglishGroupsPageComponent implements OnInit {
     //doc.save("Reporte Alumnos Inglés Grupo "+this.pdfData.group.name+".pdf");
   }
 
-  getStudentsGroup(id){
+  getStudentsGroup(id): Promise<Array<IRequestCourse>>{
     return new Promise((resolve) => {
       this.requestCourseProv.getAllRequestActiveCourse(id).subscribe(async res => { 
         resolve(res.requestCourses);
@@ -457,6 +462,24 @@ export class EnglishGroupsPageComponent implements OnInit {
         }
       });
       resolve(horario);
+    });
+  }
+
+  async uploadAverages(group: IGroup){
+
+    const dialogRef = this.dialog.open(UploadAvgsModalComponent, {
+      data: {
+        group: group, 
+        students : (await this.getStudentsGroup(group._id))
+      },
+      hasBackdrop: true, height: '70%', width: '90%'
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result) {
+        await this.getData();
+        this.applyFilters();
+      }
     });
   }
 

@@ -44,6 +44,10 @@
           <mat-icon>view_comfy</mat-icon>
           <span>Descargar Lista Alumnos Excel</span>
         </button>
+        <button *ngIf="group.status == 'active'" (click)="uploadAverages(group)" mat-menu-item>
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Subir Lista de Calificaciones</span>
+        </button>
         <button (click)="generateAct(group)" mat-menu-item *ngIf="group.status == 'evaluated' || group.status == 'finalized'">
           <mat-icon>class</mat-icon>
           <span>Generar Acta Calificaciones</span>

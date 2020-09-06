@@ -59,6 +59,7 @@ import { BossMessageComponent } from './components/boss-message/boss-message.com
 import { EnglishGroupsPageComponent } from './components/english-groups-page/english-groups-page.component';
 // Services
 import { ImageToBase64Service } from '../services/app/img.to.base63.service';
+import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-avgs-modal.component';
 
 @NgModule({
   imports: [
@@ -111,6 +112,7 @@ import { ImageToBase64Service } from '../services/app/img.to.base63.service';
     AddStudentsGroupModalComponent,
     BossMessageComponent,
     EnglishGroupsPageComponent,
+    UploadAvgsModalComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
@@ -124,7 +126,8 @@ import { ImageToBase64Service } from '../services/app/img.to.base63.service';
     ActiveGroupModalComponent,
     AssignEnglishTeacherComponent,
     ReviewInformationModalComponent,
-    AddStudentsGroupModalComponent
+    AddStudentsGroupModalComponent,
+    UploadAvgsModalComponent,
   ],
   providers: [
     StudentProvider,

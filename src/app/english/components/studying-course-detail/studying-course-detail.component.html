@@ -1,5 +1,5 @@
-<mat-card class="w-100">
-  <mat-card-content *ngIf="requestCourse">
+<mat-card class="w-100" class="bg-light">
+  <mat-card-content *ngIf="requestCourse" >
     <div class="row text-center">
       <div class="col-3"></div>
       <div class="col-2">
@@ -18,19 +18,19 @@
           </mat-card-header>
         </mat-card>
       </div>
-      <div class="col-2">
+      <div [class.col-3]="requestCourse.group.teacher" [class.col-2]="!requestCourse.group.teacher">
         <mat-card class="orange-card-info flex-align-center p-0">
           <mat-card-header>
             <mat-card-subtitle class="m-0">DOCENTE</mat-card-subtitle>
-            <mat-card-title *ngIf="requestCourse.group.teacher">{{requestCourse.group.teacher.name | uppercase}}</mat-card-title>
+            <mat-card-title *ngIf="requestCourse.group.teacher">{{requestCourse.group.teacher.name.fullName | uppercase}}</mat-card-title>
             <mat-card-title *ngIf="!requestCourse.group.teacher">SIN ASIGNAR</mat-card-title>
           </mat-card-header>
         </mat-card>
       </div>
-      <div class="col-3"></div>
+      <div [class.col-2]="requestCourse.group.teacher" [class.col-3]="!requestCourse.group.teacher"></div>
     </div>
 
-    <table class="table table-bordered table-hover mt-2" >
+    <table class="table table-responsive-sm bg-white mt-2" >
       <thead>
         <tr>
           <th class="text-center" *ngFor="let day of weekdays" scope="col">
@@ -46,7 +46,7 @@
                 {{getHour(hourForDay.startHour)}} - {{getHour(hourForDay.endDate)}}
                 <br>
                 <div *ngIf="hourForDay.classroom">
-                  Aula: {{hourForDay.classroom}}
+                  Aula: {{hourForDay.classroom.name}}
                 </div>
                 <div *ngIf="!hourForDay.classroom">
                   Aula sin asignar
