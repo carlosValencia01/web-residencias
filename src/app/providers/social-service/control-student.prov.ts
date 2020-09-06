@@ -17,6 +17,10 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  releaseSocialServiceCsv(data: any) {
+    return this.api.put(`controlStudent/release/csv`, data).pipe(map(res => res.json()));
+  }
+
   updateGeneralControlStudent(_id, data) {
     return this.api.put(`controlStudent/${_id}`, data)
       .pipe(map(controlStudent => controlStudent.json()));
