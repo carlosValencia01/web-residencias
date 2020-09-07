@@ -36,6 +36,7 @@ import { MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/d
 import {MatPaginatorIntlCro} from './materialConfig/matPaginatorIntlCroClass';
 import { ControlStudentsMainPageComponent } from './department/control-students-main-page/control-students-main-page.component';
 import {ControlStudentProv} from '../providers/social-service/control-student.prov';
+import { SocialServiceMainPageComponent } from './student/social-service-main-page/social-service-main-page.component';
 
 
 @NgModule({
@@ -71,7 +72,8 @@ import {ControlStudentProv} from '../providers/social-service/control-student.pr
     MatSlideToggleModule,
   ],
   declarations: [
-    ControlStudentsMainPageComponent
+    ControlStudentsMainPageComponent,
+    SocialServiceMainPageComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },

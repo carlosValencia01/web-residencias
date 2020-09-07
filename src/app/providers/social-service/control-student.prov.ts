@@ -17,6 +17,11 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  createAssistanceByControlNumber(controlNumber) {
+    return this.api.post('controlStudent/register/assistance', {controlNumber: controlNumber})
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   releaseSocialServiceCsv(data: any) {
     return this.api.put(`controlStudent/release/csv`, data).pipe(map(res => res.json()));
   }

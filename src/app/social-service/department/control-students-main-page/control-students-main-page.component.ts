@@ -36,6 +36,7 @@ export class ControlStudentsMainPageComponent implements OnInit {
 
   _getAllControlStudents() {
     this.loadingService.setLoading(true);
+    // Obtención de todos los estudiantes en base de datos en Servicio Social
     this.controlStudentProv.getAllControlStudents().subscribe( res => {
       const controlStudents = res.controlStudents.map(this._castToTable);
       this._refresh(controlStudents);
@@ -76,6 +77,7 @@ export class ControlStudentsMainPageComponent implements OnInit {
     };
   }
 
+  // Evento para cargar asistencia de alumnos mediante csv
   onUpload(event) {
     const students = [];
     if (event.target.files && event.target.files[0]) {
@@ -102,6 +104,7 @@ export class ControlStudentsMainPageComponent implements OnInit {
             refDialog.afterClosed().subscribe((_students: Array<any>) => {
               if (_students) {
                 this.loadingService.setLoading(true);
+                // Carga de los estudiantes que Existan y hayamos elegido para su carga a la base de datos (asistencia)
                 this.controlStudentProv.releaseSocialServiceCsv(_students).subscribe(_ => {
                   this.loadingService.setLoading(false);
                   this.notificationsService.showNotification(eNotificationType.SUCCESS,
@@ -120,6 +123,7 @@ export class ControlStudentsMainPageComponent implements OnInit {
     }
   }
 
+  // Carga del componente modal
   private _openDialog(component: ComponentType<any>, id?: string, data?: any) {
     return this.dialog.open(component, {
       id: id ? id : '',
