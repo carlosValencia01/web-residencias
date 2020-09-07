@@ -295,7 +295,7 @@ export class ReviewExpedientComponent implements OnInit {
         // Cambiar estatus a EN PROCESO
         let query = { inscriptionStatus:"En Proceso" };
         const _student = this.data && this.data.student;
-        if (totalDocs === 2 && (validatedDocs === 2 || aceptedDocs === 2) && _student && _student.stepWizard === 2) {
+        if ((totalDocs === 2 || totalDocs === 3) && (validatedDocs === 2 || validatedDocs === 3 || aceptedDocs === 2 || aceptedDocs === 3 ) && _student && _student.stepWizard === 2) {
           query['stepWizard'] = 3;
         }
        this.inscriptionsProv.updateStudent(query, this.data.student._id).subscribe(res => {  });
