@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { CalendarEvent, CalendarMonthViewBeforeRenderEvent, CalendarView } from 'angular-calendar';
 import { isSameDay, isSameMonth } from 'date-fns';
@@ -15,7 +15,9 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { ActNotificacionComponent } from 'src/app/titulation/act-notificacion/act-notificacion.component';
 import { ViewMoreComponent } from 'src/app/titulation/view-more/view-more.component';
-
+import { Subscription } from 'rxjs';
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
+import { eRecActEvents } from 'src/app/enumerators/shared/sockets.enum';
 require('jspdf-autotable');
 const jsPDF = require('jspdf');
 
@@ -26,7 +28,7 @@ moment.locale('es');
   templateUrl: './view-appointment-page.component.html',
   styleUrls: ['./view-appointment-page.component.scss']
 })
-export class ViewAppointmentPageComponent implements OnInit {
+export class ViewAppointmentPageComponent implements OnInit, OnDestroy {
   private WIDTH = 286;
   private HEIGHT = 239;
   private FONT = 'Montserrat';
@@ -61,7 +63,7 @@ export class ViewAppointmentPageComponent implements OnInit {
   view: CalendarView = CalendarView.Month;
   locale = 'es';
   role: string;
-
+  private subscriptions: Array<Subscription> = [];
   constructor(
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
@@ -71,6 +73,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     private _CookiesService: CookiesService,
     public _getImage: ImageToBase64Service,
     private loadingService: LoadingService,
+    private webSocketService: WebSocketService,
   ) {
     this.carrers = [];
     this._getImageToPdf();
@@ -96,7 +99,12 @@ export class ViewAppointmentPageComponent implements OnInit {
         }
       });
   }
-
+  ngOnDestroy(){        
+    this.subscriptions.forEach((subscription: Subscription) => {
+      if(!subscription.closed)
+        subscription.unsubscribe();
+    });
+  }
   filterDepto(depto: string): void {
     switch (depto) {
       case 'ISIC': {
@@ -122,18 +130,37 @@ export class ViewAppointmentPageComponent implements OnInit {
     const maxDate = new Date(this.viewDate.getTime());
     minDate.setDate(minDate.getDate() - minDate.getDay());
     maxDate.setDate(maxDate.getDate() + (6 - maxDate.getDay()));
+
+    this.subscriptions.push(
+      this.webSocketService.listen(eRecActEvents.GET_DIARY).subscribe( data=>{
+        if (typeof (data.Diary) !== 'undefined') {
+          this.Appointments = data.Diary;
+          this.loadAppointment();
+          this.refresh.next();
+        }
+      }));
+
+    this.subscriptions.push(
+      this.webSocketService.listen(eRecActEvents.MODIFY_DIARY).subscribe(data=>{
+        this._RequestProvider.getDiary({
+          month: month,
+          year: year,
+          isWeek: this.view === CalendarView.Week,
+          min: minDate,
+          max: maxDate
+        }, this._CookiesService.getClientId()).subscribe(data => {
+          
+        });
+      }));
+
     this._RequestProvider.getDiary({
       month: month,
       year: year,
       isWeek: this.view === CalendarView.Week,
       min: minDate,
       max: maxDate
-    }).subscribe(data => {
-      if (typeof (data.Diary) !== 'undefined') {
-        this.Appointments = data.Diary;
-        this.loadAppointment();
-        this.refresh.next();
-      }
+    }, this._CookiesService.getClientId()).subscribe(data => {
+      
     }, _ => {
       this._NotificationsServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener eventos');
@@ -233,9 +260,7 @@ export class ViewAppointmentPageComponent implements OnInit {
     }
   }
 
-  reload(): void {
-    this.diary(this.viewDate.getMonth(), this.viewDate.getFullYear());
-  }
+
 
   genTrades($event): void {
     const title: string = $event.title;

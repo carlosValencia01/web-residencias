@@ -35,6 +35,7 @@ import { Storage } from 'src/app/services/app/storage.service';
 import { CurrentPositionService } from 'src/app/services/shared/current-position.service';
 import { ErrorMatcher } from 'src/app/services/shared/ErrorMatcher';
 import { RoleService } from 'src/app/services/shared/role.service';
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
 import { AppComponent } from './app.component';
 import { CommonsModule } from './commons/commons.module';
 import { LoaderComponent } from './commons/loader/loader.component';
@@ -108,6 +109,7 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
     NotificationsServices,
     RoleService,
     Storage,
+    WebSocketService
   ],
   entryComponents: [SelectPositionComponent],
   bootstrap: [AppComponent]

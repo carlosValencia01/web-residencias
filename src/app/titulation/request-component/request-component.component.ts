@@ -21,6 +21,7 @@ import { NotificationsServices } from 'src/app/services/app/notifications.servic
 import { EmployeeAdviserComponent } from 'src/app/titulation/employee-adviser/employee-adviser.component';
 import { IntegrantsComponentComponent } from 'src/app/titulation/integrants-component/integrants-component.component';
 import Swal from 'sweetalert2';
+import { ERoleToAcronym } from 'src/app/enumerators/app/role.enum';
 
 @Component({
   selector: 'app-request-component',
@@ -57,7 +58,7 @@ export class RequestComponentComponent implements OnInit {
   private adviserInfo: { name: string, title: string, cedula: string, email?: string };
   private product = 'INFORME TÉCNICO DE RESIDENCIA PROFESIONAL';
   private titulationOption = 'XI - TITULACIÓN INTEGRAL';
-
+  private filterRole: string;
   constructor(
     public studentProvider: StudentProvider,
     private cookiesService: CookiesService,
@@ -74,6 +75,7 @@ export class RequestComponentComponent implements OnInit {
       this.router.navigate(['/']);
     }
     this.typeCareer = <keyof typeof eCAREER>this.userInformation.career;
+    this.filterRole = (ERoleToAcronym as any)[this.userInformation.rol.name.toLowerCase()];
     this.getFolderId();
   }
 
@@ -347,7 +349,7 @@ export class RequestComponentComponent implements OnInit {
       department: this.request.department.name,
       boss: this.request.department.boss
     };
-    this.requestProvider.updateRequest(this.request._id, data).subscribe(_ => {
+    this.requestProvider.updateRequest(this.request._id, data,this.filterRole).subscribe(_ => {
       this.loadingService.setLoading(false);
       this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto Recepcional', 'Solicitud Enviada');
       this.btnSubmitRequest.emit(true);
