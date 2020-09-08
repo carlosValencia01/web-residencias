@@ -2,6 +2,11 @@
   <div class="col-11">
     <div class="row text-center">
       <div class="col-8 p-0">
+        <div style="display: inline;" *ngIf="data.student.stepWizard == 2">
+          <button type="button" class="btn btn-secondary" style="margin-left: 7px;" (click)="updateStepWizard()">
+          Cambiar
+        </button>
+        </div>
         <h1 mat-dialog-title>
           {{ data.student.fullName }} - {{ data.student.controlNumber }} - {{data.student.careerId.acronym}}
         </h1>

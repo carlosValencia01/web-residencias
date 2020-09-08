@@ -95,8 +95,7 @@ export class ReviewExpedientComponent implements OnInit {
     this.studentProv.getDocumentsInscription(this.data.student.controlNumber,this.degree).subscribe(
       (docs)=>{
         this.documents = docs.docs;
-        console.log(this.documents);
-
+       
         this.docto = this.docto ? this.documents.filter(docc => docc.file.filename === this.docto.file.filename)[0] : null;
         this.pendings = this.documents.filter( (doc)=> doc.status !== 'ACEPTADO').length;
         this.selectPendings = 0;
@@ -254,7 +253,7 @@ export class ReviewExpedientComponent implements OnInit {
       const validatedDocs = this.documents.filter( (doc)=> doc.status === 'VALIDADO').length;
       const aceptedDocs = this.documents.filter( (doc)=> doc.status === 'ACEPTADO').length;
       const totalDocs = processDocs + validatedDocs + aceptedDocs;
-
+      
       if(this.degree === 'lic'){
          // Cambiar estatus a ACEPTADO
          if(aceptedDocs === 7 || aceptedDocs === 8 ){
@@ -294,11 +293,16 @@ export class ReviewExpedientComponent implements OnInit {
       if(processDocs === 0){
         // Cambiar estatus a EN PROCESO
         let query = { inscriptionStatus:"En Proceso" };
-        const _student = this.data && this.data.student;
-        if ((totalDocs === 2 || totalDocs === 3) && (validatedDocs === 2 || validatedDocs === 3 || aceptedDocs === 2 || aceptedDocs === 3 ) && _student && _student.stepWizard === 2) {
+        const isFoto = this.documents.filter(doc=>doc.file.shortName == 'FOTO')[0];       
+        if(isFoto){
+          
+          if(totalDocs === 3 && (validatedDocs === 3 || aceptedDocs === 3) && this.data.student.stepWizard == 2){
+            query['stepWizard'] = 3;
+          }
+        }else if( totalDocs === 2 && (validatedDocs === 2 || aceptedDocs === 2) && this.data.student.stepWizard == 2 ){    
           query['stepWizard'] = 3;
         }
-       this.inscriptionsProv.updateStudent(query, this.data.student._id).subscribe(res => {  });
+        this.inscriptionsProv.updateStudent(query, this.data.student._id).subscribe(res => {  });
        return;
       }
     }, 500);
