@@ -683,6 +683,170 @@
     </div>
   </ng-template>
 
+  <!-- ESTUDIANTES -->
+  <mat-tab label="Estudiantes">
+
+    <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+      <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+        <input matInput (keyup)="applyFilterStudents()" placeholder="Ingrese Nombre o Numero de Control..."
+          [(ngModel)]="searchStudent" (keyup)="applyFilterStudents()" (focus)="setupFilter()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <div style="text-align: right;">
+      </div>
+    </div>
+
+    <!--Tabla-->
+    <div style="position: relative;">
+
+      <div style="position: relative; overflow: auto; max-width: 100%;">
+
+        <table mat-table [dataSource]="englishStudentsDataSource" class="mat-elevation-z8" matSort>
+          
+          <ng-container matColumnDef="controlNumber">
+            <mat-header-cell *matHeaderCellDef>NC</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.controlNumber}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="fullName">
+            <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="phone">
+            <mat-header-cell *matHeaderCellDef>Teléfono</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.phone}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="career">
+            <mat-header-cell *matHeaderCellDef>Carrera</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="hours">
+            <mat-header-cell *matHeaderCellDef>Horas</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.hours}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
+            <mat-cell *matCellDef="let row"><mat-chip class="small">{{statusEnglishStudent[row.status]}}</mat-chip></mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #actions="matMenu">
+                <button (click)="openViewHistory(row)" mat-menu-item>
+                  <mat-icon>schedule</mat-icon>
+                  <span>Ver Avance</span>
+                </button>
+              </mat-menu>
+
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="['controlNumber', 'fullName', 'phone', 'career', 'hours', 'status', 'actions']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['controlNumber', 'fullName', 'phone', 'career', 'hours', 'status',  'actions']"></mat-row>
+
+        </table>
+        <mat-paginator #matPaginatorStudents [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+      </div>
+    </div>
+  </mat-tab>
+
+  <ng-template #viewHistory>
+    <h1 mat-dialog-title>Avance</h1>
+    <div mat-dialog-content>
+      <!-- tabla -->
+      <div style="position: relative; background: white;">
+        <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+          <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+            <input matInput (keyup)="applyFilterHistory()" placeholder="Buscar..." [(ngModel)]="searchHistory"
+              (keyup)="applyFilterHistory()">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+        <div style="position: relative; overflow: auto; max-width: 100%;">
+
+          <table mat-table [dataSource]="requestsDataSource" class="mat-elevation-z8" matSort>
+
+            <ng-container matColumnDef="course">
+              <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.course}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="level">
+              <mat-header-cell *matHeaderCellDef>Bloque</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.level}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="group">
+              <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.group}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
+              <mat-cell *matCellDef="let row"><mat-chip class="small">{{requestCourseStatus[row.status]}}</mat-chip></mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="average">
+              <mat-header-cell *matHeaderCellDef>Promedio</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.average}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="teacher">
+              <mat-header-cell *matHeaderCellDef>Docente</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.teacher}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="period">
+              <mat-header-cell *matHeaderCellDef>Periodo</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.period}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+              </mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <button mat-icon-button [matMenuTriggerFor]="actions">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <mat-menu #actions="matMenu">
+                  <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
+                    <mat-icon>watch_later</mat-icon>
+                    <span>Ver Horario</span>
+                  </button>
+                </mat-menu>
+
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="['course', 'level', 'group', 'status', 'average', 'teacher', 'period', 'actions']">
+            </mat-header-row>
+            <mat-row *matRowDef="let row; columns: ['course', 'level', 'group', 'status', 'average', 'teacher', 'period', 'actions']">
+            </mat-row>
+          </table>
+
+        </div>
+
+        <!--Paginas-->
+        <mat-paginator #matPaginatorHistory [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+
+      </div>
+      <!-- tabla -->
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+    </div>
+  </ng-template>
+
 </mat-tab-group>
 
 <!-- Tabla reporte alumnos Excel-->

@@ -9,6 +9,11 @@ export class EnglishStudentProvider {
 
   constructor(private api: Api) { }
 
+  getAllEnglishStudent() {
+    return this.api.get('sg-cle/englishstudent/all')
+    .pipe(map(students => students.json()));
+}
+
   getEnglishStudentByStudentId(studentId: string) {
     return this.api.get(`sg-cle/englishstudent/search/student/` + studentId)
       .pipe(map(student => student.json()));

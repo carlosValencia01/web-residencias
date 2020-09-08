@@ -74,10 +74,31 @@ table {
 //Grupos
 
 .mat-column-level{
-  max-width: 80px;
-  min-width: 70px;
+  max-width: 60px;
+  min-width: 60px;
 }
 
 #tableActiveGroupReportExcel{
   display: none;
+}
+
+//Estudiantes
+
+.mat-column-average{
+  max-width: 80px;
+  min-width: 80px;
+}
+
+.mat-column-hours{
+  max-width: 55px;
+  min-width: 55px;
+}
+
+.mat-column-career{
+  min-width: 80px;
+}
+
+.mat-column-actions{
+  min-width: 100px;
+  max-width: 100px;
 }

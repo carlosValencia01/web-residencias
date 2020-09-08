@@ -21,6 +21,7 @@ import { RequestCourseProvider } from 'src/app/english/providers/request-course.
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
 import { EmployeeProvider } from '../../../providers/shared/employee.prov';
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 
 // Importar Componentes
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
@@ -32,6 +33,8 @@ import { GroupStudentsComponent } from 'src/app/english/components/english-cours
 // Importar Enumeradores
 import { EStatusGroupDB, EStatusGroup } from 'src/app/english/enumerators/status-group.enum';
 import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
+import { EStatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
+import { ERequestCourseStatus } from 'src/app/english/enumerators/request-course-status.enum';
 
 // Importar Modales
 import { ActiveGroupModalComponent } from '../../modals/active-group-modal/active-group-modal.component';
@@ -46,6 +49,7 @@ import { ICourse } from '../../entities/course.model';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { IEmployee } from '../../../entities/shared/employee.model';
 import { IRequestCourse } from '../../entities/request-course.model';
+import { IEnglishStudent } from '../../entities/english-student.model';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -111,6 +115,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     private requestCourseProv: RequestCourseProvider,
     private classroomProv: ClassroomProvider,
     private englishCourseProv: EnglishCourseProvider,
+    private englishStudentProv: EnglishStudentProvider,
     private groupProv: GroupProvider,
     public dialog: MatDialog,
     private notificationsServices: NotificationsServices,
@@ -131,6 +136,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.createGroups();
     this.getActivePeriod();
     this._initTeachers();
+    this._initStudents();
   }
 
   // #region Solicitudes
@@ -1039,6 +1045,107 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   // #endregion
 
+
+  // #region Estudiantes
+
+  
+  public englishStudents: IEnglishStudent[];
+  public englishStudentsDataSource: MatTableDataSource<any>;
+  @ViewChild('matPaginatorStudents') paginatorStudents: MatPaginator;
+  searchStudent = "";
+  public requestsStudent: any[];
+  public requestsDataSource: MatTableDataSource<any>;
+  @ViewChild('matPaginatorHistory') paginatorHistory: MatPaginator;
+  searchHistory = "";
+  @ViewChild("viewHistory") dialogRefViewHistory: TemplateRef<any>;
+  statusEnglishStudent = EStatusEnglishStudent;
+  requestCourseStatus = ERequestCourseStatus;
+
+  private async _initStudents(): Promise<void> {
+
+    this.englishStudentsDataSource = new MatTableDataSource();
+
+    this.englishStudentProv.getAllEnglishStudent().subscribe(res => {
+
+      this.englishStudents = res.englishStudents;
+      this._fillTableEnglishStudents(this.englishStudents);
+    }, error => {
+
+    }, () => this.loadingService.setLoading(false));
+  }
+
+  private _fillTableEnglishStudents(englishStudents: IEnglishStudent[]): void {
+
+    this.englishStudentsDataSource.data = englishStudents.map((englishStudent) => this._parseEnglishStudentToTable(englishStudent));
+    
+    this.englishStudentsDataSource.paginator = this.paginatorStudents;
+    
+  }
+
+  private _parseEnglishStudentToTable(englishStudent: any): any {
+    return {
+      _id: englishStudent._id,
+      controlNumber: englishStudent.studentId.controlNumber,
+      name: englishStudent.studentId.fullName,
+      phone: englishStudent.currentPhone,
+      career: englishStudent.studentId.careerId ? englishStudent.studentId.careerId.acronym : '',
+      hours: englishStudent.totalHoursCoursed,
+      status: englishStudent.status
+    };
+  }
+
+  openViewHistory(student){
+
+    this.requestCourseProv.getAllRequestCourseByEnglishStudentId(student._id).subscribe(res => {
+
+      this.requestsStudent = res.requestCourse;
+      console.log(res)
+
+      this._fillTableHistory(this.requestsStudent);
+
+    }, error => {
+
+    }, () => this.loadingService.setLoading(false));
+
+    let dialogRef = this.dialog.open(this.dialogRefViewHistory, { hasBackdrop: true, height: '90%', width: '80%' });
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) {
+      }
+    });
+  }
+
+  private _fillTableHistory(requests): void {
+
+    this.requestsDataSource = new MatTableDataSource();
+    this.requestsDataSource.data = requests.map((request) => this._parseRequestToTable(request));
+    
+    this.requestsDataSource.paginator = this.paginatorHistory;
+    
+    console.log(this.requestsDataSource.data)
+  }
+
+  private _parseRequestToTable(request): any {
+    return {
+      _id: request._id,
+      course: request.group.course.name,
+      level: request.group.level,
+      group: request.group.name,
+      status: request.status,
+      average: request.average ? request.average : '-',
+      teacher: request.group.teacher ? request.group.teacher.name.fullName : 'Sin Asignar',
+      period: request.period.periodName + ' ' +  request.period.year,
+      schedule: request.group.schedule
+    };
+  }
+
+  applyFilterHistory() {
+    this.requestsDataSource.filter = this.searchHistory.trim().toLowerCase();
+  }
+  applyFilterStudents() {
+    this.englishStudentsDataSource.filter = this.searchStudent.trim().toLowerCase();
+  }
+
+  // #endregion
 }
 
 interface IEnglishTeacher {

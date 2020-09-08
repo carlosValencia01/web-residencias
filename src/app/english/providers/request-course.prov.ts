@@ -68,4 +68,8 @@ export class RequestCourseProvider {
   saveAverages(data) {
     return this.api.put('sg-cle/requestcourse/students/average', data).pipe(map(res => res.json()));
   }
+  
+  getAllRequestCourseByEnglishStudentId(englishStudentId) {
+    return this.api.get('sg-cle/requestcourse/all/by/englishstudent/' + englishStudentId).pipe(map(res => res.json()));
+  }
 }
