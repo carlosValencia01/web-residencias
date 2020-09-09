@@ -284,7 +284,7 @@ export class ExpedentTableComponentComponent implements OnInit {
       this.dataSource.data = this.dataSource.data.filter(st=>st.career.toLowerCase() == this.filters.career.value);
     }
     if(this.filters.textSearch.status){
-      this.dataSource.data = this.dataSource.data.filter(st=>st.controlNumber.toLowerCase().indexOf(this.filters.textSearch.value) !=-1);
+      this.dataSource.data = this.dataSource.data.filter(st=>st.controlNumber.toLowerCase().indexOf(this.filters.textSearch.value) !=-1 || st.fullName.toLowerCase().indexOf(this.filters.textSearch.value) !=-1);
     }
     if(!this.filters.credentials.all){ //si no se quieren ver todos
       if(this.filters.credentials.printed){ //solo credenciales impresas
