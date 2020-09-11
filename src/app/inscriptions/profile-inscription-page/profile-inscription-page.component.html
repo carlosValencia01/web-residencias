@@ -1949,10 +1949,9 @@
               </mat-card-footer>
             </mat-card>
           </div>
-
           <!--Carta Compromiso-->
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;"
-            *ngIf="!doctorate && !mastersDegree && docCompromiso">
+            *ngIf="!doctorate && !mastersDegree && docCompromiso && !docCertificado">
             <mat-card *ngIf="docCompromiso.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Carta Compromiso</mat-card-title>
@@ -2039,7 +2038,7 @@
 
           <!-- CC Certificado de licenciatura-->
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;"
-            *ngIf="mastersDegree && cccertificateLDoc">
+            *ngIf="mastersDegree && cccertificateLDoc && !certificateLDoc">
             <mat-card *ngIf="cccertificateLDoc.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Cc Certificado Licenciatura</mat-card-title>
@@ -2126,7 +2125,7 @@
 
           <!--CC Titulo de licenciatura-->
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;"
-            *ngIf="mastersDegree && cctitledLDoc">
+            *ngIf="mastersDegree && cctitledLDoc && !titledLDoc">
             <mat-card *ngIf="cctitledLDoc.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Cc Título Licenciatura</mat-card-title>
@@ -2213,7 +2212,7 @@
 
           <!--CC Cedula de licenciatura-->
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;"
-            *ngIf="mastersDegree && cccedulaLDoc">
+            *ngIf="mastersDegree && cccedulaLDoc && !cedulaLDoc">
             <mat-card *ngIf="cccedulaLDoc.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Cc Cédula Licenciatura</mat-card-title>
@@ -2300,7 +2299,7 @@
 
           <!--CC Acta Examen de licenciatura-->
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;"
-            *ngIf="mastersDegree && ccexamActLDoc">
+            *ngIf="mastersDegree && ccexamActLDoc && !examActLDoc">
             <mat-card *ngIf="ccexamActLDoc.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Cc Acta Examen Licenciatura</mat-card-title>
@@ -2387,7 +2386,7 @@
 
           <!-- CC Certificado de maestria-->
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;"
-            *ngIf="doctorate && cccertificateMDoc">
+            *ngIf="doctorate && cccertificateMDoc && !certificateMDoc">
             <mat-card *ngIf="cccertificateMDoc.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Cc Certificado Maestria</mat-card-title>
@@ -2473,7 +2472,8 @@
           </div>
 
           <!--CC Titulo de maestria-->
-          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && cctitledMDoc">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" 
+            *ngIf="doctorate && cctitledMDoc && !titledMDoc">
             <mat-card *ngIf="cctitledMDoc.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Cc Título Maestria</mat-card-title>
@@ -2559,7 +2559,8 @@
           </div>
 
           <!--CC Cedula de maestria-->
-          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="doctorate && cccedulaMDoc">
+          <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;"
+            *ngIf="doctorate && cccedulaMDoc && !cedulaMDoc">
             <mat-card *ngIf="cccedulaMDoc.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Cc Cédula Maestria</mat-card-title>
@@ -2646,7 +2647,7 @@
 
           <!--CC Acta Examen de maestria-->
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;"
-            *ngIf="doctorate && ccexamActMDoc">
+            *ngIf="doctorate && ccexamActMDoc && !examActMDoc">
             <mat-card *ngIf="ccexamActMDoc.status.name == 'EN PROCESO'" class="process">
               <mat-card-header>
                 <mat-card-title class="processText">Cc Acta Examen Maestria</mat-card-title>
