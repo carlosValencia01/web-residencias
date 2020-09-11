@@ -151,11 +151,11 @@
                     
                       <div
                         class="col-12"
-                        *ngIf="docto.status !== 'ACEPTADO'"
+                        
                       >
                       <div class="row text-center">
 
-                        <div class="col-6">
+                        <div class="col-6" *ngIf="docto.status !== 'ACEPTADO'">
                           <div
                             (click)="changeStatus('ACEPTADO')"
                             class="btn-rounded btn-rounded-success"
