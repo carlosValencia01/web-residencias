@@ -294,12 +294,30 @@ export class ReviewExpedientComponent implements OnInit {
       if(processDocs === 0){
         // Cambiar estatus a EN PROCESO
         let query = { inscriptionStatus:"En Proceso" };
-        const _student = this.data && this.data.student;
-        if (totalDocs === 2 && (validatedDocs === 2 || aceptedDocs === 2) && _student && _student.stepWizard === 2) {
+        const isFoto = this.documents.filter(doc=>doc.file.shortName == 'FOTO')[0];       
+        if(isFoto){
+          if(isFoto.status == 'EN PROCESO'){
+            if((validatedDocs + aceptedDocs) == 2 && this.data.student.stepWizard == 2){
+              query['stepWizard'] = 3;
+            }
+          }else if(isFoto.status == 'VALIDADO' || isFoto.status == 'ACEPTADO'){
+            if((validatedDocs + aceptedDocs) == 3 && this.data.student.stepWizard == 2){
+              query['stepWizard'] = 3;
+            }
+          }
+        }else if( (validatedDocs + aceptedDocs) == 2 && this.data.student.stepWizard == 2 ){    
           query['stepWizard'] = 3;
         }
        this.inscriptionsProv.updateStudent(query, this.data.student._id).subscribe(res => {  });
        return;
+      }else if(this.data.student.stepWizard == 2){
+        const isCertificate = this.documents.filter(doc=>doc.file.shortName.indexOf('CERTIFICADO') > -1 )[0];
+        const isPay = this.documents.filter(doc=>doc.file.shortName == 'COMPROBANTE')[0];
+        if(isCertificate && isPay){
+          if((isCertificate.status == 'VALIDADO' || isCertificate.status == 'ACEPTADO') && (isPay.status == 'VALIDADO' || isPay.status == 'ACEPTADO')){
+            this.inscriptionsProv.updateStudent({stepWizard:3, inscriptionStatus:"En Proceso"}, this.data.student._id).subscribe(res => {  });
+          }
+        }
       }
     }, 500);
   }

@@ -284,7 +284,7 @@ export class ExpedentTableComponentComponent implements OnInit {
       this.dataSource.data = this.dataSource.data.filter(st=>st.career.toLowerCase() == this.filters.career.value);
     }
     if(this.filters.textSearch.status){
-      this.dataSource.data = this.dataSource.data.filter(st=>st.controlNumber.toLowerCase().indexOf(this.filters.textSearch.value) !=-1);
+      this.dataSource.data = this.dataSource.data.filter(st=>st.controlNumber.toLowerCase().indexOf(this.filters.textSearch.value) !=-1 || st.fullName.toLowerCase().indexOf(this.filters.textSearch.value) !=-1);
     }
     if(!this.filters.credentials.all){ //si no se quieren ver todos
       if(this.filters.credentials.printed){ //solo credenciales impresas
@@ -494,7 +494,7 @@ export class ExpedentTableComponentComponent implements OnInit {
           // Cambiar estatus a EN PROCESO
           let query = { inscriptionStatus:"En Proceso" };
           const _student = row && row.student;
-          if (totalDocs === 2 && (validatedDocs === 2 || aceptedDocs === 2) && _student && _student.stepWizard === 2) {
+          if ((totalDocs === 2 || totalDocs === 3) && (validatedDocs === 2 || validatedDocs === 3 || aceptedDocs === 2 || aceptedDocs === 3 ) && _student && _student.stepWizard === 2) {
             query['stepWizard'] = 3;
           }
           this.inscriptionsProv.updateStudent(query, row.student._id).subscribe(res => {  });
