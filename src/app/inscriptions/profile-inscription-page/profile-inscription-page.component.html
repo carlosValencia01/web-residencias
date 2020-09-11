@@ -108,10 +108,6 @@
                   </div>
                 </div>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz4" [config]="config4" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="docComprobante.status.name == 'RECHAZADO'" class="reject">
               <mat-card-header>
@@ -217,10 +213,6 @@
                   </div>
                 </div>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config2" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="docCertificado.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -350,10 +342,6 @@
                   <span class="badge badge-warning">{{certificateLDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config8" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="certificateLDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -462,10 +450,6 @@
                   <span class="badge badge-warning">{{titledLDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config9" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="titledLDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -574,10 +558,6 @@
                   <span class="badge badge-warning">{{cedulaLDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config10" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="cedulaLDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -686,10 +666,6 @@
                   <span class="badge badge-warning">{{examActLDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config11" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="examActLDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -798,10 +774,6 @@
                   <span class="badge badge-warning">{{certificateMDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config16" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="certificateMDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -909,10 +881,6 @@
                   <span class="badge badge-warning">{{titledMDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config17" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="titledMDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -1019,10 +987,6 @@
                   <span class="badge badge-warning">{{cedulaMDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config18" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="cedulaMDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -1129,10 +1093,6 @@
                   <span class="badge badge-warning">{{examActMDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config19" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="examActMDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -1321,10 +1281,6 @@
                   </div>
                 </div>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz5" [config]="config5" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
           </div>
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!docCurp">
@@ -1391,10 +1347,6 @@
                   </div>
                 </div>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz1" [config]="config1" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="docActa.status.name == 'RECHAZADO'" class="reject">
               <mat-card-header>
@@ -1613,12 +1565,7 @@
                   </div>
                 </div>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz3" [config]="config3" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
-
           </div>
           <div class='col-xs-12 col-sm-6 col-md-4 col-lg-3' style="padding-top: 5px;" *ngIf="!docAnalisis">
             <mat-card class="cardDocumentsNoSend">
@@ -1683,15 +1630,6 @@
                   </div>
                 </div>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton"
-                  accept="image/png,image/jpg,image/jpeg" style="display: none;">
-                <button mat-button (click)="showSelectFileDialog()">
-                  <p style="text-align: center;">
-                    Cambiar Foto
-                  </p>
-                </button>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="docFoto.status.name == 'RECHAZADO'" class="reject">
               <mat-card-header>
@@ -1838,10 +1776,6 @@
                   </div>
                 </div>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz6" [config]="config6" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="docNss.status.name == 'RECHAZADO'" class="reject">
               <mat-card-header>
@@ -1969,10 +1903,6 @@
                   <span class="badge badge-warning">{{docCompromiso.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz7" [config]="config7" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="docCompromiso.status.name == 'RECHAZADO'" class="reject">
               <mat-card-header>
@@ -2056,10 +1986,6 @@
                   <span class="badge badge-warning">{{cccertificateLDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config12" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="cccertificateLDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -2143,10 +2069,6 @@
                   <span class="badge badge-warning">{{cctitledLDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config13" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="cctitledLDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -2230,10 +2152,6 @@
                   <span class="badge badge-warning">{{cccedulaLDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config14" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="cccedulaLDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -2317,10 +2235,6 @@
                   <span class="badge badge-warning">{{ccexamActLDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config15" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="ccexamActLDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -2404,10 +2318,6 @@
                   <span class="badge badge-warning">{{cccertificateMDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config20" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="cccertificateMDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -2491,10 +2401,6 @@
                   <span class="badge badge-warning">{{cctitledMDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config21" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="cctitledMDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -2578,10 +2484,6 @@
                   <span class="badge badge-warning">{{cccedulaMDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config22" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="cccedulaMDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>
@@ -2665,10 +2567,6 @@
                   <span class="badge badge-warning">{{ccexamActMDoc.status.name}}</span>
                 </p>
               </mat-card-actions>
-              <mat-card-footer style="text-align: center; color: black;">
-                <dropzone id="dz2" [config]="config23" [message]="'Cambiar Documento'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)"></dropzone>
-              </mat-card-footer>
             </mat-card>
             <mat-card *ngIf="ccexamActMDoc.status.name == 'ACEPTADO'" class="accept">
               <mat-card-header>

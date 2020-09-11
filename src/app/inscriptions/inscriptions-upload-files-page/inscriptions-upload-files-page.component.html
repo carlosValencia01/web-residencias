@@ -70,7 +70,7 @@
             </div>
 
             <div class="card-body c-body" id="collapsePAGO" style="max-height: 235px; padding: 10px;">
-              <div>
+              <div *ngIf="!payDoc || payDoc.status.name === 'RECHAZADO'">
                 <dropzone id="dz3" [config]="config3" [message]="'Subir'" (error)="onErrorCommon($event)"
                   (success)="onUploadSuccess($event)"></dropzone>
               </div>
@@ -155,7 +155,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasCert && !ccDoc || certificateDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!certificateDoc || certificateDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz0" [config]="config" [message]="'Subir (certificado)'" (error)="onErrorCommon($event)"
                     (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -163,7 +163,7 @@
               <div class="row text-center" *ngIf="hasCert && !certificateDoc || ccDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!ccDoc || ccDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz7" [config]="config7" [message]="'Subir (carta)'" (error)="onErrorCommon($event)"
                         (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -255,7 +255,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasCerL && !cccertificateLDoc || certificateLDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!certificateLDoc || certificateLDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz8" [config]="config8" [message]="'Subir (certificado)'"
                     (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -263,7 +263,7 @@
               <div class="row text-center" *ngIf="hasCerL && !certificateLDoc || cccertificateLDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!cccertificateLDoc || cccertificateLDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz12" [config]="config12" [message]="'Subir (carta)'"
                         (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -345,7 +345,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasTL && !cctitledLDoc || titledLDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!titledLDoc || titledLDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz9" [config]="config9" [message]="'Subir (título)'" (error)="onErrorCommon($event)"
                     (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -353,7 +353,7 @@
               <div class="row text-center" *ngIf="hasTL && !titledLDoc || cctitledLDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!cctitledLDoc || cctitledLDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz13" [config]="config13" [message]="'Subir (carta)'"
                         (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -434,7 +434,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasCedL && !cccedulaLDoc || cedulaLDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!cedulaLDoc || cedulaLDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz10" [config]="config10" [message]="'Subir (cédula)'" (error)="onErrorCommon($event)"
                     (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -442,7 +442,7 @@
               <div class="row text-center" *ngIf="hasCedL && !cedulaLDoc || cccedulaLDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!cccedulaLDoc || cccedulaLDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz14" [config]="config14" [message]="'Subir (carta)'"
                         (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -523,7 +523,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasEL && !ccexamActLDoc || examActLDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!examActLDoc || examActLDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz11" [config]="config11" [message]="'Subir (acta)'" (error)="onErrorCommon($event)"
                     (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -531,7 +531,7 @@
               <div class="row text-center" *ngIf="hasEL && !examActLDoc || ccexamActLDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!ccexamActLDoc || ccexamActLDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz15" [config]="config15" [message]="'Subir (carta)'"
                         (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -614,7 +614,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasCerM && !cccertificateMDoc || certificateMDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!certificateMDoc || certificateMDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz16" [config]="config16" [message]="'Subir (certificado)'"
                     (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -622,7 +622,7 @@
               <div class="row text-center" *ngIf="hasCerM && !certificateMDoc || cccertificateMDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!cccertificateMDoc || cccertificateMDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz20" [config]="config20" [message]="'Subir (carta)'"
                         (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -703,7 +703,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasTM && !cctitledMDoc || titledMDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!titledMDoc || titledMDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz17" [config]="config17" [message]="'Subir (título)'" (error)="onErrorCommon($event)"
                     (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -711,7 +711,7 @@
               <div class="row text-center" *ngIf="hasTM && !titledMDoc || cctitledMDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!cctitledMDoc || cctitledMDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz21" [config]="config21" [message]="'Subir (carta)'"
                         (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -792,7 +792,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasCedM && !cccedulaMDoc || cedulaMDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!cedulaMDoc || cedulaMDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz18" [config]="config18" [message]="'Subir (cédula)'" (error)="onErrorCommon($event)"
                     (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -800,7 +800,7 @@
               <div class="row text-center" *ngIf="hasCedM && !cedulaMDoc || cccedulaMDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!cccedulaMDoc || cccedulaMDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz22" [config]="config22" [message]="'Subir (carta)'"
                         (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -881,7 +881,7 @@
                 </div>
               </div>
               <div class="row text-center" *ngIf="!hasEM && !ccexamActMDoc || examActMDoc">
-                <div class="col-12">
+                <div class="col-12" *ngIf="!examActMDoc || examActMDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz19" [config]="config19" [message]="'Subir (acta)'" (error)="onErrorCommon($event)"
                     (success)="onUploadSuccess($event)"></dropzone>
                 </div>
@@ -889,7 +889,7 @@
               <div class="row text-center" *ngIf="hasEM && !examActMDoc || ccexamActMDoc">
                 <div class="col-12">
                   <div class="row text-center">
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="!ccexamActMDoc || ccexamActMDoc.status.name === 'RECHAZADO'">
                       <dropzone id="dz23" [config]="config23" [message]="'Subir (carta)'"
                         (error)="onErrorCommon($event)" (success)="onUploadSuccess($event)"></dropzone>
                     </div>
@@ -945,7 +945,7 @@
                 <div class="row">
                   <div class="col-12">
                     <dropzone id="dz2" [config]="config2" [message]="'Subir'" (error)="onErrorCommon($event)"
-                      (success)="onUploadSuccess($event)"></dropzone>
+                      (success)="onUploadSuccess($event)" *ngIf="!curpDoc || curpDoc.status === 'RECHAZADO'"></dropzone>
                   </div>
                 </div>
                 <div class="row text-center">
@@ -991,7 +991,7 @@
             </div>
             <div class="card-body c-body" id="collapseACTA">
               <dropzone id="dz1" [config]="config1" [message]="'Subir'" (error)="onErrorCommon($event)"
-                (success)="onUploadSuccess($event)"></dropzone>
+                (success)="onUploadSuccess($event)" *ngIf="!actaDoc || actaDoc.status === 'RECHAZADO'"></dropzone>
               <div class="row text-center">
                 <div class="col-12" ngbTooltip="Ayuda">
                   <mat-icon class="help" (click)="
@@ -1037,7 +1037,7 @@
             </div>
             <div class="card-body c-body" id="collapseCLINICOS">
               <dropzone id="dz4" [config]="config4" [message]="'Subir'" (error)="onErrorCommon($event)"
-                (success)="onUploadSuccess($event)"></dropzone>
+                (success)="onUploadSuccess($event)" *ngIf="!clinicDoc || clinicDoc.status === 'RECHAZADO'"></dropzone>
               <div class="row text-center">
                 <div class="col-12" ngbTooltip="Ayuda">
                   <mat-icon class="help" (click)="
@@ -1097,18 +1097,20 @@
               <!-- <label><b>Nombre del archivo: </b>{{dropzoneFileNamePhoto}}</label>
                 <dropzone id="dz5" [config]="config5" [message]="'Subir'"
                   (success)="onUploadSuccess($event)" (error)="onError($event)"></dropzone> -->
-              <img class="profile-icon" [src]="photoStudent" />
-              <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton"
-                accept="image/png,image/jpg,image/jpeg" style="display: none;" />
-              <div (click)="showSelectFileDialog()" class="tag">
-                Buscar imagen
-              </div>
-
-              <div class="row text-center">
-                <div class="col-12" ngbTooltip="Ayuda">
-                  <mat-icon class="help" (click)="helpPhoto()">help</mat-icon>
+                  <img class="profile-icon" [src]="photoStudent" />
+                <div *ngIf="!imageDoc || imageDoc.status === 'RECHAZADO'">
+                  <input type="file" (change)="fileChangeEvent($event, content)" id="fileButton"
+                    accept="image/png,image/jpg,image/jpeg" style="display: none;"/>
+                  <div (click)="showSelectFileDialog()" class="tag">
+                    Buscar imagen
+                  </div>
+    
+                  <div class="row text-center">
+                    <div class="col-12" ngbTooltip="Ayuda">
+                      <mat-icon class="help" (click)="helpPhoto()">help</mat-icon>
+                    </div>
+                  </div>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -1146,9 +1148,8 @@
               </div>
             </div>
             <div class="card-body c-body" id="collapseNSS">
-              <label><b>Nombre del archivo: </b>{{ dropzoneFileNameNSS }}</label>
               <dropzone id="dz6" [config]="config6" [message]="'Subir'" (error)="onErrorCommon($event)"
-                (success)="onUploadSuccess($event)"></dropzone>
+                (success)="onUploadSuccess($event)" *ngIf="!nssDoc || nssDoc.status === 'RECHAZADO'"></dropzone>
               <div class="row text-center">
                 <div class="col-12" ngbTooltip="Ayuda">
                   <mat-icon (click)="
