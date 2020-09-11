@@ -75,6 +75,193 @@
         </mat-step>
         <mat-step [completed]="firstDocuments">
           <ng-template matStepLabel>Primera documentación</ng-template>
+          
+          <div> 
+            <div class="card-header text-white d-flex justify-content-between bg-secondary">
+              <span><strong>Solicitud de servicio social</strong></span>
+            </div>
+            <form [formGroup]="formRequest" class="card-body" (ngSubmit)="registerRequest()"> 
+              <div class="container">
+                <p style="font-size: 0.8rem;"><strong>Datos del programa</strong></p>
+                <hr>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Dependencia oficial</mat-label>
+                      <input matInput formControlName="dependency" type="text" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Telefono</mat-label>
+                      <input matInput formControlName="dependencyPhone" type="tel" required>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Domicilio de la depencia</mat-label>
+                      <input matInput formControlName="dependencyAddress" type="text" required>  
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Titular de la dependencia</mat-label>
+                      <input matInput formControlName="dependencyHead" type="text" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Puesto ó cargo del titular</mat-label>
+                      <input matInput formControlName="position" type="text" required>  
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Unidad orgánica ó departamento</mat-label>
+                      <input matInput formControlName="department" type="text" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Nombre del encargado</mat-label>
+                      <input matInput formControlName="inChargeName" type="text" required>  
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Correo electrónico</mat-label>
+                      <input matInput formControlName="inChargeEmail" type="email" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Puesto ó cargo del encargado</mat-label>
+                      <input matInput formControlName="inChargePosition" type="text" required>  
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Nombre del programa</mat-label>
+                      <input matInput formControlName="programName" type="text" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-label>Modalidad</mat-label>
+                    <mat-radio-group class="row justify-content-center my-3" formControlName="modality">
+                      <mat-radio-button class="col-12 col-md-5" [value]=true>Interno</mat-radio-button>
+                      <mat-radio-button class="col-12 col-md-5" [value]=false>Externo</mat-radio-button>
+                    </mat-radio-group> 
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Fecha de inicio</mat-label>
+                      <input matInput formControlName="startDate" type="date" required>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Actividades</mat-label>
+                      <textarea matInput formControlName="activities" type="text" rows="8" required></textarea>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Categorias</mat-label>
+                      <mat-select formControlname="category" (selectionChange)="comunity($event)">
+                        <mat-option *ngFor="let category of categories" [value]="category.value">
+                          {{category.viewValue}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row" *ngIf="comunityFlag"> 
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Especificar comunidad</mat-label>
+                      <input matInput formControlName="comunityName" type="text" required>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <hr>
+              </div><!--container-->
+                <p>Carta de asignacion / plan de trabajo del prestador de servicio social<p>
+              <div class="container">
+                <p style="font-size: 0.8rem;"><strong>Datos del prestador de servicio</strong></p>
+                <hr>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Edad</mat-label>
+                      <input matInput formControlName="age" type="number" required>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Numero de creditos cubiertos</mat-label>
+                      <input matInput formControlName="credits" type="text" required>  
+                    </mat-form-field>
+                  </div>
+                </div>
+                <hr>
+                <p style="font-size: 0.8rem;"><strong>Datos del programa</strong></p>
+                <div class="row">
+                  <div class="col">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Objetivo</mat-label>
+                      <textarea matInput formControlName="objetive" type="text" rows="8" required></textarea>
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <br>
+                    <mat-label>El servicio social lo realizara dentro de las instalaciones de la dependencia</mat-label>
+                    <mat-radio-group class="row justify-content-center my-3" formControlName="modalityDependency">
+                      <mat-radio-button class="col-12 col-md-5" [value]=true>Si</mat-radio-button>
+                      <mat-radio-button class="col-12 col-md-5" [value]=false>No</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Donde</mat-label>
+                      <input matInput formControlName="where" type="text" required>  
+                    </mat-form-field>
+                  </div>
+                  
+                </div>
+
+                <br>
+                <div class="row justify-content-center">
+                  <div class="col-3" style="text-align:center;">
+                    <button mat-raised-button type="reset" color="warn" style="width:100%">Cancelar</button>
+                  </div>
+                  <div class="col-3" style="text-align:center;">
+                    <button mat-raised-button type="submit" color="primary" style="width:100%">Guardar</button>
+                  </div>
+                </div>
+              </div><!--container-->
+            </form>
+          </div>
+
         </mat-step>
       </mat-vertical-stepper>
     </div>
