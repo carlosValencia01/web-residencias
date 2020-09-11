@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource, MatDialog } from '@angular/material';
-import { IEnglishStudent } from '../../entities/english-student.model';
+import { MatDialog, MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
-import { Identifiers } from '@angular/compiler';
 import Swal from 'sweetalert2';
+import { IEnglishStudent } from '../../entities/english-student.model';
+import { EStatusEnglishStudentDB } from '../../enumerators/status-english-student.enum';
 import { ReviewInformationModalComponent } from '../../modals/review-information-modal/review-information-modal.component';
 
 @Component({
@@ -20,7 +20,7 @@ export class ReviewInformationPageComponent implements OnInit {
   constructor(
     private studentEnglishProv: EnglishStudentProvider,
     public dialog: MatDialog,
-  ) { 
+  ) {
 
   }
 
@@ -28,7 +28,7 @@ export class ReviewInformationPageComponent implements OnInit {
     this.getStudents();
   }
 
-  getStudents(){
+  getStudents() {
     this.studentEnglishProv.getEnglishStudentNoVerified().subscribe(res => {
       this.students = res.englishStudent;
       this.dataSource = new MatTableDataSource(this.students);
@@ -37,7 +37,7 @@ export class ReviewInformationPageComponent implements OnInit {
     });
   }
 
-  viewDetails(student){
+  viewDetails(student) {
     const linkModal = this.dialog.open(ReviewInformationModalComponent, {
       data: {
         operation: 'view',
@@ -52,8 +52,8 @@ export class ReviewInformationPageComponent implements OnInit {
       information => {
         switch (information.action) {
           case 'accept':
-            this.studentEnglishProv.updateEnglishStudent({verified:true},information.id).subscribe(res => {
-              if(res){
+            this.studentEnglishProv.updateEnglishStudent({ verified: true }, information.id).subscribe(res => {
+              if (res) {
                 Swal.fire({
                   title: 'Éxito!',
                   text: 'Información Verificada',
@@ -67,14 +67,14 @@ export class ReviewInformationPageComponent implements OnInit {
             break;
           case 'reject':
             const data = {
-              verified:true,
+              verified: true,
               courseType: null,
               lastLevelInfo: null,
-              level:0,
-              totalHoursCoursed:0
+              level: 0,
+              totalHoursCoursed: 0
             }
-            this.studentEnglishProv.updateEnglishStudent(data,information.id).subscribe(res => {
-              if(res){
+            this.studentEnglishProv.updateEnglishStudent(data, information.id).subscribe(res => {
+              if (res) {
                 Swal.fire({
                   title: 'Éxito!',
                   text: 'Información Rechazada',
@@ -88,7 +88,9 @@ export class ReviewInformationPageComponent implements OnInit {
             break;
           case 'update':
             const dataUpdate = {
-              verified:true,
+              verified: true,
+              status: information.data.level === information.data.course.totalSemesters
+                ? EStatusEnglishStudentDB.NOT_RELEASED : EStatusEnglishStudentDB.NO_CHOICE,
               courseType: information.data.course._id,
               lastLevelInfo: {
                 startHour: information.data.lastLevelInfo.startHour,
@@ -96,11 +98,11 @@ export class ReviewInformationPageComponent implements OnInit {
                 teacher: information.data.lastLevelInfo.teacher,
                 period: information.data.lastLevelInfo.period
               },
-              level:information.data.level,
-              totalHoursCoursed:(information.data.course.semesterHours)*(information.data.level)
+              level: information.data.level,
+              totalHoursCoursed: (information.data.course.semesterHours) * (information.data.level)
             }
-            this.studentEnglishProv.updateEnglishStudent(dataUpdate,information.id).subscribe(res => {
-              if(res){
+            this.studentEnglishProv.updateEnglishStudent(dataUpdate, information.id).subscribe(res => {
+              if (res) {
                 Swal.fire({
                   title: 'Éxito!',
                   text: 'Información Actualizada y Validada',
@@ -118,7 +120,7 @@ export class ReviewInformationPageComponent implements OnInit {
     );
   }
 
-  acceptReq(studentId){
+  acceptReq(studentId) {
     Swal.fire({
       title: 'Verificar Información',
       text: `¿Está seguro de verificar la información del curso previo del alumno?`,
@@ -132,8 +134,8 @@ export class ReviewInformationPageComponent implements OnInit {
       focusCancel: true
     }).then((result) => {
       if (result.value) {
-        this.studentEnglishProv.updateEnglishStudent({verified:true},studentId).subscribe(res => {
-          if(res){
+        this.studentEnglishProv.updateEnglishStudent({ verified: true }, studentId).subscribe(res => {
+          if (res) {
             Swal.fire({
               title: 'Éxito!',
               text: 'Información Verificada',
@@ -149,7 +151,7 @@ export class ReviewInformationPageComponent implements OnInit {
   }
 
 
-  declineReq(studentId){
+  declineReq(studentId) {
     Swal.fire({
       title: 'Rechazar Información',
       text: `¿Está seguro de rechazar la información del curso previo del alumno?`,
@@ -164,14 +166,14 @@ export class ReviewInformationPageComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         const data = {
-          verified:true,
+          verified: true,
           courseType: null,
           lastLevelInfo: null,
-          level:0,
-          totalHoursCoursed:0
+          level: 0,
+          totalHoursCoursed: 0
         }
-        this.studentEnglishProv.updateEnglishStudent(data,studentId).subscribe(res => {
-          if(res){
+        this.studentEnglishProv.updateEnglishStudent(data, studentId).subscribe(res => {
+          if (res) {
             Swal.fire({
               title: 'Éxito!',
               text: 'Información Rechazada',
