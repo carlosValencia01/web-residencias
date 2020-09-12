@@ -713,6 +713,35 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       }
     
   }
+
+  getDateMov(){
+    let date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    if(month < 10){
+      if(day < 10){
+        return (`0${day}0${month}${year}`)
+      }
+      else{
+        return (`${day}0${month}${year}`)
+      }
+    }else{
+      if(day < 10){
+        return (`0${day}${month}${year}`)
+      } else{
+        return (`${day}${month}${year}`)
+      }
+    }
+  }
+
+  complete10Dig(number){
+    var num = number.toString();
+    while (num.length<10){
+      num = '0'+num;
+    }
+    return(num);
+  }
   
 }
 interface loggedStudents{
