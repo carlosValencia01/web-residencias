@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { eRole, ERoleToAcronym } from 'src/app/enumerators/app/role.enum';
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { iRequest } from '../../entities/reception-act/request.model';
@@ -8,13 +8,15 @@ import { RequestProvider } from '../../providers/reception-act/request.prov';
 import { CareerProvider } from '../../providers/shared/career.prov';
 import { EmployeeProvider } from '../../providers/shared/employee.prov';
 import { IEmployee } from '../../entities/shared/employee.model';
-
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
+import { Subscription } from 'rxjs';
+import { eRecActEvents } from 'src/app/enumerators/shared/sockets.enum';
 @Component({
   selector: 'app-progress-page',
   templateUrl: './progress-page.component.html',
   styleUrls: ['./progress-page.component.scss']
 })
-export class ProgressPageComponent implements OnInit {
+export class ProgressPageComponent implements OnInit, OnDestroy {
   public phasesLiberation = ['Liberado'];
   public phasesDocuments = ['Entregado'];
   public phasesApprove = ['Realizado'];
@@ -26,11 +28,13 @@ export class ProgressPageComponent implements OnInit {
   public role: string;
   public boss: string;
 
+  private subscriptions: Array<Subscription> = [];
   constructor(
     private cookiesService: CookiesService,
     private careerProv: CareerProvider,
     private employeeProvider: EmployeeProvider,
     private requestProvider: RequestProvider,
+    private webSocketService: WebSocketService
   ) {
     this.role = this.cookiesService.getData().user.rol.name.toLowerCase();
     this.boss = this.role;
@@ -42,8 +46,14 @@ export class ProgressPageComponent implements OnInit {
     this._assignData();
   }
 
+  ngOnDestroy(){
+    this.subscriptions.forEach((subscription: Subscription) => {
+      if(!subscription.closed)
+        subscription.unsubscribe();
+    });
+  }
   // Valida que existan los datos necesarios para mostrar la página titulation-progress
-  public canSeeTitulationProgress() {
+  public canSeeTitulationProgress() {    
     return this.data && this.data.periods && this.data.careers && this.data.requests &&
       this.data.periods.length && this.data.careers.length && this.data.requests.length;
   }
@@ -60,12 +70,21 @@ export class ProgressPageComponent implements OnInit {
   }
 
   private async _assignData() {
-    await this._getBosses();
+    await this._getBosses();   
     this.data = {
-      periods: await this._getAllPeriods() as IPeriod[],
-      careers: await this._getAllCarrers() as ICareer[],
-      requests: await this._getRequestsByStatus(this.role) as iRequest[],
-    }
+      periods:null,
+      careers:null,
+      requests:null
+    };
+    this.data.periods =  await this._getAllPeriods() as IPeriod[];
+    this.data.careers = await this._getAllCarrers() as ICareer[];    
+    this.webSocketService.listen(eRecActEvents.REQUEST_BY_ROLE).subscribe(requests=>{      
+      this.data.requests = requests.request;           
+    });
+    this.webSocketService.listen(eRecActEvents.CREATE_OR_CANCEL_TITULATION).subscribe(data=>{
+      this._getRequestsByStatus(this.role);
+    });
+    this._getRequestsByStatus(this.role);
   }
 
   // Guarda los datos de los jefes
@@ -126,14 +145,14 @@ export class ProgressPageComponent implements OnInit {
   }
 
   // Obtiene las solicitudes de acuerdo al rol del usuario
-  private _getRequestsByStatus(role: string): Promise<iRequest[]> {
-    return new Promise((resolve) => {
-      this.requestProvider
-        .getAllRequestByStatus(role)
-        .subscribe(
-          ({ request }) => resolve(request),
-          (_) => resolve(null));
-    });
+  private _getRequestsByStatus(role: string) {
+    this.requestProvider
+      .getAllRequestByStatus(role,this.cookiesService.getClientId())
+      .subscribe(
+        (request ) => {},
+        (_) => console.log(_)
+        );
+    
   }
 
 }
