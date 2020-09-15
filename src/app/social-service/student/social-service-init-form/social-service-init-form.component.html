@@ -1,0 +1,177 @@
+<div class="card">
+  <form [formGroup]="formRequest" class="card-body" (ngSubmit)="registerRequest()">
+    <div class="container">
+      <p style="font-size: 0.8rem;">
+        <strong>Validación de correo electronico del estudiante</strong>
+        <mat-icon *ngIf="verificationEmail" class="text-success">check_circle</mat-icon>
+        <mat-icon *ngIf="!verificationEmail" matTooltip="Verifica tu correo electrónico para continuar con el registro de información" class="text-danger">info</mat-icon>
+      </p>
+      <div class="row">
+        <div class="col-5">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Correo electrónico</mat-label>
+            <input matInput [formControl]="emailStudent" type="email" required>
+          </mat-form-field>
+        </div>
+        <div class="col-4">
+          <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Código de confirmación</mat-label>
+            <input matInput [formControl]="code" type="text">
+          </mat-form-field>
+        </div>
+        <div class="col-3">
+          <button mat-raised-button *ngIf="!sendEmailCode" color="primary" class="btn-block" type="button" (click)="sendEmailConfirmation()">Enviar código</button>
+          <button mat-raised-button *ngIf="sendEmailCode" [disabled]="verificationEmail" (click)="verifyCode()" color="accent" class="btn-block" type="button">Validar código</button>
+        </div>
+      </div>
+      <hr>
+      <p style="font-size: 0.8rem;"><strong>Datos del programa</strong></p>
+      <hr>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Dependencia oficial</mat-label>
+            <input matInput formControlName="dependencyName" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['1']">
+              info
+            </mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Telefono</mat-label>
+            <input matInput formControlName="dependencyPhone" type="tel" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Domicilio de la depencia</mat-label>
+            <input matInput formControlName="dependencyAddress" type="text" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Titular de la dependencia</mat-label>
+            <input matInput formControlName="dependencyHeadline" type="text" required>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Puesto ó cargo del titular</mat-label>
+            <input matInput formControlName="dependencyHeadlinePosition" type="text" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Unidad orgánica ó departamento</mat-label>
+            <input matInput formControlName="dependencyDepartment" type="text" required>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Nombre del encargado</mat-label>
+            <input matInput formControlName="dependencyDepartmentManager" type="text" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Correo electrónico</mat-label>
+            <input matInput formControlName="dependencyDepartmentManagerEmail" type="email" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Nombre del programa</mat-label>
+            <input matInput formControlName="dependencyProgramName" type="text" required>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6">
+          <mat-label>Modalidad</mat-label>
+          <mat-radio-group class="row justify-content-center my-3" formControlName="dependencyProgramModality">
+            <mat-radio-button class="col-12 col-md-5" [value]=true>Interno</mat-radio-button>
+            <mat-radio-button class="col-12 col-md-5" [value]=false>Externo</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Fecha de inicio</mat-label>
+            <input matInput formControlName="initialDate" type="date" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Actividades del programa</mat-label>
+            <textarea matInput formControlName="dependencyActivities" type="text" rows="8" required></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Tipo de programa</mat-label>
+            <mat-select formControlName="dependencyProgramType" (selectionChange)="community($event)">
+              <mat-option *ngFor="let category of categories" [value]="category.value">
+                {{category.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row" *ngIf="communityFlag">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Especificar comunidad</mat-label>
+            <input matInput [formControl]="communityName" type="text" required>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Objetivo del programa</mat-label>
+            <textarea matInput formControlName="dependencyProgramObjective" type="text" rows="8" required></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <br>
+          <mat-label>El servicio social lo realizara dentro de las instalaciones de la dependencia</mat-label>
+          <mat-radio-group class="row justify-content-center my-3" formControlName="dependencyProgramLocationInside">
+            <mat-radio-button class="col-12 col-md-5" [value]=true>Si</mat-radio-button>
+            <mat-radio-button class="col-12 col-md-5" [value]=false>No</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Donde</mat-label>
+            <input matInput formControlName="dependencyProgramLocation" type="text" required>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <br>
+      <div class="row justify-content-center">
+        <div class="col-6" style="text-align:center;">
+          <button mat-raised-button type="submit" [disabled]="!verificationEmail" color="primary" style="width:100%">Guardar</button>
+        </div>
+      </div>
+    </div><!--container-->
+  </form>
+</div>

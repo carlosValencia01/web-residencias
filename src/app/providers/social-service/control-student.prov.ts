@@ -17,8 +17,18 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  sendCodeForEmailConfirmation(_id, email) {
+    return this.api.get(`controlStudent/verify/${_id}/${email}`)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   createAssistanceByControlNumber(controlNumber) {
     return this.api.post('controlStudent/register/assistance', {controlNumber: controlNumber})
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
+  verifyCode(data) {
+    return this.api.post('controlStudent/verify', data)
       .pipe(map(controlStudent => controlStudent.json()));
   }
 

@@ -37,6 +37,7 @@ import {MatPaginatorIntlCro} from './materialConfig/matPaginatorIntlCroClass';
 import { ControlStudentsMainPageComponent } from './department/control-students-main-page/control-students-main-page.component';
 import {ControlStudentProv} from '../providers/social-service/control-student.prov';
 import { SocialServiceMainPageComponent } from './student/social-service-main-page/social-service-main-page.component';
+import { SocialServiceInitFormComponent } from './student/social-service-init-form/social-service-init-form.component';
 
 
 @NgModule({
@@ -73,7 +74,8 @@ import { SocialServiceMainPageComponent } from './student/social-service-main-pa
   ],
   declarations: [
     ControlStudentsMainPageComponent,
-    SocialServiceMainPageComponent
+    SocialServiceMainPageComponent,
+    SocialServiceInitFormComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
