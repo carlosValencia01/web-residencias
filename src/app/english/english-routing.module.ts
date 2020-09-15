@@ -6,6 +6,7 @@ import { EnglishCoursesPageComponent } from './components/english-courses-page/e
 import { BossMessageComponent } from './components/boss-message/boss-message.component';
 
 import { EnglishGroupsPageComponent } from './components/english-groups-page/english-groups-page.component';
+import { StudentOptionsPageComponent } from './components/student-options-page/student-options-page.component';
 
 const routes: Routes = [
   {
@@ -27,6 +28,11 @@ const routes: Routes = [
     path: 'english-groups',
     pathMatch: 'full',
     component: EnglishGroupsPageComponent
+  },
+  {
+    path: 'student-options',
+    pathMatch: 'full',
+    component: StudentOptionsPageComponent
   },
 ];
 

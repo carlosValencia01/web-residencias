@@ -60,6 +60,8 @@ import { EnglishGroupsPageComponent } from './components/english-groups-page/eng
 // Services
 import { ImageToBase64Service } from '../services/app/img.to.base63.service';
 import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-avgs-modal.component';
+import { StudentOptionsPageComponent } from './components/student-options-page/student-options-page.component';
+import { StudentListComponent } from './components/student-list/student-list.component';
 
 @NgModule({
   imports: [
@@ -113,6 +115,8 @@ import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-
     BossMessageComponent,
     EnglishGroupsPageComponent,
     UploadAvgsModalComponent,
+    StudentOptionsPageComponent,
+    StudentListComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
