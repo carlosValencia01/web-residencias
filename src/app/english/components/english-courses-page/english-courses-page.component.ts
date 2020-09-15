@@ -1159,13 +1159,28 @@ export class EnglishCoursesPageComponent implements OnInit {
           title: 'Solicitud Encontrada',
           type: 'info',
           html:
-            '<label>Debe declinar la solicitud de curso del alumno con número de control: <b>'+student.controlNumber+'</b> antes de eliminar perfil</label>',
+          '<label>El perfil del alumno con número de control: <b>'+student.controlNumber+'</b> cuenta con una solicitud activa. Se eliminará perfil y solicitud.</label>',
           allowOutsideClick: false,
           showConfirmButton: true,
-          confirmButtonText: 'Aceptar',
+          showCancelButton: true,
+          confirmButtonText: 'Eliminar',
+          cancelButtonText: 'Cancelar',
+          confirmButtonColor: 'green',
+          cancelButtonColor: 'red',
         }).then((result) => {
           if (result.value) {
-            this.tabGroup.selectedIndex = 0;
+            this.englishStudentProv.deleteEnglishProfile(student._id).subscribe(res => {
+              if (res){
+                Swal.fire({
+                  title: 'Éxito',
+                  text: 'Perfil y Solicitud Eliminadas',
+                  showConfirmButton: false,
+                  timer: 2500,
+                  type: 'success'
+                });
+                this._initStudents();
+              }
+            });
           }
         });
       } else {
@@ -1187,7 +1202,7 @@ export class EnglishCoursesPageComponent implements OnInit {
             this.englishStudentProv.deleteEnglishProfile(student._id).subscribe(res => {
               if (res){
                 Swal.fire({
-                  title: 'Éxito!',
+                  title: 'Éxito',
                   text: 'Perfil Eliminado',
                   showConfirmButton: false,
                   timer: 2500,
