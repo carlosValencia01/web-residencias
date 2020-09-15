@@ -28,6 +28,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 //Proveedores
 import { StudentProvider } from '../providers/shared/student.prov';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
@@ -60,6 +61,7 @@ import { EnglishGroupsPageComponent } from './components/english-groups-page/eng
 // Services
 import { ImageToBase64Service } from '../services/app/img.to.base63.service';
 import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-avgs-modal.component';
+import { EnglishStudentsListPageComponent } from './components/english-students-list-page/english-students-list-page.component';
 
 @NgModule({
   imports: [
@@ -90,6 +92,7 @@ import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-
     MatMenuModule,
     MatBadgeModule,
     MatAutocompleteModule,
+    NgbModule.forRoot(),
   ],
   declarations: [
     StudentEnglishPageComponent,
@@ -113,6 +116,7 @@ import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-
     BossMessageComponent,
     EnglishGroupsPageComponent,
     UploadAvgsModalComponent,
+    EnglishStudentsListPageComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,
