@@ -2,9 +2,7 @@
 [roleName]='rolName' [tabName]="'acepted'" [students]="studentsForTable" [periods]="periods"
 (updateGIEmit) = "updateGI($event)"
 (viewAnalysisEmit) = "viewAnalysis($event)"
-(viewExpedientEmit) = "viewExpedient($event)"
-(registerCredentialEmit) = "registerCredential($event)"
-(removeCredentialEmit) = "removeCredential($event)"            
+(viewExpedientEmit) = "viewExpedient($event)"           
 (generateCredentialEmit) = "generateCredential($event)"
 (generateCoversEmit) = "generateCovers()"
 (generateLabelsEmit) = "generateLabels()"
@@ -14,7 +12,7 @@
 (excelExportCMEmit) = "excelExportCM($event)"
 (getCareerEmit) = "setSearchCareer($event)"
 (getControlNumberEmit) = "setSearchControlNumber($event)"    
-(reloadEmit) = "getStudents()"    
+    
 *ngIf="readyToShowTable.periods && readyToShowTable.students" ></app-expedent-table-component>
 
     <!-- Tabla reporte alumnos Excel-->

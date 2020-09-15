@@ -17,6 +17,7 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { RequestService } from 'src/app/services/reception-act/request.service';
 import { CurrentPositionService } from 'src/app/services/shared/current-position.service';
+import { ERoleToAcronym } from 'src/app/enumerators/app/role.enum';
 
 @Component({
   selector: 'app-steep-component',
@@ -43,7 +44,7 @@ export class SteepComponentComponent implements OnInit {
   private oRequest: uRequest;
   private folderId: string;
   private registerObservations: string;
-
+  private filterRole: string
   constructor(
     public dialogRef: MatDialogRef<SteepComponentComponent>,
     @Inject(MAT_DIALOG_DATA) public data,
@@ -62,6 +63,7 @@ export class SteepComponentComponent implements OnInit {
     this.enableNext = true;
     this.fileFlag = false;
     this.passwordFlag = false;
+    this.filterRole = (ERoleToAcronym as any)[this.cookiesService.getData().user.rol.name.toLowerCase()];
   }
 
   ngOnInit() {
@@ -189,7 +191,7 @@ export class SteepComponentComponent implements OnInit {
               }
             };
             this.notificationsServ.showNotification(eNotificationType.INFORMATION, 'Acto recepcional', 'Actualizando solicitud');
-            this._RequestProvider.updateRequest(this.Request._id, data)
+            this._RequestProvider.updateRequest(this.Request._id, data,this.filterRole)
               .subscribe(_ => {
                 this.notificationsServ.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Solicitud actualizada');
                 this.loadingService.setLoading(false);

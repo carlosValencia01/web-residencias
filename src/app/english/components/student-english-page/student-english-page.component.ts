@@ -385,7 +385,7 @@ export class StudentEnglishPageComponent implements OnInit {
       currentPhone: this.currentStudent.phone as string,
       status: data.course &&
         data.level === data.course.totalSemesters
-        ? EStatusEnglishStudentDB.NOT_RELEASED : undefined,
+        ? EStatusEnglishStudentDB.NOT_RELEASED : EStatusEnglishStudentDB.NO_CHOICE,
       totalHoursCoursed: data.course
         ? data.level * data.course.semesterHours
         : data.level,
