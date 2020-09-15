@@ -934,7 +934,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   // #region Reportes Excel
   generateExcelActiveGroup(_group) {
     this.notificationsServices.showNotification(eNotificationType.INFORMATION, '', 'Generando Reporte...');
-    this.requestCourseProv.getAllRequestActiveCourse(_group._id).subscribe(async res => {
+    this.requestCourseProv.getAllRequestActiveCourse(_group._id, this._CookiesService.getClientId()).subscribe(async res => {
       this.dataExcel = {
         group: _group,
         teacher: _group.teacher ? _group.teacher.name.fullName : '',

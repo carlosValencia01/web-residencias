@@ -125,14 +125,7 @@ export class UploadAvgsModalComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         this.notificationService.showNotification(eNotificationType.INFORMATION,'ÍNGLES','Registrando calificaciones');
-        this.loadingService.setLoading(true);
-        this.requestCourseProv.saveAverages(this.dataSource.data).subscribe((res)=>{
-          this.notificationService.showNotification(eNotificationType.SUCCESS,'ÍNGLES','Calificaciones registradas');   
-          this.loadingService.setLoading(false);
-          // clear the data to upload new file     
-          this.dataSource.data = [];
-          this.englishStudents = [];
-        });
+        
       }
     });
     

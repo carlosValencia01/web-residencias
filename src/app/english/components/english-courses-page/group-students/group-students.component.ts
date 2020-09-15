@@ -20,6 +20,7 @@ import { IEnglishStudent } from '../../../entities/english-student.model';
 import { IRequestCourse } from 'src/app/english/entities/request-course.model';
 import { ERequestCourseStatus } from 'src/app/english/enumerators/request-course-status.enum';
 import { EStatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
+import { CookiesService } from 'src/app/services/app/cookie.service';
 
 export interface DialogData {
   group: IGroup,
@@ -49,7 +50,9 @@ export class GroupStudentsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private englishStudentProv: EnglishStudentProvider,
     private requestCourseProv: RequestCourseProvider,
-    private loadingService: LoadingService) { }
+    private loadingService: LoadingService,
+    private cookiesService: CookiesService
+    ) { }
 
   ngOnInit() {
     setTimeout(() => {
@@ -61,7 +64,7 @@ export class GroupStudentsComponent implements OnInit {
 
     this.loadingService.setLoading(true);
 
-    this.requestCourseProv.getAllRequestActiveCourse(this.data.group._id).subscribe(async res => { 
+    this.requestCourseProv.getAllRequestActiveCourse(this.data.group._id, this.cookiesService.getClientId()).subscribe(async res => { 
       this.englishStudents = res.requestCourses;
       this.createDataSource();
     }, error => {

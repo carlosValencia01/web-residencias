@@ -17,6 +17,11 @@ export class GroupProvider {
       .pipe(map(res => res.json()));
   }
 
+  getGroupById(id: string) {
+    return this.api.get('sg-cle/group/byid/'+id)
+      .pipe(map(group => group.json()));
+  }
+
   getAllGroup() {
     return this.api.get('sg-cle/group/all')
       .pipe(map(group => group.json()));
@@ -40,7 +45,13 @@ export class GroupProvider {
     return this.api.get('sg-cle/group/students/' + _groupId).pipe(map(res => res.json()));
   }
 
-  getAllGroupByTeacher(_teacherId) {
-    return this.api.get('sg-cle/group/teacher/' + _teacherId).pipe(map(res => res.json()));
+  getAllGroupByTeacher(_teacherId, clientId: string) {
+    return this.api.get(`sg-cle/group/teacher/${ _teacherId}/${clientId}`).pipe(map(res => res.json()));
+  }
+  saveAverages(data) {
+    return this.api.put('sg-cle/group/students/average', data).pipe(map(res => res.json()));
+  }
+  saveSingleAverage(data) {
+    return this.api.put('sg-cle/group/students/single/average', data).pipe(map(res => res.json()));
   }
 }

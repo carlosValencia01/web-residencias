@@ -71,7 +71,10 @@ dropzone > .dropzone.dz-wrapper .dz-message{
   align-items: center !important;
   justify-content: center !important;
 }
-
+.flex-halign-center{
+  display: flex !important;
+  justify-content: center !important;
+}
 /* SCROLL BAR */
 ::-webkit-scrollbar {
   width: 13px;
