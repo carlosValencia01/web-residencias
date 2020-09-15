@@ -1824,79 +1824,79 @@ export class ProfileInscriptionPageComponent implements OnInit {
       acceptedFiles:'application/pdf',
     };
     this.config9 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-TITULO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.titledLDoc ? false :true, fileId:this.titledLDoc ? this.titledLDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config10 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CEDULA_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cedulaLDoc ? false :true, fileId:this.cedulaLDoc ? this.cedulaLDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config11 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-EXAMEN_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.examActLDoc ? false :true, fileId:this.examActLDoc ? this.examActLDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config12 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cccertificateLDoc ? false :true, fileId:this.cccertificateLDoc ? this.cccertificateLDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config13 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_TITULO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cctitledLDoc ? false :true, fileId:this.cctitledLDoc ? this.cctitledLDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config14 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CEDULA_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cccedulaLDoc ? false :true, fileId:this.cccedulaLDoc ? this.cccedulaLDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config15 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_EXAMEN_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.ccexamActLDoc ? false :true, fileId:this.ccexamActLDoc ? this.ccexamActLDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
 
     // DROPZONE DOCTORADO
     this.config16 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CERTIFICADO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.certificateMDoc ? false :true, fileId:this.certificateMDoc ? this.certificateMDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config17 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-TITULO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.titledMDoc ? false :true, fileId:this.titledMDoc ? this.titledMDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config18 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-CEDULA_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cedulaMDoc ? false :true, fileId:this.cedulaMDoc ? this.cedulaMDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config19 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-EXAMEN_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.examActMDoc ? false :true, fileId:this.examActMDoc ? this.examActMDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config20 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CERTIFICADO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cccertificateMDoc ? false :true, fileId:this.cccertificateMDoc ? this.cccertificateMDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config21 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_TITULO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cctitledMDoc ? false :true, fileId:this.cctitledMDoc ? this.cctitledMDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config22 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_CEDULA_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cccedulaMDoc ? false :true, fileId:this.cccedulaMDoc ? this.cccedulaMDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
     this.config23 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: {folderId:this.folderId, 'filename': this.data.email+'-COMPROMISO_EXAMEN_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.ccexamActMDoc ? false :true, fileId:this.ccexamActMDoc ? this.ccexamActMDoc.fileIdInDrive :''},
       acceptedFiles: 'application/pdf',
     };
