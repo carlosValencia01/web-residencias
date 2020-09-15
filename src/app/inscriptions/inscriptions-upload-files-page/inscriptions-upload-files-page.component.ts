@@ -365,7 +365,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
     /*Dropzone*/
     this.config = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-CERTIFICADO.pdf', 'mimeType': 'application/pdf', newF: this.certificateDoc ? false : true, fileId: this.certificateDoc ? this.certificateDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCERTIFICADO = file.name; done(); },
       acceptedFiles: 'application/pdf',
@@ -373,7 +373,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     };
 
     this.config1 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-ACTA.pdf', 'mimeType': 'application/pdf', newF: this.actaDoc ? false : true, fileId: this.actaDoc ? this.actaDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameACTA = file.name; done(); },
       acceptedFiles: 'application/pdf',
@@ -381,7 +381,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     };
 
     this.config2 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-CURP.pdf', 'mimeType': 'application/pdf', newF: this.curpDoc ? false : true, fileId: this.curpDoc ? this.curpDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCURP = file.name; done(); },
       acceptedFiles: 'application/pdf',
@@ -389,7 +389,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     };
 
     this.config3 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROBANTE.pdf', 'mimeType': 'application/pdf', newF: this.payDoc ? false : true, fileId: this.payDoc ? this.payDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCOMPROBANTE = file.name; done(); },
       acceptedFiles: 'application/pdf',
@@ -397,7 +397,7 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     };
 
     this.config4 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-CLINICOS.pdf', 'mimeType': 'application/pdf', newF: this.clinicDoc ? false : true, fileId: this.clinicDoc ? this.clinicDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameANALISIS = file.name; done(); },
       acceptedFiles: 'application/pdf',
@@ -405,21 +405,21 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
     };
 
     this.config5 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-FOTO', 'mimeType': 'image/png,image/jpg', newF: this.imageDoc ? false : true, fileId: this.imageDoc ? this.imageDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNamePhoto = file.name; done(); },
       acceptedFiles: '.png,.jpg'
     };
 
     this.config6 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-NSS.pdf', 'mimeType': 'application/pdf', newF: this.nssDoc ? false : true, fileId: this.nssDoc ? this.nssDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameNSS = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
 
     this.config7 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO.pdf', 'mimeType': 'application/pdf', newF: this.ccDoc ? false : true, fileId: this.ccDoc ? this.ccDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCC = file.name; done(); },
       acceptedFiles: 'application/pdf',
@@ -427,49 +427,49 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
     // DROPZONE MAESTRIA
     this.config8 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-CERTIFICADO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.certificateLDoc ? false : true, fileId: this.certificateLDoc ? this.certificateLDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCERTIFICADOMAESTRIA = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config9 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-TITULO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.titledLDoc ? false : true, fileId: this.titledLDoc ? this.titledLDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameTITULOMAESTRIA = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config10 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-CEDULA_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cedulaLDoc ? false : true, fileId: this.cedulaLDoc ? this.cedulaLDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCEDULAMAESTRIA = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config11 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-EXAMEN_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.examActLDoc ? false : true, fileId: this.examActLDoc ? this.examActLDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameEXAMENMAESTRIA = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config12 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO_CERTIFICADO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cccertificateLDoc ? false : true, fileId: this.cccertificateLDoc ? this.cccertificateLDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCCCERTIFICADOMAESTRIA = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config13 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO_TITULO_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cctitledLDoc ? false : true, fileId: this.cctitledLDoc ? this.cctitledLDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCCTITULOMAESTRIA = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config14 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO_CEDULA_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.cccedulaLDoc ? false : true, fileId: this.cccedulaLDoc ? this.cccedulaLDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCCCEDULAMAESTRIA = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config15 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO_EXAMEN_LICENCIATURA.pdf', 'mimeType': 'application/pdf', newF: this.ccexamActLDoc ? false : true, fileId: this.ccexamActLDoc ? this.ccexamActLDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCCEXAMENMAESTRIA = file.name; done(); },
       acceptedFiles: 'application/pdf',
@@ -477,49 +477,49 @@ export class InscriptionsUploadFilesPageComponent implements OnInit {
 
     // DROPZONE DOCTORADO
     this.config16 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-CERTIFICADO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.certificateMDoc ? false : true, fileId: this.certificateMDoc ? this.certificateMDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCERTIFICADODOCTORADO = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config17 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-TITULO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.titledMDoc ? false : true, fileId: this.titledMDoc ? this.titledMDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameTITULODOCTORADO = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config18 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-CEDULA_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cedulaMDoc ? false : true, fileId: this.cedulaMDoc ? this.cedulaMDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCEDULADOCTORADO = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config19 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-EXAMEN_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.examActMDoc ? false : true, fileId: this.examActMDoc ? this.examActMDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameEXAMENDOCTORADO = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config20 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO_CERTIFICADO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cccertificateMDoc ? false : true, fileId: this.cccertificateMDoc ? this.cccertificateMDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCCCERTIFICADODOCTORADO = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config21 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO_TITULO_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cctitledMDoc ? false : true, fileId: this.cctitledMDoc ? this.cctitledMDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCCTITULODOCTORADO = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config22 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO_CEDULA_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.cccedulaMDoc ? false : true, fileId: this.cccedulaMDoc ? this.cccedulaMDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCCCEDULADOCTORADO = file.name; done(); },
       acceptedFiles: 'application/pdf',
     };
     this.config23 = {
-      clickable: true, maxFiles: 2,
+      clickable: true, maxFiles: 1,
       params: { 'usuario': this.data.name.fullName, folderId: this.folderId, 'filename': this.data.email + '-COMPROMISO_EXAMEN_MAESTRIA.pdf', 'mimeType': 'application/pdf', newF: this.ccexamActMDoc ? false : true, fileId: this.ccexamActMDoc ? this.ccexamActMDoc.fileIdInDrive : '' },
       accept: (file, done) => { this.dropzoneFileNameCCEXAMENDOCTORADO = file.name; done(); },
       acceptedFiles: 'application/pdf',

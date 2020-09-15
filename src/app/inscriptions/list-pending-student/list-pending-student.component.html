@@ -10,26 +10,22 @@
     
   <!-- Tabla reporte alumnos Excel-->
 <table class="table table-striped table-bordered table-hover" id="tableReportExcel"
-data-cols-width="9,21,46,66,15,30,30,30,30,30,15,15,15,30,15,15" *ngIf="filteredStudents">
+data-cols-width="9,21,46,66,46,20,15,30,30,30,30,30,30,15,15,15,30,15,15" *ngIf="filteredStudents">
 <thead>
   <tr>
     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">No</th>
-    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control
-    </th>
-    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno
-    </th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Número de Control</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nombre del Alumno</th>
     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carrera</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Correo</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Teléfono</th>
     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Estatus</th>
     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF"></th>
-    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Acta de Nacimiento
-    </th>
-    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Certificado de
-      Estudios
-    </th>
-    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Análisis Clínicos
-    </th>
-    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Comprobante de Pago
-    </th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Comprobante de Pago</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Certificado de Estudios</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Carta Compromiso</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Acta de Nacimiento</th>
+    <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Análisis Clínicos</th>
     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Curp</th>
     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Nss</th>
     <th data-f-bold="true" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">Foto</th>
@@ -45,6 +41,8 @@ data-cols-width="9,21,46,66,15,30,30,30,30,30,15,15,15,30,15,15" *ngIf="filtered
     <td data-f-sz="12" data-t="s">{{item.controlNumber}}</td>
     <td data-f-sz="12" data-t="s">{{item.fullName}}</td>
     <td data-f-sz="12" data-t="s">{{item.career}}</td>
+    <td data-f-sz="12" data-t="s">{{item.email}}</td>
+    <td data-f-sz="12" data-t="s">{{item.phone}}</td>
     <td data-f-sz="12" data-fill-color="FCD539" data-f-color="000000"
       *ngIf="item.inscriptionStatus == 'En Captura' " class="Captura">{{item.inscriptionStatus}}</td>
     <td data-f-sz="12" data-fill-color="39CEFC" data-f-color="000000"
@@ -58,6 +56,42 @@ data-cols-width="9,21,46,66,15,30,30,30,30,30,15,15,15,30,15,15" *ngIf="filtered
     <td data-f-sz="12" data-t="s" data-fill-color="112043" data-f-color="FFFFFF" data-a-h="center">
       DOCUMENTOS
     </td>
+    <!--COMRPOBANTE-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+      *ngIf="filterDocuments('Comprobante',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+      *ngIf="filterDocuments('Comprobante',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+      *ngIf="filterDocuments('Comprobante',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+      *ngIf="filterDocuments('Comprobante',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+      *ngIf="filterDocuments('Comprobante',item) != 'EN PROCESO' && filterDocuments('Comprobante',item) != 'RECHAZADO' && filterDocuments('Comprobante',item) != 'VALIDADO' && filterDocuments('Comprobante',item) != 'ACEPTADO'">
+      Sin Envío</td>
+    <!--CERTIFICADO-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+    *ngIf="filterDocuments('Certificado',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+    *ngIf="filterDocuments('Certificado',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+    *ngIf="filterDocuments('Certificado',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+    *ngIf="filterDocuments('Certificado',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+    *ngIf="filterDocuments('Certificado',item) != 'EN PROCESO' && filterDocuments('Certificado',item) != 'RECHAZADO' && filterDocuments('Certificado',item) != 'VALIDADO' && filterDocuments('Certificado',item) != 'ACEPTADO'">
+    Sin Envío</td>
+    <!--COMPROMISO-->
+    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
+    *ngIf="filterDocuments('Compromiso',item) == 'EN PROCESO'">En Proceso</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
+    *ngIf="filterDocuments('Compromiso',item) == 'RECHAZADO'">Rechazado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
+    *ngIf="filterDocuments('Compromiso',item) == 'VALIDADO'">Validado</td>
+    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
+    *ngIf="filterDocuments('Compromiso',item) == 'ACEPTADO'">Aceptado</td>
+    <td data-f-sz="12" data-t="s"
+    *ngIf="filterDocuments('Compromiso',item) != 'EN PROCESO' && filterDocuments('Compromiso',item) != 'RECHAZADO' && filterDocuments('Compromiso',item) != 'VALIDADO' && filterDocuments('Compromiso',item) != 'ACEPTADO'">
+    Sin Envío</td>
     <!--ACTA-->
     <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
       *ngIf="filterDocuments('Acta',item) == 'EN PROCESO'">En Proceso</td>
@@ -70,18 +104,6 @@ data-cols-width="9,21,46,66,15,30,30,30,30,30,15,15,15,30,15,15" *ngIf="filtered
     <td data-f-sz="12" data-t="s"
       *ngIf="filterDocuments('Acta',item) != 'EN PROCESO' && filterDocuments('Acta',item) != 'RECHAZADO' && filterDocuments('Acta',item) != 'VALIDADO' && filterDocuments('Acta',item) != 'ACEPTADO'">
       Sin Envío</td>
-    <!--CERTIFICADO-->
-    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-      *ngIf="filterDocuments('Certificado',item) == 'EN PROCESO'">En Proceso</td>
-    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-      *ngIf="filterDocuments('Certificado',item) == 'RECHAZADO'">Rechazado</td>
-    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-      *ngIf="filterDocuments('Certificado',item) == 'VALIDADO'">Validado</td>
-    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-      *ngIf="filterDocuments('Certificado',item) == 'ACEPTADO'">Aceptado</td>
-    <td data-f-sz="12" data-t="s"
-      *ngIf="filterDocuments('Certificado',item) != 'EN PROCESO' && filterDocuments('Certificado',item) != 'RECHAZADO' && filterDocuments('Certificado',item) != 'VALIDADO' && filterDocuments('Certificado',item) != 'ACEPTADO'">
-      Sin Envío</td>
     <!--ANALISIS-->
     <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
       *ngIf="filterDocuments('Analisis',item) == 'EN PROCESO'">En Proceso</td>
@@ -93,18 +115,6 @@ data-cols-width="9,21,46,66,15,30,30,30,30,30,15,15,15,30,15,15" *ngIf="filtered
       *ngIf="filterDocuments('Analisis',item) == 'ACEPTADO'">Aceptado</td>
     <td data-f-sz="12" data-t="s"
       *ngIf="filterDocuments('Analisis',item) != 'EN PROCESO' && filterDocuments('Analisis',item) != 'RECHAZADO' && filterDocuments('Analisis',item) != 'VALIDADO' && filterDocuments('Analisis',item) != 'ACEPTADO'">
-      Sin Envío</td>
-    <!--COMRPOBANTE-->
-    <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
-      *ngIf="filterDocuments('Comprobante',item) == 'EN PROCESO'">En Proceso</td>
-    <td data-f-sz="12" data-t="s" data-fill-color="b64443" data-f-color="ffffff"
-      *ngIf="filterDocuments('Comprobante',item) == 'RECHAZADO'">Rechazado</td>
-    <td data-f-sz="12" data-t="s" data-fill-color="00FF80" data-f-color="000000"
-      *ngIf="filterDocuments('Comprobante',item) == 'VALIDADO'">Validado</td>
-    <td data-f-sz="12" data-t="s" data-fill-color="142B58" data-f-color="ffffff"
-      *ngIf="filterDocuments('Comprobante',item) == 'ACEPTADO'">Aceptado</td>
-    <td data-f-sz="12" data-t="s"
-      *ngIf="filterDocuments('Comprobante',item) != 'EN PROCESO' && filterDocuments('Comprobante',item) != 'RECHAZADO' && filterDocuments('Comprobante',item) != 'VALIDADO' && filterDocuments('Comprobante',item) != 'ACEPTADO'">
       Sin Envío</td>
     <!--CURP-->
     <td data-f-sz="12" data-t="s" data-fill-color="FCD539" data-f-color="000000"
