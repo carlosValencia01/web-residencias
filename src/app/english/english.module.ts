@@ -64,6 +64,7 @@ import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-
 import { StudentOptionsPageComponent } from './components/student-options-page/student-options-page.component';
 import { StudentListComponent } from './components/student-list/student-list.component';
 import { EnglishStudentsListPageComponent } from './components/english-students-list-page/english-students-list-page.component';
+import { EnglishTeachersListPageComponent } from './components/english-teachers-list-page/english-teachers-list-page.component';
 
 @NgModule({
   imports: [
@@ -121,6 +122,7 @@ import { EnglishStudentsListPageComponent } from './components/english-students-
     StudentOptionsPageComponent,
     StudentListComponent,
     EnglishStudentsListPageComponent,
+    EnglishTeachersListPageComponent,
   ],
   entryComponents: [ //Permite exportar
     FormRequestCourseComponent,

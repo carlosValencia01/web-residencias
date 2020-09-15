@@ -10,6 +10,7 @@ import { EnglishGroupsPageComponent } from './components/english-groups-page/eng
 import { StudentOptionsPageComponent } from './components/student-options-page/student-options-page.component';
 
 import { EnglishStudentsListPageComponent } from './components/english-students-list-page/english-students-list-page.component';
+import { EnglishTeachersListPageComponent } from './components/english-teachers-list-page/english-teachers-list-page.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,11 @@ const routes: Routes = [
     path: 'student-options',
     pathMatch: 'full',
     component: StudentOptionsPageComponent
+  },
+  {
+    path: 'teacher-options',
+    pathMatch: 'full',
+    component: EnglishTeachersListPageComponent
   },
   {
     path: 'english-groups/:grupId',

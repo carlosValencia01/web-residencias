@@ -1,0 +1,159 @@
+<mat-card>
+  <mat-card-content>
+
+    <!--Tabla-->
+    <div style="position: relative;">
+
+      <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
+
+        <table mat-table [dataSource]="englishTeachersDataSource" class="mat-elevation-z8" matSort #sortTeachers="matSort"
+        matSortActive="ID" matSortDirection="asc">
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="countGroups">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Grupos</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.countGroups}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #actions="matMenu">
+                <button (click)="openViewTableGroups(row.groups)" mat-menu-item>
+                  <mat-icon>list</mat-icon>
+                  <span>Ver Grupos</span>
+                </button>
+              </mat-menu>
+
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="['name', 'countGroups', 'actions']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['name', 'countGroups', 'actions']"></mat-row>
+
+        </table>
+        <mat-paginator #matPaginatorTeachers [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+      </div>
+    </div>
+    <!--Fin de la Tabla-->
+  </mat-card-content>
+</mat-card>
+
+
+<!--VENTANA DE GRUPOS-->
+
+<ng-template #viewGroupOfTeacher>
+  <h1 mat-dialog-title>Grupos activos</h1>
+  <div mat-dialog-content>
+    <!-- tabla -->
+    <div style="position: relative; background: white;">
+      <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+          <input matInput (keyup)="applyFilterG()" placeholder="Buscar..." [(ngModel)]="searchGA"
+            (keyup)="applyFilterG()" (focus)="setupFilterG()">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+      <div style="position: relative; overflow: auto; max-width: 100%;">
+
+        <table mat-table [dataSource]="dataSourceActiveGroupsOfTeacher" class="mat-elevation-z8" matSort #sortActiveGroups="matSort"
+        matSortActive="ID" matSortDirection="asc">
+
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="course">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="level">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Bloque</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="numberStudents">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Alumnos Inscritos</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.numberStudents}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #actions="matMenu">
+                <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
+                  <mat-icon>watch_later</mat-icon>
+                  <span>Ver Horario</span>
+                </button>
+                <button (click)="openDialogshowGroupStudents(row)" mat-menu-item>
+                  <mat-icon>view_list</mat-icon>
+                  <span>Ver Alumnos Inscritos</span>
+                </button>
+              </mat-menu>
+
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'numberStudents', 'actions']">
+          </mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'numberStudents', 'actions']">
+          </mat-row>
+        </table>
+
+      </div>
+
+      <!--Paginas-->
+      <mat-paginator #matPaginatorActiveGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+
+    </div>
+    <!--Fin de la tabla -->
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+  </div>
+</ng-template>
+
+
+<!--VENTANA DE HORARIO-->
+
+<ng-template #viewScheduleGroup>
+  <h1 mat-dialog-title>Horario</h1>
+  <div mat-dialog-content>
+    <table class="table table-bordered table-hover mt-2">
+      <thead>
+        <tr>
+          <th class="text-center" *ngFor="let day of weekdays" scope="col">
+            {{dayschedule[day]}}</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td class="text-center" *ngFor="let day of weekdays; let j = index;">
+            <ng-container *ngFor="let hourForDay of scheduleGroupSelected;">
+              <ng-container *ngIf="hourForDay.day==day">
+                {{getHour(hourForDay.startHour)}} - {{getHour(hourForDay.endDate)}}
+              </ng-container>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+  </div>
+</ng-template>
