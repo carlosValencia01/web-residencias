@@ -355,7 +355,7 @@ export class EnglishGroupsPageComponent implements OnInit {
     doc.text(this.actData.teacher.name.fullName, 100, 105, 'left');
     doc.text(this.actData.group.name, pageWidth - 85, 105, 'left');
     doc.text(this.actData.group.period.periodName+'/'+this.actData.group.period.year, 100, 115, 'left');
-    doc.text(this.actData.group.reqActCount.toString(), pageWidth - 85, 115, 'left');
+    doc.text(this.actData.group.numberStudents.toString(), pageWidth - 85, 115, 'left');
 
     doc.autoTable({
       html: '#tablePdfActHead',

@@ -40,4 +40,8 @@ export class EnglishStudentProvider {
   getEnglishStudentNoVerified() {
     return this.api.get('sg-cle/englishstudent/students/noverified').pipe(map(student => student.json()));
   }
+
+  deleteEnglishProfile(id){
+    return this.api.delete('sg-cle/englishstudent/delete/profile/' + id).pipe(map(res => res.json()));
+  }
 }

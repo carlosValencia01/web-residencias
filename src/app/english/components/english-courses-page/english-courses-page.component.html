@@ -627,7 +627,7 @@
 
             <ng-container matColumnDef="request">
               <mat-header-cell *matHeaderCellDef>Alumnos Inscritos</mat-header-cell>
-              <mat-cell *matCellDef="let row">{{row.reqActCount}}</mat-cell>
+              <mat-cell *matCellDef="let row">{{row.numberStudents}}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="actions">
@@ -745,6 +745,10 @@
                 <button (click)="openViewHistory(row)" mat-menu-item>
                   <mat-icon>schedule</mat-icon>
                   <span>Ver Avance</span>
+                </button>
+                <button (click)="deleteProfile(row)" mat-menu-item>
+                  <mat-icon>delete_forever</mat-icon>
+                  <span>Eliminar Perfil de Inglés</span>
                 </button>
               </mat-menu>
 
