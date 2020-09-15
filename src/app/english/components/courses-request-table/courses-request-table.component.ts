@@ -15,6 +15,7 @@ import { NotificationsServices } from 'src/app/services/app/notifications.servic
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { EnglishCourseProvider } from '../../providers/english-course.prov';
 import { RequestCourseProvider } from '../../providers/request-course.prov';
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 // models
 import { IPeriod } from '../../../entities/shared/period.model';
 import { IStudent } from '../../../entities/shared/student.model';
@@ -66,6 +67,7 @@ export class CoursesRequestTableComponent implements OnInit {
     private requestCourseProv: RequestCourseProvider,
     private requestProvider: RequestProvider,
     private englishCourseProv: EnglishCourseProvider,
+    private englishStudentProv: EnglishStudentProvider,
     private notificationService: NotificationsServices,
     private loadingService: LoadingService,
   ) {
@@ -119,7 +121,21 @@ export class CoursesRequestTableComponent implements OnInit {
     const confirmdialog = await this.swalDialogInput('DECLINAR SOLICITUD', 'Especifique el motivo');
     if (confirmdialog) {
       const data = { status: 'rejected', rejectMessage: confirmdialog };
-      this.requestCourseProv.updateRequestById(request._id, data).subscribe(updated => { });
+      this.requestCourseProv.updateRequestById(request._id, data).subscribe(updated => {
+        if(updated){
+          this.englishStudentProv.updateEnglishStudent({status:'no_choice'},request.englishStudent._id).subscribe(res => {
+            if(res){
+              Swal.fire({
+                title: 'Éxito!',
+                text: 'Solicitud declinada',
+                showConfirmButton: false,
+                timer: 2500,
+                type: 'success'
+              });
+            }
+          });
+        }
+       });
       await this.getData();
       this.applyFilters();
     }

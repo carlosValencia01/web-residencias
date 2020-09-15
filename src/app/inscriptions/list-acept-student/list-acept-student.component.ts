@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnDestroy, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
@@ -13,13 +13,15 @@ import { ReviewCredentialsComponent } from '../review-credentials/review-credent
 import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
 import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
 import { LoadingBarService } from 'ngx-loading-bar';
-
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
+import { Subscription } from 'rxjs';
+import { eInscriptionEvents } from 'src/app/enumerators/shared/sockets.enum';
 @Component({
   selector: 'app-list-acept-student',
   templateUrl: './list-acept-student.component.html',
   styleUrls: ['./list-acept-student.component.scss']
 })
-export class ListAceptStudentComponent implements OnInit {
+export class ListAceptStudentComponent implements OnInit, OnDestroy, OnChanges {
   @Input('periods') periods: Array<any>;
   // periods = [];
   activPeriod;  
@@ -40,6 +42,7 @@ export class ListAceptStudentComponent implements OnInit {
     students: false,
     periods:false
   };
+  webSocketSub: Subscription;
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
     private inscriptionsProv: InscriptionsProvider,
@@ -51,6 +54,7 @@ export class ListAceptStudentComponent implements OnInit {
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
     private loadingBar: LoadingBarService,
+    private webSocketService: WebSocketService
   ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -67,6 +71,11 @@ export class ListAceptStudentComponent implements OnInit {
       this.emptyUInscription = new uInscription(this.imageToBase64Serv,this.cookiesService,this.inscriptionsProv);
     }, 300);
   }
+
+  ngOnDestroy(){
+    if(!this.webSocketSub.closed)this.webSocketSub.unsubscribe();
+  }
+
   ngOnChanges(changes: SimpleChanges) { // cuando se actualiza algo en el padre  
     
     if(changes.periods){
@@ -76,10 +85,9 @@ export class ListAceptStudentComponent implements OnInit {
   }
 
   getStudents(){
-    this.loadingBar.start();
-    this.inscriptionsProv.getStudentsAcept().subscribe(res => {
-      this.students = res.students;
-
+    this.webSocketSub = this.webSocketService.listen(eInscriptionEvents.ACCEPT_STUDENTS).subscribe( (data)=>{
+      this.loadingBar.start();            
+      this.students = data;
       // Ordenar Alumnos por Apellidos
       this.students.sort(function (a, b) {
         return a.fatherLastName.localeCompare(b.fatherLastName);
@@ -105,7 +113,10 @@ export class ListAceptStudentComponent implements OnInit {
         }));
       this.loadingBar.complete();
       this.readyToShowTable.students = true;
-      this.listCovers = this.listStudentsAcept;        
+      this.listCovers = this.listStudentsAcept;
+    });
+    this.inscriptionsProv.getStudentsAcept(this.cookiesService.getClientId()).subscribe(res => {              
+              
     });
 
   }
@@ -335,13 +346,13 @@ export class ListAceptStudentComponent implements OnInit {
     }
   }
 
-  registerCredential(item){    
-    this.getStudents();
-  }
+  // registerCredential(item){    
+  //   this.getStudents();
+  // }
 
-  removeCredential(item){    
-    this.getStudents();
-  }
+  // removeCredential(item){    
+  //   this.getStudents();
+  // }
 
   async generateCredentials(){
     this.credentialStudents = this.filterItemsCarreer(this.searchCareer);
@@ -363,12 +374,12 @@ export class ListAceptStudentComponent implements OnInit {
           width: '90em',
           height: '800px'
         });
-        let sub = linkModal.afterClosed().subscribe(
-          credentials=>{
-            this.getStudents();
-          },
-          err=>console.log(err), ()=> sub.unsubscribe()
-        );
+        // let sub = linkModal.afterClosed().subscribe(
+        //   credentials=>{
+        //     this.getStudents();
+        //   },
+        //   err=>console.log(err), ()=> sub.unsubscribe()
+        // );
         
       } else {
         this.notificationService.showNotification(eNotificationType.INFORMATION, 'No Hay Credenciales Para Imprimir', '');
@@ -421,12 +432,12 @@ export class ListAceptStudentComponent implements OnInit {
             width: '90em',
             height: '800px'
           });
-          let sub = linkModal.afterClosed().subscribe(
-            credentials=>{
-              this.getStudents();
-            },
-            err=>console.log(err), ()=> sub.unsubscribe()
-          );
+          // let sub = linkModal.afterClosed().subscribe(
+          //   credentials=>{
+          //     this.getStudents();
+          //   },
+          //   err=>console.log(err), ()=> sub.unsubscribe()
+          // );
         } else {
           this.notificationService.showNotification(eNotificationType.INFORMATION, 'Credencial ya fue impresa', '');
         }

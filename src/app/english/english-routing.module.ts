@@ -6,7 +6,10 @@ import { EnglishCoursesPageComponent } from './components/english-courses-page/e
 import { BossMessageComponent } from './components/boss-message/boss-message.component';
 
 import { EnglishGroupsPageComponent } from './components/english-groups-page/english-groups-page.component';
+
 import { StudentOptionsPageComponent } from './components/student-options-page/student-options-page.component';
+
+import { EnglishStudentsListPageComponent } from './components/english-students-list-page/english-students-list-page.component';
 
 const routes: Routes = [
   {
@@ -33,6 +36,11 @@ const routes: Routes = [
     path: 'student-options',
     pathMatch: 'full',
     component: StudentOptionsPageComponent
+  },
+  {
+    path: 'english-groups/:grupId',
+    pathMatch: 'full',
+    component: EnglishStudentsListPageComponent
   },
 ];
 

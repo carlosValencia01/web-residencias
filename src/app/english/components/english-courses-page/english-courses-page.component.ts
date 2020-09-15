@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import TableToExcel from '@linways/table-to-excel';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { MatTabGroup } from '@angular/material/tabs';
 
 // TABLA
 import { MatPaginator } from '@angular/material/paginator';
@@ -84,6 +85,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   @ViewChild("scheduleClassroomAux") dialogRefScheduleClassroomAux: TemplateRef<any>;
   @ViewChild("viewScheduleClassroom") dialogRefViewScheduleClassroom: TemplateRef<any>;
   @ViewChild("viewUpdateClassroom") dialogRefViewUpdateClassroom: TemplateRef<any>;
+  @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
   // GRUPOS
   groups: IGroup[];
@@ -934,7 +936,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   // #region Reportes Excel
   generateExcelActiveGroup(_group) {
     this.notificationsServices.showNotification(eNotificationType.INFORMATION, '', 'Generando Reporte...');
-    this.requestCourseProv.getAllRequestActiveCourse(_group._id).subscribe(async res => {
+    this.requestCourseProv.getAllRequestActiveCourse(_group._id, this._CookiesService.getClientId()).subscribe(async res => {
       this.dataExcel = {
         group: _group,
         teacher: _group.teacher ? _group.teacher.name.fullName : '',
@@ -1143,6 +1145,76 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
   applyFilterStudents() {
     this.englishStudentsDataSource.filter = this.searchStudent.trim().toLowerCase();
+  }
+
+  deleteProfile(student){
+    this.requestCourseProv.getAllRequestCourseByEnglishStudentId(student._id).subscribe(async res => {
+      const requestStudent = res.requestCourse.filter(req=> req.status == 'requested');
+      const lastRequestStudent = requestStudent[requestStudent.length - 1];
+      
+      // Verificar si tiene una solocitud activa
+      if(lastRequestStudent){
+        // Mostrar alerta para eliminar solicitud de alumno
+        Swal.fire({
+          title: 'Solicitud Encontrada',
+          type: 'info',
+          html:
+          '<label>El perfil del alumno con número de control: <b>'+student.controlNumber+'</b> cuenta con una solicitud activa. Se eliminará perfil y solicitud.</label>',
+          allowOutsideClick: false,
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Eliminar',
+          cancelButtonText: 'Cancelar',
+          confirmButtonColor: 'green',
+          cancelButtonColor: 'red',
+        }).then((result) => {
+          if (result.value) {
+            this.englishStudentProv.deleteEnglishProfile(student._id).subscribe(res => {
+              if (res){
+                Swal.fire({
+                  title: 'Éxito',
+                  text: 'Perfil y Solicitud Eliminadas',
+                  showConfirmButton: false,
+                  timer: 2500,
+                  type: 'success'
+                });
+                this._initStudents();
+              }
+            });
+          }
+        });
+      } else {
+        // Eliminar perfil de inglés de alumno
+        Swal.fire({
+          title: 'Atención',
+          type: 'info',
+          html:
+            '<label>Se eliminará el perfil del alumno con número de control: <b>'+student.controlNumber+'</b></label>',
+          allowOutsideClick: false,
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Eliminar',
+          cancelButtonText: 'Cancelar',
+          confirmButtonColor: 'green',
+          cancelButtonColor: 'red',
+        }).then((result) => {
+          if (result.value) {
+            this.englishStudentProv.deleteEnglishProfile(student._id).subscribe(res => {
+              if (res){
+                Swal.fire({
+                  title: 'Éxito',
+                  text: 'Perfil Eliminado',
+                  showConfirmButton: false,
+                  timer: 2500,
+                  type: 'success'
+                });
+                this._initStudents();
+              }
+            });
+          }
+        });
+      }
+    });
   }
 
   // #endregion
