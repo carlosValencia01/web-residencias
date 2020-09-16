@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
 
 // TABLA
 import { MatPaginator } from '@angular/material/paginator';
@@ -171,6 +172,76 @@ export class StudentListComponent implements OnInit {
     let hh = h < 10 ? '0' + h : h; //Asigna un 0 al inicio de la hora si es menor a 10
     let mm = m < 10 ? '0' + m : m; //Asigna un 0 al inicio de los minutos si es menor a 10
     return hh + ':' + mm; //Retorna los minutos en tiempo Ej: "24:00"
+  }
+
+  deleteProfile(student){
+    this.requestCourseProv.getAllRequestCourseByEnglishStudentId(student._id).subscribe(async res => {
+      const requestStudent = res.requestCourse.filter(req=> req.status == 'requested');
+      const lastRequestStudent = requestStudent[requestStudent.length - 1];
+
+      // Verificar si tiene una solocitud activa
+      if(lastRequestStudent){
+        // Mostrar alerta para eliminar solicitud de alumno
+        Swal.fire({
+          title: 'Solicitud Encontrada',
+          type: 'info',
+          html:
+          '<label>El perfil del alumno con número de control: <b>'+student.controlNumber+'</b> cuenta con una solicitud activa. Se eliminará perfil y solicitud.</label>',
+          allowOutsideClick: false,
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Eliminar',
+          cancelButtonText: 'Cancelar',
+          confirmButtonColor: 'green',
+          cancelButtonColor: 'red',
+        }).then((result) => {
+          if (result.value) {
+            this.englishStudentProv.deleteEnglishProfile(student._id).subscribe(res => {
+              if (res){
+                Swal.fire({
+                  title: 'Éxito',
+                  text: 'Perfil y Solicitud Eliminadas',
+                  showConfirmButton: false,
+                  timer: 2500,
+                  type: 'success'
+                });
+                this._initStudents();
+              }
+            });
+          }
+        });
+      } else {
+        // Eliminar perfil de inglés de alumno
+        Swal.fire({
+          title: 'Atención',
+          type: 'info',
+          html:
+            '<label>Se eliminará el perfil del alumno con número de control: <b>'+student.controlNumber+'</b></label>',
+          allowOutsideClick: false,
+          showConfirmButton: true,
+          showCancelButton: true,
+          confirmButtonText: 'Eliminar',
+          cancelButtonText: 'Cancelar',
+          confirmButtonColor: 'green',
+          cancelButtonColor: 'red',
+        }).then((result) => {
+          if (result.value) {
+            this.englishStudentProv.deleteEnglishProfile(student._id).subscribe(res => {
+              if (res){
+                Swal.fire({
+                  title: 'Éxito',
+                  text: 'Perfil Eliminado',
+                  showConfirmButton: false,
+                  timer: 2500,
+                  type: 'success'
+                });
+                this._initStudents();
+              }
+            });
+          }
+        });
+      }
+    });
   }
 
 }

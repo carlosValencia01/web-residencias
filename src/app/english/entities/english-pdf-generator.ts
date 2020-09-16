@@ -106,7 +106,7 @@ export class PDFEnglish {
         var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
 
         doc.addImage(this.sepLogo, 'PNG', 36, 5, 163, 40); // Logo SEP
-        doc.addImage(this.tecNacLogo, 'PNG', pageWidth - 145, 2, 103, 44); // Logo TecNM
+        doc.addImage(this.tecNacLogo, 'PNG', pageWidth - 72, 5, 34, 38); // Logo TecNM
 
         let header = 'Lista de Alumnos';
         doc.setTextColor(0, 0, 0);
@@ -146,7 +146,7 @@ export class PDFEnglish {
         var pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
     
         doc.addImage(this.sepLogo, 'PNG', 36, 5, 163, 40); // Logo SEP
-        doc.addImage(this.tecNacLogo, 'PNG', pageWidth - 145, 2, 103, 44); // Logo TecNM
+        doc.addImage(this.tecNacLogo, 'PNG', pageWidth - 72, 5, 34, 38); // Logo TecNM
     
         doc.setTextColor(0, 0, 0);
         doc.setFontSize(15);
