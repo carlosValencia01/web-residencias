@@ -308,19 +308,5 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
     ); 
   }
 
-  saveStudents(){
-    const s = this.firestoreService.getGraduates('agodic2019').subscribe(
-      students=>{
-        s.unsubscribe();
-        const studentsMap = students.map(st=> ({nc:st.payload.doc.get('nc'),}));
-        studentsMap.forEach(elem=>{
-          this.firestoreService.asignEvent('agodic2019',elem.nc).then(
-            sd=>{
-            }
-          );
-        });
-      }
-    )
-  }
   
 }

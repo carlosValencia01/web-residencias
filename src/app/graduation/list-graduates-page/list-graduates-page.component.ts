@@ -39,6 +39,10 @@ export class ListGraduatesPageComponent implements OnInit {
   public certificadosImpresos;
   public certificadosListos;
   public certificadosEntregados;
+  public certificadosNoSolicitados;
+  public certificadosSolicitados;
+  public certificadosConLineaAsignada;
+  public certificadosEnviados;
 
   public totalVerificados;
   public boletosTotales;
@@ -259,35 +263,39 @@ export class ListGraduatesPageComponent implements OnInit {
 
   readEmail() {
     this.firestoreService.getGraduates(this.collection).subscribe((alumnosSnapshot) => {
-      this.alumnos = alumnosSnapshot.map((alumno) => {
-        return {
-          id: alumno.payload.doc.id,
-          nc: alumno.payload.doc.get('nc'),
-          name: alumno.payload.doc.get('nombre'),
-          nameLastName: alumno.payload.doc.get('nombreApellidos'),
-          carreer: alumno.payload.doc.get('carrera'),
-          carreerComplete: alumno.payload.doc.get('carreraCompleta'),
-          email: alumno.payload.doc.get('correo'),
-          status: alumno.payload.doc.get('estatus'),
-          degree: alumno.payload.doc.get('degree') ? true : false,
-          observations: alumno.payload.doc.get('observations'),
-          survey: alumno.payload.doc.get('survey'),
-          genero: alumno.payload.doc.get('genero'),
-          curp: alumno.payload.doc.get('curp'),
-          bestAverage: alumno.payload.doc.get('mejorPromedio') ? alumno.payload.doc.get('mejorPromedio') : false,
-          average: alumno.payload.doc.get('promedio') ? alumno.payload.doc.get('promedio') : 0,
-          documentationStatus: alumno.payload.doc.get('documentationStatus') ? alumno.payload.doc.get('documentationStatus') : ' ',
-          specialty: alumno.payload.doc.get('especialidad') ? alumno.payload.doc.get('especialidad') : '<<Especialidad>>',
-          numInvitados: alumno.payload.doc.get('numInvitados') ? alumno.payload.doc.get('numInvitados') : 0,
-          invitados: alumno.payload.doc.get('invitados') ? alumno.payload.doc.get('invitados') : [{}],
-          nss: alumno.payload.doc.get('nss') ? alumno.payload.doc.get('nss') : ''
-        };
-      });
-      this.getTicketsRegistered();
+      this.alumnos = alumnosSnapshot.reduce((prev, alumno) => {
+        if(alumno.payload.doc.get('nc')){
+          prev.push({
+            id: alumno.payload.doc.id,
+            nc: alumno.payload.doc.get('nc'),
+            name: alumno.payload.doc.get('nombre'),
+            nameLastName: alumno.payload.doc.get('nombreApellidos'),
+            carreer: alumno.payload.doc.get('carrera'),
+            carreerComplete: alumno.payload.doc.get('carreraCompleta'),
+            email: alumno.payload.doc.get('correo'),
+            status: alumno.payload.doc.get('estatus'),
+            degree: alumno.payload.doc.get('degree') ? true : false,
+            observations: alumno.payload.doc.get('observations'),
+            survey: alumno.payload.doc.get('survey'),
+            genero: alumno.payload.doc.get('genero'),
+            curp: alumno.payload.doc.get('curp'),
+            bestAverage: alumno.payload.doc.get('mejorPromedio') ? alumno.payload.doc.get('mejorPromedio') : false,
+            average: alumno.payload.doc.get('promedio') ? alumno.payload.doc.get('promedio') : 0,
+            documentationStatus: alumno.payload.doc.get('documentationStatus') ? alumno.payload.doc.get('documentationStatus') : ' ',
+            specialty: alumno.payload.doc.get('especialidad') ? alumno.payload.doc.get('especialidad') : '<<Especialidad>>',
+            numInvitados: alumno.payload.doc.get('numInvitados') ? alumno.payload.doc.get('numInvitados') : 0,
+            invitados: alumno.payload.doc.get('invitados') ? alumno.payload.doc.get('invitados') : [{}],
+            nss: alumno.payload.doc.get('nss') ? alumno.payload.doc.get('nss') : ''
+  
+          })       
+        }
+        return prev;
+      },[]);
       // Ordenar Alumnos por Apellidos
       this.alumnos.sort(function (a, b) {
         return a.nameLastName.localeCompare(b.nameLastName);
       });
+      this.getTicketsRegistered();
 
       this.alumnosReport = this.alumnos;
       this.dataSource = new MatTableDataSource(this.alumnosReport);
@@ -304,10 +312,14 @@ export class ListGraduatesPageComponent implements OnInit {
       this.totalEgresados = this.alumnos.length;
       this.totalEgresadosH = this.alumnos.filter(st => st.genero === 'M').length;
       this.totalEgresadosM = this.alumnos.filter(st => st.genero === 'F').length;
-      this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
-      this.certificadosListos = this.filterCountItemsStatus('Listo').length;
-      this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
-      this.certificadosPendientes = this.filterCountItemsStatus('Fotos y Recibo').length;
+      this.certificadosImpresos = this.filterCountItemsStatus('impreso').length;
+      this.certificadosListos = this.filterCountItemsStatus('listo').length;
+      this.certificadosEntregados = this.filterCountItemsStatus('entregado').length;
+      this.certificadosPendientes = this.filterCountItemsStatus('pendiente').length;
+      this.certificadosConLineaAsignada = this.filterCountItemsStatus('linea asignada').length;
+      this.certificadosEnviados = this.filterCountItemsStatus('enviado').length;
+      this.certificadosSolicitados = this.filterCountItemsStatus('solicitado').length;
+      this.certificadosNoSolicitados = this.filterCountItemsStatus('no solicitado').length;
 
       this.totalVerificados = this.filterCountItemsVerified().length;
       this.boletosRestantes = (this.boletosTotales - this.boletosRegistrados);
@@ -547,9 +559,9 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
-  filterCountItemsStatus(status) {
+  filterCountItemsStatus(status: string) {
     return this.alumnos.filter(function (alumno) {
-      return alumno.documentationStatus.toLowerCase().indexOf(status.toLowerCase()) > -1;
+      return alumno.documentationStatus.toLowerCase().indexOf(status) > -1;
     });
   }
 
@@ -1287,48 +1299,47 @@ export class ListGraduatesPageComponent implements OnInit {
 
   changeStatusDocumentation(student, status) {
     switch (status) {
-      case 'Fotos y Recibo':
-        this.firestoreService.updateFieldGraduate(student.id, {documentationStatus: status}, this.collection);
-        this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas', student.nc);
-        break;
-      case 'Impreso':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
 
-        // this.sendNotification('Certificado', 'Tus certificado ha sido impreso',student.nc);
-        break;
-      case 'Listo':
+      case 'ENVIADO':
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
-
-        this.sendNotification('Certificado', 'Tu certificado ya está listo', student.nc);
+        this.sendNotification('Certificado', 'Tu certificado fue enviado a tu correo', student.nc);
         break;
-      case 'Entregado':
+      case 'ENTREGADO':
         this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
-
         this.sendNotification('Certificado', 'Tu certificado fue entregado', student.nc);
         break;
-      case 'Regresar':
+      case 'Regresar':{
+
         switch (student.documentationStatus) {
-          case 'Fotos y Recibo':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: ' ' }, this.collection);
-
-            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
+          case 'LINEA ASIGNADA':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'SOLICITADO' }, this.collection);
             break;
-          case 'Impreso':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Fotos y Recibo' }, this.collection);
-
-            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
+          case 'PENDIENTE':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'LINEA ASIGNADA' }, this.collection);
             break;
-          case 'Listo':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Impreso' }, this.collection);
+          case 'IMPRESO':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'PENDIENTE' }, this.collection);
 
-            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
-          case 'Entregado':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Listo' }, this.collection);
+          case 'LISTO':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'IMPRESO' }, this.collection);
 
-            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
+          case 'ENVIADO':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'LISTO' }, this.collection);
+
+            break;         
+          case 'ENTREGADO':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'ENVIADO' }, this.collection);
+
+            break;         
         }
+        break;
+      }
+      default: {
+          this.firestoreService.updateFieldGraduate(student.id, {documentationStatus: status}, this.collection);
+          break;
+      }
     }
   }
 
@@ -2299,5 +2310,9 @@ export class ListGraduatesPageComponent implements OnInit {
       err=>console.warn(err)
       
     );
+  }
+
+  reviewPhotos(student){
+
   }
 }

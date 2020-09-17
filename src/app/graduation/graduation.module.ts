@@ -43,6 +43,7 @@ import { SurveyPageComponent } from './survey-page/survey-page.component';
 import { SurveyQuestionsPageComponent } from './survey-questions-page/survey-questions-page.component';
 import { SurveyRegisterPageComponent } from './survey-register-page/survey-register-page.component';
 import { CareerProvider } from '../providers/shared/career.prov';
+import { CertificateIneComponent } from './certificate-ine/certificate-ine.component';
 @NgModule({
   imports: [
     CommonsModule,
@@ -83,6 +84,7 @@ import { CareerProvider } from '../providers/shared/career.prov';
     SurveyGraduatesPageComponent,
     SurveyQuestionsPageComponent,
     NewGraduationEventComponent,
+    CertificateIneComponent,
     
   ],
   providers: [

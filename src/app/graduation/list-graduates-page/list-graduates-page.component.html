@@ -1,6 +1,6 @@
 <div class="content-general" *ngIf="role !== 'asistenciaInvitados'">
   <div class="card card-shadow">
-    <mat-tab-group>
+    <mat-tab-group *ngIf="dataSource">
       <mat-tab
         *ngIf="
           role === 'administration' ||
@@ -15,7 +15,7 @@
           <div style="overflow-x: auto; padding-top: 20px;">
             <div class="row">
               <div class="col-sm-3">
-                <mat-card class="cardEgresados"
+                <mat-card class="card-with-border-left cardEgresados"
                   ><b>Egresados</b>
                   <!-- <br>{{totalEgresados}} -->
                   <mat-card-content>
@@ -27,7 +27,7 @@
                 </mat-card>
               </div>
               <div class="col-sm-3">
-                <mat-card class="cardCListos"
+                <mat-card class="card-with-border-left cardCListos"
                   ><b>Verificados</b><br />{{ totalVerificados }}</mat-card
                 >
               </div>
@@ -35,7 +35,7 @@
                 class="col-sm-3"
                 *ngIf="role === 'administration' || role === 'comunication'"
               >
-                <mat-card class="cardCPendientes"
+                <mat-card class="card-with-border-left cardCPendientes"
                   ><b>Boletos Totales</b><br />{{ boletosTotales }}</mat-card
                 >
               </div>
@@ -43,7 +43,7 @@
                 class="col-sm-3"
                 *ngIf="role === 'administration' || role === 'comunication'"
               >
-                <mat-card class="cardRestantes"
+                <mat-card class="card-with-border-left cardRestantes"
                   ><b>Boletos Restantes</b><br />{{
                     boletosRestantes
                   }}</mat-card
@@ -676,28 +676,48 @@
         <div class="card-body">
           <div style="overflow-x: auto; padding-top: 20px;">
             <div class="row">
-              <div class="col-sm-4">
-                <mat-card class="cardEgresados"
+              <div class="col-sm-12 text-center">
+                <mat-card class="card-with-border-left cardEgresados"
                   ><b>Egresados</b><br />{{ totalEgresados }}</mat-card
                 >
               </div>
-              <div class="col-sm-2">
-                <mat-card class="cardCPendientes"
+              <div class="col-sm-3 mt-2">
+                <mat-card class="card-with-border-left card-not-requested"
+                  ><b>No solicitados</b><br />{{ certificadosNoSolicitados }}</mat-card
+                >
+              </div>
+              <div class="col-sm-3 mt-2">
+                <mat-card class="card-with-border-left card-requested"
+                  ><b>Solicitados</b><br />{{ certificadosSolicitados }}</mat-card
+                >
+              </div>
+              <div class="col-sm-3 mt-2">
+                <mat-card class="card-with-border-left card-asigned-line"
+                  ><b>Línea asignada</b><br />{{ certificadosConLineaAsignada }}</mat-card
+                >
+              </div>              
+              <div class="col-sm-3 mt-2">
+                <mat-card class="card-with-border-left cardCPendientes"
                   ><b>Pendientes</b><br />{{ certificadosPendientes }}</mat-card
                 >
               </div>
-              <div class="col-sm-2">
-                <mat-card class="cardCImpresos"
+              <div class="col-sm-3 mt-2">
+                <mat-card class="card-with-border-left cardCImpresos"
                   ><b>Impresos</b><br />{{ certificadosImpresos }}</mat-card
                 >
               </div>
-              <div class="col-sm-2">
-                <mat-card class="cardCListos"
+              <div class="col-sm-3 mt-2">
+                <mat-card class="card-with-border-left cardCListos"
                   ><b>Listos</b><br />{{ certificadosListos }}</mat-card
                 >
               </div>
-              <div class="col-sm-2">
-                <mat-card class="cardEgresados"
+              <div class="col-sm-3 mt-2">
+                <mat-card class="card-with-border-left card-sended"
+                  ><b>Enviados</b><br />{{ certificadosEnviados }}</mat-card
+                >
+              </div>
+              <div class="col-sm-3 mt-2">
+                <mat-card class="card-with-border-left card-delivered"
                   ><b>Entregados</b><br />{{ certificadosEntregados }}</mat-card
                 >
               </div>
@@ -730,10 +750,14 @@
                 <div class="form-group">
                   <select (change)="filterDoc('status',$event)" class="form-control">
                     <option value='default'>Todos los estatus</option>
-                    <option value="fotos y recibo">Fotos y Recibo</option>
-                    <option value="impreso">Impreso</option>
-                    <option value="listo">Listo</option>
-                    <option value="entregado">Entregado</option>
+                    <option value="NO SOLICITADO">No solicitado</option>
+                    <option value="SOLICITADO">Solicitado</option>
+                    <option value="LINEA ASIGNADA">Línea Asignada</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="IMPRESO">Impreso</option>
+                    <option value="LISTO">Listo</option>
+                    <option value="ENVIADO">Enviado</option>
+                    <option value="ENTREGADO">Entregado</option>
                   </select>
                 </div>                
               </div>
@@ -782,13 +806,21 @@
                      <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Estatus </th>
                      <td mat-cell *matCellDef="let row" > 
                        <div [ngSwitch]="row.documentationStatus">
-                           <span *ngSwitchCase="'Fotos y Recibo'"
-                               class="badge badge-pill badge-photos">{{row.documentationStatus}}</span>
-                           <span *ngSwitchCase="'Impreso'"
-                               class="badge badge-pill badge-printed">{{row.documentationStatus}}</span>
-                           <span *ngSwitchCase="'Listo'"
-                               class="badge badge-pill badge-ready">{{row.documentationStatus}}</span>
-                           <span *ngSwitchCase="'Entregado'"
+                           <span *ngSwitchCase="'NO SOLICITADO'"
+                               class="badge badge-pill badge-not-requested">{{row.documentationStatus}}</span>
+                           <span *ngSwitchCase="'SOLICITADO'"
+                               class="badge badge-pill badge-requested">{{row.documentationStatus}}</span>
+                           <span *ngSwitchCase="'LINEA ASIGNADA'"
+                               class="badge badge-pill badge-asigned-line">{{row.documentationStatus}}</span>
+                           <span *ngSwitchCase="'PENDIENTE'"
+                               class="badge badge-pill badge-pending">{{row.documentationStatus}}</span>                                                         
+                           <span *ngSwitchCase="'IMPRESO'"
+                               class="badge badge-pill badge-printed">{{row.documentationStatus}}</span>                                                         
+                           <span *ngSwitchCase="'LISTO'"
+                               class="badge badge-pill badge-ready">{{row.documentationStatus}}</span>                                                         
+                           <span *ngSwitchCase="'ENVIADO'"
+                               class="badge badge-pill badge-sended">{{row.documentationStatus}}</span>                                                         
+                           <span *ngSwitchCase="'ENTREGADO'"
                                class="badge badge-pill badge-delivered">{{row.documentationStatus}}</span>                                                         
                        </div>        
                      
@@ -806,38 +838,57 @@
                         </button>
                       
                         <mat-menu #actions="matMenu">
-                          <button mat-menu-item *ngIf="row.documentationStatus == ' '" (click)="changeStatusDocumentation(row,'Fotos y Recibo')">
-                            <mat-icon>recent_actors</mat-icon>
-                            Fotos y Recibo
+                          
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'LINEA ASIGNADA'" (click)="changeStatusDocumentation(row,'PENDIENTE')">
+                            <mat-icon>hourglass_full</mat-icon>
+                            Pendiente
                           </button>
-                          <button mat-menu-item *ngIf="row.documentationStatus == 'Fotos y Recibo'" (click)="changeStatusDocumentation(row,'Impreso')">
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'PENDIENTE'" (click)="reviewPhotos(row)">
+                            <mat-icon>perm_media</mat-icon>
+                            Dictaminar fotos y recibo
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'PENDIENTE'" (click)="changeStatusDocumentation(row,'IMPRESO')">
                             <mat-icon>print</mat-icon>
                             Impreso
                           </button>
-                          <button mat-menu-item *ngIf="row.documentationStatus == 'Impreso'" (click)="changeStatusDocumentation(row,'Listo')">
-                            <mat-icon>library_add_check</mat-icon>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'IMPRESO'" (click)="changeStatusDocumentation(row,'LISTO')">
+                            <mat-icon>done_all</mat-icon>
                             Listo
                           </button>
-                          <button mat-menu-item *ngIf="row.documentationStatus == 'Listo'" (click)="changeStatusDocumentation(row,'Entregado')">
-                            <mat-icon>pending_actions</mat-icon>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'LISTO'" (click)="changeStatusDocumentation(row,'ENVIADO')">
+                            <mat-icon>contact_mail</mat-icon>
+                            Enviado
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'ENVIADO'" (click)="changeStatusDocumentation(row,'ENTREGADO')">
+                            <mat-icon>send</mat-icon>
                             Entregado
                           </button>
-                          <button mat-menu-item *ngIf="row.documentationStatus == 'Fotos y Recibo'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'LINEA ASIGNADA'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
                             <mat-icon class="text-danger">settings_backup_restore</mat-icon>
-                            Regresar Estatus a Sin Entrega
+                            Regresar Estatus a Solicitado
                           </button>
-                          <button mat-menu-item *ngIf="row.documentationStatus == 'Impreso'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'PENDIENTE'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
                             <mat-icon class="text-danger">settings_backup_restore</mat-icon>
-                            Regresar Estatus a Fotos y Recibo
+                            Regresar Estatus a Línea Asignada
                           </button>
-                          <button mat-menu-item *ngIf="row.documentationStatus == 'Listo'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'IMPRESO'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                            <mat-icon class="text-danger">settings_backup_restore</mat-icon>
+                            Regresar Estatus a Pendiente
+                          </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'LISTO'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
                             <mat-icon class="text-danger">settings_backup_restore</mat-icon>
                             Regresar Estatus a Impreso
                           </button>
-                          <button mat-menu-item *ngIf="row.documentationStatus == 'Entregado'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'ENVIADO'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
                             <mat-icon class="text-danger">settings_backup_restore</mat-icon>
                             Regresar Estatus a Listo
                           </button>
+                          <button mat-menu-item *ngIf="row.documentationStatus == 'ENTREGADO'" (click)="changeStatusDocumentation(row,'Regresar')" class="text-danger">
+                            <mat-icon class="text-danger">settings_backup_restore</mat-icon>
+                            Regresar Estatus a Enviado
+                          </button>
+
                           <button mat-menu-item (click)="generateConstancy(row)">
                             <mat-icon>library_books</mat-icon>
                             Generar Constancia
@@ -902,6 +953,9 @@
             </ng-template>
           </div>
         </div>
+      </mat-tab>
+      <mat-tab label="Por asignar línea">
+       <app-certificate-line [collection]="collection" *ngIf="collection" class="p-4"></app-certificate-line> 
       </mat-tab>
     </mat-tab-group>
   </div>
