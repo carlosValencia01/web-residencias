@@ -1,0 +1,91 @@
+<div *ngIf="!isGraduate">
+  <div class="row justify-content-md-center">
+    <div class="col-12 col-lg-8">
+      <div class="title">
+        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+        <h2>¡Aviso, Graduación!</h2><br>
+        <span>No te encuentras en la lista de graduación</span><br>
+        <span>No puedes solicitar certificado</span><br><br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isGraduate">
+  <mat-horizontal-stepper [linear]="isLinear" #stepper>
+    <mat-step editable='false'>
+      <ng-template matStepLabel>Solicitud de Certificado</ng-template>
+      <div class="example-container" style="margin: 15px; text-align: center;" *ngIf="step == 1 || !step">
+          <mat-form-field appearance="outline" class="example-full-width" style="width: 30%;">
+            <mat-label>Correo Institucional</mat-label>
+            <input matInput [(ngModel)]="email">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="example-full-width" style="width: 20%;">
+            <input matInput [(ngModel)]="emailDomain" readonly>
+          </mat-form-field>
+          <br>
+          <mat-form-field appearance="outline" class="example-full-width" style="width: 30%;">
+            <mat-label>Confirmar Correo Institucional</mat-label>
+            <input matInput [(ngModel)]="emailConfirm">
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="example-full-width" style="width: 20%;">
+            <input matInput [(ngModel)]="emailDomain" readonly>
+          </mat-form-field>
+          <br><label>Continúa para solicitar tu certificado</label><br>
+        <mat-dialog-actions class="d-flex justify-content-center">
+          <button mat-stroked-button class="m-1" (click)="continue(1)" type="button" color="primary" style="background: dodgerblue; color: white;">
+            Continuar
+          </button>
+        </mat-dialog-actions>
+      </div>
+    </mat-step>
+    <mat-step editable='false'>
+      <ng-template matStepLabel>Recibo de pago</ng-template>
+      <div class="example-container" *ngIf="step == 2">
+        <div class="row justify-content-md-center">
+          <div class="col-sm-6 col-md-4 col-lg-3" style="text-align: center;">
+            <label><b>Línea de Captura:</b> {{documentationStatus == 'LINEA ASIGNADA' ? 'Asignada' : 'Solicitada'}}</label>
+            <div class="col-12" ngbTooltip="Ayuda" *ngIf="documentationStatus == 'LINEA ASIGNADA' || documentationStatus == 'PENDIENTE'">
+              <mat-icon class="help" style="color: black;" (click)="help()">help</mat-icon>
+            </div>
+            <div class="card cd" *ngIf="documentationStatus == 'LINEA ASIGNADA' || documentationStatus == 'PENDIENTE'">
+              <div [class.isDisabled]="payDoc !== undefined ? true : false" class="card-header c-header" (click)="
+                  collapse('collapseCOMPROBANTE',payDoc !== undefined ? true : false)">
+                <div class="row text-center">
+                  <div class="col-12">
+                    <div>
+                      <p><b>COMPROBANTE DE PAGO</b></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="row text-center">
+                  <div class="col-12">
+                    <div *ngIf="payDoc">
+                      <span *ngIf="payDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                      <span *ngIf="payDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                      <span *ngIf="payDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                    </div>
+                    <span *ngIf="!payDoc" class="badge badge-warning">SIN ENVIO</span>
+                  </div>
+                </div><br>
+                <div *ngIf="payDoc && payDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer;">
+                  <mat-icon class="mx-1" style="color:white" (click)="onMessage(payDoc.status.observation)"
+                  data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+                </div>
+              </div>
+              <div class="card-body c-body" id="collapseCOMPROBANTE" *ngIf="payConfig">
+                <dropzone id="dz0" [config]="payConfig" [message]="'Subir'" (error)="onErrorCommon($event)"
+                  (success)="onUploadSuccess($event)" *ngIf="!payDoc || payDoc.status.name === 'RECHAZADO'">
+                </dropzone>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step editable='false'>
+      <ng-template matStepLabel>Estatus del Certificado</ng-template>
+      <!-- HTML de estatus de certificado aquí -->
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>

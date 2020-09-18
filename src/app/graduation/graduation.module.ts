@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -44,6 +45,15 @@ import { SurveyQuestionsPageComponent } from './survey-questions-page/survey-que
 import { SurveyRegisterPageComponent } from './survey-register-page/survey-register-page.component';
 import { CareerProvider } from '../providers/shared/career.prov';
 import { CertificateIneComponent } from './certificate-ine/certificate-ine.component';
+import { MyCertificatePageComponent } from './my-certificate-page/my-certificate-page.component';
+import { DropzoneConfigInterface, DropzoneModule, DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
+
+const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
+  url: environment.filesGraduationURL,
+  maxFilesize: 3,
+  acceptedFiles: 'image/jpeg,image/png,application/pdf',
+  maxFiles: 1
+};
 @NgModule({
   imports: [
     CommonsModule,
@@ -69,7 +79,9 @@ import { CertificateIneComponent } from './certificate-ine/certificate-ine.compo
     MatBadgeModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatStepperModule,
+    DropzoneModule,
   ],
   declarations: [
     SurveyListPageComponent,
@@ -85,11 +97,15 @@ import { CertificateIneComponent } from './certificate-ine/certificate-ine.compo
     SurveyQuestionsPageComponent,
     NewGraduationEventComponent,
     CertificateIneComponent,
-    
+    MyCertificatePageComponent,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     { provide: ErrorStateMatcher, useClass: ErrorMatcher },
+    {
+      provide: DROPZONE_CONFIG,
+      useValue: DEFAULT_DROPZONE_CONFIG
+    },
     AngularFirestore,
     AngularFirestoreModule,
     FirebaseService,
