@@ -64,6 +64,7 @@
                 </div>
               </mat-step>
               <mat-step>
+
                 <ng-template matStepLabel>Resultado</ng-template>
                 <h5 class="text-center">Tu asistencia para servicio social se ha registrado con éxito</h5>
                 <div class="d-flex justify-content-center" *ngIf="assistanceFirstStep && assistanceSecondStep">
@@ -79,7 +80,7 @@
                                         [controlStudentId]="controlStudentId"
                                         [sendEmailCode]="sendEmailCode"
                                         [verificationEmail]="verificationEmail"
-                                        (sendInformation)="changeStatusSendInformation()"
+                                        (sendInformation)="changeStatusSendInformation($event)"
                                         [email]="emailStudent"></app-social-service-init-form>
           <div *ngIf="statusFirstDocuments !== 'register'">
             <div class="row justify-content-center">
@@ -98,6 +99,15 @@
           </div>
         </mat-step>
       </mat-vertical-stepper>
+      <div class="row text-center">
+        <div class="col-12">
+          <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'80vh'" [useBrowserLocale]="true"
+                                   (pdfLoaded)="_loadPage()">
+          </ngx-extended-pdf-viewer>
+          <div class="xml-output" id="dataXML">
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div *ngIf="releaseSocialService">

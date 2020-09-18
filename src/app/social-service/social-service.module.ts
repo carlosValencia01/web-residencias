@@ -32,12 +32,16 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatDialogModule, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import {MatPaginatorIntlCro} from './materialConfig/matPaginatorIntlCroClass';
 import { ControlStudentsMainPageComponent } from './department/control-students-main-page/control-students-main-page.component';
 import {ControlStudentProv} from '../providers/social-service/control-student.prov';
 import { SocialServiceMainPageComponent } from './student/social-service-main-page/social-service-main-page.component';
 import { SocialServiceInitFormComponent } from './student/social-service-init-form/social-service-init-form.component';
+import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
+import {ImageToBase64Service} from '../services/app/img.to.base63.service';
+import {MatNativeDateModule} from '@angular/material';
 
 
 @NgModule({
@@ -71,6 +75,9 @@ import { SocialServiceInitFormComponent } from './student/social-service-init-fo
     MatCheckboxModule,
     MatBadgeModule,
     MatSlideToggleModule,
+    NgxExtendedPdfViewerModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   declarations: [
     ControlStudentsMainPageComponent,
@@ -80,7 +87,8 @@ import { SocialServiceInitFormComponent } from './student/social-service-init-fo
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },
-    ControlStudentProv
+    ControlStudentProv,
+    ImageToBase64Service
   ],
   entryComponents: []
 })

@@ -12,8 +12,18 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  getActivePeriod() {
+    return this.api.get('period/active')
+      .pipe(map(period => period.json()));
+  }
+
   getControlStudentByStudentId(studentId) {
     return this.api.get(`controlStudent/${studentId}`)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
+  getStudentInformationByControlId(_id) {
+    return this.api.get(`controlStudent/student/${_id}`)
       .pipe(map(controlStudent => controlStudent.json()));
   }
 

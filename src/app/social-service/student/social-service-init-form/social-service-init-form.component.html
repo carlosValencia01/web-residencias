@@ -2,7 +2,7 @@
   <form [formGroup]="formRequest" class="card-body" (ngSubmit)="registerRequest()">
     <div class="container">
       <p style="font-size: 0.8rem;">
-        <strong>Validación de correo electronico del estudiante</strong>
+        <strong>Validación de correo electrónico del estudiante</strong>
         <mat-icon *ngIf="verificationEmail" class="text-success">check_circle</mat-icon>
         <mat-icon *ngIf="!verificationEmail" matTooltip="Verifica tu correo electrónico para continuar con el registro de información" class="text-danger">info</mat-icon>
       </p>
@@ -39,7 +39,7 @@
         </div>
         <div class="col-12 col-md-6">
           <mat-form-field appearance="outline" style="width: 100%;">
-            <mat-label>Telefono</mat-label>
+            <mat-label>Teléfono</mat-label>
             <input matInput formControlName="dependencyPhone" type="tel" required>
           </mat-form-field>
         </div>
@@ -98,16 +98,18 @@
         <div class="col-12 col-md-6">
           <mat-label>Modalidad</mat-label>
           <mat-radio-group class="row justify-content-center my-3" formControlName="dependencyProgramModality">
-            <mat-radio-button class="col-12 col-md-5" [value]=true>Interno</mat-radio-button>
-            <mat-radio-button class="col-12 col-md-5" [value]=false>Externo</mat-radio-button>
+            <mat-radio-button class="col-12 col-md-5" value="Interno">Interno</mat-radio-button>
+            <mat-radio-button class="col-12 col-md-5" value="Externo">Externo</mat-radio-button>
           </mat-radio-group>
         </div>
       </div>
       <div class="row">
         <div class="col-12 col-md-6">
-          <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Fecha de inicio</mat-label>
-            <input matInput formControlName="initialDate" type="date" required>
+            <input matInput (dateChange)="getDate($event)" [matDatepicker]="picker" [min]="minDate" [max]="maxDate" formControlName="initialDate" disabled>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker disabled="false"></mat-datepicker>
           </mat-form-field>
         </div>
       </div>

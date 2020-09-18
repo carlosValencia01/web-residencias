@@ -4,6 +4,9 @@ import {CookiesService} from '../../../services/app/cookie.service';
 import {ControlStudentProv} from '../../../providers/social-service/control-student.prov';
 import {NotificationsServices} from '../../../services/app/notifications.service';
 import {eNotificationType} from '../../../enumerators/app/notificationType.enum';
+import * as moment from 'moment';
+
+moment.locale('es');
 
 @Component({
   selector: 'app-social-service-main-page',
@@ -24,8 +27,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public emailStudent: string;
   public sendEmailCode: boolean;
   public verificationEmail: boolean;
-
-
+  pdf: any;
 
   constructor(private loadingService: LoadingService,
               private cookiesService: CookiesService,
@@ -47,6 +49,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.releaseSocialService = false;
       this.assistance = false;
       this.firstDocuments = false;
+
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
@@ -60,11 +63,14 @@ export class SocialServiceMainPageComponent implements OnInit {
     this.loaded = true;
   }
 
-  changeStatusSendInformation() {
+  changeStatusSendInformation(event) {
+    // Hace falta enviar el documento
+    this.pdf = event.pdf;
+    // Se envia el documento y se actualiza el estatus de documento enviado.
     this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, { 'verification.solicitude': 'send'})
       .subscribe( () => {
         this.ngOnInit();
-      }, error => {
+      }, () => {
         this.notificationsService.showNotification(eNotificationType.INFORMATION,
           'Atención',
           'No se ha actualizado el estatus de tu información por favor, vuelve a enviar la información de tu servicio');
