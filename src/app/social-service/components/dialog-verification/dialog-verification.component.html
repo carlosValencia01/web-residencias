@@ -1,0 +1,41 @@
+<h2 mat-dialog-title>Favor de verificar su identidad</h2>
+<form [formGroup]="formVerification">
+
+  <mat-form-field appearance="outline" class="col-12">
+    <mat-label style="color: #707070;">
+      <mat-icon style="font-size: 15px;">account_circle</mat-icon> Número de Control
+    </mat-label>
+    <input matInput type="text" (keyup.enter)="password.focus()" formControlName="usernameInput"
+      placeholder="Número de control" aria-describedby="emailHelp" aria-label="Introduzca su numero de control"
+      required autofocus>
+    <mat-error *ngIf="formVerification.get('usernameInput').errors">
+      <span *ngIf="formVerification.get('usernameInput').errors['required']">
+        Campo obligatorio
+      </span>
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="col-12">
+    <mat-label style="color: #707070;">
+      <mat-icon style="font-size: 15px;">lock</mat-icon> NIP
+    </mat-label>
+    <input #password matInput type="password" (keyup.enter)="login()" formControlName="passwordInput"
+      aria-describedby="emailHelp" aria-label="Introduzca su NIP" placeholder="NIP" required>
+    <mat-error *ngIf="formVerification.get('passwordInput').errors">
+      <span *ngIf="formVerification.get('passwordInput').errors['required']">
+        Campo obligatorio
+      </span>
+    </mat-error>
+  </mat-form-field>
+</form>
+
+<div *ngIf="showAlertDiv" style="margin-top: 8px;" class="alert alert-danger" role="alert">
+  {{messageAlertDiv}}
+</div>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close color="danger">Cancelar</button>
+  <button mat-button type="submit" color="primary" (click)="verification()" >Aceptar</button>
+</mat-dialog-actions>
+
+

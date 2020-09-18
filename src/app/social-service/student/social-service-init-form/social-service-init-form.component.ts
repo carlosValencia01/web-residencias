@@ -1,9 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {NotificationsServices} from '../../../services/app/notifications.service';
 import {eNotificationType} from '../../../enumerators/app/notificationType.enum';
 import {ControlStudentProv} from '../../../providers/social-service/control-student.prov';
 import {LoadingService} from '../../../services/app/loading.service';
+import {MatDialog} from '@angular/material';
+import { DialogVerificationComponent } from '../../components/dialog-verification/dialog-verification.component';
 
 interface Category {
   value: string;
@@ -35,14 +37,21 @@ export class SocialServiceInitFormComponent implements OnInit {
     {value: 'g', viewValue: 'Instituciones educativas privadas'}
   ];
   public communityFlag = false;
+  public verificationResult = false;
   public fieldMessages = {
     '1': 'Nombre  y teléfono de la dependencia en la que se pretende realizar el Servicio Social.'
   };
+  public localEmail: string;
+
+  @ViewChild('dialogverification') dialogVerification: DialogVerificationComponent;
 
   constructor(private formBuilder: FormBuilder,
               private controlStudentProv: ControlStudentProv,
               private loadingService: LoadingService,
-              private notificationsService: NotificationsServices) {
+              private notificationsService: NotificationsServices,
+              public dialog: MatDialog) {
+    const data = JSON.parse(localStorage.getItem('user'));
+    this.localEmail = data.email;
   }
 
   ngOnInit() {
@@ -65,25 +74,32 @@ export class SocialServiceInitFormComponent implements OnInit {
     if (this.formRequest.invalid) {
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor de llenar todos los campos', '');
     } else {
-      let programType = this.categories.find(c => c.value === this.formRequest.get('dependencyProgramType').value).viewValue;
-      if (this.communityFlag) {
-        if (this.communityName.invalid) {
-          this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor describa su comunidad', '');
-          return;
-        } else {
-          programType = programType + ' ' + this.communityName.value;
+      const dialogRef = this.dialog.open(DialogVerificationComponent, { data: { email: this.localEmail }, });
+      dialogRef.afterClosed().subscribe(result => {
+        this.verificationResult = result;
+        if (this.verificationResult) {
+          console.log('Proceder a insercion de formulario');
+          let programType = this.categories.find(c => c.value === this.formRequest.get('dependencyProgramType').value).viewValue;
+          if (this.communityFlag) {
+            if (this.communityName.invalid) {
+              this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor describa su comunidad', '');
+              return;
+            } else {
+              programType = programType + ' ' + this.communityName.value;
+            }
+          }
+          this.formRequest.get('dependencyProgramType').setValue(programType);
+          this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, this.formRequest.value)
+            .subscribe( res => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+              this.sendInformation.emit();
+            }, error => {
+              this.loadingService.setLoading(true);
+            }, () => this.loadingService.setLoading(false));
         }
-      }
-      this.formRequest.get('dependencyProgramType').setValue(programType);
-      this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, this.formRequest.value)
-        .subscribe( res => {
-          this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
-          this.sendInformation.emit();
-        }, error => {
-          this.loadingService.setLoading(true);
-        }, () => this.loadingService.setLoading(false));
+      });
     }
-  }
+  }// registerRequest
 
   _initialize() {
     this.formRequest = this.formBuilder.group({

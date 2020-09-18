@@ -38,6 +38,7 @@ import { ControlStudentsMainPageComponent } from './department/control-students-
 import {ControlStudentProv} from '../providers/social-service/control-student.prov';
 import { SocialServiceMainPageComponent } from './student/social-service-main-page/social-service-main-page.component';
 import { SocialServiceInitFormComponent } from './student/social-service-init-form/social-service-init-form.component';
+import { DialogVerificationComponent } from './components/dialog-verification/dialog-verification.component';
 
 
 @NgModule({
@@ -75,13 +76,14 @@ import { SocialServiceInitFormComponent } from './student/social-service-init-fo
   declarations: [
     ControlStudentsMainPageComponent,
     SocialServiceMainPageComponent,
-    SocialServiceInitFormComponent
+    SocialServiceInitFormComponent,
+    DialogVerificationComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },
     ControlStudentProv
   ],
-  entryComponents: []
+  entryComponents: [DialogVerificationComponent]
 })
 export class SocialServiceModule { }

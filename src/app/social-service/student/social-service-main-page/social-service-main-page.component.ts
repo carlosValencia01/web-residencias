@@ -26,7 +26,6 @@ export class SocialServiceMainPageComponent implements OnInit {
   public verificationEmail: boolean;
 
 
-
   constructor(private loadingService: LoadingService,
               private cookiesService: CookiesService,
               private notificationsService: NotificationsServices,
