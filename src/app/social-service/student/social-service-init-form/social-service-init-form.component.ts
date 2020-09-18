@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {NotificationsServices} from '../../../services/app/notifications.service';
 import {eNotificationType} from '../../../enumerators/app/notificationType.enum';
@@ -9,6 +9,8 @@ import {ImageToBase64Service} from '../../../services/app/img.to.base63.service'
 import {CookiesService} from '../../../services/app/cookie.service';
 import * as moment from 'moment';
 moment.locale('es');
+import {MatDialog} from '@angular/material';
+import { DialogVerificationComponent } from '../../components/dialog-verification/dialog-verification.component';
 
 interface Category {
   value: string;
@@ -42,21 +44,27 @@ export class SocialServiceInitFormComponent implements OnInit {
     {value: 'g', viewValue: 'Instituciones educativas privadas'}
   ];
   public communityFlag = false;
+  public verificationResult = false;
   public fieldMessages = {
     '1': 'Nombre  y teléfono de la dependencia en la que se pretende realizar el Servicio Social.'
   };
   initRequest: InitRequest;
+  public localEmail: string;
+  @ViewChild('dialogverification') dialogVerification: DialogVerificationComponent;
 
   constructor(private formBuilder: FormBuilder,
               private controlStudentProv: ControlStudentProv,
               private loadingService: LoadingService,
               public imgSrv: ImageToBase64Service,
               private cookiesService: CookiesService,
-              private notificationsService: NotificationsServices) {
+              private notificationsService: NotificationsServices,
+              public dialog: MatDialog) {
     const currentYear = new Date().getFullYear();
     const currentMont = new Date().getMonth();
     this.minDate = new Date(currentYear, currentMont - 1, 1);
     this.maxDate = new Date();
+    const data = JSON.parse(localStorage.getItem('user'));
+    this.localEmail = data.email;
   }
 
   ngOnInit() {
@@ -93,37 +101,43 @@ export class SocialServiceInitFormComponent implements OnInit {
     if (this.formRequest.invalid) {
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor de llenar todos los campos', '');
     } else {
-      // Obtener el texto del tipo de programa para la eleccion de la variable categoria
-      const programType = this.categories.find(c => c.value === this.formRequest.get('dependencyProgramType').value);
-      // Si la categoria es true, significa que se eligio la comunidad donde el alumno tendra que escribir la comunidad
-      if (this.communityFlag) {
-        if (this.communityName.invalid) {
-          // Si se deja el campo de comunidad vacio no continua con el proceso
-          this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor describa su comunidad', '');
-          return;
-        } else {
-          // Guardar dentro de la variable viewValue el valor del texto y la comunidad
-          programType.viewValue = programType.viewValue + ': ' + this.communityName.value;
-        }
-      }
-      this.formRequest.get('dependencyProgramType').setValue(programType);
-      // Se asigna el valor del formulario del alumno a la clase de initRequest para el documento de solicitud
-      this.initRequest.setRequest(this.formRequest.value);
-      // Se obtiene el documento pdf de Servicio Social
-      const pdf = this.initRequest.socialServiceSolicitude().output('bloburl');
+      const dialogRef = this.dialog.open(DialogVerificationComponent, { data: { email: this.localEmail }, });
+      dialogRef.afterClosed().subscribe(result => {
+        this.verificationResult = result;
+        if (this.verificationResult) {
+          // Obtener el texto del tipo de programa para la eleccion de la variable categoria
+          const programType = this.categories.find(c => c.value === this.formRequest.get('dependencyProgramType').value);
+          // Si la categoria es true, significa que se eligio la comunidad donde el alumno tendra que escribir la comunidad
+          if (this.communityFlag) {
+            if (this.communityName.invalid) {
+              // Si se deja el campo de comunidad vacio no continua con el proceso
+              this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor describa su comunidad', '');
+              return;
+            } else {
+              // Guardar dentro de la variable viewValue el valor del texto y la comunidad
+              programType.viewValue = programType.viewValue + ': ' + this.communityName.value;
+            }
+          }
+          this.formRequest.get('dependencyProgramType').setValue(programType);
+          // Se asigna el valor del formulario del alumno a la clase de initRequest para el documento de solicitud
+          this.initRequest.setRequest(this.formRequest.value);
+          // Se obtiene el documento pdf de Servicio Social
+          const pdf = this.initRequest.socialServiceSolicitude().output('bloburl');
 
-      // Se guarda la informacion del estudiante en la base de datos y se emite el cambio de estatus en la pagina principal
-      // asi como su actualizacion para el documento enviado
-      this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, this.formRequest.value)
-        .subscribe( res => {
-          this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
-          this.sendInformation.emit({pdf});
-        }, () => {
-          this.notificationsService.showNotification(eNotificationType.ERROR, 'Error', 'No se ha podido guardar la información, favor de intentarlo mas tarde');
-          this.loadingService.setLoading(true);
-        }, () => this.loadingService.setLoading(false));
+          // Se guarda la informacion del estudiante en la base de datos y se emite el cambio de estatus en la pagina principal
+          // asi como su actualizacion para el documento enviado
+          this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, this.formRequest.value)
+            .subscribe( res => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+              this.sendInformation.emit({pdf});
+            }, () => {
+              this.notificationsService.showNotification(eNotificationType.ERROR, 'Error', 'No se ha podido guardar la información, favor de intentarlo mas tarde');
+              this.loadingService.setLoading(true);
+            }, () => this.loadingService.setLoading(false));
+        }
+      });
     }
-  }
+  }// registerRequest
 
   getDate(event) {
     const time = moment();

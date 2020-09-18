@@ -42,6 +42,7 @@ import { SocialServiceInitFormComponent } from './student/social-service-init-fo
 import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 import {ImageToBase64Service} from '../services/app/img.to.base63.service';
 import {MatNativeDateModule} from '@angular/material';
+import { DialogVerificationComponent } from './components/dialog-verification/dialog-verification.component';
 
 
 @NgModule({
@@ -82,7 +83,8 @@ import {MatNativeDateModule} from '@angular/material';
   declarations: [
     ControlStudentsMainPageComponent,
     SocialServiceMainPageComponent,
-    SocialServiceInitFormComponent
+    SocialServiceInitFormComponent,
+    DialogVerificationComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -90,6 +92,6 @@ import {MatNativeDateModule} from '@angular/material';
     ControlStudentProv,
     ImageToBase64Service
   ],
-  entryComponents: []
+  entryComponents: [DialogVerificationComponent]
 })
 export class SocialServiceModule { }

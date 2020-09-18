@@ -102,9 +102,13 @@
                   <div class="row">
                     <div class="col-12">
                       <p>
-                        <b>
+                        <b *ngIf="!hasCert">
                           <span class="text-warning"> * </span>
                           CERTIFICADO DE BACHILLERATO
+                        </b>
+                        <b *ngIf="hasCert">
+                          <span class="text-warning"> * </span>
+                          CARTA COMPROMISO
                         </b>
                       </p>
                     </div>
@@ -113,54 +117,45 @@
               </div>
               <div class="row text-center">
                 <div class="col-12">
-                  <div *ngIf="certificateDoc && !ccDoc">
-                    <span *ngIf="certificateDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="certificateDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="certificateDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="certificateDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                  <div *ngIf="!hasCert">
+                    <span *ngIf="!certificateDoc" class="badge badge-warning">SIN ENVIO</span>
+                    <span *ngIf="certificateDoc && certificateDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="certificateDoc && certificateDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="certificateDoc && certificateDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="certificateDoc && certificateDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <div *ngIf="ccDoc && !certificateDoc">
-                    <span *ngIf="ccDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="ccDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="ccDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="ccDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                  <div *ngIf="hasCert">
+                    <span *ngIf="!ccDoc" class="badge badge-warning">SIN ENVIO</span>
+                    <span *ngIf="ccDoc && ccDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="ccDoc && ccDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
+                    <span *ngIf="ccDoc && ccDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="ccDoc && ccDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
                   </div>
-                  <div *ngIf="ccDoc && certificateDoc">
-                    <span *ngIf="certificateDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                    <span *ngIf="certificateDoc.status.name === 'VALIDADO'" class="badge badge-primary">VALIDADO</span>
-                    <span *ngIf="certificateDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                    <span *ngIf="certificateDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
-                  </div>
-                  <span *ngIf="!ccDoc && !certificateDoc" class="badge badge-warning">SIN ENVIO</span>
                 </div>
               </div>
             </div>
-            <div *ngIf="!ccDoc && certificateDoc && certificateDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+            <div *ngIf="certificateDoc && certificateDoc.status.name === 'RECHAZADO' && !hasCert" style="text-align: center; cursor: pointer; background: #276142;">
               <mat-icon class="mx-1" style="color:white" (click)="onMessage(certificateDoc.status.observation)"
               data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
             </div>
-            <div *ngIf="!certificateDoc && ccDoc && ccDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
+            <div *ngIf="ccDoc && ccDoc.status.name === 'RECHAZADO' && hasCert" style="text-align: center; cursor: pointer; background: #276142;">
               <mat-icon class="mx-1" style="color:white" (click)="onMessage(ccDoc.status.observation)"
               data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
             </div>
-            <div *ngIf="ccDoc && certificateDoc && certificateDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer; background: #276142;">
-              <mat-icon class="mx-1" style="color:white" (click)="onMessage(certificateDoc.status.observation)"
-              data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-            </div>
             <div class="card-body c-body" id="collapseCERT">
-              <div class="row text-center" *ngIf="!certificateDoc && !ccDoc">
+              <div class="row text-center" *ngIf="(!certificateDoc && !ccDoc) || (certificateDoc && certificateDoc.status.name === 'RECHAZADO' || ccDoc!) || (ccDoc && ccDoc.status.name === 'RECHAZADO' && (!certificateDoc || certificateDoc.status.name === 'RECHAZADO'))">
                 <div class="col-12">
                   <mat-slide-toggle (change)="hasCertificate($event)" color="primary">No tengo certificado
                   </mat-slide-toggle>
                 </div>
               </div>
-              <div class="row text-center" *ngIf="!hasCert && !ccDoc || certificateDoc">
-                <div class="col-12" *ngIf="!certificateDoc || certificateDoc.status.name === 'RECHAZADO'">
+              <div class="row text-center" *ngIf="!hasCert">
+                <div class="col-12" *ngIf="!certificateDoc && !ccDoc || certificateDoc.status.name === 'RECHAZADO'">
                   <dropzone id="dz0" [config]="config" [message]="'Subir (certificado)'" (error)="onErrorCommon($event)"
                     (success)="onUploadSuccess($event)"></dropzone>
                 </div>
               </div>
-              <div class="row text-center" *ngIf="hasCert && !certificateDoc || ccDoc">
+              <div class="row text-center" *ngIf="hasCert">
                 <div class="col-12">
                   <div class="row text-center">
                     <div class="col-12" *ngIf="!ccDoc || ccDoc.status.name === 'RECHAZADO'">
@@ -168,7 +163,7 @@
                         (success)="onUploadSuccess($event)"></dropzone>
                     </div>
                   </div>
-                  <div class="row text-center">
+                  <div class="row text-center" *ngIf="!ccDoc || ccDoc.status.name === 'RECHAZADO'">
                     <div class="col-12 download">
                       <a ngbTooltip="Descargar carta compromiso" tooltipClass="my-custom-class"
                         (click)="generateCommitmentLetter('Certificado de Bachillerato')" style="color: red;">Descargar</a>
