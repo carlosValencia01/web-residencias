@@ -18,6 +18,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2';
 import { ICareer } from 'src/app/entities/app/career.model';
 import { CareerProvider } from 'src/app/providers/shared/career.prov';
+import { MatDialog } from '@angular/material';
+import { ReviewPhotosPaydocModalComponent } from '../review-photos-paydoc-modal/review-photos-paydoc-modal.component';
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -97,7 +99,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   displayedColumns: string[] = ['nc', 'name', 'carreer', 'numInvitados','status','actions'];
   dataSource: MatTableDataSource<any>;
-  displayedColumnsDoc: string[] = ['nc', 'name', 'carreer','status','actions'];
+  displayedColumnsDoc: string[] = ['nc', 'name', 'carreer','avance','status','actions'];
   dataSourceDoc: MatTableDataSource<any>;
   
   @ViewChild('paginator1') set paginator(paginator: MatPaginator){
@@ -146,6 +148,9 @@ export class ListGraduatesPageComponent implements OnInit {
     }
   };
   filteredCareerDoc: string;
+  doPdfReport = false;
+  doExcelReport = false;
+  doBestAvgReport = false;
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
@@ -155,7 +160,8 @@ export class ListGraduatesPageComponent implements OnInit {
     private imageToBase64Serv: ImageToBase64Service,
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
-    private careerProv: CareerProvider
+    private careerProv: CareerProvider,
+    public dialog: MatDialog,
   ) {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
@@ -285,7 +291,11 @@ export class ListGraduatesPageComponent implements OnInit {
             specialty: alumno.payload.doc.get('especialidad') ? alumno.payload.doc.get('especialidad') : '<<Especialidad>>',
             numInvitados: alumno.payload.doc.get('numInvitados') ? alumno.payload.doc.get('numInvitados') : 0,
             invitados: alumno.payload.doc.get('invitados') ? alumno.payload.doc.get('invitados') : [{}],
-            nss: alumno.payload.doc.get('nss') ? alumno.payload.doc.get('nss') : ''
+            nss: alumno.payload.doc.get('nss') ? alumno.payload.doc.get('nss') : '',
+            comprobantePago: alumno.payload.doc.get('comprobantePago'),
+            correoCertificado: alumno.payload.doc.get('correoCertificado'),
+            entregaFotos: alumno.payload.doc.get('entregaFotos'),
+            
   
           })       
         }
@@ -575,7 +585,8 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   // Generar reporte de alumnos
-  generateReport() {
+  async generateReport() {
+    this.doPdfReport = true;
     this.loadingService.setLoading(true);
     var doc = new jsPDF('l', 'pt');
 
@@ -591,7 +602,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(15);
     doc.setFontStyle('bold');
     doc.text(header, pageWidth / 2, 30, 'center');
-
+    await this.delay(500);
     doc.autoTable({
       html: '#tableReport',
       theme: 'grid',
@@ -656,13 +667,18 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontStyle('bold');
     doc.setFontSize(7);
     doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
+    this.doPdfReport = false;
     window.open(doc.output('bloburl'), '_blank');
     this.loadingService.setLoading(false);
     // doc.save("Reporte Graduacion "+this.filteredCareer+".pdf");
   }
 
   // Exportar alumnos a excel
-  excelExport() {
+  async excelExport() {
+    this.doExcelReport = true;
+    this.loadingService.setLoading(true);
+    await this.delay(1000);
+    this.loadingService.setLoading(false);
     this.notificationsServices.showNotification(0, 'Datos Exportados', 'Los datos se exportaron con éxito');
     TableToExcel.convert(document.getElementById('tableReportExcel'), {
       name: 'Reporte Graduación.xlsx',
@@ -670,6 +686,8 @@ export class ListGraduatesPageComponent implements OnInit {
         name: 'Alumnos'
       }
     });
+    await this.delay(200);
+    this.doExcelReport = false;
   }
 
   // Generar papeletas de alumnos verificados
@@ -967,6 +985,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   async generateReportBestAverage() {
+    this.doBestAvgReport = true;
     this.loadingService.setLoading(true);
     await this.getBestAvgs();
 
@@ -984,7 +1003,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(15);
     doc.setFontStyle('bold');
     doc.text(header, pageWidth / 2, 50, 'center');
-
+    await this.delay(1000);
     doc.autoTable({
       html: '#tableReportBestAverageIn',
       theme: 'striped',
@@ -1040,6 +1059,7 @@ export class ListGraduatesPageComponent implements OnInit {
       doc.setFontSize(7);
       doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
       this.loadingService.setLoading(false);
+      this.doBestAvgReport = false;
       window.open(doc.output('bloburl'), '_blank');
     }, 500);
     // doc.save("Reporte Graduacion "+this.filteredCareer+".pdf");
@@ -2313,6 +2333,39 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   reviewPhotos(student){
-
+    const linkModal = this.dialog.open(ReviewPhotosPaydocModalComponent, {
+      data: {
+        operation: 'view',
+        student:student,
+        collection: this.collection
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90em',
+      height: '800px'
+    });
+    linkModal.afterClosed().subscribe( (res)=>{
+        const graduated = this.alumnos.filter( st=> st.id == student.id)[0];
+        if(graduated.entregaFotos && graduated.comprobantePago.status.name == 'ACEPTADO'){
+          this.firestoreService.updateFieldGraduate(student.id,{documentationStatus:'PENDIENTE',stepCertificado:3},this.collection).then(upd=>{});
+        }
+       
+      },
+      err=>console.log(err)
+    );
   }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  changeStatusPhotos(student){
+    const graduated = this.alumnos.filter( st=> st.id == student.id)[0];
+    if(graduated.comprobantePago && graduated.comprobantePago.status.name == 'ACEPTADO'){
+      this.firestoreService.updateFieldGraduate(student.id,{documentationStatus:'PENDIENTE',stepCertificado:3, entregaFotos:true},this.collection).then(upd=>{});
+    }else{
+      this.firestoreService.updateFieldGraduate(student.id,{entregaFotos:true},this.collection).then(upd=>{});
+    }
+  }
+
 }

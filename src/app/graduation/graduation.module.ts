@@ -44,6 +44,9 @@ import { SurveyQuestionsPageComponent } from './survey-questions-page/survey-que
 import { SurveyRegisterPageComponent } from './survey-register-page/survey-register-page.component';
 import { CareerProvider } from '../providers/shared/career.prov';
 import { CertificateIneComponent } from './certificate-ine/certificate-ine.component';
+import { ReviewPhotosPaydocModalComponent } from './review-photos-paydoc-modal/review-photos-paydoc-modal.component';
+import { SafePipe } from './pipes/safe.pipe';
+import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
 @NgModule({
   imports: [
     CommonsModule,
@@ -85,7 +88,8 @@ import { CertificateIneComponent } from './certificate-ine/certificate-ine.compo
     SurveyQuestionsPageComponent,
     NewGraduationEventComponent,
     CertificateIneComponent,
-    
+    ReviewPhotosPaydocModalComponent,
+    SafePipe
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -97,9 +101,11 @@ import { CertificateIneComponent } from './certificate-ine/certificate-ine.compo
     ImageToBase64Service,
     StudentProvider,
     CareerProvider,
+    InscriptionsProvider,
   ],
   entryComponents: [
     NewGraduationEventComponent,
+    ReviewPhotosPaydocModalComponent,
   ]
 })
 export class GraduationModule { }
