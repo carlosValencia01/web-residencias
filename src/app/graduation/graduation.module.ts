@@ -54,6 +54,9 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
   acceptedFiles: 'image/jpeg,image/png,application/pdf',
   maxFiles: 1
 };
+import { ReviewPhotosPaydocModalComponent } from './review-photos-paydoc-modal/review-photos-paydoc-modal.component';
+import { SafePipe } from './pipes/safe.pipe';
+import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
 @NgModule({
   imports: [
     CommonsModule,
@@ -98,6 +101,8 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     NewGraduationEventComponent,
     CertificateIneComponent,
     MyCertificatePageComponent,
+    ReviewPhotosPaydocModalComponent,
+    SafePipe
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -113,9 +118,11 @@ const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
     ImageToBase64Service,
     StudentProvider,
     CareerProvider,
+    InscriptionsProvider,
   ],
   entryComponents: [
     NewGraduationEventComponent,
+    ReviewPhotosPaydocModalComponent,
   ]
 })
 export class GraduationModule { }
