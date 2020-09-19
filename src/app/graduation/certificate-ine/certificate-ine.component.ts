@@ -1,8 +1,8 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
-import { GraduationProvider } from 'src/app/providers/graduation/graduation.prov';
+
 import { CookiesService } from 'src/app/services/app/cookie.service';
-import { LoadingService } from 'src/app/services/app/loading.service';
+
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { FirebaseService } from 'src/app/services/graduation/firebase.service';
 import { Subscription } from 'rxjs';
@@ -46,11 +46,9 @@ export class CertificateIneComponent implements OnInit, OnDestroy {
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
-    private graduationProv: GraduationProvider,
     private cookiesService: CookiesService,
-    private loadingService: LoadingService,
     private studentProv: StudentProvider,
-    private careerProv: CareerProvider,
+    private careerProv: CareerProvider
   ) { 
     this.dataSource = new MatTableDataSource();
   }

@@ -128,6 +128,7 @@ export class LoaderDataGraduationPageComponent implements OnInit {
             observations: '',
             degree: '',
             estatus: 'Registrado',
+            documentationStatus: 'NO SOLICITADO',
             survey: false,
             mejorPromedio:false
           });
