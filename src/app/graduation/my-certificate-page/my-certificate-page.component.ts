@@ -46,6 +46,7 @@ export class MyCertificatePageComponent implements OnInit {
   folderPeriodDrive;
   payDoc;
   documentationStatus;
+  isOkPeriod;
 
   constructor(
     private notificationsServices: NotificationsServices,
@@ -74,15 +75,25 @@ export class MyCertificatePageComponent implements OnInit {
                 this.event = event.payload.data();
                 this.folderPeriodDrive = this.event.folderIdDrive;
                 this.eventId = event.payload.id;
-                this.studentSub = this.firebaseSrv.getGraduateByControlNumber(this.user.email + '', this.eventId).subscribe(
-                  (student) => {
-                    this.student = student[0];
-                    this.step = this.student.data.stepCertificado ? this.student.data.stepCertificado : 1;
-                    this.documentationStatus = this.student.data.documentationStatus ? this.student.data.documentationStatus : 'NO SOLICITADO';
-                    this.payDoc = this.student.data.comprobantePago ? this.student.data.comprobantePago : '';
-                    this.loadStepWizard(this.step);
-                    this.assingConfigForDropzone();
-                });
+
+                let initDate = new Date (this.event.certificateInitDate.seconds * 1000);
+                let endDate = new Date (this.event.certificateEndDate.seconds * 1000);
+                let today = new Date();
+
+                if(today >= initDate && today <= endDate){
+                  this.isOkPeriod = true;
+                  this.studentSub = this.firebaseSrv.getGraduateByControlNumber(this.user.email + '', this.eventId).subscribe(
+                    (student) => {
+                      this.student = student[0];
+                      this.step = this.student.data.stepCertificado ? this.student.data.stepCertificado : 1;
+                      this.documentationStatus = this.student.data.documentationStatus ? this.student.data.documentationStatus : 'NO SOLICITADO';
+                      this.payDoc = this.student.data.comprobantePago ? this.student.data.comprobantePago : '';
+                      this.loadStepWizard(this.step);
+                      this.assingConfigForDropzone();
+                  });
+                } else {
+                  this.isOkPeriod = false;
+                }
               } else {
                 this.isGraduate = false;
               }
@@ -122,13 +133,14 @@ export class MyCertificatePageComponent implements OnInit {
 
   loadStepWizard(step) {
     if (step == 1) {
-      this.stepper.selectedIndex = 0;   
+      this.stepper.selectedIndex = 0;
     }
     if (step == 2) {
       this.stepper.selectedIndex = 1;    
     }
     if (step == 3) {
-      this.stepper.selectedIndex = 2;
+      this.stepper.next();
+      this.stepper.next();
     }
   }
 
@@ -142,15 +154,6 @@ export class MyCertificatePageComponent implements OnInit {
             console.log(error);
           });
         }
-        break;
-      case 2:
-      
-        break;
-      case 3:
-        
-        break;
-    
-      default:
         break;
     }
   }
@@ -173,7 +176,7 @@ export class MyCertificatePageComponent implements OnInit {
       const documentInfo = {
         doc: {
           filename: args[1].name,
-          type: moment(new Date()).format('LL'),
+          date: moment(new Date()).format("DD/MM/YYYY"),
           fileIdInDrive: args[1].fileId,
         },
         status: {

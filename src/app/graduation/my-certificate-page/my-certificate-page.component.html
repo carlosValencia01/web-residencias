@@ -11,7 +11,19 @@
   </div>
 </div>
 
-<div *ngIf="isGraduate">
+<div *ngIf="isGraduate && !isOkPeriod">
+  <div class="row justify-content-md-center">
+    <div class="col-12 col-lg-8">
+      <div class="title">
+        <img src="assets/imgs/sweetInfoIcon.png" width="70" height="70" class="d-inline-block align-top" alt=""><br>
+        <h2>¡Aviso, Graduación!</h2><br>
+        <span>El periodo de solicitudes ha terminado</span><br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isGraduate && isOkPeriod">
   <mat-horizontal-stepper [linear]="isLinear" #stepper>
     <mat-step editable='false'>
       <ng-template matStepLabel>Solicitud de Certificado</ng-template>
@@ -43,49 +55,95 @@
       <ng-template matStepLabel>Recibo de pago</ng-template>
       <div class="example-container" *ngIf="step == 2">
         <div class="row justify-content-md-center">
-          <div class="col-sm-6 col-md-4 col-lg-3" style="text-align: center;">
-            <label><b>Línea de Captura:</b> {{documentationStatus == 'LINEA ASIGNADA' ? 'Asignada' : 'Solicitada'}}</label>
-            <div class="col-12" ngbTooltip="Ayuda" *ngIf="documentationStatus == 'LINEA ASIGNADA' || documentationStatus == 'PENDIENTE'">
-              <mat-icon class="help" style="color: black;" (click)="help()">help</mat-icon>
-            </div>
-            <div class="card cd" *ngIf="documentationStatus == 'LINEA ASIGNADA' || documentationStatus == 'PENDIENTE'">
-              <div [class.isDisabled]="payDoc !== undefined ? true : false" class="card-header c-header" (click)="
-                  collapse('collapseCOMPROBANTE',payDoc !== undefined ? true : false)">
-                <div class="row text-center">
-                  <div class="col-12">
-                    <div>
-                      <p><b>COMPROBANTE DE PAGO</b></p>
+          <table class="table" style="width: 80%;">
+            <tbody>
+              <tr>
+                <td rowspan="2" style="width: 50%;">
+                  <div style="text-align: center;">
+                    <label><b>Línea de Captura:</b> {{documentationStatus == 'LINEA ASIGNADA' ? 'Asignada' : 'Solicitada'}}</label>
+                    <div ngbTooltip="Ayuda" *ngIf="documentationStatus == 'LINEA ASIGNADA'">
+                      <mat-icon class="help" style="color: black;" (click)="help()">help</mat-icon>
                     </div>
                   </div>
-                </div>
-                <div class="row text-center">
-                  <div class="col-12">
-                    <div *ngIf="payDoc">
-                      <span *ngIf="payDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
-                      <span *ngIf="payDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
-                      <span *ngIf="payDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                  <div class="card cd" *ngIf="documentationStatus == 'LINEA ASIGNADA'">
+                    <div [class.isDisabled]="payDoc !== undefined ? true : false" class="card-header c-header" (click)="
+                        collapse('collapseCOMPROBANTE',payDoc !== undefined ? true : false)">
+                      <div class="row text-center">
+                        <div class="col-12">
+                          <div>
+                            <p><b>COMPROBANTE DE PAGO</b></p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row text-center">
+                        <div class="col-12">
+                          <div *ngIf="payDoc">
+                            <span *ngIf="payDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                            <span *ngIf="payDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                            <span *ngIf="payDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                          </div>
+                          <span *ngIf="!payDoc" class="badge badge-warning">SIN ENVIO</span>
+                        </div>
+                      </div><br>
+                      <div *ngIf="payDoc && payDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer;">
+                        <mat-icon class="mx-1" style="color:white" (click)="onMessage(payDoc.status.observation)"
+                        data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+                      </div>
                     </div>
-                    <span *ngIf="!payDoc" class="badge badge-warning">SIN ENVIO</span>
+                    <div class="card-body c-body" id="collapseCOMPROBANTE" *ngIf="payConfig">
+                      <dropzone id="dz0" [config]="payConfig" [message]="'Subir'" (error)="onErrorCommon($event)"
+                        (success)="onUploadSuccess($event)" *ngIf="!payDoc || payDoc.status.name === 'RECHAZADO'">
+                      </dropzone>
+                    </div>
                   </div>
-                </div><br>
-                <div *ngIf="payDoc && payDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer;">
-                  <mat-icon class="mx-1" style="color:white" (click)="onMessage(payDoc.status.observation)"
-                  data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
-                </div>
-              </div>
-              <div class="card-body c-body" id="collapseCOMPROBANTE" *ngIf="payConfig">
-                <dropzone id="dz0" [config]="payConfig" [message]="'Subir'" (error)="onErrorCommon($event)"
-                  (success)="onUploadSuccess($event)" *ngIf="!payDoc || payDoc.status.name === 'RECHAZADO'">
-                </dropzone>
-              </div>
-            </div>
-          </div>
+                </td>
+                <td style="width: 50%;">
+                  <div class="alert alert-warning">
+                    <h5 class="alert-heading">Proveedor recomendado para fotos:</h5>
+                    <hr>
+                    <label>Información aquí...</label>
+                    <hr>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 50%;">
+                  <div class="alert alert-warning">
+                    <h5 class="alert-heading">Requisitos para fotos:</h5>
+                    <hr>
+                    <ul style="text-align: left;">
+                      <li>Tamaño credencial.</li>
+                      <li>Ovaladas.</li>
+                      <li>Blanco y negro.</li>
+                      <li>Saco negro / gris oscuro.</li>
+                      <li>Camisa / blusa blanca.</li>
+                      <li>Corbata (Hombres).</li>
+                      <li>Aretes discretos (Mujeres).</li>
+                      <li>Fondo blanco.</li>
+                      <li>Peinado formal.</li>
+                      <li>Pegamento al reverso.</li>
+                      <li>Sin retoque.</li>
+                    </ul>
+                    <hr>
+                  </div>
+                </td>
+              </tr>
+          </table>
         </div>
       </div>
     </mat-step>
     <mat-step editable='false'>
       <ng-template matStepLabel>Estatus del Certificado</ng-template>
-      <!-- HTML de estatus de certificado aquí -->
-    </mat-step>
+      <div class="example-container" *ngIf="step == 3">
+        <div class="row justify-content-md-center">
+          <div class="alert alert-warning">
+            <h5 class="alert-heading">Estimado: {{user.name.fullName}}</h5>
+            <hr>
+            <label>Le informamos que reibirá su certificado de manera digital a partir del día DD/MM/AAAA</label>
+            <hr>
+          </div>
+        </div>
+      </div>
+      </mat-step>
   </mat-horizontal-stepper>
 </div>
