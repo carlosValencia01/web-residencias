@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Api } from 'src/app/providers/app/api.prov';
+import { IGroupSchedule } from '../entities/group.model';
 
 @Injectable()
 export class GroupProvider {
@@ -17,8 +18,13 @@ export class GroupProvider {
       .pipe(map(res => res.json()));
   }
 
+  public assignGroupClassroom(groupId: string, schedule: IGroupSchedule, classroomId: string) {
+    return this.api.put(`sg-cle/group/${groupId}/assign-classroom`, { schedule, classroom: classroomId })
+      .pipe(map(res => res.json()));
+  }
+
   getGroupById(id: string) {
-    return this.api.get('sg-cle/group/byid/'+id)
+    return this.api.get('sg-cle/group/byid/' + id)
       .pipe(map(group => group.json()));
   }
 
@@ -46,7 +52,7 @@ export class GroupProvider {
   }
 
   getAllGroupByTeacher(_teacherId, clientId: string) {
-    return this.api.get(`sg-cle/group/teacher/${ _teacherId}/${clientId}`).pipe(map(res => res.json()));
+    return this.api.get(`sg-cle/group/teacher/${_teacherId}/${clientId}`).pipe(map(res => res.json()));
   }
   saveAverages(data) {
     return this.api.put('sg-cle/group/students/average', data).pipe(map(res => res.json()));

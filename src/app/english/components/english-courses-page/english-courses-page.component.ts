@@ -36,6 +36,7 @@ import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
 import { ActiveGroupModalComponent } from '../../modals/active-group-modal/active-group-modal.component';
 import { AssignEnglishTeacherComponent } from '../../modals/assign-english-teacher/assign-english-teacher.component';
 import { AddStudentsGroupModalComponent } from '../../modals/add-students-group-modal/add-students-group-modal.component';
+import { AssignClassroomComponent } from '../../modals/assign-classroom/assign-classroom.component';
 
 // Importar modelos
 import { IPeriod } from '../../../entities/shared/period.model';
@@ -415,6 +416,26 @@ export class EnglishCoursesPageComponent implements OnInit {
       data: { group, teacherId: group.teacher && group.teacher._id },
       hasBackdrop: true,
       maxWidth: '85vw',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((group: IGroup) => {
+        if (group) {
+          const index = this.activeGroups.findIndex(({ _id }) => _id === group._id);
+          if (index !== -1) {
+            this.activeGroups.splice(index, 1, group);
+            this.createDataSourceActiveGroups(this.activeGroups);
+          }
+        }
+      });
+  }
+
+  public openDialogShowClassrooms(group: IGroup): void {
+    const dialogRef = this.dialog.open(AssignClassroomComponent, {
+      data: { group },
+      hasBackdrop: true,
+      maxWidth: '95vw',
       disableClose: true,
     });
 

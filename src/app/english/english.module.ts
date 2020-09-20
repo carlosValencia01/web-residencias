@@ -2,29 +2,29 @@ import { NgModule } from '@angular/core';
 import { CommonsModule } from 'src/app/commons/commons.module';
 import { EnglishRoutingModule } from './english-routing.module';
 import { StudentEnglishPageComponent } from './components/student-english-page/student-english-page.component';
-//MATERIAL
+// MATERIAL
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
-import {MatListModule} from '@angular/material/list';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatRadioModule} from '@angular/material/radio';
-import {MatStepperModule} from '@angular/material/stepper';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
-import {MatChipsModule} from '@angular/material/chips';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatTableModule} from '@angular/material/table';
-import {MatSortModule} from '@angular/material/sort';
-import {MatPaginatorModule} from '@angular/material/paginator';
-import {MatSelectModule} from '@angular/material/select';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatListModule } from '@angular/material/list';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -38,7 +38,7 @@ import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-//Componentes
+// Componentes
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 import { FormRequestCourseComponent } from './components/student-english-page/form-request-course/form-request-course.component';
 import { StudentRequestsComponent } from './components/english-courses-page/student-requests/student-requests.component';
@@ -58,6 +58,7 @@ import { UploadExternalStudentsComponent } from './components/upload-external-st
 import { AddStudentsGroupModalComponent } from './modals/add-students-group-modal/add-students-group-modal.component';
 import { BossMessageComponent } from './components/boss-message/boss-message.component';
 import { EnglishGroupsPageComponent } from './components/english-groups-page/english-groups-page.component';
+import { AssignClassroomComponent } from './modals/assign-classroom/assign-classroom.component';
 // Services
 import { ImageToBase64Service } from '../services/app/img.to.base63.service';
 import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-avgs-modal.component';
@@ -123,8 +124,9 @@ import { EnglishTeachersListPageComponent } from './components/english-teachers-
     StudentListComponent,
     EnglishStudentsListPageComponent,
     EnglishTeachersListPageComponent,
+    AssignClassroomComponent,
   ],
-  entryComponents: [ //Permite exportar
+  entryComponents: [ // Permite exportar
     FormRequestCourseComponent,
     StudentRequestsComponent,
     ConfigureCourseComponent,
@@ -138,6 +140,7 @@ import { EnglishTeachersListPageComponent } from './components/english-teachers-
     ReviewInformationModalComponent,
     AddStudentsGroupModalComponent,
     UploadAvgsModalComponent,
+    AssignClassroomComponent,
   ],
   providers: [
     StudentProvider,

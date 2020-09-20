@@ -80,6 +80,10 @@
                       <mat-icon>person_add</mat-icon>
                       <span>{{ getEnglishTeacherItemName(row) }}</span>
                     </button>
+                    <button (click)="openDialogShowClassrooms(row)" mat-menu-item>
+                      <mat-icon>domain</mat-icon>
+                      <span>Asignación de aula</span>
+                    </button>
                   </mat-menu>
 
                 </mat-cell>
