@@ -65,8 +65,8 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   // AULAS
   classrooms: IClassroom[];
-  weekdays = [1, 2, 3, 4, 5, 6]; //Dias de la semana
-  dialogRef: any;
+  weekdays = [1, 2, 3, 4, 5, 6]; // Dias de la semana
+  dayschedule = EDaysSchedule; // Enumerador de los dias de la semana
   searchClassroom = '';
   searchGA = '';
 
@@ -273,17 +273,8 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.dataSourceActiveGroups.sort = this.sortActiveGroups;
   }
 
-  scheduleGroupSelected: Array<any>;
-
   openDilogViewScheduleGroup(scheduleSelected) {
-    this.scheduleGroupSelected = scheduleSelected;
-    this.dialogRef = this.dialog.open(this.dialogRefViewScheduleGroup, { hasBackdrop: false });
-
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (!result) {
-        this.scheduleGroupSelected = [];
-      }
-    });
+    this.dialog.open(this.dialogRefViewScheduleGroup, { data: scheduleSelected, hasBackdrop: false });
   }
 
   openDialogFormGenerateGroups() {
@@ -715,7 +706,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   @ViewChild('periodInput') periodInput: ElementRef<HTMLInputElement>;
   periodCtrl = new FormControl();
 
-  _getPeriods(){
+  _getPeriods() {
     this.requestProvider.getPeriods().subscribe(
       (periods) => {
         this.periods = periods.periods;

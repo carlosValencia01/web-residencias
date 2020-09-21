@@ -229,7 +229,7 @@
 
     </mat-tab-group>
 
-    <ng-template #viewScheduleGroup>
+    <ng-template #viewScheduleGroup let-schedule>
       <h1 mat-dialog-title>Horario</h1>
       <div mat-dialog-content>
         <table class="table table-bordered table-hover mt-2">
@@ -243,7 +243,7 @@
 
             <tr>
               <td class="text-center" *ngFor="let day of weekdays; let j = index;">
-                <ng-container *ngFor="let hourForDay of scheduleGroupSelected;">
+                <ng-container *ngFor="let hourForDay of schedule;">
                   <ng-container *ngIf="hourForDay.day==day">
                     {{getHour(hourForDay.startHour)}} - {{getHour(hourForDay.endDate)}}
                   </ng-container>
