@@ -36,17 +36,17 @@ export class DialogVerificationComponent implements OnInit {
       return;
     }
     if  (this.data.email !== this.formVerification.get('usernameInput').value) {
-      this.messageAlertDiv = 'Numero de control no coincide';
+      this.messageAlertDiv = 'Usuario y/o contraseña son incorrectos';
       this.showAlertDiv = true;
       return;
     }
-    this.userProv.login({
+    this.userProv.verifyLoginSii({
       email: this.formVerification.get('usernameInput').value,
       password: this.formVerification.get('passwordInput').value
     })
     .subscribe((res) => {
       this.userProv.sendTokenFromAPI(res.token);
-      if (res.user.rol && res.user.rol.name && res.user.rol.name.toUpperCase().indexOf('ESTUDIANTE') > -1) {
+      if (res) {
         this.dialogRef.close('true');
         return;
       }

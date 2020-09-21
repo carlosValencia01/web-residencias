@@ -21,8 +21,13 @@ export class UserProvider {
             .pipe(map(user => user.json()));
     }
 
-    login(data) {        
+    login(data) {
         return this.api.post('user/login', data)
+            .pipe(map(user => user.json()));
+    }
+
+    verifyLoginSii(data) {
+        return this.api.post('user/verify/studentAccount', data)
             .pipe(map(user => user.json()));
     }
 
