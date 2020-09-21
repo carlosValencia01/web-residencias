@@ -11,6 +11,7 @@ import { StudentOptionsPageComponent } from './components/student-options-page/s
 
 import { EnglishStudentsListPageComponent } from './components/english-students-list-page/english-students-list-page.component';
 import { EnglishTeachersListPageComponent } from './components/english-teachers-list-page/english-teachers-list-page.component';
+import { EnglishClassroomsListPageComponent } from './components/english-classrooms-list-page/english-classrooms-list-page.component';
 
 const routes: Routes = [
   {
@@ -42,6 +43,11 @@ const routes: Routes = [
     path: 'teacher-options',
     pathMatch: 'full',
     component: EnglishTeachersListPageComponent
+  },
+  {
+    path: 'classroom-options',
+    pathMatch: 'full',
+    component: EnglishClassroomsListPageComponent
   },
   {
     path: 'english-groups/:grupId',
