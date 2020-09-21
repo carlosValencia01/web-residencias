@@ -106,102 +106,125 @@
 
       <mat-tab label="Grupos en general">
 
-        <div class="row justify-content-center p-3">
+        <mat-card>
+          <mat-card-content>
 
-          <div>
+            <div class="row text-center p-4 m-0 mt-2" style="align-items: center;">
+              <div class="col-xs-12 col-md-4">
+                <mat-form-field *ngIf="periods" class="w-100">
+                  <mat-chip-list #chipList aria-label="Period selection">
+                    <mat-chip *ngFor="let p of usedPeriods" selectable="true" removable="true"
+                      (removed)="removePeriod(p)">
+                      {{p.periodName}}-{{p.year}}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Filtrar por período..." #periodInput [formControl]="periodCtrl"
+                      [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
+                      (matChipInputTokenEnd)="addPeriod($event)" (ngModelChange)="filterPeriod($event)" matInput>
+                  </mat-chip-list>
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
+                      {{period.periodName}}-{{period.year}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <div class="col-xs-12 col-md-8">
+                <button class="button-blue mr-2" mat-raised-button (click)="openDialogFormCreateGroup()">
+                  Nuevo grupo
+                </button>
+                <button class="button-blue ml-2" mat-raised-button (click)="openDialogFormGenerateGroups()">
+                  Generar grupos
+                </button>
+              </div>
 
-            <button class="button-blue mr-2" mat-raised-button (click)="openDialogFormCreateGroup()">
-              Nuevo grupo
-            </button>
-            <button class="button-blue ml-2" mat-raised-button (click)="openDialogFormGenerateGroups()">
-              Generar grupos
-            </button>
+            </div>
 
-          </div>
+            <!--Tabla-->
+            <div style="position: relative;">
 
-        </div>
+              <div style="position: relative; overflow: auto; max-width: 100%;">
 
-        <!--Tabla-->
-        <div style="position: relative;">
+                <table mat-table [dataSource]="dataSourceGroups" class="mat-elevation-z8" matSort>
 
-          <div style="position: relative; overflow: auto; max-width: 100%;">
+                  <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                  </ng-container>
 
-            <table mat-table [dataSource]="dataSourceGroups" class="mat-elevation-z8" matSort>
+                  <ng-container matColumnDef="course">
+                    <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
+                  </ng-container>
 
-              <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
-              </ng-container>
+                  <ng-container matColumnDef="level">
+                    <mat-header-cell *matHeaderCellDef>Bloque</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
+                  </ng-container>
 
-              <ng-container matColumnDef="course">
-                <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
-              </ng-container>
-
-              <ng-container matColumnDef="level">
-                <mat-header-cell *matHeaderCellDef>Bloque</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
-              </ng-container>
-
-              <ng-container matColumnDef="period">
-                <mat-header-cell *matHeaderCellDef>Período</mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
-              </ng-container>
+                  <ng-container matColumnDef="period">
+                    <mat-header-cell *matHeaderCellDef>Período</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
+                  </ng-container>
 
 
-              <ng-container matColumnDef="request">
-                <mat-header-cell *matHeaderCellDef>Solicitudes</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.reqCount}}</mat-cell>
-              </ng-container>
+                  <ng-container matColumnDef="request">
+                    <mat-header-cell *matHeaderCellDef>Solicitudes</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.reqCount}}</mat-cell>
+                  </ng-container>
 
-              <ng-container matColumnDef="status">
-                <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
-                <mat-cell *matCellDef="let row">
-                  <mat-chip class="small">{{ getStatusGroupName(row.status) }}</mat-chip>
-                </mat-cell>
-              </ng-container>
+                  <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <mat-chip class="small">{{ getStatusGroupName(row.status) }}</mat-chip>
+                    </mat-cell>
+                  </ng-container>
 
-              <ng-container matColumnDef="actions">
-                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
-                </mat-header-cell>
-                <mat-cell *matCellDef="let row">
-                  <button mat-icon-button [matMenuTriggerFor]="actions">
-                    <mat-icon>more_vert</mat-icon>
-                  </button>
+                  <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <button mat-icon-button [matMenuTriggerFor]="actions">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
 
-                  <mat-menu #actions="matMenu">
-                    <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
-                      <mat-icon>watch_later</mat-icon>
-                      <span>Ver Horario</span>
-                    </button>
-                    <button (click)="activeGroup(row)" mat-menu-item>
-                      <mat-icon>done</mat-icon>
-                      <span>Activar Grupo</span>
-                    </button>
-                    <button (click)="generateExcelGroupRequests(row)" mat-menu-item>
-                      <mat-icon>cloud_download</mat-icon>
-                      <span>Descargar solicitudes en excel</span>
-                    </button>
-                  </mat-menu>
+                      <mat-menu #actions="matMenu">
+                        <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
+                          <mat-icon>watch_later</mat-icon>
+                          <span>Ver Horario</span>
+                        </button>
+                        <button (click)="activeGroup(row)" mat-menu-item>
+                          <mat-icon>done</mat-icon>
+                          <span>Activar Grupo</span>
+                        </button>
+                        <button (click)="generateExcelGroupRequests(row)" mat-menu-item>
+                          <mat-icon>cloud_download</mat-icon>
+                          <span>Descargar solicitudes en excel</span>
+                        </button>
+                      </mat-menu>
 
-                </mat-cell>
-              </ng-container>
+                    </mat-cell>
+                  </ng-container>
 
-              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
-              </mat-header-row>
-              <mat-row
-                *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
-              </mat-row>
-            </table>
+                  <mat-header-row
+                    *matHeaderRowDef="['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
+                  </mat-header-row>
+                  <mat-row
+                    *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
+                  </mat-row>
+                </table>
 
-          </div>
+              </div>
 
-          <!--Paginas-->
+              <!--Paginas-->
 
-          <mat-paginator #matPaginatorCreatedGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+              <mat-paginator #matPaginatorCreatedGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
 
-        </div>
+            </div>
 
+          </mat-card-content>
+        </mat-card>
       </mat-tab>
 
     </mat-tab-group>

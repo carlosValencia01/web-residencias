@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
 import TableToExcel from '@linways/table-to-excel';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { MatTabGroup } from '@angular/material/tabs';
+import { MatAutocomplete, MatChipInputEvent } from '@angular/material';
 
 // TABLA
 import { MatPaginator } from '@angular/material/paginator';
@@ -20,6 +22,7 @@ import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 
 // Importar Componentes
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
@@ -97,6 +100,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   constructor(
     private _CookiesService: CookiesService,
     private _ActivatedRoute: ActivatedRoute,
+    private requestProvider: RequestProvider,
     private router: Router,
     private loadingService: LoadingService,
     private requestCourseProv: RequestCourseProvider,
@@ -119,6 +123,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.createEnglishCourses();
     this.createGroups();
     this.getActivePeriod();
+    this._getPeriods();
   }
 
   // #region Solicitudes
@@ -698,6 +703,82 @@ export class EnglishCoursesPageComponent implements OnInit {
     });
   }
   // #endregion
+
+  // #region Filtro Periodo
+
+  // Periods
+  periods: IPeriod[] = [];
+  filteredPeriods: IPeriod[] = [];
+  // periods used to filter data
+  usedPeriods: IPeriod[] = [];
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
+  @ViewChild('periodInput') periodInput: ElementRef<HTMLInputElement>;
+  periodCtrl = new FormControl();
+
+  _getPeriods(){
+    this.requestProvider.getPeriods().subscribe(
+      (periods) => {
+        this.periods = periods.periods;
+        this.filteredPeriods = periods.periods;
+        this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
+      }
+    );
+  }
+
+  addPeriod(event: MatChipInputEvent): void {
+    if (!this.matAutocomplete.isOpen) {
+      const input = event.input;
+      const value = event.value;
+      if (input) {
+        input.value = '';
+      }
+      this.periodCtrl.setValue(null);
+    }
+  }
+
+  filterPeriod(value: string): void {
+    if (value) {
+      this.periods = this.periods.filter(period => (period.periodName + '-' + period.year).toLowerCase().trim().indexOf(value) !== -1);
+    }
+  }
+
+  slectedPeriod(period): void {
+    this.updatePeriods(period, 'insert');
+  }
+
+  updatePeriods(period, action: string): void {
+    if (action === 'delete') {
+      this.filteredPeriods.push(period);
+      this.usedPeriods = this.usedPeriods.filter(per => per._id !== period._id);
+    }
+    if (action === 'insert') {
+      this.usedPeriods.push(period);
+      this.filteredPeriods = this.filteredPeriods.filter(per => per._id !== period._id);
+    }
+    this.periods = this.filteredPeriods;
+    if (this.periodInput) this.periodInput.nativeElement.blur(); // set focus
+    this.applyFiltersActiveGroups();
+  }
+
+  removePeriod(period): void {
+    this.updatePeriods(period, 'delete');
+  }
+
+  applyFiltersActiveGroups() {
+
+    this.dataSourceGroups.data = this.groups;
+    if (this.usedPeriods) {
+      if (this.usedPeriods.length > 0) {
+        this.dataSourceGroups.data = this.dataSourceGroups.data.filter(
+          (req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period._id))
+        );
+      } else {
+        this.dataSourceGroups.data = this.dataSourceGroups.data;
+      }
+    } else {
+      this.dataSourceGroups.data = this.dataSourceGroups.data;
+    }
+  }
 
 }
 
