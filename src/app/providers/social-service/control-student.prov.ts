@@ -52,6 +52,6 @@ export class ControlStudentProv {
   }
 
   uploadDocumentDrive(id, data): Observable<any> {
-    return this.api.put(`student/document/drive/${id}`, data).pipe(map(res => res.json()));
+    return this.api.put(`controlStudent/document/drive/${id}`, data).pipe(map(res => res.json()));
   }
 }

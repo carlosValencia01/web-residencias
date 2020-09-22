@@ -66,5 +66,5 @@ export class UserProvider {
                   this._refreshNeeded$.next();
                 })
               );;
-    }    
+    }
 }

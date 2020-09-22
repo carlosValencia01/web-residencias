@@ -19,7 +19,7 @@
     <mat-label style="color: #707070;">
       <mat-icon style="font-size: 15px;">lock</mat-icon> NIP
     </mat-label>
-    <input #password matInput type="password" (keyup.enter)="login()" formControlName="passwordInput"
+    <input #password matInput type="password" (keyup.enter)="verification()" formControlName="passwordInput"
       aria-describedby="emailHelp" aria-label="Introduzca su NIP" placeholder="NIP" required>
     <mat-error *ngIf="formVerification.get('passwordInput').errors">
       <span *ngIf="formVerification.get('passwordInput').errors['required']">

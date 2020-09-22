@@ -45,7 +45,6 @@ export class DialogVerificationComponent implements OnInit {
       password: this.formVerification.get('passwordInput').value
     })
     .subscribe((res) => {
-      this.userProv.sendTokenFromAPI(res.token);
       if (res) {
         this.dialogRef.close('true');
         return;
