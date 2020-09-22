@@ -43,6 +43,8 @@ import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 import {ImageToBase64Service} from '../services/app/img.to.base63.service';
 import {MatNativeDateModule} from '@angular/material';
 import { DialogVerificationComponent } from './components/dialog-verification/dialog-verification.component';
+import {StudentProvider} from '../providers/shared/student.prov';
+import {InscriptionsProvider} from '../providers/inscriptions/inscriptions.prov';
 
 
 @NgModule({
@@ -90,6 +92,8 @@ import { DialogVerificationComponent } from './components/dialog-verification/di
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     { provide: MatPaginatorIntl, useClass: MatPaginatorIntlCro },
     ControlStudentProv,
+    StudentProvider,
+    InscriptionsProvider,
     ImageToBase64Service
   ],
   entryComponents: [DialogVerificationComponent]

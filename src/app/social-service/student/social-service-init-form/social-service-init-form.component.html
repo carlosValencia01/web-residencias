@@ -126,8 +126,8 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Tipo de programa</mat-label>
             <mat-select formControlName="dependencyProgramType" (selectionChange)="community($event)">
-              <mat-option *ngFor="let category of categories" [value]="category.value">
-                {{category.viewValue}}
+              <mat-option *ngFor="let category of categories" [value]="category.option">
+                {{category.value}}
               </mat-option>
             </mat-select>
           </mat-form-field>

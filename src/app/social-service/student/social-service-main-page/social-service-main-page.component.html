@@ -80,6 +80,7 @@
                                         [controlStudentId]="controlStudentId"
                                         [sendEmailCode]="sendEmailCode"
                                         [verificationEmail]="verificationEmail"
+                                        [folderId]="folderId"
                                         (sendInformation)="changeStatusSendInformation($event)"
                                         [email]="emailStudent"></app-social-service-init-form>
           <div *ngIf="statusFirstDocuments !== 'register'">
@@ -99,15 +100,6 @@
           </div>
         </mat-step>
       </mat-vertical-stepper>
-      <div class="row text-center">
-        <div class="col-12">
-          <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'80vh'" [useBrowserLocale]="true"
-                                   (pdfLoaded)="_loadPage()">
-          </ngx-extended-pdf-viewer>
-          <div class="xml-output" id="dataXML">
-          </div>
-        </div>
-      </div>
     </div>
   </div>
   <div *ngIf="releaseSocialService">

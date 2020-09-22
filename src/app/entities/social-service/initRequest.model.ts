@@ -23,6 +23,6 @@ export interface InitRequestModel {
 }
 
 interface Category {
+  option: string;
   value: string;
-  viewValue: string;
 }

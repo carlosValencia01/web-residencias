@@ -32,7 +32,7 @@ export class InscriptionsMainPageComponent implements OnInit {
     private inscriptionsProv: InscriptionsProvider,
     public dialog: MatDialog,
     private careerProv: CareerProvider,
-    private stProv : StudentProvider,
+    private stProv: StudentProvider,
     private loadingService: LoadingService,
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -49,7 +49,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   pageChanged(ev) {
     this.page = ev;
   }
-  swalDialog(title,msg,type){
+  swalDialog(title, msg, type) {
     return Swal.fire({
       title: title,
       text: msg,
@@ -61,22 +61,22 @@ export class InscriptionsMainPageComponent implements OnInit {
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Confirmar'
     }).then((result) => {
-      if (result.value)  return true;
-      else return false;
+      if (result.value) {  return true; } else { return false; }
     });
   }
 
   async updatePeriodo(row) {
-    let confirmdialog = await this.swalDialog('¿Estás seguro de cerrar este Período ?',`El período (${row.periodName} ${row.year}) será desactivado.`,'question');
-    if(confirmdialog){
+    let confirmdialog = await this.swalDialog('¿Estás seguro de cerrar este Período ?',
+      `El período (${row.periodName} ${row.year}) será desactivado.`, 'question');
+    if (confirmdialog) {
       row.active = false;
-      this.confirmedPeriodChange(row,'Período cerrado correctamente.');
+      this.confirmedPeriodChange(row, 'Período cerrado correctamente.');
     }
   }
 
   confirmedPeriodChange(row, msg){
 
-    this.inscriptionsProv.updatePeriod(row,row._id).subscribe(res => {
+    this.inscriptionsProv.updatePeriod(row, row._id).subscribe(res => {
 
       this.notificationsServices.showNotification(eNotificationType.SUCCESS,
         'Exito', msg);
@@ -87,7 +87,7 @@ export class InscriptionsMainPageComponent implements OnInit {
   refreshDataSource() {
     let sub = this.inscriptionsProv.getAllPeriods()
       .subscribe(periods => {
-        this.periods=periods.periods;
+        this.periods = periods.periods;
         this.periods.reverse();
         sub.unsubscribe();
       });
@@ -98,29 +98,35 @@ export class InscriptionsMainPageComponent implements OnInit {
     // period.year = currentYear+'';
     period.active = true;
 
-    let confirmdialog = await this.swalDialog('¿Estás seguro de crear este Período ?',`El período (${period.periodName} ${period.year}) será activado.`,'question');
+    let confirmdialog = await this.swalDialog('¿Estás seguro de crear este Período ?',
+      `El período (${period.periodName} ${period.year}) será activado.`, 'question');
 
-    if(confirmdialog){
+    if (confirmdialog) {
       this.inscriptionsProv.createPeriod(period).subscribe(async res => {
         this.inscriptionsProv.getAllFolders().subscribe(
-          async fold=>{
+          async fold => {
             const folders = fold.folders;
             const rootFolder = folders.filter(folder => folder.name === 'Expedientes')[0];
-            if(rootFolder){
+            if (rootFolder) {
               const inscriptionFolder = folders.filter(folder => folder.name === 'Expedientes nuevo ingreso')[0];
               const receptionActFolder = folders.filter(folder => folder.name === 'Expedientes titulación')[0];
+              const socialServiceFolder = folders.filter(folder => folder.name === 'Expedientes Servicio Social')[0];
 
-              await this.createInscriptionFolder(rootFolder.idFolderInDrive,inscriptionFolder,period.year+' '+period.periodName,res.period._id);
+              await this.createInscriptionFolder(rootFolder.idFolderInDrive, inscriptionFolder, period.year + ' ' + period.periodName, res.period._id);
 
-              await this.createReceptionActFolder(rootFolder.idFolderInDrive,receptionActFolder,period.year+' '+period.periodName,res.period._id);
+              await this.createReceptionActFolder(rootFolder.idFolderInDrive, receptionActFolder, period.year + ' ' + period.periodName, res.period._id);
 
-            }else{
+              await this.createSocialServiceFolder(rootFolder.idFolderInDrive, socialServiceFolder, period.year + ' ' + period.periodName, res.period._id);
 
-              this.inscriptionsProv.createFolder('Expedientes',res.period._id,0).subscribe(
-                async exp=>{
-                  await this.createInscriptionFolder(exp.folder.idFolderInDrive,null,period.year+' '+period.periodName,res.period._id);
+            } else {
 
-                  await this.createReceptionActFolder(exp.folder.idFolderInDrive,null,period.year+' '+period.periodName,res.period._id);
+              this.inscriptionsProv.createFolder('Expedientes', res.period._id, 0).subscribe(
+                async exp => {
+                  await this.createInscriptionFolder(exp.folder.idFolderInDrive, null, period.year + ' ' + period.periodName, res.period._id);
+
+                  await this.createReceptionActFolder(exp.folder.idFolderInDrive, null, period.year + ' ' + period.periodName, res.period._id);
+
+                  await this.createSocialServiceFolder(exp.folder.idFolderInDrive, null, period.year + ' ' + period.periodName, res.period._id);
 
                 }
               )
@@ -134,65 +140,82 @@ export class InscriptionsMainPageComponent implements OnInit {
     }
   }
 
-  async createInscriptionFolder(rootF,insFolder,periodName,periodId){
-    if(insFolder){
-      await  this.inscriptionsProv.createSubFolder(periodName,periodId, insFolder.idFolderInDrive,1).subscribe(res=>{
+  async createInscriptionFolder(rootF, insFolder, periodName, periodId) {
+    if (insFolder) {
+      await  this.inscriptionsProv.createSubFolder(periodName, periodId, insFolder.idFolderInDrive, 1).subscribe(res => {
       },
-      err=>{
+      err => {
       }
       );
-    }else{
-      await this.inscriptionsProv.createSubFolder('Expedientes nuevo ingreso',periodId,rootF,1).subscribe(
-        async res=>{
-          await  this.inscriptionsProv.createSubFolder(periodName,periodId, res.folder.idFolderInDrive,1).subscribe(ress=>{
+    } else {
+      await this.inscriptionsProv.createSubFolder('Expedientes nuevo ingreso', periodId, rootF, 1).subscribe(
+        async res => {
+          await  this.inscriptionsProv.createSubFolder(periodName, periodId, res.folder.idFolderInDrive, 1).subscribe(ress => {
           },
-          err=>{
+          err => {
           }
           );;
         },
-        err=>{
+        err => {
           console.log(err);
         }
       );
     }
   }
-  async createReceptionActFolder(rootF,recepFolder,periodName,periodId){
-    if(recepFolder){
-      await  this.inscriptionsProv.createSubFolder(periodName,periodId, recepFolder.idFolderInDrive,2).subscribe(res=>{
-      },
-      err=>{
-      });
-    }else{
-      await this.inscriptionsProv.createSubFolder('Expedientes titulación',periodId,rootF,2).subscribe(
-        async res=>{
-          await  this.inscriptionsProv.createSubFolder(periodName,periodId, res.folder.idFolderInDrive,2).subscribe(ress=>{
-          },
-          err=>{
-          }
+  async createReceptionActFolder(rootF, recepFolder, periodName, periodId) {
+    if (recepFolder) {
+      await this.inscriptionsProv.createSubFolder(periodName, periodId, recepFolder.idFolderInDrive, 2).subscribe(res => {
+        },
+        err => {
+        });
+    } else {
+      await this.inscriptionsProv.createSubFolder('Expedientes titulación', periodId, rootF, 2).subscribe(
+        async res => {
+          await this.inscriptionsProv.createSubFolder(periodName, periodId, res.folder.idFolderInDrive, 2).subscribe(ress => {
+            },
+            err => {
+            }
           );
         },
-        err=>{
+        err => {
+          console.log(err);
+        }
+      );
+    }
+  }
+  async createSocialServiceFolder(rootF, socialServiceFolder, periodName, periodId) {
+    if (socialServiceFolder) {
+      await  this.inscriptionsProv.createSubFolder(periodName, periodId, socialServiceFolder.idFolderInDrive, 4 )
+        .subscribe(res => {},
+                  err => {});
+    } else {
+      await this.inscriptionsProv.createSubFolder('Expedientes Servicio Social', periodId, rootF, 4 ).subscribe(
+        async res => {
+          await  this.inscriptionsProv.createSubFolder(periodName, periodId, res.folder.idFolderInDrive, 4 )
+            .subscribe(ress => {},
+                      err => {});
+        }, err => {
           console.log(err);
         }
       );
     }
   }
 
-  createPeriod(){
+  createPeriod() {
     let lastActivePeriod, currentYear;
-    if(this.periods.length>0){
+    if (this.periods.length > 0) {
       lastActivePeriod = this.periods[0];
-      currentYear = lastActivePeriod.periodName === 'AGOSTO-DICIEMBRE' ? (parseInt(lastActivePeriod.year)+1) : lastActivePeriod.year;
+      currentYear = lastActivePeriod.periodName === 'AGOSTO-DICIEMBRE' ? (parseInt(lastActivePeriod.year) + 1) : lastActivePeriod.year;
 
-      let activePeriod = this.periods.filter( period=> period.active === true).length > 0;
-      if(activePeriod) {
+      let activePeriod = this.periods.filter( period => period.active === true).length > 0;
+      if (activePeriod) {
         this.notificationsServices.showNotification(eNotificationType.ERROR,
           'Período activo', `Ya existe un período activo '${lastActivePeriod.periodName}' no es posible crear otro período.`);
           // this.refreshDataSource();
         return;
       }
-    }else if(this.periods.length == 0){
-      lastActivePeriod=0;
+    } else if (this.periods.length == 0) {
+      lastActivePeriod = 0;
       currentYear = new Date;
       currentYear = currentYear.getFullYear();
     }
@@ -201,7 +224,7 @@ export class InscriptionsMainPageComponent implements OnInit {
       data: {
         operation: 'create',
         initialPeriod: lastActivePeriod === 0 ? 'true' : lastActivePeriod.periodName === 'AGOSTO-DICIEMBRE' ? 'ENERO-JUNIO' : 'AGOSTO-DICIEMBRE',
-        year:currentYear
+        year: currentYear
       },
       disableClose: true,
       hasBackdrop: true,
@@ -209,17 +232,17 @@ export class InscriptionsMainPageComponent implements OnInit {
       height: '720px'
     });
     let sub = linkModal.afterClosed().subscribe(
-      period=>{
-        if(period.action === 'submit'){
-          this.addPeriod(period.period,currentYear);
+      period => {
+        if (period.action === 'submit') {
+          this.addPeriod(period.period, currentYear);
         }
         // else this.refreshDataSource();
       },
-      err=>console.log(err), ()=> sub.unsubscribe()
+      err => console.log(err), () => sub.unsubscribe()
     );
   }
 
-  editPeriod(period){
+  editPeriod(period) {
     const linkModal = this.dialog.open(NewPeriodComponent, {
       data: {
         operation: 'edit',
@@ -231,17 +254,17 @@ export class InscriptionsMainPageComponent implements OnInit {
       height: '720px'
     });
     let sub = linkModal.afterClosed().subscribe(
-      period=>{
-        if(period.action === 'edit'){
-          this.confirmedPeriodChange(period.period,'Periodo actualizado correctamente.');
+      period => {
+        if (period.action === 'edit') {
+          this.confirmedPeriodChange(period.period, 'Periodo actualizado correctamente.');
         }
       },
-      err=>console.log(err), ()=> sub.unsubscribe()
+      err => console.log(err), () => sub.unsubscribe()
     );
   }
 
-  periodDetail(period){
-    let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };    
+  periodDetail(period) {
+    let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     Swal.fire({
       html:
         `<h4>General</h4>
@@ -282,11 +305,11 @@ export class InscriptionsMainPageComponent implements OnInit {
     }).then((result) => { });
   }
 
-  getCareers(){
+  getCareers() {
     this.careerProv.getAllCareers().subscribe(
-      res=>{
-        if(res.careers){
-          let  careers = res.careers;
+      res => {
+        if (res.careers) {
+          let careers = res.careers;
           careers.forEach( career => {
             this.careers[career.fullName] = career._id;
           });
@@ -294,11 +317,11 @@ export class InscriptionsMainPageComponent implements OnInit {
       });
   }
 
-  updateCareer(){
+  updateCareer() {
         this.stProv.getAllStudents().subscribe(
-          async res2=>{
+          async res2 => {
             let students = res2.students;
-            for await (const student of students){
+            for await (const student of students) {
               let career = this.careers[student.career];
               let f = await this.up(student,career);
             }
@@ -307,42 +330,42 @@ export class InscriptionsMainPageComponent implements OnInit {
           }
         );
   }
- async up(student,career){
+ async up(student, career) {
     return await this.stProv.updateStudent(student._id,{careerId:career}).toPromise()
               .then(
-                rest=>{return rest;
+                rest => {return rest;
                 }
               ).catch( err=>console.log(err)
               );
   }
-  insert(){
+  insert() {
     let careers = [
-      {fullName:'ARQUITECTURA',shortName:'ARQUITECTURA',acronym:'ARQ'},
-      {fullName:'INGENIERÍA CIVIL',shortName:'ING. CIVIL',acronym:'IC'},
-      {fullName:'INGENIERÍA BIOQUÍMICA',shortName:'ING. BIOQUÍMICA',acronym:'IBQ'},
-      {fullName:'INGENIERÍA EN GESTIÓN EMPRESARIAL',shortName:'ING. EN GESTIÓN EMPRESARIAL',acronym:'IGE'},
-      {fullName:'INGENIERÍA QUIMICA',shortName:'ING. QUIMICA',acronym:'IQ'},
-      {fullName:'INGENIERÍA MECATRÓNICA',shortName:'ING. MECATRÓNICA',acronym:'IM'},
-      {fullName:'INGENIERÍA ELÉCTRICA',shortName:'ING. ELÉCTRICA',acronym:'IE'},
-      {fullName:'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES',shortName:'ING. EN TICS',acronym:'ITICS'},
-      {fullName:'INGENIERÍA EN SISTEMAS COMPUTACIONALES',shortName:'ING. EN SISTEMAS COMPUTACIONALES',acronym:'ISC'},
-      {fullName:'INGENIERÍA INDUSTRIAL',shortName:'ING. INDUSTRIAL',acronym:'II'},
-      {fullName:'LICENCIATURA EN ADMINISTRACIÓN',shortName:'LIC. ADMINISTRACIÓN',acronym:'LA'},
-      {fullName:'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN',shortName:'M. EN TECNOLOGÍAS DE LA INFORMACIÓN',acronym:'MTI'},
-      {fullName:'MAESTRÍA EN CIENCIAS EN ALIMENTOS',shortName:'M. CIENCIAS EN ALIMENTOS',acronym:'MCA'},
-      {fullName:'DOCTORADO EN CIENCIAS EN ALIMENTOS',shortName:'D. CIENCIAS EN ALIMENTOS',acronym:'DCA'},
+      { fullName: 'ARQUITECTURA', shortName: 'ARQUITECTURA', acronym: 'ARQ'},
+      { fullName: 'INGENIERÍA CIVIL', shortName: 'ING. CIVIL', acronym: 'IC'},
+      { fullName: 'INGENIERÍA BIOQUÍMICA', shortName: 'ING. BIOQUÍMICA', acronym: 'IBQ'},
+      { fullName: 'INGENIERÍA EN GESTIÓN EMPRESARIAL', shortName: 'ING. EN GESTIÓN EMPRESARIAL', acronym: 'IGE'},
+      { fullName: 'INGENIERÍA QUIMICA', shortName: 'ING. QUIMICA', acronym: 'IQ'},
+      { fullName: 'INGENIERÍA MECATRÓNICA', shortName: 'ING. MECATRÓNICA', acronym: 'IM'},
+      { fullName: 'INGENIERÍA ELÉCTRICA', shortName: 'ING. ELÉCTRICA', acronym: 'IE'},
+      { fullName: 'INGENIERÍA EN TECNOLOGÍAS DE LA INFORMACIÓN Y COMUNICACIONES', shortName: 'ING. EN TICS', acronym: 'ITICS'},
+      { fullName: 'INGENIERÍA EN SISTEMAS COMPUTACIONALES', shortName: 'ING. EN SISTEMAS COMPUTACIONALES', acronym: 'ISC'},
+      { fullName: 'INGENIERÍA INDUSTRIAL', shortName: 'ING. INDUSTRIAL', acronym: 'II'},
+      { fullName: 'LICENCIATURA EN ADMINISTRACIÓN', shortName: 'LIC. ADMINISTRACIÓN', acronym: 'LA'},
+      { fullName: 'MAESTRÍA EN TECNOLOGÍAS DE LA INFORMACIÓN', shortName: 'M. EN TECNOLOGÍAS DE LA INFORMACIÓN', acronym: 'MTI'},
+      { fullName: 'MAESTRÍA EN CIENCIAS EN ALIMENTOS', shortName: 'M. CIENCIAS EN ALIMENTOS', acronym: 'MCA'},
+      { fullName: 'DOCTORADO EN CIENCIAS EN ALIMENTOS', shortName: 'D. CIENCIAS EN ALIMENTOS', acronym: 'DCA'},
     ];
-    this.careerProv.newCareer({careers:careers}).subscribe(
-      res=>{
+    this.careerProv.newCareer({careers: careers}).subscribe(
+      res => {
         this.notificationsServices.showNotification(eNotificationType.SUCCESS,
         'Carreras creadas', '');
         this.getCareers();
       },
-      err=>console.log(err)
+      err => console.log(err)
     );
   }
 
-  secretaryAssignment(period?){
+  secretaryAssignment(period?) {
     this.dialog.open(SecretaryAssignmentComponent, {
       data: {
         operation: 'create',
@@ -355,14 +378,14 @@ export class InscriptionsMainPageComponent implements OnInit {
     });
   }
 
-  async insertSignedUpStudents(){
+  async insertSignedUpStudents() {
     const insertStudents = await this.showAlert('¿Insertar los nuevos alumnos inscritos?');
-    if(insertStudents){
+    if (insertStudents) {
       this.loadingService.setLoading(true);
       await this.stProv.insertSignedUpStudents().toPromise().then(
-        inserted=>{
+        inserted => {
           this.loadingService.setLoading(false);
-          this.notificationsServices.showNotification(eNotificationType.SUCCESS,'Configuraciones','Se insertaron '+inserted.created+' alumnos')
+          this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'Configuraciones', 'Se insertaron ' + inserted.created + ' alumnos')
         },
         err=> this.loadingService.setLoading(false)
       ).catch(err => this.loadingService.setLoading(false));

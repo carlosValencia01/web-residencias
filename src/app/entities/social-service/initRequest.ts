@@ -164,9 +164,9 @@ export class InitRequest {
     this.justifyText(doc,
       this._request.dependencyActivities,
       {x: this.MARGIN.LEFT + 4, y: 165}, this.WIDTH - (this.MARGIN.LEFT * 2 + 10), 4, 8);
-    const categoryDe = this._request.dependencyProgramType.value;
+    const categoryDe = this._request.dependencyProgramType.option;
     this.category[categoryDe] = 'X';
-    const community = categoryDe === 'd' ? this._request.dependencyProgramType.viewValue.split(':')[1] : '';
+    const community = categoryDe === 'd' ? this._request.dependencyProgramType.value.split(':')[1] : '';
     doc.text('(' + this.category['a'] + ') Educación para adultos', this.MARGIN.LEFT + 2, 190, { align: 'left' });
     doc.text('(' + this.category['b'] + ') Desarrollo de comunidad: urbano, suburbano, rural.', this.MARGIN.LEFT + 70, 190, { align: 'left' });
     doc.text('(' + this.category['c'] + ') Asesoría académica a niños  primaria, secundaria o bachillerato de zonas vulnerables de escuelas publicas', this.MARGIN.LEFT + 2, 195, { align: 'left' });

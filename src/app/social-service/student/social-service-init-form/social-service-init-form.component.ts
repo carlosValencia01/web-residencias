@@ -11,10 +11,11 @@ import * as moment from 'moment';
 moment.locale('es');
 import {MatDialog} from '@angular/material';
 import { DialogVerificationComponent } from '../../components/dialog-verification/dialog-verification.component';
+import {InscriptionsProvider} from '../../../providers/inscriptions/inscriptions.prov';
 
 interface Category {
+  option: string;
   value: string;
-  viewValue: string;
 }
 
 @Component({
@@ -27,6 +28,7 @@ export class SocialServiceInitFormComponent implements OnInit {
   @Input() sendEmailCode: boolean;
   @Input() verificationEmail: boolean;
   @Input() email: string;
+  @Input() folderId: string;
   @Output() sendInformation: EventEmitter<any> = new EventEmitter();
   public formRequest: FormGroup;
   public communityName: FormControl;
@@ -35,13 +37,13 @@ export class SocialServiceInitFormComponent implements OnInit {
   public minDate: Date;
   public maxDate: Date;
   public categories: Category[] = [
-    {value: 'a', viewValue: 'Educacion para adultos'},
-    {value: 'b', viewValue: 'Desarrollo de comunidad: Urbano, suburbano, rural'},
-    {value: 'c', viewValue: 'Asesoría académica a niños primaria, secundaria o bachillerato de zonas vulnerables de escuelas publicas'},
-    {value: 'd', viewValue: 'Promocion social, cultural o deportiva en la comunidad'},
-    {value: 'e', viewValue: 'Dependencia de Gobierno'},
-    {value: 'f', viewValue: 'I.T de Tepic'},
-    {value: 'g', viewValue: 'Instituciones educativas privadas'}
+    {option: 'a', value: 'Educacion para adultos'},
+    {option: 'b', value: 'Desarrollo de comunidad: Urbano, suburbano, rural'},
+    {option: 'c', value: 'Asesoría académica a niños primaria, secundaria o bachillerato de zonas vulnerables de escuelas publicas'},
+    {option: 'd', value: 'Promocion social, cultural o deportiva en la comunidad'},
+    {option: 'e', value: 'Dependencia de Gobierno'},
+    {option: 'f', value: 'I.T de Tepic'},
+    {option: 'g', value: 'Instituciones educativas privadas'}
   ];
   public communityFlag = false;
   public verificationResult = false;
@@ -54,6 +56,7 @@ export class SocialServiceInitFormComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private controlStudentProv: ControlStudentProv,
+              private inscriptionsProv: InscriptionsProvider,
               private loadingService: LoadingService,
               public imgSrv: ImageToBase64Service,
               private cookiesService: CookiesService,
@@ -105,8 +108,9 @@ export class SocialServiceInitFormComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         this.verificationResult = result;
         if (this.verificationResult) {
+          this.loadingService.setLoading(true);
           // Obtener el texto del tipo de programa para la eleccion de la variable categoria
-          const programType = this.categories.find(c => c.value === this.formRequest.get('dependencyProgramType').value);
+          const programType = this.categories.find(c => c.option === this.formRequest.get('dependencyProgramType').value);
           // Si la categoria es true, significa que se eligio la comunidad donde el alumno tendra que escribir la comunidad
           if (this.communityFlag) {
             if (this.communityName.invalid) {
@@ -115,29 +119,39 @@ export class SocialServiceInitFormComponent implements OnInit {
               return;
             } else {
               // Guardar dentro de la variable viewValue el valor del texto y la comunidad
-              programType.viewValue = programType.viewValue + ': ' + this.communityName.value;
+              programType.value = programType.value + ': ' + this.communityName.value;
             }
           }
           this.formRequest.get('dependencyProgramType').setValue(programType);
+
           // Se asigna el valor del formulario del alumno a la clase de initRequest para el documento de solicitud
           this.initRequest.setRequest(this.formRequest.value);
-          // Se obtiene el documento pdf de Servicio Social
-          const pdf = this.initRequest.socialServiceSolicitude().output('bloburl');
 
           // Se guarda la informacion del estudiante en la base de datos y se emite el cambio de estatus en la pagina principal
           // asi como su actualizacion para el documento enviado
           this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, this.formRequest.value)
             .subscribe( res => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
-              this.sendInformation.emit({pdf});
+
+              // Se obtiene el documento pdf de Servicio Social
+              const document = this.initRequest.socialServiceSolicitude().output('arraybuffer');
+              const binary = this.bufferToBase64(document);
+              this.sendInformation.emit({doc: binary});
             }, () => {
-              this.notificationsService.showNotification(eNotificationType.ERROR, 'Error', 'No se ha podido guardar la información, favor de intentarlo mas tarde');
-              this.loadingService.setLoading(true);
+              this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
+                'No se ha podido guardar la información, favor de intentarlo mas tarde');
+              this.loadingService.setLoading(false);
             }, () => this.loadingService.setLoading(false));
         }
       });
     }
   }// registerRequest
+
+  bufferToBase64(buffer) {
+    return btoa(new Uint8Array(buffer).reduce((data, byte) => {
+      return data + String.fromCharCode(byte);
+    }, ''));
+  }
 
   getDate(event) {
     const time = moment();
@@ -200,8 +214,8 @@ export class SocialServiceInitFormComponent implements OnInit {
       this.controlStudentProv.verifyCode({_id: this.controlStudentId, code: this.code.value})
         .subscribe( res => {
           this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
-          this.verificationEmail = true;
           this.code.disable();
+          this.verificationEmail = true;
         }, error => {
           this.loadingService.setLoading(false);
           const message = JSON.parse(error._body).msg;

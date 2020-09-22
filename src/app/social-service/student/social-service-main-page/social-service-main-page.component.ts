@@ -5,6 +5,9 @@ import {ControlStudentProv} from '../../../providers/social-service/control-stud
 import {NotificationsServices} from '../../../services/app/notifications.service';
 import {eNotificationType} from '../../../enumerators/app/notificationType.enum';
 import * as moment from 'moment';
+import {eFOLDER} from '../../../enumerators/shared/folder.enum';
+import {StudentProvider} from '../../../providers/shared/student.prov';
+import {InscriptionsProvider} from '../../../providers/inscriptions/inscriptions.prov';
 
 moment.locale('es');
 
@@ -23,23 +26,28 @@ export class SocialServiceMainPageComponent implements OnInit {
   public firstDocuments: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public statusFirstDocuments: string; // Condicion para saber si el estudiante ya envio toda la información o esta en revisión
   private userData; // Datos del usuario
+  private _idStudent: string; // ID del estudiante
+  private folderId: string; // Id del folder del estudiante para servicio social
+  private activePeriod;
   public controlStudentId: string;
   public emailStudent: string;
   public sendEmailCode: boolean;
   public verificationEmail: boolean;
-  pdf: any;
 
   constructor(private loadingService: LoadingService,
               private cookiesService: CookiesService,
+              private studentProvider: StudentProvider,
+              private inscriptionsProv: InscriptionsProvider,
               private notificationsService: NotificationsServices,
-              private controlStudentProv: ControlStudentProv) {
+              private controlStudentProvider: ControlStudentProv) {
     // Obtencion de la informacion del alumno, id, nombre, carrera, revisar en localStorage
     this.userData = this.cookiesService.getData().user;
+    this._idStudent = this.userData._id;
   }
 
   ngOnInit() {
     this.loadingService.setLoading(true);
-    this.controlStudentProv.getControlStudentByStudentId(this.userData._id).subscribe( res => {
+    this.controlStudentProvider.getControlStudentByStudentId(this.userData._id).subscribe( res => {
       this.controlStudentId = res.controlStudent._id;
       this.emailStudent = res.controlStudent.emailStudent || '';
       this.sendEmailCode = res.controlStudent.verification.sendEmailCode;
@@ -49,7 +57,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.releaseSocialService = false;
       this.assistance = false;
       this.firstDocuments = false;
-
+      this.getFolderId();
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
@@ -63,11 +71,11 @@ export class SocialServiceMainPageComponent implements OnInit {
     this.loaded = true;
   }
 
-  changeStatusSendInformation(event) {
-    // Hace falta enviar el documento
-    this.pdf = event.pdf;
+  async changeStatusSendInformation(event) {
+    // Continua a guardar el documento en DRIVE
+    await this.saveDocument(event.doc, true);
     // Se envia el documento y se actualiza el estatus de documento enviado.
-    this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, { 'verification.solicitude': 'send'})
+    this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, { 'verification.solicitude': 'send'})
       .subscribe( () => {
         this.ngOnInit();
       }, () => {
@@ -76,6 +84,67 @@ export class SocialServiceMainPageComponent implements OnInit {
           'No se ha actualizado el estatus de tu información por favor, vuelve a enviar la información de tu servicio');
         this.ngOnInit();
       });
+  }
+
+  getFolderId() {
+    this.inscriptionsProv.getActivePeriod().toPromise().then(
+      period => {
+        if (period.period) {
+          this.activePeriod = period.period;
+          // first check folderId on Student model
+          this.studentProvider.getDriveFolderId(this.userData.email, eFOLDER.SERVICIOSOCIAL).subscribe(
+            (folder) => {
+              this.folderId =  folder.folderIdInDrive;
+            },
+            err => {
+              console.log(err);
+            }
+          );
+        } else { // no hay período activo
+          this.activePeriod = false;
+        }
+      }
+    );
+  }
+
+  saveDocument(document, statusDoc) {
+    // this.loadingService.setLoading(true);
+    const documentInfo = {
+      mimeType: 'application/pdf',
+      nameInDrive: this.userData.email + '-SOLICITUD.pdf',
+      bodyMedia: document,
+      folderId: this.folderId,
+      newF: statusDoc,
+      fileId: ''
+    };
+
+    this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
+      async updated => {
+        const documentInfo4 = {
+          doc: {
+            filename: updated.name,
+            type: 'DRIVE',
+            fileIdInDrive: updated.fileId
+          },
+          status: {
+            name: 'EN PROCESO',
+            active: true,
+            message: 'Se envio por primera vez'
+          }
+        };
+
+        await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo4).subscribe( () => {
+            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud enviada correctamente.');
+          },
+          err => {
+            console.log(err);
+          }, () => this.loadingService.setLoading(false)
+        );
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
 }
