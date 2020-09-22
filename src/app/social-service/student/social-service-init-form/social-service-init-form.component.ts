@@ -143,7 +143,8 @@ export class SocialServiceInitFormComponent implements OnInit {
               this.loadingService.setLoading(false);
             }, () => this.loadingService.setLoading(false));
         }
-      });
+      }
+      );
     }
   }// registerRequest
 
