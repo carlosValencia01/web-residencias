@@ -711,6 +711,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       (periods) => {
         this.periods = periods.periods;
         this.filteredPeriods = periods.periods;
+        this.usedPeriods = [];
         this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
       }
     );
