@@ -120,7 +120,7 @@ export class CoursesRequestTableComponent implements OnInit {
   async declineRequest(request) {
     const confirmdialog = await this.swalDialogInput('DECLINAR SOLICITUD', 'Especifique el motivo');
     if (confirmdialog) {
-      const data = { status: 'rejected', rejectMessage: confirmdialog };
+      const data = { status: 'rejected', rejectMessage: confirmdialog, active: false };
       this.requestCourseProv.updateRequestById(request._id, data).subscribe(updated => {
         if(updated){
           this.englishStudentProv.updateEnglishStudent({status:'no_choice'},request.englishStudent._id).subscribe(res => {
