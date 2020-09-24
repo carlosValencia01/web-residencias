@@ -158,12 +158,12 @@
       <th></th>
       <th></th>
       <th></th>
-      <th data-a-h="center">{{excelData.schedule.Lunes.classroom}}</th>
-      <th data-a-h="center">{{excelData.schedule.Martes.classroom}}</th>
-      <th data-a-h="center">{{excelData.schedule.Miercoles.classroom}}</th>
-      <th data-a-h="center">{{excelData.schedule.Jueves.classroom}}</th>
-      <th data-a-h="center">{{excelData.schedule.Viernes.classroom}}</th>
-      <th data-a-h="center">{{excelData.schedule.Sabado.classroom}}</th>
+      <th data-a-h="center">{{excelData.schedule.Lunes.classroom.name ? excelData.schedule.Lunes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Martes.classroom.name ? excelData.schedule.Martes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Miercoles.classroom.name ? excelData.schedule.Miercoles.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Jueves.classroom.name ? excelData.schedule.Jueves.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Viernes.classroom.name ? excelData.schedule.Viernes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Sabado.classroom.name ? excelData.schedule.Sabado.classroom.name : ''}}</th>
     </tr>
   </thead>
   <thead>
@@ -272,12 +272,12 @@
       <th></th>
       <th></th>
       <th></th>
-      <th data-a-h="center">{{pdfData.schedule.Lunes.classroom}}</th>
-      <th data-a-h="center">{{pdfData.schedule.Martes.classroom}}</th>
-      <th data-a-h="center">{{pdfData.schedule.Miercoles.classroom}}</th>
-      <th data-a-h="center">{{pdfData.schedule.Jueves.classroom}}</th>
-      <th data-a-h="center">{{pdfData.schedule.Viernes.classroom}}</th>
-      <th data-a-h="center">{{pdfData.schedule.Sabado.classroom}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Lunes.classroom.name ? pdfData.schedule.Lunes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Martes.classroom.name ? pdfData.schedule.Martes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Miercoles.classroom.name ? pdfData.schedule.Miercoles.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Jueves.classroom.name ? pdfData.schedule.Jueves.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Viernes.classroom.name ? pdfData.schedule.Viernes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Sabado.classroom.name ? pdfData.schedule.Sabado.classroom.name : ''}}</th>
     </tr>
   </tbody>
 </table>
@@ -355,12 +355,12 @@
       <th data-a-h="center">{{actData.schedule.Sabado.hour}}</th>
       </tr>
       <tr>
-      <th data-a-h="center">{{actData.schedule.Lunes.classroom}}</th>
-      <th data-a-h="center">{{actData.schedule.Martes.classroom}}</th>
-      <th data-a-h="center">{{actData.schedule.Miercoles.classroom}}</th>
-      <th data-a-h="center">{{actData.schedule.Jueves.classroom}}</th>
-      <th data-a-h="center">{{actData.schedule.Viernes.classroom}}</th>
-      <th data-a-h="center">{{actData.schedule.Sabado.classroom}}</th>
+      <th data-a-h="center">{{actData.schedule.Lunes.classroom.name  ? actData.schedule.Lunes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Martes.classroom.name  ? actData.schedule.Martes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Miercoles.classroom.name  ? actData.schedule.Miercoles.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Jueves.classroom.name  ? actData.schedule.Jueves.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Viernes.classroom.name  ? actData.schedule.Viernes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Sabado.classroom.name  ? actData.schedule.Sabado.classroom.name : ''}}</th>
       </tr>
   </tbody>
 </table>

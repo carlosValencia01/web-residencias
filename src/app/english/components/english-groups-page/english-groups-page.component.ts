@@ -348,27 +348,27 @@ export class EnglishGroupsPageComponent implements OnInit {
         switch (EDaysSchedule[schedule.day]) {
           case 'Lunes':
             horario.Lunes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-            horario.Lunes.classroom = schedule.classroom ? schedule.classroom :  's/a';
+            horario.Lunes.classroom = schedule.classroom ? schedule.classroom :  '';
             break;
           case 'Martes':
             horario.Martes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-            horario.Martes.classroom = schedule.classroom ? schedule.classroom :  's/a';
+            horario.Martes.classroom = schedule.classroom ? schedule.classroom :  '';
             break;
           case 'Miércoles':
             horario.Miercoles.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-            horario.Miercoles.classroom = schedule.classroom ? schedule.classroom :  's/a';
+            horario.Miercoles.classroom = schedule.classroom ? schedule.classroom :  '';
             break;
           case 'Jueves':
             horario.Jueves.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-            horario.Jueves.classroom = schedule.classroom ? schedule.classroom :  's/a';
+            horario.Jueves.classroom = schedule.classroom ? schedule.classroom :  '';
             break;
           case 'Viernes':
             horario.Viernes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-            horario.Viernes.classroom = schedule.classroom ? schedule.classroom :  's/a';
+            horario.Viernes.classroom = schedule.classroom ? schedule.classroom :  '';
             break;
           case 'Sábado':
             horario.Sabado.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-            horario.Sabado.classroom = schedule.classroom ? schedule.classroom :  's/a';
+            horario.Sabado.classroom = schedule.classroom ? schedule.classroom :  '';
             break;
         }
       });
