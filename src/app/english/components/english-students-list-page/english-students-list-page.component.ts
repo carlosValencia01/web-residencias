@@ -372,14 +372,17 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
         avg = parseFloat(avg);
         let requestQuery = {
           average:avg,
-          status: 'approved'
+          status: 'approved',
+          active: false
         };
         if(avg < 70){
           requestQuery.status = 'not_approved';
         }        
         let studentQuery = {
+          status: 'no_choice',
           level: requestQuery.status == 'approved' ? row.level : row.englishStudent.level,
-          status: 'no_choice'
+          totalHoursCoursed: requestQuery.status == 'approved' ? (row.englishStudent.totalHoursCoursed+row.group.course.semesterHours) : row.englishStudent.totalHoursCoursed,
+          courseType: requestQuery.status == 'approved' ? row.group.course._id : (row.englishStudent.courseType ? row.englishStudent.courseType : null)
         };
         if(row.level == row.group.course.totalSemesters){
           studentQuery.status = 'not_released';
