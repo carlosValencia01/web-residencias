@@ -50,6 +50,10 @@
                       <mat-icon class="text-danger">person_add_disabled</mat-icon>
                       <span>Quitar asistencia</span>
                     </button>
+                    <button mat-menu-item routerLink="/social-service/validateData" [queryParams]="{id: row['_id']}">
+                      <mat-icon class="text-warning">edit</mat-icon>
+                      <span>Validar solicitud</span>
+                    </button>
                   </mat-menu>
                 </td>
               </ng-container>

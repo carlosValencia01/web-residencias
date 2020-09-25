@@ -17,6 +17,11 @@ export class ControlStudentProv {
       .pipe(map(period => period.json()));
   }
 
+  getControlStudentById(_id) {
+    return this.api.get(`controlStudent/control/student/${_id}`)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   getControlStudentByStudentId(studentId) {
     return this.api.get(`controlStudent/${studentId}`)
       .pipe(map(controlStudent => controlStudent.json()));
@@ -53,5 +58,9 @@ export class ControlStudentProv {
 
   uploadDocumentDrive(id, data): Observable<any> {
     return this.api.put(`controlStudent/document/drive/${id}`, data).pipe(map(res => res.json()));
+  }
+
+  updateDocumentLog(id, data): Observable<any> {
+    return this.api.put(`controlStudent/document/status/${id}`, data).pipe(map(res => res.json()));
   }
 }

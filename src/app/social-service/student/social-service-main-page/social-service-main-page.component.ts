@@ -23,7 +23,8 @@ export class SocialServiceMainPageComponent implements OnInit {
   public assistance: boolean; // Condicion para saber si ya tiene la asistencia registrada (si existe su registro en BD)
   public assistanceFirstStep = false; // Condicion para el stepper de ASISTENCIA, controlamos que hasta que no sea verdadero no se continua
   public assistanceSecondStep = false;
-  public firstDocuments: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
+  public solicitudeDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
+  public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public statusFirstDocuments: string; // Condicion para saber si el estudiante ya envio toda la información o esta en revisión
   private userData; // Datos del usuario
   private _idStudent: string; // ID del estudiante
@@ -53,10 +54,11 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.sendEmailCode = res.controlStudent.verification.sendEmailCode;
       this.verificationEmail = res.controlStudent.verification.verificationEmail;
       this.statusFirstDocuments = res.controlStudent.verification['solicitude'];
+      this.solicitudeDocument = this.statusFirstDocuments === 'approved';
+      this.presentationDocument = false;
       this.permission = false;
       this.releaseSocialService = false;
       this.assistance = false;
-      this.firstDocuments = false;
       this.getFolderId();
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
@@ -71,19 +73,8 @@ export class SocialServiceMainPageComponent implements OnInit {
     this.loaded = true;
   }
 
-  async changeStatusSendInformation(event) {
-    // Continua a guardar el documento en DRIVE
-    await this.saveDocument(event.doc, true);
-    // Se envia el documento y se actualiza el estatus de documento enviado.
-    this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, { 'verification.solicitude': 'send'})
-      .subscribe( () => {
-        this.ngOnInit();
-      }, () => {
-        this.notificationsService.showNotification(eNotificationType.INFORMATION,
-          'Atención',
-          'No se ha actualizado el estatus de tu información por favor, vuelve a enviar la información de tu servicio');
-        this.ngOnInit();
-      });
+  async changeStatusSendInformation() {
+    this.ngOnInit();
   }
 
   getFolderId() {
@@ -103,46 +94,6 @@ export class SocialServiceMainPageComponent implements OnInit {
         } else { // no hay período activo
           this.activePeriod = false;
         }
-      }
-    );
-  }
-
-  saveDocument(document, statusDoc) {
-    // this.loadingService.setLoading(true);
-    const documentInfo = {
-      mimeType: 'application/pdf',
-      nameInDrive: this.userData.email + '-SOLICITUD.pdf',
-      bodyMedia: document,
-      folderId: this.folderId,
-      newF: statusDoc,
-      fileId: ''
-    };
-
-    this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-      async updated => {
-        const documentInfo4 = {
-          doc: {
-            filename: updated.name,
-            type: 'DRIVE',
-            fileIdInDrive: updated.fileId
-          },
-          status: {
-            name: 'EN PROCESO',
-            active: true,
-            message: 'Se envio por primera vez'
-          }
-        };
-
-        await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo4).subscribe( () => {
-            this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud enviada correctamente.');
-          },
-          err => {
-            console.log(err);
-          }, () => this.loadingService.setLoading(false)
-        );
-      },
-      err => {
-        console.log(err);
       }
     );
   }

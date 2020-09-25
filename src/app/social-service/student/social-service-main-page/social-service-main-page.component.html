@@ -74,16 +74,17 @@
             </mat-horizontal-stepper>
           </div>
         </mat-step>
-        <mat-step [completed]="firstDocuments">
-          <ng-template matStepLabel>Primera documentación</ng-template>
+        <mat-step [completed]="solicitudeDocument">
+          <ng-template matStepLabel>Solicitud para Servicio social</ng-template>
           <app-social-service-init-form *ngIf="statusFirstDocuments === 'register'"
                                         [controlStudentId]="controlStudentId"
                                         [sendEmailCode]="sendEmailCode"
                                         [verificationEmail]="verificationEmail"
                                         [folderId]="folderId"
-                                        (sendInformation)="changeStatusSendInformation($event)"
-                                        [email]="emailStudent"></app-social-service-init-form>
-          <div *ngIf="statusFirstDocuments !== 'register'">
+                                        (sendInformation)="changeStatusSendInformation()"
+                                        [email]="emailStudent"
+                                        [controlNumber]="userData.email"></app-social-service-init-form>
+          <div *ngIf="statusFirstDocuments === 'send'">
             <div class="row justify-content-center">
               <div class="col-10 col-sm-8 col-md-6 col-lg-4">
                 <mat-card style="height: 200px; width: 300px;">
@@ -98,6 +99,32 @@
               </div>
             </div>
           </div>
+          <app-social-service-review-init-form *ngIf="statusFirstDocuments === 'reevaluate'"
+                                               [controlStudentId]="controlStudentId"
+                                               [folderId]="folderId"
+                                               (sendInformation)="changeStatusSendInformation()"
+                                               [controlNumber]="userData.email">
+
+          </app-social-service-review-init-form>
+          <div *ngIf="statusFirstDocuments === 'approved'">
+            <div class="row justify-content-center">
+              <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                <mat-card style="height: 200px; width: 300px;">
+                  <mat-card-header class="flex-column align-items-center">
+                    <img alt="File" src="../../../../assets/imgs/approved.png" style="width: 80px; height: 80px;">
+                    <h5 class="text-center mt-3">Su <strong>solicitud</strong> ha sido <strong class="text-success">aceptada </strong></h5>
+                  </mat-card-header>
+                </mat-card>
+              </div>
+              <div class="col-12 mt-4" style=" text-align: center;">
+                <button mat-raised-button matStepperNext color="primary" style="width: 15%;">Continuar</button>
+              </div>
+            </div>
+          </div>
+        </mat-step>
+        <mat-step [completed]="presentationDocument">
+          <ng-template matStepLabel>Carta de presentación</ng-template>
+
         </mat-step>
       </mat-vertical-stepper>
     </div>

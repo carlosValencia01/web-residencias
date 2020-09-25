@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 
 import { SocialServiceRoutingModule } from './social-service-routing.module';
 
@@ -45,6 +45,8 @@ import {MatNativeDateModule} from '@angular/material';
 import { DialogVerificationComponent } from './components/dialog-verification/dialog-verification.component';
 import {StudentProvider} from '../providers/shared/student.prov';
 import {InscriptionsProvider} from '../providers/inscriptions/inscriptions.prov';
+import { ReviewFirstDataPageComponent } from './department/review-first-data-page/review-first-data-page.component';
+import { SocialServiceReviewInitFormComponent } from './student/social-service-review-init-form/social-service-review-init-form.component';
 
 
 @NgModule({
@@ -86,7 +88,9 @@ import {InscriptionsProvider} from '../providers/inscriptions/inscriptions.prov'
     ControlStudentsMainPageComponent,
     SocialServiceMainPageComponent,
     SocialServiceInitFormComponent,
-    DialogVerificationComponent
+    DialogVerificationComponent,
+    ReviewFirstDataPageComponent,
+    SocialServiceReviewInitFormComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -94,7 +98,8 @@ import {InscriptionsProvider} from '../providers/inscriptions/inscriptions.prov'
     ControlStudentProv,
     StudentProvider,
     InscriptionsProvider,
-    ImageToBase64Service
+    ImageToBase64Service,
+    DatePipe
   ],
   entryComponents: [DialogVerificationComponent]
 })

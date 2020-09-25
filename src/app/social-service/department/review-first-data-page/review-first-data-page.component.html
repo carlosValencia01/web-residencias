@@ -1,0 +1,49 @@
+
+<div class="card card-shadow">
+  <div class="card-header text-white bg-secondary">
+    <strong>Información de solicitud del estudiante para realizar su servicio social</strong>
+  </div>
+  <div class="card-body">
+    <div class="container">
+      <form [formGroup]="formRequest" (ngSubmit)="sendInformationReview()">
+        <p style="font-size: 0.8rem;"><strong>Empresarial</strong></p>
+        <div class="row" *ngFor="let field of displayControlFieldName; let index = index;">
+          <div class="col-8">
+            <mat-form-field *ngIf="field !== 'dependencyActivities' && field !== 'dependencyProgramObjective'"  appearance="outline" style="width: 100%;">
+              <mat-label>{{displayName[index]}}</mat-label>
+              <input matInput [formControlName]="field" type="text">
+              <button mat-icon-button matSuffix *ngIf="errorFields && !errorFieldsValidate[field]"
+                      [matTooltip]="'Mensaje de departamento: ' + errorFieldsMessage[field]"
+                      matTooltipClass="bg-warning"
+                      matTooltipPosition="above"
+                      [attr.aria-label]="'show information'">
+                <mat-icon class="text-warning">info</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-form-field *ngIf="field === 'dependencyActivities' || field === 'dependencyProgramObjective'" appearance="outline" style="width: 100%;">
+              <mat-label>{{displayName[index]}}</mat-label>
+              <textarea matInput [formControlName]="field" rows="8"></textarea>
+              <button mat-icon-button matSuffix *ngIf="errorFields && !errorFieldsValidate[field]"
+                      [matTooltip]="'Mensaje de departamento: ' + errorFieldsMessage[field]"
+                      matTooltipClass="bg-warning"
+                      matTooltipPosition="above"
+                      [attr.aria-label]="'show information'">
+                <mat-icon class="text-warning">info</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+          <div class="col-4">
+            <mat-button-toggle-group [formControlName]="field+'-v'" style="margin-top: 4px;" (change)="valueChange($event, field, displayName[index])">
+              <mat-button-toggle class="validateFields" [ngClass]="(formRequest.get(field+'-v').value == false)?'reject':'none'" [value]="false">Rechazar</mat-button-toggle>
+              <mat-button-toggle class="validateFields" [ngClass]="(formRequest.get(field+'-v').value == true)?'accept':'none'" [value]="true">Aceptar</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+        <div class="d-flex justify-content-around">
+          <button mat-raised-button type="reset" color="warn" (click)="cancelInformationReview()" style="width: 40%;">Cancelar</button>
+          <button mat-raised-button type="submit" color="primary" style="width: 40%;">Validar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

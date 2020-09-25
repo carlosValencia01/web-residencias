@@ -1,8 +1,5 @@
-import {IStudent} from '../shared/student.model';
-import {IPeriod} from '../shared/period.model';
 
-export interface InitRequestModel {
-  student?: IStudent | any;
+export interface SolicitudeModel {
   dependencyName?: string;
   dependencyPhone?: string;
   dependencyAddress?: string;
@@ -19,7 +16,6 @@ export interface InitRequestModel {
   dependencyProgramObjective?: string;
   dependencyProgramLocationInside?: string;
   dependencyProgramLocation?: string;
-  periodId: IPeriod;
 }
 
 interface Category {

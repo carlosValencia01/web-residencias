@@ -107,9 +107,9 @@
         <div class="col-12 col-md-6">
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Fecha de inicio</mat-label>
-            <input matInput (dateChange)="getDate($event)" [matDatepicker]="picker" [min]="minDate" [max]="maxDate" formControlName="initialDate" disabled>
+            <input matInput [matDatepicker]="picker" formControlName="initialDate" disabled readonly>
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker disabled="false"></mat-datepicker>
+            <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
       </div>

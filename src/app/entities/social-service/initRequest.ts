@@ -7,6 +7,7 @@ import {ImageToBase64Service} from '../../services/app/img.to.base63.service';
 import {CookiesService} from '../../services/app/cookie.service';
 import {eSocialFiles} from '../../enumerators/social-service/document.enum';
 import {InitRequestModel} from './initRequest.model';
+import {SolicitudeModel} from './solicitude.model';
 
 moment.locale('es');
 
@@ -41,14 +42,13 @@ export class InitRequest {
   private _qrCode: any;
   private _stamp: any;
   private category = {
-    'a': '',
-    'b': '',
-    'c': '',
-    'd': '',
-    'e': '',
-    'f': '',
+    'a': '', 'b': '',
+    'c': '', 'd': '',
+    'e': '', 'f': '',
     'g': '',
   };
+  private responsibleSign: any;
+  private signStudentDate: Date;
 
   constructor(
     public _request: InitRequestModel,
@@ -60,8 +60,13 @@ export class InitRequest {
     this._getImageToPdf();
   }
 
-  public setRequest(request: InitRequestModel) {
+  public setRequest(request: SolicitudeModel) {
     this._request = Object.assign(this._request, request);
+  }
+
+  public setSignResponsibles(userData, signStudent) {
+    this.responsibleSign = userData;
+    this.signStudentDate = signStudent;
   }
 
   private _getImageToPdf() {
@@ -179,17 +184,22 @@ export class InitRequest {
     doc.setFontSize(10);
     doc.setFont(this.FONT, 'Bold');
     doc.text('PARA USO EXCLUSIVO DE LA OFICINA DE SERVICIO SOCIAL', this.MARGIN.LEFT, 215, { align: 'left' });
-    doc.rect(this.MARGIN.LEFT, 218, this.WIDTH - (this.MARGIN.RIGHT * 2), 25);
+    doc.rect(this.MARGIN.LEFT, 218, this.WIDTH - (this.MARGIN.RIGHT * 2), 14);
     doc.setFont(this.FONT, 'Normal');
     doc.text('ACEPTADO: ', this.MARGIN.LEFT + 2, 222, { align: 'left' });
-    doc.text('SI: ( ):  NO: ( )', this.MARGIN.LEFT + 26, 222, { align: 'left' });
+    doc.text('SI: (X):  NO: ( )', this.MARGIN.LEFT + 26, 222, { align: 'left' });
     doc.text('MOTIVO: ', this.MARGIN.LEFT + 50, 222, { align: 'left' });
     doc.text('OBSERVACIONES: ', this.MARGIN.LEFT + 2, 230, { align: 'left' });
+
+    doc.setFontSize(9);
+    doc.text('FIRMA DEL DEPARTAMENTO', (this.WIDTH / 2), 238, { align: 'center' });
+    doc.text(`Esta solicitud fue firmada electrónicamente por ${this.responsibleSign.name.fullName} el ${moment().format('D [de] MMMM [de] YYYY [a las] h:mm a')}`,
+      (this.WIDTH / 2), 242, { align: 'center' });
 
     // Firma del solicitante
     doc.setFontSize(9);
     doc.text('FIRMA DEL SOLICITANTE', (this.WIDTH / 2), 250, { align: 'center' });
-    doc.text(`Esta solicitud fue firmada electrónicamente por ${this._request.student.fullName} el ${moment(this._request.initialDate).format('D [de] MMMM [de] YYYY [a las] h:mm a')}`,
+    doc.text(`Esta solicitud fue firmada electrónicamente por ${this._request.student.fullName} el ${moment(this.signStudentDate).format('D [de] MMMM [de] YYYY [a las] h:mm a')}`,
       (this.WIDTH / 2), 255, { align: 'center' });
     doc.text('_______________________________________________________', (this.WIDTH / 2), 257, { align: 'center' });
 
