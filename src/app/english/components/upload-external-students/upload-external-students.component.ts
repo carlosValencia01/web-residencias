@@ -62,16 +62,16 @@ export class UploadExternalStudentsComponent implements OnInit {
                   fatherLastName,
                   motherLastName,
                   firstName,
-                  phone:element[8],
-                  email:element[7],
+                  phone:element[12],
+                  email:element[11],
                   curp:element[5],
                   sex:element[5].substr(10,1) == 'H' ? 'M' : 'F',
                   age: parseInt(element[5].substr(6,2)) < today.getMonth() ? age : parseInt(element[5].substr(6,2)) > today.getMonth() ? age-1 : element[5].substr(6,2) == today.getMonth() ? parseInt(element[5].substr(8,2)) <= today.getDate() ? age : age-1 : age,
-                  cp:element[13],
-                  street: element[9],
-                  suburb:element[10],
-                  city:element[11],
-                  state:element[12],
+                  cp:element[10],
+                  street: element[6],
+                  suburb:element[7],
+                  city:element[8],
+                  state:element[9],
                   dateBirth
                 });
               }
