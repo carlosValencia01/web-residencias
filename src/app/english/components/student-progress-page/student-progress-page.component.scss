@@ -1,0 +1,50 @@
+table {
+    width: 100%;
+  }
+
+.mat-header-cell {
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgb(21, 43, 84);
+  color: #fff;
+  font-size: 14pt;
+}
+  
+  //Centrar encabezado de la tabla
+.mat-header-cell {
+    flex-direction: column;
+    justify-content: center;
+}
+  
+  //Centrar el contenido de los renglones de la tabla
+.mat-cell {
+    text-align: center;
+    justify-content:center;
+}
+
+.button-blue{
+  background-color: #183969;
+  color: white;
+}
+
+  //Ancho minimo de las columnas
+
+.mat-column-actions{
+  min-width: 100px;
+}
+
+.mat-column-period{
+  min-width: 120px;
+}
+
+.mat-column-course{
+  min-width: 100px;
+}
+
+.mat-column-level{
+  min-width: 100px;
+}
+
+.mat-column-average{
+  min-width: 120px;
+}

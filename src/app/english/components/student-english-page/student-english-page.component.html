@@ -118,7 +118,7 @@
                 <label *ngIf="lastRequestStudent.paidNumber == 2"><a>Segundo pago registrado</a></label>
               </div>
               <mat-divider></mat-divider>
-              <div class="container-progress-spinners mt-3 mb-2">
+              <div class="container-progress-spinners mt-3 mb-2" (click)="selectProgress()">
                 <div class="mat-progress-spinner-empty">
                   <mat-progress-spinner style="margin:0 auto;" mode="determinate" value="100" strokeWidth="25"
                     diameter="150">
@@ -208,8 +208,8 @@
       </mat-tab>
 
       <!--TAB del Avance del Estudiante-->
-      <mat-tab label="Avance" *ngIf="englishStudent.status == 'studying'">
-        Aquí se mostrará el avance
+      <mat-tab label="Avance">
+        <app-student-progress-page [englishStudent]="englishStudent"></app-student-progress-page>
       </mat-tab>
 
     </mat-tab-group>
