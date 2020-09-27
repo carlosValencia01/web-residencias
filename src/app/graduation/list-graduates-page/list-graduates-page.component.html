@@ -754,6 +754,20 @@
               </div>
               <div class="col-3">
                 <div class="form-group">
+                  <select
+                    class="form-control"
+                    (change)="filterDoc('photos', $event)"                  
+                  >
+                    <option value="default" selected>Opción de fotos</option>                    
+                    <option value="1">Opción 1</option>
+                    <option value="2">Opción 2</option>
+                    >
+                  </select>
+                  
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group">
                   <select (change)="filterDoc('status',$event)" class="form-control">
                     <option value='default'>Todos los estatus</option>
                     <option value="NO SOLICITADO">No solicitado</option>
@@ -823,6 +837,15 @@
                        <span *ngIf="!row.comprobantePago && !row.entregaFotos">
                         0/1
                        </span>
+                     </td>
+                   </ng-container>       
+
+                   <!-- opcion de fotos -->
+                   <ng-container matColumnDef="photos">
+                     <th mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content: center;"> Opción de fotos </th>
+                     <td mat-cell *matCellDef="let row" > 
+                       <span *ngIf="!row.opcionFotos && row.stepCertificado == 4">Sin elegir</span>
+                       <span *ngIf="row.opcionFotos">Opción {{row.opcionFotos}}</span>
                      </td>
                    </ng-container>       
        

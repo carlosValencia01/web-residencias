@@ -99,7 +99,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   displayedColumns: string[] = ['nc', 'name', 'carreer', 'numInvitados','status','actions'];
   dataSource: MatTableDataSource<any>;
-  displayedColumnsDoc: string[] = ['nc', 'name', 'carreer','avance','status','actions'];
+  displayedColumnsDoc: string[] = ['nc', 'name', 'carreer','avance','photos','status','actions'];
   dataSourceDoc: MatTableDataSource<any>;
   
   @ViewChild('paginator1') set paginator(paginator: MatPaginator){
@@ -139,6 +139,10 @@ export class ListGraduatesPageComponent implements OnInit {
       value:''
     },   
     status:{
+      value:'',
+      all:true      
+    },    
+    photos:{
       value:'',
       all:true      
     },    
@@ -295,8 +299,8 @@ export class ListGraduatesPageComponent implements OnInit {
             comprobantePago: alumno.payload.doc.get('comprobantePago'),
             correoCertificado: alumno.payload.doc.get('correoCertificado'),
             entregaFotos: alumno.payload.doc.get('entregaFotos'),
-            
-  
+            opcionFotos: alumno.payload.doc.get('opcionFotos'),
+            stepCertificado: alumno.payload.doc.get('stepCertificado'),
           })       
         }
         return prev;
@@ -1321,11 +1325,11 @@ export class ListGraduatesPageComponent implements OnInit {
     switch (status) {
 
       case 'ENVIADO':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
-        this.sendNotification('Certificado', 'Tu certificado fue enviado a tu correo', student.nc);
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status,stepCertificado: 6 }, this.collection);
+        this.sendNotification('Certificado', 'Tu certificado fue enviado a tu correo electrónico', student.nc);
         break;
       case 'ENTREGADO':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status,stepCertificado: 7 }, this.collection);
         this.sendNotification('Certificado', 'Tu certificado fue entregado', student.nc);
         break;
       case 'Regresar':{
@@ -2291,6 +2295,16 @@ export class ListGraduatesPageComponent implements OnInit {
         }
         break;
       }               
+      case 'photos':{ // filtrar por opcion de las fotos       
+        if(filterValue == 'default'){
+          this.filtersDoc.photos.all = true;   
+          this.filtersDoc.photos.value = '';       
+        }else{
+          this.filtersDoc.photos.all = false;
+          this.filtersDoc.photos.value = filterValue;                   
+        }
+        break;
+      }               
       case 'search':{ //para el cuadro de texto
         if(filterValue !== ''){
           this.filtersDoc.textSearch.status = true;
@@ -2316,8 +2330,10 @@ export class ListGraduatesPageComponent implements OnInit {
       this.dataSourceDoc.filter = this.filtersDoc.textSearch.value;
     }
     if(!this.filtersDoc.status.all){ //si no se quieren ver todos
-      this.dataSourceDoc.data = this.dataSourceDoc.data.filter( (st:any)=>st.documentationStatus.toLowerCase() == this.filtersDoc.status.value);
-      
+      this.dataSourceDoc.data = this.dataSourceDoc.data.filter( (st:any)=>st.documentationStatus.toLowerCase() == this.filtersDoc.status.value);      
+    }
+    if(!this.filtersDoc.photos.all){ //si no se quieren ver todos
+      this.dataSourceDoc.data = this.dataSourceDoc.data.filter( (st:any)=>(st.opcionFotos+'').toLowerCase() == this.filtersDoc.photos.value);      
     }
     this.eventFilterReportDocumentation();
   }
@@ -2362,10 +2378,11 @@ export class ListGraduatesPageComponent implements OnInit {
   changeStatusPhotos(student){
     const graduated = this.alumnos.filter( st=> st.id == student.id)[0];
     if(graduated.comprobantePago && graduated.comprobantePago.status.name == 'ACEPTADO'){
-      this.firestoreService.updateFieldGraduate(student.id,{documentationStatus:'PENDIENTE',stepCertificado:3, entregaFotos:true},this.collection).then(upd=>{});
+      this.firestoreService.updateFieldGraduate(student.id,{documentationStatus:'PENDIENTE', entregaFotos:true},this.collection).then(upd=>{});
     }else{
       this.firestoreService.updateFieldGraduate(student.id,{entregaFotos:true},this.collection).then(upd=>{});
     }
+    this.sendNotification('Fotos recibidas','Las fotos para tu certificado fueron entregadas',graduated.nc);
   }
 
 }

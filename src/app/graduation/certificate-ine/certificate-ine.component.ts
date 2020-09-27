@@ -183,7 +183,7 @@ export class CertificateIneComponent implements OnInit, OnDestroy {
   changeStatusDocumentation(student, status) {
     switch (status) {
       case 'LINEA ASIGNADA':
-        this.firestoreService.updateFieldGraduate(student.id, {documentationStatus: status}, this.collection);
+        this.firestoreService.updateFieldGraduate(student.id, {documentationStatus: status, stepCertificado:3}, this.collection);
         this.sendNotification('Línea asignada', 'Ya puedes imprimir tu recibo de pago para el certificado', student.nc);
         break;
       
