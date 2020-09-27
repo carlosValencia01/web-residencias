@@ -10,7 +10,7 @@ export const environment = {
     appId: '1:178833379222:web:c6b59ef3d0579784'
   },
   filesURL: 'https://api.mitec.ittepic.edu.mx/escolares/credenciales/drive/upload/file',
-  filesGraduationURL: 'http://api.mitec.ittepic.edu.mx/escolares/credenciales/drive/upload/fileGraduation',
+  filesGraduationURL: 'https://api.mitec.ittepic.edu.mx/escolares/credenciales/drive/upload/fileGraduation',
   documentHelper: {
 
     // https://drive.google.com/open?id=1OZNev3eyn5MHwZWIFjM4DxAaqWNNBMek
