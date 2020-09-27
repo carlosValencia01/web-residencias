@@ -12,6 +12,7 @@ import { StudentOptionsPageComponent } from './components/student-options-page/s
 import { EnglishStudentsListPageComponent } from './components/english-students-list-page/english-students-list-page.component';
 import { EnglishTeachersListPageComponent } from './components/english-teachers-list-page/english-teachers-list-page.component';
 import { EnglishClassroomsListPageComponent } from './components/english-classrooms-list-page/english-classrooms-list-page.component';
+import { ReleasedOptionsPageComponent } from './components/released-options-page/released-options-page.component';
 
 const routes: Routes = [
   {
@@ -48,6 +49,11 @@ const routes: Routes = [
     path: 'classroom-options',
     pathMatch: 'full',
     component: EnglishClassroomsListPageComponent
+  },
+  {
+    path: 'released-options',
+    pathMatch: 'full',
+    component: ReleasedOptionsPageComponent
   },
   {
     path: 'english-groups/:grupId',

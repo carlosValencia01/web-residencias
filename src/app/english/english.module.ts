@@ -69,6 +69,7 @@ import { EnglishStudentsListPageComponent } from './components/english-students-
 import { EnglishTeachersListPageComponent } from './components/english-teachers-list-page/english-teachers-list-page.component';
 import { EnglishClassroomsListPageComponent } from './components/english-classrooms-list-page/english-classrooms-list-page.component';
 import { StudentProgressPageComponent } from './components/student-progress-page/student-progress-page.component';
+import { ReleasedOptionsPageComponent } from './components/released-options-page/released-options-page.component';
 
 @NgModule({
   imports: [
@@ -131,6 +132,7 @@ import { StudentProgressPageComponent } from './components/student-progress-page
     AssignClassroomComponent,
     EnglishClassroomsListPageComponent,
     StudentProgressPageComponent,
+    ReleasedOptionsPageComponent,
   ],
   entryComponents: [ // Permite exportar
     FormRequestCourseComponent,
