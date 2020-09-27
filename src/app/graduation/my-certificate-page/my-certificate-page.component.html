@@ -24,9 +24,10 @@
 </div>
 
 <div *ngIf="isGraduate && isOkPeriod">
-  <mat-horizontal-stepper [linear]="isLinear" #stepper>
-    <mat-step editable='false'>
-      <ng-template matStepLabel>Solicitud de Certificado</ng-template>
+  <mat-vertical-stepper [linear]="isLinear" #stepper>
+    <!-- Paso 1: Registro correo electrónico -->
+    <mat-step editable='false' completed='true'>
+      <ng-template matStepLabel>Registro correo electrónico</ng-template>
       <div class="example-container" style="margin: 15px; text-align: center;" *ngIf="step == 1 || !step">
           <mat-form-field appearance="outline" class="example-full-width" style="width: 30%;">
             <mat-label>Correo Institucional</mat-label>
@@ -51,21 +52,45 @@
         </mat-dialog-actions>
       </div>
     </mat-step>
-    <mat-step editable='false'>
-      <ng-template matStepLabel>Recibo de pago</ng-template>
+
+    <!-- Paso 2: Asignación de línea de captura -->
+    <mat-step editable='false' completed='true'>
+      <ng-template matStepLabel>Asignación de línea de captura</ng-template>
       <div class="example-container" *ngIf="step == 2">
+        <div class="row justify-content-md-center">
+          <div class="alert alert-warning">
+            <h5 class="alert-heading">Estimado: {{user.name.fullName}}</h5>
+            <hr>
+            <label>Tu solicitud está siendo atendida, espera a que se te asigne línea de captura por parte de Servicios Escolares (promesa de servicio 1 día hábil).</label>
+            <hr>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- Paso 3 Requisitos -->    
+    <mat-step editable='false' completed='true'>
+      <ng-template matStepLabel>Requisitos</ng-template>
+      <div class="example-container" *ngIf="step == 3">
         <div class="row justify-content-md-center">
           <table class="table" style="width: 80%;">
             <tbody>
               <tr>
-                <td rowspan="2" style="width: 50%;">
+                <td style="width: 50%;">
                   <div style="text-align: center;">
-                    <label><b>Línea de Captura:</b> {{documentationStatus == 'LINEA ASIGNADA' ? 'Asignada' : 'Solicitada'}}</label>
-                    <div ngbTooltip="Ayuda" *ngIf="documentationStatus == 'LINEA ASIGNADA'">
+                    <label><b>Pago del certificado</b></label>
+                    <hr>
+                    <ol type="a" style="text-align: justify;">
+                      <li>Ingresa a Conceptos de Cobro / Concepto Asignado.</li>
+                      <li>Da clic en imprimir en el concepto 118 - Certificado.</li>
+                      <li>Acude al banco a realizar el pago correspondiente.</li>
+                      <li>Sube el ticket del banco aquí (imagen o pdf).</li>
+                    </ol>
+                    <div>
                       <mat-icon class="help" style="color: black;" (click)="help()">help</mat-icon>
                     </div>
                   </div>
-                  <div class="card cd" *ngIf="documentationStatus == 'LINEA ASIGNADA'">
+                  <div class="card cd">
                     <div [class.isDisabled]="payDoc !== undefined ? true : false" class="card-header c-header" (click)="
                         collapse('collapseCOMPROBANTE',payDoc !== undefined ? true : false)">
                       <div class="row text-center">
@@ -98,52 +123,159 @@
                   </div>
                 </td>
                 <td style="width: 50%;">
-                  <div class="alert alert-warning">
-                    <h5 class="alert-heading">Proveedor recomendado para fotos:</h5>
+                  <div style="text-align: center;">
+                    <label><b>Fotos</b></label>
                     <hr>
-                    <label>Información aquí...</label>
-                    <hr>
+                    <label>Tienes dos opciones</label>
                   </div>
+                  <mat-radio-group class="example-radio-group" [(ngModel)]="opcionFotos">
+                    <div class="alert alert-warning">
+                      <h5 class="alert-heading">Proveedor recomendado para fotos:</h5>
+                      <hr>
+                      <label>Debido a la contingencia, se ha realizado un convenio con un proveedor para que sea él quien entregue directamente a Servicios Escolares tus fotografías. Es necesario ponerte en contacto con él, para ello te proporcionamos el siguiente número de teléfono 3118479396.</label>
+                      <hr>
+                      <mat-radio-button class="example-radio-button" value = 1> Da clic aquí para elegir esta opción </mat-radio-button>
+                    </div>
+                    <div class="alert alert-warning">
+                      <h5 class="alert-heading">Tómate la foto en otro lugar, considerando lo siguiente:</h5>
+                      <hr>
+                      <ul style="text-align: left;">
+                        <li>Tamaño credencial.</li>
+                        <li>Ovaladas.</li>
+                        <li>Blanco y negro.</li>
+                        <li>Saco negro / gris oscuro.</li>
+                        <li>Camisa / blusa blanca.</li>
+                        <li>Corbata (Hombres).</li>
+                        <li>Aretes discretos (Mujeres).</li>
+                        <li>Fondo blanco.</li>
+                        <li>Peinado formal.</li>
+                        <li>Pegamento al reverso.</li>
+                        <li>Sin retoque.</li>
+                      </ul>
+                      <hr>
+                      <mat-radio-button class="example-radio-button" value = 2> Da clic aquí para elegir esta opción y solicitar una cita para entrega de tus fotografías. </mat-radio-button>
+                    </div>
+                  </mat-radio-group>
                 </td>
               </tr>
               <tr>
-                <td style="width: 50%;">
-                  <div class="alert alert-warning">
-                    <h5 class="alert-heading">Requisitos para fotos:</h5>
-                    <hr>
-                    <ul style="text-align: left;">
-                      <li>Tamaño credencial.</li>
-                      <li>Ovaladas.</li>
-                      <li>Blanco y negro.</li>
-                      <li>Saco negro / gris oscuro.</li>
-                      <li>Camisa / blusa blanca.</li>
-                      <li>Corbata (Hombres).</li>
-                      <li>Aretes discretos (Mujeres).</li>
-                      <li>Fondo blanco.</li>
-                      <li>Peinado formal.</li>
-                      <li>Pegamento al reverso.</li>
-                      <li>Sin retoque.</li>
-                    </ul>
-                    <hr>
-                  </div>
+                <td colspan="2">
+                  <div class="row justify-content-md-center">
+                    <div class="col-12 col-lg-8">
+                      <div style="text-align: center;">
+                        <label><b>¡Importante!</b></label>
+                        <label>No se comenzará el trámite del certificado hasta que no se entreguen los 2 requisitos mencionados (recibo de pago y fotografías adecuadas).</label>
+                        <button mat-stroked-button class="m-1" (click)="continue(3)" type="button" color="primary" style="background: dodgerblue; color: white;">
+                          Continuar
+                        </button>
+                      </div>
+                    </div>
+                  </div> 
                 </td>
               </tr>
           </table>
         </div>
       </div>
     </mat-step>
-    <mat-step editable='false'>
-      <ng-template matStepLabel>Estatus del Certificado</ng-template>
-      <div class="example-container" *ngIf="step == 3">
+
+    <!-- Paso 4 Revisión del comprobante de pago -->    
+    <mat-step editable='false' completed='true'>
+      <ng-template matStepLabel>Revisión del comprobante de pago</ng-template>
+      <div class="example-container" *ngIf="step == 4">
         <div class="row justify-content-md-center">
           <div class="alert alert-warning">
             <h5 class="alert-heading">Estimado: {{user.name.fullName}}</h5>
             <hr>
-            <label>Le informamos que recibirá su certificado de manera digital a partir del día DD/MM/AAAA</label>
+            <label>Tu comprobante de pago está siendo revisado, debes esperar (promesa de servicio 1 día hábil).</label>
+            <hr>
+          </div>
+        </div>
+        <div class="row justify-content-md-center">
+          <div class="card cd" style="width: 30%;">
+            <div [class.isDisabled]="payDoc !== undefined ? true : false" class="card-header c-header" (click)="
+                collapse('collapseCOMPROBANTE',payDoc !== undefined ? true : false)">
+              <div class="row text-center">
+                <div class="col-12">
+                  <div>
+                    <p><b>COMPROBANTE DE PAGO</b></p>
+                  </div>
+                </div>
+              </div>
+              <div class="row text-center">
+                <div class="col-12">
+                  <div *ngIf="payDoc">
+                    <span *ngIf="payDoc.status.name === 'EN PROCESO'" class="badge badge-info">EN PROCESO</span>
+                    <span *ngIf="payDoc.status.name === 'ACEPTADO'" class="badge badge-success">ACEPTADO</span>
+                    <span *ngIf="payDoc.status.name === 'RECHAZADO'" class="badge badge-danger">RECHAZADO</span>
+                  </div>
+                  <span *ngIf="!payDoc" class="badge badge-warning">SIN ENVIO</span>
+                </div>
+              </div><br>
+              <div *ngIf="payDoc && payDoc.status.name === 'RECHAZADO'" style="text-align: center; cursor: pointer;">
+                <mat-icon class="mx-1" style="color:white" (click)="onMessage(payDoc.status.observation)"
+                data-toggle="tooltip" data-placement="top" title="Ver observación">message</mat-icon>
+              </div>
+            </div>
+            <div class="card-body c-body" id="collapseCOMPROBANTE" *ngIf="payConfig">
+              <dropzone id="dz0" [config]="payConfig" [message]="'Subir'" (error)="onErrorCommon($event)"
+                (success)="onUploadSuccess($event)" *ngIf="!payDoc || payDoc.status.name === 'RECHAZADO'">
+              </dropzone>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- Paso 5 Confirmación -->    
+    <mat-step editable='false' completed='true'>
+      <ng-template matStepLabel>Confirmación</ng-template>
+      <div class="example-container" *ngIf="step == 5">
+        <div class="row justify-content-md-center" *ngIf="opcionFotos == 1">
+          <div class="alert alert-warning">
+            <hr>
+            <label>En espera de recepción de fotografías por parte del proveedor.</label>
+            <hr>
+          </div>
+        </div>
+        <div class="row justify-content-md-center" *ngIf="opcionFotos == 2">
+          <div class="alert alert-warning">
+            <h5 class="alert-heading">Estimado: {{user.name.fullName}}</h5>
+            <hr>
+            <label>Espera cita para entregar tus fotografías, nos comunicaremos a través de tu correo institucional.</label>
             <hr>
           </div>
         </div>
       </div>
-      </mat-step>
-  </mat-horizontal-stepper>
+    </mat-step>
+
+    <!-- Paso 6: Certificado enviado por correo electrónico -->    
+    <mat-step editable='false' completed='true'>
+      <ng-template matStepLabel>Certificado enviado por correo electrónico</ng-template>
+      <div class="example-container" *ngIf="step == 6">
+        <div class="row justify-content-md-center">
+          <div class="alert alert-warning">
+            <h5 class="alert-heading">Estimado: {{user.name.fullName}}</h5>
+            <hr>
+            <label>Tu certificado digitalizado se ha enviado a tu correo electrónico.</label>
+            <hr>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+
+    <!-- Paso 7: Certificado entregado -->    
+    <mat-step editable='false' completed='true'>
+      <ng-template matStepLabel>Certificado entregado</ng-template>
+      <div class="example-container" *ngIf="step == 7">
+        <div class="row justify-content-md-center">
+          <div class="alert alert-warning">
+            <h5 class="alert-heading">Estimado: {{user.name.fullName}}</h5>
+            <hr>
+            <label>Tu certificado ha sido entregado.</label>
+            <hr>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
 </div>

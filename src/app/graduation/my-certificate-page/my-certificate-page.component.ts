@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
@@ -17,7 +17,8 @@ moment.locale('es');
 @Component({
   selector: 'app-my-certificate-page',
   templateUrl: './my-certificate-page.component.html',
-  styleUrls: ['./my-certificate-page.component.scss']
+  styleUrls: ['./my-certificate-page.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class MyCertificatePageComponent implements OnInit {
   @ViewChild('stepper') private stepper: MatStepper;
@@ -38,7 +39,7 @@ export class MyCertificatePageComponent implements OnInit {
   collection;
 
   // Stepper
-  isLinear = false;
+  isLinear = true;
   step;
   email = '';
   emailConfirm = '';
@@ -47,6 +48,8 @@ export class MyCertificatePageComponent implements OnInit {
   payDoc;
   documentationStatus;
   isOkPeriod;
+
+  opcionFotos: number;
 
   constructor(
     private notificationsServices: NotificationsServices,
@@ -88,6 +91,7 @@ export class MyCertificatePageComponent implements OnInit {
                       this.step = this.student.data.stepCertificado ? this.student.data.stepCertificado : 1;
                       this.documentationStatus = this.student.data.documentationStatus ? this.student.data.documentationStatus : 'NO SOLICITADO';
                       this.payDoc = this.student.data.comprobantePago ? this.student.data.comprobantePago : '';
+                      this.opcionFotos = this.student.data.opcionFotos ? this.student.data.opcionFotos : null;
                       this.loadStepWizard(this.step);
                       this.assingConfigForDropzone();
                   });
@@ -132,15 +136,27 @@ export class MyCertificatePageComponent implements OnInit {
   }
 
   loadStepWizard(step) {
+    console.log(step)
     if (step == 1) {
       this.stepper.selectedIndex = 0;
     }
     if (step == 2) {
-      this.stepper.selectedIndex = 1;    
+      this.stepper.selectedIndex = 1; 
     }
     if (step == 3) {
-      this.stepper.next();
-      this.stepper.next();
+      this.stepper.selectedIndex = 2;  
+    }
+    if (step == 4) {
+      this.stepper.selectedIndex = 3;
+    }
+    if (step == 5) {
+      this.stepper.selectedIndex = 4;
+    }
+    if (step == 6) {
+      this.stepper.selectedIndex = 5;
+    }
+    if (step == 7) {
+      this.stepper.selectedIndex = 6;
     }
   }
 
@@ -155,7 +171,34 @@ export class MyCertificatePageComponent implements OnInit {
           });
         }
         break;
-    }
+      case 3:
+        // Verificar que tenga cargado el comprobante de pago
+        if(!this.payDoc){
+          Swal.fire({
+            title: 'Atención',
+            text: `Debe subir su comprobante de pago`,
+            type: 'info',
+            allowOutsideClick: false,
+            confirmButtonText: 'Aceptar'
+          });
+          // Verificar que tenga seleccionado opción de fotos
+        } else if (!this.opcionFotos){
+          Swal.fire({
+            title: 'Atención',
+            text: `Seleccione una opción para entrega de fotos`,
+            type: 'info',
+            allowOutsideClick: false,
+            confirmButtonText: 'Aceptar'
+          });
+        } else {
+          // Guardar datos y avanzar al paso 4
+          this.firebaseSrv.updateFieldGraduate(this.student.id, {opcionFotos: this.opcionFotos, stepCertificado:4}, this.collection).then(() => {
+          }, (error) => {
+            console.log(error);
+          });
+        }
+        break;
+  }
   }
 
   assingConfigForDropzone() {
