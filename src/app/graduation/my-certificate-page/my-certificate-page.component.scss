@@ -1,5 +1,5 @@
-::ng-deep .mat-horizontal-stepper-header{
-    pointer-events: none !important;
+.mat-step-header {
+  pointer-events: none !important;
 }
 
 .imgProfile{
@@ -170,6 +170,24 @@ p, #dz0, #dz1, #dz2, #dz3, #dz4, #dz5, #dz6, #dz7, #dz8, #dz9, #dz10, #dz11, #dz
   cursor: pointer;
 }
 
-td { 
+td,tr{ 
   border: none; 
 } 
+
+.example-radio-group {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.example-radio-button {
+  margin: 5px;
+  white-space: normal !important;
+}
+
+.example-radio-button > * {
+  white-space: normal !important;
+}
+
+.example-selected-value {
+  margin: 15px 0;
+}
