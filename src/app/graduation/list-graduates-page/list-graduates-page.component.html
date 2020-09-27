@@ -887,6 +887,10 @@
                       
                         <mat-menu #actions="matMenu">
                           
+                          <button mat-menu-item *ngIf="row.opcionFotos && !row.entregaFotos" (click)="changeOptionPhotos(row)">
+                            <mat-icon>settings_backup_restore</mat-icon>
+                            Cambiar opción de fotos
+                          </button>
                           <button mat-menu-item *ngIf="row.documentationStatus == 'LINEA ASIGNADA' && !row.entregaFotos" (click)="changeStatusPhotos(row)">
                             <mat-icon>perm_media</mat-icon>
                             Fotos recibidas

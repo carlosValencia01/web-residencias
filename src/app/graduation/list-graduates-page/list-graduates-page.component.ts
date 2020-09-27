@@ -317,7 +317,7 @@ export class ListGraduatesPageComponent implements OnInit {
       this.dataSource.sort = this.sort;       
       this.applyFilters();
       this.totalAlumnos = this.alumnosReport.length;      
-      this.alumnosReportDocumentation = this.alumnos;
+      this.alumnosReportDocumentation = this.alumnos.slice(0);
       this.dataSourceDoc = new MatTableDataSource(this.alumnosReportDocumentation);
       this.dataSourceDoc.paginator = this.paginator2;
       this.dataSourceDoc.sort = this.sort;
@@ -2383,6 +2383,10 @@ export class ListGraduatesPageComponent implements OnInit {
       this.firestoreService.updateFieldGraduate(student.id,{entregaFotos:true},this.collection).then(upd=>{});
     }
     this.sendNotification('Fotos recibidas','Las fotos para tu certificado fueron entregadas',graduated.nc);
+  }
+  changeOptionPhotos(student){
+    const newOption = student.opcionFotos == 1 ? 2 : 1;
+    this.firestoreService.updateFieldGraduate(student.id,{opcionFotos:newOption},this.collection).then(upd=>{});
   }
 
 }
