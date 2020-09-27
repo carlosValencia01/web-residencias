@@ -24,8 +24,7 @@ export class ReviewPhotosPaydocModalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.data.student.comprobantePago.doc.fileIdInDrive);
-    
+  
     this.URLFile = `https://drive.google.com/file/d/${this.data.student.comprobantePago.doc.fileIdInDrive}/preview`;
     
   }
@@ -45,7 +44,8 @@ export class ReviewPhotosPaydocModalComponent implements OnInit {
           observation: ''
         },
         doc: this.data.student.comprobantePago.doc
-      }
+      },      
+      stepCertificado:5
     };
     if(status === 'ACEPTADO'){
       confirmdialog = await this.swalDialog(`¿ ACEPTAR RECIBO DE PAGO ?`, '', 'question');
@@ -53,6 +53,7 @@ export class ReviewPhotosPaydocModalComponent implements OnInit {
       confirmdialog = await this.swalDialogInput('¿ RECHAZAR RECIBO DE PAGO ?','Especifique el motivo');
       query.comprobantePago.status.message = 'Documento rechazado';
       query.comprobantePago.status.observation = confirmdialog+'';
+      delete query.stepCertificado;
     }
 
     if (confirmdialog) {
