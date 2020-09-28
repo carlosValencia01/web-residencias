@@ -87,6 +87,7 @@ export class MyCertificatePageComponent implements OnInit {
                   this.isOkPeriod = true;
                   this.studentSub = this.firebaseSrv.getGraduateByControlNumber(this.user.email + '', this.eventId).subscribe(
                     (student) => {
+                      console.log(student);
                       this.student = student[0];
                       this.step = this.student.data.stepCertificado ? this.student.data.stepCertificado : 1;
                       this.documentationStatus = this.student.data.documentationStatus ? this.student.data.documentationStatus : 'NO SOLICITADO';

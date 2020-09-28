@@ -80,6 +80,7 @@
                   <div style="text-align: center;">
                     <label><b>Pago del certificado</b></label>
                     <hr>
+                    <label style="text-align: left;">1.- Descarga tu línea de captura en el SII, de acuerdo a lo siguiente:</label>
                     <ol type="a" style="text-align: justify;">
                       <li>Ingresa a Conceptos de Cobro / Concepto Asignado.</li>
                       <li>Da clic en imprimir en el concepto 118 - Certificado.</li>
@@ -132,7 +133,7 @@
                     <div class="alert alert-warning">
                       <h5 class="alert-heading">Proveedor recomendado para fotos:</h5>
                       <hr>
-                      <label>Debido a la contingencia, se ha realizado un convenio con un proveedor para que sea él quien entregue directamente a Servicios Escolares tus fotografías. Es necesario ponerte en contacto con él, para ello te proporcionamos el siguiente número de teléfono 3118479396.</label>
+                      <label>Debido a la contingencia, se ha realizado un convenio con un proveedor para que sea él quien entregue directamente a Servicios Escolares tus fotografías. Es necesario ponerte en contacto con él, para ello te proporcionamos los siguientes números de teléfono 3118479396 y 3111694385.</label>
                       <hr>
                       <mat-radio-button class="example-radio-button" value = 1> Da clic aquí para elegir esta opción </mat-radio-button>
                     </div>
@@ -229,7 +230,7 @@
     <!-- Paso 5 Confirmación -->    
     <mat-step editable='false' completed='true'>
       <ng-template matStepLabel>Confirmación</ng-template>
-      <div class="example-container" *ngIf="step == 5">
+      <div class="example-container" *ngIf="step == 5 && documentationStatus != 'PENDIENTE' ">
         <div class="row justify-content-md-center" *ngIf="opcionFotos == 1">
           <div class="alert alert-warning">
             <hr>
@@ -246,6 +247,17 @@
           </div>
         </div>
       </div>
+      <div class="example-container" *ngIf="step == 5 && documentationStatus == 'PENDIENTE' ">
+        <div class="row justify-content-md-center">
+          <div class="alert alert-warning">
+            <h5 class="alert-heading">Estimado: {{user.name.fullName}}</h5>
+            <hr>
+            <label>Los documentos han sido recibidos con éxito, su certificado está en trámite.</label>
+            <hr>
+          </div>
+        </div>
+      </div>
+      
     </mat-step>
 
     <!-- Paso 6: Certificado enviado por correo electrónico -->    
