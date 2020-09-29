@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { CalendarEvent, CalendarMonthViewBeforeRenderEvent, CalendarView } from 'angular-calendar';
 import { isSameDay, isSameMonth } from 'date-fns';
@@ -27,7 +27,10 @@ import { DenyDayProvider } from 'src/app/providers/reception-act/denyDays.prov';
 import { NewEventComponent } from '../new-event/new-event.component';
 import { NewTitleComponent } from '../new-title/new-title.component';
 import { ViewMoreComponent } from '../view-more/view-more.component';
-
+import { ERoleToAcronym } from 'src/app/enumerators/app/role.enum';
+import { Subscription } from 'rxjs';
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
+import { eRecActEvents } from 'src/app/enumerators/shared/sockets.enum';
 require('jspdf-autotable');
 const jsPDF = require('jspdf');
 
@@ -40,7 +43,7 @@ moment.locale('es');
   templateUrl: './diary.component.html',
   styleUrls: ['./diary.component.scss']
 })
-export class DiaryComponent implements OnInit {
+export class DiaryComponent implements OnInit, OnDestroy {
   @ViewChild('basicMenu') public basicMenu: ContextMenuComponent;
   @ViewChild('basicMenu_2') public basicMenu_2: ContextMenuComponent;
   carrers: iCarrera[];
@@ -83,6 +86,8 @@ export class DiaryComponent implements OnInit {
   rol: string;
   canEdit = false;
   denyDays = [];
+  private filterRole: string;
+  private subscriptions: Array<Subscription> = [];
   constructor(
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
@@ -95,9 +100,11 @@ export class DiaryComponent implements OnInit {
     private _DepartmentProvider: DepartmentProvider,
     private _DenyDayProvider: DenyDayProvider,
     private loadingService: LoadingService,
+    private webSocketService: WebSocketService
   ) {
     const tmpFecha = localStorage.getItem('Appointment');
     this.rol = this._CookiesService.getData().user.rol.name.toLowerCase();
+    this.filterRole = (ERoleToAcronym as any)[this.rol];
     this.canEdit = this.rol === 'jefe div. est. prof.' || 'administrador' || 'coordinación de titulación' ? true : false;
 
     this._getImageToPdf();
@@ -113,6 +120,12 @@ export class DiaryComponent implements OnInit {
     this.carrers.push({
       carrer: 'Todos', class: 'circulo-all', abbreviation: 'All', icon: 'all.png', status: true,
       color: { primary: '#57c7d4', secondary: '#ace3ea' }
+    });
+  }
+  ngOnDestroy(){        
+    this.subscriptions.forEach((subscription: Subscription) => {
+      if(!subscription.closed)
+        subscription.unsubscribe();
     });
   }
 
@@ -132,21 +145,40 @@ export class DiaryComponent implements OnInit {
     const maxDate = new Date(this.viewDate.getTime());
     minDate.setDate(minDate.getDate() - minDate.getDay());
     maxDate.setDate(maxDate.getDate() + (6 - maxDate.getDay()));
+
+    this.subscriptions.push(
+      this.webSocketService.listen(eRecActEvents.GET_DIARY).subscribe( data=>{
+        if (typeof (data.Diary) !== 'undefined') {
+          this.Appointments = data.Diary;
+          // this.Ranges = data.Ranges;
+          this.denyDays = data.denyDays;
+          
+          this.loadAppointment();
+          this.refresh.next();
+        }
+      }));
+
+    this.subscriptions.push(
+      this.webSocketService.listen(eRecActEvents.MODIFY_DIARY).subscribe(data=>{
+        this._RequestProvider.getDiary({
+          month: month,
+          year: year,
+          isWeek: this.view === CalendarView.Week,
+          min: minDate,
+          max: maxDate
+        }, this._CookiesService.getClientId()).subscribe(data => {
+          
+        });
+      }));
+
     this._RequestProvider.getDiary({
       month: month,
       year: year,
       isWeek: this.view === CalendarView.Week,
       min: minDate,
       max: maxDate
-    }).subscribe(data => {
-      if (typeof (data.Diary) !== 'undefined') {
-        this.Appointments = data.Diary;
-        // this.Ranges = data.Ranges;
-        this.denyDays = data.denyDays;
-        
-        this.loadAppointment();
-        this.refresh.next();
-      }
+    }, this._CookiesService.getClientId()).subscribe(data => {
+      
     }, _ => {
       this._NotificationsServices
         .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Error al obtener eventos');
@@ -510,7 +542,7 @@ export class DiaryComponent implements OnInit {
                 doer: this._CookiesService.getData().user.name.fullName,
                 phase: operation === eStatusRequest.CANCELLED ? eRequest.REALIZED : eRequest.ASSIGNED
               };
-              this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(_ => {
+              this._RequestProvider.updateRequest(tmpAppointment.id, data,this.filterRole).subscribe(_ => {
                 this._NotificationsServices
                   .showNotification(eNotificationType.SUCCESS, 'Acto recepcional',
                     operation === eStatusRequest.CANCELLED ? 'Evento cancelado' : 'Evento rechazado');
@@ -716,7 +748,7 @@ export class DiaryComponent implements OnInit {
             opcionTitulacion: tmpStudentData.product,
             departamentoEmail: this.employees
           };
-          this._RequestProvider.updateRequest(tmpValor.id, data).subscribe(_ => {
+          this._RequestProvider.updateRequest(tmpValor.id, data,this.filterRole).subscribe(_ => {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Fecha propuesta aceptada');
             // tmpValor.phase = "Realizado";
             this.Appointments[index.appointment].values[index.value].phase = 'Realizado';
@@ -822,7 +854,7 @@ export class DiaryComponent implements OnInit {
           phase: eRequest.REALIZED,
           operation: eStatusRequest.PROCESS
         };
-        this._RequestProvider.updateRequest(tmpAppointment.id, data).subscribe(__ => {
+        this._RequestProvider.updateRequest(tmpAppointment.id, data,this.filterRole).subscribe(__ => {
           window.open(oRequest.professionalEthicsAndCode().output('bloburl'), '_blank');
           this.reload();
           this.loadingService.setLoading(false);
@@ -1042,7 +1074,7 @@ export class DiaryComponent implements OnInit {
       }else{              
         event.date.setHours(23,59,59);        
        
-          const answer = await this.showAlert('Bloquear el día, no podra deshacer esta operacion');
+          const answer = await this.showAlert('¿Bloquear el día?');
           if(answer){
             this._DenyDayProvider.add({date:event.date}).toPromise().then(
               res=>{

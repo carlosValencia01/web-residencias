@@ -18,6 +18,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import Swal from 'sweetalert2';
 import { ICareer } from 'src/app/entities/app/career.model';
 import { CareerProvider } from 'src/app/providers/shared/career.prov';
+import { MatDialog } from '@angular/material';
+import { ReviewPhotosPaydocModalComponent } from '../review-photos-paydoc-modal/review-photos-paydoc-modal.component';
 declare const require: any;
 const jsPDF = require('jspdf');
 require('jspdf-autotable');
@@ -39,6 +41,10 @@ export class ListGraduatesPageComponent implements OnInit {
   public certificadosImpresos;
   public certificadosListos;
   public certificadosEntregados;
+  public certificadosNoSolicitados;
+  public certificadosSolicitados;
+  public certificadosConLineaAsignada;
+  public certificadosEnviados;
 
   public totalVerificados;
   public boletosTotales;
@@ -93,7 +99,7 @@ export class ListGraduatesPageComponent implements OnInit {
 
   displayedColumns: string[] = ['nc', 'name', 'carreer', 'numInvitados','status','actions'];
   dataSource: MatTableDataSource<any>;
-  displayedColumnsDoc: string[] = ['nc', 'name', 'carreer','status','actions'];
+  displayedColumnsDoc: string[] = ['nc', 'name', 'carreer','avance','photos','status','actions'];
   dataSourceDoc: MatTableDataSource<any>;
   
   @ViewChild('paginator1') set paginator(paginator: MatPaginator){
@@ -136,12 +142,19 @@ export class ListGraduatesPageComponent implements OnInit {
       value:'',
       all:true      
     },    
+    photos:{
+      value:'',
+      all:true      
+    },    
     textSearch:{
       status:false,
       value:''
     }
   };
   filteredCareerDoc: string;
+  doPdfReport = false;
+  doExcelReport = false;
+  doBestAvgReport = false;
   constructor(
     private firestoreService: FirebaseService,
     private notificationsServices: NotificationsServices,
@@ -151,7 +164,8 @@ export class ListGraduatesPageComponent implements OnInit {
     private imageToBase64Serv: ImageToBase64Service,
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
-    private careerProv: CareerProvider
+    private careerProv: CareerProvider,
+    public dialog: MatDialog,
   ) {
     this.getFonts();
     const rol = this.cookiesService.getData().user.role;
@@ -259,35 +273,43 @@ export class ListGraduatesPageComponent implements OnInit {
 
   readEmail() {
     this.firestoreService.getGraduates(this.collection).subscribe((alumnosSnapshot) => {
-      this.alumnos = alumnosSnapshot.map((alumno) => {
-        return {
-          id: alumno.payload.doc.id,
-          nc: alumno.payload.doc.get('nc'),
-          name: alumno.payload.doc.get('nombre'),
-          nameLastName: alumno.payload.doc.get('nombreApellidos'),
-          carreer: alumno.payload.doc.get('carrera'),
-          carreerComplete: alumno.payload.doc.get('carreraCompleta'),
-          email: alumno.payload.doc.get('correo'),
-          status: alumno.payload.doc.get('estatus'),
-          degree: alumno.payload.doc.get('degree') ? true : false,
-          observations: alumno.payload.doc.get('observations'),
-          survey: alumno.payload.doc.get('survey'),
-          genero: alumno.payload.doc.get('genero'),
-          curp: alumno.payload.doc.get('curp'),
-          bestAverage: alumno.payload.doc.get('mejorPromedio') ? alumno.payload.doc.get('mejorPromedio') : false,
-          average: alumno.payload.doc.get('promedio') ? alumno.payload.doc.get('promedio') : 0,
-          documentationStatus: alumno.payload.doc.get('documentationStatus') ? alumno.payload.doc.get('documentationStatus') : ' ',
-          specialty: alumno.payload.doc.get('especialidad') ? alumno.payload.doc.get('especialidad') : '<<Especialidad>>',
-          numInvitados: alumno.payload.doc.get('numInvitados') ? alumno.payload.doc.get('numInvitados') : 0,
-          invitados: alumno.payload.doc.get('invitados') ? alumno.payload.doc.get('invitados') : [{}],
-          nss: alumno.payload.doc.get('nss') ? alumno.payload.doc.get('nss') : ''
-        };
-      });
-      this.getTicketsRegistered();
+      this.alumnos = alumnosSnapshot.reduce((prev, alumno) => {
+        if(alumno.payload.doc.get('nc')){
+          prev.push({
+            id: alumno.payload.doc.id,
+            nc: alumno.payload.doc.get('nc'),
+            name: alumno.payload.doc.get('nombre'),
+            nameLastName: alumno.payload.doc.get('nombreApellidos'),
+            carreer: alumno.payload.doc.get('carrera'),
+            carreerComplete: alumno.payload.doc.get('carreraCompleta'),
+            email: alumno.payload.doc.get('correo'),
+            status: alumno.payload.doc.get('estatus'),
+            degree: alumno.payload.doc.get('degree') ? true : false,
+            observations: alumno.payload.doc.get('observations'),
+            survey: alumno.payload.doc.get('survey'),
+            genero: alumno.payload.doc.get('genero'),
+            curp: alumno.payload.doc.get('curp'),
+            bestAverage: alumno.payload.doc.get('mejorPromedio') ? alumno.payload.doc.get('mejorPromedio') : false,
+            average: alumno.payload.doc.get('promedio') ? alumno.payload.doc.get('promedio') : 0,
+            documentationStatus: alumno.payload.doc.get('documentationStatus') ? alumno.payload.doc.get('documentationStatus') : ' ',
+            specialty: alumno.payload.doc.get('especialidad') ? alumno.payload.doc.get('especialidad') : '<<Especialidad>>',
+            numInvitados: alumno.payload.doc.get('numInvitados') ? alumno.payload.doc.get('numInvitados') : 0,
+            invitados: alumno.payload.doc.get('invitados') ? alumno.payload.doc.get('invitados') : [{}],
+            nss: alumno.payload.doc.get('nss') ? alumno.payload.doc.get('nss') : '',
+            comprobantePago: alumno.payload.doc.get('comprobantePago'),
+            correoCertificado: alumno.payload.doc.get('correoCertificado'),
+            entregaFotos: alumno.payload.doc.get('entregaFotos'),
+            opcionFotos: alumno.payload.doc.get('opcionFotos'),
+            stepCertificado: alumno.payload.doc.get('stepCertificado'),
+          })       
+        }
+        return prev;
+      },[]);
       // Ordenar Alumnos por Apellidos
       this.alumnos.sort(function (a, b) {
         return a.nameLastName.localeCompare(b.nameLastName);
       });
+      this.getTicketsRegistered();
 
       this.alumnosReport = this.alumnos;
       this.dataSource = new MatTableDataSource(this.alumnosReport);
@@ -295,7 +317,7 @@ export class ListGraduatesPageComponent implements OnInit {
       this.dataSource.sort = this.sort;       
       this.applyFilters();
       this.totalAlumnos = this.alumnosReport.length;      
-      this.alumnosReportDocumentation = this.alumnos;
+      this.alumnosReportDocumentation = this.alumnos.slice(0);
       this.dataSourceDoc = new MatTableDataSource(this.alumnosReportDocumentation);
       this.dataSourceDoc.paginator = this.paginator2;
       this.dataSourceDoc.sort = this.sort;
@@ -304,10 +326,14 @@ export class ListGraduatesPageComponent implements OnInit {
       this.totalEgresados = this.alumnos.length;
       this.totalEgresadosH = this.alumnos.filter(st => st.genero === 'M').length;
       this.totalEgresadosM = this.alumnos.filter(st => st.genero === 'F').length;
-      this.certificadosImpresos = this.filterCountItemsStatus('Impreso').length;
-      this.certificadosListos = this.filterCountItemsStatus('Listo').length;
-      this.certificadosEntregados = this.filterCountItemsStatus('Entregado').length;
-      this.certificadosPendientes = this.filterCountItemsStatus('Fotos y Recibo').length;
+      this.certificadosImpresos = this.filterCountItemsStatus('impreso').length;
+      this.certificadosListos = this.filterCountItemsStatus('listo').length;
+      this.certificadosEntregados = this.filterCountItemsStatus('entregado').length;
+      this.certificadosPendientes = this.filterCountItemsStatus('pendiente').length;
+      this.certificadosConLineaAsignada = this.filterCountItemsStatus('linea asignada').length;
+      this.certificadosEnviados = this.filterCountItemsStatus('enviado').length;
+      this.certificadosSolicitados = this.filterCountItemsStatus('solicitado').length;
+      this.certificadosNoSolicitados = this.filterCountItemsStatus('no solicitado').length;
 
       this.totalVerificados = this.filterCountItemsVerified().length;
       this.boletosRestantes = (this.boletosTotales - this.boletosRegistrados);
@@ -547,9 +573,9 @@ export class ListGraduatesPageComponent implements OnInit {
     });
   }
 
-  filterCountItemsStatus(status) {
+  filterCountItemsStatus(status: string) {
     return this.alumnos.filter(function (alumno) {
-      return alumno.documentationStatus.toLowerCase().indexOf(status.toLowerCase()) > -1;
+      return alumno.documentationStatus.toLowerCase().indexOf(status) > -1;
     });
   }
 
@@ -563,7 +589,8 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   // Generar reporte de alumnos
-  generateReport() {
+  async generateReport() {
+    this.doPdfReport = true;
     this.loadingService.setLoading(true);
     var doc = new jsPDF('l', 'pt');
 
@@ -579,7 +606,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(15);
     doc.setFontStyle('bold');
     doc.text(header, pageWidth / 2, 30, 'center');
-
+    await this.delay(500);
     doc.autoTable({
       html: '#tableReport',
       theme: 'grid',
@@ -644,13 +671,18 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontStyle('bold');
     doc.setFontSize(7);
     doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
+    this.doPdfReport = false;
     window.open(doc.output('bloburl'), '_blank');
     this.loadingService.setLoading(false);
     // doc.save("Reporte Graduacion "+this.filteredCareer+".pdf");
   }
 
   // Exportar alumnos a excel
-  excelExport() {
+  async excelExport() {
+    this.doExcelReport = true;
+    this.loadingService.setLoading(true);
+    await this.delay(1000);
+    this.loadingService.setLoading(false);
     this.notificationsServices.showNotification(0, 'Datos Exportados', 'Los datos se exportaron con éxito');
     TableToExcel.convert(document.getElementById('tableReportExcel'), {
       name: 'Reporte Graduación.xlsx',
@@ -658,6 +690,8 @@ export class ListGraduatesPageComponent implements OnInit {
         name: 'Alumnos'
       }
     });
+    await this.delay(200);
+    this.doExcelReport = false;
   }
 
   // Generar papeletas de alumnos verificados
@@ -955,6 +989,7 @@ export class ListGraduatesPageComponent implements OnInit {
   }
 
   async generateReportBestAverage() {
+    this.doBestAvgReport = true;
     this.loadingService.setLoading(true);
     await this.getBestAvgs();
 
@@ -972,7 +1007,7 @@ export class ListGraduatesPageComponent implements OnInit {
     doc.setFontSize(15);
     doc.setFontStyle('bold');
     doc.text(header, pageWidth / 2, 50, 'center');
-
+    await this.delay(1000);
     doc.autoTable({
       html: '#tableReportBestAverageIn',
       theme: 'striped',
@@ -1028,6 +1063,7 @@ export class ListGraduatesPageComponent implements OnInit {
       doc.setFontSize(7);
       doc.text(hour, pageWidth - 45, pageHeight - 5, 'center');
       this.loadingService.setLoading(false);
+      this.doBestAvgReport = false;
       window.open(doc.output('bloburl'), '_blank');
     }, 500);
     // doc.save("Reporte Graduacion "+this.filteredCareer+".pdf");
@@ -1287,48 +1323,47 @@ export class ListGraduatesPageComponent implements OnInit {
 
   changeStatusDocumentation(student, status) {
     switch (status) {
-      case 'Fotos y Recibo':
-        this.firestoreService.updateFieldGraduate(student.id, {documentationStatus: status}, this.collection);
-        this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas', student.nc);
-        break;
-      case 'Impreso':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
 
-        // this.sendNotification('Certificado', 'Tus certificado ha sido impreso',student.nc);
+      case 'ENVIADO':
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status,stepCertificado: 6 }, this.collection);
+        this.sendNotification('Certificado', 'Tu certificado fue enviado a tu correo electrónico', student.nc);
         break;
-      case 'Listo':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
-
-        this.sendNotification('Certificado', 'Tu certificado ya está listo', student.nc);
-        break;
-      case 'Entregado':
-        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status }, this.collection);
-
+      case 'ENTREGADO':
+        this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: status,stepCertificado: 7 }, this.collection);
         this.sendNotification('Certificado', 'Tu certificado fue entregado', student.nc);
         break;
-      case 'Regresar':
+      case 'Regresar':{
+
         switch (student.documentationStatus) {
-          case 'Fotos y Recibo':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: ' ' }, this.collection);
-
-            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
+          case 'LINEA ASIGNADA':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'SOLICITADO' }, this.collection);
             break;
-          case 'Impreso':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Fotos y Recibo' }, this.collection);
-
-            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
+          case 'PENDIENTE':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'LINEA ASIGNADA' }, this.collection);
             break;
-          case 'Listo':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Impreso' }, this.collection);
+          case 'IMPRESO':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'PENDIENTE' }, this.collection);
 
-            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
-          case 'Entregado':
-            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'Listo' }, this.collection);
+          case 'LISTO':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'IMPRESO' }, this.collection);
 
-            // this.sendNotification('Fotos y Recibo', 'Tus fotos han sido recibidas',student.nc);
             break;
+          case 'ENVIADO':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'LISTO' }, this.collection);
+
+            break;         
+          case 'ENTREGADO':
+            this.firestoreService.updateFieldGraduate(student.id, { documentationStatus: 'ENVIADO' }, this.collection);
+
+            break;         
         }
+        break;
+      }
+      default: {
+          this.firestoreService.updateFieldGraduate(student.id, {documentationStatus: status}, this.collection);
+          break;
+      }
     }
   }
 
@@ -2260,6 +2295,16 @@ export class ListGraduatesPageComponent implements OnInit {
         }
         break;
       }               
+      case 'photos':{ // filtrar por opcion de las fotos       
+        if(filterValue == 'default'){
+          this.filtersDoc.photos.all = true;   
+          this.filtersDoc.photos.value = '';       
+        }else{
+          this.filtersDoc.photos.all = false;
+          this.filtersDoc.photos.value = filterValue;                   
+        }
+        break;
+      }               
       case 'search':{ //para el cuadro de texto
         if(filterValue !== ''){
           this.filtersDoc.textSearch.status = true;
@@ -2285,8 +2330,10 @@ export class ListGraduatesPageComponent implements OnInit {
       this.dataSourceDoc.filter = this.filtersDoc.textSearch.value;
     }
     if(!this.filtersDoc.status.all){ //si no se quieren ver todos
-      this.dataSourceDoc.data = this.dataSourceDoc.data.filter( (st:any)=>st.documentationStatus.toLowerCase() == this.filtersDoc.status.value);
-      
+      this.dataSourceDoc.data = this.dataSourceDoc.data.filter( (st:any)=>st.documentationStatus.toLowerCase() == this.filtersDoc.status.value);      
+    }
+    if(!this.filtersDoc.photos.all){ //si no se quieren ver todos
+      this.dataSourceDoc.data = this.dataSourceDoc.data.filter( (st:any)=>(st.opcionFotos+'').toLowerCase() == this.filtersDoc.photos.value);      
     }
     this.eventFilterReportDocumentation();
   }
@@ -2300,4 +2347,46 @@ export class ListGraduatesPageComponent implements OnInit {
       
     );
   }
+
+  reviewPhotos(student){
+    const linkModal = this.dialog.open(ReviewPhotosPaydocModalComponent, {
+      data: {
+        operation: 'view',
+        student:student,
+        collection: this.collection
+      },
+      disableClose: true,
+      hasBackdrop: true,
+      width: '90em',
+      height: '800px'
+    });
+    linkModal.afterClosed().subscribe( (res)=>{
+        const graduated = this.alumnos.filter( st=> st.id == student.id)[0];
+        if(graduated.entregaFotos && graduated.comprobantePago.status.name == 'ACEPTADO'){
+          this.firestoreService.updateFieldGraduate(student.id,{documentationStatus:'PENDIENTE',stepCertificado:3},this.collection).then(upd=>{});
+        }
+       
+      },
+      err=>console.log(err)
+    );
+  }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  changeStatusPhotos(student){
+    const graduated = this.alumnos.filter( st=> st.id == student.id)[0];
+    if(graduated.comprobantePago && graduated.comprobantePago.status.name == 'ACEPTADO'){
+      this.firestoreService.updateFieldGraduate(student.id,{documentationStatus:'PENDIENTE', entregaFotos:true},this.collection).then(upd=>{});
+    }else{
+      this.firestoreService.updateFieldGraduate(student.id,{entregaFotos:true},this.collection).then(upd=>{});
+    }
+    this.sendNotification('Fotos recibidas','Las fotos para tu certificado fueron entregadas',graduated.nc);
+  }
+  changeOptionPhotos(student){
+    const newOption = student.opcionFotos == 1 ? 2 : 1;
+    this.firestoreService.updateFieldGraduate(student.id,{opcionFotos:newOption},this.collection).then(upd=>{});
+  }
+
 }

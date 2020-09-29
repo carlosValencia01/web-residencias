@@ -13,6 +13,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { IGraduationEvent } from 'src/app/entities/graduation/graduation-event.model';
+import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
+import { eFOLDER } from 'src/app/enumerators/shared/folder.enum';
 @Component({
   selector: 'app-graduation-events-page',
   templateUrl: './graduation-events-page.component.html',
@@ -48,6 +50,7 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
     private cookiesService: CookiesService,
     private routeActive: ActivatedRoute,
     public dialog: MatDialog,
+    private inscProv: InscriptionsProvider,
   ) {
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -72,6 +75,8 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
             status: data.payload.doc.get('estatus') == 1 ? 'Activo' : data.payload.doc.get('estatus') == 2 ? 'Espera' : 'Inactivo',
             date: data.payload.doc.get('date'),
             limitDate: data.payload.doc.get('limitDate'),
+            certificateEndDate: data.payload.doc.get('certificateEndDate'),
+            certificateInitDate: data.payload.doc.get('certificateInitDate'),
             hour: data.payload.doc.get('hour'),              
             directorName: data.payload.doc.get('directorName'),              
             directorMessage: data.payload.doc.get('directorMessage'),              
@@ -139,6 +144,23 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
   }
 
   async saveEvent(event) {
+    const folderId = await new Promise((resolve)=>{
+      this.inscProv.getActivePeriod().subscribe( result =>{
+        const period = result.period;
+        this.inscProv.getAllFolders().subscribe( async (res)=>{
+          const folders = res.folders;
+          const rootFolder = folders.filter(folder => folder.name === 'Expedientes')[0];
+          const graduationFolder = folders.filter(folder => folder.name === 'Graduación')[0];
+          if(graduationFolder){
+            const idFolderInDrive = await this.createGraduationFolder(rootFolder.idFolderInDrive,graduationFolder,period.year+' '+period.periodName,period._id);
+            resolve(idFolderInDrive);
+          }else{
+            const idFolderInDrive = await this.createGraduationFolder(rootFolder.idFolderInDrive,null,period.year+' '+period.periodName,period._id);
+            resolve(idFolderInDrive);
+          }
+        });
+      } );
+    });
     const newEvent = {
       estatus:2,
       totalTickets: event.event.totalTickets,
@@ -146,11 +168,14 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       date: event.event.date,
       name: event.event.periodName + event.event.year,
       limitDate: event.event.limitDate ,
+      certificateInitDate: event.event.certificateInitDate ,
+      certificateEndDate: event.event.certificateEndDate ,
       hour: event.event.hour ,
       directorMessage: event.event.directorMessage,
       directorName: event.event.directorName,
       observationsMessage: event.event.observationsMessage,
-      hourGallery: event.event.hourGallery
+      hourGallery: event.event.hourGallery,
+      folderIdDrive: folderId
     };
         
     this.firestoreService.createEvent(newEvent.name, newEvent).then(
@@ -271,6 +296,8 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
           <p style="text-align='left'">
             <h6><b>Fecha del evento:</b> ${new Date(event.date.toDate()).toLocaleDateString("es-MX", dateOptions)}</h6>
             <h6><b>Fecha limite de entrega de comprobante de pago:</b> <br/>${new Date(event.limitDate.toDate()).toLocaleDateString("es-MX", dateOptions)}</h6>        
+            <h6><b>Fecha de inicio para solicitud de certificados:</b> <br/>${event.certificateInitDate ?new Date(event.certificateInitDate.toDate()).toLocaleDateString("es-MX", dateOptions) : ''}</h6>        
+            <h6><b>Fecha limite para solicitud de certificados:</b> <br/>${event.certificateEndDate ? new Date(event.certificateEndDate.toDate()).toLocaleDateString("es-MX", dateOptions) : ''}</h6>        
             <br>
           </p>          
           <p style="text-align='left'">
@@ -298,9 +325,11 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       directorMessage: event.event.directorMessage,
       directorName: event.event.directorName,
       observationsMessage: event.event.observationsMessage,
-      hourGallery: event.event.hourGallery
+      hourGallery: event.event.hourGallery,
+      certificateInitDate: event.event.certificateInitDate ,
+      certificateEndDate: event.event.certificateEndDate ,
     };
-        
+ 
     this.firestoreService.updateEvent(newEvent.name, newEvent).then(
      async created => {
        await this.notificationsServices.showNotification(eNotificationType.SUCCESS, 'EVENTO ACTUALIZADO', '');       
@@ -308,19 +337,19 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
     ); 
   }
 
-  saveStudents(){
-    const s = this.firestoreService.getGraduates('agodic2019').subscribe(
-      students=>{
-        s.unsubscribe();
-        const studentsMap = students.map(st=> ({nc:st.payload.doc.get('nc'),}));
-        studentsMap.forEach(elem=>{
-          this.firestoreService.asignEvent('agodic2019',elem.nc).then(
-            sd=>{
-            }
-          );
-        });
+  createGraduationFolder(rootF, graduationFolder, periodName, periodId){
+    return new Promise((resolve) => {
+
+      if(graduationFolder){
+        this.inscProv.createSubFolder(periodName,periodId, graduationFolder.idFolderInDrive,eFOLDER.GRADUACION).subscribe(res=>{resolve(res.idFolderInDrive)});
+      }else{
+        this.inscProv.createSubFolder('Graduación',periodId,rootF,eFOLDER.GRADUACION).subscribe( async res=>{
+            this.inscProv.createSubFolder(periodName,periodId, res.folder.idFolderInDrive,eFOLDER.GRADUACION).subscribe(ress=>{ resolve(ress.idFolderInDrive) });
+          }
+        );
       }
-    )
+    });
   }
+
   
 }

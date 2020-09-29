@@ -1,0 +1,17 @@
+th {
+    background: rgb(21,43,84);
+    color: white;
+    font-size: 13pt;
+}
+
+tr:hover{
+    cursor: pointer;
+}
+
+tr>th:hover{
+    cursor: default;
+}
+
+td {
+    vertical-align: middle;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output,EventEmitter, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Output,EventEmitter, Input, SimpleChanges, OnDestroy, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
@@ -9,14 +9,15 @@ import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
 import { LoadingBarService } from 'ngx-loading-bar';
-import { iState } from 'src/app/providers/reception-act/State/iState';
-
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
+import { Subscription } from 'rxjs';
+import { eInscriptionEvents } from 'src/app/enumerators/shared/sockets.enum';
 @Component({
   selector: 'app-list-process-student',
   templateUrl: './list-process-student.component.html',
   styleUrls: ['./list-process-student.component.scss']
 })
-export class ListProcessStudentComponent implements OnInit {
+export class ListProcessStudentComponent implements OnInit, OnDestroy, OnChanges {
   @Output() countStudentsEmit = new EventEmitter();
   @Input('periods') periods: Array<any>;
   students;
@@ -30,6 +31,7 @@ export class ListProcessStudentComponent implements OnInit {
     students: false,
     periods:false
   };
+  webSocketSub: Subscription;
   constructor(
     private inscriptionsProv: InscriptionsProvider,
     public dialog: MatDialog,
@@ -39,6 +41,7 @@ export class ListProcessStudentComponent implements OnInit {
     private router: Router,    
     private loadingService: LoadingService,
     private loadingBar: LoadingBarService,
+    private webSocketService: WebSocketService
   ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -52,6 +55,11 @@ export class ListProcessStudentComponent implements OnInit {
   ngOnInit() {
     
   }
+
+  ngOnDestroy(){
+    if(!this.webSocketSub.closed)this.webSocketSub.unsubscribe();
+  }
+
   ngOnChanges(changes: SimpleChanges) { // cuando se actualiza algo en el padre  
            
     if(changes.periods){
@@ -61,9 +69,9 @@ export class ListProcessStudentComponent implements OnInit {
   }
 
   getStudents(){
-    this.loadingBar.start();
-    this.inscriptionsProv.getStudentsProcess().subscribe(res => {
-      this.students = res.students;
+    this.webSocketSub = this.webSocketService.listen(eInscriptionEvents.PROCESS_STUDENTS).subscribe( (data)=>{
+      this.loadingBar.start();
+      this.students = data;
 
       // Ordenar Alumnos por Apellidos
       this.students.sort(function (a, b) {
@@ -91,6 +99,9 @@ export class ListProcessStudentComponent implements OnInit {
         }));
         this.loadingBar.complete();
         this.readyToShowTable.students = true;
+    });
+    this.inscriptionsProv.getStudentsProcess(this.cookiesService.getClientId()).subscribe(res => {
+      
     });
 
   }
@@ -208,10 +219,10 @@ export class ListProcessStudentComponent implements OnInit {
     this.loadingService.setLoading(false);
   }   
   
-  updateExpedientStatus(student){    
-    this.getStudents();    
-    this.countStudentsEmit.emit(true);    
-  }
+  // updateExpedientStatus(student){    
+  //   this.getStudents();    
+  //   this.countStudentsEmit.emit(true);    
+  // }
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));

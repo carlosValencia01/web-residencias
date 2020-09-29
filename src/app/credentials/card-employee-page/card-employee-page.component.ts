@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Hotkey, HotkeysService } from 'angular2-hotkeys';
 import * as jsPDF from 'jspdf';
-import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 import { IEmployee } from 'src/app/entities/shared/employee.model';
 import { IPosition } from 'src/app/entities/shared/position.model';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
@@ -14,6 +13,7 @@ import { FormErrorsService } from 'src/app/services/app/forms.errors.service';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import { ImageCroppedEvent } from 'ngx-image-cropper/src/image-cropper.component';
 
 @Component({
   selector: 'app-card-employee-page',

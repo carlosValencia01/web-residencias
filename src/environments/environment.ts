@@ -32,6 +32,7 @@ export const environment = {
   apiURL: 'http://localhost:3003/escolares/credenciales',
   // eSignatureURL: 'http://localhost:3017/firma/v1',
   filesURL: 'http://localhost:3003/escolares/credenciales/drive/upload/file',
+  filesGraduationURL: 'http://localhost:3003/escolares/credenciales/drive/upload/fileGraduation',
   // Pruebas
   //apiURL: 'https://rijimenezesdev.me/escolares/credenciales',
   eSignatureURL: 'https://rijimenezesdev.me/firma/v1',

@@ -75,7 +75,7 @@
                      <mat-icon>event_note</mat-icon>
                      Actualizar evento
                      </button>
-                     <button mat-menu-item *ngIf="roleName == 'Administrador' && (tabName == 'all' || tabName == 'pending')" (click)="infoEvent(row)">
+                     <button mat-menu-item *ngIf="role == 'administration'" (click)="infoEvent(row)">
                      <mat-icon>info</mat-icon>
                      Información del evento
                      </button>                  

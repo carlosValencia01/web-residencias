@@ -35,6 +35,8 @@ export class NewGraduationEventComponent implements OnInit {
         'periodName': new FormControl(null,[Validators.required]),     
         'date': new FormControl(null,[Validators.required]),        
         'limitDate': new FormControl(null,[Validators.required]),
+        'certificateInitDate': new FormControl(null,[Validators.required]) ,
+        'certificateEndDate': new FormControl(null,[Validators.required]) ,
         'hour': new FormControl(null,[Validators.required]),
         'hourGallery': new FormControl(null,[Validators.required]),
         'directorMessage': new FormControl(null,[Validators.required]),
@@ -49,6 +51,8 @@ export class NewGraduationEventComponent implements OnInit {
       this.form = new FormGroup({                
         'date': new FormControl(this.data.event.date.toDate(),[Validators.required]),        
         'limitDate': new FormControl(this.data.event.limitDate.toDate(),[Validators.required]),
+        'certificateInitDate': new FormControl(this.data.event.certificateInitDate ? this.data.event.certificateInitDate.toDate() : this.minDate,[Validators.required]) ,
+        'certificateEndDate': new FormControl(this.data.event.certificateEndDate ? this.data.event.certificateEndDate.toDate() : this.minDate,[Validators.required]) ,
         'hour': new FormControl(this.data.event.hour,[Validators.required]),
         'hourGallery': new FormControl(this.data.event.hourGallery,[Validators.required]),
         'directorMessage': new FormControl(this.data.event.directorMessage,[Validators.required]),

@@ -12,6 +12,7 @@ import { eStatusRequest } from 'src/app/enumerators/reception-act/statusRequest.
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { eOperation } from 'src/app/enumerators/reception-act/operation.enum';
 import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { ERoleToAcronym } from 'src/app/enumerators/app/role.enum';
 
 moment.locale('es');
 
@@ -31,7 +32,7 @@ export class NewEventComponent implements OnInit {
   public title: string;
   private selectRow: IRowStudent;
   private event: { appointment: Date, minutes: number, abbreviation: string };
-
+  private filterRole: string;
   constructor(
     public dialogRef: MatDialogRef<NewEventComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -49,6 +50,7 @@ export class NewEventComponent implements OnInit {
     };
     this.displayedColumns = ['controlNumber', 'fullName', 'career', 'select'];
     this.title = 'NUEVO EVENTO A LAS ' + moment(tmpDate).format('LT');
+    this.filterRole = (ERoleToAcronym as any)[this._CookiesService.getData().user.rol.name.toLowerCase()];
   }
 
   ngOnInit() {
@@ -169,7 +171,7 @@ export class NewEventComponent implements OnInit {
       doer: this._CookiesService.getData().user.name.fullName,
       duration: this.frmNewEvent.get('duration').value
     };
-    this._RequestProvider.updateRequest(request, eventData).subscribe(data => {
+    this._RequestProvider.updateRequest(request, eventData,this.filterRole).subscribe(data => {
       if (typeof (data) !== 'undefined') {
         this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Evento asignado');
         this.dialogRef.close({

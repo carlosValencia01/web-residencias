@@ -72,6 +72,30 @@ dropzone > .dropzone.dz-wrapper .dz-message{
   justify-content: center !important;
 }
 
+.btn-rounded{
+	cursor: pointer;
+	color: white;
+	padding: 5px;
+	border-radius: 100px;
+	transition: all 0.3s;
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+}
+.btn-rounded-success{
+	background-color: rgba(8,182,48,1);
+	
+}
+.btn-rounded-danger{
+	background-color: rgba(255,0,0,1);
+}
+.btn-rounded-success:hover{
+	background-color: rgba(8,182,48,0.8);	
+}
+.btn-rounded-danger:hover{
+	background-color: rgba(255,0,0,0.8);	
+}
+
 /* SCROLL BAR */
 ::-webkit-scrollbar {
   width: 13px;

@@ -38,7 +38,6 @@ export class EmployeeProvider {
             .pipe(map(student => student.json()));
     }
 
-
     getEmployeesByDepto() {
         return this.api.get(`department/employees`).pipe(map(department => department.json()));
     }
