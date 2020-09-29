@@ -28,6 +28,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 //Proveedores
 import { StudentProvider } from '../providers/shared/student.prov';
@@ -67,6 +68,8 @@ import { StudentListComponent } from './components/student-list/student-list.com
 import { EnglishStudentsListPageComponent } from './components/english-students-list-page/english-students-list-page.component';
 import { EnglishTeachersListPageComponent } from './components/english-teachers-list-page/english-teachers-list-page.component';
 import { EnglishClassroomsListPageComponent } from './components/english-classrooms-list-page/english-classrooms-list-page.component';
+import { StudentProgressPageComponent } from './components/student-progress-page/student-progress-page.component';
+import { ReleasedOptionsPageComponent } from './components/released-options-page/released-options-page.component';
 
 @NgModule({
   imports: [
@@ -97,6 +100,7 @@ import { EnglishClassroomsListPageComponent } from './components/english-classro
     MatMenuModule,
     MatBadgeModule,
     MatAutocompleteModule,
+    MatProgressBarModule,
     NgbModule.forRoot(),
   ],
   declarations: [
@@ -127,6 +131,8 @@ import { EnglishClassroomsListPageComponent } from './components/english-classro
     EnglishTeachersListPageComponent,
     AssignClassroomComponent,
     EnglishClassroomsListPageComponent,
+    StudentProgressPageComponent,
+    ReleasedOptionsPageComponent,
   ],
   entryComponents: [ // Permite exportar
     FormRequestCourseComponent,

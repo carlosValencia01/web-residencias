@@ -313,6 +313,10 @@ export class StudentEnglishPageComponent implements OnInit {
     this.tabGroup.selectedIndex = 1;
   }
 
+  public selectProgress() {
+    this.tabGroup.selectedIndex = 2;
+  }
+
   private showCoursePrices(): void {
     const IMAGE_URL = 'https://drive.google.com/file/d/1QwBVngxetPXS018nUNuxX8iVMi9LydEz/preview';
     Swal
