@@ -12,6 +12,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -43,6 +44,19 @@ import { SurveyPageComponent } from './survey-page/survey-page.component';
 import { SurveyQuestionsPageComponent } from './survey-questions-page/survey-questions-page.component';
 import { SurveyRegisterPageComponent } from './survey-register-page/survey-register-page.component';
 import { CareerProvider } from '../providers/shared/career.prov';
+import { CertificateIneComponent } from './certificate-ine/certificate-ine.component';
+import { MyCertificatePageComponent } from './my-certificate-page/my-certificate-page.component';
+import { DropzoneConfigInterface, DropzoneModule, DROPZONE_CONFIG } from 'ngx-dropzone-wrapper';
+
+const DEFAULT_DROPZONE_CONFIG: DropzoneConfigInterface = {
+  url: environment.filesGraduationURL,
+  maxFilesize: 3,
+  acceptedFiles: 'image/jpeg,image/png,application/pdf',
+  maxFiles: 1
+};
+import { ReviewPhotosPaydocModalComponent } from './review-photos-paydoc-modal/review-photos-paydoc-modal.component';
+import { SafePipe } from './pipes/safe.pipe';
+import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
 @NgModule({
   imports: [
     CommonsModule,
@@ -68,7 +82,9 @@ import { CareerProvider } from '../providers/shared/career.prov';
     MatBadgeModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatStepperModule,
+    DropzoneModule,
   ],
   declarations: [
     SurveyListPageComponent,
@@ -83,11 +99,18 @@ import { CareerProvider } from '../providers/shared/career.prov';
     SurveyGraduatesPageComponent,
     SurveyQuestionsPageComponent,
     NewGraduationEventComponent,
-    
+    CertificateIneComponent,
+    MyCertificatePageComponent,
+    ReviewPhotosPaydocModalComponent,
+    SafePipe
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
     { provide: ErrorStateMatcher, useClass: ErrorMatcher },
+    {
+      provide: DROPZONE_CONFIG,
+      useValue: DEFAULT_DROPZONE_CONFIG
+    },
     AngularFirestore,
     AngularFirestoreModule,
     FirebaseService,
@@ -95,9 +118,11 @@ import { CareerProvider } from '../providers/shared/career.prov';
     ImageToBase64Service,
     StudentProvider,
     CareerProvider,
+    InscriptionsProvider,
   ],
   entryComponents: [
     NewGraduationEventComponent,
+    ReviewPhotosPaydocModalComponent,
   ]
 })
 export class GraduationModule { }

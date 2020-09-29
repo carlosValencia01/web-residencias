@@ -46,24 +46,24 @@ dropzone > .dropzone.dz-wrapper .dz-message{
     width: 265px !important;
 }
 
-@media only screen and (max-width: 782px) {   
+@media only screen and (max-width: 782px) {
   .qr-image canvas,.qr-student-middle canvas,.qrcode {
       height: auto !important;
-      width: auto !important;    
+      width: auto !important;
   }
 }
 
-@media only screen and (max-width: 395px) {   
+@media only screen and (max-width: 395px) {
   .qr-image canvas,.qr-student-middle canvas,.qrcode {
     height: 160px !important;
-    width: 160px !important;    
+    width: 160px !important;
   }
 }
-.mat-sort-header-container {          
-  justify-content: center !important;  
+.mat-sort-header-container {
+  justify-content: center !important;
   padding-left: 10px;
 }
-.mat-cell{    
+.mat-cell{
   text-align: center;
 }
 .flex-align-center{
@@ -75,6 +75,31 @@ dropzone > .dropzone.dz-wrapper .dz-message{
   display: flex !important;
   justify-content: center !important;
 }
+
+.btn-rounded{
+	cursor: pointer;
+	color: white;
+	padding: 5px;
+	border-radius: 100px;
+	transition: all 0.3s;
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+}
+.btn-rounded-success{
+	background-color: rgba(8,182,48,1);
+
+}
+.btn-rounded-danger{
+	background-color: rgba(255,0,0,1);
+}
+.btn-rounded-success:hover{
+	background-color: rgba(8,182,48,0.8);
+}
+.btn-rounded-danger:hover{
+	background-color: rgba(255,0,0,0.8);
+}
+
 /* SCROLL BAR */
 ::-webkit-scrollbar {
   width: 13px;

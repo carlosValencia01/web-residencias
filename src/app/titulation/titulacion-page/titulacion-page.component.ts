@@ -73,8 +73,10 @@ export class TitulacionPageComponent implements OnInit {
   ProcessValidatedMessage: String = 'EN ESPERA DE LA HOJA DE NO INCONVENIENCIA';
   ProcessAssignedMessage: String = 'En espera de que tu fecha sea aceptada';
   WaitAssignedMessage: String = 'Ha ocurrido un inconveniente con la fecha, espera ha ser contactado';
-  RejectAssignedMessage: String = 'Su petición de titulación ha sido rechazada, registre una nueva fecha';
-  CancelledAssignedMessage: String = 'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada, registre una nueva fecha';
+  // RejectAssignedMessage: String = 'Su petición de titulación ha sido rechazada, registre una nueva fecha';
+  RejectAssignedMessage: String = 'Su petición de titulación ha sido rechazada';
+  // CancelledAssignedMessage: String = 'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada, registre una nueva fecha';
+  CancelledAssignedMessage: String = 'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada';
   ProcessRealizedMessage: String = 'En espera de la realización';
   CompletedRealizedMessage: String = 'ACTO RECEPCIONAL APROBADO';
   RejectRealizedMessage: String = 'ACTO RECEPCIONAL REPROBADO';
