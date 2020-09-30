@@ -109,15 +109,19 @@
           <div *ngIf="statusFirstDocuments === 'approved'">
             <div class="row justify-content-center">
               <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-                <mat-card style="height: 200px; width: 300px;">
+                <mat-card style="height: 225px; width: 300px;">
                   <mat-card-header class="flex-column align-items-center">
                     <img alt="File" src="../../../../assets/imgs/approved.png" style="width: 80px; height: 80px;">
                     <h5 class="text-center mt-3">Su <strong>solicitud</strong> ha sido <strong class="text-success">aceptada </strong></h5>
+                    <button mat-raised-button type="button" (click)="downloadSolicitude()">
+                      Descargar solicitud
+                      <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
+                    </button>
                   </mat-card-header>
                 </mat-card>
               </div>
-              <div class="col-12 mt-4" style=" text-align: center;">
-                <button mat-raised-button matStepperNext color="primary" style="width: 15%;">Continuar</button>
+              <div class="col-12 mt-4 text-center">
+                <button mat-raised-button matStepperNext color="primary" style="width: 20%;">Continuar</button>
               </div>
             </div>
           </div>

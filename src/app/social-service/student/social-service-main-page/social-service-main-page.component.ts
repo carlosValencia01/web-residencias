@@ -34,6 +34,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public emailStudent: string;
   public sendEmailCode: boolean;
   public verificationEmail: boolean;
+  private documents: Array<any> = [];
 
   constructor(private loadingService: LoadingService,
               private cookiesService: CookiesService,
@@ -55,6 +56,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.verificationEmail = res.controlStudent.verification.verificationEmail;
       this.statusFirstDocuments = res.controlStudent.verification['solicitude'];
       this.solicitudeDocument = this.statusFirstDocuments === 'approved';
+      this.documents = res.controlStudent.documents;
       this.presentationDocument = false;
       this.permission = false;
       this.releaseSocialService = false;
@@ -96,6 +98,40 @@ export class SocialServiceMainPageComponent implements OnInit {
         }
       }
     );
+  }
+
+  downloadSolicitude() {
+    this.loadingService.setLoading(true);
+    const solicitude = this.documents.filter(f => f.filename.toString().includes('SOLICITUD'));
+    let solicitudeId = '';
+    try {
+      solicitudeId = solicitude[0].fileIdInDrive;
+    } catch (e) {
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.')
+      return;
+    }
+    this.controlStudentProvider.getFile(solicitudeId, `${this.userData.email}-SOLICITUD.pdf`).subscribe(async (res) => {
+      const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
+      const downloadLink = document.createElement('a');
+      const fileName = this.userData.email + '-SOLICITUD' + '.pdf';
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+      this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
+    }, error => {
+      this.loadingService.setLoading(false);
+      const message = JSON.parse(error._body).message || 'Error al descargar el documento, intentelo mas tarde';
+      this.notificationsService
+        .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
+    }, () =>     this.loadingService.setLoading(false) );
+  }
+
+
+  public bufferToBase64(buffer) {
+    return btoa(new Uint8Array(buffer).reduce((data, byte) => {
+      return data + String.fromCharCode(byte);
+    }, ''));
   }
 
 }

@@ -37,6 +37,12 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  getFile(fileId, fileName) {
+    return this.api.post('drive/get/file', { fileId: fileId, fileName: fileName}).pipe(map(
+      res => res.json()
+    ));
+  }
+
   createAssistanceByControlNumber(controlNumber) {
     return this.api.post('controlStudent/register/assistance', {controlNumber: controlNumber})
       .pipe(map(controlStudent => controlStudent.json()));
