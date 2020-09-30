@@ -24,6 +24,7 @@
 th {
     background: rgb(21,43,84);
     color: white;
+    font-size: 13pt;
 }
 
 tr:hover{
@@ -155,41 +156,50 @@ td {
     background: rgb(7, 7, 133);
     color: white;
 }
+.card-with-border-left{
+  text-align: center;
+  border-left-width: 5px;
+  border-left-style: solid;
+  box-shadow: 0px 0px 12px rgba(0,0,0,0.25);
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
-.cardEgresados{
-    text-align: center;
-    border-left-width: 5px;
-    border-left-style: solid;
+.cardEgresados{    
     border-left-color: rgb(17,32,67);
 }
 
-.cardCPendientes{
-    text-align: center;
-    border-left-width: 5px;
-    border-left-style: solid;
+.cardCPendientes{    
     border-left-color: #ff7100;
 }
 
 .cardCImpresos{
-    text-align: center;
-    border-left-width: 5px;
-    border-left-style: solid;
-    border-left-color: rgb(71, 178, 218);
+    border-left-color: #ff9100;
 }
 
 .cardCListos{
-    text-align: center;
-    border-left-width: 5px;
-    border-left-style: solid;
     border-left-color: green;
 }
 
 .cardRestantes{
-    text-align: center;
-    border-left-width: 5px;
-    border-left-style: solid;
-    border-left-color: rgb(202,0,10);
-    ;
+    border-left-color: rgb(202,0,10);    
+}
+.card-not-requested{
+  border-left-color:#ff7100; 
+}
+.card-requested{
+  border-left-color: rgb(71, 178, 218);;
+}
+.card-delivered{
+  border-left-color: rgb(17,32,67);
+}
+.card-asigned-line{
+  border-left-color:rgb(17, 65, 67);
+}
+.card-sended{
+  border-left-color:  rgb(40, 70, 141);
 }
 
 
@@ -275,7 +285,9 @@ td {
 
  
   .badge-r, .badge-v, .badge-a,.badge-m,
-  .badge-photos,.badge-printed,.badge-ready,.badge-delivered{
+  .badge-not-requested,.badge-requested,.badge-ready,
+  .badge-delivered,.badge-asigned-line,.badge-pending,
+  .badge-printed,.badge-sended{
     text-align: center;    
     color: white;
     font-size: 10pt;
@@ -292,13 +304,15 @@ td {
   .badge-m{    
     background-color: rgb(7, 7, 133);  
   }
-  .badge-photos,.badge-printed,.badge-ready,.badge-delivered{
-    border: 2px solid #495057;    
+  .badge-not-requested,.badge-requested,.badge-ready,
+  .badge-delivered,.badge-asigned-line,.badge-pending,
+  .badge-printed,.badge-sended{
+    border: 2px solid #2b3d4e;    
   }
-  .badge-photos{
+  .badge-not-requested{
     background-color: #ff7100;  
   }
-  .badge-printed{
+  .badge-requested{
     background-color: rgb(71, 178, 218);
   }
   .badge-ready{
@@ -306,6 +320,18 @@ td {
   }
   .badge-delivered{
     background-color: rgb(17,32,67);
+  }
+  .badge-asigned-line{
+    background-color: rgb(17, 65, 67);
+  }
+  .badge-printed{
+    background-color: #ff9100;  
+  }
+  .badge-pending{
+    background-color: rgb(95, 19, 19);
+  }
+  .badge-sended{
+    background-color: rgb(40, 70, 141);
   }
   .table{
     border: none;

@@ -2,9 +2,9 @@
   [roleName]='rolName' [tabName]="'process'" [students]="studentsForTable" [periods]="periods"
   (updateGIEmit) = "updateGI($event)"      
   (viewExpedientEmit) = "viewExpedient($event)"      
-  (updateExpedientStatusEmit) = "updateExpedientStatus($event)"
+  
   (getExcelExportEmit) = "excelExport($event)"
-  (reloadEmit) = "getStudents()"
+
   *ngIf="readyToShowTable.periods && readyToShowTable.students" ></app-expedent-table-component>
 
 <!-- Tabla reporte alumnos Excel-->

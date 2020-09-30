@@ -1,6 +1,6 @@
 export enum eFOLDER {
-    INSCRIPCIONES = 1,
-    TITULACION = 2,
-
+    INSCRIPCIONES=1,
+    TITULACION=2,
+    GRADUACION=3,
     SERVICIOSOCIAL = 4
 }

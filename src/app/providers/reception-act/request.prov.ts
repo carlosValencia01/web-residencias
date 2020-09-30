@@ -23,8 +23,8 @@ export class RequestProvider {
         return this.api.delete(`request/${_id}`).pipe(map(res => res.json()));
     }
 
-    getAllRequestByStatus(role) {
-        return this.api.get(`request/phase/${role}`)
+    getAllRequestByStatus(role, clientId) {
+        return this.api.get(`request/phase/${role}/${clientId}`)
             .pipe(map(requests => requests.json()));
     }
 
@@ -33,8 +33,8 @@ export class RequestProvider {
             .pipe(map(request => request.json()));
     }
 
-    updateRequest(_id, data) {
-        return this.api.put(`request/${_id}/status`, data).pipe(map(request => request.json()));
+    updateRequest(_id, data, role) {
+        return this.api.put(`request/${_id}/status/${role}`, data).pipe(map(request => request.json()));
     }
 
     releasedRequest(_id, data) {
@@ -71,8 +71,8 @@ export class RequestProvider {
         return this.api.post(`request/schedule`, data).pipe(map(request => request.json()));
     }
 
-    getDiary(data) {
-        return this.api.post(`request/diary`, data).pipe(map(request => request.json()));
+    getDiary(data, clientId) {
+        return this.api.post(`request/diary/${clientId}`, data).pipe(map(request => request.json()));
     }
 
     StudentsToSchedule() {
