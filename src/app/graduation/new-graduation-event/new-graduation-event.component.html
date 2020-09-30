@@ -87,6 +87,36 @@
           </mat-error> 
     </div>    
   </div>
+
+  <!-- row certificate period-->
+
+  <div class="row text-center mt-4">    
+    <div class="col-md-6"> 
+      <mat-form-field>
+        <input [min]="minDate" matInput [matDatepicker]="pickerCertificateInit" placeholder="Fecha de inicio para solicitud de certificados" formControlName="certificateInitDate" >
+        <mat-datepicker-toggle matSuffix [for]="pickerCertificateInit"></mat-datepicker-toggle>
+        <mat-datepicker #pickerCertificateInit></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!form.get('certificateInitDate').valid && form.get('certificateInitDate').touched">Seleccione una fecha valida</span>
+      </mat-error>      
+    </div>
+    <div class="col-md-6">
+      <mat-form-field>
+        <input [min]="form.get('certificateInitDate').valid ? form.get('certificateInitDate').value : minDate" matInput [matDatepicker]="pickerCertificateEnd" placeholder="Fecha de inicio para solicitud de certificados" formControlName="certificateEndDate" >
+        <mat-datepicker-toggle matSuffix [for]="pickerCertificateEnd"></mat-datepicker-toggle>
+        <mat-datepicker #pickerCertificateEnd></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+          *ngIf="!form.get('certificateEndDate').valid && form.get('certificateEndDate').touched">Seleccione una fecha valida</span>
+      </mat-error> 
+    </div>
+       
+  </div>
+
+  <!-- row director name-->
   <div class="row text-center mt-4">    
     <div class="col-md-4"> 
       <mat-form-field>
@@ -105,7 +135,7 @@
       </mat-form-field>
       <mat-error>
           <span
-          *ngIf="!form.get('hour').valid && form.get('hour').touched">Ingrese el nombre del director</span>
+          *ngIf="!form.get('hour').valid && form.get('hour').touched">Ingrese una hora</span>
       </mat-error> 
     </div>
     <div class="col-md-4">

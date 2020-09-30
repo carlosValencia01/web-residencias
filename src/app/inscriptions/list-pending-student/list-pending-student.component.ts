@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, SimpleChanges, OnDestroy, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
@@ -13,13 +13,15 @@ import Swal from 'sweetalert2';
 import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
 import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
 import { LoadingBarService } from 'ngx-loading-bar';
-
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
+import { Subscription } from 'rxjs';
+import { eInscriptionEvents } from 'src/app/enumerators/shared/sockets.enum';
 @Component({
   selector: 'app-list-pending-student',
   templateUrl: './list-pending-student.component.html',
   styleUrls: ['./list-pending-student.component.scss']
 })
-export class ListPendingStudentComponent implements OnInit {
+export class ListPendingStudentComponent implements OnInit, OnDestroy, OnChanges {
   @Output() countStudentsEmit = new EventEmitter();
   @Input('periods') periods: Array<any>;
   students;
@@ -35,6 +37,7 @@ export class ListPendingStudentComponent implements OnInit {
     students: false,
     periods:false
   };
+  webSocketSub: Subscription;
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
     private inscriptionsProv: InscriptionsProvider,
@@ -46,6 +49,7 @@ export class ListPendingStudentComponent implements OnInit {
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
     private loadingBar: LoadingBarService,
+    private webSocketService: WebSocketService
   ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -61,6 +65,11 @@ export class ListPendingStudentComponent implements OnInit {
       this.emptyUInscription = new uInscription(this.imageToBase64Serv,this.cookiesService,this.inscriptionsProv);
     }, 300);
   }
+
+  ngOnDestroy(){
+    if(!this.webSocketSub.closed)this.webSocketSub.unsubscribe();
+  }
+
   ngOnChanges(changes: SimpleChanges) { // cuando se actualiza algo en el padre            
     if(changes.periods){
       this.periods = changes.periods.currentValue ? changes.periods.currentValue : this.periods;
@@ -69,9 +78,9 @@ export class ListPendingStudentComponent implements OnInit {
   }
 
   getStudents(){
-    this.loadingBar.start();
-    this.inscriptionsProv.getStudentsPendant().subscribe(res => {
-      this.students = res.students;
+    this.webSocketSub = this.webSocketService.listen(eInscriptionEvents.PENDANT_STUDENTS).subscribe( (data)=>{
+      this.loadingBar.start();
+      this.students = data;
 
       // Ordenar Alumnos por Apellidos
       this.students.sort(function (a, b) {
@@ -98,6 +107,9 @@ export class ListPendingStudentComponent implements OnInit {
         }));
         this.loadingBar.complete();
         this.readyToShowTable.students = true;
+    });
+    this.inscriptionsProv.getStudentsPendant(this.cookiesService.getClientId()).subscribe(res => {
+      
     });
   }
 
@@ -311,10 +323,10 @@ export class ListPendingStudentComponent implements OnInit {
     return folderId;
   }
   
-  updateExpedientStatus(student){
-    this.getStudents();
-    this.countStudentsEmit.emit(true);
-  }
+  // updateExpedientStatus(student){
+  //   this.getStudents();
+  //   this.countStudentsEmit.emit(true);
+  // }
 
   delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));

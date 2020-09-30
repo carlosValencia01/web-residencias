@@ -100,8 +100,7 @@ export class ReviewExpedientComponent implements OnInit {
     this.studentProv.getDocumentsInscription(this.data.student.controlNumber,this.degree).subscribe(
       (docs)=>{
         this.documents = docs.docs;
-        console.log(this.documents);
-
+       
         this.docto = this.docto ? this.documents.filter(docc => docc.file.filename === this.docto.file.filename)[0] : null;
         this.pendings = this.documents.filter( (doc)=> doc.status !== 'ACEPTADO').length;
         this.selectPendings = 0;
@@ -258,7 +257,6 @@ export class ReviewExpedientComponent implements OnInit {
       const processDocs = this.documents.filter( (doc)=> doc.status === 'EN PROCESO').length;
       const validatedDocs = this.documents.filter( (doc)=> doc.status === 'VALIDADO').length;
       const aceptedDocs = this.documents.filter( (doc)=> doc.status === 'ACEPTADO').length;
-
       if(this.degree === 'lic'){
          // Cambiar estatus a ACEPTADO
          if(aceptedDocs === 7 || aceptedDocs === 8 ){

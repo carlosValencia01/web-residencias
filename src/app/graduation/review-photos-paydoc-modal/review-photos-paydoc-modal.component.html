@@ -1,0 +1,31 @@
+<div class="row sticky">
+  <div class="col-11">
+    {{data.student.nc}} - {{data.student.nameLastName}} - {{data.student.carreer}}
+  </div>
+  <div class="col-1">
+    <button mat-icon-button (click)="onClose()" class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<div class="content noScroll">
+  <iframe [src]="URLFile | safe" width="100%" height="600" *ngIf="URLFile"></iframe>
+  <div class="row text-center mt-3">
+    <div class="col-6">
+      <div
+        (click)="changeStatus('ACEPTADO')"
+        class="btn-rounded btn-rounded-success"
+      >
+        <mat-icon>done</mat-icon> Aceptar
+      </div>
+    </div>
+    <div class="col-6">
+      <div
+        (click)="changeStatus('RECHAZADO')"
+        class="btn-rounded btn-rounded-danger"
+      >
+        <mat-icon>close</mat-icon> Rechazar
+      </div>
+    </div>
+  </div>
+</div>

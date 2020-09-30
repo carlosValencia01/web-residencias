@@ -12,6 +12,7 @@ import { SurveyGraduatesPageComponent } from './survey-graduates-page/survey-gra
 import { SurveyQuestionsPageComponent } from './survey-questions-page/survey-questions-page.component';
 import { SurveyRegisterPageComponent } from './survey-register-page/survey-register-page.component';
 import { MyGraduationComponent } from './my-graduation/my-graduation.component';
+import { MyCertificatePageComponent } from './my-certificate-page/my-certificate-page.component';
 
 const routes: Routes = [
   {
@@ -68,6 +69,11 @@ const routes: Routes = [
     path: 'surveyQuestions/:id/:nc',
     pathMatch: 'full',
     component: SurveyQuestionsPageComponent
+  },
+  {
+    path: 'my-certificate',
+    pathMatch: 'full',
+    component: MyCertificatePageComponent
   },
 ];
 

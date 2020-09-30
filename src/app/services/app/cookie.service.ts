@@ -87,6 +87,11 @@ export class CookiesService {
         return JSON.parse(this.storage.getLocalData('bosses'));
     }
 
+    //id del cliente con socket.id
+    public getClientId(): string {
+        return this.storage.getLocalData('clientId');
+    }
+
     public saveUser(user: any): boolean {
         if (!user) {
             return false;
@@ -192,5 +197,10 @@ export class CookiesService {
 
     public saveUserToken(userToken: string): boolean {
         return this.storage.saveCookieData('_mt_user_jwt', userToken, 1 / 24, environment.production);
+    }
+
+    //id de la conexion con socket.id
+    public saveClientId(id: string): boolean {
+        return this.storage.saveLocalData('clientId', id);
     }
 }

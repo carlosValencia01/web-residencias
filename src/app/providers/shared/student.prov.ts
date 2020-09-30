@@ -56,7 +56,6 @@ export class StudentProvider {
             .pipe(map(student => student.json()));
     }
 
-
     updateStudent(id, data) {
         return this.api.put(`student/${id}`, data)
             .pipe(map(student => student.json()));

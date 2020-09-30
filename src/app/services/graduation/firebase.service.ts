@@ -212,4 +212,8 @@ export class FirebaseService {
       (profi)=>({id:profi.payload.doc.id,data:profi.payload.doc.data()})
     )));
   }
+
+  public uploadDocumentDrive(documentId: string, data: any , collection: string) {
+    return this.db.collection(collection).doc(documentId).update({comprobantePago:data});
+  }
 }
