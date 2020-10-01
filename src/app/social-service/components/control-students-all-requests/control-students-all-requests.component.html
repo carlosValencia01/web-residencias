@@ -26,13 +26,13 @@
                         </div>
                         <div *ngIf="row.status==='send'">
                           <span mat-line class="badge badge-pill badge-primary">
-                            Firmada                            
-                          </span> 
+                            Firmada
+                          </span>
                         </div>
                         <div *ngIf="row.status==='reevaluate'">
                           <span mat-line class="badge badge-pill badge-warning">
-                            Reevaluada                            
-                          </span> 
+                            Revaluación
+                          </span>
                         </div>
                       </div>
                       <div *ngIf="index === 5">
@@ -78,7 +78,7 @@
                           </mat-menu>
                         </div>
                       </div>
-                    </td>          
+                    </td>
     </ng-container>
     <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
     <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>

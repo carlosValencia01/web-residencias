@@ -30,7 +30,7 @@ export class ControlStudentApprovedRequestsComponent implements OnInit {
     this._getAllApprovedRequests();
   }
 
-  _getAllApprovedRequests(){
+  _getAllApprovedRequests() {
     this.loadingService.setLoading(true);
     // Obtener las solicitudes aprovadas
     this.controlStudentProv.getRequests('approved').subscribe(res => {
@@ -42,8 +42,7 @@ export class ControlStudentApprovedRequestsComponent implements OnInit {
       this.loadingService.setLoading(false);
     }, () => {
       this.loadingService.setLoading(false);
-    }
-    )
+    });
   }
 
 
@@ -60,7 +59,7 @@ export class ControlStudentApprovedRequestsComponent implements OnInit {
       fullName: data.studentId.fullName,
       controlNumber: data.controlNumber,
       career: data.studentId.career
-    }; 
+    };
   }
 
   public applyFilter(filterValue: string) {
