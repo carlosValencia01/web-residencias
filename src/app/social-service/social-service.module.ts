@@ -47,6 +47,9 @@ import {StudentProvider} from '../providers/shared/student.prov';
 import {InscriptionsProvider} from '../providers/inscriptions/inscriptions.prov';
 import { ReviewFirstDataPageComponent } from './department/review-first-data-page/review-first-data-page.component';
 import { SocialServiceReviewInitFormComponent } from './student/social-service-review-init-form/social-service-review-init-form.component';
+import { ControlStudentsSignedRequestsComponent } from './components/control-students-signed-requests/control-students-signed-requests.component';
+import { ControlStudentApprovedRequestsComponent } from './components/control-student-approved-requests/control-student-approved-requests.component';
+import { ControlStudentsAllRequestsComponent } from './components/control-students-all-requests/control-students-all-requests.component';
 
 
 @NgModule({
@@ -90,7 +93,10 @@ import { SocialServiceReviewInitFormComponent } from './student/social-service-r
     SocialServiceInitFormComponent,
     DialogVerificationComponent,
     ReviewFirstDataPageComponent,
-    SocialServiceReviewInitFormComponent
+    SocialServiceReviewInitFormComponent,
+    ControlStudentsSignedRequestsComponent,
+    ControlStudentApprovedRequestsComponent,
+    ControlStudentsAllRequestsComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
