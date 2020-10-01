@@ -34,7 +34,7 @@ export class RequestProvider {
     }
 
     updateRequest(_id, data, role) {
-        return this.api.put(`request/${_id}/status:${role}`, data).pipe(map(request => request.json()));
+        return this.api.put(`request/${_id}/status/${role}`, data).pipe(map(request => request.json()));
     }
 
     releasedRequest(_id, data) {

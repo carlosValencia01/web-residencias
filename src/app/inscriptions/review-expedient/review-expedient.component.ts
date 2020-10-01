@@ -86,7 +86,12 @@ export class ReviewExpedientComponent implements OnInit {
       cancelButtonColor: '#d33',
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Confirmar',
-      input: 'text'
+      input: 'text',
+      inputValidator: (value)=>{
+        if(!value){
+          return 'DEBE INGRESAR EL MOTIVO';
+        }
+      }
     }).then((result) => {
       return result.value ?  result.value !== '' ? result.value : false : false;
     });
@@ -252,8 +257,6 @@ export class ReviewExpedientComponent implements OnInit {
       const processDocs = this.documents.filter( (doc)=> doc.status === 'EN PROCESO').length;
       const validatedDocs = this.documents.filter( (doc)=> doc.status === 'VALIDADO').length;
       const aceptedDocs = this.documents.filter( (doc)=> doc.status === 'ACEPTADO').length;
-      const totalDocs = processDocs + validatedDocs + aceptedDocs;
-      
       if(this.degree === 'lic'){
          // Cambiar estatus a ACEPTADO
          if(aceptedDocs === 7 || aceptedDocs === 8 ){
@@ -292,17 +295,7 @@ export class ReviewExpedientComponent implements OnInit {
       }
       if(processDocs === 0){
         // Cambiar estatus a EN PROCESO
-        let query = { inscriptionStatus:"En Proceso" };
-        const isFoto = this.documents.filter(doc=>doc.file.shortName == 'FOTO')[0];       
-        if(isFoto){
-          
-          if(totalDocs === 3 && (validatedDocs === 3 || aceptedDocs === 3) && this.data.student.stepWizard == 2){
-            query['stepWizard'] = 3;
-          }
-        }else if( totalDocs === 2 && (validatedDocs === 2 || aceptedDocs === 2) && this.data.student.stepWizard == 2 ){    
-          query['stepWizard'] = 3;
-        }
-        this.inscriptionsProv.updateStudent(query, this.data.student._id).subscribe(res => {  });
+        this.inscriptionsProv.updateStudent({ inscriptionStatus:"En Proceso" }, this.data.student._id).subscribe(res => {  });
        return;
       }
     }, 500);

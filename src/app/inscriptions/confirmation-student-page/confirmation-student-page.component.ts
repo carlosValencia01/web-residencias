@@ -88,7 +88,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
     }, 300);
     Swal.fire({
       title: 'ATENCIÓN',
-      text: 'El envío de esta documentación está sujeto a observaciones, debes estar al pendiente de la plataforma o bien descarga la app (solo Android) Soy Tigre Tec Tepic, desde donde podrás visualizar el seguimiento de tu documentación',
+      text: 'El envío de esta documentación está sujeto a observaciones, debes estar al pendiente de la plataforma o bien descarga la app (solo Android) Soy Tigre Tec Tepic, desde donde podrás visualizar el seguimiento de tu documentación. ES NECESARIO FINALIZAR ESTE PASO, DANDO CLIC EN FIRMAR DOCUMENTACIÓN, PARA CONTINUAR CON TU INSCRIPCIÓN.',
       type: 'info',
       allowOutsideClick: false,
       confirmButtonColor: '#3085d6',
@@ -293,7 +293,7 @@ export class ConfirmationStudentPageComponent implements OnInit {
           confirmButtonText: 'Estoy enterado'
         }).then((result) => {
           if (result.value) {
-            this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Firmando Contrato, Solicitud y Acuse', 'Este proceso puede tardar varios minutos.');   
+            this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'Firmando Contrato, Solicitud y Acuse', 'Este proceso puede tardar varios minutos. NO CIERRE Y NO RECARGUE ESTA PESTAÑA.');   
             this.continue();
           }
          });
