@@ -384,7 +384,7 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
           totalHoursCoursed: requestQuery.status == 'approved' ? (row.englishStudent.totalHoursCoursed+row.group.course.semesterHours) : row.englishStudent.totalHoursCoursed,
           courseType: requestQuery.status == 'approved' ? row.group.course._id : (row.englishStudent.courseType ? row.englishStudent.courseType : null)
         };
-        if(row.level == row.group.course.totalSemesters){
+        if(requestQuery.status == 'approved' && row.level == row.group.course.totalSemesters){
           studentQuery.status = 'not_released';
         }
         this.groupProvider.saveSingleAverage({studentQuery,requestQuery, request:row,groupId:this.grupId,teacherId: this._CookiesService.getData().user.eid}).subscribe(res=>{});
