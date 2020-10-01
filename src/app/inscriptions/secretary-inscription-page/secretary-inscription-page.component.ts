@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatDialog, MatTabChangeEvent } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import TableToExcel from '@linways/table-to-excel';
@@ -18,20 +18,17 @@ import Swal from 'sweetalert2';
 import { ReviewCredentialsComponent } from '../review-credentials/review-credentials.component';
 import { IStudentExpedient } from 'src/app/entities/inscriptions/studentExpedient.model';
 import { uInscription } from 'src/app/entities/inscriptions/inscriptions';
-import { ListAceptStudentComponent } from '../list-acept-student/list-acept-student.component';
-import { ListPendingStudentComponent } from '../list-pending-student/list-pending-student.component';
-import { ListProcessStudentComponent } from '../list-process-student/list-process-student.component';
 import { LoadingBarService } from 'ngx-loading-bar';
+import { WebSocketService } from 'src/app/services/app/web-socket.service';
+import { Subscription } from 'rxjs';
+import { eInscriptionEvents } from 'src/app/enumerators/shared/sockets.enum';
 @Component({
   selector: 'app-secretary-inscription-page',
   templateUrl: './secretary-inscription-page.component.html',
   styleUrls: ['./secretary-inscription-page.component.scss']
 })
-export class SecretaryInscriptionPageComponent implements OnInit {
+export class SecretaryInscriptionPageComponent implements OnInit, OnDestroy {
 
-  @ViewChild(ListPendingStudentComponent) private pendingStudent: ListPendingStudentComponent;
-  @ViewChild(ListProcessStudentComponent) private processStudent: ListProcessStudentComponent;
-  @ViewChild(ListAceptStudentComponent) private aceptStudent: ListAceptStudentComponent;
 
   displayedColumns: string[] = ['controlNumber', 'fullName', 'career'];
   dataSource: MatTableDataSource<loggedStudents>;
@@ -72,6 +69,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   usedPeriods=[];
   showTabs = false;
   version = 0; //variable para indicar si hubo cambio en el filtro del periodo
+  webSocketSub: Subscription;
   constructor(
     private imageToBase64Serv: ImageToBase64Service,
     private inscriptionsProv: InscriptionsProvider,
@@ -83,6 +81,7 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     private studentProv: StudentProvider,
     private loadingService: LoadingService,
     private loadingBar: LoadingBarService,
+    private webSocket: WebSocketService
   ) {
     this.rolName = this.cookiesService.getData().user.rol.name;
     if (!this.cookiesService.isAllowed(this.routeActive.snapshot.url[0].path)) {
@@ -101,56 +100,67 @@ export class SecretaryInscriptionPageComponent implements OnInit {
       this.emptyUInscription = new uInscription(this.imageToBase64Serv,this.cookiesService,this.inscriptionsProv);
     }, 300);
   }
+  ngOnDestroy(){
+    if(!this.webSocketSub.closed)this.webSocketSub.unsubscribe();
+  }
 
   getStudents(){
-    this.loadingBar.start();
-    this.inscriptionsProv.getStudents().subscribe(res => {
-      this.students = res.students;
+    this.webSocketSub = this.webSocket.listen(eInscriptionEvents.ALL_STUDENTS).subscribe(students=>{
+      this.loadingBar.start();
+        this.students = students;
 
-      // Ordenar Alumnos por Apellidos
-      this.students.sort(function (a, b) {
-        return a.fatherLastName.localeCompare(b.fatherLastName);
-      });
-      this.listStudents = this.students;
-      this.studentsForTable = this.listStudents.map( st=>(
-        {
-          fullName: st.fullName,
-          controlNumber: st.controlNumber,
-          career: st.careerId.fullName,
-          avance: st.documentsReviewNumber+'/'+st.totalDocumentsNumber,
-          status: st.inscriptionStatus,
-          exp: st.expStatus ? st.expStatus : '',
-          medicDict:st.observationsAnalysis ? 'SI' : 'NO',
-          medicWarn:st.warningAnalysis ? 'SI' : 'NO',
-          actions: {
-            inscriptionStatus: st.inscriptionStatus,
-            printCredential: st.printCredential,
-            photo: this.filterDocuments('Foto',st),
-            pendientDocs: (st.totalDocumentsNumber-st.documentsReviewNumber)
-          },
-          student:st
-        }));
-      this.loadingBar.complete();
-      this.readyToShowTable.students = true;
-      this.listStudents.forEach(element => {
-        if((this.filterDocuments('Comprobante',element) != 'EN PROCESO' && this.filterDocuments('Comprobante',element) != 'VALIDADO' && this.filterDocuments('Comprobante',element) != 'ACEPTADO') || (this.filterDocuments('Certificado',element) != 'EN PROCESO' && this.filterDocuments('Certificado',element) != 'VALIDADO' && this.filterDocuments('Certificado',element) != 'ACEPTADO')){
-          this.listStudentsDebts.push(element);
-        }
-      });      
-      this.listCovers = this.listStudents;
+        // Ordenar Alumnos por Apellidos
+        this.students.sort(function (a, b) {
+          return a.fatherLastName.localeCompare(b.fatherLastName);
+        });
+        this.listStudents = this.students;
+        this.studentsForTable = this.listStudents.map( st=>(
+          {
+            fullName: st.fullName,
+            controlNumber: st.controlNumber,
+            career: st.careerId.fullName,
+            avance: st.documentsReviewNumber+'/'+st.totalDocumentsNumber,
+            status: st.inscriptionStatus,
+            exp: st.expStatus ? st.expStatus : '',
+            medicDict:st.observationsAnalysis ? 'SI' : 'NO',
+            medicWarn:st.warningAnalysis ? 'SI' : 'NO',
+            actions: {
+              inscriptionStatus: st.inscriptionStatus,
+              printCredential: st.printCredential,
+              photo: this.filterDocuments('Foto',st),
+              pendientDocs: (st.totalDocumentsNumber-st.documentsReviewNumber)
+            },
+            student:st
+          }));
+        this.loadingBar.complete();
+        this.readyToShowTable.students = true;
+        this.listStudents.forEach(element => {
+          if((this.filterDocuments('Comprobante',element) != 'EN PROCESO' && this.filterDocuments('Comprobante',element) != 'VALIDADO' && this.filterDocuments('Comprobante',element) != 'ACEPTADO') || (this.filterDocuments('Certificado',element) != 'EN PROCESO' && this.filterDocuments('Certificado',element) != 'VALIDADO' && this.filterDocuments('Certificado',element) != 'ACEPTADO')){
+            this.listStudentsDebts.push(element);
+          }
+        });      
+        this.listCovers = this.listStudents;
+      }
+    );
+    this.webSocket.listen(eInscriptionEvents.LOGGED_STUDENTS).subscribe(loggedStudents=>{
+        this.listStudentsLogged =loggedStudents;      
+        this.listStudentsLogged.sort(function (a, b) {
+          return a.fatherLastName.localeCompare(b.fatherLastName);
+        });      
+        
+        this.dataSource = new MatTableDataSource(this.listStudentsLogged);      
+        
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.showTable = true;
+      }
+    );
+    this.inscriptionsProv.getStudents(this.cookiesService.getClientId()).subscribe(res => {
+      
             
     });
-    this.inscriptionsProv.getStudentsLogged().subscribe(res => {
-      this.listStudentsLogged = res.students;      
-      this.listStudentsLogged.sort(function (a, b) {
-        return a.fatherLastName.localeCompare(b.fatherLastName);
-      });      
+    this.inscriptionsProv.getStudentsLogged(this.cookiesService.getClientId()).subscribe(res => {
       
-      this.dataSource = new MatTableDataSource(this.listStudentsLogged);      
-      
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      this.showTable = true;
     });
 
     this.countStudents(-1);
@@ -159,14 +169,9 @@ export class SecretaryInscriptionPageComponent implements OnInit {
   
 
   countStudents(index){
+    this.webSocket.listen(eInscriptionEvents.NUMBER_STUDENTS_BY_PERIOD).subscribe( (data)=>{
         
-    this.inscriptionsProv.getNumberInscriptionStudentsByPeriod().subscribe(
-      res=>{
-        let numberStudentsByPeriod = res.studentsByPeriod;
-        setTimeout(() => {
-          this.processStudent.getStudents();
-          this.pendingStudent.getStudents(); 
-          this.aceptStudent.getStudents();
+          let numberStudentsByPeriod = data;
           this.cantListStudents = 0;
           this.cantListStudentsProcess = 0;
           this.cantListStudentsPendant = 0;
@@ -179,12 +184,20 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             this.cantListStudents += students ? students.allStudents : 0;
             this.cantListStudentsProcess += students ? students.processStudents : 0;
             this.cantListStudentsPendant += students ? students.pendantStudents : 0;
-            this.cantListStudentsAcept += students ? students.acepStudents : 0;
+            this.cantListStudentsAcept += students ? students.accepStudents : 0;
             this.cantListStudentsLogged += students ? students.loggedStudents : 0;
             this.cantIntegratedExpedient += students ? students.expedientsIntegrated : 0;
             this.cantArchivedExpedient += students ? students.expedientsArchived : 0;
           }
-        }, 200);
+      }
+    );
+    this.inscriptionsProv.getNumberInscriptionStudentsByPeriod(this.cookiesService.getClientId()).subscribe(
+      res=>{        
+        // setTimeout(() => {
+        //   this.processStudent.getStudents();
+        //   this.pendingStudent.getStudents(); 
+        //   this.aceptStudent.getStudents();          
+        // }, 200);
       }
     );
         
@@ -385,13 +398,13 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     this.loadingService.setLoading(false);
   }  
 
-  registerCredential(item){
-    this.getStudents();
-  }
+  // registerCredential(item){
+  //   this.getStudents();
+  // }
 
-  removeCredential(item){
-    this.getStudents();
-  }
+  // removeCredential(item){
+  //   this.getStudents();
+  // }
 
   async generateCredentials(){
     this.credentialStudents = this.filterItemsCarreer(this.searchCareer);
@@ -413,12 +426,12 @@ export class SecretaryInscriptionPageComponent implements OnInit {
           width: '90em',
           height: '800px'
         });
-        let sub = linkModal.afterClosed().subscribe(
-          credentials=>{
-            this.getStudents();
-          },
-          err=>console.log(err), ()=> sub.unsubscribe()
-        );
+        // let sub = linkModal.afterClosed().subscribe(
+        //   credentials=>{
+        //     this.getStudents();
+        //   },
+        //   err=>console.log(err), ()=> sub.unsubscribe()
+        // );
         
       } else {
         this.notificationService.showNotification(eNotificationType.INFORMATION, 'No Hay Credenciales Para Imprimir', '');
@@ -536,12 +549,12 @@ export class SecretaryInscriptionPageComponent implements OnInit {
             width: '90em',
             height: '800px'
           });
-          let sub = linkModal.afterClosed().subscribe(
-            credentials=>{
-              this.getStudents();
-            },
-            err=>console.log(err), ()=> sub.unsubscribe()
-          );
+          // let sub = linkModal.afterClosed().subscribe(
+          //   credentials=>{
+          //     this.getStudents();
+          //   },
+          //   err=>console.log(err), ()=> sub.unsubscribe()
+          // );
         } else {
           this.notificationService.showNotification(eNotificationType.INFORMATION, 'Credencial ya fue impresa', '');
         }
@@ -553,23 +566,23 @@ export class SecretaryInscriptionPageComponent implements OnInit {
     }
   }
 
-  updateExpedientStatus(student){
-    this.getStudents();
-  }
+  // updateExpedientStatus(student){
+  //   this.getStudents();
+  // }
 
   onTabChanged(event: MatTabChangeEvent){
-    this.countStudents(event.index);
+    // this.countStudents(event.index);
     
   }
 
-  integratedExpedient(student){
+  // integratedExpedient(student){
     
-    this.getStudents();
-  }
+  //   this.getStudents();
+  // }
 
-  archivedExpedient(student){
-    this.getStudents();
-  }
+  // archivedExpedient(student){
+  //   this.getStudents();
+  // }
 
   async excelExportDebts(students){
     this.notificationService.showNotification(eNotificationType.INFORMATION, 'EXPORTANDO DATOS', '');

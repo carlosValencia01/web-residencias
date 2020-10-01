@@ -29,14 +29,15 @@ export class ConfirmDialogComponent implements OnInit {
         this.dialogRef.close({
           confirm: true, motivo:
             this.Configuration.Status === eStatusRequest.CANCELLED ?
-              'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada. Registre una nueva fecha' :
-              'Su petición de titulación ha sido rechazada. Registre una nueva fecha'
+              'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada.' : 'Su petición de titulación ha sido rechazada.'
+              // 'Por un un imprevisto mayor, su fecha de titulación ha sido cancelada. Registre una nueva fecha' : 'Su petición de titulación ha sido rechazada. Registre una nueva fecha'
         });
       }
       else {
         this.existError = this.motivo.trim().length === 0;
         if (!this.existError)
-          this.dialogRef.close({ confirm: true, motivo: this.motivo + ". Registre una nueva fecha" });
+          this.dialogRef.close({ confirm: true, motivo: this.motivo + "." });
+          // this.dialogRef.close({ confirm: true, motivo: this.motivo + ". Registre una nueva fecha" });
       }
     }
     else

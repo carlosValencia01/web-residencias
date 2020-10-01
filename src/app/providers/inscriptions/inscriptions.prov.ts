@@ -30,31 +30,31 @@ export class InscriptionsProvider {
     }
 
     updateStudent(data : object, id : string){
-        return this.api.put('inscription/updateStudent/'+id,data).pipe(map( res=>res.json()));
+        return this.api.put(`inscription/updateStudent/${id}`,data).pipe(map( res=>res.json()));
     }
 
     getStudent(id : string){
         return this.api.get('inscription/getStudent/'+id).pipe(map( res=>res.json()));
     }
 
-    getStudents(){
-        return this.api.get('inscription/getStudents/').pipe(map( res=>res.json()));
+    getStudents(clientId){
+        return this.api.get('inscription/getStudents/'+clientId).pipe(map( res=>res.json()));
     }
 
-    getStudentsLogged(){
-        return this.api.get('inscription/getStudentsLogged/').pipe(map( res=>res.json()));
+    getStudentsLogged(clientId){
+        return this.api.get('inscription/getStudentsLogged/'+clientId).pipe(map( res=>res.json()));
     }
 
-    getStudentsProcess(){
-        return this.api.get('inscription/getStudentsProcess/').pipe(map( res=>res.json()));
+    getStudentsProcess(clientId){
+        return this.api.get('inscription/getStudentsProcess/'+clientId).pipe(map( res=>res.json()));
     }
 
-    getStudentsPendant(){
-        return this.api.get('inscription/getStudentsPendant/').pipe(map( res=>res.json()));
+    getStudentsPendant(clientId){
+        return this.api.get('inscription/getStudentsPendant/'+clientId).pipe(map( res=>res.json()));
     }
 
-    getStudentsAcept(){
-        return this.api.get('inscription/getStudentsAcept/').pipe(map( res=>res.json()));
+    getStudentsAcept(clientId){
+        return this.api.get('inscription/getStudentsAcept/'+clientId).pipe(map( res=>res.json()));
     }
 
     createFolder(folderName : string, period : string, type: number){
@@ -100,9 +100,8 @@ export class InscriptionsProvider {
     getArchivedExpedient(){
         return this.api.get('inscription/getArchivedExpedient/').pipe(map( res=>res.json()));
     }
-    
-    getNumberInscriptionStudentsByPeriod(){
-        return this.api.get('inscription/getNumberInscriptionStudentsByPeriod').pipe(map( res=>res.json()));
+    getNumberInscriptionStudentsByPeriod(connectionId: string){
+        return this.api.get('inscription/getNumberInscriptionStudentsByPeriod/'+connectionId).pipe(map( res=>res.json()));
     }
 
     sendNotificationMail(data){

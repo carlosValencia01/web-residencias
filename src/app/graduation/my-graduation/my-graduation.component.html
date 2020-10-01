@@ -41,14 +41,14 @@
               </p>
             </mat-card-content>
           </mat-card>
-          <mat-card class="start-card">
+          <!-- <mat-card class="start-card">
             <mat-card-content>
               <h6 style="text-align:left; color: #F27F07;">Recuerda</h6>
               <p>
                 Te esperamos el día <span style="color: #F27F07;">{{graduationDate}}</span> en el teatro Alí Chumacero a las <span style="color: #F27F07;">{{event.hour}} hrs</span>.
               </p>
             </mat-card-content>
-          </mat-card>
+          </mat-card> -->
           <mat-card class="start-card" *ngIf="student.data.observations">
             <mat-card-content>
               <img src="assets/icons/bestAverage.svg" style="width: 50px;">
@@ -62,7 +62,8 @@
           </mat-card>
         </div>
       </mat-tab>
-      <mat-tab *ngIf="student.data.estatus == 'Verificado' || student.data.estatus == 'Pagado' || student.data.estatus == 'Asistió'">
+
+      <!-- <mat-tab *ngIf="student.data.estatus == 'Verificado' || student.data.estatus == 'Pagado' || student.data.estatus == 'Asistió'">
         <ng-template matTabLabel>
           <span>Mis Boletos</span>
         </ng-template>       
@@ -77,7 +78,6 @@
                   <button type="button" class="btn btn-primary" (click)="saveQR(student.id)">Guardar <mat-icon>save_alt</mat-icon></button>
                 </div>
                 <div class="qr-student" [id] = "student.id">
-                  <!-- <h1>Mi Boleto</h1> -->
                   <div class="qr-student-middle">
                     <ngx-qrcode 
                       [qrc-value] = "qrData"
@@ -96,7 +96,6 @@
                       <img src="assets/imgs/logoITTepic.png" alt="">
                     </div>
                 </div>
-            <!-- code here -->
           </mat-expansion-panel>
           <mat-expansion-panel class="tickects-acordion-panel" *ngIf="guests.length > 0">
             <mat-expansion-panel-header>
@@ -104,7 +103,6 @@
                 Mis Invitados
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <!-- code here -->
                 <ngb-carousel #carousel interval="6000" pauseOnHover="true">
                   <ng-template ngbSlide *ngFor="let guest of guests">
                     <div class="btn-save ">
@@ -150,9 +148,9 @@
             </mat-card-content>
           </mat-card>
         </div>  
-      </mat-tab>
+      </mat-tab> -->
 
-      <mat-tab *ngIf="student.data.estatus == 'Registrado'">
+      <!-- <mat-tab *ngIf="student.data.estatus == 'Registrado'">
         <ng-template matTabLabel>
           <span>Mis Boletos</span>
         </ng-template>  
@@ -174,7 +172,7 @@
             </mat-card-content>
           </mat-card>
         </div>
-      </mat-tab>
+      </mat-tab> -->
     </mat-tab-group>
   </div>
 </div>

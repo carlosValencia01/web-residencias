@@ -13,6 +13,7 @@ import { CookiesService } from 'src/app/services/app/cookie.service';
 import { ISchedule } from 'src/app/entities/reception-act/schedule.model';
 import { InscriptionsProvider } from 'src/app/providers/inscriptions/inscriptions.prov';
 import { eRequest } from 'src/app/enumerators/reception-act/request.enum';
+import { ERoleToAcronym } from 'src/app/enumerators/app/role.enum';
 
 @Component({
   selector: 'app-schedule',
@@ -45,7 +46,7 @@ export class ScheduleComponent implements OnInit {
   weekStartsOn: number = DAYS_OF_WEEK.MONDAY;
   weekendDays: number[] = [DAYS_OF_WEEK.FRIDAY, DAYS_OF_WEEK.SATURDAY];
   denyDays = [];
-
+  private filterRole: string;
   constructor(
     public _RequestProvider: RequestProvider,
     public _NotificationsServices: NotificationsServices,
@@ -55,6 +56,7 @@ export class ScheduleComponent implements OnInit {
   ) {
     const user = this._CookiesService.getData().user;
     this.career = user.career;
+    this.filterRole = (ERoleToAcronym as any)[user.rol.name.toLowerCase()];
   }
 
   ngOnInit() {
@@ -216,7 +218,7 @@ export class ScheduleComponent implements OnInit {
             appointment: tmpAppointment,
             phase: eRequest.ASSIGNED
           };
-          this._RequestProvider.updateRequest(this.request._id, data).subscribe(_ => {
+          this._RequestProvider.updateRequest(this.request._id, data,this.filterRole).subscribe(_ => {
             this._NotificationsServices.showNotification(eNotificationType.SUCCESS, 'Acto recepcional', 'Fecha propuesta agendada');
             this.eventResponse.emit(true);
           }, _ => {
