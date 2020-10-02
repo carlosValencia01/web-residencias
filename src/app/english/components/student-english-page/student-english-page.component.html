@@ -112,7 +112,7 @@
                     style="color: blue; cursor: pointer;" (click)="selectNewCourse()">Selecciona un nuevo curso y
                     horario</a></label>
               </div>
-              <div *ngIf="lastRequestStudent && lastRequestStudent.paidNumber && lastRequestStudent.paidNumber > 0"
+              <div *ngIf="lastRequestStudent && lastRequestStudent.paidNumber && lastRequestStudent.paidNumber > 0 && englishStudent.status != 'not_released' && englishStudent.status != 'released' "
                 class="paid-label">
                 <label *ngIf="lastRequestStudent.paidNumber == 1"><a>Primer pago registrado</a></label>
                 <label *ngIf="lastRequestStudent.paidNumber == 2"><a>Segundo pago registrado</a></label>
