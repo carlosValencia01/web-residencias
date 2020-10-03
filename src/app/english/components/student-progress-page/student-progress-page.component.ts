@@ -45,25 +45,22 @@ export class StudentProgressPageComponent implements OnInit {
   getRequests() {
     this.loadingService.setLoading(true);
     this.requestCourseProv.getAllRequestCourseByEnglishStudentId(this.englishStudent._id).subscribe(res => {
-
       this.requestsStudent = res.requestCourse;
-      this.requestsStudent.sort((a, b) => a.requestDate.localeCompare(b.requestDate));
+      if (this.requestsStudent.length > 0) {
+        this.requestsStudent = this.requestsStudent.filter(request => (request.status == 'approved') || (request.status == 'not_approved'))
+        this.requestsStudent.sort((a, b) => a.requestDate.localeCompare(b.requestDate));
+      }
       this._fillTable();
-      console.log(this.requestsStudent);
-
     }, error => {
 
     }, () => this.loadingService.setLoading(false));
   }
 
   _fillTable() {
-
     this.requestsDataSource = new MatTableDataSource();
     this.requestsDataSource.data = this.requestsStudent.map((request) => this._parseRequestToTable(request));
     this.requestsDataSource.paginator = this.paginatorRequests;
     this.requestsDataSource.sort = this.sortRequests;
-    
-    console.log(this.requestsDataSource.data);
   }
 
   private _parseRequestToTable(request): any {
@@ -78,27 +75,27 @@ export class StudentProgressPageComponent implements OnInit {
       period: request.period.periodName + ' ' + request.period.year,
       schedule: request.group.schedule,
       requestDate: request.requestDate,
-      hoursCoursed: request.average ? (request.average>70 ? request.group.course.semesterHours : 0) : 0
+      hoursCoursed: request.average ? (request.average > 70 ? request.group.course.semesterHours : 0) : 0
     };
   }
 
-  getHoursCoursed(){
+  getHoursCoursed() {
     this.totalHoursCoursed = this.englishStudent.totalHoursCoursed;
-    this.percentHours = this.totalHoursCoursed/this.totalHours*100;
+    this.percentHours = this.totalHoursCoursed / this.totalHours * 100;
   }
 
-  openViewInfo(request){
+  openViewInfo(request) {
     Swal.fire({
       title: request.course + ' - ' + request.level,
-      html: 
-      '('+request.period+')<br><br><br>'+
-      'Grupo: <b>'+request.group+'</b><br><br>'+
-      'Docente: <b>'+request.teacher+'</b><br><br>'+
-      'Calificación final: <b>'+request.average+'</b><br>'+
-      'Horas aprobadas: <b>'+request.hoursCoursed+'</b><br><br>',
+      html:
+        '(' + request.period + ')<br><br><br>' +
+        'Grupo: <b>' + request.group + '</b><br><br>' +
+        'Docente: <b>' + request.teacher + '</b><br><br>' +
+        'Calificación final: <b>' + request.average + '</b><br>' +
+        'Horas aprobadas: <b>' + request.hoursCoursed + '</b><br><br>',
       showCloseButton: true,
       showConfirmButton: false,
-      focusCancel:true
+      focusCancel: true
     })
   }
 
