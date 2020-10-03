@@ -227,6 +227,115 @@
         </mat-card>
       </mat-tab>
 
+      <!--INICIA GRUPOS EVALUADOS-->
+
+      <mat-tab label="Grupos Evaluados">
+
+        <mat-card>
+          <mat-card-content>
+
+            <div class="row text-center p-4 m-0 mt-2" style="align-items: center;">
+              <div class="col-xs-12 col-md-4">
+                <mat-form-field *ngIf="periods" class="w-100">
+                  <mat-chip-list #chipList aria-label="Period selection">
+                    <mat-chip *ngFor="let p of usedPeriods" selectable="true" removable="true"
+                      (removed)="removePeriod(p)">
+                      {{p.periodName}}-{{p.year}}
+                      <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Filtrar por período..." #periodInput [formControl]="periodCtrl"
+                      [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
+                      (matChipInputTokenEnd)="addPeriod($event)" (ngModelChange)="filterPeriod($event)" matInput>
+                  </mat-chip-list>
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
+                      {{period.periodName}}-{{period.year}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+
+            </div>
+
+            <!--Tabla-->
+            <div style="position: relative;">
+
+              <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
+
+                <table mat-table [dataSource]="dataSourceGroupsEvaluated" matSort #sortGroupsEvaluated="matSort" matSortActive="ID"
+                matSortDirection="asc">
+
+                  <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="course">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="level">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Bloque</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="teacher">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Docente</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.teacher.name.fullName}}</mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <button mat-icon-button [matMenuTriggerFor]="actions">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+
+                      <mat-menu #actions="matMenu">
+                        <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
+                          <mat-icon>watch_later</mat-icon>
+                          <span>Ver Horario</span>
+                        </button>
+                        <button  mat-menu-item>
+                          <mat-icon>view_list</mat-icon>
+                          <span>Mas información</span>
+                        </button>
+                        <button mat-menu-item>
+                          <mat-icon>cloud_download</mat-icon>
+                          <span>Generar Acta de Calificaciones</span>
+                        </button>
+                      </mat-menu>
+
+                    </mat-cell>
+                  </ng-container>
+
+                  <mat-header-row
+                    *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'actions']">
+                  </mat-header-row>
+                  <mat-row
+                    *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'actions']">
+                  </mat-row>
+                </table>
+
+              </div>
+
+              <!--Paginas-->
+
+              <mat-paginator #matPaginatorGroupsEvaluated [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+      </mat-tab>
+
+      <!--FIN GRUPOS EVALUADOS-->
+
+
+
     </mat-tab-group>
 
     <ng-template #viewScheduleGroup let-schedule>

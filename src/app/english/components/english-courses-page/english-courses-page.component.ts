@@ -87,6 +87,12 @@ export class EnglishCoursesPageComponent implements OnInit {
   @ViewChild(MatSort) sortGroups: MatSort;
   activeGroups: IGroup[];
   dataSourceActiveGroups: MatTableDataSource<IGroup>;
+
+  groupsEvaluated: IGroup[];
+  dataSourceGroupsEvaluated: MatTableDataSource<IGroup>;
+  @ViewChild('matPaginatorGroupsEvaluated') paginatorGroupsEvaluated: MatPaginator;
+  @ViewChild('sortGroupsEvaluated') sortGroupsEvaluated: MatSort;
+
   dataSourceClassrooms: MatTableDataSource<any>;
   @ViewChild('matPaginatorActiveGroups') set paginatorActiveGroups(paginator: MatPaginator) {
     this.dataSourceActiveGroups.paginator = paginator;
@@ -115,6 +121,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     }
     this.dataSourceGroups = new MatTableDataSource();
     this.dataSourceActiveGroups = new MatTableDataSource();
+    this.dataSourceGroupsEvaluated = new MatTableDataSource();
   }
 
   ngOnInit() {
@@ -265,7 +272,9 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   divideGroups() {
     this.activeGroups = this.groups.filter(({ status }) => status === EStatusGroupDB.ACTIVE);
+    this.groupsEvaluated = this.groups.filter(({ status }) => status === EStatusGroupDB.FINALIZED || status === "evaluated");
     this.createDataSourceActiveGroups(this.activeGroups);
+    this.createDataSourceGroupsEvaluated();
   }
 
   createDataSourceActiveGroups(groups: IGroup[]): void {
@@ -273,8 +282,14 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.dataSourceActiveGroups.sort = this.sortActiveGroups;
   }
 
+  createDataSourceGroupsEvaluated(){
+    this.dataSourceGroupsEvaluated.data = this.groupsEvaluated;
+    this.dataSourceGroupsEvaluated.paginator = this.paginatorGroupsEvaluated;
+    this.dataSourceGroupsEvaluated.sort = this.sortGroupsEvaluated;
+  }
+
   openDilogViewScheduleGroup(scheduleSelected) {
-    this.dialog.open(this.dialogRefViewScheduleGroup, { data: scheduleSelected, hasBackdrop: false });
+    this.dialog.open(this.dialogRefViewScheduleGroup, { data: scheduleSelected, hasBackdrop: true });
   }
 
   openDialogFormGenerateGroups() {
@@ -392,7 +407,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       data: {
         group: group
       },
-      hasBackdrop: false, height: '70%', width: '90%'
+      hasBackdrop: true, height: '70%', width: '90%'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -750,6 +765,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.periods = this.filteredPeriods;
     if (this.periodInput) this.periodInput.nativeElement.blur(); // set focus
     this.applyFiltersActiveGroups();
+    this.applyFiltersGroupsEvaluated();
   }
 
   removePeriod(period): void {
@@ -769,6 +785,22 @@ export class EnglishCoursesPageComponent implements OnInit {
       }
     } else {
       this.dataSourceGroups.data = this.dataSourceGroups.data;
+    }
+  }
+
+  applyFiltersGroupsEvaluated() {
+
+    this.dataSourceGroupsEvaluated.data = this.groupsEvaluated;
+    if (this.usedPeriods) {
+      if (this.usedPeriods.length > 0) {
+        this.dataSourceGroupsEvaluated.data = this.dataSourceGroupsEvaluated.data.filter(
+          (req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period._id))
+        );
+      } else {
+        this.dataSourceGroupsEvaluated.data = this.dataSourceGroupsEvaluated.data;
+      }
+    } else {
+      this.dataSourceGroupsEvaluated.data = this.dataSourceGroupsEvaluated.data;
     }
   }
 
