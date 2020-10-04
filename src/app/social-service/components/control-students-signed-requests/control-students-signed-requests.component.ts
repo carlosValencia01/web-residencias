@@ -46,6 +46,9 @@ export class ControlStudentsSignedRequestsComponent implements OnInit {
     });
   }
 
+  public refresh() {
+    this._getAllSignedRequests();
+  }
 
   private _refresh(data: Array<any>): void {
     this.dataSource = new MatTableDataSource(data);
@@ -59,7 +62,7 @@ export class ControlStudentsSignedRequestsComponent implements OnInit {
       fullName: data.studentId.fullName,
       controlNumber: data.controlNumber,
       career: data.studentId.career
-    }; 
+    };
   }
 
   public applyFilter(filterValue: string) {
@@ -68,5 +71,4 @@ export class ControlStudentsSignedRequestsComponent implements OnInit {
       this.dataSource.paginator.firstPage();
     }
   }
-  
 }

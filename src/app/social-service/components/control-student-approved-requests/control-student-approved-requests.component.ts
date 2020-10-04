@@ -45,7 +45,9 @@ export class ControlStudentApprovedRequestsComponent implements OnInit {
     });
   }
 
-
+  public refresh() {
+    this._getAllApprovedRequests();
+  }
 
   private _refresh(data: Array<any>): void {
     this.dataSource = new MatTableDataSource(data);

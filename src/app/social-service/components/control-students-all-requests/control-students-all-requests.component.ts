@@ -26,8 +26,8 @@ export class ControlStudentsAllRequestsComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit() {
-    this.displayedColumns = ['id', 'fullName', 'controlNumber', 'career','status','actions'];
-    this.displayedColumnsName = ['No','Nombre', 'Nùmero de control', 'Carrera', 'Estatus'];
+    this.displayedColumns = ['id', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
+    this.displayedColumnsName = ['No', 'Nombre', 'Nùmero de control', 'Carrera', 'Estatus'];
     this.dataSource.paginator = this.paginator;
     this._getAllRequests();
   }
@@ -45,7 +45,11 @@ export class ControlStudentsAllRequestsComponent implements OnInit {
     }, () => {
       this.loadingService.setLoading(false);
     }
-    )
+    );
+  }
+
+  public refresh() {
+    this._getAllRequests();
   }
 
   private _refresh(data: Array<any>): void {
@@ -62,7 +66,7 @@ export class ControlStudentsAllRequestsComponent implements OnInit {
       controlNumber: data.controlNumber,
       career: data.studentId.career,
       status: data.verification.solicitude
-    }; 
+    };
   }
 
   public applyFilter(filterValue: string) {

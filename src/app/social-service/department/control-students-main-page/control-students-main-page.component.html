@@ -3,79 +3,54 @@
   <mat-card-content>
     <mat-tab-group>
       <mat-tab>
-        <ng-template mat-tab-label>Control de asistencia</ng-template>
-        <div class="row p-3">
-          <div class="col-10">
-            <mat-form-field class="w-100">
-              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
-                     oninput="this.value=this.value.toUpperCase()">
-            </mat-form-field>
+        <ng-template mat-tab-label>
+          <div (click)="loadTab(1)">
+            Control de asistencia
           </div>
-          <div class="col-1 justify-content-end text-center">
-            <input #fileUpload type="file" accept=".csv" (change)="onUpload($event)" style="display: none">
-            <button mat-mini-fab class="m-1" class="bg-success" (click)="fileUpload.click()" data-toggle="tooltip"
-                    title="Cargar asistencia por csv">
-              <mat-icon class="text-white">publish</mat-icon>
-            </button>
-          </div>
-          <div class="col-1 justify-content-end text-center">
-            <button mat-mini-fab class="m-1" color="primary" (click)="refresh()" data-toggle="tooltip"
-                    title="Recargar">
-              <mat-icon>update</mat-icon>
-            </button>
-          </div>
+        </ng-template>
+        <div *ngIf="tab1">
+          <app-control-student-attendance></app-control-student-attendance>
         </div>
-        <div class="row">
-            <table mat-table [dataSource]="dataSource" matSort>
-              <ng-container *ngFor="let item of displayedColumns.slice(0, -1);let index=index"
-                            [matColumnDef]="item">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsName[index]}}</th>
-                <td *matCellDef="let row" mat-cell style="width:25%;">
-                  <span mat-line *ngIf="index === 3">
-                      {{row[item] | date: 'mediumDate'}}
-                  </span>
-                  <span mat-line *ngIf="index !== 3">
-                      {{row[item]}}
-                  </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="actions">
-                <th *matHeaderCellDef mat-header-cell></th>
-                <td *matCellDef="let row" mat-cell style="width:20%">
-                  <button [matMenuTriggerFor]="actions" mat-icon-button>
-                    <mat-icon>more_vert</mat-icon>
-                  </button>
-                  <mat-menu #actions>
-                    <button mat-menu-item>
-                      <mat-icon class="text-danger">person_add_disabled</mat-icon>
-                      <span>Quitar asistencia</span>
-                    </button>
-                  </mat-menu>
-                </td>
-              </ng-container>
-              <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-              <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
-            </table>
-            <mat-paginator #matPaginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-          </div>
       </mat-tab>
       <mat-tab>
-        <ng-template mat-tab-label>Solicitudes</ng-template>
+          <ng-template mat-tab-label>
+            <div (click)="loadTab(2)">
+              Solicitudes
+            </div>
+          </ng-template>
           <mat-tab-group>
             <mat-tab>
-              <ng-template mat-tab-label>Solicitudes Firmadas</ng-template>
+              <ng-template mat-tab-label>
+                <div (click)="loadTab(2)">
+                  Solicitudes Firmadas
+                </div>
+              </ng-template>
               <br>
-              <app-control-students-signed-requests></app-control-students-signed-requests>
+              <div *ngIf="tab2">
+                <app-control-students-signed-requests></app-control-students-signed-requests>
+              </div>
             </mat-tab>
             <mat-tab>
-              <ng-template mat-tab-label>Solicitudes Aceptadas</ng-template>
+              <ng-template mat-tab-label>
+                <div (click)="loadTab(3)">
+                  Solicitudes Aceptadas
+                </div>
+              </ng-template>
               <br>
-              <app-control-student-approved-requests></app-control-student-approved-requests>
+              <div *ngIf="tab3">
+                <app-control-student-approved-requests></app-control-student-approved-requests>
+              </div>
             </mat-tab>
             <mat-tab>
-              <ng-template mat-tab-label>Todas las Solicitudes</ng-template>
+              <ng-template mat-tab-label>
+                <div (click)="loadTab(4)">
+                  Todas las Solicitudes
+                </div>
+              </ng-template>
               <br>
-              <app-control-students-all-requests></app-control-students-all-requests>
+              <div *ngIf="tab4">
+                <app-control-students-all-requests></app-control-students-all-requests>
+              </div>
             </mat-tab>
           </mat-tab-group>
       </mat-tab>

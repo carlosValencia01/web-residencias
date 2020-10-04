@@ -1,0 +1,31 @@
+table {
+    width: 100%;
+  }
+  
+  .mat-form-field {
+    font-size: 14px;
+    width: 100%;
+  }
+  
+  td, th {
+    width: 25%;
+  }
+  
+  td > mat-icon {
+    cursor: pointer;
+  }
+  
+  .addAssistance {
+    width: 45px;
+    height: 45px;
+    font-size: 1.5em;
+    background-color: #f65803;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999 !important;
+  }
+  

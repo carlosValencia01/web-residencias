@@ -50,6 +50,7 @@ import { SocialServiceReviewInitFormComponent } from './student/social-service-r
 import { ControlStudentsSignedRequestsComponent } from './components/control-students-signed-requests/control-students-signed-requests.component';
 import { ControlStudentApprovedRequestsComponent } from './components/control-student-approved-requests/control-student-approved-requests.component';
 import { ControlStudentsAllRequestsComponent } from './components/control-students-all-requests/control-students-all-requests.component';
+import { ControlStudentAttendanceComponent } from './components/control-student-attendance/control-student-attendance.component';
 
 
 @NgModule({
@@ -96,7 +97,8 @@ import { ControlStudentsAllRequestsComponent } from './components/control-studen
     SocialServiceReviewInitFormComponent,
     ControlStudentsSignedRequestsComponent,
     ControlStudentApprovedRequestsComponent,
-    ControlStudentsAllRequestsComponent
+    ControlStudentsAllRequestsComponent,
+    ControlStudentAttendanceComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
