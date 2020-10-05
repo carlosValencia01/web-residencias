@@ -108,8 +108,8 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header>Promedio</mat-header-cell>
         <mat-cell *matCellDef="let row" [class.aproved-students] = "row.average ? row.average > 69 : false"
         [class.not-aproved-students] = "row.average ? row.average < 70 : false"> 
-          <input mat-input style="width: 100%;" type="number" min="0" max="100" step="0.1" [id]="row._id" *ngIf="!row.average"/>
-          <span *ngIf="row.average">{{row.average}}</span>
+          <input mat-input style="width: 100%;" type="number" min="0" max="100" step="0.1" [id]="row._id" [value]="row.average?row.average:''" *ngIf="!row.average || isEditable">
+          <span *ngIf="row.average && !isEditable">{{row.average}}</span>
         </mat-cell>
       </ng-container>
 
@@ -120,7 +120,7 @@
         <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
         <mat-cell *matCellDef="let row">
 
-          <button  ngbTooltip="Guardar Calificación" *ngIf="!row.average" (click)="setRequestAverage(row)" mat-icon-button>
+          <button  ngbTooltip="Guardar Calificación" *ngIf="!row.average || isEditable" (click)="setRequestAverage(row)" mat-icon-button>
             <mat-icon class="blue" >save</mat-icon>
           </button>
 
@@ -168,9 +168,16 @@
             <button mat-icon-button>
               <mat-icon>class</mat-icon>              
             </button>
+          </div>  
+          <div class="div-img" ngbTooltip="Editar Calificaciones" 
+          *ngIf="(group.status == 'evaluated' || group.status == 'finalized') && isCLE && !isEditable"
+          (click)="isEditable=true">
+            <button mat-icon-button>
+              <mat-icon>create</mat-icon>              
+            </button>
           </div>            
           <div class="div-img" ngbTooltip="Calificaciones" 
-          *ngIf="group.status == 'active'">
+          *ngIf="group.status == 'active' || isEditable">
             <button mat-icon-button [matMenuTriggerFor]="menuAvgs">
               <mat-icon>assessment</mat-icon>
             </button>

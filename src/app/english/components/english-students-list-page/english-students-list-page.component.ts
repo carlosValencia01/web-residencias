@@ -37,6 +37,7 @@ import { WebSocketService } from 'src/app/services/app/web-socket.service';
 export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
 
   isCLE = false;
+  isEditable = false;
   
   teacher: { name: string, email: string };
   grupId: string;
@@ -349,7 +350,7 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
             if(res){
               this.notificationsServices.showNotification(eNotificationType.INFORMATION,'ÍNGLES','Registrando calificaciones');
               this.loadingService.setLoading(true);
-              this.groupProvider.saveAverages({studentsToUploadAvg,groupId:this.grupId,teacherId: this._CookiesService.getData().user.eid}).subscribe((res)=>{
+              this.groupProvider.saveAverages({studentsToUploadAvg,groupId:this.grupId,teacherId: this.isCLE?this.actRoute.snapshot.params.teacherId:this._CookiesService.getData().user.eid}).subscribe((res)=>{
                 this.notificationsServices.showNotification(eNotificationType.SUCCESS,'ÍNGLES','Calificaciones registradas');   
                 this.loadingService.setLoading(false);           
               });
@@ -400,7 +401,7 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
         if(requestQuery.status == 'approved' && row.level == row.group.course.totalSemesters){
           studentQuery.status = 'not_released';
         }
-        this.groupProvider.saveSingleAverage({studentQuery,requestQuery, request:row,groupId:this.grupId,teacherId: this._CookiesService.getData().user.eid}).subscribe(res=>{});
+        this.groupProvider.saveSingleAverage({studentQuery,requestQuery, request:row,groupId:this.grupId,teacherId: this.isCLE?this.actRoute.snapshot.params.teacherId:this._CookiesService.getData().user.eid}).subscribe(res=>{});
       }
     }
     
