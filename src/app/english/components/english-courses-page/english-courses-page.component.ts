@@ -16,6 +16,8 @@ import { MatTableDataSource } from '@angular/material/table';
 // Importar Servicios
 import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
+import { PDFEnglish } from 'src/app/english/entities/english-pdf-generator';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
 
 // Importar Proveedores
 import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
@@ -109,6 +111,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     private requestProvider: RequestProvider,
     private router: Router,
     private loadingService: LoadingService,
+    private imageToBase64Serv: ImageToBase64Service,
     private requestCourseProv: RequestCourseProvider,
     private classroomProv: ClassroomProvider,
     private englishCourseProv: EnglishCourseProvider,
@@ -131,6 +134,10 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.createGroups();
     this.getActivePeriod();
     this._getPeriods();
+
+    setTimeout(() => {
+      this.emptyPDFGenerator = new PDFEnglish(this.imageToBase64Serv, this._CookiesService);
+    }, 300);
   }
 
   // #region Solicitudes
@@ -282,7 +289,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.dataSourceActiveGroups.sort = this.sortActiveGroups;
   }
 
-  createDataSourceGroupsEvaluated(){
+  createDataSourceGroupsEvaluated() {
     this.dataSourceGroupsEvaluated.data = this.groupsEvaluated;
     this.dataSourceGroupsEvaluated.paginator = this.paginatorGroupsEvaluated;
     this.dataSourceGroupsEvaluated.sort = this.sortGroupsEvaluated;
@@ -583,37 +590,63 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   getScheduleDaysGroup(schedules) {
-    var horario = {
-      Lunes: '',
-      Martes: '',
-      Miercoles: '',
-      Jueves: '',
-      Viernes: '',
-      Sabado: ''
-    };
-    schedules.forEach((schedule, index) => {
-      switch (EDaysSchedule[schedule.day]) {
-        case 'Lunes':
-          horario.Lunes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Martes':
-          horario.Martes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Miércoles':
-          horario.Miercoles = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Jueves':
-          horario.Jueves = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Viernes':
-          horario.Viernes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Sábado':
-          horario.Sabado = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-      }
+    return new Promise((resolve) => {
+      var horario = {
+        Lunes: {
+          hour: '',
+          classroom: ''
+        },
+        Martes: {
+          hour: '',
+          classroom: ''
+        },
+        Miercoles: {
+          hour: '',
+          classroom: ''
+        },
+        Jueves: {
+          hour: '',
+          classroom: ''
+        },
+        Viernes: {
+          hour: '',
+          classroom: ''
+        },
+        Sabado: {
+          hour: '',
+          classroom: ''
+        }
+      };
+      schedules.forEach((schedule, index) => {
+        switch (EDaysSchedule[schedule.day]) {
+          case 'Lunes':
+            horario.Lunes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Lunes.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Martes':
+            horario.Martes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Martes.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Miércoles':
+            horario.Miercoles.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Miercoles.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Jueves':
+            horario.Jueves.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Jueves.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Viernes':
+            horario.Viernes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Viernes.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Sábado':
+            horario.Sabado.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Sabado.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+        }
+      });
+      resolve(horario);
     });
-    return horario;
   }
 
   activeGroup(_groupId) {
@@ -654,6 +687,67 @@ export class EnglishCoursesPageComponent implements OnInit {
     }, error => {
     });
   }
+
+  actData;
+  teacher;
+  emptyPDFGenerator: PDFEnglish;
+
+  async generateAct(group) {
+    this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'INGLÉS', 'Generando Acta Calificaciones');
+    this.actData = {
+      students: await this.getStudentsGroup(group._id),
+      group: group,
+      schedule: await this.getScheduleDaysGroup(group.schedule),
+      teacher: {
+        name: group.teacher.name,
+        email: group.teacher.email
+      }
+    };
+    console.log(this.actData);
+    setTimeout(() => {
+      this.generatePDFAct();
+    }, 2000);
+  }
+
+  getStudentsGroup(id): Promise<Array<IRequestCourse>> {
+    return new Promise((resolve) => {
+      this.requestCourseProv.getAllRequestActiveCourse(id, this._CookiesService.getClientId()).subscribe(async res => {
+        resolve(res.requestCourses);
+      });
+    });
+  }
+
+  generatePDFAct() {
+    this.loadingService.setLoading(true);
+    const doc1 = this.emptyPDFGenerator.generateActaCalificacionesStep1(this.actData);
+
+    doc1.autoTable({
+      html: '#tablePdfActHead',
+      theme: 'grid',
+      headStyles: { fillColor: [20, 43, 88], textColor: [255, 255, 255] },
+      styles: { halign: 'center', valign: 'middle', fontSize: 7, fontStyle: 'bold', cellPadding: 1 },
+      margin: { top: 120 }
+    });
+
+    doc1.autoTable({
+      html: '#tablePdfAct',
+      theme: 'grid',
+      headStyles: { fillColor: [20, 43, 88], textColor: [255, 255, 255] },
+      styles: { halign: 'center', valign: 'middle', fontSize: 7, fontStyle: 'bold', cellPadding: 1 },
+      startY: 159
+    });
+
+    const doc = this.emptyPDFGenerator.generateGroupStudentsListStep2(doc1);
+
+    window.open(doc.output('bloburl'), '_blank');
+    this.loadingService.setLoading(false);
+    this.actData = null;
+  }
+
+  async uploadAverages(group: IGroup) {
+    this.router.navigate(['/english/english-groups', group.teacher._id, group._id]);
+  }
+
   //#endregion
 
   // #region Reportes Excel

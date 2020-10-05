@@ -1,6 +1,30 @@
 <div class="content p-4" *ngIf="group">
-  <button mat-button class="bg-white card-shadow" ngbTooltip="Regresar" routerLink="/english/english-groups"><mat-icon>keyboard_backspace</mat-icon></button>
+  <ng-container [ngSwitch]="isCLE">
+  <button *ngSwitchCase="true" mat-button class="bg-white card-shadow" ngbTooltip="Regresar" routerLink="/english/english-courses"><mat-icon>keyboard_backspace</mat-icon></button>
+  <button *ngSwitchCase="false" mat-button class="bg-white card-shadow" ngbTooltip="Regresar" routerLink="/english/english-groups"><mat-icon>keyboard_backspace</mat-icon></button>
+  </ng-container>
   <div mat-dialog-content >
+
+    <ng-container *ngIf="isCLE">
+      <div class="flex-halign-center">  
+        <h1 mat-dialog-title class="text-center table-titles">DOCENTE</h1>
+      </div>
+      <table class="table table-responsive-sm bg-white card-shadow mb-4">
+        <thead>
+          <tr>
+            <th class="text-center">Nombre</th>
+            <th class="text-center">Correo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-center">{{teacher.name.fullName}}</td>
+            <td class="text-center">{{teacher.email}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+
     <div class="flex-halign-center">  
       <h1 mat-dialog-title class="text-center table-titles">HORARIO</h1>
     </div>

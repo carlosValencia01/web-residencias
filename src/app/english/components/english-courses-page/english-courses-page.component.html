@@ -299,12 +299,12 @@
                           <mat-icon>watch_later</mat-icon>
                           <span>Ver Horario</span>
                         </button>
-                        <button  mat-menu-item>
+                        <button (click)="uploadAverages(row)" mat-menu-item>
                           <mat-icon>view_list</mat-icon>
                           <span>Mas información</span>
                         </button>
-                        <button mat-menu-item>
-                          <mat-icon>cloud_download</mat-icon>
+                        <button (click)="generateAct(row)" mat-menu-item>
+                          <mat-icon>class</mat-icon>
                           <span>Generar Acta de Calificaciones</span>
                         </button>
                       </mat-menu>
@@ -543,5 +543,81 @@
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.email }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.currentPhone }}</td>
     </tr>
+  </tbody>
+</table>
+
+<table class="table table-striped table-bordered table-hover" id="tablePdfActHead"
+  data-cols-width="9,21,35,35,17,17,17,17,17,17" *ngIf="actData">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Lunes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Martes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Miércoles
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Jueves
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Viernes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Sábado
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th data-a-h="center">{{actData.schedule.Lunes.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Martes.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Miercoles.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Jueves.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Viernes.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Sabado.hour}}</th>
+      </tr>
+      <tr>
+      <th data-a-h="center">{{actData.schedule.Lunes.classroom.name  ? actData.schedule.Lunes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Martes.classroom.name  ? actData.schedule.Martes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Miercoles.classroom.name  ? actData.schedule.Miercoles.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Jueves.classroom.name  ? actData.schedule.Jueves.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Viernes.classroom.name  ? actData.schedule.Viernes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Sabado.classroom.name  ? actData.schedule.Sabado.classroom.name : ''}}</th>
+      </tr>
+  </tbody>
+</table>
+
+<table class="table table-striped table-bordered table-hover" id="tablePdfAct"
+  data-cols-width="9,21,35,35,17,17,17,17,17,17" *ngIf="actData">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        No.
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        No. Contról
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Nombre del Alumno
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Carrera
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Calificación
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let alumno of actData.students; let indice = index;">
+      <th data-a-h="center">{{ indice + 1 }}</th>
+      <th data-a-h="center">{{ alumno.englishStudent.studentId.controlNumber }}</th>
+      <th data-a-h="center">{{ alumno.englishStudent.studentId.fullName }}</th>
+      <th data-a-h="center">{{ alumno.englishStudent.studentId.careerId ? alumno.englishStudent.studentId.careerId.shortName : '---' }}</th>
+      <th data-a-h="center">{{ alumno.average ? alumno.average : 'NA' }}</th>
+    </tr>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
   </tbody>
 </table>

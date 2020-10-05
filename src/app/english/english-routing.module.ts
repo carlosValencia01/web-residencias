@@ -60,6 +60,11 @@ const routes: Routes = [
     pathMatch: 'full',
     component: EnglishStudentsListPageComponent
   },
+  {
+    path: 'english-groups/:teacherId/:grupId',
+    pathMatch: 'full',
+    component: EnglishStudentsListPageComponent
+  },
 ];
 
 @NgModule({

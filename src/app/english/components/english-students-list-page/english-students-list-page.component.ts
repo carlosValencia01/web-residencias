@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute  } from '@angular/router';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { CookiesService } from 'src/app/services/app/cookie.service';
@@ -24,6 +24,7 @@ import { eEnglishEvents } from 'src/app/enumerators/shared/sockets.enum';
 import { GroupProvider } from '../../providers/group.prov';
 import { RequestCourseProvider } from '../../providers/request-course.prov';
 import { PDFEnglish } from '../../entities/english-pdf-generator';
+import { EmployeeProvider } from '../../../providers/shared/employee.prov';
 
 // services
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
@@ -34,6 +35,8 @@ import { WebSocketService } from 'src/app/services/app/web-socket.service';
   styleUrls: ['./english-students-list-page.component.scss']
 })
 export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
+
+  isCLE = false;
   
   teacher: { name: string, email: string };
   grupId: string;
@@ -63,6 +66,8 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
     private groupProvider: GroupProvider,
     private imageToBase64Serv: ImageToBase64Service,
     private wsService: WebSocketService,
+    private actRoute: ActivatedRoute,
+    private employeeProv: EmployeeProvider
   ) { }
 
   ngOnInit() {
@@ -70,6 +75,15 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
       name: this._CookiesService.getData().user.name,
       email: this._CookiesService.getData().user.email
     };
+    if(this._CookiesService.getData().user.rol.name=="Coordinación de lenguas extranjeras"){
+      this.isCLE = true;
+      this.employeeProv.getEmployeeById(this.actRoute.snapshot.params.teacherId).subscribe(data => { 
+        this.teacher = {
+          name: data.employee.name,
+          email: data.employee.email
+        };
+      });
+    }
     this.grupId = this.router.url.split('/').pop();
     this._loadData();
   }
@@ -97,8 +111,7 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
       console.log(groups);
       
     }) );
-    this.groupProvider.getAllGroupByTeacher(this._CookiesService.getData().user.eid, this._CookiesService.getClientId()).subscribe((data) => {  });
-
+    this.groupProvider.getAllGroupByTeacher(this.isCLE?this.actRoute.snapshot.params.teacherId:this._CookiesService.getData().user.eid, this._CookiesService.getClientId()).subscribe((data) => {  });
   }
 
   _getStudentsGroup(id){
