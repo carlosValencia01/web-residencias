@@ -1,0 +1,217 @@
+<mat-tab-group [selectedIndex]="selectedSubTab.value" (selectedIndexChange)="changeSubTab($event)">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <div>
+        Solicitudes Firmadas
+      </div>
+    </ng-template>
+    <br>
+    <div>
+      <div class="row p-3">
+        <div class="col-11">
+          <mat-form-field class="w-100">
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                   oninput="this.value=this.value.toUpperCase()">
+          </mat-form-field>
+        </div>
+        <div class="col-1 justify-content-end text-center">
+          <button mat-mini-fab class="m-1" color="primary" (click)="refreshSend()" data-toggle="tooltip"
+                  title="Recargar">
+            <mat-icon>update</mat-icon>
+          </button>
+        </div>  
+      </div>
+      <div class="row text-center">
+        <table mat-table [dataSource]="dataSourceSend" matSort>
+          <ng-container *ngFor="let item of displayedColumnsSend;let index=index"
+                                  [matColumnDef]="item">
+                      <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsSendName[index]}}</th>
+                        <td *matCellDef="let row; let i = index" mat-cell-style="width:25%;">
+                          <span mat-line *ngIf="index === 0">
+                            {{i+1}}
+                          </span>
+                          <span mat-line *ngIf="index !== 0">
+                              {{row[item]}}
+                          </span>
+                          <div *ngIf="index === 4">
+                            <button [matMenuTriggerFor]="actions" mat-icon-button>
+                              <mat-icon>more_vert</mat-icon>
+                            </button>
+                            <mat-menu #actions>
+                              <button mat-menu-item routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
+                                <mat-icon class="material-icons text-success">done</mat-icon>
+                                <span>Verificar</span>
+                              </button>
+                              <button mat-menu-item>
+                                <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                                <span>Expediente</span>
+                              </button>
+                            </mat-menu>
+                          </div>
+                        </td>
+          </ng-container>
+          <tr *matHeaderRowDef="displayedColumnsSend" mat-header-row></tr>
+          <tr *matRowDef="let row; columns: displayedColumnsSend;" mat-row></tr>
+        </table>
+        <mat-paginator #matPaginatorSend [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <div>
+        Solicitudes Aceptadas
+      </div>
+    </ng-template>
+    <br>
+    <div>
+      <div class="row p-3">
+        <div class="col-11">
+          <mat-form-field class="w-100">
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                   oninput="this.value=this.value.toUpperCase()">
+          </mat-form-field>
+        </div>
+          <div class="col-1 justify-content-end text-center">
+            <button mat-mini-fab class="m-1" color="primary" (click)="refreshApproved()" data-toggle="tooltip"
+                    title="Recargar">
+              <mat-icon>update</mat-icon>
+            </button>
+          </div>  
+      </div>
+      <div class="row text-center">
+        <table mat-table [dataSource]="dataSourceApproved" matSort>
+          <ng-container *ngFor="let item of displayedColumnsApproved;let index=index"
+                                [matColumnDef]="item">
+                          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsApprovedName[index]}}</th>      
+                          <td *matCellDef="let row; let i = index" mat-cell-style="width:25%;">
+                            <span mat-line *ngIf="index === 0">
+                              {{i+1}}
+                            </span>
+                            <span mat-line *ngIf="index === 1 || index === 2 || index === 3">
+                              {{row[item]}}
+                            </span>
+                            <div *ngIf="index === 4">
+                              <button [matMenuTriggerFor]="actions" mat-icon-button>
+                                <mat-icon>more_vert</mat-icon>
+                              </button>
+                              <mat-menu #actions>
+                                <button mat-menu-item>
+                                  <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                                  <span>Expediente</span>
+                                </button>
+                              </mat-menu>
+                            </div>
+                          </td>
+          </ng-container>
+          <tr *matHeaderRowDef="displayedColumnsApproved" mat-header-row></tr>
+          <tr *matRowDef="let row; columns: displayedColumnsApproved;" mat-row></tr>
+        </table>
+      <mat-paginator #matPaginatorApproved [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <div>
+        Todas las Solicitudes
+      </div>
+    </ng-template>
+    <br>
+    <div>
+      <div class="row p-3">
+        <div class="col-11">
+          <mat-form-field class="w-100">
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                   oninput="this.value=this.value.toUpperCase()">
+          </mat-form-field>
+        </div>
+        <div class="col-1 justify-content-end text-center">
+          <button mat-mini-fab class="m-1" color="primary" (click)="refreshAllRequests()" data-toggle="tooltip"
+                  title="Recargar">
+            <mat-icon>update</mat-icon>
+          </button>
+        </div>  
+      </div>
+      <div class="row">
+        <table mat-table [dataSource]="dataSourceAllRequests" matSort>
+          <ng-container *ngFor="let item of displayedColumnsAllRequests;let index=index"
+                                [matColumnDef]="item">
+                          <th id="narrowTh" *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsAllRequestsName[index]}}</th>
+                          <td id="narrowTd" *matCellDef="let row; let i = index" mat-cell-style="width:25%;">
+                            <span mat-line *ngIf="index === 0">
+                              {{i+1}}
+                            </span>
+                            <span mat-line *ngIf="index === 1 || index === 2 || index === 3">
+                              {{row[item]}}
+                            </span>
+                            <div *ngIf="index === 4">
+                              <div *ngIf="row.status==='approved'">
+                                <span mat-line class="badge badge-pill badge-success">
+                                  Aprobada
+                                </span>
+                              </div>
+                              <div *ngIf="row.status==='send'">
+                                <span mat-line class="badge badge-pill badge-primary">
+                                  Firmada
+                                </span>
+                              </div>
+                              <div *ngIf="row.status==='reevaluate'">
+                                <span mat-line class="badge badge-pill badge-warning">
+                                  Revaluación
+                                </span>
+                              </div>
+                            </div>
+                            <div *ngIf="index === 5">
+                              <div *ngIf="row.status==='send'">
+                                    <button [matMenuTriggerFor]="actions" mat-icon-button>
+                                      <mat-icon>more_vert</mat-icon>
+                                    </button>
+                                    <mat-menu #actions>
+                                      <button mat-menu-item routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
+                                        <mat-icon class="material-icons text-success">done</mat-icon>
+                                        <span>Verificar</span>
+                                      </button>
+                                      <button mat-menu-item>
+                                        <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                                        <span>Expediente</span>
+                                      </button>
+                                    </mat-menu>
+                              </div>
+                              <div *ngIf="row.status==='approved'">
+                                <button [matMenuTriggerFor]="actions" mat-icon-button>
+                                  <mat-icon>more_vert</mat-icon>
+                                </button>
+                                <mat-menu #actions>
+                                  <button mat-menu-item>
+                                    <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                                    <span>Expediente</span>
+                                  </button>
+                                </mat-menu>
+                              </div>
+                              <div *ngIf="row.status==='reevaluate'">
+                                <button [matMenuTriggerFor]="actions" mat-icon-button>
+                                  <mat-icon>more_vert</mat-icon>
+                                </button>
+                                <mat-menu #actions>
+                                  <button mat-menu-item routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
+                                    <mat-icon class="material-icons text-success">done</mat-icon>
+                                    <span>Verificar</span>
+                                  </button>
+                                  <button mat-menu-item>
+                                    <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                                    <span>Expediente</span>
+                                  </button>
+                                </mat-menu>
+                              </div>
+                            </div>
+                          </td>
+          </ng-container>
+          <tr *matHeaderRowDef="displayedColumnsAllRequests" mat-header-row></tr>
+          <tr *matRowDef="let row; columns: displayedColumnsAllRequests;" mat-row></tr>
+        </table>
+      <mat-paginator #matPaginatorAllRequests [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>
