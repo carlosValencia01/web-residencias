@@ -28,7 +28,6 @@ interface InformationReview {
 export class ReviewFirstDataPageComponent implements OnInit {
   private controlStudentId: string;
   private studentFolderId: string;
-  private studentInformation;
   private studentDocumentSolicitude;
   public formRequest: FormGroup;
   private formInformationReview: Array<InformationReview> = [];
@@ -102,7 +101,6 @@ export class ReviewFirstDataPageComponent implements OnInit {
         this.formRequest.setValue(data);
         this.formDocument = this._castToDoc(res.controlStudent);
         this._initializeDocument(res.controlStudent.studentId);
-        this.studentInformation = res.controlStudent.studentId;
         this.signStudentDate = res.controlStudent.verification.signs.solicitude.signStudentDate;
         this.studentFolderId = res.controlStudent.studentId.folderIdSocService.idFolderInDrive;
         this.studentDocumentSolicitude = res.controlStudent.documents.filter(f => f.filename.includes('SOLICITUD'));
@@ -339,7 +337,7 @@ export class ReviewFirstDataPageComponent implements OnInit {
     this.loadingService.setLoading(true);
     const documentInfo = {
       mimeType: 'application/pdf',
-      nameInDrive: this.studentInformation.controlNumber + '-SOLICITUD.pdf',
+      nameInDrive: 'ITT-POC-08-02 Solicitud de Servicio Social.pdf',
       bodyMedia: document,
       folderId: this.studentFolderId,
       newF: statusDoc,

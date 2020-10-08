@@ -40,7 +40,7 @@ export class InitPresentationDocument {
     this._getImageToPdf();
   }
 
-  public setSolicitudeRequest(request: InitRequestModel) {
+  public setPresentationRequest(request: InitRequestModel) {
     this._request = request;
   }
 

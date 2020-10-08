@@ -1,7 +1,7 @@
 <mat-card>
   <button mat-mini-fab matTooltip="Agregar una asistencia" class="addAssistance" type="button"><mat-icon>person_add</mat-icon></button>
   <mat-card-content>
-    <mat-tab-group [selectedIndex]="selectedTab.value" (selectedIndexChange)="changeTab($event)">
+    <mat-tab-group>
       <mat-tab>
         <ng-template mat-tab-label>
           <div>
@@ -64,39 +64,6 @@
             <mat-paginator #matPaginatorAttendance [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
           </div>
         </div>
-      </mat-tab>
-      <mat-tab>
-          <ng-template mat-tab-label>
-            <div>
-              Solicitud
-            </div>
-          </ng-template>
-          <mat-tab-group [selectedIndex]="0" color="warn">
-            <mat-tab>
-              <ng-template mat-tab-label>
-                <mat-icon class="example-tab-icon">arrow_forward</mat-icon>
-              </ng-template>
-            </mat-tab>
-            <mat-tab>
-              <ng-template mat-tab-label>
-                Solicitudes
-              </ng-template>
-              <app-control-students-requests></app-control-students-requests>
-            </mat-tab>
-
-            <mat-tab>
-              <ng-template mat-tab-label>
-                Presentación
-              </ng-template>
-              <app-department-control-students-presentation></app-department-control-students-presentation>
-            </mat-tab>
-
-            <mat-tab>
-              <ng-template mat-tab-label>
-                Aceptación
-              </ng-template>
-            </mat-tab>
-          </mat-tab-group>
       </mat-tab>
     </mat-tab-group>
   </mat-card-content>

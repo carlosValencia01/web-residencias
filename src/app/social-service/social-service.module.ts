@@ -47,7 +47,7 @@ import {StudentProvider} from '../providers/shared/student.prov';
 import {InscriptionsProvider} from '../providers/inscriptions/inscriptions.prov';
 import { ReviewFirstDataPageComponent } from './department/review-first-data-page/review-first-data-page.component';
 import { SocialServiceReviewInitFormComponent } from './student/social-service-review-init-form/social-service-review-init-form.component';
-import { ControlStudentsRequestsComponent } from './components/control-students-requests/control-students-requests.component';
+import { ControlStudentsRequestsComponent } from './department/control-students-requests/control-students-requests.component';
 import { DepartmentControlStudentsPresentationComponent } from './components/department-control-students-presentation/department-control-students-presentation.component';
 
 

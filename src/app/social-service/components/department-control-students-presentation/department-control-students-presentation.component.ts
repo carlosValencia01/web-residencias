@@ -81,7 +81,7 @@ export class DepartmentControlStudentsPresentationComponent implements OnInit {
         this.controlStudentProv.getControlStudentById(studentId)
           .subscribe( resp => {
             this.formDocument = this._castToDoc(resp.controlStudent);
-            this.initRequest.setSolicitudeRequest(this.formDocument);
+            this.initRequest.setPresentationRequest(this.formDocument);
             this.pdf = this.initRequest.socialServicePresentation().output('bloburl');
             // const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
             // this.saveDocument(binary, this.formDocument.student,false, '');

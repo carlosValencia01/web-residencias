@@ -16,7 +16,6 @@ import {LoadCsvDataComponent} from '../../../commons/load-csv-data/load-csv-data
   styleUrls: ['./control-students-main-page.component.scss']
 })
 export class ControlStudentsMainPageComponent implements OnInit {
-  public selectedTab: FormControl;
   public search: string;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -29,7 +28,6 @@ export class ControlStudentsMainPageComponent implements OnInit {
                 private loadingService: LoadingService,
                 private dialog: MatDialog,
                 private notificationsService: NotificationsServices) {
-              this.selectedTab = new FormControl(0);
   }
 
   ngOnInit() {
@@ -38,23 +36,11 @@ export class ControlStudentsMainPageComponent implements OnInit {
     this._getAllControlStudents();
   }
 
-  public changeTab(event) {
-    this.selectedTab.setValue(event);
-    switch (event) {
-      case 0: return this._getAllControlStudents();
-      // case 1: return this._getAllSendRequests();
-    }
-  }
-
   public applyFilter(filterValue: string) {
-    switch (this.selectedTab.value) {
-      case 0:
-        this.dataSourceAttendance.filter = filterValue.trim().toLowerCase();
-        if (this.dataSourceAttendance.paginator) {
-          this.dataSourceAttendance.paginator.firstPage();
-        }
-        break;
-    }
+      this.dataSourceAttendance.filter = filterValue.trim().toLowerCase();
+      if (this.dataSourceAttendance.paginator) {
+        this.dataSourceAttendance.paginator.firstPage();
+      }
   }
 
   public refreshAttendance() {
