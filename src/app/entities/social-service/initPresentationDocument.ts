@@ -1,4 +1,3 @@
-import {IBoss} from '../reception-act/boss.model';
 import * as jsPDF from 'jspdf';
 import * as moment from 'moment';
 
@@ -7,11 +6,9 @@ import {ImageToBase64Service} from '../../services/app/img.to.base63.service';
 import {CookiesService} from '../../services/app/cookie.service';
 import {eSocialFiles} from '../../enumerators/social-service/document.enum';
 import {InitRequestModel} from './initRequest.model';
-import {SolicitudeModel} from './solicitude.model';
-
 moment.locale('es');
 
-export class InitRequest {
+export class InitPresentationDocument {
   private ENCABEZADO = '"2020, Año de Leona Vicario, Benemérita Madre de la Patria"';
   private WIDTH = 216;
   private HEIGHT = 279;
@@ -34,30 +31,17 @@ export class InitRequest {
   private directorFirm: any;
   private montserratNormal: any;
   private montserratBold: any;
-  private category = {
-    'a': '', 'b': '',
-    'c': '', 'd': '',
-    'e': '', 'f': '',
-    'g': '',
-  };
-  private responsibleSign: any;
-  private signStudentDate: Date;
+  public _request: InitRequestModel;
 
   constructor(
-    public _request: InitRequestModel,
     public _getImage: ImageToBase64Service,
     public _CookiesService: CookiesService
   ) {
     this._getImageToPdf();
   }
 
-  public setSolicitudeRequest(request: SolicitudeModel) {
-    this._request = Object.assign(this._request, request);
-  }
-
-  public setSignResponsibles(userData, signStudent) {
-    this.responsibleSign = userData;
-    this.signStudentDate = signStudent;
+  public setSolicitudeRequest(request: InitRequestModel) {
+    this._request = request;
   }
 
   private _getImageToPdf() {
@@ -94,8 +78,8 @@ export class InitRequest {
     let document;
     let binary;
     switch (file) {
-      case eSocialFiles.SOLICITUD: {
-        document = this.socialServiceSolicitude().output('arraybuffer');
+      case eSocialFiles.PRESENTACION: {
+        document = this.socialServicePresentation().output('arraybuffer');
         binary = this.bufferToBase64(document);
         break;
       }
@@ -109,98 +93,48 @@ export class InitRequest {
     }, ''));
   }
 
-  // ************** CARTA DE SOLICITUD PARA LA REALIZACION DEL SERVICIO SOCIAL
-  public socialServiceSolicitude(): jsPDF {
+  // ************** CARTA DE PRESENTACION PARA LA REALIZACION DEL SERVICIO SOCIAL
+  public socialServicePresentation(): jsPDF {
     const doc = this.newDocumentTec(true, false);
 
-    const sentHistory = new Date();
     doc.setTextColor(0, 0, 0);
     // Title
     doc.setFont(this.FONT, 'Bold');
     doc.setFontSize(8);
-    doc.text('Solicitud de Servicio Social ITT-POC-08-02', (this.WIDTH / 2), 35, { align: 'center' });
-    doc.text('DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN', (this.WIDTH / 2), 40, { align: 'center' });
-    doc.text('SOLICITUD DE SERVICIO SOCIAL', (this.WIDTH / 2), 45, { align: 'center' });
+    doc.text('CARTA DE PRESENTACIÓN PARA LA REALIZACIÓN DEL SERVICIO SOCIAL', (this.WIDTH / 2), 35, { align: 'center' });
+    doc.text('ITT-POC-08-03', (this.WIDTH / 2), 40, { align: 'center' });
 
     // Cuadro de Datos personales
+    doc.setFont(this.FONT, 'Normal');
     doc.setFontSize(10);
-    doc.setFont(this.FONT, 'Bold');
-    doc.text('DATOS PERSONALES', this.MARGIN.LEFT, 55, { align: 'left' });
-    doc.rect(this.MARGIN.LEFT, 58, this.WIDTH - (this.MARGIN.RIGHT * 2), 32);
-    doc.setFont(this.FONT, 'Normal');
-    doc.text(`Nombre completo: ${this._request.student.fullName}`, this.MARGIN.LEFT + 2, 62, { align: 'left' });
-    doc.text(`Sexo: ${this._request.student.sex}`, this.MARGIN.LEFT + 2, 69, { align: 'left' });
-    doc.text(`Teléfono: ${this._request.student.phone}`, this.MARGIN.LEFT + 18, 69, { align: 'left' });
-    doc.text(`Domicilio: ${this._request.student.street} ${this._request.student.suburb}`, this.MARGIN.LEFT + 58, 69, { align: 'left' });
-    doc.setFont(this.FONT, 'Bold');
-    doc.text('ESCOLARIDAD', this.MARGIN.LEFT + 2, 77, { align: 'left' });
-    doc.setFont(this.FONT, 'Normal');
-    doc.text(`No. de Control: ${this._request.student.controlNumber}`, this.MARGIN.LEFT + 2, 82, { align: 'left' });
-    doc.text(`Carrera: ${this._request.student.career}`, this.MARGIN.LEFT + 52, 82, { align: 'left' });
-    doc.text(`Periodo: ${this._request.periodId.periodName}`, this.MARGIN.LEFT + 2, 87, { align: 'left' });
-    doc.text(`Semestre: ${this._request.student.semester}`, this.MARGIN.LEFT + 62, 87, { align: 'left' });
+    this.addTextRight(doc, 'Departamento Académico: Departamento de Gestión Tecnológica y Vinculación', 55);
+    this.addTextRight(doc, `No. de Oficio: ${this._request.tradeDocumentNumber}`, 60);
+    this.addTextRight(doc, 'Asunto: Carta de Presentación', 65);
 
-    // Cuadro de Datos del programa
-    doc.setFont(this.FONT, 'Bold');
-    doc.text('DATOS DEL PROGRAMA', this.MARGIN.LEFT, 97, { align: 'left' });
-    doc.rect(this.MARGIN.LEFT, 100, this.WIDTH - (this.MARGIN.RIGHT * 2), 108);
-    doc.setFont(this.FONT, 'Normal');
-    doc.text(`Dependencia Oficial: ${this._request.dependencyName}`, this.MARGIN.LEFT + 2, 105, { align: 'left' });
-    doc.text(`Tel: ${this._request.dependencyPhone}`, this.MARGIN.LEFT + 125, 105, { align: 'left' });
-    doc.text(`Titular de la dependencia: ${this._request.dependencyHeadline}`, this.MARGIN.LEFT + 2, 112, { align: 'left' });
-    doc.text(`Puesto o cargo: ${this._request.dependencyHeadlinePosition}`, this.MARGIN.LEFT + 2, 119, { align: 'left' });
-    doc.text(`Unidad órganica o Departamento: ${this._request.dependencyDepartment}`, this.MARGIN.LEFT + 2, 126, { align: 'left' });
-    doc.text(`Nombre del encargado: ${this._request.dependencyDepartmentManager}`, this.MARGIN.LEFT + 2, 133, { align: 'left' });
-    doc.text(`Correo electrónico: ${this._request.dependencyDepartmentManagerEmail}`, this.MARGIN.LEFT + 2, 140, { align: 'left' });
-    doc.text(`Nombre del programa: ${this._request.dependencyProgramName}`, this.MARGIN.LEFT + 2, 147, { align: 'left' });
-    doc.text(`Modalidad: ${this._request.dependencyProgramModality}`, this.MARGIN.LEFT + 2, 154, { align: 'left' });
-    doc.text(`Fecha de inicio: ${moment(this._request.initialDate).format('LL')}`, this.MARGIN.LEFT + 42, 154, { align: 'left' });
-    doc.text('Actividades:', this.MARGIN.LEFT + 2, 161, { align: 'left' });
-    doc.setFontSize(9);
-    // doc.text('Descripcion de las actividades', this.MARGIN.LEFT + 2, 169, { align: 'left' });
+    doc.text('C. ' + this._request.dependencyDepartmentManager, this.MARGIN.LEFT, 75, { align: 'left' });
+    doc.text(this._request.dependencyName, this.MARGIN.LEFT, 80, { align: 'left' });
+
+    doc.text('PRESENTE', this.MARGIN.LEFT, 105, { align: 'left' });
+    const body = `Por este conducto, presentamos a sus finas atenciones al C. ${this._request.student.fullName}, con número de control escolar:  ${this._request.student.controlNumber}, estudiante de la carrera de: ${this._request.student.career}, quien desea realizar su Servicio Social en esa Dependencia, cubriendo un total de mínimo 480 horas y máximo 500 horas en el programa ${this._request.dependencyProgramName} en un período mínimo de seis meses y no mayor de dos años.`;
     this.justifyText(doc,
-      this._request.dependencyActivities,
-      {x: this.MARGIN.LEFT + 4, y: 165}, this.WIDTH - (this.MARGIN.LEFT * 2 + 10), 4, 8);
-    const categoryDe = this._request.dependencyProgramType.option;
-    this.category[categoryDe] = 'X';
-    const community = categoryDe === 'd' ? this._request.dependencyProgramType.value.split(':')[1] : '';
-    doc.text('(' + this.category['a'] + ') Educación para adultos', this.MARGIN.LEFT + 2, 190, { align: 'left' });
-    doc.text('(' + this.category['b'] + ') Desarrollo de comunidad: urbano, suburbano, rural.', this.MARGIN.LEFT + 70, 190, { align: 'left' });
-    doc.text('(' + this.category['c'] + ') Asesoría académica a niños  primaria, secundaria o bachillerato de zonas vulnerables de escuelas publicas', this.MARGIN.LEFT + 2, 195, { align: 'left' });
-    doc.text('(' + this.category['d'] + ') Promoción social, cultural o deportiva en la comunidad, especificar comunidad: ' + community, this.MARGIN.LEFT + 2, 200, { align: 'left' });
-    doc.text('(' + this.category['e'] + ') Dependencias de Gobierno', this.MARGIN.LEFT + 2, 205, { align: 'left' });
-    doc.text('(' + this.category['f'] + ') I.T de Tepic', this.MARGIN.LEFT + 62, 205, { align: 'left' });
-    doc.text('(' + this.category['g'] + ') Instituciones educativas publicas', this.MARGIN.LEFT + 92, 205, { align: 'left' });
+      body,
+      {x: this.MARGIN.LEFT, y: 110}, this.WIDTH - (this.MARGIN.LEFT * 2), 7, 10);
 
-    // Cuadro de Uso exclusivo de la oficina del servicio social
-    doc.setFontSize(10);
-    doc.setFont(this.FONT, 'Bold');
-    doc.text('PARA USO EXCLUSIVO DE LA OFICINA DE SERVICIO SOCIAL', this.MARGIN.LEFT, 215, { align: 'left' });
-    doc.rect(this.MARGIN.LEFT, 218, this.WIDTH - (this.MARGIN.RIGHT * 2), 14);
-    doc.setFont(this.FONT, 'Normal');
-    doc.text('ACEPTADO: ', this.MARGIN.LEFT + 2, 222, { align: 'left' });
-    doc.text('SI: (X):  NO: ( )', this.MARGIN.LEFT + 26, 222, { align: 'left' });
-    doc.text('MOTIVO: ', this.MARGIN.LEFT + 50, 222, { align: 'left' });
-    doc.text('OBSERVACIONES: ', this.MARGIN.LEFT + 2, 230, { align: 'left' });
+    doc.text('Agradezco las atenciones que se sirva brindar al portador de la presente.', this.MARGIN.LEFT, 160, { align: 'left' });
 
+    // Firma de la Jefa del Departamento de Gestion y Vinculacion
     doc.setFontSize(9);
-    doc.text('FIRMA DEL DEPARTAMENTO', (this.WIDTH / 2), 238, { align: 'center' });
-    doc.text(`Esta solicitud fue firmada electrónicamente por ${this.responsibleSign.name.fullName} el ${moment().format('D [de] MMMM [de] YYYY [a las] h:mm a')}`,
-      (this.WIDTH / 2), 242, { align: 'center' });
-
-    // Firma del solicitante
-    doc.setFontSize(9);
-    doc.text('FIRMA DEL SOLICITANTE', (this.WIDTH / 2), 250, { align: 'center' });
-    doc.text(`Esta solicitud fue firmada electrónicamente por ${this._request.student.fullName} el ${moment(this.signStudentDate).format('D [de] MMMM [de] YYYY [a las] h:mm a')}`,
-      (this.WIDTH / 2), 255, { align: 'center' });
-    doc.text('_______________________________________________________', (this.WIDTH / 2), 257, { align: 'center' });
+    doc.text('ATENTAMENTE', (this.WIDTH / 2), 205, { align: 'center' });
+    doc.text('Firma', (this.WIDTH / 2), 217, { align: 'center' });
+    doc.text('_______________________________________________', (this.WIDTH / 2), 220, { align: 'center' });
+    doc.text('Jefe(a) de Departamento de Gestión Tecnológica y Vinculación', (this.WIDTH / 2), 225, { align: 'center' });
 
     // Footer
     doc.setFont(this.FONT, 'Bold');
     doc.setTextColor(189, 189, 189);
     doc.setFontSize(8);
     doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
-    doc.text('Código ITT-POC-08-02', (this.WIDTH / 2), 262, { align: 'center' });
+    doc.text('Código ITT-POC-08-03', (this.WIDTH / 2), 262, { align: 'center' });
     doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
     doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
     return doc;

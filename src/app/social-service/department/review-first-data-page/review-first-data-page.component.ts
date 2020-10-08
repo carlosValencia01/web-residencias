@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ControlStudentProv} from '../../../providers/social-service/control-student.prov';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -12,6 +12,7 @@ import {ImageToBase64Service} from '../../../services/app/img.to.base63.service'
 import {CookiesService} from '../../../services/app/cookie.service';
 import {SolicitudeModel} from '../../../entities/social-service/solicitude.model';
 import {InscriptionsProvider} from '../../../providers/inscriptions/inscriptions.prov';
+import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 
 interface InformationReview {
   fieldName: string;
@@ -102,10 +103,10 @@ export class ReviewFirstDataPageComponent implements OnInit {
         this.formDocument = this._castToDoc(res.controlStudent);
         this._initializeDocument(res.controlStudent.studentId);
         this.studentInformation = res.controlStudent.studentId;
-        this.signStudentDate = res.controlStudent.verification.solicitudeSign;
+        this.signStudentDate = res.controlStudent.verification.signs.solicitude.signStudentDate;
         this.studentFolderId = res.controlStudent.studentId.folderIdSocService.idFolderInDrive;
         this.studentDocumentSolicitude = res.controlStudent.documents.filter(f => f.filename.includes('SOLICITUD'));
-        const informationSolicitude = res.controlStudent.verificationDepartment.information;
+        const informationSolicitude = res.controlStudent.verificationDepartment.solicitude;
         if (informationSolicitude.length > 0) {
           this.errorFields = true;
           informationSolicitude.forEach( dep => {
@@ -315,20 +316,16 @@ export class ReviewFirstDataPageComponent implements OnInit {
             // Enviar mensaje predefinido y enviar la informacion
             if (this.wrongFields.length > 0) {
               // Se ha encontrado al menos un campo rechazado
-              this.sendVerificationInformation(
-                {message: 'Su información ha sido revisada detalladamente. ' +
-                    'Por favor vuelva a enviar la información que se le marca en la página del formulario.',
-                  status: 'reject'}, this.formInformationReview, 'reevaluate');
+              this.sendVerificationInformation(this.formInformationReview, 'reevaluate');
             } else {
               // Todos los campos del formulario son correctos
-              this.sendVerificationInformation({message: 'Su información ha sido aceptada', status: 'approved'}, [], 'approved');
+              this.sendVerificationInformation( [], 'approved');
               // Se asigna el valor del formulario del alumno a la clase de initRequest para el documento de solicitud
-              this.initRequest.setRequest(this.formDocument);
+              this.initRequest.setSolicitudeRequest(this.formDocument);
               this.initRequest.setSignResponsibles(this.userData, this.signStudentDate);
 
               // Se obtiene el documento pdf de Servicio Social
-              const document = this.initRequest.socialServiceSolicitude().output('arraybuffer');
-              const binary = this.bufferToBase64(document);
+              const binary = this.initRequest.documentSend(eSocialFiles.SOLICITUD);
               const fileId = this.studentDocumentSolicitude.length > 0 ? this.studentDocumentSolicitude[0].fileIdInDrive : '';
               this.saveDocument(binary, this.studentDocumentSolicitude.length === 0, fileId);
             }
@@ -359,13 +356,22 @@ export class ReviewFirstDataPageComponent implements OnInit {
               fileIdInDrive: updated.fileId
             },
             status: {
-              name: 'EN PROCESO',
+              name: 'ACEPTADO',
               active: true,
               message: 'Se envio por primera vez'
             }
           };
 
           await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo4).subscribe( () => {
+              this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
+                {'verification.signs.solicitude.signDepartmentDate': new Date(),
+                  'verification.signs.solicitude.signDepartmentName': this.userData.name.fullName} )
+                .subscribe( res => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+                }, () => {
+                  this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
+                    'No se ha podido guardar la información de firma del responsable');
+                });
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud registrada correctamente.');
             },
             err => {
@@ -374,12 +380,21 @@ export class ReviewFirstDataPageComponent implements OnInit {
           );
         } else {
           const docStatus = {
-            name: 'EVALUADO',
+            name: 'ACEPTADO',
             active: true,
             message: 'Se actualizo el documento'
           };
           await this.controlStudentProvider.updateDocumentLog(this.controlStudentId, {filename: updated.filename, status: docStatus})
             .subscribe( () => {
+              this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
+                {'verification.signs.solicitude.signDepartmentDate': new Date(),
+                  'verification.signs.solicitude.signDepartmentName': this.userData.name.fullName} )
+                .subscribe( res => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+                }, () => {
+                  this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
+                    'No se ha podido guardar la información de firma del responsable');
+                });
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');
             }, err => {
               console.log(err);
@@ -391,12 +406,6 @@ export class ReviewFirstDataPageComponent implements OnInit {
         this.loadingService.setLoading(false);
       }
     );
-  }
-
-  bufferToBase64(buffer) {
-    return btoa(new Uint8Array(buffer).reduce((data, byte) => {
-      return data + String.fromCharCode(byte);
-    }, ''));
   }
 
   sendInformationReview() {
@@ -412,10 +421,9 @@ export class ReviewFirstDataPageComponent implements OnInit {
     this.router.navigate(['/social-service/controlStudents']);
   }
 
-  sendVerificationInformation(message, information, status) {
+  sendVerificationInformation(information, status) {
     this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
-      {'verificationDepartment.message.solicitude': message,
-            'verificationDepartment.information': information,
+      {'verificationDepartment.solicitude': information,
             'verification.solicitude': status})
       .subscribe( () => {
         this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',

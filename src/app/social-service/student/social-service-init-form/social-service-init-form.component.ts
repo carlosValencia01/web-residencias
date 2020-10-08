@@ -101,7 +101,7 @@ export class SocialServiceInitFormComponent implements OnInit {
           // Se guarda la informacion del estudiante en la base de datos y se emite el cambio de estatus en la pagina principal
           // asi como su actualizacion para el documento enviado
           this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId,
-            Object.assign(this.formRequest.value, {'verification.solicitude': 'send', 'verification.solicitudeSign': new Date()}))
+            Object.assign(this.formRequest.value, {'verification.solicitude': 'send', 'verification.signs.solicitude.signStudentDate': new Date()}))
             .subscribe( res => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
               this.sendInformation.emit();
@@ -169,6 +169,7 @@ export class SocialServiceInitFormComponent implements OnInit {
           this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
           this.code.disable();
           this.formRequest.enable();
+          this.verificationEmail = true;
         }, error => {
           this.loadingService.setLoading(false);
           const message = JSON.parse(error._body).msg;

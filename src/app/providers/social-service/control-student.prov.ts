@@ -32,17 +32,12 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
-  getSignedRequests() {
-    return this.api.get('controlStudent/signedRequests/')
+  getControlStudentByDocumentAndStatus(documentName, status) {
+    return this.api.get(`controlStudent/document/status/${documentName}/${status}`)
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
-  getApprovedRequests(){
-    return this.api.get('controlStudent/approvedRequests/')
-      .pipe(map(controlStudent => controlStudent.json()));
-  }
-
-  getRequests(status){
+  getRequests(status) {
     return this.api.get(`controlStudent/request/${status}`)
       .pipe(map(controlStudent => controlStudent.json()));
   }

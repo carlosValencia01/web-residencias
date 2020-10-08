@@ -1,10 +1,11 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { ControlStudentProv } from 'src/app/providers/social-service/control-student.prov';
-import { LoadingService } from 'src/app/services/app/loading.service';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
+import {eNotificationType} from 'src/app/enumerators/app/notificationType.enum';
+import {ControlStudentProv} from 'src/app/providers/social-service/control-student.prov';
+import {LoadingService} from 'src/app/services/app/loading.service';
+import {NotificationsServices} from 'src/app/services/app/notifications.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-control-students-requests',
@@ -14,7 +15,9 @@ import { NotificationsServices } from 'src/app/services/app/notifications.servic
 export class ControlStudentsRequestsComponent implements OnInit {
   public selectedSubTab: FormControl;
   public search: string;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('MatSortSign') sortSign: MatSort;
+  @ViewChild('MatSortApproved') sortApproved: MatSort;
+  @ViewChild('MatSortAll') sortAll: MatSort;
   @ViewChild('matPaginatorSend') paginatorSend: MatPaginator;
   @ViewChild('matPaginatorApproved') paginatorApproved: MatPaginator;
   @ViewChild('matPaginatorAllRequests') paginatorAllRequests: MatPaginator;
@@ -38,12 +41,12 @@ export class ControlStudentsRequestsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.displayedColumnsSend = ['id', 'fullName', 'controlNumber', 'career', 'actions'];
-    this.displayedColumnsSendName = ['No', 'Nombre', 'Nùmero de control', 'Carrera'];
-    this.displayedColumnsApproved = ['id', 'fullName', 'controlNumber', 'career', 'actions'];
-    this.displayedColumnsApprovedName = ['No', 'Nombre', 'Nùmero de control', 'Carrera'];
-    this.displayedColumnsAllRequests = ['id', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
-    this.displayedColumnsAllRequestsName = ['No', 'Nombre', 'Nùmero de control', 'Carrera', 'Estatus'];
+    this.displayedColumnsSend = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
+    this.displayedColumnsSendName = ['Nombre', 'Número de control', 'Carrera'];
+    this.displayedColumnsApproved = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
+    this.displayedColumnsApprovedName = ['Nombre', 'Número de control', 'Carrera'];
+    this.displayedColumnsAllRequests = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
+    this.displayedColumnsAllRequestsName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
     this._getAllSendRequests();
   }
 
@@ -89,6 +92,46 @@ export class ControlStudentsRequestsComponent implements OnInit {
 
   public refreshAllRequests() {
     this._getAllRequests();
+  }
+
+  assignTradeDocumentNumber(controlStudentId) {
+    Swal.fire({
+      title: 'Asignación de Número de Oficio',
+      type: 'question',
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off'
+      },
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#3085d6',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Asignar'
+    }).then((result) => {
+      if (result.value) {
+        Swal.fire({
+          title: '¿Esta seguro de continuar?',
+          type: 'warning',
+          showCancelButton: true,
+          cancelButtonColor: '#d33',
+          confirmButtonColor: '#3085d6',
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Si'
+        }).then((res) => {
+          if (res.value) {
+            this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
+              {'verification.presentation': 'send', 'verification.tradeDocumentNumber': result.value})
+              .subscribe(() => {
+                this.notificationsService.showNotification(eNotificationType.SUCCESS,
+                  'Se ha asignado correctamente el número de oficio al estudiante', '');
+            }, () => {
+                this.notificationsService.showNotification(eNotificationType.ERROR,
+                  'Ha sucedido un error, no se ha asignado el número de oficio al estudiante', 'Vuelva a intentarlo mas tarde');
+              });
+          }
+        });
+      }
+    });
   }
 
   _getAllSendRequests() {
@@ -140,20 +183,20 @@ export class ControlStudentsRequestsComponent implements OnInit {
   private _refreshSend(data: Array<any>): void {
     this.dataSourceSend = new MatTableDataSource(data);
     this.dataSourceSend.paginator = this.paginatorSend;
-    this.dataSourceSend.sort = this.sort;
+    this.dataSourceSend.sort = this.sortSign;
   }
 
 
   private _refreshApproved(data: Array<any>): void {
     this.dataSourceApproved = new MatTableDataSource(data);
     this.dataSourceApproved.paginator = this.paginatorSend;
-    this.dataSourceApproved.sort = this.sort;
+    this.dataSourceApproved.sort = this.sortApproved;
   }
 
   private _refreshAllRequests(data: Array<any>): void {
     this.dataSourceAllRequests = new MatTableDataSource(data);
     this.dataSourceAllRequests.paginator = this.paginatorSend;
-    this.dataSourceAllRequests.sort = this.sort;
+    this.dataSourceAllRequests.sort = this.sortAll;
   }
 
 
@@ -181,7 +224,8 @@ export class ControlStudentsRequestsComponent implements OnInit {
       fullName: data.studentId.fullName,
       controlNumber: data.controlNumber,
       career: data.studentId.career,
-      status: data.verification.solicitude
+      status: data.verification.solicitude,
+      statusPresentation: data.verification.presentation
     };
   }
 

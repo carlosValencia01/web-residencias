@@ -22,19 +22,19 @@ export class SocialServiceMainPageComponent implements OnInit {
   public releaseSocialService: boolean; // Condicion para saber si ha liberado el servicio social
   public assistance: boolean; // Condicion para saber si ya tiene la asistencia registrada (si existe su registro en BD)
   public assistanceFirstStep = false; // Condicion para el stepper de ASISTENCIA, controlamos que hasta que no sea verdadero no se continua
-  public assistanceSecondStep = false;
+  public assistanceSecondStep = false; // Condicion para el subStepper en caso de no tener asistencia y revisar el formulario a evaluar
   public solicitudeDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public statusFirstDocuments: string; // Condicion para saber si el estudiante ya envio toda la información o esta en revisión
   private userData; // Datos del usuario
   private _idStudent: string; // ID del estudiante
   private folderId: string; // Id del folder del estudiante para servicio social
-  private activePeriod;
-  public controlStudentId: string;
-  public emailStudent: string;
-  public sendEmailCode: boolean;
-  public verificationEmail: boolean;
-  private documents: Array<any> = [];
+  private activePeriod; // Variable para guardar el periodo activo para obtener el folder Id del estudiante
+  public controlStudentId: string; // id del documento guardado en la colección de ControlStudent para servicio social
+  public emailStudent: string; // Variable para guardar el correo personal de comunicación con el estudiante
+  public sendEmailCode: boolean; // Validacion de codigo de correo electronico enviado a estudiante
+  public verificationEmail: boolean; // Validacion de verificacion de email como primer paso del proceso de servicio social
+  private documents: Array<any> = []; // Array para almacenar los documentos del estudiante
 
   constructor(private loadingService: LoadingService,
               private cookiesService: CookiesService,

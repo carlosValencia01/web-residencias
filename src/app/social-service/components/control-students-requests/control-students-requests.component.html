@@ -1,4 +1,4 @@
-<mat-tab-group [selectedIndex]="selectedSubTab.value" (selectedIndexChange)="changeSubTab($event)">
+<mat-tab-group [selectedIndex]="selectedSubTab.value" (selectedIndexChange)="changeSubTab($event)" color="accent">
   <mat-tab>
     <ng-template mat-tab-label>
       <div>
@@ -19,36 +19,40 @@
                   title="Recargar">
             <mat-icon>update</mat-icon>
           </button>
-        </div>  
+        </div>
       </div>
       <div class="row text-center">
         <table mat-table [dataSource]="dataSourceSend" matSort>
-          <ng-container *ngFor="let item of displayedColumnsSend;let index=index"
+          <ng-container matColumnDef="no">
+            <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+            <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+              {{i+1}}
+            </td>
+          </ng-container>
+          <ng-container *ngFor="let item of displayedColumnsSend.slice(1, -1);let index=index"
                                   [matColumnDef]="item">
                       <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsSendName[index]}}</th>
-                        <td *matCellDef="let row; let i = index" mat-cell-style="width:25%;">
-                          <span mat-line *ngIf="index === 0">
-                            {{i+1}}
-                          </span>
-                          <span mat-line *ngIf="index !== 0">
+                        <td *matCellDef="let row;" mat-cell style="width:25%;">
                               {{row[item]}}
-                          </span>
-                          <div *ngIf="index === 4">
-                            <button [matMenuTriggerFor]="actions" mat-icon-button>
-                              <mat-icon>more_vert</mat-icon>
-                            </button>
-                            <mat-menu #actions>
-                              <button mat-menu-item routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
-                                <mat-icon class="material-icons text-success">done</mat-icon>
-                                <span>Verificar</span>
-                              </button>
-                              <button mat-menu-item>
-                                <mat-icon class="material-icons text-info">folder_shared</mat-icon>
-                                <span>Expediente</span>
-                              </button>
-                            </mat-menu>
-                          </div>
                         </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th *matHeaderCellDef mat-header-cell>Acciones</th>
+            <td *matCellDef="let row" mat-cell style="width:20%">
+              <button [matMenuTriggerFor]="actions" mat-icon-button>
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #actions>
+                <button mat-menu-item routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
+                  <mat-icon class="material-icons text-success">done</mat-icon>
+                  <span>Verificar</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                  <span>Expediente</span>
+                </button>
+              </mat-menu>
+            </td>
           </ng-container>
           <tr *matHeaderRowDef="displayedColumnsSend" mat-header-row></tr>
           <tr *matRowDef="let row; columns: displayedColumnsSend;" mat-row></tr>
@@ -77,32 +81,44 @@
                     title="Recargar">
               <mat-icon>update</mat-icon>
             </button>
-          </div>  
+          </div>
       </div>
       <div class="row text-center">
         <table mat-table [dataSource]="dataSourceApproved" matSort>
-          <ng-container *ngFor="let item of displayedColumnsApproved;let index=index"
+          <ng-container matColumnDef="no">
+            <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+            <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+              {{i+1}}
+            </td>
+          </ng-container>
+          <ng-container *ngFor="let item of displayedColumnsApproved.slice(1,-1);let index=index"
                                 [matColumnDef]="item">
-                          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsApprovedName[index]}}</th>      
-                          <td *matCellDef="let row; let i = index" mat-cell-style="width:25%;">
-                            <span mat-line *ngIf="index === 0">
-                              {{i+1}}
-                            </span>
-                            <span mat-line *ngIf="index === 1 || index === 2 || index === 3">
+                          <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsApprovedName[index]}}</th>
+                          <td *matCellDef="let row;" mat-cell style="width:25%;">
                               {{row[item]}}
-                            </span>
-                            <div *ngIf="index === 4">
-                              <button [matMenuTriggerFor]="actions" mat-icon-button>
-                                <mat-icon>more_vert</mat-icon>
-                              </button>
-                              <mat-menu #actions>
-                                <button mat-menu-item>
-                                  <mat-icon class="material-icons text-info">folder_shared</mat-icon>
-                                  <span>Expediente</span>
-                                </button>
-                              </mat-menu>
-                            </div>
                           </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th *matHeaderCellDef mat-header-cell>Acciones</th>
+            <td *matCellDef="let row" mat-cell style="width:20%">
+              <button [matMenuTriggerFor]="actions" mat-icon-button>
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #actions>
+                <button mat-menu-item>
+                  <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                  <span>Expediente</span>
+                </button>
+                <button mat-menu-item (click)="assignTradeDocumentNumber(row['id'])" *ngIf="row['statusPresentation'] === 'register'">
+                  <mat-icon class="material-icons">assignment</mat-icon>
+                  <span>Asignar No.Oficio</span>
+                </button>
+                <button mat-menu-item *ngIf="row['statusPresentation'] !== 'register'">
+                  <mat-icon class="material-icons text-success">assignment</mat-icon>
+                  <span>No.Oficio asignado</span>
+                </button>
+              </mat-menu>
+            </td>
           </ng-container>
           <tr *matHeaderRowDef="displayedColumnsApproved" mat-header-row></tr>
           <tr *matRowDef="let row; columns: displayedColumnsApproved;" mat-row></tr>
@@ -131,21 +147,24 @@
                   title="Recargar">
             <mat-icon>update</mat-icon>
           </button>
-        </div>  
+        </div>
       </div>
       <div class="row">
         <table mat-table [dataSource]="dataSourceAllRequests" matSort>
-          <ng-container *ngFor="let item of displayedColumnsAllRequests;let index=index"
+          <ng-container matColumnDef="no">
+            <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+            <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+              {{i+1}}
+            </td>
+          </ng-container>
+          <ng-container *ngFor="let item of displayedColumnsAllRequests.slice(1,-1);let index=index"
                                 [matColumnDef]="item">
                           <th id="narrowTh" *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsAllRequestsName[index]}}</th>
                           <td id="narrowTd" *matCellDef="let row; let i = index" mat-cell-style="width:25%;">
-                            <span mat-line *ngIf="index === 0">
-                              {{i+1}}
-                            </span>
-                            <span mat-line *ngIf="index === 1 || index === 2 || index === 3">
+                            <span mat-line *ngIf="index === 0 || index === 1 || index === 2">
                               {{row[item]}}
                             </span>
-                            <div *ngIf="index === 4">
+                            <div *ngIf="index === 3">
                               <div *ngIf="row.status==='approved'">
                                 <span mat-line class="badge badge-pill badge-success">
                                   Aprobada
@@ -162,50 +181,33 @@
                                 </span>
                               </div>
                             </div>
-                            <div *ngIf="index === 5">
-                              <div *ngIf="row.status==='send'">
-                                    <button [matMenuTriggerFor]="actions" mat-icon-button>
-                                      <mat-icon>more_vert</mat-icon>
-                                    </button>
-                                    <mat-menu #actions>
-                                      <button mat-menu-item routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
-                                        <mat-icon class="material-icons text-success">done</mat-icon>
-                                        <span>Verificar</span>
-                                      </button>
-                                      <button mat-menu-item>
-                                        <mat-icon class="material-icons text-info">folder_shared</mat-icon>
-                                        <span>Expediente</span>
-                                      </button>
-                                    </mat-menu>
-                              </div>
-                              <div *ngIf="row.status==='approved'">
-                                <button [matMenuTriggerFor]="actions" mat-icon-button>
-                                  <mat-icon>more_vert</mat-icon>
-                                </button>
-                                <mat-menu #actions>
-                                  <button mat-menu-item>
-                                    <mat-icon class="material-icons text-info">folder_shared</mat-icon>
-                                    <span>Expediente</span>
-                                  </button>
-                                </mat-menu>
-                              </div>
-                              <div *ngIf="row.status==='reevaluate'">
-                                <button [matMenuTriggerFor]="actions" mat-icon-button>
-                                  <mat-icon>more_vert</mat-icon>
-                                </button>
-                                <mat-menu #actions>
-                                  <button mat-menu-item routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
-                                    <mat-icon class="material-icons text-success">done</mat-icon>
-                                    <span>Verificar</span>
-                                  </button>
-                                  <button mat-menu-item>
-                                    <mat-icon class="material-icons text-info">folder_shared</mat-icon>
-                                    <span>Expediente</span>
-                                  </button>
-                                </mat-menu>
-                              </div>
-                            </div>
                           </td>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <th *matHeaderCellDef mat-header-cell>Acciones</th>
+            <td *matCellDef="let row" mat-cell style="width:20%">
+              <button [matMenuTriggerFor]="actions" mat-icon-button>
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #actions>
+                <button mat-menu-item  *ngIf="row.status==='reevaluate'" routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
+                  <mat-icon class="material-icons text-success">done</mat-icon>
+                  <span>Verificar</span>
+                </button>
+                <button mat-menu-item>
+                  <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                  <span>Expediente</span>
+                </button>
+                <button mat-menu-item (click)="assignTradeDocumentNumber(row['id'])" *ngIf="row.status==='approved' && row['statusPresentation'] === 'register'">
+                  <mat-icon class="material-icons">assignment</mat-icon>
+                  <span>Asignar No.Oficio</span>
+                </button>
+                <button mat-menu-item *ngIf="row.status==='approved' && row['statusPresentation'] !== 'register'">
+                  <mat-icon class="material-icons text-success">assignment</mat-icon>
+                  <span>No.Oficio asignado</span>
+                </button>
+              </mat-menu>
+            </td>
           </ng-container>
           <tr *matHeaderRowDef="displayedColumnsAllRequests" mat-header-row></tr>
           <tr *matRowDef="let row; columns: displayedColumnsAllRequests;" mat-row></tr>

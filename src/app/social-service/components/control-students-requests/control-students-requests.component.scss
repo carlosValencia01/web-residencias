@@ -1,25 +1,26 @@
 table {
     width: 100%;
   }
-  
+
   .mat-form-field {
     font-size: 14px;
     width: 100%;
   }
-  
-  td, th {
-    width: 25%;
+
+  .mat-column-no, .mat-column-actions{
+    max-width: 100px;
+    min-width: 64px;
   }
-  
+
   #narrowTd, #narrowTh {
     width: 20%;
     text-align: center;
   }
-  
+
   td > mat-icon {
     cursor: pointer;
   }
-  
+
   .addAssistance {
     width: 45px;
     height: 45px;
@@ -33,4 +34,3 @@ table {
     align-items: center;
     z-index: 999 !important;
   }
-  

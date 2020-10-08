@@ -19,7 +19,8 @@ export interface InitRequestModel {
   dependencyProgramObjective?: string;
   dependencyProgramLocationInside?: string;
   dependencyProgramLocation?: string;
-  periodId: IPeriod;
+  tradeDocumentNumber?: string;
+  periodId?: IPeriod;
 }
 
 interface Category {

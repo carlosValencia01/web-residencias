@@ -97,7 +97,7 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
               this.formRequest.get('dependencyProgramType').setValue(programType);
             }
             this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId,
-              Object.assign(this.formRequest.value, {'verification.solicitude': 'send', 'verification.solicitudeSign': new Date()}))
+              Object.assign(this.formRequest.value, {'verification.solicitude': 'send', 'verification.signs.solicitude.signStudentDate': new Date()}))
               .subscribe( res => {
                 this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
                 this.sendInformation.emit();
