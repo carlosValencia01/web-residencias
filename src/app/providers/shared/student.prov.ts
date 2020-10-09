@@ -276,4 +276,5 @@ export class StudentProvider {
     registerExternalStudents(data) {
         return this.api.post('student/register/external', data).pipe(map(res => res.json()));
     }
+
 }

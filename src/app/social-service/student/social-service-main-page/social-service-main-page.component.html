@@ -128,7 +128,36 @@
         </mat-step>
         <mat-step [completed]="presentationDocument">
           <ng-template matStepLabel>Carta de presentación</ng-template>
-
+          <div *ngIf="statusFirstDocuments === 'approved'">
+            <div *ngIf="presentation === 'noAssigned'">
+              <div class="row justify-content-center">
+                <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                  <mat-card style="height: 225px; width: 300px;">
+                    <mat-card-header class="flex-column align-items-center">
+                      <img alt="File" src="../../../../assets/imgs/reloj.png" style="width: 80px; height: 80px;">
+                      <h5 class="text-center mt-3">Su Carta de presentación está en trámite</h5>
+                    </mat-card-header>
+                  </mat-card>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="presentation === 'assigned'">
+              <div class="row justify-content-center">
+                <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                  <mat-card style="height: 225px; width: 300px;">
+                    <mat-card-header class="flex-column align-items-center">
+                      <img alt="File" src="../../../../assets/imgs/approved.png" style="width: 80px; height: 80px;">
+                      <h5 class="text-center mt-3">Su <strong>Carta de presentación</strong> esta <strong class="text-success">lista </strong></h5>
+                      <button mat-raised-button type="button" (click)="downloadPresentation()">
+                        Descargar Carta
+                        <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
+                      </button>
+                    </mat-card-header>
+                  </mat-card>
+                </div>
+              </div>
+            </div>
+          </div>
         </mat-step>
       </mat-vertical-stepper>
     </div>

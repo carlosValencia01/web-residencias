@@ -26,6 +26,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public solicitudeDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public statusFirstDocuments: string; // Condicion para saber si el estudiante ya envio toda la información o esta en revisión
+  public presentation: string; // Variable para guardar el estatus de la carta de presentacion.
   private userData; // Datos del usuario
   private _idStudent: string; // ID del estudiante
   private folderId: string; // Id del folder del estudiante para servicio social
@@ -57,6 +58,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.statusFirstDocuments = res.controlStudent.verification['solicitude'];
       this.solicitudeDocument = this.statusFirstDocuments === 'approved';
       this.documents = res.controlStudent.documents;
+      this.presentation = res.controlStudent.verification.presentation;
       this.presentationDocument = false;
       this.permission = false;
       this.releaseSocialService = false;
@@ -68,6 +70,7 @@ export class SocialServiceMainPageComponent implements OnInit {
         'No se ha encontrado su información por favor de recargar la página o volver a intentarlo mas tarde');
       this._loadPage();
     }, () => this._loadPage());
+
   }
 
   _loadPage() {
@@ -127,12 +130,41 @@ export class SocialServiceMainPageComponent implements OnInit {
     }, () =>     this.loadingService.setLoading(false) );
   }
 
+  downloadPresentation() {
+    this.loadingService.setLoading(true);
+    const presentation = this.documents.filter(f => f.filename.toString().includes('PRESENTACION'));
+    let presentationId = '';
+    try {
+      presentationId = presentation[0].fileIdInDrive;
+    } catch (e) {
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
+      return;
+    }
+    this.controlStudentProvider.getFile(presentationId, `${this.userData.email}-PRESENTACION.pdf`).subscribe(async (res) => {
+      const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
+      const downloadLink = document.createElement('a');
+      const fileName = this.userData.email + '-PRESENTACION' + '.pdf';
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+      this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
+    }, error => {
+      this.loadingService.setLoading(false);
+      const message = JSON.parse(error._body).message || 'Error al descargar el documento, intentelo mas tarde';
+      this.notificationsService
+        .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
+    }, () =>     this.loadingService.setLoading(false) );
+  }
+
 
   public bufferToBase64(buffer) {
     return btoa(new Uint8Array(buffer).reduce((data, byte) => {
       return data + String.fromCharCode(byte);
     }, ''));
   }
+
+
 
 }
 
