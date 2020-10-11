@@ -131,7 +131,10 @@
                 </div>
                 <div class="center-description-progress-spinner">{{englishStudent.totalHoursCoursed}} hrs</div>
               </div>
-              <div>Aún no cumple con las horas necesarias para liberar el Inglés</div>
+              <ng-container [ngSwitch]="englishStudent.status == 'not_released' || englishStudent.totalHoursCoursed >= 450">
+                <div *ngSwitchCase="true">Ya cumple con las horas necesarias y se encuentra pendiente su liberación de Inglés</div>
+                <div *ngSwitchCase="false">Aún no cumple con las horas necesarias para liberar el Inglés</div>
+              </ng-container>
               <div *ngIf="lastRequestStudent">
                 <button *ngIf="lastRequestStudent.status=='requested'" class="mt-4" mat-raised-button color="warn"
                   (click)="openDialogRejectRequest(englishStudent._id)">Cancelar solicitud</button>
