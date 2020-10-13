@@ -1,6 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
 import TableToExcel from '@linways/table-to-excel';
@@ -120,6 +121,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     private groupProv: GroupProvider,
     public dialog: MatDialog,
     private notificationsServices: NotificationsServices,
+    private _formBuilder: FormBuilder,
   ) {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -494,40 +496,26 @@ export class EnglishCoursesPageComponent implements OnInit {
   //#endregion
 
   // #region Cursos
+  coursesDataSource: MatTableDataSource<any>;
+  @ViewChild('matPaginatorCourses') paginatorCourses: MatPaginator;
+  @ViewChild('sortCourses') sortCourses: MatSort;
 
   createEnglishCourses() {
     this.loadingService.setLoading(true);
     this.englishCourseProv.getAllEnglishCourse().subscribe(res => {
 
       this.englishCourses = res.englishCourses;
-
+      this.fillTableCourses();
     }, error => {
 
     }, () => this.loadingService.setLoading(false));
   }
 
-  createCourse() {
-    var data = {
-      englishCourse: {
-        name: "",
-        dailyHours: "",
-        totalHours: "",
-        totalSemesters: "",
-        finalHours: "",
-        //status: ""
-      },
-      courseSchedule: {
-        days: [
-          {
-            desc: [false, false, false, false, false, false, false],
-            enable: false,
-            hours: []
-          }
-        ]
-      },
-      newCourse: true
-    }
-
+  fillTableCourses(){
+    this.coursesDataSource = new MatTableDataSource();
+    this.coursesDataSource.data = this.englishCourses;
+    this.coursesDataSource.sort = this.sortCourses;
+    this.coursesDataSource.paginator = this.paginatorCourses;
   }
 
   openDialogFormCreateCourse(): void {
@@ -545,6 +533,10 @@ export class EnglishCoursesPageComponent implements OnInit {
           totalHours: result.totalHoursCtrl,
           startPeriod: this.activePeriod._id,
           status: 'active',
+          payment:{
+            payments: result.paymentsCtrl,
+            pay: result.payCtrl,
+          }
         };
         this.englishCourseProv.createEnglishCourse(data).subscribe(res => {
           this.ngOnInit()
@@ -552,6 +544,64 @@ export class EnglishCoursesPageComponent implements OnInit {
           error => { });
 
       };
+    });
+  }
+
+  courseFormGroup: FormGroup;
+  @ViewChild("viewEditCourse") dialogRefViewEditCourse: TemplateRef<any>;
+
+  openDilogEditCourse(course){
+    this.courseFormGroup = null;
+    this.courseFormGroup = this._formBuilder.group({
+      nameCtrl: [{value:course.name, disabled:true}, Validators.required],
+      statusCtrl: [course.status=='active'],
+      dailyHoursCtrl: [{value:course.dailyHours, disabled:true}, [Validators.required, Validators.min(1)]],
+      semesterHoursCtrl: [{value:course.semesterHours, disabled:true}, [Validators.required, Validators.min(1)]],
+      totalSemestersCtrl: [{value:course.totalSemesters, disabled:true}, [Validators.required, Validators.min(1)]],
+      totalHoursCtrl: [{value:course.totalHours, disabled:true}, [Validators.required, Validators.min(1)]],
+      paymentsCtrl: [course.payment?course.payment.payments:1, [Validators.required, Validators.min(1), Validators.max(2)]],
+      payCtrl: [course.payment?course.payment.pay:'', [Validators.required, Validators.min(0)]],
+    });
+
+    let dialogRef = this.dialog.open(this.dialogRefViewEditCourse, { hasBackdrop: true });
+    dialogRef.afterClosed().subscribe(values => {
+      console.log(values);
+      if (values) {
+
+        Swal.fire({
+          title: 'Guardar cambios',
+          text: `Está por modificar el curso ` + course.name + `. ¿Desea continuar?`,
+          type: 'warning',
+          allowOutsideClick: false,
+          showCancelButton: true,
+          confirmButtonColor: 'green',
+          cancelButtonColor: 'red',
+          confirmButtonText: 'Continuar',
+          cancelButtonText: 'Cancelar',
+          focusCancel: true
+        }).then((result) => {
+          if (result.value) {
+            let data = {
+              status: values.statusCtrl?'active':'inactive',
+              'payment.payments': values.paymentsCtrl,
+              'payment.pay': values.payCtrl,
+            }
+            this.loadingService.setLoading(true);
+            this.englishCourseProv.updateEnglishCourse(course._id, data).subscribe(res => {
+              if (res) {
+                Swal.fire({
+                  title: 'Curso modificado con exito!',
+                  showConfirmButton: false,
+                  timer: 2500,
+                  type: 'success'
+                });
+                this.ngOnInit();
+              }
+            });
+            this.loadingService.setLoading(false);
+          }
+        });
+      }
     });
   }
 
@@ -938,29 +988,6 @@ export class EnglishCoursesPageComponent implements OnInit {
         this.loadingService.setLoading(false);
       }
     });
-
-    return;
-
-    var request;
-    if (confirmdialog) {
-      const data = { status: 'rejected', rejectMessage: confirmdialog, active: false };
-      this.requestCourseProv.updateRequestById(request._id, data).subscribe(updated => {
-        if (updated) {
-          this.englishStudentProv.updateEnglishStudent({ status: 'no_choice' }, request.englishStudent._id).subscribe(res => {
-            if (res) {
-              Swal.fire({
-                title: 'Éxito!',
-                text: 'Grupo Cerrado',
-                showConfirmButton: false,
-                timer: 2500,
-                type: 'success'
-              });
-            }
-          });
-        }
-      });
-      this.ngOnInit();
-    }
   }
 
   swalDialogInput(title: string, msg: string) {

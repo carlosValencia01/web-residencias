@@ -23,6 +23,11 @@ export class EnglishCourseProvider {
             .pipe(map(englishCourse => englishCourse.json()));
     }
 
+    updateEnglishCourse(id,data) {
+        return this.api.put(`sg-cle/englishcourse/update/${id}`,data)
+            .pipe(map(englishCourse => englishCourse.json()));
+    }
+
     getActivePeriod(){
         return this.api.get('period/active').pipe(map( res=>res.json()));
     }

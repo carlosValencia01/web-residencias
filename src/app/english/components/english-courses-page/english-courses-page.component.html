@@ -269,8 +269,8 @@
 
               <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
 
-                <table mat-table [dataSource]="dataSourceGroupsEvaluated" matSort #sortGroupsEvaluated="matSort" matSortActive="ID"
-                matSortDirection="asc">
+                <table mat-table [dataSource]="dataSourceGroupsEvaluated" matSort #sortGroupsEvaluated="matSort"
+                  matSortActive="ID" matSortDirection="asc">
 
                   <ng-container matColumnDef="name">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
@@ -318,11 +318,9 @@
                     </mat-cell>
                   </ng-container>
 
-                  <mat-header-row
-                    *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'actions']">
+                  <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'actions']">
                   </mat-header-row>
-                  <mat-row
-                    *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'actions']">
+                  <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'actions']">
                   </mat-row>
                 </table>
 
@@ -379,71 +377,92 @@
 
   <mat-tab label="Cursos">
 
+    <mat-card>
+      <mat-card-content>
 
+        <div class="row justify-content-center p-3">
 
-    <div class="row justify-content-center p-3">
+          <div>
 
-      <div>
+            <button class="button-blue" mat-raised-button (click)="openDialogFormCreateCourse()">Nuevo Curso</button>
 
-        <button class="button-blue" mat-raised-button (click)="openDialogFormCreateCourse()">Nuevo Curso</button>
+          </div>
 
-      </div>
+        </div>
 
-    </div>
+        <!--Tabla-->
+        <div style="position: relative;">
 
-    <div>
-      <table mat-table [dataSource]="englishCourses" class="mat-elevation-z8">
+          <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
 
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
-        </ng-container>
+            <table mat-table [dataSource]="coursesDataSource" class="mat-elevation-z8" matSort #sortCourses="matSort"
+              matSortActive="ID" matSortDirection="asc">
 
-        <ng-container matColumnDef="dailyHours">
-          <mat-header-cell *matHeaderCellDef>Horas diarias</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.dailyHours}} </mat-cell>
-        </ng-container>
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+              </ng-container>
 
-        <ng-container matColumnDef="semesterHours">
-          <mat-header-cell *matHeaderCellDef>Horas por semestre</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.semesterHours}} </mat-cell>
-        </ng-container>
+              <ng-container matColumnDef="dailyHours">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Horas diarias</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.dailyHours}} </mat-cell>
+              </ng-container>
 
-        <ng-container matColumnDef="totalSemesters">
-          <mat-header-cell *matHeaderCellDef>Bloques</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.totalSemesters}} </mat-cell>
-        </ng-container>
+              <ng-container matColumnDef="semesterHours">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Horas por semestre</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.semesterHours}} </mat-cell>
+              </ng-container>
 
-        <ng-container matColumnDef="totalHours">
-          <mat-header-cell *matHeaderCellDef>Total de horas</mat-header-cell>
-          <mat-cell *matCellDef="let row"> {{row.totalHours}} </mat-cell>
-        </ng-container>
+              <ng-container matColumnDef="totalSemesters">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Bloques</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.totalSemesters}} </mat-cell>
+              </ng-container>
 
-        <ng-container matColumnDef="actions">
-          <mat-header-cell *matHeaderCellDef></mat-header-cell>
-          <mat-cell *matCellDef="let row">
+              <ng-container matColumnDef="totalHours">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Total de horas</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.totalHours}} </mat-cell>
+              </ng-container>
 
-            <!--
-            <mat-slide-toggle
-                [checked]="row.status == 'active'"
-                >
-              Activo
-            </mat-slide-toggle>
-               <button (click)="opcion(row._id)" mat-icon-button>
-                <mat-icon>delete</mat-icon>
-               </button>
-               -->
-          </mat-cell>
-        </ng-container>
+              <ng-container matColumnDef="payment">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Pagos</mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <ng-container *ngIf="row.payment">
+                    {{row.payment.payments}} de ${{row.payment.pay}}
+                  </ng-container>
+                </mat-cell>
+              </ng-container>
 
-        <mat-header-row
-          *matHeaderRowDef="['name', 'dailyHours', 'semesterHours', 'totalSemesters', 'totalHours', 'actions']">
-        </mat-header-row>
-        <mat-row
-          *matRowDef="let row; columns: ['name', 'dailyHours', 'semesterHours', 'totalSemesters', 'totalHours', 'actions']">
-        </mat-row>
-      </table>
-    </div>
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <button mat-icon-button [matMenuTriggerFor]="actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+
+                  <mat-menu #actions="matMenu">
+                    <button (click)="openDilogEditCourse(row)" mat-menu-item>
+                      <mat-icon>edit</mat-icon>
+                      <span>Editar Curso</span>
+                    </button>
+                  </mat-menu>
+
+                </mat-cell>
+              </ng-container>
+
+              <mat-header-row
+                *matHeaderRowDef="['name', 'dailyHours', 'semesterHours', 'totalSemesters', 'totalHours', 'payment', 'actions']">
+              </mat-header-row>
+              <mat-row
+                *matRowDef="let row; columns: ['name', 'dailyHours', 'semesterHours', 'totalSemesters', 'totalHours', 'payment', 'actions']">
+              </mat-row>
+            </table>
+            <mat-paginator #matPaginatorCourses [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+          </div>
+        </div>
+
+      </mat-card-content>
+    </mat-card>
 
   </mat-tab>
 
@@ -584,15 +603,20 @@
       <th data-a-h="center">{{actData.schedule.Jueves.hour}}</th>
       <th data-a-h="center">{{actData.schedule.Viernes.hour}}</th>
       <th data-a-h="center">{{actData.schedule.Sabado.hour}}</th>
-      </tr>
-      <tr>
+    </tr>
+    <tr>
       <th data-a-h="center">{{actData.schedule.Lunes.classroom.name  ? actData.schedule.Lunes.classroom.name : ''}}</th>
-      <th data-a-h="center">{{actData.schedule.Martes.classroom.name  ? actData.schedule.Martes.classroom.name : ''}}</th>
-      <th data-a-h="center">{{actData.schedule.Miercoles.classroom.name  ? actData.schedule.Miercoles.classroom.name : ''}}</th>
-      <th data-a-h="center">{{actData.schedule.Jueves.classroom.name  ? actData.schedule.Jueves.classroom.name : ''}}</th>
-      <th data-a-h="center">{{actData.schedule.Viernes.classroom.name  ? actData.schedule.Viernes.classroom.name : ''}}</th>
-      <th data-a-h="center">{{actData.schedule.Sabado.classroom.name  ? actData.schedule.Sabado.classroom.name : ''}}</th>
-      </tr>
+      <th data-a-h="center">{{actData.schedule.Martes.classroom.name  ? actData.schedule.Martes.classroom.name : ''}}
+      </th>
+      <th data-a-h="center">
+        {{actData.schedule.Miercoles.classroom.name  ? actData.schedule.Miercoles.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Jueves.classroom.name  ? actData.schedule.Jueves.classroom.name : ''}}
+      </th>
+      <th data-a-h="center">{{actData.schedule.Viernes.classroom.name  ? actData.schedule.Viernes.classroom.name : ''}}
+      </th>
+      <th data-a-h="center">{{actData.schedule.Sabado.classroom.name  ? actData.schedule.Sabado.classroom.name : ''}}
+      </th>
+    </tr>
   </tbody>
 </table>
 
@@ -622,8 +646,89 @@
       <th data-a-h="center">{{ indice + 1 }}</th>
       <th data-a-h="center">{{ alumno.englishStudent.studentId.controlNumber }}</th>
       <th data-a-h="center">{{ alumno.englishStudent.studentId.fullName }}</th>
-      <th data-a-h="center">{{ alumno.englishStudent.studentId.careerId ? alumno.englishStudent.studentId.careerId.shortName : '---' }}</th>
+      <th data-a-h="center">
+        {{ alumno.englishStudent.studentId.careerId ? alumno.englishStudent.studentId.careerId.shortName : '---' }}</th>
       <th data-a-h="center">{{ alumno.average ? alumno.average : 'NA' }}</th>
-    </tr>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+    </tr>
   </tbody>
 </table>
+
+
+<ng-template #viewEditCourse>
+
+  <h1 mat-dialog-title>Editar Curso</h1>
+
+  <div mat-dialog-content>
+
+    <form [formGroup]="courseFormGroup" class="text-center">
+
+      <div class="m-1">
+        <mat-form-field class="m-1">
+          <mat-label>Nombre del curso</mat-label>
+          <input matInput disabled formControlName="nameCtrl" maxlength="30" placeholder="Cool Tiger" required>
+          <mat-error *ngIf="this.courseFormGroup.get('nameCtrl').invalid">Necesitas ingresar un nombre</mat-error>
+        </mat-form-field>
+        <mat-slide-toggle formControlName="statusCtrl">
+          {{this.courseFormGroup.get('statusCtrl').value?'&nbsp;&nbsp;&nbsp;Activo':'Inactivo'}}
+        </mat-slide-toggle>
+      </div>
+
+      <div class="m-1">
+        <mat-form-field class="m-1">
+          <mat-label>Horas diarias</mat-label>
+          <input matInput disabled formControlName="dailyHoursCtrl" type="number" min="1" maxlength="5" required>
+          <mat-error *ngIf="this.courseFormGroup.get('dailyHoursCtrl').invalid">Necesitas ingresar una cantidad
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="m-1">
+          <mat-label>Horas por semestre</mat-label>
+          <input matInput disabled formControlName="semesterHoursCtrl" type="number" min="1" maxlength="3" required>
+          <mat-error *ngIf="this.courseFormGroup.get('semesterHoursCtrl').invalid">Necesitas ingresar una cantidad
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="m-1">
+        <mat-form-field class="m-1">
+          <mat-label>Bloques</mat-label>
+          <input matInput disabled formControlName="totalSemestersCtrl" type="number" min="1" maxlength="1" required>
+          <mat-error *ngIf="this.courseFormGroup.get('totalSemestersCtrl').invalid">Necesitas ingresar una cantidad
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="m-1">
+          <mat-label>Total de horas a cursar</mat-label>
+          <input matInput disabled formControlName="totalHoursCtrl" type="number" min="1" maxlength="3" required>
+          <mat-error *ngIf="this.courseFormGroup.get('totalHoursCtrl').invalid">Necesitas ingresar una cantidad
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="m-1">
+        <mat-form-field class="m-1">
+          <mat-label>Pagos</mat-label>
+          <input matInput formControlName="paymentsCtrl" type="number" min="1" max="2" maxlength="1" required>
+          <mat-error *ngIf="this.courseFormGroup.get('paymentsCtrl').invalid">Ingresar una cantidad valida</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="m-1">
+          <mat-label>Precio por pago</mat-label>
+          <span matPrefix>$ &nbsp;</span>
+          <input matInput formControlName="payCtrl" type="number" min="1" maxlength="3" required>
+          <mat-error *ngIf="this.courseFormGroup.get('payCtrl').invalid">Ingresar una cantidad valida</mat-error>
+        </mat-form-field>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div mat-dialog-actions>
+    <button class="button-blue" mat-button matDialogClose>Cancelar</button>
+    <button [class.button-blue]="!courseFormGroup.invalid" mat-button [mat-dialog-close]="courseFormGroup.value"
+      [disabled]="!courseFormGroup.valid" cdkFocusInitial>Guardar</button>
+  </div>
+
+
+</ng-template>
