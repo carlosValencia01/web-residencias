@@ -60,4 +60,7 @@ export class GroupProvider {
   saveSingleAverage(data) {
     return this.api.put('sg-cle/group/students/single/average', data).pipe(map(res => res.json()));
   }
+  closeGroup(id, data){
+    return this.api.put('sg-cle/group/decline/' + id, data).pipe(map(res => res.json()));
+  }
 }

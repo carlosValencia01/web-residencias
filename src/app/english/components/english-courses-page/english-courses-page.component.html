@@ -202,6 +202,12 @@
                           <mat-icon>cloud_download</mat-icon>
                           <span>Descargar solicitudes en excel</span>
                         </button>
+                        <ng-container>
+                          <button (click)="closeGroup(row)" mat-menu-item>
+                            <mat-icon>clear</mat-icon>
+                            <span>Cerrar Grupo</span>
+                          </button>
+                        </ng-container>
                       </mat-menu>
 
                     </mat-cell>

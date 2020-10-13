@@ -25,6 +25,7 @@ import { RequestCourseProvider } from 'src/app/english/providers/request-course.
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
 
 // Importar Componentes
 import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
@@ -115,6 +116,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     private requestCourseProv: RequestCourseProvider,
     private classroomProv: ClassroomProvider,
     private englishCourseProv: EnglishCourseProvider,
+    private englishStudentProv: EnglishStudentProvider,
     private groupProv: GroupProvider,
     public dialog: MatDialog,
     private notificationsServices: NotificationsServices,
@@ -896,6 +898,90 @@ export class EnglishCoursesPageComponent implements OnInit {
     } else {
       this.dataSourceGroupsEvaluated.data = this.dataSourceGroupsEvaluated.data;
     }
+  }
+
+  async closeGroup(group) {
+
+    var confirmdialog;
+    if (group.reqCount > 0) {
+      confirmdialog = await this.swalDialogInput('DECLINAR SOLICITUDES', 'Especifique el motivo');
+      if (!confirmdialog) {
+        return;
+      }
+    }
+    Swal.fire({
+      title: 'Cerrar grupo',
+      text: `Está por cerrar el grupo ` + group.name + `. ¿Desea continuar?`,
+      type: 'warning',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: true
+    }).then((result) => {
+      if (result.value) {
+        this.loadingService.setLoading(true);
+        this.groupProv.closeGroup(group._id,{confirmdialog:confirmdialog}).subscribe(res => {
+          if (res) {
+            console.log("Errores al modificar en la BD: "+res.err);
+            Swal.fire({
+              title: 'Grupo cerrado con exito!',
+              showConfirmButton: false,
+              timer: 2500,
+              type: 'success'
+            });
+            this.ngOnInit();
+          }
+        });
+        this.loadingService.setLoading(false);
+      }
+    });
+
+    return;
+
+    var request;
+    if (confirmdialog) {
+      const data = { status: 'rejected', rejectMessage: confirmdialog, active: false };
+      this.requestCourseProv.updateRequestById(request._id, data).subscribe(updated => {
+        if (updated) {
+          this.englishStudentProv.updateEnglishStudent({ status: 'no_choice' }, request.englishStudent._id).subscribe(res => {
+            if (res) {
+              Swal.fire({
+                title: 'Éxito!',
+                text: 'Grupo Cerrado',
+                showConfirmButton: false,
+                timer: 2500,
+                type: 'success'
+              });
+            }
+          });
+        }
+      });
+      this.ngOnInit();
+    }
+  }
+
+  swalDialogInput(title: string, msg: string) {
+    return Swal.fire({
+      title: title,
+      text: msg,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar',
+      input: 'text',
+      inputValidator: (value) => {
+        if (!value) {// validate empty input
+          return '¡Ingresa el motivo!';
+        }
+      }
+    }).then((result) => {
+      return result.value ? result.value !== '' ? result.value : false : false;
+    });
   }
 
 }
