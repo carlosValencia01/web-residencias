@@ -1,0 +1,21 @@
+.mat-card-content {
+  display: flex;
+}
+
+.lateral {
+  width: 200px;
+  min-width: 150px;
+  height: 100%;
+}
+
+.document {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.presentation {
+  position: relative;
+  width: 60vw;
+  min-width: 700px;
+  margin-left: 20px;
+}

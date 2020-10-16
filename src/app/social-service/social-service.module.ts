@@ -49,6 +49,7 @@ import { ReviewFirstDataPageComponent } from './department/review-first-data-pag
 import { SocialServiceReviewInitFormComponent } from './student/social-service-review-init-form/social-service-review-init-form.component';
 import { ControlStudentsRequestsComponent } from './department/control-students-requests/control-students-requests.component';
 import { DepartmentControlStudentsPresentationComponent } from './components/department-control-students-presentation/department-control-students-presentation.component';
+import { ReviewSolicitudeDocumentsPageComponent } from './department/review-solicitude-documents-page/review-solicitude-documents-page.component';
 
 
 @NgModule({
@@ -94,7 +95,8 @@ import { DepartmentControlStudentsPresentationComponent } from './components/dep
     ReviewFirstDataPageComponent,
     SocialServiceReviewInitFormComponent,
     ControlStudentsRequestsComponent,
-    DepartmentControlStudentsPresentationComponent
+    DepartmentControlStudentsPresentationComponent,
+    ReviewSolicitudeDocumentsPageComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },

@@ -39,23 +39,17 @@
                     {{row[item]}}
                   </span>
                   <div *ngIf="index === 4">
-                    <span mat-line class="badge badge-pill badge-success" *ngIf="row.status==='approved'">
-                      Aceptado(a)
+                    <span mat-line class="badge badge-pill badge-success" *ngIf="row.phase==='approved'">
+                      Validado
                     </span>
-                    <span mat-line class="badge badge-pill badge-primary" *ngIf="row.status==='send'">
-                      Enviado(a)
+                    <span mat-line class="badge badge-pill badge-primary" *ngIf="row.phase==='send'">
+                      Sin atender
                     </span>
-                    <span mat-line class="badge badge-pill badge-warning" *ngIf="row.status==='reevaluate'">
-                      Revaluación
+                    <span mat-line class="badge badge-pill badge-warning" *ngIf="['reevaluate','noAssigned','assigned'].includes(row.phase)">
+                      Pendiente
                     </span>
-                    <span mat-line class="badge badge-pill badge-success" *ngIf="row.status==='sign'">
-                        Firmada
-                      </span>
-                    <span mat-line class="badge badge-pill badge-info" *ngIf="row.status==='noAssigned'">
-                        No asignada
-                      </span>
-                    <span mat-line class="badge badge-pill badge-warning" *ngIf="row.status==='assigned'">
-                        Asignada
+                    <span mat-line class="badge badge-pill badge-success" *ngIf="row.phase==='sign'">
+                      Pendiente de<br>documentos
                     </span>
                   </div>
                 </td>
@@ -67,7 +61,7 @@
                     <mat-icon>more_vert</mat-icon>
                   </button>
                   <mat-menu #actions>
-                    <button mat-menu-item  *ngIf="row.status==='reevaluate'" routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
+                    <button mat-menu-item *ngIf="row.nStatus === 0 && ['send','reevaluate'].includes(row.phase)" routerLink="/social-service/validateData" [queryParams]="{id: row['id']}">
                       <mat-icon class="material-icons text-success">done</mat-icon>
                       <span>Verificar</span>
                     </button>
@@ -75,11 +69,11 @@
                       <mat-icon class="material-icons text-info">folder_shared</mat-icon>
                       <span>Expediente</span>
                     </button>
-                    <button mat-menu-item (click)="assignTradeDocumentNumber(row['id'])" *ngIf="row.document==='presentation' && row.status === 'noAssigned'">
+                    <button mat-menu-item (click)="assignTradeDocumentNumber(row['id'])" *ngIf="row.nStatus === 1">
                       <mat-icon class="material-icons">assignment</mat-icon>
                       <span>Asignar No.Oficio</span>
                     </button>
-                    <button mat-menu-item *ngIf="verifyPositionBoss() && row.document==='presentation' && row.status === 'assigned'" (click)="signPresentationDocument(row['id'])">
+                    <button mat-menu-item *ngIf="verifyPositionBoss() && row.nStatus === 1 && row.phase === 'assigned'" (click)="signPresentationDocument(row['id'])">
                       <mat-icon class="material-icons text-info">assignment_turned_in</mat-icon>
                       <span>Firmar</span>
                     </button>
@@ -105,7 +99,7 @@
       <mat-tab>
         <ng-template mat-tab-label>
           <div>
-            Solicitudes Firmadas
+            Solicitudes enviadas
           </div>
         </ng-template>
         <br>
@@ -164,64 +158,64 @@
           </div>
         </div>
       </mat-tab>
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <div>
-            Solicitudes Aceptadas
-          </div>
-        </ng-template>
-        <br>
-        <div>
-          <div class="row p-3">
-            <div class="col-11">
-              <mat-form-field class="w-100">
-                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
-                       oninput="this.value=this.value.toUpperCase()">
-              </mat-form-field>
-            </div>
-              <div class="col-1 justify-content-end text-center">
-                <button mat-mini-fab class="m-1" color="primary" (click)="refreshApproved()" data-toggle="tooltip"
-                        title="Recargar">
-                  <mat-icon>update</mat-icon>
-                </button>
-              </div>
-          </div>
-          <div class="row text-center">
-            <table mat-table [dataSource]="dataSourceApproved" matSort>
-              <ng-container matColumnDef="no">
-                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
-                <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
-                  {{i+1}}
-                </td>
-              </ng-container>
-              <ng-container *ngFor="let item of displayedColumnsApproved.slice(1,-1);let index=index"
-                                    [matColumnDef]="item">
-                              <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsApprovedName[index]}}</th>
-                              <td *matCellDef="let row;" mat-cell style="width:25%;">
-                                  {{row[item]}}
-                              </td>
-              </ng-container>
-              <ng-container matColumnDef="actions">
-                <th *matHeaderCellDef mat-header-cell>Acciones</th>
-                <td *matCellDef="let row" mat-cell style="width:20%">
-                  <button [matMenuTriggerFor]="actions" mat-icon-button>
-                    <mat-icon>more_vert</mat-icon>
-                  </button>
-                  <mat-menu #actions>
-                    <button mat-menu-item>
-                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>
-                      <span>Expediente</span>
-                    </button>
-                  </mat-menu>
-                </td>
-              </ng-container>
-              <tr *matHeaderRowDef="displayedColumnsApproved" mat-header-row></tr>
-              <tr *matRowDef="let row; columns: displayedColumnsApproved;" mat-row></tr>
-            </table>
-          <mat-paginator #matPaginatorApproved [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
-          </div>
-        </div>
-      </mat-tab>
+<!--      <mat-tab>-->
+<!--        <ng-template mat-tab-label>-->
+<!--          <div>-->
+<!--            Solicitudes Aceptadas-->
+<!--          </div>-->
+<!--        </ng-template>-->
+<!--        <br>-->
+<!--        <div>-->
+<!--          <div class="row p-3">-->
+<!--            <div class="col-11">-->
+<!--              <mat-form-field class="w-100">-->
+<!--                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."-->
+<!--                       oninput="this.value=this.value.toUpperCase()">-->
+<!--              </mat-form-field>-->
+<!--            </div>-->
+<!--              <div class="col-1 justify-content-end text-center">-->
+<!--                <button mat-mini-fab class="m-1" color="primary" (click)="refreshApproved()" data-toggle="tooltip"-->
+<!--                        title="Recargar">-->
+<!--                  <mat-icon>update</mat-icon>-->
+<!--                </button>-->
+<!--              </div>-->
+<!--          </div>-->
+<!--          <div class="row text-center">-->
+<!--            <table mat-table [dataSource]="dataSourceApproved" matSort>-->
+<!--              <ng-container matColumnDef="no">-->
+<!--                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>-->
+<!--                <td *matCellDef="let row; let i = index" mat-cell style="width:10%">-->
+<!--                  {{i+1}}-->
+<!--                </td>-->
+<!--              </ng-container>-->
+<!--              <ng-container *ngFor="let item of displayedColumnsApproved.slice(1,-1);let index=index"-->
+<!--                                    [matColumnDef]="item">-->
+<!--                              <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsApprovedName[index]}}</th>-->
+<!--                              <td *matCellDef="let row;" mat-cell style="width:25%;">-->
+<!--                                  {{row[item]}}-->
+<!--                              </td>-->
+<!--              </ng-container>-->
+<!--              <ng-container matColumnDef="actions">-->
+<!--                <th *matHeaderCellDef mat-header-cell>Acciones</th>-->
+<!--                <td *matCellDef="let row" mat-cell style="width:20%">-->
+<!--                  <button [matMenuTriggerFor]="actions" mat-icon-button>-->
+<!--                    <mat-icon>more_vert</mat-icon>-->
+<!--                  </button>-->
+<!--                  <mat-menu #actions>-->
+<!--                    <button mat-menu-item>-->
+<!--                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>-->
+<!--                      <span>Expediente</span>-->
+<!--                    </button>-->
+<!--                  </mat-menu>-->
+<!--                </td>-->
+<!--              </ng-container>-->
+<!--              <tr *matHeaderRowDef="displayedColumnsApproved" mat-header-row></tr>-->
+<!--              <tr *matRowDef="let row; columns: displayedColumnsApproved;" mat-row></tr>-->
+<!--            </table>-->
+<!--          <mat-paginator #matPaginatorApproved [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </mat-tab>-->
       <mat-tab label="Presentación sin oficio">
         <div class="row p-3">
           <div class="col-11">
@@ -272,7 +266,7 @@
           </div>
         </div>
       </mat-tab>
-      <mat-tab label="Presentación con oficio">
+      <mat-tab label="Presentación por firmar">
         <div class="row p-3">
           <div class="col-11">
             <mat-form-field>
@@ -300,7 +294,10 @@
                             [matColumnDef]="item">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsNumberName[index]}}</th>
                 <td *matCellDef="let row" mat-cell style="width:25%;">
-                      <span mat-line>
+                      <span mat-line *ngIf="[0,1,2,3].includes(index)">
+                        {{row[item]}}
+                      </span>
+                      <span mat-line *ngIf="index === 4" class="badge badge-pill" [ngClass]="(row['status'] === 'Firmada')?'badge-primary':'badge-warning'">
                         {{row[item]}}
                       </span>
                 </td>
@@ -323,6 +320,66 @@
               <tr *matRowDef="let row; columns: displayedColumnsNumber;" mat-row></tr>
             </table>
             <mat-paginator #matPaginatorNumber [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Recepción de solicitud">
+        <div class="row p-3">
+          <div class="col-11">
+            <mat-form-field>
+              <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                     oninput="this.value=this.value.toUpperCase()">
+            </mat-form-field>
+          </div>
+          <div class="col-1 justify-content-end text-center">
+            <button mat-mini-fab class="m-1" color="primary" (click)="refreshComplete()" data-toggle="tooltip"
+                    title="Recargar">
+              <mat-icon>update</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 mat-elevation-z8">
+            <table mat-table [dataSource]="dataSourceComplete" matSort>
+              <ng-container matColumnDef="no">
+                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+                <td *matCellDef="let row; let i = index" mat-cell style="width:5%">
+                  {{i+1}}
+                </td>
+              </ng-container>
+              <ng-container *ngFor="let item of displayedColumnsComplete.slice(1, -1);let index=index"
+                            [matColumnDef]="item">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsCompleteName[index]}}</th>
+                <td *matCellDef="let row" mat-cell style="width:25%;">
+                      <span mat-line *ngIf="[0,1,2].includes(index)">
+                        {{row[item]}}
+                      </span>
+                  <span mat-line *ngIf="index === 3" class="badge badge-pill"
+                        [ngClass]="{'register':'badge-info','send':'badge-warning','reevaluation':'badge-danger','approved':'badge-success'}[row['status']]">
+                        {{row[item] === 'register' ? 'Pendiente' :
+                          row[item] === 'send' ? 'Sin atender' :
+                          row[item] === 'reevaluate' ? 'Reevaluación' : 'Aceptado'}}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th *matHeaderCellDef mat-header-cell>Acciones</th>
+                <td *matCellDef="let row" mat-cell>
+                  <button [matMenuTriggerFor]="actions" mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions>
+                    <button mat-menu-item *ngIf="row['status'] === 'send'" routerLink="/social-service/validateSolicitudeDocuments" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">check_circle</mat-icon>
+                      <span>Evaluar solicitud</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <tr *matHeaderRowDef="displayedColumnsComplete" mat-header-row></tr>
+              <tr *matRowDef="let row; columns: displayedColumnsComplete;" mat-row></tr>
+            </table>
+            <mat-paginator #matPaginatorComplete [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
           </div>
         </div>
       </mat-tab>

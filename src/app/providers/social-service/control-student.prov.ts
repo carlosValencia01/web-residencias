@@ -42,6 +42,11 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  getResource(driveId: string, resource: string): Observable<Blob> {
+    return this.api.getFile(`controlStudent/${driveId}/file/${resource.toLocaleLowerCase()}`)
+      .pipe(map(res => res.blob()));
+  }
+
   sendCodeForEmailConfirmation(_id, email) {
     return this.api.get(`controlStudent/verify/${_id}/${email}`)
       .pipe(map(controlStudent => controlStudent.json()));

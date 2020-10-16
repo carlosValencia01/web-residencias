@@ -6,6 +6,7 @@ import {ImageToBase64Service} from '../../services/app/img.to.base63.service';
 import {CookiesService} from '../../services/app/cookie.service';
 import {eSocialFiles} from '../../enumerators/social-service/document.enum';
 import {InitRequestModel} from './initRequest.model';
+
 moment.locale('es');
 
 export class InitPresentationDocument {
@@ -83,6 +84,11 @@ export class InitPresentationDocument {
         binary = this.bufferToBase64(document);
         break;
       }
+      case eSocialFiles.ASIGNACION: {
+        document = this.socialServiceWorkProject().output('arraybuffer');
+        binary = this.bufferToBase64(document);
+        break;
+      }
     }
     return binary;
   }
@@ -135,6 +141,51 @@ export class InitPresentationDocument {
     doc.setFontSize(8);
     doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
     doc.text('Código ITT-POC-08-03', (this.WIDTH / 2), 262, { align: 'center' });
+    doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
+    doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
+    return doc;
+  }
+
+
+  // ************** Plan de trabajo PARA LA REALIZACION DEL SERVICIO SOCIAL
+  public socialServiceWorkProject(): jsPDF {
+    const doc = this.newDocumentTec(true, false);
+
+    doc.setTextColor(0, 0, 0);
+    // Title
+    doc.setFont(this.FONT, 'Bold');
+    doc.setFontSize(8);
+    doc.text('CARTA DE ASIGNACIÓN /', (this.WIDTH / 2), 35, { align: 'center' });
+    doc.text('PLAN DE TRABAJO DEL PRESTADOR DE SERVICIO SOCIAL ITT-POC-08-04', (this.WIDTH / 2), 40, { align: 'center' });
+
+    // Cuadro de Datos personales
+    doc.setFontSize(10);
+    doc.setFont(this.FONT, 'Bold');
+    doc.text('DATOS DEL PRESTADOR DE SERVICIO SOCIAL', this.MARGIN.LEFT, 55, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT, 58, this.WIDTH - (this.MARGIN.RIGHT * 2), 32);
+    doc.setFont(this.FONT, 'Normal');
+    doc.text(`NOMBRE COMPLETO: ${this._request.student.fullName}`, this.MARGIN.LEFT + 2, 62, { align: 'left' });
+    doc.text(`EDAD: EDAD`, this.MARGIN.LEFT + 52, 62, { align: 'left' });
+    doc.text(`SEXO: ${this._request.student.sex}`, this.MARGIN.LEFT + 2, 69, { align: 'left' });
+    doc.text(`TEL: ${this._request.student.phone}`, this.MARGIN.LEFT + 18, 69, { align: 'left' });
+    doc.text(`DIRECCIÓN: ${this._request.student.street} ${this._request.student.suburb}`, this.MARGIN.LEFT + 58, 69, { align: 'left' });
+    doc.text(`CARRERA: ${this._request.student.career}`, this.MARGIN.LEFT + 2, 75, { align: 'left' });
+    doc.text(`SEMESTRE: ${this._request.student.semester}`, this.MARGIN.LEFT + 62, 75, { align: 'left' });
+    doc.text(`No. DE CONTROL: ${this._request.student.controlNumber}`, this.MARGIN.LEFT + 2, 82, { align: 'left' });
+    doc.text(`No. DE CREDITOS CUBIERTOS: ${this._request.periodId.periodName}`, this.MARGIN.LEFT + 2, 82, { align: 'left' });
+
+    // Cuadro de Datos del programa
+    doc.setFont(this.FONT, 'Bold');
+    doc.text('DATOS DEL PROGRAMA', this.MARGIN.LEFT, 92, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT, 95, this.WIDTH - (this.MARGIN.RIGHT * 2), 108);
+    doc.setFont(this.FONT, 'Normal');
+
+    // Footer
+    doc.setFont(this.FONT, 'Bold');
+    doc.setTextColor(189, 189, 189);
+    doc.setFontSize(8);
+    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    doc.text('Código ITT-POC-08-04', (this.WIDTH / 2), 262, { align: 'center' });
     doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
     doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
     return doc;

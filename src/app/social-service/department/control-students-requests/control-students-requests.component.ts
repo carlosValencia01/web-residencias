@@ -23,37 +23,37 @@ export class ControlStudentsRequestsComponent implements OnInit {
   public selectedSubTab: FormControl;
   public search: string;
   @ViewChild('MatSortSign') sortSign: MatSort;
-  @ViewChild('MatSortApproved') sortApproved: MatSort;
+  // @ViewChild('MatSortApproved') sortApproved: MatSort;
   @ViewChild('MatSortAll') sortAll: MatSort;
+  @ViewChild(MatSort) sortNoNumber: MatSort;
+  @ViewChild(MatSort) sortWithNumber: MatSort;
+  @ViewChild(MatSort) sortComplete: MatSort;
+  @ViewChild('matPaginatorNoNumber') paginatorNoNumber: MatPaginator;
+  @ViewChild('matPaginatorNumber') paginatorNumber: MatPaginator;
+  @ViewChild('matPaginatorNumber') paginatorComplete: MatPaginator;
   @ViewChild('matPaginatorSend') paginatorSend: MatPaginator;
-  @ViewChild('matPaginatorApproved') paginatorApproved: MatPaginator;
+  // @ViewChild('matPaginatorApproved') paginatorApproved: MatPaginator;
   @ViewChild('matPaginatorAllRequests') paginatorAllRequests: MatPaginator;
 
   public displayedColumnsSend: string[];
   public displayedColumnsSendName: string[];
-  public displayedColumnsApproved: string[];
-  public displayedColumnsApprovedName: string[];
+  // public displayedColumnsApproved: string[];
+  // public displayedColumnsApprovedName: string[];
   public displayedColumnsAllRequests: string[];
   public displayedColumnsAllRequestsName: string[];
-
-  public dataSourceSend: MatTableDataSource<any>;
-  public dataSourceApproved: MatTableDataSource<any>;
-  public dataSourceAllRequests: MatTableDataSource<any>;
-
-  @ViewChild(MatSort) sortNoNumber: MatSort;
-  @ViewChild(MatSort) sortWithNumber: MatSort;
-  @ViewChild(MatSort) sortSignNumber: MatSort;
-  @ViewChild('matPaginatorNoNumber') paginatorNoNumber: MatPaginator;
-  @ViewChild('matPaginatorNumber') paginatorNumber: MatPaginator;
-  @ViewChild('matPaginatorSign') paginatorSign: MatPaginator;
-
   public displayedColumnsNoNumber: string[];
   public displayedColumnsNoNumberName: string[];
   public displayedColumnsNumber: string[];
   public displayedColumnsNumberName: string[];
+  public displayedColumnsComplete: string[];
+  public displayedColumnsCompleteName: string[];
 
+  public dataSourceSend: MatTableDataSource<any>;
+  // public dataSourceApproved: MatTableDataSource<any>;
+  public dataSourceAllRequests: MatTableDataSource<any>;
   public dataSourceNoNumber: MatTableDataSource<any>;
   public dataSourceNumber: MatTableDataSource<any>;
+  public dataSourceComplete: MatTableDataSource<any>;
 
   private readonly positionName: String;
   initRequest: InitPresentationDocument;
@@ -79,14 +79,16 @@ export class ControlStudentsRequestsComponent implements OnInit {
   ngOnInit() {
     this.displayedColumnsSend = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
     this.displayedColumnsSendName = ['Nombre', 'Número de control', 'Carrera'];
-    this.displayedColumnsApproved = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
-    this.displayedColumnsApprovedName = ['Nombre', 'Número de control', 'Carrera'];
-    this.displayedColumnsAllRequests = ['no', 'fullName', 'controlNumber', 'career', 'document', 'status', 'actions'];
-    this.displayedColumnsAllRequestsName = ['Nombre', 'Número de control', 'Carrera', 'Documento', 'Estatus'];
+    // this.displayedColumnsApproved = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
+    // this.displayedColumnsApprovedName = ['Nombre', 'Número de control', 'Carrera'];
+    this.displayedColumnsAllRequests = ['no', 'fullName', 'controlNumber', 'career', 'status', 'phase', 'actions'];
+    this.displayedColumnsAllRequestsName = ['Nombre', 'Número de control', 'Carrera', 'Estatus', 'Fase'];
     this.displayedColumnsNoNumber = ['no', 'fullName', 'controlNumber', 'career', 'tradeDocumentNumber', 'actions'];
     this.displayedColumnsNoNumberName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio'];
-    this.displayedColumnsNumber = ['no', 'fullName', 'controlNumber', 'career', 'tradeDocumentNumber', 'actions'];
-    this.displayedColumnsNumberName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio'];
+    this.displayedColumnsNumber = ['no', 'fullName', 'controlNumber', 'career', 'tradeDocumentNumber', 'status', 'actions'];
+    this.displayedColumnsNumberName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio', 'Estatus'];
+    this.displayedColumnsComplete = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
+    this.displayedColumnsCompleteName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
     this._getAllRequests();
   }
 
@@ -94,10 +96,10 @@ export class ControlStudentsRequestsComponent implements OnInit {
     this.selectedSubTab.setValue(event);
     switch (event) {
       case 0: return this._getAllRequests();
-      case 1: return this._getAllApprovedRequests();
-      case 2: return this._getAllSendRequests();
-      case 3: return this._getAllNoNumberPresentations();
-      case 4: return this._getAllNumberPresentations();
+      case 1: return this._getAllSendRequests();
+      case 2: return this._getAllNoNumberPresentations();
+      case 3: return this._getAllNumberPresentations();
+      case 4: return this._getAllCompletePresentations();
     }
   }
 
@@ -110,27 +112,27 @@ export class ControlStudentsRequestsComponent implements OnInit {
         }
         break;
       case 1:
-        this.dataSourceApproved.filter = filterValue.trim().toLowerCase();
-        if (this.dataSourceApproved.paginator) {
-          this.dataSourceApproved.paginator.firstPage();
-        }
-        break;
-      case 2:
         this.dataSourceSend.filter = filterValue.trim().toLowerCase();
         if (this.dataSourceSend.paginator) {
           this.dataSourceSend.paginator.firstPage();
         }
         break;
-      case 3:
+      case 2:
         this.dataSourceNoNumber.filter = filterValue.trim().toLowerCase();
         if (this.dataSourceNoNumber.paginator) {
           this.dataSourceNoNumber.paginator.firstPage();
         }
         break;
-      case 4:
+      case 3:
         this.dataSourceNumber.filter = filterValue.trim().toLowerCase();
         if (this.dataSourceNumber.paginator) {
           this.dataSourceNumber.paginator.firstPage();
+        }
+        break;
+      case 4:
+        this.dataSourceComplete.filter = filterValue.trim().toLowerCase();
+        if (this.dataSourceComplete.paginator) {
+          this.dataSourceComplete.paginator.firstPage();
         }
         break;
     }
@@ -208,6 +210,7 @@ export class ControlStudentsRequestsComponent implements OnInit {
                   'verification.signs.presentation.signDepartmentName': this.userData.name.fullName} )
                 .subscribe( res => {
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+                  this.changeSubTab(0);
                 }, () => {
                   this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
                     'No se ha podido guardar la información de firma del responsable');
@@ -251,9 +254,9 @@ export class ControlStudentsRequestsComponent implements OnInit {
     this._getAllSendRequests();
   }
 
-  public refreshApproved() {
-    this._getAllApprovedRequests();
-  }
+  // public refreshApproved() {
+  //   this._getAllApprovedRequests();
+  // }
 
   public refreshAllRequests() {
     this._getAllRequests();
@@ -265,6 +268,10 @@ export class ControlStudentsRequestsComponent implements OnInit {
 
   public refreshNumber() {
     this._getAllNumberPresentations();
+  }
+
+  public refreshComplete() {
+    this._getAllCompletePresentations();
   }
 
   public verifyPositionBoss(): boolean {
@@ -301,6 +308,7 @@ export class ControlStudentsRequestsComponent implements OnInit {
               .subscribe(() => {
                 this.notificationsService.showNotification(eNotificationType.SUCCESS,
                   'Se ha asignado correctamente el número de oficio al estudiante', '');
+                this.changeSubTab(0);
             }, () => {
                 this.notificationsService.showNotification(eNotificationType.ERROR,
                   'Ha sucedido un error, no se ha asignado el número de oficio al estudiante', 'Vuelva a intentarlo mas tarde');
@@ -326,20 +334,20 @@ export class ControlStudentsRequestsComponent implements OnInit {
     });
   }
 
-  _getAllApprovedRequests() {
-    this.loadingService.setLoading(true);
-    // Obtener las solicitudes aprovadas
-    this.controlStudentProv.getRequests('approved').subscribe(res => {
-      const approvedRequests = res.controlStudents.map(this._castToTableApproved);
-      this._refreshApproved(approvedRequests);
-    }, () => {
-      this.notificationsService.showNotification(eNotificationType.ERROR,
-        'Error', 'Ha sucedido un error en la descarga de la información');
-      this.loadingService.setLoading(false);
-    }, () => {
-      this.loadingService.setLoading(false);
-    });
-  }
+  // _getAllApprovedRequests() {
+  //   this.loadingService.setLoading(true);
+  //   // Obtener las solicitudes aprovadas
+  //   this.controlStudentProv.getRequests('approved').subscribe(res => {
+  //     const approvedRequests = res.controlStudents.map(this._castToTableApproved);
+  //     this._refreshApproved(approvedRequests);
+  //   }, () => {
+  //     this.notificationsService.showNotification(eNotificationType.ERROR,
+  //       'Error', 'Ha sucedido un error en la descarga de la información');
+  //     this.loadingService.setLoading(false);
+  //   }, () => {
+  //     this.loadingService.setLoading(false);
+  //   });
+  // }
 
   _getAllRequests() {
     this.loadingService.setLoading(true);
@@ -383,6 +391,19 @@ export class ControlStudentsRequestsComponent implements OnInit {
       }, () => this.loadingService.setLoading(false) );
   }
 
+  _getAllCompletePresentations() {
+    this.loadingService.setLoading(true);
+    this.controlStudentProv.getControlStudentByDocumentAndStatus('presentation', 'sign-send-reevaluate-approved')
+      .subscribe( res => {
+        const data = res.controlStudent.map(this._castToTableRequest);
+        this._refreshComplete(data);
+      }, error => {
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'No se ha podido obtener la información de los estudiantes', 'Vuelva a intentarlo mas tarde');
+        this.loadingService.setLoading(false);
+      }, () => this.loadingService.setLoading(false) );
+  }
+
   private _refreshNoNumber(data: Array<any>): void {
     this.dataSourceNoNumber = new MatTableDataSource(data);
     this.dataSourceNoNumber.paginator = this.paginatorNoNumber;
@@ -394,6 +415,11 @@ export class ControlStudentsRequestsComponent implements OnInit {
     this.dataSourceNumber.paginator = this.paginatorNoNumber;
     this.dataSourceNumber.sort = this.sortWithNumber;
   }
+  private _refreshComplete(data: Array<any>): void {
+    this.dataSourceComplete = new MatTableDataSource(data);
+    this.dataSourceComplete.paginator = this.paginatorComplete;
+    this.dataSourceComplete.sort = this.sortComplete;
+  }
 
   private _refreshSend(data: Array<any>): void {
     this.dataSourceSend = new MatTableDataSource(data);
@@ -401,12 +427,11 @@ export class ControlStudentsRequestsComponent implements OnInit {
     this.dataSourceSend.sort = this.sortSign;
   }
 
-
-  private _refreshApproved(data: Array<any>): void {
-    this.dataSourceApproved = new MatTableDataSource(data);
-    this.dataSourceApproved.paginator = this.paginatorSend;
-    this.dataSourceApproved.sort = this.sortApproved;
-  }
+  // private _refreshApproved(data: Array<any>): void {
+  //   this.dataSourceApproved = new MatTableDataSource(data);
+  //   this.dataSourceApproved.paginator = this.paginatorSend;
+  //   this.dataSourceApproved.sort = this.sortApproved;
+  // }
 
   private _refreshAllRequests(data: Array<any>): void {
     this.dataSourceAllRequests = new MatTableDataSource(data);
@@ -439,9 +464,17 @@ export class ControlStudentsRequestsComponent implements OnInit {
       fullName: data.studentId.fullName,
       controlNumber: data.controlNumber,
       career: data.studentId.career,
-      document: data.verification.solicitude !== 'approved' ? 'Solicitud' :
-        data.verification.presentation !== 'approved' ? 'Presentación' : 'workPlanProject',
-      status: data.verification.solicitude !== 'approved' ? data.verification.solicitude :
+      status:
+        data.verification.solicitude !== 'approved' ? 'Solicitud enviada' :
+        data.verification.presentation === 'noAssigned' ? 'Presentación sin oficio' :
+        data.verification.presentation === 'assigned' ? 'Presentación por firmar' :
+        data.verification.presentation === 'sign' ? 'Recepción de solicitud' : 'Sin estatus',
+      nStatus:
+        data.verification.solicitude !== 'approved' ? 0 :
+          data.verification.presentation === 'noAssigned' ? 1 :
+            data.verification.presentation === 'assigned' ? 2 :
+              data.verification.presentation === 'sign' ? 3 : 4,
+      phase: data.verification.solicitude !== 'approved' ? data.verification.solicitude :
         data.verification.presentation !== 'approved' ? data.verification.presentation : 'none'
     };
   }
@@ -452,7 +485,29 @@ export class ControlStudentsRequestsComponent implements OnInit {
       fullName: data.studentId.fullName,
       controlNumber: data.controlNumber,
       career: data.studentId.career,
-      tradeDocumentNumber: data.tradePresentationDocumentNumber
+      tradeDocumentNumber: data.tradePresentationDocumentNumber,
+      status: data.verification.presentation === 'sign' ? 'Firmada' : 'No firmada'
+    };
+  }
+
+  _castToTableRequest(data) {
+    return {
+      id: data._id,
+      fullName: data.studentId.fullName,
+      controlNumber: data.controlNumber,
+      career: data.studentId.career,
+      status: data.verification.presentation === 'approved' &&
+              data.verification.acceptance === 'approved' &&
+              data.verification.workPlanProject === 'approved' &&
+              data.verification.commitment === 'approved' ? 'approved' :
+                data.verification.presentation === 'sign' &&
+                data.verification.acceptance === 'send' &&
+                data.verification.workPlanProject === 'send' &&
+                data.verification.commitment === 'send' ? 'send' :
+                  data.verification.presentation === 'reevaluate' ||
+                  data.verification.acceptance === 'reevaluate' ||
+                  data.verification.workPlanProject === 'reevaluate' ||
+                  data.verification.commitment === 'reevaluate' ? 'reevaluate' : 'register'
     };
   }
 

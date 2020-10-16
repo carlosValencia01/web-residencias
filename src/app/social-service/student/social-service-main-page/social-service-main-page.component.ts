@@ -50,7 +50,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   ngOnInit() {
     this.loadingService.setLoading(true);
-    this.controlStudentProvider.getControlStudentByStudentId(this.userData._id).subscribe( res => {
+    this.controlStudentProvider.getControlStudentByStudentId(this.userData._id).subscribe( async res => {
       this.controlStudentId = res.controlStudent._id;
       this.emailStudent = res.controlStudent.emailStudent || '';
       this.sendEmailCode = res.controlStudent.verification.sendEmailCode;
@@ -63,7 +63,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.permission = false;
       this.releaseSocialService = false;
       this.assistance = false;
-      this.getFolderId();
+      await this.getFolderId();
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
