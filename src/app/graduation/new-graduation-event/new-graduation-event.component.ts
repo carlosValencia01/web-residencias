@@ -62,6 +62,7 @@ export class NewGraduationEventComponent implements OnInit {
         'studentTickets': new FormControl(this.data.event.studentTickets,[Validators.required, Validators.min(0)]),
         'videoUrl': new FormControl(this.data.event.videoUrl,null),
         'imageUrl': new FormControl(this.data.event.imageUrl,null),
+        'folderIdDrive': new FormControl(this.data.event.folderIdDrive,null)
       });  
     }
   }

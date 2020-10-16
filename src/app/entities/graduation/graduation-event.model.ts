@@ -10,4 +10,5 @@ export interface IGraduationEvent {
     studentTickets: number;
     observationsMessage: string;
     hourGallery: number;
+    folderIdDrive: string;
 }
