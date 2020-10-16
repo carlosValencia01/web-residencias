@@ -129,7 +129,7 @@
         <mat-step [completed]="presentationDocument">
           <ng-template matStepLabel>Carta de presentación</ng-template>
           <div *ngIf="statusFirstDocuments === 'approved'">
-            <div *ngIf="presentation === 'noAssigned'">
+            <div *ngIf="presentation !== 'sign'">
               <div class="row justify-content-center">
                 <div class="col-10 col-sm-8 col-md-6 col-lg-4">
                   <mat-card style="height: 225px; width: 300px;">
@@ -141,7 +141,7 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="presentation === 'assigned'">
+            <div *ngIf="presentation === 'sign' && !presentationDownloaded">
               <div class="row justify-content-center">
                 <div class="col-10 col-sm-8 col-md-6 col-lg-4">
                   <mat-card style="height: 225px; width: 300px;">
@@ -157,7 +157,111 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="presentationDownloaded" class="text-center">
+              <h5 class="mt-3"><strong>Llene su horario</strong></h5>
+              <br>   
+              <form [formGroup]="formSchedule" (ngSubmit)="registerSchedule()">
+                <div class="justify-content-center" style="overflow-x:auto;"> 
+                  <table>
+                    <tr>
+                      <th>Dia</th>
+                      <th></th>
+                      <th>Lunes</th>
+                      <th>Martes</th>
+                      <th>Miercoles</th>
+                      <th>Jueves</th>
+                      <th>Viernes</th>
+                      <th>Sabado</th>
+                      <th>Domingo</th>
+                      <th>Total</th>
+                      <th><mat-icon matTooltip="Debe cumplir con 21 horas por semana" class="text-info">info</mat-icon></th>
+                    </tr>
+                    <tr>
+                      <td>                          
+                        <span style=" float: left">Hora</span>                          
+                      </td>
+                      <td>
+                        <mat-icon style=" float: right" matTooltip="Indicar horario en el formato  hh:mm-hh:mm en un rango de 07:00-20:00 en formato de 24 hrs" class="text-info">info</mat-icon>                                                
+                      </td>
+                      <td>
+                        <mat-form-field appearance="fill">
+                          <input matInput formControlName="monday" placeholder="12:00-14:00" on-focusout="sumHours()">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="fill">
+                          <input matInput formControlName="tuesday" placeholder="12:00-14:00" on-focusout="sumHours()">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="fill">
+                          <input matInput formControlName="wednesday" placeholder="12:00-14:00" on-focusout="sumHours()">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="fill">
+                          <input matInput formControlName="thursday" placeholder="12:00-14:00" on-focusout="sumHours()">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="fill">
+                          <input matInput formControlName="friday" placeholder="12:00-14:00" on-focusout="sumHours()">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="fill">
+                          <input matInput formControlName="saturday" placeholder="12:00-14:00" on-focusout="sumHours()">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <mat-form-field appearance="fill">
+                          <input matInput formControlName="sunday" placeholder="12:00-14:00" on-focusout="sumHours()">
+                        </mat-form-field>
+                      </td>
+                      <td>
+                        <span>{{total}}</span>
+                      </td>
+                      <td></td>
+                    </tr>
+                  </table>
+                </div>
+                <br>
+
+                <h4>¿En que mes iniciará su servicio social?</h4>
+                <div class="row">
+                    <mat-form-field appearance="fill">
+                      <mat-label>Seleccione un mes</mat-label>
+                      <select matNativeControl formControlName="initialMonth">
+                        <option value="0">Enero</option>
+                        <option value="1">Febrero</option>
+                        <option value="2">Marzo</option>
+                        <option value="3">Abril</option>
+                        <option value="4">Mayo</option>
+                        <option value="5">Junio</option>
+                        <option value="6">Julio</option>
+                        <option value="7">Agosto</option>
+                        <option value="8">Septiembre</option>
+                        <option value="9">Octubre</option>
+                        <option value="10">Noviembre</option>
+                        <option value="11">Diciembre</option>
+                      </select>
+                    </mat-form-field>
+                </div>
+
+                <br>
+                <div class="row justify-content-center">
+                  <div class="col-3">
+                    <button mat-raised-button type="submit" [disabled]="!verificationSchedule" color="primary" style="width:100%">Crear plan de trabajo</button>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div>
+
+          <div>
+            <button (click)="test()">test</button>
+          </div>
+
         </mat-step>
       </mat-vertical-stepper>
     </div>

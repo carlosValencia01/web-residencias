@@ -84,4 +84,9 @@ export class ControlStudentProv {
   updateDocumentLog(id, data): Observable<any> {
     return this.api.put(`controlStudent/document/status/${id}`, data).pipe(map(res => res.json()));
   }
+
+  saveWorkPlan(id, data) {
+    return this.api.put(`controlStudent/saveWorkPlan/${id}`, data); // .pipe(map(res => res.json()));
+  }
+
 }
