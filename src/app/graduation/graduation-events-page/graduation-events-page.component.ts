@@ -83,7 +83,8 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
             totalTickets: data.payload.doc.get('totalTickets'),              
             studentTickets: data.payload.doc.get('studentTickets'),
             observationsMessage: data.payload.doc.get('observationsMessage'),
-            hourGallery: data.payload.doc.get('hourGallery')             
+            hourGallery: data.payload.doc.get('hourGallery'),
+            folderIdDrive: data.payload.doc.get('folderIdDrive') ? data.payload.doc.get('folderIdDrive') : ''
         }) );       
         this.dataSource = new MatTableDataSource(this.events);
         this.dataSource.paginator = this.paginator;
@@ -328,6 +329,7 @@ export class GraduationEventsPageComponent implements OnInit, OnDestroy {
       hourGallery: event.event.hourGallery,
       certificateInitDate: event.event.certificateInitDate ,
       certificateEndDate: event.event.certificateEndDate ,
+      folderIdDrive: event.event.folderIdDrive
     };
  
     this.firestoreService.updateEvent(newEvent.name, newEvent).then(
