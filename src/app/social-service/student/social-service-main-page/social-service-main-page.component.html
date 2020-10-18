@@ -142,6 +142,7 @@
               </div>
             </div>
             <div *ngIf="presentation === 'sign' && !presentationDownloaded">
+              <br>
               <div class="row justify-content-center">
                 <div class="col-10 col-sm-8 col-md-6 col-lg-4">
                   <mat-card style="height: 225px; width: 300px;">
@@ -157,7 +158,15 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="presentationDownloaded" class="text-center">
+            <div *ngIf="presentationDownloaded">
+              <br>
+              <button mat-raised-button type="button" (click)="downloadPresentation()">
+                Descargar Carta de presentación
+                <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
+              </button>
+            </div>
+            <div *ngIf="presentationDownloaded && !savedSchedule" class="text-center">
+              <br>
               <h5 class="mt-3"><strong>Llene su horario</strong></h5>
               <br>   
               <form [formGroup]="formSchedule" (ngSubmit)="registerSchedule()">
@@ -251,17 +260,12 @@
                 <br>
                 <div class="row justify-content-center">
                   <div class="col-3">
-                    <button mat-raised-button type="submit" [disabled]="!verificationSchedule" color="primary" style="width:100%">Crear plan de trabajo</button>
+                    <button mat-raised-button type="submit" [disabled]="!verificationSchedule" color="primary" style="width:100%">Guardar plan de trabajo</button>
                   </div>
                 </div>
               </form>
             </div>
           </div>
-
-          <div>
-            <button (click)="test()">test</button>
-          </div>
-
         </mat-step>
       </mat-vertical-stepper>
     </div>

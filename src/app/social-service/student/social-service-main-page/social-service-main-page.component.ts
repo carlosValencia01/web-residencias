@@ -48,10 +48,10 @@ export class SocialServiceMainPageComponent implements OnInit {
   public presentationDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
   public totalHours: number; // variable para contabilizar las horas por semana.
   public total: string; // variable para mostrar el total de horas.
-  public initialDate: string; //  variable para guardar la fecha de inicio.
   public verificationSchedule = false; // variable para saber si se cumplen las horas minimas por semana.
   public dayList: Array<any>; // arreglo con los horarios por dia.
   private userData; // Datos del usuario
+  public savedSchedule = false; // variable para saber si ya se guardo el plan de trabajo
   public controlNumber;
   private _idStudent: string; // ID del estudiante
   private folderId: string; // Id del folder del estudiante para servicio social
@@ -62,7 +62,6 @@ export class SocialServiceMainPageComponent implements OnInit {
   public verificationEmail: boolean; // Validacion de verificacion de email como primer paso del proceso de servicio social
   private documents: Array<any> = []; // Array para almacenar los documentos del estudiante
   public formSchedule: FormGroup;
-  
 
 
   editField: string;
@@ -86,8 +85,9 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.releaseSocialService = false;
       this.assistance = false;
       await this.getFolderId();
-      this.presentationDownloaded = res.presentationDownloaded;
       this.controlNumber = res.controlStudent.controlNumber;
+      if ( res.controlStudent.months.length !== 0  ) { this.savedSchedule = true; }
+      this.presentationDownloaded = res.controlStudent.presentationDownloaded;
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
@@ -135,7 +135,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       solicitudeId = solicitude[0].fileIdInDrive;
     } catch (e) {
       this.notificationsService.showNotification(eNotificationType.ERROR,
-        'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.')
+        'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
       return;
     }
     this.controlStudentProvider.getFile(solicitudeId, `${this.userData.email}-SOLICITUD.pdf`).subscribe(async (res) => {
@@ -156,7 +156,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   downloadPresentation() {
     this.loadingService.setLoading(true);
-    const presentation = this.documents.filter(f => f.filename.toString().includes('PRESENTACION'));
+    const presentation = this.documents.filter(f => f.filename.toString().includes('Presentación'));
     let presentationId = '';
     try {
       presentationId = presentation[0].fileIdInDrive;
@@ -173,6 +173,17 @@ export class SocialServiceMainPageComponent implements OnInit {
       downloadLink.download = fileName;
       downloadLink.click();
       this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
+      // el documento se descargo correctamente
+      if ( !this.presentationDownloaded ) {// solo actualizar el status y la fecha la primera vez que se descarga
+        this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
+          {'presentationDownloaded': true, 'presentationDateDownload' : new Date()})
+          .subscribe(() => {
+            this.ngOnInit();
+          }, () => {
+            this.notificationsService.showNotification(eNotificationType.ERROR,
+              'Ha sucedido un error al descargar su Carta de Presentación', 'Vuelva a intentarlo mas tarde');
+          });
+      }
     }, error => {
       this.loadingService.setLoading(false);
       const message = JSON.parse(error._body).message || 'Error al descargar el documento, intentelo mas tarde';
@@ -260,6 +271,7 @@ export class SocialServiceMainPageComponent implements OnInit {
         .subscribe(() => {
           this.notificationsService.showNotification(eNotificationType.SUCCESS,
             'Se ha registrado correctamente el plan de trabajo', '');
+            this.ngOnInit();
         }, () => {
           this.notificationsService.showNotification(eNotificationType.ERROR,
             'Ha sucedido un error, no se ha registrado el plan de trabajo', 'Vuelva a intentarlo mas tarde');
@@ -267,5 +279,4 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
     });
   }// registerSchedule
-
 }
