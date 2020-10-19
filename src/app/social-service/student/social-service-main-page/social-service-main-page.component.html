@@ -129,7 +129,7 @@
         <mat-step [completed]="presentationDocument">
           <ng-template matStepLabel>Carta de presentación</ng-template>
           <div *ngIf="statusFirstDocuments === 'approved'">
-            <div *ngIf="presentation !== 'sign'">
+            <div *ngIf="['noAssigned','assigned'].includes(presentation)">
               <div class="row justify-content-center">
                 <div class="col-10 col-sm-8 col-md-6 col-lg-4">
                   <mat-card style="height: 225px; width: 300px;">
@@ -158,19 +158,12 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="presentationDownloaded">
-              <br>
-              <button mat-raised-button type="button" (click)="downloadPresentation()">
-                Descargar Carta de presentación
-                <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
-              </button>
-            </div>
             <div *ngIf="presentationDownloaded && !savedSchedule" class="text-center">
               <br>
-              <h5 class="mt-3"><strong>Llene su horario</strong></h5>
-              <br>   
+              <h6 class="mt-3"><strong>Llene su horario</strong></h6>
+              <br>
               <form [formGroup]="formSchedule" (ngSubmit)="registerSchedule()">
-                <div class="justify-content-center" style="overflow-x:auto;"> 
+                <div class="justify-content-center" style="overflow-x:auto;">
                   <table>
                     <tr>
                       <th>Dia</th>
@@ -186,44 +179,44 @@
                       <th><mat-icon matTooltip="Debe cumplir con 21 horas por semana" class="text-info">info</mat-icon></th>
                     </tr>
                     <tr>
-                      <td>                          
-                        <span style=" float: left">Hora</span>                          
+                      <td>
+                        <span style=" float: left">Hora</span>
                       </td>
                       <td>
-                        <mat-icon style=" float: right" matTooltip="Indicar horario en el formato  hh:mm-hh:mm en un rango de 07:00-20:00 en formato de 24 hrs" class="text-info">info</mat-icon>                                                
+                        <mat-icon style=" float: right" matTooltip="Indicar horario en el formato  hh:mm-hh:mm en un rango de 07:00-20:00 en formato de 24 hrs" class="text-info">info</mat-icon>
                       </td>
                       <td>
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="fill" class="field-day">
                           <input matInput formControlName="monday" placeholder="12:00-14:00" on-focusout="sumHours()">
                         </mat-form-field>
                       </td>
                       <td>
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="fill" class="field-day">
                           <input matInput formControlName="tuesday" placeholder="12:00-14:00" on-focusout="sumHours()">
                         </mat-form-field>
                       </td>
                       <td>
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="fill" class="field-day">
                           <input matInput formControlName="wednesday" placeholder="12:00-14:00" on-focusout="sumHours()">
                         </mat-form-field>
                       </td>
                       <td>
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="fill" class="field-day">
                           <input matInput formControlName="thursday" placeholder="12:00-14:00" on-focusout="sumHours()">
                         </mat-form-field>
                       </td>
                       <td>
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="fill" class="field-day">
                           <input matInput formControlName="friday" placeholder="12:00-14:00" on-focusout="sumHours()">
                         </mat-form-field>
                       </td>
                       <td>
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="fill" class="field-day">
                           <input matInput formControlName="saturday" placeholder="12:00-14:00" on-focusout="sumHours()">
                         </mat-form-field>
                       </td>
                       <td>
-                        <mat-form-field appearance="fill">
+                        <mat-form-field appearance="fill" class="field-day">
                           <input matInput formControlName="sunday" placeholder="12:00-14:00" on-focusout="sumHours()">
                         </mat-form-field>
                       </td>
@@ -256,7 +249,6 @@
                       </select>
                     </mat-form-field>
                 </div>
-
                 <br>
                 <div class="row justify-content-center">
                   <div class="col-3">
@@ -264,6 +256,142 @@
                   </div>
                 </div>
               </form>
+            </div>
+            <div *ngIf="presentationDownloaded && savedSchedule && !workPlanProjectDownloaded" class="text-center">
+              <div class="row justify-content-center">
+                <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                  <mat-card style="height: 225px; width: 300px;">
+                    <mat-card-header class="flex-column align-items-center">
+                      <img alt="File" src="../../../../assets/imgs/approved.png" style="width: 80px; height: 80px;">
+                      <h5 class="text-center mt-3"><strong>Carta de asignación - Plan de trabajo</strong></h5>
+                      <button mat-raised-button type="button">
+                        Descargar Carta
+                        <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
+                      </button>
+                    </mat-card-header>
+                  </mat-card>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="presentationDownloaded && savedSchedule && workPlanProjectDownloaded" class="text-center">
+              <div class="text-right">
+                <button mat-button type="button" class="mt-2" (click)="downloadPresentation()">
+                  Descargar Carta de presentación
+                  <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
+                </button>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <mat-card class="my-2 solicitude-document">
+                    <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                      <h6 class="text-center">Carta de presentación</h6>
+                      <label for="presentation" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                        <div [ngSwitch]="presentation">
+                          <div *ngSwitchCase="'send'">
+                            <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
+                          </div>
+                          <div *ngSwitchCase="'reevaluate'">
+                            <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                          </div>
+                          <div *ngSwitchCase="'approved'">
+                            <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+                          </div>
+                          <div *ngSwitchDefault>
+                            <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                          </div>
+                        </div>
+                      </label>
+                      <input type="file" id="presentation" (change)="onFileChange($event)"
+                             hidden="hidden" accept="application/pdf">
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+                <div class="col-3">
+                  <mat-card class="my-2 solicitude-document">
+                    <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                      <h6 class="text-center">Carta de <br>aceptación</h6>
+                      <label for="acceptance" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                        <div [ngSwitch]="acceptance">
+                          <div *ngSwitchCase="'send'">
+                            <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
+                          </div>
+                          <div *ngSwitchCase="'reevaluate'">
+                            <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                          </div>
+                          <div *ngSwitchCase="'approved'">
+                            <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+                          </div>
+                          <div *ngSwitchDefault>
+                            <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                          </div>
+                        </div>
+                      </label>
+                      <input type="file" id="acceptance" (change)="onFileChange($event)"
+                             hidden="hidden" accept="application/pdf">
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+                <div class="col-3">
+                  <mat-card class="my-2 solicitude-document">
+                    <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                      <h6 class="text-center">Carta de asignación - Plan de trabajo</h6>
+                      <label for="workProject" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                        <div [ngSwitch]="workPlanProject">
+                          <div *ngSwitchCase="'send'">
+                            <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
+                          </div>
+                          <div *ngSwitchCase="'reevaluate'">
+                            <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                          </div>
+                          <div *ngSwitchCase="'approved'">
+                            <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+                          </div>
+                          <div *ngSwitchDefault>
+                            <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                          </div>
+                        </div>
+                      </label>
+                      <input type="file" id="workProject" (change)="onFileChange($event)"
+                             hidden="hidden" accept="application/pdf">
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+                <div class="col-3">
+                  <mat-card class="my-2 solicitude-document">
+                    <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                      <h6 class="text-center">Carta <br>compromiso</h6>
+                      <label for="commitment" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                        <div [ngSwitch]="commitment">
+                          <div *ngSwitchCase="'send'">
+                            <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
+                          </div>
+                          <div *ngSwitchCase="'reevaluate'">
+                            <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                          </div>
+                          <div *ngSwitchCase="'approved'">
+                            <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+                          </div>
+                          <div *ngSwitchDefault>
+                            <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                          </div>
+                        </div>
+                      </label>
+                      <input type="file" id="commitment" (change)="onFileChange($event)"
+                             hidden="hidden" accept="application/pdf">
+<!--                      <button type="button" id="commitment" (click)="createCommitmentDocument()"-->
+<!--                             hidden="hidden">-->
+<!--                      </button>-->
+                    </mat-card-content>
+                  </mat-card>
+                </div>
+              </div>
+              <div class="text-center">
+                <button mat-raised-button color="primary" class="w-50" (click)="uploadFiles()" [disabled]="validateUploadFiles()">Subir documentos</button>
+              </div>
             </div>
           </div>
         </mat-step>

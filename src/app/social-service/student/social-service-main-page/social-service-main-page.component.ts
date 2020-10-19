@@ -11,6 +11,7 @@ import {InscriptionsProvider} from '../../../providers/inscriptions/inscriptions
 import { FormBuilder, FormControl, FormGroup, PatternValidator, Validators } from '@angular/forms';
 import {MatDialog} from '@angular/material';
 import {DialogVerificationComponent} from '../../components/dialog-verification/dialog-verification.component';
+import {DialogDocumentViewerComponent} from '../../components/dialog-document-viewer/dialog-document-viewer.component';
 
 moment.locale('es');
 
@@ -20,21 +21,9 @@ moment.locale('es');
   styleUrls: ['./social-service-main-page.component.scss']
 })
 export class SocialServiceMainPageComponent implements OnInit {
-
+  selectedFile: File = null;
   @ViewChild('dialogverification') dialogVerification: DialogVerificationComponent;
 
-  constructor(private loadingService: LoadingService,
-              private cookiesService: CookiesService,
-              private studentProvider: StudentProvider,
-              private inscriptionsProv: InscriptionsProvider,
-              private notificationsService: NotificationsServices,
-              private controlStudentProvider: ControlStudentProv,
-              private formBuilder: FormBuilder,
-              public dialog: MatDialog) {
-    // Obtencion de la informacion del alumno, id, nombre, carrera, revisar en localStorage
-    this.userData = this.cookiesService.getData().user;
-    this._idStudent = this.userData._id;
-  }
   public loaded = false; // Carga de la pagina
   public permission: boolean; // Permiso para acceder a servicio social
   public releaseSocialService: boolean; // Condicion para saber si ha liberado el servicio social
@@ -44,7 +33,19 @@ export class SocialServiceMainPageComponent implements OnInit {
   public solicitudeDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public statusFirstDocuments: string; // Condicion para saber si el estudiante ya envio toda la información o esta en revisión
+  // documents status
   public presentation: string; // Variable para guardar el estatus de la carta de presentacion.
+  public workPlanProject: string; // Variable para guardar el estatus del plan de trabajo.
+  public acceptance: string; // Variable para guardar el estatus de la carta de aceptacion.
+  public commitment: string; // Variable para guardar el estatus de la carta de compromiso.
+
+  // Object Documents
+  public presentationDoc: any; // Variable para guardar el estatus de la carta de presentacion.
+  public workPlanProjectDoc: any; // Variable para guardar el estatus del plan de trabajo.
+  public acceptanceDoc: any; // Variable para guardar el estatus de la carta de aceptacion.
+  public commitmentDoc: any; // Variable para guardar el estatus de la carta de compromiso.
+
+  public workPlanProjectDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
   public presentationDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
   public totalHours: number; // variable para contabilizar las horas por semana.
   public total: string; // variable para mostrar el total de horas.
@@ -69,6 +70,19 @@ export class SocialServiceMainPageComponent implements OnInit {
     { hour: 'Hora', monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '', total: '' }
   ];
 
+  constructor(private loadingService: LoadingService,
+              private cookiesService: CookiesService,
+              private studentProvider: StudentProvider,
+              private inscriptionsProv: InscriptionsProvider,
+              private notificationsService: NotificationsServices,
+              private controlStudentProvider: ControlStudentProv,
+              private formBuilder: FormBuilder,
+              public dialog: MatDialog) {
+    // Obtencion de la informacion del alumno, id, nombre, carrera, revisar en localStorage
+    this.userData = this.cookiesService.getData().user;
+    this._idStudent = this.userData._id;
+  }
+
   ngOnInit() {
     this.loadingService.setLoading(true);
     this.controlStudentProvider.getControlStudentByStudentId(this.userData._id).subscribe( async res => {
@@ -80,6 +94,9 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.solicitudeDocument = this.statusFirstDocuments === 'approved';
       this.documents = res.controlStudent.documents;
       this.presentation = res.controlStudent.verification.presentation;
+      this.workPlanProject = res.controlStudent.verification.workPlanProject;
+      this.acceptance = res.controlStudent.verification.acceptance;
+      this.commitment = res.controlStudent.verification.commitment;
       this.presentationDocument = false;
       this.permission = false;
       this.releaseSocialService = false;
@@ -87,7 +104,8 @@ export class SocialServiceMainPageComponent implements OnInit {
       await this.getFolderId();
       this.controlNumber = res.controlStudent.controlNumber;
       if ( res.controlStudent.months.length !== 0  ) { this.savedSchedule = true; }
-      this.presentationDownloaded = res.controlStudent.presentationDownloaded;
+      this.presentationDownloaded = res.controlStudent.verification.presentationDownloaded;
+      this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
@@ -176,7 +194,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       // el documento se descargo correctamente
       if ( !this.presentationDownloaded ) {// solo actualizar el status y la fecha la primera vez que se descarga
         this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
-          {'presentationDownloaded': true, 'presentationDateDownload' : new Date()})
+          {'verification.presentationDownloaded': true, 'verification.presentationDateDownload' : new Date()})
           .subscribe(() => {
             this.ngOnInit();
           }, () => {
@@ -199,7 +217,166 @@ export class SocialServiceMainPageComponent implements OnInit {
     }, ''));
   }
 
+  // Carga de Curriculum PDF a drive
+  async onFileChange(event) {
+    const reader = new FileReader();
+    const docType = event.target.attributes.id.value;
+    let newF = true;
+    let fileId = '';
+    let nameDocument = '';
+    switch (docType) {
+      case 'presentation':
+        nameDocument = 'ITT-POC-08-03 Carta de Presentación de Servicio Social';
+        if (this.presentation === 'reevaluate' || this.presentation === 'sign') {
+          newF = false;
+          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-03'));
+          fileId = documentId[0].fileIdInDrive;
+        }
+        break;
+      case 'acceptance':
+        nameDocument = 'ITT-POC-08-00 Carta de aceptación de Servicio Social';
+        if (this.acceptance === 'reevaluate') {
+          newF = false;
+          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-00'));
+          fileId = documentId[0].fileIdInDrive;
+        }
+        break;
+      case 'workProject':
+        nameDocument = 'ITT-POC-08-04 Carta de Asignación-Plan de Trabajo';
+        if (this.workPlanProject === 'reevaluate') {
+          newF = false;
+          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-04'));
+          fileId = documentId[0].fileIdInDrive;
+        }
+        break;
+      case 'commitment':
+        nameDocument = 'ITT-POC-08-05 Carta Compromiso de Servicio Social';
+        if (this.acceptance === 'reevaluate') {
+          newF = false;
+          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-05'));
+          fileId = documentId[0].fileIdInDrive;
+        }
+        break;
+    }
 
+    this.selectedFile = <File>event.target.files[0];
+    if (event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      reader.readAsDataURL(file);
+
+      reader.onload = () => {
+        const document = {
+          mimeType: this.selectedFile.type,
+          nameInDrive: nameDocument,
+          bodyMedia: reader.result.toString().split(',')[1],
+          folderId: this.folderId,
+          newF: newF,
+          fileId: fileId
+        };
+
+        this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then( response => {
+          if (response) {
+            switch (docType) {
+              case 'presentation':
+                this.presentationDoc = document;
+                this.presentation = 'send';
+                break;
+              case 'acceptance':
+                this.acceptanceDoc = document;
+                this.acceptance = 'send';
+                break;
+              case 'workProject':
+                this.workPlanProjectDoc = document;
+                this.workPlanProject = 'send';
+                break;
+              case 'commitment':
+                this.commitmentDoc = document;
+                this.commitment = 'send';
+                break;
+            }
+          }
+        });
+      };
+    }
+  }
+
+  validateUploadFiles() {
+    return this.presentation !== 'send' ||
+            this.acceptance !== 'send' ||
+            this.workPlanProject !== 'send' ||
+            this.commitment !== 'send';
+  }
+
+  async uploadFiles() {
+    await this.uploadFile(this.presentationDoc.nameInDrive, this.presentationDoc);
+    await this.uploadFile(this.acceptanceDoc.nameInDrive, this.acceptanceDoc);
+    await this.uploadFile(this.workPlanProjectDoc.nameInDrive, this.workPlanProjectDoc);
+    await this.uploadFile(this.commitmentDoc.nameInDrive, this.commitmentDoc);
+  }
+
+  uploadFile(nameDocument, document) {
+    this.loadingService.setLoading(true);
+    // Cargar el documento a Drive, ya debe de existir su registro y base de datos
+    this.controlStudentProvider.uploadFile2(document).subscribe( async updated => {
+        if (updated.action === 'create file') {
+          const documentInfo = {
+            filename: updated.name,
+            type: 'DRIVE',
+            fileIdInDrive: updated.fileId,
+            status: {
+              name: 'EN PROCESO',
+              message: `Se subio el ${nameDocument} por primera vez`
+            }
+          };
+          // Actualizar información del documento subido a
+          await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo).subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
+            },
+            err => {
+              console.log(err);
+            }, () => this.loadingService.setLoading(false)
+          );
+        } else {
+
+          const documentInfo = {
+            filename: updated.filename,
+            status: {
+              name: 'EN PROCESO',
+              message: `Se actualizo el ${nameDocument}`
+            }
+          };
+          // Actualizar la información del documento
+          await this.controlStudentProvider.updateDocumentLog(this.controlStudentId, documentInfo)
+            .subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
+                nameDocument + ' actualizado.');
+            }, err => {
+              console.log(err);
+            }, () => this.loadingService.setLoading(false));
+        }
+      },
+      err => {
+        console.log(err);
+        this.loadingService.setLoading(false);
+      });
+  }
+
+  validateDocumentViewer(pdf, title) {
+    return new Promise((resolve) => {
+      const dialogRef = this.dialog.open(DialogDocumentViewerComponent, {
+        data: {document: pdf, title: title},
+        hasBackdrop: true
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        resolve(result);
+      });
+    });
+  }
+
+  createCommitmentDocument() {
+    console.log('Carta compromiso');
+    this.commitment = 'send';
+  }
 
   _initializeTableForm() {
     this.formSchedule = new FormGroup ({

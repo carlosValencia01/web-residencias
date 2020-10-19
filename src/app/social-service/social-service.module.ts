@@ -50,6 +50,7 @@ import { SocialServiceReviewInitFormComponent } from './student/social-service-r
 import { ControlStudentsRequestsComponent } from './department/control-students-requests/control-students-requests.component';
 import { DepartmentControlStudentsPresentationComponent } from './components/department-control-students-presentation/department-control-students-presentation.component';
 import { ReviewSolicitudeDocumentsPageComponent } from './department/review-solicitude-documents-page/review-solicitude-documents-page.component';
+import { DialogDocumentViewerComponent } from './components/dialog-document-viewer/dialog-document-viewer.component';
 
 
 @NgModule({
@@ -96,7 +97,8 @@ import { ReviewSolicitudeDocumentsPageComponent } from './department/review-soli
     SocialServiceReviewInitFormComponent,
     ControlStudentsRequestsComponent,
     DepartmentControlStudentsPresentationComponent,
-    ReviewSolicitudeDocumentsPageComponent
+    ReviewSolicitudeDocumentsPageComponent,
+    DialogDocumentViewerComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -107,6 +109,6 @@ import { ReviewSolicitudeDocumentsPageComponent } from './department/review-soli
     ImageToBase64Service,
     DatePipe
   ],
-  entryComponents: [DialogVerificationComponent]
+  entryComponents: [DialogVerificationComponent, DialogDocumentViewerComponent]
 })
 export class SocialServiceModule { }

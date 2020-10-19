@@ -19,4 +19,14 @@ table {
 
 table th{
   vertical-align: center;
+  font-size: 0.8em;
+}
+
+table td, .field-day{
+  max-width: 100px;
+  font-size: 0.8em;
+}
+
+.solicitude-document {
+  min-height: 140px;
 }

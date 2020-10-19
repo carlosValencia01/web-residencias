@@ -63,6 +63,11 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  uploadFile2(data) {
+    return this.api.post('controlStudent/upload/file2', data)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   verifyCode(data) {
     return this.api.post('controlStudent/verify', data)
       .pipe(map(controlStudent => controlStudent.json()));
