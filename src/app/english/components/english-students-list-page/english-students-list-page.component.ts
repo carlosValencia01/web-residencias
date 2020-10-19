@@ -397,8 +397,8 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
         }        
         let studentQuery = {
           status: 'no_choice',
-          level: requestQuery.status == 'approved' ? row.level : row.englishStudent.level,
-          totalHoursCoursed: requestQuery.status == 'approved' ? (row.englishStudent.totalHoursCoursed+row.group.course.semesterHours) : row.englishStudent.totalHoursCoursed,
+          level: requestQuery.status == 'approved' ? row.level : (row.englishStudent.level==row.level?row.englishStudent.level-1:row.englishStudent.level),
+          totalHoursCoursed: this.getTotalHoursCoursed(requestQuery,row),
           courseType: requestQuery.status == 'approved' ? row.group.course._id : (row.englishStudent.courseType ? row.englishStudent.courseType : null)
         };
         if(requestQuery.status == 'approved' && row.level == row.group.course.totalSemesters){
@@ -408,6 +408,21 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
       }
     }
     
+  }
+
+  getTotalHoursCoursed(requestQuery, row):Number{
+    console.log(row);
+    if (requestQuery.status == 'approved') {
+      if (row.status == 'approved') {
+        return row.englishStudent.totalHoursCoursed;
+      }
+      return row.englishStudent.totalHoursCoursed+row.group.course.semesterHours;
+    } else {
+      if (row.status == 'approved') {
+        return row.englishStudent.totalHoursCoursed-row.group.course.semesterHours;
+      }
+      return row.englishStudent.totalHoursCoursed;
+    }
   }
 
   showAlert(title: string, message: string){
