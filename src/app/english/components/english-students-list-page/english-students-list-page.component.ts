@@ -307,7 +307,8 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
     if (event.target.files && event.target.files[0]) {
       this.loadingService.setLoading(false);
       
-      let file= event.target.files[0];     
+      let file= event.target.files[0];
+      event.target.value = '';     
       let fileReader = new FileReader();    
       fileReader.readAsArrayBuffer(file);
       let studentsToUploadAvg = [];
@@ -323,7 +324,7 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
           const arraylist = XLSX.utils.sheet_to_json(worksheet,{raw:false});          
           studentsToUploadAvg = this.students.reduce((prev,curr)=>{
             // solo los alumnos que no se le ha registrado el promedio
-            if(!curr.average){
+            if(!curr.average || this.isCLE){
               // alumnos de la lista en excel que se encuentran en el grupo
               if(arraylist.map(stu => stu['NO. CONTROL']).includes((curr.englishStudent.studentId as IStudent).controlNumber)){
                 let average = arraylist.find( stu => stu['NO. CONTROL'] == (curr.englishStudent.studentId as IStudent).controlNumber)['PROMEDIO'];
@@ -360,6 +361,8 @@ export class EnglishStudentsListPageComponent implements OnInit, OnDestroy {
           }
       }
              
+    }else{
+      this.loadingService.setLoading(false);
     }
   }
 
