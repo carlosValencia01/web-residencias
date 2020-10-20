@@ -539,7 +539,15 @@ export class EnglishCoursesPageComponent implements OnInit {
           }
         };
         this.englishCourseProv.createEnglishCourse(data).subscribe(res => {
-          this.ngOnInit()
+          if (res) {
+            Swal.fire({
+              title: 'Curso creado con éxito!',
+              showConfirmButton: false,
+              timer: 2500,
+              type: 'success'
+            });
+            this.ngOnInit();
+          }
         },
           error => { });
 
