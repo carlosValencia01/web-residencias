@@ -88,7 +88,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   };
   @ViewChild('matPaginatorClassrooms') paginatorClassrooms: MatPaginator;
   @ViewChild(MatSort) sortClassrooms: MatSort;
-  @ViewChild(MatSort) sortGroups: MatSort;
+  @ViewChild('sortGeneralGroups') sortGroups: MatSort;
   activeGroups: IGroup[];
   dataSourceActiveGroups: MatTableDataSource<IGroup>;
 

@@ -13,95 +13,98 @@
     <mat-tab-group>
 
       <mat-tab label="Activos en Clases">
-        <!-- tabla -->
-        <div style="position: relative; background: white;">
-          <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
-            <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
-              <input matInput (keyup)="applyFilterG()" placeholder="Buscar..." [(ngModel)]="searchGA"
-                (keyup)="applyFilterG()" (focus)="setupFilterG()">
-              <mat-icon matSuffix>search</mat-icon>
-            </mat-form-field>
-          </div>
-          <div style="position: relative; overflow: auto; max-width: 100%;">
+        <mat-card>
+          <mat-card-content>
+            <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+              <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+                <input matInput (keyup)="applyFilterG()" placeholder="Buscar..." [(ngModel)]="searchGA"
+                  (keyup)="applyFilterG()" (focus)="setupFilterG()">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
 
-            <table mat-table [dataSource]="dataSourceActiveGroups" class="mat-elevation-z8" matSort>
+            <!--Tabla-->
+            <div>
 
-              <ng-container matColumnDef="name">
-                <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
-              </ng-container>
+              <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
 
-              <ng-container matColumnDef="course">
-                <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
-              </ng-container>
 
-              <ng-container matColumnDef="level">
-                <mat-header-cell *matHeaderCellDef>Bloque</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
-              </ng-container>
+                <table mat-table [dataSource]="dataSourceActiveGroups" class="mat-elevation-z8" matSort #sortActiveGroups="matSort"
+                matSortActive="ID" matSortDirection="asc">
 
-              <ng-container matColumnDef="teacher">
-                <mat-header-cell *matHeaderCellDef>Docente</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.teacher ? row.teacher.name.fullName : 'Sin asignar'}}</mat-cell>
-              </ng-container>
+                  <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+                  </ng-container>
 
-              <ng-container matColumnDef="request">
-                <mat-header-cell *matHeaderCellDef>Alumnos Inscritos</mat-header-cell>
-                <mat-cell *matCellDef="let row">{{row.numberStudents}}</mat-cell>
-              </ng-container>
+                  <ng-container matColumnDef="course">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
+                  </ng-container>
 
-              <ng-container matColumnDef="actions">
-                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
-                </mat-header-cell>
-                <mat-cell *matCellDef="let row">
-                  <button mat-icon-button [matMenuTriggerFor]="actions">
-                    <mat-icon>more_vert</mat-icon>
-                  </button>
+                  <ng-container matColumnDef="level">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Bloque</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
+                  </ng-container>
 
-                  <mat-menu #actions="matMenu">
-                    <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
-                      <mat-icon>watch_later</mat-icon>
-                      <span>Ver Horario</span>
-                    </button>
-                    <button (click)="openDialogshowGroupStudents(row)" mat-menu-item>
-                      <mat-icon>view_list</mat-icon>
-                      <span>Ver Alumnos Inscritos</span>
-                    </button>
-                    <button (click)="openDialogAddGroupStudents(row)" mat-menu-item>
-                      <mat-icon>people_alt</mat-icon>
-                      <span>Agregar Alumnos</span>
-                    </button>
-                    <button (click)="generateExcelActiveGroup(row)" mat-menu-item>
-                      <mat-icon>view_comfy</mat-icon>
-                      <span>Generar Lista Excel</span>
-                    </button>
-                    <button (click)="openDialogshowEnglishTeachers(row)" mat-menu-item>
-                      <mat-icon>person_add</mat-icon>
-                      <span>{{ getEnglishTeacherItemName(row) }}</span>
-                    </button>
-                    <button (click)="openDialogShowClassrooms(row)" mat-menu-item>
-                      <mat-icon>domain</mat-icon>
-                      <span>Asignación de aula</span>
-                    </button>
-                  </mat-menu>
+                  <ng-container matColumnDef="teacher">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Docente</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.teacher ? row.teacher.name.fullName : 'Sin asignar'}}
+                    </mat-cell>
+                  </ng-container>
 
-                </mat-cell>
-              </ng-container>
+                  <ng-container matColumnDef="request">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Alumnos Inscritos</mat-header-cell>
+                    <mat-cell *matCellDef="let row">{{row.numberStudents}}</mat-cell>
+                  </ng-container>
 
-              <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'request', 'actions']">
-              </mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'request', 'actions']">
-              </mat-row>
-            </table>
+                  <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <button mat-icon-button [matMenuTriggerFor]="actions">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      <mat-menu #actions="matMenu">
+                        <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
+                          <mat-icon>watch_later</mat-icon>
+                          <span>Ver Horario</span>
+                        </button>
+                        <button (click)="openDialogshowGroupStudents(row)" mat-menu-item>
+                          <mat-icon>view_list</mat-icon>
+                          <span>Ver Alumnos Inscritos</span>
+                        </button>
+                        <button (click)="openDialogAddGroupStudents(row)" mat-menu-item>
+                          <mat-icon>people_alt</mat-icon>
+                          <span>Agregar Alumnos</span>
+                        </button>
+                        <button (click)="generateExcelActiveGroup(row)" mat-menu-item>
+                          <mat-icon>view_comfy</mat-icon>
+                          <span>Generar Lista Excel</span>
+                        </button>
+                        <button (click)="openDialogshowEnglishTeachers(row)" mat-menu-item>
+                          <mat-icon>person_add</mat-icon>
+                          <span>{{ getEnglishTeacherItemName(row) }}</span>
+                        </button>
+                        <button (click)="openDialogShowClassrooms(row)" mat-menu-item>
+                          <mat-icon>domain</mat-icon>
+                          <span>Asignación de aula</span>
+                        </button>
+                      </mat-menu>
+                    </mat-cell>
+                  </ng-container>
 
-          </div>
-
-          <!--Paginas-->
-          <mat-paginator #matPaginatorActiveGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
-
-        </div>
-        <!-- tabla -->
+                  <mat-header-row *matHeaderRowDef="['name', 'course', 'level', 'teacher', 'request', 'actions']">
+                  </mat-header-row>
+                  <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'request', 'actions']">
+                  </mat-row>
+                </table>
+                <!--Paginas-->
+                <mat-paginator #matPaginatorActiveGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </mat-tab>
 
       <mat-tab label="Grupos en General">
@@ -144,38 +147,39 @@
             <!--Tabla-->
             <div style="position: relative;">
 
-              <div style="position: relative; overflow: auto; max-width: 100%;">
+              <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
 
-                <table mat-table [dataSource]="dataSourceGroups" class="mat-elevation-z8" matSort>
+                <table mat-table [dataSource]="dataSourceGroups" matSort #sortGeneralGroups="matSort"
+                  matSortActive="ID" matSortDirection="asc">
 
                   <ng-container matColumnDef="name">
-                    <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Grupo</mat-header-cell>
                     <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
                   </ng-container>
 
                   <ng-container matColumnDef="course">
-                    <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
                     <mat-cell *matCellDef="let row"> {{row.course.name}} </mat-cell>
                   </ng-container>
 
                   <ng-container matColumnDef="level">
-                    <mat-header-cell *matHeaderCellDef>Bloque</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Bloque</mat-header-cell>
                     <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
                   </ng-container>
 
                   <ng-container matColumnDef="period">
-                    <mat-header-cell *matHeaderCellDef>Período</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Período</mat-header-cell>
                     <mat-cell *matCellDef="let row"> {{row.period.periodName}} ({{row.period.year}})</mat-cell>
                   </ng-container>
 
 
                   <ng-container matColumnDef="request">
-                    <mat-header-cell *matHeaderCellDef>Solicitudes</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Solicitudes</mat-header-cell>
                     <mat-cell *matCellDef="let row">{{row.reqCount}}</mat-cell>
                   </ng-container>
 
                   <ng-container matColumnDef="status">
-                    <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Estatus</mat-header-cell>
                     <mat-cell *matCellDef="let row">
                       <mat-chip class="small">{{ getStatusGroupName(row.status) }}</mat-chip>
                     </mat-cell>
@@ -220,13 +224,9 @@
                     *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
                   </mat-row>
                 </table>
-
+                <!--Paginas-->
+                <mat-paginator #matPaginatorCreatedGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
               </div>
-
-              <!--Paginas-->
-
-              <mat-paginator #matPaginatorCreatedGroups [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
-
             </div>
 
           </mat-card-content>
@@ -323,13 +323,9 @@
                   <mat-row *matRowDef="let row; columns: ['name', 'course', 'level', 'teacher', 'actions']">
                   </mat-row>
                 </table>
-
+                <!--Paginas-->
+                <mat-paginator #matPaginatorGroupsEvaluated [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
               </div>
-
-              <!--Paginas-->
-
-              <mat-paginator #matPaginatorGroupsEvaluated [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
-
             </div>
 
           </mat-card-content>
