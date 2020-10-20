@@ -107,3 +107,7 @@ table {
   min-width: 100px;
   max-width: 100px;
 }
+
+#tableExcelReport, #tablePdfReportHead, #tablePdfReport, #tablePdfActHead, #tablePdfAct{
+  display: none;
+}
