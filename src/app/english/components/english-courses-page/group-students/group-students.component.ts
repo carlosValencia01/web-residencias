@@ -146,7 +146,7 @@ export class GroupStudentsComponent implements OnInit {
         this.requestCourseProv.declineRequest(student).subscribe(updated => {
           if (updated) {
             Swal.fire({
-              title: 'Alumno declinado con exito!',
+              title: 'Alumno declinado con éxito!',
               showConfirmButton: false,
               timer: 2500,
               type: 'success'

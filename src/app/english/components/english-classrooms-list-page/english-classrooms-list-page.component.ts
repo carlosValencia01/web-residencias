@@ -307,7 +307,7 @@ export class EnglishClassroomsListPageComponent implements OnInit {
       this.dialog.closeAll();
       this.ngOnInit();
       Swal.fire({
-        title: 'Aula registrada con exito!',
+        title: 'Aula registrada con éxito!',
         showConfirmButton: false,
         timer: 2500,
         type: 'success'

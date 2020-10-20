@@ -598,7 +598,7 @@ export class EnglishCoursesPageComponent implements OnInit {
             this.englishCourseProv.updateEnglishCourse(course._id, data).subscribe(res => {
               if (res) {
                 Swal.fire({
-                  title: 'Curso modificado con exito!',
+                  title: 'Curso modificado con éxito!',
                   showConfirmButton: false,
                   timer: 2500,
                   type: 'success'
@@ -985,7 +985,7 @@ export class EnglishCoursesPageComponent implements OnInit {
           if (res) {
             console.log("Errores al modificar en la BD: "+res.err);
             Swal.fire({
-              title: 'Grupo cerrado con exito!',
+              title: 'Grupo cerrado con éxito!',
               showConfirmButton: false,
               timer: 2500,
               type: 'success'

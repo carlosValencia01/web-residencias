@@ -81,7 +81,7 @@ export class AddStudentsGroupModalComponent implements OnInit {
           if (updated) {
             this.getRequest(this.data.groupOrigin);
             Swal.fire({
-              title: 'Alumno agregado con exito!',
+              title: 'Alumno agregado con éxito!',
               showConfirmButton: false,
               timer: 2500,
               type: 'success'
