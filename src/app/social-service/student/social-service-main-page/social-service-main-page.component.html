@@ -273,7 +273,7 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="presentationDownloaded && savedSchedule && workPlanProjectDownloaded" class="text-center">
+            <div *ngIf="presentationDownloaded && savedSchedule && workPlanProjectDownloaded && (validateSolicitudePhase() === 'register' || validateSolicitudePhase() === 'reevaluate')" class="text-center">
               <div class="text-right">
                 <button mat-button type="button" class="mt-2" (click)="downloadPresentation()">
                   Descargar Carta de presentación
@@ -288,6 +288,9 @@
                       <label for="presentation" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
                         <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
                         <div [ngSwitch]="presentation">
+                          <div *ngSwitchCase="'upload'">
+                            <span mat-line class="badge badge-pill badge-success">CARGADO</span>
+                          </div>
                           <div *ngSwitchCase="'send'">
                             <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                           </div>
@@ -302,8 +305,20 @@
                           </div>
                         </div>
                       </label>
+                      <p *ngIf="['reevaluate', 'upload'].includes(presentation)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
+                      <div class="text-center" *ngIf="presentation === 'reevaluate'">
+                        <button mat-icon-button matSuffix
+                                matTooltipClass="bg-danger"
+                                [matTooltip]="filesStatus['presentation'].message"
+                                matTooltipPosition="above"
+                                [attr.aria-label]="'show information'"
+                                style="margin-left: auto;"
+                                type="button">
+                          <mat-icon class="text-danger">info</mat-icon>
+                        </button>
+                      </div>
                       <input type="file" id="presentation" (change)="onFileChange($event)"
-                             hidden="hidden" accept="application/pdf">
+                             hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFile('presentation')">
                     </mat-card-content>
                   </mat-card>
                 </div>
@@ -314,6 +329,9 @@
                       <label for="acceptance" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
                         <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
                         <div [ngSwitch]="acceptance">
+                          <div *ngSwitchCase="'upload'">
+                            <span mat-line class="badge badge-pill badge-success">CARGADO</span>
+                          </div>
                           <div *ngSwitchCase="'send'">
                             <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                           </div>
@@ -328,8 +346,20 @@
                           </div>
                         </div>
                       </label>
+                      <p *ngIf="['reevaluate', 'upload'].includes(acceptance)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
+                      <div class="text-center"  *ngIf="acceptance === 'reevaluate'">
+                        <button mat-icon-button matSuffix
+                                matTooltipClass="bg-danger"
+                                [matTooltip]="filesStatus['acceptance'].message"
+                                matTooltipPosition="above"
+                                [attr.aria-label]="'show information'"
+                                style="margin-left: auto;"
+                                type="button">
+                          <mat-icon class="text-danger">info</mat-icon>
+                        </button>
+                      </div>
                       <input type="file" id="acceptance" (change)="onFileChange($event)"
-                             hidden="hidden" accept="application/pdf">
+                             hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFile('acceptance')">
                     </mat-card-content>
                   </mat-card>
                 </div>
@@ -340,6 +370,9 @@
                       <label for="workProject" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
                         <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
                         <div [ngSwitch]="workPlanProject">
+                          <div *ngSwitchCase="'upload'">
+                            <span mat-line class="badge badge-pill badge-success">CARGADO</span>
+                          </div>
                           <div *ngSwitchCase="'send'">
                             <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                           </div>
@@ -354,8 +387,20 @@
                           </div>
                         </div>
                       </label>
+                      <p *ngIf="['reevaluate', 'upload'].includes(workPlanProject)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
+                      <div class="text-center"  *ngIf="workPlanProject === 'reevaluate'">
+                        <button mat-icon-button matSuffix
+                                matTooltipClass="bg-danger"
+                                [matTooltip]="filesStatus['workPlanProject'].message"
+                                matTooltipPosition="above"
+                                [attr.aria-label]="'show information'"
+                                style="margin-left: auto;"
+                                type="button">
+                          <mat-icon class="text-danger">info</mat-icon>
+                        </button>
+                      </div>
                       <input type="file" id="workProject" (change)="onFileChange($event)"
-                             hidden="hidden" accept="application/pdf">
+                             hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFile('workPlanProject')">
                     </mat-card-content>
                   </mat-card>
                 </div>
@@ -366,6 +411,9 @@
                       <label for="commitment" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
                         <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
                         <div [ngSwitch]="commitment">
+                          <div *ngSwitchCase="'upload'">
+                            <span mat-line class="badge badge-pill badge-success">CARGADO</span>
+                          </div>
                           <div *ngSwitchCase="'send'">
                             <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                           </div>
@@ -380,8 +428,20 @@
                           </div>
                         </div>
                       </label>
+                      <p *ngIf="['reevaluate', 'upload'].includes(commitment)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
+                      <div class="text-center"  *ngIf="commitment === 'reevaluate'">
+                        <button mat-icon-button matSuffix
+                                matTooltipClass="bg-danger"
+                                [matTooltip]="filesStatus['commitment'].message"
+                                matTooltipPosition="above"
+                                [attr.aria-label]="'show information'"
+                                style="margin-left: auto;"
+                                type="button">
+                          <mat-icon class="text-danger">info</mat-icon>
+                        </button>
+                      </div>
                       <input type="file" id="commitment" (change)="onFileChange($event)"
-                             hidden="hidden" accept="application/pdf">
+                             hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFile('commitment')">
 <!--                      <button type="button" id="commitment" (click)="createCommitmentDocument()"-->
 <!--                             hidden="hidden">-->
 <!--                      </button>-->
@@ -393,6 +453,33 @@
                 <button mat-raised-button color="primary" class="w-50" (click)="uploadFiles()" [disabled]="validateUploadFiles()">Subir documentos</button>
               </div>
             </div>
+
+            <div *ngIf="validateSolicitudePhase() === 'send'">
+              <div class="row justify-content-center">
+                <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                  <mat-card style="height: 225px; width: 300px;">
+                    <mat-card-header class="flex-column align-items-center">
+                      <img alt="File" src="../../../../assets/imgs/reloj.png" style="width: 80px; height: 80px;">
+                      <h5 class="text-center mt-3">Sus documentos de solicitud de servicio social estan en <strong>revisión</strong></h5>
+                    </mat-card-header>
+                  </mat-card>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="validateSolicitudePhase() === 'approved'">
+              <div class="row justify-content-center">
+                <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                  <mat-card style="height: 225px; width: 300px;">
+                    <mat-card-header class="flex-column align-items-center">
+                      <img alt="File" src="../../../../assets/imgs/approved.png" style="width: 80px; height: 80px;">
+                      <h5 class="text-center mt-3">Sus documentos de solicitud de servicio social han sido <span class="text-success">aceptados</span></h5>
+                    </mat-card-header>
+                  </mat-card>
+                </div>
+              </div>
+            </div>
+
           </div>
         </mat-step>
       </mat-vertical-stepper>

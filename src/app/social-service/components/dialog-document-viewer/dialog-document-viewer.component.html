@@ -1,15 +1,12 @@
-<div class="card">
-  <div class="card-header" mat-dialog-title>
-    <h6 style="font-family: 'Calibri', 'Arial', sans-serif">{{title}}</h6>
-    <div class="d-flex justify-content-around">
-      <button mat-flat-button color="warn" style="width: 35%;" type="button" (click)="dialogResult(false)">Cancelar</button>
-      <button mat-flat-button color="primary" style="width: 35%;" type="button" (click)="dialogResult(true)">Aceptar</button>
-    </div>
+
+<div mat-dialog-title>
+  <h6 style="font-family: 'Calibri', 'Arial', sans-serif">{{title}}</h6>
+  <div class="d-flex justify-content-around">
+    <button mat-flat-button color="warn" style="width: 35%;" type="button" (click)="dialogResult(false)">Cancelar</button>
+    <button mat-flat-button color="primary" style="width: 35%;" type="button" (click)="dialogResult(true)">Aceptar</button>
   </div>
-  <div class="card-body" mat-dialog-content>
-    <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'100vh'" [useBrowserLocale]="true">
-    </ngx-extended-pdf-viewer>
-    <div class="xml-output" id="dataXML">
-    </div>
-  </div>
+</div>
+<div mat-dialog-content>
+  <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'100vh'" [useBrowserLocale]="true">
+  </ngx-extended-pdf-viewer>
 </div>

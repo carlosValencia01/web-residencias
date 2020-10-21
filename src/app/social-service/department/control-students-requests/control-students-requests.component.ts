@@ -468,12 +468,12 @@ export class ControlStudentsRequestsComponent implements OnInit {
         data.verification.solicitude !== 'approved' ? 'Solicitud enviada' :
         data.verification.presentation === 'noAssigned' ? 'Presentación sin oficio' :
         data.verification.presentation === 'assigned' ? 'Presentación por firmar' :
-        data.verification.presentation === 'sign' ? 'Recepción de solicitud' : 'Sin estatus',
+        ['sign', 'send'].includes(data.verification.presentation) ? 'Recepción de solicitud' : 'Sin estatus',
       nStatus:
         data.verification.solicitude !== 'approved' ? 0 :
           data.verification.presentation === 'noAssigned' ? 1 :
             data.verification.presentation === 'assigned' ? 2 :
-              data.verification.presentation === 'sign' ? 3 : 4,
+              ['sign', 'send'].includes(data.verification.presentation) ? 3 : 4,
       phase: data.verification.solicitude !== 'approved' ? data.verification.solicitude :
         data.verification.presentation !== 'approved' ? data.verification.presentation : 'none'
     };
@@ -500,7 +500,7 @@ export class ControlStudentsRequestsComponent implements OnInit {
               data.verification.acceptance === 'approved' &&
               data.verification.workPlanProject === 'approved' &&
               data.verification.commitment === 'approved' ? 'approved' :
-                data.verification.presentation === 'sign' &&
+                data.verification.presentation === 'send' &&
                 data.verification.acceptance === 'send' &&
                 data.verification.workPlanProject === 'send' &&
                 data.verification.commitment === 'send' ? 'send' :

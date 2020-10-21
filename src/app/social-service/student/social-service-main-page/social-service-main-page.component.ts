@@ -45,6 +45,9 @@ export class SocialServiceMainPageComponent implements OnInit {
   public acceptanceDoc: any; // Variable para guardar el estatus de la carta de aceptacion.
   public commitmentDoc: any; // Variable para guardar el estatus de la carta de compromiso.
 
+  // document status for department
+  public filesStatus = [];
+
   public workPlanProjectDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
   public presentationDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
   public totalHours: number; // variable para contabilizar las horas por semana.
@@ -106,6 +109,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       if ( res.controlStudent.months.length !== 0  ) { this.savedSchedule = true; }
       this.presentationDownloaded = res.controlStudent.verification.presentationDownloaded;
       this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
+      this.filesStatus = res.controlStudent.verificationDepartment;
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
@@ -226,34 +230,38 @@ export class SocialServiceMainPageComponent implements OnInit {
     let nameDocument = '';
     switch (docType) {
       case 'presentation':
-        nameDocument = 'ITT-POC-08-03 Carta de Presentación de Servicio Social';
+        nameDocument = 'ITT-POC-08-03 Carta de Presentación de Servicio Social.pdf';
         if (this.presentation === 'reevaluate' || this.presentation === 'sign') {
           newF = false;
           const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-03'));
+          nameDocument = documentId[0].filename;
           fileId = documentId[0].fileIdInDrive;
         }
         break;
       case 'acceptance':
-        nameDocument = 'ITT-POC-08-00 Carta de aceptación de Servicio Social';
+        nameDocument = 'ITT-POC-08-00 Carta de aceptación de Servicio Social.pdf';
         if (this.acceptance === 'reevaluate') {
           newF = false;
           const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-00'));
+          nameDocument = documentId[0].filename;
           fileId = documentId[0].fileIdInDrive;
         }
         break;
       case 'workProject':
-        nameDocument = 'ITT-POC-08-04 Carta de Asignación-Plan de Trabajo';
+        nameDocument = 'ITT-POC-08-04 Carta de Asignación-Plan de Trabajo.pdf';
         if (this.workPlanProject === 'reevaluate') {
           newF = false;
           const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-04'));
+          nameDocument = documentId[0].filename;
           fileId = documentId[0].fileIdInDrive;
         }
         break;
       case 'commitment':
-        nameDocument = 'ITT-POC-08-05 Carta Compromiso de Servicio Social';
+        nameDocument = 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf';
         if (this.acceptance === 'reevaluate') {
           newF = false;
           const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-05'));
+          nameDocument = documentId[0].filename;
           fileId = documentId[0].fileIdInDrive;
         }
         break;
@@ -274,24 +282,44 @@ export class SocialServiceMainPageComponent implements OnInit {
           fileId: fileId
         };
 
-        this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then( response => {
+        this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then( async response => {
           if (response) {
             switch (docType) {
               case 'presentation':
-                this.presentationDoc = document;
-                this.presentation = 'send';
+                if (this.presentation === 'reevaluate') {
+                  await this.uploadFile(document.nameInDrive, document, 'presentation');
+                  this.presentation = 'send';
+                } else {
+                  this.presentationDoc = document;
+                  this.presentation = 'upload';
+                }
                 break;
               case 'acceptance':
-                this.acceptanceDoc = document;
-                this.acceptance = 'send';
+                if (this.acceptance === 'reevaluate') {
+                  await this.uploadFile(document.nameInDrive, document, 'acceptance');
+                  this.acceptance = 'send';
+                } else {
+                  this.acceptanceDoc = document;
+                  this.acceptance = 'upload';
+                }
                 break;
               case 'workProject':
-                this.workPlanProjectDoc = document;
-                this.workPlanProject = 'send';
+                if (this.workPlanProject === 'reevaluate') {
+                  await this.uploadFile(document.nameInDrive, document, 'workPlanProject');
+                  this.workPlanProject = 'send';
+                } else {
+                  this.workPlanProjectDoc = document;
+                  this.workPlanProject = 'upload';
+                }
                 break;
               case 'commitment':
-                this.commitmentDoc = document;
-                this.commitment = 'send';
+                if (this.commitment === 'reevaluate') {
+                  await this.uploadFile(document.nameInDrive, document, 'commitment');
+                  this.commitment = 'send';
+                } else {
+                  this.commitmentDoc = document;
+                  this.commitment = 'upload';
+                }
                 break;
             }
           }
@@ -301,28 +329,32 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   validateUploadFiles() {
-    return this.presentation !== 'send' ||
-            this.acceptance !== 'send' ||
-            this.workPlanProject !== 'send' ||
-            this.commitment !== 'send';
+    return this.presentation !== 'upload' ||
+            this.acceptance !== 'upload' ||
+            this.workPlanProject !== 'upload' ||
+            this.commitment !== 'upload';
   }
 
   async uploadFiles() {
-    await this.uploadFile(this.presentationDoc.nameInDrive, this.presentationDoc);
-    await this.uploadFile(this.acceptanceDoc.nameInDrive, this.acceptanceDoc);
-    await this.uploadFile(this.workPlanProjectDoc.nameInDrive, this.workPlanProjectDoc);
-    await this.uploadFile(this.commitmentDoc.nameInDrive, this.commitmentDoc);
+    const documents = [this.presentationDoc, this.acceptanceDoc, this.workPlanProjectDoc, this.commitmentDoc];
+    const details = ['presentation', 'acceptance', 'workPlanProject', 'commitment'];
+    for (let n = 0; n < documents.length; n++) {
+      await this.uploadFile(documents[n].nameInDrive, documents[n], details[n]);
+    }
+    this.ngOnInit();
   }
 
-  uploadFile(nameDocument, document) {
+  uploadFile(nameDocument, document, detailDocument) {
     this.loadingService.setLoading(true);
     // Cargar el documento a Drive, ya debe de existir su registro y base de datos
     this.controlStudentProvider.uploadFile2(document).subscribe( async updated => {
         if (updated.action === 'create file') {
           const documentInfo = {
-            filename: updated.name,
-            type: 'DRIVE',
-            fileIdInDrive: updated.fileId,
+            doc: {
+              filename: updated.name,
+              type: 'DRIVE',
+              fileIdInDrive: updated.fileId,
+            },
             status: {
               name: 'EN PROCESO',
               message: `Se subio el ${nameDocument} por primera vez`
@@ -331,6 +363,10 @@ export class SocialServiceMainPageComponent implements OnInit {
           // Actualizar información del documento subido a
           await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo).subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
+              this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {['verification.' + detailDocument]: 'send'})
+                .subscribe( () => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
+                });
             },
             err => {
               console.log(err);
@@ -350,6 +386,10 @@ export class SocialServiceMainPageComponent implements OnInit {
             .subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
                 nameDocument + ' actualizado.');
+              this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {['verification.' + detailDocument]: 'send'})
+                .subscribe( () => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
+                });
             }, err => {
               console.log(err);
             }, () => this.loadingService.setLoading(false));
@@ -361,11 +401,47 @@ export class SocialServiceMainPageComponent implements OnInit {
       });
   }
 
+  disabledUploadFile(document): boolean {
+    let dis = false;
+    switch (document) {
+      case 'presentation':
+        dis = ['approved', 'send'].includes(this.presentation);
+        break;
+      case 'acceptance':
+        dis = ['approved', 'send'].includes(this.acceptance);
+        break;
+      case 'workPlanProject':
+        dis = ['approved', 'send'].includes(this.workPlanProject);
+        break;
+      case 'commitment':
+        dis = ['approved', 'send'].includes(this.commitment);
+        break;
+    }
+    return dis;
+  }
+
+  validateSolicitudePhase(): string {
+    return this.presentation === 'send' &&
+      this.acceptance === 'send' &&
+      this.workPlanProject === 'send' &&
+      this.commitment === 'send' ? 'send' :
+      this.presentation === 'reevaluate' ||
+      this.acceptance === 'reevaluate' ||
+      this.workPlanProject === 'reevaluate' ||
+      this.commitment === 'reevaluate' ? 'reevaluate' :
+        this.presentation === 'approved' &&
+        this.acceptance === 'approved' &&
+        this.workPlanProject === 'approved' &&
+        this.commitment === 'approved' ? 'approved' : 'register';
+  }
+
   validateDocumentViewer(pdf, title) {
     return new Promise((resolve) => {
       const dialogRef = this.dialog.open(DialogDocumentViewerComponent, {
         data: {document: pdf, title: title},
-        hasBackdrop: true
+        hasBackdrop: true,
+        minWidth: '700px',
+        maxWidth: '1000px'
       });
       dialogRef.afterClosed().subscribe(result => {
         resolve(result);
