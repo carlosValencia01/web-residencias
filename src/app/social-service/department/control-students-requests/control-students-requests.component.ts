@@ -468,14 +468,57 @@ export class ControlStudentsRequestsComponent implements OnInit {
         data.verification.solicitude !== 'approved' ? 'Solicitud enviada' :
         data.verification.presentation === 'noAssigned' ? 'Presentación sin oficio' :
         data.verification.presentation === 'assigned' ? 'Presentación por firmar' :
-        ['sign', 'send'].includes(data.verification.presentation) ? 'Recepción de solicitud' : 'Sin estatus',
+          data.verification.presentation === 'send' &&
+          data.verification.acceptance === 'send' &&
+          data.verification.workPlanProject === 'send' &&
+          data.verification.commitment === 'send' ? 'Recepción de solicitud' :
+            data.verification.presentation === 'reevaluate' ||
+            data.verification.acceptance === 'reevaluate' ||
+            data.verification.workPlanProject === 'reevaluate' ||
+            data.verification.commitment === 'reevaluate' ? 'Recepción de solicitud' :
+              data.verification.presentation === 'send' ||
+              data.verification.acceptance === 'send' ||
+              data.verification.workPlanProject === 'send' ||
+              data.verification.commitment === 'send' ? 'Recepción de solicitud' :
+                data.verification.presentation === 'approved' &&
+                data.verification.acceptance === 'approved' &&
+                data.verification.workPlanProject === 'approved' &&
+                data.verification.commitment === 'approved' ? 'Solicitud aprobada' : 'Solicitud',
       nStatus:
         data.verification.solicitude !== 'approved' ? 0 :
           data.verification.presentation === 'noAssigned' ? 1 :
             data.verification.presentation === 'assigned' ? 2 :
-              ['sign', 'send'].includes(data.verification.presentation) ? 3 : 4,
+              data.verification.presentation === 'sign' ? 3 :
+                data.verification.presentation === 'send' &&
+                data.verification.acceptance === 'send' &&
+                data.verification.workPlanProject === 'send' &&
+                data.verification.commitment === 'send' ? 4 :
+                    data.verification.presentation === 'send' ||
+                    data.verification.acceptance === 'send' ||
+                    data.verification.workPlanProject === 'send' ||
+                    data.verification.commitment === 'send' ? 6 :
+                    data.verification.presentation === 'approved' &&
+                    data.verification.acceptance === 'approved' &&
+                    data.verification.workPlanProject === 'approved' &&
+                    data.verification.commitment === 'approved' ? 7 : 8,
       phase: data.verification.solicitude !== 'approved' ? data.verification.solicitude :
-        data.verification.presentation !== 'approved' ? data.verification.presentation : 'none'
+          data.verification.presentation === 'sign' ? 'sign' :
+          data.verification.presentation === 'send' &&
+          data.verification.acceptance === 'send' &&
+          data.verification.workPlanProject === 'send' &&
+          data.verification.commitment === 'send' ? 'send' :
+            data.verification.presentation === 'send' ||
+            data.verification.acceptance === 'send' ||
+            data.verification.workPlanProject === 'send' ||
+            data.verification.commitment === 'send' ? 'send' :
+              data.verification.presentation === 'reevaluate' ||
+              data.verification.acceptance === 'reevaluate' ||
+              data.verification.workPlanProject === 'reevaluate' ||
+              data.verification.commitment === 'reevaluate' ? 'reevaluate' :
+                data.verification.presentation === 'approved' &&
+                data.verification.acceptance === 'approved' &&
+                data.verification.workPlanProject === 'approved' &&
+                data.verification.commitment === 'approved' ? 'approved' : 'none'
     };
   }
 
@@ -504,10 +547,14 @@ export class ControlStudentsRequestsComponent implements OnInit {
                 data.verification.acceptance === 'send' &&
                 data.verification.workPlanProject === 'send' &&
                 data.verification.commitment === 'send' ? 'send' :
-                  data.verification.presentation === 'reevaluate' ||
-                  data.verification.acceptance === 'reevaluate' ||
-                  data.verification.workPlanProject === 'reevaluate' ||
-                  data.verification.commitment === 'reevaluate' ? 'reevaluate' : 'register'
+                  data.verification.presentation === 'send' ||
+                  data.verification.acceptance === 'send' ||
+                  data.verification.workPlanProject === 'send' ||
+                  data.verification.commitment === 'send' ? 'send' :
+                    data.verification.presentation === 'reevaluate' ||
+                    data.verification.acceptance === 'reevaluate' ||
+                    data.verification.workPlanProject === 'reevaluate' ||
+                    data.verification.commitment === 'reevaluate' ? 'reevaluate' : 'register'
     };
   }
 

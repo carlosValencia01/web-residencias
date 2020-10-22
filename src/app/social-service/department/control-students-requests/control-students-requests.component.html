@@ -77,6 +77,10 @@
                       <mat-icon class="material-icons text-info">assignment_turned_in</mat-icon>
                       <span>Firmar</span>
                     </button>
+                    <button mat-menu-item *ngIf="row.nStatus === 4 || row.nStatus === 6" routerLink="/social-service/validateSolicitudeDocuments" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">check_circle</mat-icon>
+                      <span>Evaluar solicitud</span>
+                    </button>
                   </mat-menu>
                 </td>
               </ng-container>
@@ -355,7 +359,7 @@
                         {{row[item]}}
                       </span>
                   <span mat-line *ngIf="index === 3" class="badge badge-pill"
-                        [ngClass]="{'register':'badge-info','send':'badge-warning','reevaluation':'badge-danger','approved':'badge-success'}[row['status']]">
+                        [ngClass]="{'register':'badge-info','send':'badge-warning','reevaluate':'badge-danger','approved':'badge-success'}[row['status']]">
                         {{row[item] === 'register' ? 'Pendiente' :
                           row[item] === 'send' ? 'Sin atender' :
                           row[item] === 'reevaluate' ? 'Reevaluación' : 'Aceptado'}}
