@@ -157,29 +157,116 @@ export class InitPresentationDocument {
     doc.setFontSize(8);
     doc.text('CARTA DE ASIGNACIÓN /', (this.WIDTH / 2), 35, { align: 'center' });
     doc.text('PLAN DE TRABAJO DEL PRESTADOR DE SERVICIO SOCIAL ITT-POC-08-04', (this.WIDTH / 2), 40, { align: 'center' });
-
     // Cuadro de Datos personales
     doc.setFontSize(10);
     doc.setFont(this.FONT, 'Bold');
     doc.text('DATOS DEL PRESTADOR DE SERVICIO SOCIAL', this.MARGIN.LEFT, 55, { align: 'left' });
-    doc.rect(this.MARGIN.LEFT, 58, this.WIDTH - (this.MARGIN.RIGHT * 2), 32);
+    doc.rect(this.MARGIN.LEFT, 58, this.WIDTH - (this.MARGIN.RIGHT * 2), 35);
     doc.setFont(this.FONT, 'Normal');
-    doc.text(`NOMBRE COMPLETO: ${this._request.student.fullName}`, this.MARGIN.LEFT + 2, 62, { align: 'left' });
-    doc.text(`EDAD: EDAD`, this.MARGIN.LEFT + 52, 62, { align: 'left' });
-    doc.text(`SEXO: ${this._request.student.sex}`, this.MARGIN.LEFT + 2, 69, { align: 'left' });
-    doc.text(`TEL: ${this._request.student.phone}`, this.MARGIN.LEFT + 18, 69, { align: 'left' });
-    doc.text(`DIRECCIÓN: ${this._request.student.street} ${this._request.student.suburb}`, this.MARGIN.LEFT + 58, 69, { align: 'left' });
-    doc.text(`CARRERA: ${this._request.student.career}`, this.MARGIN.LEFT + 2, 75, { align: 'left' });
-    doc.text(`SEMESTRE: ${this._request.student.semester}`, this.MARGIN.LEFT + 62, 75, { align: 'left' });
-    doc.text(`No. DE CONTROL: ${this._request.student.controlNumber}`, this.MARGIN.LEFT + 2, 82, { align: 'left' });
-    doc.text(`No. DE CREDITOS CUBIERTOS: ${this._request.periodId.periodName}`, this.MARGIN.LEFT + 2, 82, { align: 'left' });
+    const nombre = `NOMBRE COMPLETO: ${this._request.student.fullName}    EDAD: XX    SEXO:X`;
+    doc.text(nombre, this.MARGIN.LEFT + 2, 62, { align: 'left' });
+    const direccion = `DIRECCION: Calle siempreviva #123 colonia abcdefg Tepic, Nayarit   TEL: 1234567890`
+    doc.text(direccion, this.MARGIN.LEFT + 2, 69, { align: 'left' });
+    doc.text(`                    CALLE Y NUMERO     COLONIA       CIUDAD Y ESTADO`, this.MARGIN.LEFT + 2, 76, { align: 'left' });
+    const carrera = `CARRERA: ${this._request.student.career}     SEMESTRE: ${this._request.student.semester}`;
+    doc.text(carrera, this.MARGIN.LEFT + 2, 83, { align: 'left' });
+    const noCtrol = `No. DE CONTROL:   ${this._request.student.controlNumber}     No. DE CREDITOS CUBIERTOS:  XX.X%`;
+    doc.text(noCtrol, this.MARGIN.LEFT + 2, 90, { align: 'left' });
 
     // Cuadro de Datos del programa
-    doc.setFont(this.FONT, 'Bold');
-    doc.text('DATOS DEL PROGRAMA', this.MARGIN.LEFT, 92, { align: 'left' });
-    doc.rect(this.MARGIN.LEFT, 95, this.WIDTH - (this.MARGIN.RIGHT * 2), 108);
-    doc.setFont(this.FONT, 'Normal');
 
+
+    doc.setFontSize(10);
+    doc.setFont(this.FONT, 'Bold');
+    doc.text('DATOS DEL PROGRAMA', this.MARGIN.LEFT, 99, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT, 102, this.WIDTH - (this.MARGIN.RIGHT * 2), 138); // rectangulo completo
+    doc.rect(this.MARGIN.LEFT, 102, (this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2, 40); // ya esta bien
+    doc.rect(this.MARGIN.LEFT, 102, (this.WIDTH - (this.MARGIN.RIGHT * 2)), 40); // ya esta bien
+    doc.setFont(this.FONT, 'Normal');
+    doc.text('NOMBRE', this.MARGIN.LEFT + 2, 107, { align: 'left' });
+    doc.text('OBJETIVO', ((this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2) + 22, 107, { align: 'left' });
+
+    const programName = this._request.dependencyProgramName;
+    this.justifyText(doc,
+      programName,
+      {x: this.MARGIN.LEFT + 2, y: 112}, ((this.WIDTH - (this.MARGIN.LEFT * 2)) / 2) - 5, 5, 10);
+
+    const programObjective = this._request.dependencyProgramObjective;
+    this.justifyText(doc,
+      programObjective,
+      {x: ((this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2) + 22, y: 112}, ((this.WIDTH - (this.MARGIN.LEFT * 2)) / 2) - 5 , 5, 10);
+      const actDesc = 'ACTIVIDADES A DESARROLLAR (Preguntar al responsable del programa acerca de las actividades que realizará y use el espacio necesario para describir adecuadamente, no se limite):';
+      this.justifyText(doc,
+        actDesc,
+        {x: this.MARGIN.LEFT + 2, y: 147}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
+    doc.text(this._request.dependencyActivities, this.MARGIN.LEFT + 2, 157, { align: 'left' });
+      
+    doc.rect(this.MARGIN.LEFT + 2, 192, this.WIDTH - (this.MARGIN.RIGHT * 2) - 4, 33); // HORARIO  225
+
+    doc.line(this.MARGIN.LEFT + 2, 201, this.WIDTH - (this.MARGIN.RIGHT) - 25 , 201); // 1 horizontal
+    doc.line(this.MARGIN.LEFT + 2, 206, this.WIDTH - (this.MARGIN.RIGHT) - 2 , 206); // 2 horizontal
+    doc.line(this.MARGIN.LEFT + 2, 212, this.WIDTH - (this.MARGIN.RIGHT) - 2 , 212); // 3 horizontal
+    doc.line(this.MARGIN.LEFT + 2, 218, this.WIDTH - (this.MARGIN.RIGHT) - 2 , 218); // ultima horizontal
+        // Lineas verticales de la tabla
+    doc.line(this.MARGIN.LEFT + 13, 201, this.MARGIN.LEFT + 13 , 212); // 1 vertical
+    doc.line(this.MARGIN.LEFT + 33, 201, this.MARGIN.LEFT + 33 , 212); // 2 vertical
+    doc.line(this.MARGIN.LEFT + 53, 201, this.MARGIN.LEFT + 53 , 212); // 3 vertical
+    doc.line(this.MARGIN.LEFT + 73, 201, this.MARGIN.LEFT + 73 , 212); // 4 vertical
+    doc.line(this.MARGIN.LEFT + 93, 201, this.MARGIN.LEFT + 93 , 212); // 5 vertical
+    doc.line(this.MARGIN.LEFT + 113, 201, this.MARGIN.LEFT + 113 , 212); // 6 vertical
+    doc.line(this.MARGIN.LEFT + 132, 201, this.MARGIN.LEFT + 132 , 212); // 7 vertical
+    doc.line(this.MARGIN.LEFT + 151, 192, this.MARGIN.LEFT + 151 , 212); // 8 vertical
+
+        // Verticales de los meses
+    doc.line(this.MARGIN.LEFT + 23, 218, this.MARGIN.LEFT + 23 , 225); // 1 vertical
+    doc.line(this.MARGIN.LEFT + 43, 218, this.MARGIN.LEFT + 43 , 225); // 2 vertical
+    doc.line(this.MARGIN.LEFT + 63, 218, this.MARGIN.LEFT + 63 , 225); // 3 vertical
+    doc.line(this.MARGIN.LEFT + 83, 218, this.MARGIN.LEFT + 83 , 225); // 4 vertical
+    doc.line(this.MARGIN.LEFT + 103, 218, this.MARGIN.LEFT + 103 , 225); // 5 vertical
+    doc.line(this.MARGIN.LEFT + 123, 218, this.MARGIN.LEFT + 123 , 225); // 6 vertical
+    doc.line(this.MARGIN.LEFT + 151, 218, this.MARGIN.LEFT + 151 , 225); // ultmina vertical
+
+
+    doc.text(`HORARIO`, this.MARGIN.LEFT + 55, 198, { align: 'left' });
+    doc.setFontSize(8);
+    doc.text(`Total`, this.MARGIN.LEFT + 156, 200, { align: 'left' });
+
+    doc.text(`Día`, this.MARGIN.LEFT + 4, 204, { align: 'left' });
+    doc.text(`Lunes`, this.MARGIN.LEFT + 14, 204, { align: 'left' });
+    doc.text(`Martes`, this.MARGIN.LEFT + 34, 204, { align: 'left' });
+    doc.text(`Miércoles`, this.MARGIN.LEFT + 54, 204, { align: 'left' });
+    doc.text(`Jueves`, this.MARGIN.LEFT + 74, 204, { align: 'left' });
+    doc.text(`Viernes`, this.MARGIN.LEFT + 94, 204, { align: 'left' });
+    doc.text(`Sábado`, this.MARGIN.LEFT + 114, 204, { align: 'left' });
+    doc.text(`Domingo`, this.MARGIN.LEFT + 133, 204, { align: 'left' });
+    doc.text(`Horas/Semana`, this.MARGIN.LEFT + 152, 204, { align: 'left' });
+
+    doc.setFontSize(9);
+    doc.text(`Hora`, this.MARGIN.LEFT + 4, 210, { align: 'left' });
+    doc.text(this._request.schedule[0], this.MARGIN.LEFT + 14, 210, { align: 'left' });
+    doc.text(this._request.schedule[1], this.MARGIN.LEFT + 34, 210, { align: 'left' });
+    doc.text(this._request.schedule[2], this.MARGIN.LEFT + 54, 210, { align: 'left' });
+    doc.text(this._request.schedule[3], this.MARGIN.LEFT + 74, 210, { align: 'left' });
+    doc.text(this._request.schedule[4], this.MARGIN.LEFT + 94, 210, { align: 'left' });
+    doc.text(this._request.schedule[5], this.MARGIN.LEFT + 114, 210, { align: 'left' });
+    doc.text(this._request.schedule[6], this.MARGIN.LEFT + 133, 210, { align: 'left' });
+    doc.text(`21 horas`, this.MARGIN.LEFT + 154, 210, { align: 'left' });
+
+    doc.text(`PERIODO DE REALIZACIÓN (MESES)`, ((this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2) - 10 , 216, { align: 'left' });
+    doc.text(this._request.months[0], this.MARGIN.LEFT + 4, 223, { align: 'left' });
+    doc.text(this._request.months[1], this.MARGIN.LEFT + 24, 223, { align: 'left' });
+    doc.text(this._request.months[2], this.MARGIN.LEFT + 44, 223, { align: 'left' });
+    doc.text(this._request.months[3], this.MARGIN.LEFT + 64, 223, { align: 'left' });
+    doc.text(this._request.months[4], this.MARGIN.LEFT + 84, 223, { align: 'left' });
+    doc.text(this._request.months[5], this.MARGIN.LEFT + 104, 223, { align: 'left' });
+    doc.text(`24 semanas`, this.MARGIN.LEFT + 153, 223, { align: 'left' });
+        //225
+    let inside = 'no';
+    if (this._request.dependencyProgramLocationInside) {inside = 'si'; }
+    doc.text(`EL SERVICIO SOCIAL LO REALIZARA DENTRO DE LAS INSTALACIONES DE LA DEPENDENCIA:` , this.MARGIN.LEFT + 2, 228, { align: 'left' });
+    doc.text(`              ${inside}` , this.MARGIN.LEFT + 2, 233, { align: 'left' });
+    doc.text(`DONDE:  ${this._request.dependencyProgramLocation}` , this.MARGIN.LEFT + 2, 238, { align: 'left' });
+    // 240
     // Footer
     doc.setFont(this.FONT, 'Bold');
     doc.setTextColor(189, 189, 189);

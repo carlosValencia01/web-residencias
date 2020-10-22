@@ -264,8 +264,8 @@
                     <mat-card-header class="flex-column align-items-center">
                       <img alt="File" src="../../../../assets/imgs/approved.png" style="width: 80px; height: 80px;">
                       <h5 class="text-center mt-3"><strong>Carta de asignación - Plan de trabajo</strong></h5>
-                      <button mat-raised-button type="button">
-                        Descargar Carta
+                      <button mat-raised-button type="button" (click)="downloadAsignation()">
+                        Descargar Carta de Asignación
                         <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
                       </button>
                     </mat-card-header>
@@ -274,13 +274,17 @@
               </div>
             </div>
             <div *ngIf="presentationDownloaded && savedSchedule && workPlanProjectDownloaded" class="text-center">
-              <div class="text-right">
+              <div class="d-flex justify-content-around align-items-center my-3">
                 <button mat-button type="button" class="mt-2" (click)="downloadPresentation()">
-                  Descargar Carta de presentación
+                  Descargar Carta de Presentación
+                  <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
+                </button>
+                <button mat-button type="button" class="mt-2" (click)="downloadAsignation()">
+                  Descargar Carta de Asignación/Plan de trabajo
                   <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
                 </button>
               </div>
-              <div class="row">
+              <div class="row margen">
                 <div class="col-3">
                   <mat-card class="my-2 solicitude-document">
                     <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
