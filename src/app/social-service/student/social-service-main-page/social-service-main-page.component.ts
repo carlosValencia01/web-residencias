@@ -12,6 +12,11 @@ import { FormBuilder, FormControl, FormGroup, PatternValidator, Validators } fro
 import {MatDialog} from '@angular/material';
 import {DialogVerificationComponent} from '../../components/dialog-verification/dialog-verification.component';
 import {DialogDocumentViewerComponent} from '../../components/dialog-document-viewer/dialog-document-viewer.component';
+import {InitRequestModel} from '../../../entities/social-service/initRequest.model';
+import {InitPresentationDocument} from '../../../entities/social-service/initPresentationDocument';
+import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
+import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+
 
 moment.locale('es');
 
@@ -23,6 +28,24 @@ moment.locale('es');
 export class SocialServiceMainPageComponent implements OnInit {
   selectedFile: File = null;
   @ViewChild('dialogverification') dialogVerification: DialogVerificationComponent;
+
+  formDocument: InitRequestModel;
+  initRequest: InitPresentationDocument;
+
+  constructor(private loadingService: LoadingService,
+              private cookiesService: CookiesService,
+              private studentProvider: StudentProvider,
+              private inscriptionsProv: InscriptionsProvider,
+              private notificationsService: NotificationsServices,
+              private controlStudentProvider: ControlStudentProv,
+              private formBuilder: FormBuilder,
+              public dialog: MatDialog,
+              public imgSrv: ImageToBase64Service) {
+    // Obtencion de la informacion del alumno, id, nombre, carrera, revisar en localStorage
+    this.userData = this.cookiesService.getData().user;
+    this._idStudent = this.userData._id;
+    this.initRequest = new InitPresentationDocument(this.imgSrv, this.cookiesService);
+  }
 
   public loaded = false; // Carga de la pagina
   public permission: boolean; // Permiso para acceder a servicio social
@@ -50,12 +73,14 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   public workPlanProjectDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
   public presentationDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
+  public asignationDownloaded = false; // Variable para saber si la carta de asignacion se ha descargado
   public totalHours: number; // variable para contabilizar las horas por semana.
   public total: string; // variable para mostrar el total de horas.
   public verificationSchedule = false; // variable para saber si se cumplen las horas minimas por semana.
   public dayList: Array<any>; // arreglo con los horarios por dia.
   private userData; // Datos del usuario
   public savedSchedule = false; // variable para saber si ya se guardo el plan de trabajo
+  public studentData: Array<any>;
   public controlNumber;
   private _idStudent: string; // ID del estudiante
   private folderId: string; // Id del folder del estudiante para servicio social
@@ -73,18 +98,6 @@ export class SocialServiceMainPageComponent implements OnInit {
     { hour: 'Hora', monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '', total: '' }
   ];
 
-  constructor(private loadingService: LoadingService,
-              private cookiesService: CookiesService,
-              private studentProvider: StudentProvider,
-              private inscriptionsProv: InscriptionsProvider,
-              private notificationsService: NotificationsServices,
-              private controlStudentProvider: ControlStudentProv,
-              private formBuilder: FormBuilder,
-              public dialog: MatDialog) {
-    // Obtencion de la informacion del alumno, id, nombre, carrera, revisar en localStorage
-    this.userData = this.cookiesService.getData().user;
-    this._idStudent = this.userData._id;
-  }
 
   ngOnInit() {
     this.loadingService.setLoading(true);
@@ -213,6 +226,47 @@ export class SocialServiceMainPageComponent implements OnInit {
         .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
     }, () =>     this.loadingService.setLoading(false) );
   }
+
+
+  downloadAsignation() {
+    this.loadingService.setLoading(true);
+    const asignation = this.documents.filter(f => f.filename.toString().includes('Asignación'));
+    let asignationId = '';
+    console.log(asignation[1].fileIdInDrive);
+    try {
+      asignationId = asignation[asignation.length - 1].fileIdInDrive;
+    } catch (e) {
+      console.log(e);
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
+      return;
+    }
+    this.controlStudentProvider.getFile(asignationId, `${this.userData.email}-ASIGNACION.pdf`).subscribe(async (res) => {
+      const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
+      const downloadLink = document.createElement('a');
+      const fileName = this.userData.email + '-ASIGNACION' + '.pdf';
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+      this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
+      // el documento se descargo correctamente
+      if ( !this.workPlanProjectDownloaded ) {// solo actualizar el status y la fecha la primera vez que se descarga
+        this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
+          {'verification.workPlanProjectDownloaded': true, 'verification.workPlanProjectDateDownload' : new Date()})
+          .subscribe(() => {
+            this.ngOnInit();
+          }, () => {
+            this.notificationsService.showNotification(eNotificationType.ERROR,
+              'Ha sucedido un error al descargar su Carta de Asignación', 'Vuelva a intentarlo mas tarde');
+          });
+      }
+    }, error => {
+      this.loadingService.setLoading(false);
+      const message = JSON.parse(error._body).message || 'Error al descargar el documento, intentelo mas tarde';
+      this.notificationsService
+        .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
+    }, () =>     this.loadingService.setLoading(false) );
+    }
 
 
   public bufferToBase64(buffer) {
@@ -522,9 +576,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
         {'schedule': this.dayList, 'months': scheduleMonths})
         .subscribe(() => {
-          this.notificationsService.showNotification(eNotificationType.SUCCESS,
-            'Se ha registrado correctamente el plan de trabajo', '');
-            this.ngOnInit();
+          this.saveWorkPlan();
         }, () => {
           this.notificationsService.showNotification(eNotificationType.ERROR,
             'Ha sucedido un error, no se ha registrado el plan de trabajo', 'Vuelva a intentarlo mas tarde');
@@ -532,4 +584,105 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
     });
   }// registerSchedule
+
+  saveWorkPlan() {
+    this.controlStudentProvider.getStudentInformationByControlId(this.controlStudentId)
+    .subscribe(resp => {
+      this.studentData = resp;
+    }, err => {
+      console.log(err);
+    });
+    this.controlStudentProvider.getControlStudentById(this.controlStudentId)
+    .subscribe( resp => {
+      this.formDocument = this._castToDoc(resp.controlStudent);
+      this.initRequest.setPresentationRequest(this.formDocument);
+      const binary = this.initRequest.documentSend(eSocialFiles.ASIGNACION);
+      this.saveDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
+    }, err => {
+      console.log(err);
+    });
+  }// saveWorkPlan
+
+  private _castToDoc(data) {
+    return {
+      student: data.studentId,
+      dependencyName: data.dependencyName,
+      dependencyPhone: data.dependencyPhone,
+      dependencyAddress: data.dependencyAddress,
+      dependencyHeadline: data.dependencyHeadline,
+      dependencyHeadlinePosition: data.dependencyHeadlinePosition,
+      dependencyDepartment: data.dependencyDepartment,
+      dependencyDepartmentManager: data.dependencyDepartmentManager,
+      dependencyDepartmentManagerEmail: data.dependencyDepartmentManagerEmail,
+      dependencyProgramName: data.dependencyProgramName,
+      dependencyProgramModality: data.dependencyProgramModality,
+      initialDate: data.initialDate,
+      dependencyActivities: data.dependencyActivities,
+      dependencyProgramType: data.dependencyProgramType,
+      dependencyProgramObjective: data.dependencyProgramObjective,
+      dependencyProgramLocationInside: data.dependencyProgramLocationInside,
+      dependencyProgramLocation: data.dependencyProgramLocation,
+      tradeDocumentNumber: data.tradePresentationDocumentNumber,
+      months: data.months,
+      schedule: data.schedule
+    };
+  }
+
+  saveDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string) {
+    this.loadingService.setLoading(true);
+    const documentInfo = {
+      mimeType: 'application/pdf',
+      nameInDrive: 'ITT-POC-08-04 Carta de Asignación / Plan de Trabajo del Prestador de Servicio Social.pdf',
+      bodyMedia: document,
+      folderId: student.folderIdSocService.idFolderInDrive,
+      newF: statusDoc,
+      fileId: fileId
+    };
+
+    this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
+      async updated => {
+        if (updated.action === 'create file') {
+          const documentInfo4 = {
+            doc: {
+              filename: updated.name,
+              type: 'DRIVE',
+              fileIdInDrive: updated.fileId
+            },
+            status: {
+              name: 'ACEPTADO',
+              active: true,
+              message: 'Se envio por primera vez',
+              observation: 'Firmado por: ' + this.userData.name.fullName
+            }
+          };
+
+          await this.controlStudentProvider.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Asignación registrada correctamente.');
+            },
+            err => {
+              console.log(err);
+            }, () => this.loadingService.setLoading(false)
+          );
+        } else {
+          const docStatus = {
+            name: 'ACEPTADO',
+            active: true,
+            message: 'Se actualizo el documento'
+          };
+          await this.controlStudentProvider.updateDocumentLog(student._id, {filename: updated.filename, status: docStatus})
+            .subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Asignación actualizada correctamente.');
+            }, err => {
+              console.log(err);
+            }, () => this.loadingService.setLoading(false));
+        }
+      },
+      err => {
+        console.log(err);
+        this.loadingService.setLoading(false);
+      }
+    );
+  }
+
+
 }
