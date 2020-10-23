@@ -274,7 +274,7 @@
               </div>
             </div>
             <div *ngIf="presentationDownloaded && savedSchedule && workPlanProjectDownloaded && (validateSolicitudePhase() === 'register' || validateSolicitudePhase() === 'reevaluate')" class="text-center">
-              <div class="text-right">
+              <div class="d-flex justify-content-around">
                 <button mat-button type="button" class="mt-2" (click)="downloadPresentation()">
                   Descargar Carta de Presentación
                   <mat-icon matPrefix class="text-info">cloud_download</mat-icon>

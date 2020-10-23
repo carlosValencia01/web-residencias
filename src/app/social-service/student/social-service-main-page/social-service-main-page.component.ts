@@ -71,9 +71,8 @@ export class SocialServiceMainPageComponent implements OnInit {
   // document status for department
   public filesStatus = [];
 
-  public workPlanProjectDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
+  public workPlanProjectDownloaded = false; // Variable para saber cuando la carta de asignación ha sido descargada
   public presentationDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
-  public asignationDownloaded = false; // Variable para saber si la carta de asignacion se ha descargado
   public totalHours: number; // variable para contabilizar las horas por semana.
   public total: string; // variable para mostrar el total de horas.
   public verificationSchedule = false; // variable para saber si se cumplen las horas minimas por semana.
@@ -91,7 +90,6 @@ export class SocialServiceMainPageComponent implements OnInit {
   public verificationEmail: boolean; // Validacion de verificacion de email como primer paso del proceso de servicio social
   private documents: Array<any> = []; // Array para almacenar los documentos del estudiante
   public formSchedule: FormGroup;
-
 
   editField: string;
   scheduleList: Array<any> = [
@@ -164,7 +162,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   downloadSolicitude() {
     this.loadingService.setLoading(true);
-    const solicitude = this.documents.filter(f => f.filename.toString().includes('SOLICITUD'));
+    const solicitude = this.documents.filter(f => f.filename.toString().includes('ITT-POC-08-02'));
     let solicitudeId = '';
     try {
       solicitudeId = solicitude[0].fileIdInDrive;
@@ -173,10 +171,10 @@ export class SocialServiceMainPageComponent implements OnInit {
         'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
       return;
     }
-    this.controlStudentProvider.getFile(solicitudeId, `${this.userData.email}-SOLICITUD.pdf`).subscribe(async (res) => {
+    this.controlStudentProvider.getFile(solicitudeId, 'ITT-POC-08-02 Solicitud de Servicio Social.pdf').subscribe(async (res) => {
       const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
       const downloadLink = document.createElement('a');
-      const fileName = this.userData.email + '-SOLICITUD' + '.pdf';
+      const fileName = 'ITT-POC-08-02 Solicitud de Servicio Social.pdf';
       downloadLink.href = linkSource;
       downloadLink.download = fileName;
       downloadLink.click();
@@ -191,7 +189,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   downloadPresentation() {
     this.loadingService.setLoading(true);
-    const presentation = this.documents.filter(f => f.filename.toString().includes('Presentación'));
+    const presentation = this.documents.filter(f => f.filename.toString().includes('ITT-POC-08-03'));
     let presentationId = '';
     try {
       presentationId = presentation[0].fileIdInDrive;
@@ -200,10 +198,10 @@ export class SocialServiceMainPageComponent implements OnInit {
         'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
       return;
     }
-    this.controlStudentProvider.getFile(presentationId, `${this.userData.email}-PRESENTACION.pdf`).subscribe(async (res) => {
+    this.controlStudentProvider.getFile(presentationId, 'ITT-POC-08-03 Carta de Presentación de Servicio Social.pdf').subscribe(async (res) => {
       const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
       const downloadLink = document.createElement('a');
-      const fileName = this.userData.email + '-PRESENTACION' + '.pdf';
+      const fileName = 'ITT-POC-08-03 Carta de Presentación de Servicio Social.pdf';
       downloadLink.href = linkSource;
       downloadLink.download = fileName;
       downloadLink.click();
@@ -230,7 +228,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   downloadAsignation() {
     this.loadingService.setLoading(true);
-    const asignation = this.documents.filter(f => f.filename.toString().includes('Asignación'));
+    const asignation = this.documents.filter(f => f.filename.toString().includes('ITT-08-04'));
     let asignationId = '';
     console.log(asignation[1].fileIdInDrive);
     try {
@@ -241,10 +239,10 @@ export class SocialServiceMainPageComponent implements OnInit {
         'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
       return;
     }
-    this.controlStudentProvider.getFile(asignationId, `${this.userData.email}-ASIGNACION.pdf`).subscribe(async (res) => {
+    this.controlStudentProvider.getFile(asignationId, 'ITT-POC-08-04 Carta de Asignación-Plan de Trabajo.pdf').subscribe(async (res) => {
       const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
       const downloadLink = document.createElement('a');
-      const fileName = this.userData.email + '-ASIGNACION' + '.pdf';
+      const fileName = 'ITT-POC-08-04 Carta de Asignación-Plan de Trabajo.pdf';
       downloadLink.href = linkSource;
       downloadLink.download = fileName;
       downloadLink.click();
@@ -275,7 +273,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     }, ''));
   }
 
-  // Carga de Curriculum PDF a drive
+  // Carga de PDF a drive
   async onFileChange(event) {
     const reader = new FileReader();
     const docType = event.target.attributes.id.value;
