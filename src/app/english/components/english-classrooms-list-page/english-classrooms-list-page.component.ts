@@ -320,7 +320,7 @@ export class EnglishClassroomsListPageComponent implements OnInit {
 
     Swal.fire({
       title: 'Borrar Aula',
-      text: `¿Está seguro de eliminar el aula: ` + classroomName + ` ?`,
+      html: '¿Está seguro de eliminar el aula: <b>' + classroomName + '</b> ?',
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
