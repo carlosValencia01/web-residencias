@@ -203,16 +203,16 @@
         <table class="table table-bordered table-hover mt-2">
           <thead>
             <tr>
-              <th scope="col">Horas</th>
-              <th *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]" matTooltipPosition="above">
+              <th class="text-center" scope="col">Horas</th>
+              <th class="text-center" *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]" matTooltipPosition="above">
                 {{dayschedule[day].charAt(0)}}</th>
             </tr>
           </thead>
           <tbody>
             <ng-container *ngFor="let hour of dataSchedule; let i = index;">
               <tr class="table-row clickable-row" *ngIf="showHour(hour)">
-                <th scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}</th>
-                <td *ngFor="let day of weekdays; let j = index;" [class.status-available]="hour[j]=='available'"
+                <th class="text-center" scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}</th>
+                <td class="text-center" *ngFor="let day of weekdays; let j = index;" [class.status-available]="hour[j]=='available'"
                   [class.status-occupied]="hour[j]=='occupied'" [class.status-none]="hour[j]==''">
                 </td>
               </tr>
