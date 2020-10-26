@@ -316,7 +316,20 @@ export class EnglishClassroomsListPageComponent implements OnInit {
       error => { });
   }
 
-  deleteClassroom(classroomId, classroomName) {
+  deleteClassroom(classroom: IClassroom) {
+
+    if (this.verifyScheduleoccupied(classroom)) {
+      Swal.fire({
+        title: 'No se puede eliminar ya que el aula se encuentra ocupada!',
+        showConfirmButton: false,
+        timer: 2500,
+        type: 'error'
+      });
+      return;
+    }
+
+    const classroomId = classroom._id;
+    const classroomName = classroom.name;
 
     Swal.fire({
       title: 'Borrar Aula',
@@ -381,6 +394,11 @@ export class EnglishClassroomsListPageComponent implements OnInit {
     if (this.createScheduleClassroom()) {
       this.dialogRef.close(true);
     }
+  }
+
+  verifyScheduleoccupied(classroom:IClassroom):boolean{
+    const occupied = classroom.schedule.filter(hour=> hour.status=='occupied')
+    return occupied.length==0?false:true;
   }
 
   onUpdateClassroom() {
