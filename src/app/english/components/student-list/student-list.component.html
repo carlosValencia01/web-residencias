@@ -121,7 +121,7 @@
           <ng-container matColumnDef="status">
             <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
             <mat-cell *matCellDef="let row">
-              <mat-chip class="small">{{requestCourseStatus[row.status]}}</mat-chip>
+              <span class="badge badge-pill" style="background: #dadada;">{{requestCourseStatus[row.status]}}</span>
             </mat-cell>
           </ng-container>
 
