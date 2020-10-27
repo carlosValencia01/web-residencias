@@ -9,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 // Importar Servicios
 import { CookiesService } from 'src/app/services/app/cookie.service';
+import { LoadingService } from 'src/app/services/app/loading.service';
 
 // Importar Proveedores
 import { GroupProvider } from 'src/app/english/providers/group.prov';
@@ -42,6 +43,7 @@ export class EnglishTeachersListPageComponent implements OnInit {
     public dialog: MatDialog,
     private groupProv: GroupProvider,
     private employeeProv: EmployeeProvider,
+    private loadingService: LoadingService,
   ) {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
@@ -66,9 +68,11 @@ export class EnglishTeachersListPageComponent implements OnInit {
 
   private async _initTeachers(): Promise<void> {
     this.englishTeachersDataSource = new MatTableDataSource();
+    this.loadingService.setLoading(true);
     this.englishTeachers = await this._getEnglishTeachers();
     this.groups = await this._getGroups();
     this._fillTable(this.englishTeachers);
+    this.loadingService.setLoading(false);
   }
 
   private _getGroups(): Promise<any> {
