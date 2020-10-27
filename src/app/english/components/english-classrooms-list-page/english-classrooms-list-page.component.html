@@ -165,8 +165,8 @@
                 <tr class="table-row clickable-row" *ngFor="let course of dataSchedule; let i = index;">
                   <th (click)="selectHour(i)" scope="row">{{dataHours[i]}} -
                     {{getHour(getMinutes(dataHours[i])+segment)}}</th>
-                  <td *ngFor="let day of weekdays; let j = index;" [class.mat-button-selected]="course[j]==dataHours[i]"
-                    (click)="course[j]=(course[j]=='')?dataHours[i]:''">
+                  <td *ngFor="let day of weekdays; let j = index;" [class.status-occupied]="!this.hourIsAvailable(i,j)"
+                    [class.mat-button-selected]="course[j]==dataHours[i]" (click)="onSelectHour(i,j)">
                   </td>
                 </tr>
               </tbody>
@@ -204,16 +204,19 @@
           <thead>
             <tr>
               <th class="text-center" scope="col">Horas</th>
-              <th class="text-center" *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]" matTooltipPosition="above">
+              <th class="text-center" *ngFor="let day of weekdays" scope="col" [matTooltip]="dayschedule[day]"
+                matTooltipPosition="above">
                 {{dayschedule[day].charAt(0)}}</th>
             </tr>
           </thead>
           <tbody>
             <ng-container *ngFor="let hour of dataSchedule; let i = index;">
               <tr class="table-row clickable-row" *ngIf="showHour(hour)">
-                <th class="text-center" scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}</th>
-                <td class="text-center" *ngFor="let day of weekdays; let j = index;" [class.status-available]="hour[j]=='available'"
-                  [class.status-occupied]="hour[j]=='occupied'" [class.status-none]="hour[j]==''">
+                <th class="text-center" scope="row">{{dataHours[i]}} - {{getHour(getMinutes(dataHours[i])+segment)}}
+                </th>
+                <td class="text-center" *ngFor="let day of weekdays; let j = index;"
+                  [class.status-available]="hour[j]=='available'" [class.status-occupied]="hour[j]=='occupied'"
+                  [class.status-none]="hour[j]==''">
                 </td>
               </tr>
             </ng-container>

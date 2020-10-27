@@ -138,7 +138,9 @@ export class EnglishClassroomsListPageComponent implements OnInit {
       }
     } else {//Si no
       for (let i = 0; i < 6; i++) { //De lunes a Sabado
-        this.dataSchedule[hour][i] = ""; //Dejar de seleccionar esos dias
+        if (this.hourIsAvailable(hour, i)) { //Verificar que no se encuentre ocupada
+          this.dataSchedule[hour][i] = ""; //Dejar de seleccionar esos dias
+        }
       }
     }
   }
@@ -188,6 +190,16 @@ export class EnglishClassroomsListPageComponent implements OnInit {
 
       }
     });
+  }
+
+  onSelectHour(i, j) {
+    if (this.hourIsAvailable(i, j)) {
+      this.dataSchedule[i][j] = (this.dataSchedule[i][j] == '') ? this.dataHours[i] : '';
+    }
+  }
+
+  hourIsAvailable(i, j) {
+    return this.isAvailable(j + 1, this.getMinutes(this.dataHours[i])) && this.isAvailable(j + 1, this.getMinutes(this.dataHours[i] + 30))
   }
 
   showHour(hour): boolean { //Mostrar el renglon de la hora
@@ -261,7 +273,7 @@ export class EnglishClassroomsListPageComponent implements OnInit {
             day: day,
             startHour: startHour,
             endDate: endDate,
-            status: 'available'
+            status: this.isAvailable(day, startHour) ? 'available' : 'occupied'
           }
 
           this.scheduleClassroom.push(startData);
@@ -271,7 +283,7 @@ export class EnglishClassroomsListPageComponent implements OnInit {
             day: day,
             startHour: endDate,
             endDate: endDate + this.segment,
-            status: 'available'
+            status: this.isAvailable(day, endDate) ? 'available' : 'occupied'
           }
 
           this.scheduleClassroom.push(endData);
@@ -291,6 +303,16 @@ export class EnglishClassroomsListPageComponent implements OnInit {
       return false;
     };
 
+    return true;
+  }
+
+  isAvailable(day, startHour) {
+    if (this.scheduleSelected) {
+      const schedule = this.scheduleSelected.find(e => e.startHour == startHour && e.day == day && e.status == 'occupied');
+      if (schedule) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -368,11 +390,14 @@ export class EnglishClassroomsListPageComponent implements OnInit {
     this.dialogRef = this.dialog.open(this.dialogRefViewCreateClassroom, { hasBackdrop: true, height: '70%', width: '40%' });
   }
 
+  scheduleSelected = []; //Arreglo del horario del aula seleccionada
+
   openDialogUpdateClassroom(classroom) {
 
     this.segment = 60;
     this.createDataHours();
     this.generateSchedule();
+    this.scheduleSelected = classroom.schedule;
     this.getSchedule(classroom.schedule, 'time');
 
     this.updateClassroomForm = this.formBuilder.group({
@@ -396,9 +421,9 @@ export class EnglishClassroomsListPageComponent implements OnInit {
     }
   }
 
-  verifyScheduleoccupied(classroom:IClassroom):boolean{
-    const occupied = classroom.schedule.filter(hour=> hour.status=='occupied')
-    return occupied.length==0?false:true;
+  verifyScheduleoccupied(classroom: IClassroom): boolean {
+    const occupied = classroom.schedule.filter(hour => hour.status == 'occupied')
+    return occupied.length == 0 ? false : true;
   }
 
   onUpdateClassroom() {
