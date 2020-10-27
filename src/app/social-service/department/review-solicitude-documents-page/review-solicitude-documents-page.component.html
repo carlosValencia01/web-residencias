@@ -2,6 +2,9 @@
   <mat-card-header>
     <mat-card-title>Servicio social: Revisión de documentos de solicitud</mat-card-title>
     <mat-card-subtitle>Estudiante: {{student.fullName}}</mat-card-subtitle>
+    <button mat-icon-button (click)="location.back()" matTooltip="Regresar" class="text-danger" style="position: absolute; top: 5px; right: 5px;">
+      <mat-icon>cancel</mat-icon>
+    </button>
   </mat-card-header>
   <mat-card-content>
     <div class="lateral">

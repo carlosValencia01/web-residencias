@@ -5,6 +5,7 @@ import {SocialServiceMainPageComponent} from './student/social-service-main-page
 import {ReviewFirstDataPageComponent} from './department/review-first-data-page/review-first-data-page.component';
 import {ControlStudentsRequestsComponent} from './department/control-students-requests/control-students-requests.component';
 import {ReviewSolicitudeDocumentsPageComponent} from './department/review-solicitude-documents-page/review-solicitude-documents-page.component';
+import {RecordStudentPageComponent} from './department/record-student-page/record-student-page.component';
 
 // Rutas de alummno o Departamento de Servicio social
 const routes: Routes = [
@@ -24,6 +25,10 @@ const routes: Routes = [
   {
     path: 'validateSolicitudeDocuments',
     component: ReviewSolicitudeDocumentsPageComponent
+  },
+  {
+    path: 'recordStudent',
+    component: RecordStudentPageComponent
   },
   // Rutas de estudiante
   {

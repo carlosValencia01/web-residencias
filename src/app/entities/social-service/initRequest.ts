@@ -1,4 +1,3 @@
-import {IBoss} from '../reception-act/boss.model';
 import * as jsPDF from 'jspdf';
 import * as moment from 'moment';
 
@@ -42,6 +41,7 @@ export class InitRequest {
   };
   private responsibleSign: any;
   private signStudentDate: Date;
+  private documentStatus: any;
 
   constructor(
     public _request: InitRequestModel,
@@ -58,6 +58,10 @@ export class InitRequest {
   public setSignResponsibles(userData, signStudent) {
     this.responsibleSign = userData;
     this.signStudentDate = signStudent;
+  }
+
+  public setDocumentStatus(documents) {
+    this.documentStatus = documents;
   }
 
   private _getImageToPdf() {
@@ -96,6 +100,11 @@ export class InitRequest {
     switch (file) {
       case eSocialFiles.SOLICITUD: {
         document = this.socialServiceSolicitude().output('arraybuffer');
+        binary = this.bufferToBase64(document);
+        break;
+      }
+      case eSocialFiles.TARJETACONTROL: {
+        document = this.socialServiceControlCard().output('arraybuffer');
         binary = this.bufferToBase64(document);
         break;
       }
@@ -203,6 +212,159 @@ export class InitRequest {
     doc.text('Código ITT-POC-08-02', (this.WIDTH / 2), 262, { align: 'center' });
     doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
     doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
+    return doc;
+  }
+
+  // ************** CARTA DE SOLICITUD PARA LA REALIZACION DEL SERVICIO SOCIAL
+  public socialServiceControlCard(): jsPDF {
+    const doc = this.newDocumentTec(true, false);
+
+    const sentHistory = new Date();
+    doc.setTextColor(0, 0, 0);
+    // Title
+    doc.setFont(this.FONT, 'Bold');
+    doc.setFontSize(8);
+    doc.text('Tarjeta de Control de Servicio Social', (this.WIDTH / 2), 30, { align: 'center' });
+    doc.text('Código: ITT-POC-08-07   Revision: 1', (this.WIDTH / 2), 35, { align: 'center' });
+    doc.text('Referencia a la Norma ISO 9001:2015  8.2.3', (this.WIDTH / 2), 40, { align: 'center' });
+
+    doc.setFont(this.FONT, 'Normal');
+    doc.setFontSize(10);
+    doc.text('DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN', (this.WIDTH / 2), 50, { align: 'center' });
+    doc.text('TARJETA DE CONTROL DE SERVICIO SOCIAL', (this.WIDTH / 2), 55, { align: 'center' });
+
+    // Cuadro de Datos personales
+    doc.rect(this.MARGIN.LEFT, 60, this.WIDTH - (this.MARGIN.RIGHT * 2), 22);
+    doc.text(`NOMBRE: ${this._request.student.fullName}`, this.MARGIN.LEFT + 4, 68, { align: 'left' });
+    doc.text(`EDAD: ${this._request.student.sex}`, this.MARGIN.LEFT + 130, 68, { align: 'left' });
+    doc.text(`SEXO: ${this._request.student.sex}`, this.MARGIN.LEFT + 150, 68, { align: 'left' });
+    doc.text(`DOMICLIO: ${this._request.student.street} ${this._request.student.suburb}`, this.MARGIN.LEFT + 4, 73, { align: 'left' });
+    doc.text(`TEL: ${this._request.student.phone}`, this.MARGIN.LEFT + 130, 73, { align: 'left' });
+    doc.text(`NO. DE CONTROL: ${this._request.student.controlNumber}`, this.MARGIN.LEFT + 4, 78, { align: 'left' });
+    doc.text(`CREDITOS APROBADOS: 70%`, this.MARGIN.LEFT + 120, 78, { align: 'left' });
+
+    // Cuadro de Datos del programa
+    doc.text('PERIODO', this.MARGIN.LEFT, 90, { align: 'left' });
+    doc.text('ENERO-JUNIO', this.MARGIN.LEFT + 50, 90, { align: 'left' });
+    doc.text('JULIO-DICIEMBRE', this.MARGIN.LEFT + 100, 90, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 80, 86, 10, 5); // ENERO-JUNIO
+    doc.rect(this.MARGIN.LEFT + 140, 86, 10, 5); // JULIO-DICIEMBRE
+    doc.text('X', this.MARGIN.LEFT + 144, 90, { align: 'left' }); // 86 -> ENERO, 144 -> JULIO
+
+
+    doc.rect(this.MARGIN.LEFT, 95, this.WIDTH - (this.MARGIN.RIGHT * 2), 45); // tabla general
+    // columns
+    doc.rect(this.MARGIN.LEFT, 95, 30, 45); // Primer cuadro
+    doc.rect(this.MARGIN.LEFT + 30, 95, 35, 45); // Segundo cuadro
+    doc.rect(this.MARGIN.LEFT + 65, 95, 30, 45); // Tercer cuadro
+    doc.rect(this.MARGIN.LEFT + 95, 95, 35, 45); // Cuarto cuadro
+    doc.rect(this.MARGIN.LEFT + 130, 95, this.WIDTH - (this.MARGIN.RIGHT * 2) - 130, 45); // Quinto cuadro
+    // rows
+    doc.rect(this.MARGIN.LEFT, 95, this.WIDTH - (this.MARGIN.RIGHT * 2), 10);
+    doc.rect(this.MARGIN.LEFT, 130, this.WIDTH - (this.MARGIN.RIGHT * 2), 10);
+    // text
+    doc.text('INICIO', this.MARGIN.LEFT + 10, 100, { align: 'left' });
+    this.justifyText(doc,
+      moment(this._request.initialDate).format('D [de] MMMM [de] YYYY'),
+      {x: this.MARGIN.LEFT + 2, y: 110}, 27, 4, 8);
+    doc.setFontSize(10);
+    doc.text('TERMINACIÓN', this.MARGIN.LEFT + 32, 100, { align: 'left' });
+    doc.text('PROGRAMA', this.MARGIN.LEFT + 67, 100, { align: 'left' });
+    this.justifyText(doc,
+      this._request.dependencyProgramName,
+      {x: this.MARGIN.LEFT + 67, y: 110}, 27, 3, 8);
+    doc.setFontSize(10);
+    doc.text('DEPENDENCIA', this.MARGIN.LEFT + 98, 100, { align: 'left' });
+    this.justifyText(doc,
+      this._request.dependencyName,
+      {x: this.MARGIN.LEFT + 98, y: 110}, 30, 3, 8);
+    doc.setFontSize(10);
+    doc.text('HORAS ACREDITADAS', this.MARGIN.LEFT + 132, 100, { align: 'left' });
+
+    // CONTROL DE EXPEDIENTE
+    doc.text('CONTROL DE EXPEDIENTE', (this.WIDTH / 2), 155, { align: 'center' });
+    doc.rect(this.MARGIN.LEFT, 160, this.WIDTH - (this.MARGIN.RIGHT * 2), 60);
+    doc.text('SOLICITUD', this.MARGIN.LEFT + 4, 170, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 45, 166, 10, 5);
+    if (this.documentStatus.solicitude === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 49, 170, { align: 'left' });
+    }
+    doc.text('REPORTES BIMESTRALES', this.MARGIN.LEFT + 65, 170, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 115, 166, 10, 5);
+    doc.rect(this.MARGIN.LEFT + 130, 166, 5, 5);
+    doc.rect(this.MARGIN.LEFT + 140, 166, 5, 5);
+    doc.rect(this.MARGIN.LEFT + 150, 166, 5, 5);
+    if (this.documentStatus.firstReport === 'approved' &&
+      this.documentStatus.secondReport === 'approved' &&
+      this.documentStatus.thirdReport === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 119, 170, { align: 'left' });
+    }
+    if (this.documentStatus.firstReport === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 134, 170, { align: 'left' });
+    }
+    if (this.documentStatus.secondReport === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 144, 170, { align: 'left' });
+    }
+    if (this.documentStatus.thirdReport === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 154, 170, { align: 'left' });
+    }
+
+    doc.text('CURSO DE', this.MARGIN.LEFT + 4, 180, { align: 'left' });
+    doc.text('INDUCCIÓN', this.MARGIN.LEFT + 4, 183, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 45, 177, 10, 5);
+    if (this.documentStatus.assistance) {
+      doc.text('X', this.MARGIN.LEFT + 49, 181, { align: 'left' });
+    }
+    doc.text('REPORTE FINAL', this.MARGIN.LEFT + 65, 180, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 115, 177, 10, 5);
+    if (this.documentStatus.lastReportEvaluation === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 119, 181, { align: 'left' });
+    }
+
+    doc.text('CARTA DE', this.MARGIN.LEFT + 4, 193, { align: 'left' });
+    doc.text('APROBACIÓN', this.MARGIN.LEFT + 4, 196, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 45, 190, 10, 5);
+    if (this.documentStatus.acceptance === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 49, 194, { align: 'left' });
+    }
+
+    doc.text('CARTA DE TERMINACIÓN', this.MARGIN.LEFT + 65, 193, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 115, 190, 10, 5);
+    if (this.documentStatus.selfEvaluation === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 119, 194, { align: 'left' });
+    }
+
+    doc.text('FECHA', this.MARGIN.LEFT + 135, 193, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 150, 190, 20, 5);
+
+    doc.text('PLAN DE TRABAJO', this.MARGIN.LEFT + 4, 206, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 45, 202, 10, 5);
+    if (this.documentStatus.workPlanProject === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 49, 206, { align: 'left' });
+    }
+
+    doc.text('CONSTANCIA OFICIAL', this.MARGIN.LEFT + 65, 206, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 115, 202, 10, 5);
+    if (this.documentStatus.lastReport === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 119, 206, { align: 'left' });
+    }
+    doc.text('FECHA', this.MARGIN.LEFT + 135, 206, { align: 'left' });
+    doc.rect(this.MARGIN.LEFT + 150, 202, 20, 5);
+
+
+
+    // Cuadro de Uso exclusivo de la oficina del servicio social
+    doc.rect(this.MARGIN.LEFT, 230, this.WIDTH - (this.MARGIN.RIGHT * 2), 30);
+    doc.setFont(this.FONT, 'Normal');
+    doc.text('OBSERVACIONES: ', this.MARGIN.LEFT + 2, 233, { align: 'left' });
+
+    // Footer
+    doc.setFont(this.FONT, 'Bold');
+    doc.setTextColor(189, 189, 189);
+    doc.setFontSize(8);
+    doc.text('Referencia a la Norma ISO 9001:2015  8.2.3', this.MARGIN.LEFT, 267, { align: 'left' });
+    doc.text('Código ITT-POC-08-07', this.MARGIN.LEFT + 100, 267, { align: 'left' });
+    doc.text('Rev. 1', this.WIDTH - 30, 267, { align: 'left' });
     return doc;
   }
 

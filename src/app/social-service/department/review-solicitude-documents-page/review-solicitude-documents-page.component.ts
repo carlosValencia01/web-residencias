@@ -7,6 +7,7 @@ import {eNotificationType} from '../../../enumerators/app/notificationType.enum'
 import {IStudent} from '../../../entities/shared/student.model';
 import {MatDialog} from '@angular/material';
 import Swal from 'sweetalert2';
+import {Location} from '@angular/common';
 
 @Component({
   selector: 'app-review-solicitude-documents-page',
@@ -28,6 +29,7 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
               private controlStudentProv: ControlStudentProv,
               private notificationsService: NotificationsServices,
               private loadingService: LoadingService,
+              public location: Location,
               public dialog: MatDialog) {
     activatedRoute.queryParams.subscribe( param => {
       this.controlStudentId = param.id;
