@@ -5,7 +5,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
 import TableToExcel from '@linways/table-to-excel';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
 import { MatTabGroup } from '@angular/material/tabs';
 import { MatAutocomplete, MatChipInputEvent } from '@angular/material';
 
@@ -19,6 +18,7 @@ import { CookiesService } from 'src/app/services/app/cookie.service';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { PDFEnglish } from 'src/app/english/entities/english-pdf-generator';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import { NotificationsServices } from 'src/app/services/app/notifications.service';
 
 // Importar Proveedores
 import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
@@ -315,6 +315,11 @@ export class EnglishCoursesPageComponent implements OnInit {
           startName += word.charAt(0);
         });
 
+        var totalGroup = result.levels * result.schedules.length;
+        var createdGroupSuccess = 0;
+        var createdGroupError = 0;
+        this.loadingService.setLoading(true);
+
         for (let level = 1; level <= result.levels; level++) {
 
           result.schedules.forEach(schedule => {
@@ -330,10 +335,9 @@ export class EnglishCoursesPageComponent implements OnInit {
               course: result.courseId,
             };
 
-            this.groupProv.createGroup(data).subscribe(res => {
-              this.ngOnInit()
-            },
-              error => { });
+            this.groupProv.createGroup(data).subscribe(res => { createdGroupSuccess++; },
+              error => { createdGroupError++; },
+              () => { this.groupsCreationAdministrator(createdGroupSuccess, createdGroupError, totalGroup) });
 
           });
 
@@ -341,6 +345,17 @@ export class EnglishCoursesPageComponent implements OnInit {
 
       };
     });
+  }
+
+  groupsCreationAdministrator(createdGroupSuccess, createdGroupError, totalGroup) {
+    if (createdGroupSuccess + createdGroupError == totalGroup) {
+      this.ngOnInit();
+      this.loadingService.setLoading(false);
+      this.notificationsServices.showNotification(eNotificationType.SUCCESS, createdGroupSuccess + " Grupo(s)", 'Creado(s) correctamente');
+      if (createdGroupError > 0) {
+        this.notificationsServices.showNotification(eNotificationType.ERROR, "En " + createdGroupError + " Grupo(s)", 'Ocurrió un error');
+      }
+    }
   }
 
   openDialogFormCreateGroup(): void {
@@ -394,13 +409,15 @@ export class EnglishCoursesPageComponent implements OnInit {
             break;
           default:
             return;
-            break;
         };
 
         this.groupProv.createGroup(data).subscribe(res => {
-          this.ngOnInit()
+          this.notificationsServices.showNotification(eNotificationType.SUCCESS, data.name, 'Creado correctamente');
         },
-          error => { });
+          error => {
+            this.notificationsServices.showNotification(eNotificationType.ERROR, data.name, 'Ocurrió un error');
+          },
+          () => { this.ngOnInit() });
       };
     });
   }
@@ -511,7 +528,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     }, () => this.loadingService.setLoading(false));
   }
 
-  fillTableCourses(){
+  fillTableCourses() {
     this.coursesDataSource = new MatTableDataSource();
     this.coursesDataSource.data = this.englishCourses;
     this.coursesDataSource.sort = this.sortCourses;
@@ -533,7 +550,7 @@ export class EnglishCoursesPageComponent implements OnInit {
           totalHours: result.totalHoursCtrl,
           startPeriod: this.activePeriod._id,
           status: 'active',
-          payment:{
+          payment: {
             payments: result.paymentsCtrl,
             pay: result.payCtrl,
           }
@@ -558,17 +575,17 @@ export class EnglishCoursesPageComponent implements OnInit {
   courseFormGroup: FormGroup;
   @ViewChild("viewEditCourse") dialogRefViewEditCourse: TemplateRef<any>;
 
-  openDilogEditCourse(course){
+  openDilogEditCourse(course) {
     this.courseFormGroup = null;
     this.courseFormGroup = this._formBuilder.group({
-      nameCtrl: [{value:course.name, disabled:true}, Validators.required],
-      statusCtrl: [course.status=='active'],
-      dailyHoursCtrl: [{value:course.dailyHours, disabled:true}, [Validators.required, Validators.min(1)]],
-      semesterHoursCtrl: [{value:course.semesterHours, disabled:true}, [Validators.required, Validators.min(1)]],
-      totalSemestersCtrl: [{value:course.totalSemesters, disabled:true}, [Validators.required, Validators.min(1)]],
-      totalHoursCtrl: [{value:course.totalHours, disabled:true}, [Validators.required, Validators.min(1)]],
-      paymentsCtrl: [course.payment?course.payment.payments:1, [Validators.required, Validators.min(1), Validators.max(2)]],
-      payCtrl: [course.payment?course.payment.pay:'', [Validators.required, Validators.min(0)]],
+      nameCtrl: [{ value: course.name, disabled: true }, Validators.required],
+      statusCtrl: [course.status == 'active'],
+      dailyHoursCtrl: [{ value: course.dailyHours, disabled: true }, [Validators.required, Validators.min(1)]],
+      semesterHoursCtrl: [{ value: course.semesterHours, disabled: true }, [Validators.required, Validators.min(1)]],
+      totalSemestersCtrl: [{ value: course.totalSemesters, disabled: true }, [Validators.required, Validators.min(1)]],
+      totalHoursCtrl: [{ value: course.totalHours, disabled: true }, [Validators.required, Validators.min(1)]],
+      paymentsCtrl: [course.payment ? course.payment.payments : 1, [Validators.required, Validators.min(1), Validators.max(2)]],
+      payCtrl: [course.payment ? course.payment.pay : '', [Validators.required, Validators.min(0)]],
     });
 
     let dialogRef = this.dialog.open(this.dialogRefViewEditCourse, { hasBackdrop: true });
@@ -590,7 +607,7 @@ export class EnglishCoursesPageComponent implements OnInit {
         }).then((result) => {
           if (result.value) {
             let data = {
-              status: values.statusCtrl?'active':'inactive',
+              status: values.statusCtrl ? 'active' : 'inactive',
               'payment.payments': values.paymentsCtrl,
               'payment.pay': values.payCtrl,
             }
@@ -981,9 +998,9 @@ export class EnglishCoursesPageComponent implements OnInit {
     }).then((result) => {
       if (result.value) {
         this.loadingService.setLoading(true);
-        this.groupProv.closeGroup(group._id,{confirmdialog:confirmdialog}).subscribe(res => {
+        this.groupProv.closeGroup(group._id, { confirmdialog: confirmdialog }).subscribe(res => {
           if (res) {
-            console.log("Errores al modificar en la BD: "+res.err);
+            console.log("Errores al modificar en la BD: " + res.err);
             Swal.fire({
               title: 'Grupo cerrado con éxito!',
               showConfirmButton: false,
