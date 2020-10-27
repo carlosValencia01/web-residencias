@@ -13,15 +13,16 @@
     </div>
     <div style="position: relative;">
       <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSourceClassrooms" class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSourceClassrooms" class="mat-elevation-z8" matSort #sortClassrooms="matSort"
+        matSortActive="ID" matSortDirection="asc">
 
           <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef>Aula</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Aula</mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="capacity">
-            <mat-header-cell *matHeaderCellDef>Capacidad</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Capacidad</mat-header-cell>
             <mat-cell *matCellDef="let row"> {{row.capacity}} </mat-cell>
           </ng-container>
 

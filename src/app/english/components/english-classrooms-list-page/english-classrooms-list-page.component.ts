@@ -52,7 +52,7 @@ export class EnglishClassroomsListPageComponent implements OnInit {
   searchGA = '';
   dataSourceClassrooms: MatTableDataSource<any>;
   @ViewChild('matPaginatorClassrooms') paginatorClassrooms: MatPaginator;
-  @ViewChild(MatSort) sortClassrooms: MatSort;
+  @ViewChild('sortClassrooms') sortClassrooms: MatSort;
   @ViewChild(MatSort) sortGroups: MatSort;
   @ViewChild("viewCreateClassroom") dialogRefViewCreateClassroom: TemplateRef<any>;
   @ViewChild("scheduleClassroomAux") dialogRefScheduleClassroomAux: TemplateRef<any>;
