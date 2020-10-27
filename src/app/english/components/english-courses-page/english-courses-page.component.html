@@ -198,16 +198,16 @@
                           <mat-icon>watch_later</mat-icon>
                           <span>Ver Horario</span>
                         </button>
-                        <button (click)="activeGroup(row)" mat-menu-item>
+                        <button (click)="activeGroup(row)" mat-menu-item *ngIf="row.status=='opened'">
                           <mat-icon>done</mat-icon>
                           <span>Activar Grupo</span>
                         </button>
-                        <button (click)="generateExcelGroupRequests(row)" mat-menu-item>
+                        <button (click)="generateExcelGroupRequests(row)" mat-menu-item *ngIf="row.status=='opened'">
                           <mat-icon>cloud_download</mat-icon>
                           <span>Descargar Solicitudes en Excel</span>
                         </button>
                         <ng-container>
-                          <button (click)="closeGroup(row)" mat-menu-item>
+                          <button (click)="closeGroup(row)" mat-menu-item *ngIf="row.status=='opened'">
                             <mat-icon>clear</mat-icon>
                             <span>Cerrar Grupo</span>
                           </button>

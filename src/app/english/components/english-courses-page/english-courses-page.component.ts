@@ -276,8 +276,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   createDataSourceGroups() {
-    this.groups = this.groups.filter(({ status }) => status !== EStatusGroupDB.ACTIVE);
-    this.dataSourceGroups.data = this.groups;
+    this.dataSourceGroups.data = this.groups.filter(({ status }) => status !== EStatusGroupDB.ACTIVE && !(status === EStatusGroupDB.FINALIZED || status === "evaluated"));
     this.dataSourceGroups.sort = this.sortGroups;
   }
 
@@ -945,7 +944,7 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   applyFiltersActiveGroups() {
 
-    this.dataSourceGroups.data = this.groups;
+    this.dataSourceGroups.data = this.groups.filter(({ status }) => status !== EStatusGroupDB.ACTIVE && !(status === EStatusGroupDB.FINALIZED || status === "evaluated"));
     if (this.usedPeriods) {
       if (this.usedPeriods.length > 0) {
         this.dataSourceGroups.data = this.dataSourceGroups.data.filter(
