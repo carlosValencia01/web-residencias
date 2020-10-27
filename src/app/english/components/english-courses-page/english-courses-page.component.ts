@@ -732,6 +732,10 @@ export class EnglishCoursesPageComponent implements OnInit {
   getPaidStudentsRequest(group) {
     this.groupProv.getAllStudentsGroup(group._id).subscribe(res => {
       if (res) {
+        if (res.students.length==0) {
+          this.notificationsServices.showNotification(eNotificationType.ERROR, res.students.length+' Solicitud(es)', 'No cuentas con suficientes');
+          return;
+        }
         const students = res.students;
         const linkModal = this.dialog.open(ActiveGroupModalComponent, {
           data: {

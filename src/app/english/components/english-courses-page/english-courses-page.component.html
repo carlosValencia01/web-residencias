@@ -173,7 +173,7 @@
                   </ng-container>
 
 
-                  <ng-container matColumnDef="request">
+                  <ng-container matColumnDef="reqCount">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Solicitudes</mat-header-cell>
                     <mat-cell *matCellDef="let row">{{row.reqCount}}</mat-cell>
                   </ng-container>
@@ -218,10 +218,10 @@
                   </ng-container>
 
                   <mat-header-row
-                    *matHeaderRowDef="['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
+                    *matHeaderRowDef="['name', 'course', 'level', 'period', 'reqCount', 'status', 'actions']">
                   </mat-header-row>
                   <mat-row
-                    *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'request', 'status', 'actions']">
+                    *matRowDef="let row; columns: ['name', 'course', 'level', 'period', 'reqCount', 'status', 'actions']">
                   </mat-row>
                 </table>
                 <!--Paginas-->
