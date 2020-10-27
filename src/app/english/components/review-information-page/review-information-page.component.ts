@@ -37,11 +37,11 @@ export class ReviewInformationPageComponent implements OnInit {
     });
   }
 
-  _parseStudentToTable(student, index){
+  _parseStudentToTable(student, index) {
     return {
-      _id: student.id,
+      _id: student._id,
       student: student,
-      no: index+1,
+      no: index + 1,
       name: student.studentId.fullName,
       type: student.courseType.name,
       phone: student.currentPhone

@@ -210,7 +210,7 @@
       </mat-tab>
 
       <!--TAB del Avance del Estudiante-->
-      <mat-tab label="Avance">
+      <mat-tab label="Avance" *ngIf="englishStudent.verified">
         <app-student-progress-page [englishStudent]="englishStudent"></app-student-progress-page>
       </mat-tab>
 
