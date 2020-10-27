@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
 
 // TABLA
 import { MatPaginator } from '@angular/material/paginator';
@@ -119,10 +120,21 @@ export class EnglishTeachersListPageComponent implements OnInit {
     };
   }
 
-  openViewTableGroups(groups: IGroup[]) {
+  openViewTableGroups(teacher) {
+
+    if (teacher.countGroups==0) {
+      Swal.fire({
+        title: 'No tiene grupos asignados!',
+        showConfirmButton: false,
+        timer: 2500,
+        type: 'error'
+      });
+      return;
+    }
+
     this.dataSourceActiveGroupsOfTeacher = new MatTableDataSource();
     setTimeout(() => {
-      this.dataSourceActiveGroupsOfTeacher.data = groups;
+      this.dataSourceActiveGroupsOfTeacher.data = teacher.groups;
       this.dataSourceActiveGroupsOfTeacher.sort = this.sortActiveGroups;
       this.dataSourceActiveGroupsOfTeacher.paginator = this.paginatorActiveGroups;
     });
