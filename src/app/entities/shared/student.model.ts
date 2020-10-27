@@ -16,6 +16,10 @@ export interface IStudent {
   sex?: string;
   phone?: string;
   status?: string;
+  street?: string;
+  suburb?: string;
+  city?: string;
+  state?: string;
 }
 
 interface IDocument {

@@ -89,6 +89,11 @@ export class InitPresentationDocument {
         binary = this.bufferToBase64(document);
         break;
       }
+      case eSocialFiles.COMPROMISO: {
+        document = this.socialServiceCommitment().output('arraybuffer');
+        binary = this.bufferToBase64(document);
+        break;
+      }
     }
     return binary;
   }
@@ -277,6 +282,54 @@ export class InitPresentationDocument {
     doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
     return doc;
   }
+
+    // ************** Carta compromiso de servicio social
+    public socialServiceCommitment(): jsPDF {
+      const doc = this.newDocumentTec(true, false);
+      doc.setTextColor(0, 0, 0);
+      // Title
+      doc.setFont(this.FONT, 'Bold');
+      doc.setFontSize(12);
+      doc.text('CARTA COMPROMISO DE SERVICIO SOCIAL', (this.WIDTH / 2), 35, { align: 'center' });
+      doc.text('Departamento de Gestión Tecnológica y Vinculación', (this.WIDTH / 2), 42, { align: 'center' });
+      doc.text('Carta compromiso de Servicio Social ITT-POC-08-05', (this.WIDTH / 2), 49, { align: 'center' });
+      // Primer parrafo
+      doc.setFontSize(12);
+      doc.setFont(this.FONT, 'normal');
+      this.justifyText(doc,
+        'Con  el  fin  de  dar  cumplimiento  con  lo  establecido  en  la  Ley  Reglamentaria  del  Artículo  5º  Constitucional  relativo  al  ejercicio  de  profesiones,  el  suscrito: ',
+        {x: this.MARGIN.LEFT, y: 70}, this.WIDTH - (this.MARGIN.RIGHT * 2), 6, 11);
+      // Datos del prestador de servicio
+      doc.text(`Nombre del prestante del Servicio Social: ${this._request.student.fullName}`, this.MARGIN.LEFT, 90, { align: 'left' });
+      doc.text(`Número de control: ${this._request.student.controlNumber}  Domicilio: `, this.MARGIN.LEFT, 100, { align: 'left' });
+      doc.text(`Teléfono: ${this._request.student.phone} Carrera: ${this._request.student.career} Semestre: ${this._request.student.semester}`, this.MARGIN.LEFT, 110, { align: 'left' });
+      doc.text(`Dependencia u organismo: ${this._request.dependencyName}`, this.MARGIN.LEFT, 120, { align: 'left' });
+      doc.text(`Domicilio de la dependencia: ${this._request.dependencyAddress}`, this.MARGIN.LEFT, 130, { align: 'left' });
+      doc.text(`Responsable del programa: ${this._request.dependencyDepartmentManager}`, this.MARGIN.LEFT, 140, { align: 'left' });
+      doc.text(`Fecha de inicio: *fecha de inicio* Fecha de terminación: *fecha final*`, this.MARGIN.LEFT, 150, { align: 'left' });
+      
+      // Segundo parrafo
+      this.justifyText(doc,
+        'Me comprometo a realizar el Servicio Social acatando el reglamento emitido por el Tecnológico Nacional de México y llevarlo a cabo en el lugar y periodos manifestados, así como, a participar con mis conocimientos e iniciativas en las actividades que desempeñe, ' + 
+        'procurando dar una imagen positiva del instituto en el Organizmo o Dependencia oficial, de no hacerlo así, quedo enterado(a) de la cancelación respectiva a la cual procedera automáticamente.',
+        {x: this.MARGIN.LEFT, y: 160}, this.WIDTH - (this.MARGIN.RIGHT * 2), 5, 12);
+      
+      doc.text('En la ciudad de: Tepic el día *dia* del mes *mes* de *año*', (this.WIDTH / 2), 200, { align: 'center' });
+      doc.setFont(this.FONT, 'Bold');
+      doc.text('CONFORMIDAD', (this.WIDTH / 2), 210, { align: 'center' });
+      doc.text(`Firmado digitalmente por ${this._request.student.fullName}`, (this.WIDTH / 2), 225, { align: 'center' });
+      doc.text('Firma del prestante del Servicio Social', (this.WIDTH / 2), 233, { align: 'center' });
+
+      // Footer
+      doc.setFont(this.FONT, 'Bold');
+      doc.setTextColor(189, 189, 189);
+      doc.setFontSize(8);
+      doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+      doc.text('Código ITT-POC-08-05', (this.WIDTH / 2), 262, { align: 'center' });
+      doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
+      doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
+      return doc;
+    }
 
   // A una cadena de texto, le añade @ a cada palabra tanto al inicio y al final
   // Esto es para indicar que se le agregará texto en negritas
