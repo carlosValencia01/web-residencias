@@ -4,27 +4,28 @@
         
     </div>
       <div style="position: relative;">
-        <div style="position: relative; overflow: auto; max-width: 100%;">
-          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort #sortReviewInformation="matSort"
+          matSortActive="ID" matSortDirection="asc">
 
             <ng-container matColumnDef="no">
-              <mat-header-cell *matHeaderCellDef>No</mat-header-cell>
-              <mat-cell *matCellDef="let row; index as i;">{{(i + 1) + (paginator.pageIndex * paginator.pageSize)}}</mat-cell>
+              <mat-header-cell *matHeaderCellDef mat-sort-header>No</mat-header-cell>
+              <mat-cell *matCellDef="let row">{{row.no}}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="name">
-              <mat-header-cell *matHeaderCellDef>Nombre Alumno</mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{row.studentId.fullName}} </mat-cell>
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Alumno</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="type">
-              <mat-header-cell *matHeaderCellDef>Tipo Curso</mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{row.courseType.name}} </mat-cell>
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Curso</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.type}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="phone">
-              <mat-header-cell *matHeaderCellDef>Teléfono Alumno</mat-header-cell>
-              <mat-cell *matCellDef="let row"> {{row.currentPhone}} </mat-cell>
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Alumno</mat-header-cell>
+              <mat-cell *matCellDef="let row"> {{row.phone}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="actions">
@@ -35,7 +36,7 @@
                 </button>
 
                 <mat-menu #actions="matMenu">
-                  <button  (click)="viewDetails(row)" mat-menu-item>
+                  <button  (click)="viewDetails(row.student)" mat-menu-item>
                     <mat-icon>visibility</mat-icon>
                     <span>Detalles Solicitud</span>
                   </button>

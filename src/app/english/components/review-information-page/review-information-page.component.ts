@@ -13,9 +13,9 @@ import { ReviewInformationModalComponent } from '../../modals/review-information
 })
 export class ReviewInformationPageComponent implements OnInit {
   @ViewChild('matPaginator') paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  dataSource: MatTableDataSource<IEnglishStudent>;
-  students;
+  @ViewChild('sortReviewInformation') sortReviewInformation: MatSort;
+  dataSource: MatTableDataSource<any>;
+  students: Array<any>;
 
   constructor(
     private studentEnglishProv: EnglishStudentProvider,
@@ -31,10 +31,21 @@ export class ReviewInformationPageComponent implements OnInit {
   getStudents() {
     this.studentEnglishProv.getEnglishStudentNoVerified().subscribe(res => {
       this.students = res.englishStudent;
-      this.dataSource = new MatTableDataSource(this.students);
+      this.dataSource = new MatTableDataSource(this.students.map((student, index) => this._parseStudentToTable(student, index)));
       this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+      this.dataSource.sort = this.sortReviewInformation;
     });
+  }
+
+  _parseStudentToTable(student, index){
+    return {
+      _id: student.id,
+      student: student,
+      no: index+1,
+      name: student.studentId.fullName,
+      type: student.courseType.name,
+      phone: student.currentPhone
+    }
   }
 
   viewDetails(student) {
