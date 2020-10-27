@@ -16,3 +16,14 @@ export enum EStatusEnglishStudent {
   rejected = "Solicitud rechazada",
   requested = "Solicitud enviada"
 }
+
+export enum EStatusEnglishStudentBackgroundColor {
+  no_choice = '#dadada',
+  waiting = ' #f8f5cd',
+  cancelled = "#ff2d2d",
+  studying = "#ffc49d",
+  not_released = "#76c8ff",
+  released = "#58ff8a",
+  rejected = "#ff2d2d",
+  requested = "#f8f5cd"
+}

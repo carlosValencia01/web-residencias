@@ -15,8 +15,8 @@
 
       <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
 
-        <table mat-table [dataSource]="englishStudentsDataSource"  matSort #sortStudents="matSort"
-        matSortActive="ID" matSortDirection="asc">
+        <table mat-table [dataSource]="englishStudentsDataSource" matSort #sortStudents="matSort" matSortActive="ID"
+          matSortDirection="asc">
 
           <ng-container matColumnDef="controlNumber">
             <mat-header-cell *matHeaderCellDef mat-sort-header>NC</mat-header-cell>
@@ -46,7 +46,7 @@
           <ng-container matColumnDef="status">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Estatus</mat-header-cell>
             <mat-cell *matCellDef="let row">
-              <mat-chip class="small">{{statusEnglishStudent[row.status]}}</mat-chip>
+              <span class="badge badge-pill" [ngStyle]="{'background': this.statusEnEsBackgroundColor[row.status]}">{{statusEnglishStudent[row.status]}}</span>
             </mat-cell>
           </ng-container>
 
@@ -71,8 +71,7 @@
 
             </mat-cell>
           </ng-container>
-          <mat-header-row
-            *matHeaderRowDef="['controlNumber', 'name', 'phone', 'career', 'hours', 'status', 'actions']">
+          <mat-header-row *matHeaderRowDef="['controlNumber', 'name', 'phone', 'career', 'hours', 'status', 'actions']">
           </mat-header-row>
           <mat-row
             *matRowDef="let row; columns: ['controlNumber', 'name', 'phone', 'career', 'hours', 'status',  'actions']">

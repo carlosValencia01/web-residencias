@@ -20,7 +20,7 @@ import { EnglishStudentProvider } from 'src/app/english/providers/english-studen
 
 // Importar Enumeradores
 import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
-import { EStatusEnglishStudent } from 'src/app/english/enumerators/status-english-student.enum';
+import { EStatusEnglishStudent, EStatusEnglishStudentBackgroundColor } from 'src/app/english/enumerators/status-english-student.enum';
 import { ERequestCourseStatus } from 'src/app/english/enumerators/request-course-status.enum';
 
 // Importar Modales
@@ -63,6 +63,7 @@ export class StudentListComponent implements OnInit {
   @ViewChild("viewHistory") dialogRefViewHistory: TemplateRef<any>;
   statusEnglishStudent = EStatusEnglishStudent;
   requestCourseStatus = ERequestCourseStatus;
+  statusEnEsBackgroundColor = EStatusEnglishStudentBackgroundColor;
 
   private async _initStudents(): Promise<void> {
 
