@@ -578,7 +578,7 @@ export class EnglishCoursesPageComponent implements OnInit {
 
         Swal.fire({
           title: 'Guardar cambios',
-          text: `Está por modificar el curso ` + course.name + `. ¿Desea continuar?`,
+          html: `Está por modificar el curso <b>` + course.name + `</b>. ¿Desea continuar?`,
           type: 'warning',
           allowOutsideClick: false,
           showCancelButton: true,
