@@ -986,7 +986,7 @@ export class EnglishCoursesPageComponent implements OnInit {
     }
     Swal.fire({
       title: 'Cerrar grupo',
-      text: `Está por cerrar el grupo ` + group.name + `. ¿Desea continuar?`,
+      html: `Está por cerrar el grupo <b>` + group.name + `</b>. ¿Desea continuar?`,
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
