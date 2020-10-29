@@ -637,6 +637,25 @@ export class EnglishCoursesPageComponent implements OnInit {
       if (res.period) {
         this.activePeriod = res.period;
       }
+      if (new Date(res.period.englishPerEndDate) < new Date()) {
+        const reminderDays = [];
+        const permitDay = new Date(res.period.englishPerEndDate);
+        for (let i = 1; i < 5; i++) {
+          permitDay.setDate(new Date().getDate() + i);
+          reminderDays.push(new Date(permitDay));
+        }
+        if (reminderDays.includes(new Date())) {
+          Swal.fire({
+            title: '<strong>El segundo periodo de solicitudes ha iniciado, favor de cambiar los grupos a pendiente</strong>',
+            type: 'info',
+            showCloseButton: true,
+            focusConfirm: false,
+            confirmButtonText:
+              '<i class="fa fa-thumbs-up"></i> Ok',
+            confirmButtonAriaLabel: 'Thumbs up, great!'
+          });
+        }
+      }
 
     }, error => {
 
