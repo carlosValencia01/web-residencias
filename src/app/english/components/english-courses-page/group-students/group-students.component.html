@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    
+
       <div style="text-align: right;">
         <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
           <input matInput (keyup)="applyFilter()" placeholder="Buscar..." [(ngModel)]="searchStudent" (keyup)="applyFilter()" (focus)="setupFilter()">
@@ -25,66 +25,79 @@
         <div style="position: relative; overflow: auto; max-width: 100%;">
           <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort #sortStudents="matSort"
             matSortActive="ID" matSortDirection="asc">
-    
+
             <!--Columna Nombre-->
-    
+
             <ng-container matColumnDef="fullName">
               <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.fullName}} </mat-cell>
             </ng-container>
-    
+
             <!--Columna No. Control-->
-    
+
             <ng-container matColumnDef="controlNumber">
               <mat-header-cell *matHeaderCellDef mat-sort-header>No. Control</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.controlNumber}} </mat-cell>
             </ng-container>
-    
+
             <!--Columna Carrera-->
-    
+
             <ng-container matColumnDef="career">
               <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.careerId ? row.englishStudent.studentId.careerId.shortName : ''}} </mat-cell>
             </ng-container>
-    
+
             <!--Columna Correo-->
-    
+
             <ng-container matColumnDef="email">
               <mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electronico</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.englishStudent.studentId.email}} </mat-cell>
             </ng-container>
-    
+
             <!--Columna Telefono-->
-    
+
             <ng-container matColumnDef="currentPhone">
               <mat-header-cell *matHeaderCellDef mat-sort-header>Telefono Celular</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.englishStudent.currentPhone}} </mat-cell>
             </ng-container>
-    
+
+            <!--Columna estatus-->
+
+            <ng-container matColumnDef="status">
+              <mat-header-cell *matHeaderCellDef mat-sort-header>Estatus</mat-header-cell>
+              <mat-cell *matCellDef="let row" [ngSwitch]="row.status">
+                <span *ngSwitchCase="'studying'" class="badge badge-pill badge-primary">Estudiando</span>
+                <span *ngSwitchCase="'pending'" class="badge badge-pill badge-info">Segundo pago</span>
+                <span *ngSwitchCase="'finalized'" class="badge badge-pill badge-secondary">Finalizado</span>
+                <span *ngSwitchCase="'approved'" class="badge badge-pill badge-success">Aprobado</span>
+                <span *ngSwitchCase="'not_approved'" class="badge badge-pill badge-warning">No aprobado</span>
+              </mat-cell>
+            </ng-container>
+
             <!--Columna promedio-->
-    
+
             <ng-container matColumnDef="average" >
               <mat-header-cell *matHeaderCellDef mat-sort-header>Promedio</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.average}} </mat-cell>
             </ng-container>
 
             <!--Columna Fecha-->
-    
+
             <ng-container matColumnDef="requestDate" >
               <mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</mat-header-cell>
               <mat-cell *matCellDef="let row"> {{row.requestDate | date :  "dd/MM/yy HH:mm"}} </mat-cell>
             </ng-container>
-    
-    
+
+
             <!--Columna Opciones-->
-    
+
             <ng-container matColumnDef="actions">
               <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones</mat-header-cell>
               <mat-cell *matCellDef="let row">
                 <button mat-icon-button [matMenuTriggerFor]="actions">
                   <mat-icon>more_vert</mat-icon>
                 </button>
-    
+
                 <mat-menu #actions="matMenu" [ngSwitch]="data.type">
                   <ng-container *ngSwitchCase="'teacher'">
                     <button *ngIf="!row.average" (click)="setRequestAverage(row)" mat-menu-item>
@@ -103,28 +116,28 @@
                     </button>
 
                   </ng-container>
-                
+
                 </mat-menu>
-    
+
               </mat-cell>
             </ng-container>
-            <mat-header-row 
-              *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone','average', 'requestDate', 'actions']">
+            <mat-header-row
+              *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone','status', 'average', 'requestDate', 'actions']">
             </mat-header-row>
             <mat-row
-              *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'average', 'requestDate','actions']">
-            </mat-row>            
-    
+              *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone','status', 'average', 'requestDate','actions']">
+            </mat-row>
+
             <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
-    
+
             <tr class="mat-row" *matNoDataRow>
               <td class="mat-cell" colspan="6">No se encontraron datos.</td>
             </tr>
-    
+
           </table>
         </div>
         <!--Paginas-->
-    
+
         <mat-paginator #matPaginatorEnglishStudents [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
       </div>
 

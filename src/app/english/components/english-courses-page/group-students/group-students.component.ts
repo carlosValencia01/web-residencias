@@ -64,7 +64,7 @@ export class GroupStudentsComponent implements OnInit {
 
     this.loadingService.setLoading(true);
 
-    this.requestCourseProv.getAllRequestActiveCourse(this.data.group._id, this.cookiesService.getClientId()).subscribe(async res => { 
+    this.requestCourseProv.getAllRequestActiveCourse(this.data.group._id, this.cookiesService.getClientId()).subscribe(async res => {
       this.englishStudents = res.requestCourses;
       this.createDataSource();
     }, error => {
@@ -108,7 +108,7 @@ export class GroupStudentsComponent implements OnInit {
   }
 
   setupFilter() {
-    this.dataSource.filterPredicate = (data, filterValue: string) =>  
+    this.dataSource.filterPredicate = (data, filterValue: string) =>
       data.englishStudent.studentId.fullName.trim().toLowerCase().indexOf(filterValue) !== -1 ||
       data.englishStudent.studentId.controlNumber.indexOf(filterValue) !== -1 ||
       (data.englishStudent.studentId.careerId ? data.englishStudent.studentId.careerId.shortName.trim().toLowerCase().indexOf(filterValue) !== -1 : false) ||
@@ -211,7 +211,7 @@ export class GroupStudentsComponent implements OnInit {
 
     const avg = this.data.type == 'teacher' ? await this.showAverageWarningForTeacher(row.englishStudent.studentId.fullName) : await this.swalDialogInput('CALIFICACIÓN PARA', row.englishStudent.studentId.fullName);
     console.log(avg);
-    
+
 
     if(avg){
       let query = {
@@ -231,7 +231,7 @@ export class GroupStudentsComponent implements OnInit {
       }
       this.englishStudentProv.updateEnglishStudent(studentQuery, row.englishStudent._id).subscribe(res=>{});
     }
-    
+
   }
 
   showAverageWarningForTeacher(studentName: string) {
@@ -242,7 +242,7 @@ export class GroupStudentsComponent implements OnInit {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         cancelButtonText: 'Cancelar',
-        confirmButtonText: 'Aceptar',     
+        confirmButtonText: 'Aceptar',
         showCancelButton: true,
         progressSteps: ['1', '2'],
         type: 'warning'
@@ -259,35 +259,35 @@ export class GroupStudentsComponent implements OnInit {
           showCancelButton: false,
           input:'text',
           inputPlaceholder:'Ingresa la calificación',
-          inputAttributes:{          
+          inputAttributes:{
             autocapitalize: 'off',
             autocorrect: 'off'
-          },        
+          },
           inputValidator: (value) => {
             if (!value) {//validar que no este vacio
               return '¡Ingresa una calificación!';
-            }else{            
-              if(!value.match((/^\d{1,3}(\.\d{1,2})?$/))){//validar numeros 
+            }else{
+              if(!value.match((/^\d{1,3}(\.\d{1,2})?$/))){//validar numeros
                 if(value.match((/^\d{1,3}(\.\d{3,10})?$/))) return '¡Solo dos decimales!'
-  
+
                 return '¡Ingresa un promedio valido!';
               }else if(parseFloat(value)>100){
                 return '¡El promedio no puede ser mayor a 100!';
               }
             }
-          }            
-        },      
+          }
+        },
       ]).then((result) => {
         if (result.value) {
           const avg = parseFloat(result.value[1]);
-          resolve(avg);           
+          resolve(avg);
         }else{
           resolve(false);
         }
       });
 
     });
-    
+
   }
   /**
    * Open a swal modal with an input text
@@ -308,8 +308,8 @@ export class GroupStudentsComponent implements OnInit {
       inputValidator: (value) => {
         if (!value) {// validate empty input
           return '¡Ingrese la calificación!';
-        }else{            
-          if(!value.match((/^\d{1,3}(\.\d{1,2})?$/))){//validar numeros 
+        }else{
+          if(!value.match((/^\d{1,3}(\.\d{1,2})?$/))){//validar numeros
             if(value.match((/^\d{1,3}(\.\d{3,10})?$/))) return '¡Solo dos decimales!'
 
             return '¡Ingresa un promedio valido!';

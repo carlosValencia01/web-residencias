@@ -1,58 +1,50 @@
-import { Component, OnInit, ElementRef, ViewChild, TemplateRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { FormControl } from '@angular/forms';
+import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import Swal from 'sweetalert2';
 import TableToExcel from '@linways/table-to-excel';
-import { MatTabGroup } from '@angular/material/tabs';
-import { MatAutocomplete, MatChipInputEvent } from '@angular/material';
-
+import {MatTabGroup} from '@angular/material/tabs';
+import {MatAutocomplete, MatChipInputEvent} from '@angular/material';
 // TABLA
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 // Importar Servicios
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { LoadingService } from 'src/app/services/app/loading.service';
-import { PDFEnglish } from 'src/app/english/entities/english-pdf-generator';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-
+import {CookiesService} from 'src/app/services/app/cookie.service';
+import {LoadingService} from 'src/app/services/app/loading.service';
+import {PDFEnglish} from 'src/app/english/entities/english-pdf-generator';
+import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
+import {NotificationsServices} from 'src/app/services/app/notifications.service';
 // Importar Proveedores
-import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
-import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
-import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
-import { GroupProvider } from 'src/app/english/providers/group.prov';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
-import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
-
+import {ClassroomProvider} from 'src/app/english/providers/classroom.prov';
+import {RequestCourseProvider} from 'src/app/english/providers/request-course.prov';
+import {EnglishCourseProvider} from 'src/app/english/providers/english-course.prov';
+import {GroupProvider} from 'src/app/english/providers/group.prov';
+import {RequestProvider} from 'src/app/providers/reception-act/request.prov';
+import {EnglishStudentProvider} from 'src/app/english/providers/english-student.prov';
 // Importar Componentes
-import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
-import { FormCreateCourseComponent } from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
-import { FormGroupComponent } from 'src/app/english/components/english-courses-page/form-group/form-group.component';
-import { FromGenerateGroupsComponent } from 'src/app/english/components/english-courses-page/from-generate-groups/from-generate-groups.component';
-import { GroupStudentsComponent } from 'src/app/english/components/english-courses-page/group-students/group-students.component';
-
+import {StudentRequestsComponent} from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
+import {FormCreateCourseComponent} from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
+import {FormGroupComponent} from 'src/app/english/components/english-courses-page/form-group/form-group.component';
+import {FromGenerateGroupsComponent} from 'src/app/english/components/english-courses-page/from-generate-groups/from-generate-groups.component';
+import {GroupStudentsComponent} from 'src/app/english/components/english-courses-page/group-students/group-students.component';
 // Importar Enumeradores
-import { EStatusGroupDB, EStatusGroup } from 'src/app/english/enumerators/status-group.enum';
-import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
-
+import {EStatusGroup, EStatusGroupDB} from 'src/app/english/enumerators/status-group.enum';
+import {EDaysSchedule} from 'src/app/english/enumerators/days-schedule.enum';
 // Importar Modales
-import { ActiveGroupModalComponent } from '../../modals/active-group-modal/active-group-modal.component';
-import { AssignEnglishTeacherComponent } from '../../modals/assign-english-teacher/assign-english-teacher.component';
-import { AddStudentsGroupModalComponent } from '../../modals/add-students-group-modal/add-students-group-modal.component';
-import { AssignClassroomComponent } from '../../modals/assign-classroom/assign-classroom.component';
-
+import {ActiveGroupModalComponent} from '../../modals/active-group-modal/active-group-modal.component';
+import {AssignEnglishTeacherComponent} from '../../modals/assign-english-teacher/assign-english-teacher.component';
+import {AddStudentsGroupModalComponent} from '../../modals/add-students-group-modal/add-students-group-modal.component';
+import {AssignClassroomComponent} from '../../modals/assign-classroom/assign-classroom.component';
 // Importar modelos
-import { IPeriod } from '../../../entities/shared/period.model';
-import { IClassroom } from '../../entities/classroom.model';
-import { IGroup } from '../../entities/group.model';
-import { ICourse } from '../../entities/course.model';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { IEmployee } from '../../../entities/shared/employee.model';
-import { IRequestCourse } from '../../entities/request-course.model';
+import {IPeriod} from '../../../entities/shared/period.model';
+import {IClassroom} from '../../entities/classroom.model';
+import {IGroup} from '../../entities/group.model';
+import {ICourse} from '../../entities/course.model';
+import {eNotificationType} from 'src/app/enumerators/app/notificationType.enum';
+import {IEmployee} from '../../../entities/shared/employee.model';
+import {IRequestCourse} from '../../entities/request-course.model';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -151,9 +143,28 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   pending(group: IGroup): void {
     // console.log('grupo id', group.course._id);
-    this.requestCourseProv.updateRequestCourseStatusToPendingByGroupId(group.course._id, '').subscribe(
-      res => console.log(res)
-    );
+    Swal.fire({
+      title: 'Cambio de estatus a alumnos para segundo periodo de curso',
+      text: '¿Esta seguro de continuar?',
+      type: 'warning',
+      showCloseButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.value) {
+        this.loadingService.setLoading(true);
+        this.requestCourseProv.updateRequestCourseStatusToPendingByGroupId(group._id, '').subscribe(
+          res => {
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS, res.message, '');
+            console.log(res);
+          }, () => {
+            this.loadingService.setLoading(false);
+            this.notificationsServices.showNotification(eNotificationType.ERROR, 'Error', 'No se han actualizado los estatus');
+          }, () => this.loadingService.setLoading(false)
+      );
+      }
+    });
   }
 
   getTwoPayments () {
@@ -669,25 +680,17 @@ export class EnglishCoursesPageComponent implements OnInit {
       if (res.period) {
         this.activePeriod = res.period;
       }
-      if (new Date(res.period.englishPerEndDate) < new Date()) {
-        const reminderDays = [];
-        const permitDay = new Date(res.period.englishPerEndDate);
-        for (let i = 1; i < 5; i++) {
-          permitDay.setDate(new Date().getDate() + i);
-          reminderDays.push(new Date(permitDay));
-        }
-        if (reminderDays.includes(new Date())) {
-          this.period = true;
-          Swal.fire({
-            title: '<strong>El segundo periodo de solicitudes ha iniciado, favor de cambiar los grupos a pendiente</strong>',
-            type: 'info',
-            showCloseButton: true,
-            focusConfirm: false,
-            confirmButtonText:
-              '<i class="fa fa-thumbs-up"></i> Ok',
-            confirmButtonAriaLabel: 'Thumbs up, great!'
-          });
-        }
+      if (new Date(res.period.englishSecPerInitDate) <= new Date() && new Date(res.period.englishSecPerEndDate) >= new Date() ) {
+        this.period = true;
+        Swal.fire({
+          title: '<strong>El segundo periodo de solicitudes ha iniciado, favor de cambiar los grupos a pendiente</strong>',
+          type: 'info',
+          showCloseButton: true,
+          focusConfirm: false,
+          confirmButtonText:
+            '<i class="fa fa-thumbs-up"></i> Ok',
+          confirmButtonAriaLabel: 'Thumbs up, great!'
+        });
       }
 
     }, error => {
