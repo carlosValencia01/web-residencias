@@ -61,6 +61,9 @@ import { IRequestCourse } from '../../entities/request-course.model';
 })
 export class EnglishCoursesPageComponent implements OnInit {
 
+  twoPaymentCourses: Array<any>;
+  period = false;
+
   activePeriod: IPeriod; //Periodo activo actualmente
 
   // SOLICITUDES
@@ -139,9 +142,37 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.getActivePeriod();
     this._getPeriods();
 
+    this.getTwoPayments();
+
     setTimeout(() => {
       this.emptyPDFGenerator = new PDFEnglish(this.imageToBase64Serv, this._CookiesService);
     }, 300);
+  }
+
+  pending(group: IGroup): void {
+    // console.log('grupo id', group.course._id);
+    this.requestCourseProv.updateRequestCourseStatusToPendingByGroupId(group.course._id, '').subscribe(
+      res => console.log(res)
+    );
+  }
+
+  getTwoPayments () {
+    this.englishCourseProv.getEnglishCourseTwoPayments().subscribe(
+      res => this.twoPaymentCourses = res.englishCourses
+    );
+  }
+
+  twoPayments (group: IGroup) {
+    let res = false;
+    for (const course in this.twoPaymentCourses) {
+      if (this.twoPaymentCourses[course]._id === group.course._id) {
+        res = true;
+      }
+    }
+    if (!this.period) {
+      res = false;
+    }
+    return res;
   }
 
   // #region Solicitudes
@@ -509,6 +540,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       err => { }, () => sub.unsubscribe()
     );
   }
+
   //#endregion
 
   // #region Cursos
@@ -645,6 +677,7 @@ export class EnglishCoursesPageComponent implements OnInit {
           reminderDays.push(new Date(permitDay));
         }
         if (reminderDays.includes(new Date())) {
+          this.period = true;
           Swal.fire({
             title: '<strong>El segundo periodo de solicitudes ha iniciado, favor de cambiar los grupos a pendiente</strong>',
             type: 'info',
@@ -1057,6 +1090,8 @@ export class EnglishCoursesPageComponent implements OnInit {
       return result.value ? result.value !== '' ? result.value : false : false;
     });
   }
+
+
 
 }
 

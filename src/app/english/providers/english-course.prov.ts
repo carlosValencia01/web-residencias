@@ -18,6 +18,11 @@ export class EnglishCourseProvider {
             .pipe(map(englishCourse => englishCourse.json()));
     }
 
+    getEnglishCourseTwoPayments() {
+        return this.api.get('sg-cle/englishcourse/twoPayments')
+            .pipe(map(englishCourse => englishCourse.json()));
+    }
+
     getAllEnglishCourseActive() {
         return this.api.get('sg-cle/englishcourse/all/active')
             .pipe(map(englishCourse => englishCourse.json()));

@@ -90,6 +90,12 @@
                           <mat-icon>domain</mat-icon>
                           <span>Asignación de aula</span>
                         </button>
+                        <div *ngIf="twoPayments(row)">
+                          <button (click)="pending(row)" mat-menu-item>
+                            <mat-icon>payment</mat-icon>
+                            <span>Segundo Pago</span>
+                          </button>
+                        </div>
                       </mat-menu>
                     </mat-cell>
                   </ng-container>

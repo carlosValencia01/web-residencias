@@ -63,8 +63,12 @@ export class RequestCourseProvider {
 
   setPaidStatus(data) {
     return this.api.put('sg-cle/requestcourse/paidstatus', data).pipe(map(res => res.json()));
-  }  
-  
+  }
+
+  updateRequestCourseStatusToPendingByGroupId(id, data) {
+    return this.api.put(`sg-cle/requestcourse/requestCourseToPending/${id}`, data).pipe(map(res => res.json()));
+  }
+
   getAllRequestCourseByEnglishStudentId(englishStudentId) {
     return this.api.get('sg-cle/requestcourse/all/by/englishstudent/' + englishStudentId).pipe(map(res => res.json()));
   }
