@@ -13,6 +13,7 @@ import { EnglishStudentsListPageComponent } from './components/english-students-
 import { EnglishTeachersListPageComponent } from './components/english-teachers-list-page/english-teachers-list-page.component';
 import { EnglishClassroomsListPageComponent } from './components/english-classrooms-list-page/english-classrooms-list-page.component';
 import { ReleasedOptionsPageComponent } from './components/released-options-page/released-options-page.component';
+import { EnglishPeriodListPageComponent } from './components/english-period-list-page/english-period-list-page.component';
 
 const routes: Routes = [
   {
@@ -64,6 +65,11 @@ const routes: Routes = [
     path: 'english-groups/:teacherId/:grupId',
     pathMatch: 'full',
     component: EnglishStudentsListPageComponent
+  },
+  {
+    path: 'english-periods',
+    pathMatch: 'full',
+    component: EnglishPeriodListPageComponent
   },
 ];
 

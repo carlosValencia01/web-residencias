@@ -1,0 +1,240 @@
+<mat-card>
+  <mat-card-content>
+
+    <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+      <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+        <input matInput (keyup)="applyFilter()" placeholder="Buscar..." [(ngModel)]="searchEnglishPeriod"
+          (keyup)="applyFilter()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <div style="text-align: right;">
+        <button [disabled]="!canCreateEnglishPeriod" style="margin-bottom:5px;"
+          [class]="canCreateEnglishPeriod?'btn btn-success':'btn btn-danger'" (click)="openDialogEnglishPeriod(null)">
+          Configurar
+          Nuevo Período</button>
+      </div>
+    </div>
+
+    <!--Tabla-->
+    <div style="position: relative;">
+
+      <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
+
+        <table mat-table [dataSource]="englishPeriodDataSource" class="mat-elevation-z8" matSort
+          #sortEnglishPeriods="matSort" matSortActive="ID" matSortDirection="asc">
+          <ng-container matColumnDef="year">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Año</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.year}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="periodName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Período</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.periodName}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="active">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span *ngIf="row.active" class="badge badge-pill badge-success">Activo</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #actions="matMenu">
+                <button (click)="openViewDetail(row.data)" mat-menu-item>
+                  <mat-icon>list</mat-icon>
+                  <span>Ver Detalles</span>
+                </button>
+                <button *ngIf="row.active" (click)="openDialogEnglishPeriod(row.data)" mat-menu-item>
+                  <mat-icon>edit</mat-icon>
+                  <span>Editar Configuración</span>
+                </button>
+                <button *ngIf="row.active" (click)="disableEnglishPeriod(row)" mat-menu-item>
+                  <mat-icon>clear</mat-icon>
+                  <span>Desactivar</span>
+                </button>
+              </mat-menu>
+
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="['year', 'periodName', 'active', 'actions']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['year', 'periodName', 'active', 'actions']"></mat-row>
+
+        </table>
+        <mat-paginator #matPaginatorEnglishPeriods [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+      </div>
+    </div>
+    <!--Fin de la Tabla-->
+  </mat-card-content>
+</mat-card>
+
+
+<!--Vista para crear período-->
+<ng-template #viewEnglishPeriod>
+  <section class="p-0 px-sm-1 px-md-3">
+    <div class="d-flex justify-content-between">
+      <h1 mat-dialog-title>{{period?'Editar':'Crear'}} período de Ingles</h1>
+      <button mat-icon-button mat-dialog-close class="float-right">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <mat-dialog-content class="p-0 px-sm-1 px-md-2">
+      <div class="row p-0 m-0 d-flex justify-content-center">
+        <form [formGroup]="englishPeriodForm">
+          <div class="row text-center">
+            <div class="col-12">
+              <h5><b>{{period?period.period.periodName:activePeriod.periodName}}
+                  ({{period?period.period.year:activePeriod.year}})</b></h5>
+            </div>
+          </div>
+          <hr />
+          <!--PERIODO DE SOLICITUDES-->
+          <div class="row text-center">
+            <div class="col-12">
+              <h5>Datos del período para enviar solicitudes</h5>
+            </div>
+          </div>
+          <div class="row text-center">
+
+            <!-- NO FUNCIONA, NECESITA MATERIAL ^10.0.2:
+            <mat-form-field>
+              <mat-label>Fecha de inicio y fin</mat-label>
+              <mat-date-range-input
+                [rangePicker]="reqPer"
+                [comparisonStart]="englishPeriodForm.value.reqPerInitDate"
+                [comparisonEnd]="englishPeriodForm.value.reqPerEndDate">
+                <input matStartDate placeholder="dd/mm/aaaa" formControlName="reqPerInitDate">
+                <input matEndDate placeholder="dd/mm/aaaa" formControlName="reqPerEndDate">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="reqPer"></mat-datepicker-toggle>
+              <mat-date-range-picker #reqPer></mat-date-range-picker>
+            </mat-form-field>-->
+
+            <div class="col-md-6">
+              <mat-form-field>
+                <mat-label>Fecha inicio</mat-label>
+                <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="reqPerInit" placeholder="mm/dd/aaaa"
+                  formControlName="reqPerInitDate">
+                <mat-datepicker-toggle matSuffix [for]="reqPerInit"></mat-datepicker-toggle>
+                <mat-datepicker #reqPerInit></mat-datepicker>
+              </mat-form-field>
+              <mat-error>
+                <span
+                  *ngIf="!englishPeriodForm.get('reqPerInitDate').valid && englishPeriodForm.get('reqPerInitDate').touched">Seleccione
+                  una fecha valida</span>
+              </mat-error>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field>
+                <mat-label>Fecha fin</mat-label>
+                <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="reqPerEnd" placeholder="mm/dd/aaaa"
+                  formControlName="reqPerEndDate" [disabled]="!englishPeriodForm.get('reqPerInitDate').valid"
+                  [readonly]="!englishPeriodForm.get('reqPerInitDate').valid"
+                  [min]="englishPeriodForm.get('reqPerInitDate').valid ? englishPeriodForm.get('reqPerInitDate').value : minDate">
+                <mat-datepicker-toggle matSuffix [for]="reqPerEnd"></mat-datepicker-toggle>
+                <mat-datepicker #reqPerEnd></mat-datepicker>
+              </mat-form-field>
+              <mat-error *ngIf="englishPeriodForm.get('reqPerInitDate').valid">
+                <span
+                  *ngIf="!englishPeriodForm.get('reqPerEndDate').valid && englishPeriodForm.get('reqPerEndDate').touched">Seleccione
+                  una fecha valida</span>
+              </mat-error>
+            </div>
+          </div>
+          <hr />
+          <!--SEGINDO PERIODO DE SOLICITUDES-->
+          <div class="row text-center">
+            <div class="col-12">
+              <h5>Datos del segundo período para enviar solicitudes</h5>
+            </div>
+          </div>
+          <div class="row text-center">
+            <div class="col-md-6">
+              <mat-form-field>
+                <mat-label>Fecha inicio</mat-label>
+                <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="secReqPerInit"
+                  placeholder="mm/dd/aaaa" formControlName="secReqPerInitDate"
+                  [disabled]="!englishPeriodForm.get('reqPerEndDate').valid"
+                  [readonly]="!englishPeriodForm.get('reqPerEndDate').valid"
+                  [min]="englishPeriodForm.get('reqPerEndDate').valid ? englishPeriodForm.get('reqPerEndDate').value : minDate">
+                <mat-datepicker-toggle matSuffix [for]="secReqPerInit"></mat-datepicker-toggle>
+                <mat-datepicker #secReqPerInit></mat-datepicker>
+              </mat-form-field>
+              <mat-error *ngIf="englishPeriodForm.get('reqPerEndDate').valid">
+                <span
+                  *ngIf="!englishPeriodForm.get('secReqPerInitDate').valid && englishPeriodForm.get('secReqPerInitDate').touched">Seleccione
+                  una fecha valida</span>
+              </mat-error>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field>
+                <mat-label>Fecha fin</mat-label>
+                <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="secReqPerEnd" placeholder="mm/dd/aaaa"
+                  formControlName="secReqPerEndDate" [disabled]="!englishPeriodForm.get('secReqPerInitDate').valid"
+                  [readonly]="!englishPeriodForm.get('secReqPerInitDate').valid"
+                  [min]="englishPeriodForm.get('secReqPerInitDate').valid ? englishPeriodForm.get('secReqPerInitDate').value : minDate">
+                <mat-datepicker-toggle matSuffix [for]="secReqPerEnd"></mat-datepicker-toggle>
+                <mat-datepicker #secReqPerEnd></mat-datepicker>
+              </mat-form-field>
+              <mat-error *ngIf="englishPeriodForm.get('secReqPerInitDate').valid">
+                <span
+                  *ngIf="!englishPeriodForm.get('secReqPerEndDate').valid && englishPeriodForm.get('secReqPerEndDate').touched">Seleccione
+                  una fecha valida</span>
+              </mat-error>
+            </div>
+          </div>
+          <hr />
+          <!--PERIODO DE EVALUACIÓN-->
+          <div class="row text-center">
+            <div class="col-12">
+              <h5>Datos del período para evaluar</h5>
+            </div>
+          </div>
+          <div class="row text-center">
+            <div class="col-md-6">
+              <mat-form-field>
+                <mat-label>Fecha inicio</mat-label>
+                <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="evaPerInit" placeholder="mm/dd/aaaa"
+                  formControlName="evaPerInitDate" [disabled]="!englishPeriodForm.get('secReqPerEndDate').valid"
+                  [readonly]="!englishPeriodForm.get('secReqPerEndDate').valid"
+                  [min]="englishPeriodForm.get('secReqPerEndDate').valid ? englishPeriodForm.get('secReqPerEndDate').value : minDate">
+                <mat-datepicker-toggle matSuffix [for]="evaPerInit"></mat-datepicker-toggle>
+                <mat-datepicker #evaPerInit></mat-datepicker>
+              </mat-form-field>
+              <mat-error *ngIf="englishPeriodForm.get('secReqPerEndDate').valid">
+                <span
+                  *ngIf="!englishPeriodForm.get('evaPerInitDate').valid && englishPeriodForm.get('evaPerInitDate').touched">Seleccione
+                  una fecha valida</span>
+              </mat-error>
+            </div>
+            <div class="col-md-6">
+              <mat-form-field>
+                <mat-label>Fecha fin</mat-label>
+                <input matInput [matDatepickerFilter]="myFilter" [matDatepicker]="evaPerEnd" placeholder="mm/dd/aaaa"
+                  formControlName="evaPerEndDate" [disabled]="!englishPeriodForm.get('evaPerInitDate').valid"
+                  [readonly]="!englishPeriodForm.get('evaPerInitDate').valid"
+                  [min]="englishPeriodForm.get('evaPerInitDate').valid ? englishPeriodForm.get('evaPerInitDate').value : minDate">
+                <mat-datepicker-toggle matSuffix [for]="evaPerEnd"></mat-datepicker-toggle>
+                <mat-datepicker #evaPerEnd></mat-datepicker>
+              </mat-form-field>
+              <mat-error *ngIf="englishPeriodForm.get('evaPerInitDate').valid">
+                <span
+                  *ngIf="!englishPeriodForm.get('evaPerEndDate').valid && englishPeriodForm.get('evaPerEndDate').touched">Seleccione
+                  una fecha valida</span>
+              </mat-error>
+            </div>
+          </div>
+        </form>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions class="d-flex justify-content-center mt-3">
+      <button mat-raised-button [class.button-blue]="englishPeriodForm.value"
+        [mat-dialog-close]="englishPeriodForm.value" [disabled]="englishPeriodForm.invalid">Guardar</button>
+    </mat-dialog-actions>
+  </section>
+</ng-template>

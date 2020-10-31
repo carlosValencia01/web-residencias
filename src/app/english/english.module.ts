@@ -30,6 +30,9 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material';
+import { MAT_DATE_LOCALE } from '@angular/material';
 //Proveedores
 import { StudentProvider } from '../providers/shared/student.prov';
 import { InscriptionsProvider } from '../providers/inscriptions/inscriptions.prov';
@@ -39,6 +42,7 @@ import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
 import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
 import { GroupProvider } from 'src/app/english/providers/group.prov';
 import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { EnglishPeriodProvider } from 'src/app/english/providers/english-period.prov';
 // Componentes
 import { EnglishCoursesPageComponent } from './components/english-courses-page/english-courses-page.component';
 import { FormRequestCourseComponent } from './components/student-english-page/form-request-course/form-request-course.component';
@@ -60,8 +64,6 @@ import { AddStudentsGroupModalComponent } from './modals/add-students-group-moda
 import { BossMessageComponent } from './components/boss-message/boss-message.component';
 import { EnglishGroupsPageComponent } from './components/english-groups-page/english-groups-page.component';
 import { AssignClassroomComponent } from './modals/assign-classroom/assign-classroom.component';
-// Services
-import { ImageToBase64Service } from '../services/app/img.to.base63.service';
 import { UploadAvgsModalComponent } from './components/upload-avgs-modal/upload-avgs-modal.component';
 import { StudentOptionsPageComponent } from './components/student-options-page/student-options-page.component';
 import { StudentListComponent } from './components/student-list/student-list.component';
@@ -70,6 +72,9 @@ import { EnglishTeachersListPageComponent } from './components/english-teachers-
 import { EnglishClassroomsListPageComponent } from './components/english-classrooms-list-page/english-classrooms-list-page.component';
 import { StudentProgressPageComponent } from './components/student-progress-page/student-progress-page.component';
 import { ReleasedOptionsPageComponent } from './components/released-options-page/released-options-page.component';
+import { EnglishPeriodListPageComponent } from './components/english-period-list-page/english-period-list-page.component';
+// Services
+import { ImageToBase64Service } from '../services/app/img.to.base63.service';
 
 @NgModule({
   imports: [
@@ -101,6 +106,8 @@ import { ReleasedOptionsPageComponent } from './components/released-options-page
     MatBadgeModule,
     MatAutocompleteModule,
     MatProgressBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     NgbModule.forRoot(),
   ],
   declarations: [
@@ -133,6 +140,7 @@ import { ReleasedOptionsPageComponent } from './components/released-options-page
     EnglishClassroomsListPageComponent,
     StudentProgressPageComponent,
     ReleasedOptionsPageComponent,
+    EnglishPeriodListPageComponent,
   ],
   entryComponents: [ // Permite exportar
     FormRequestCourseComponent,
@@ -159,7 +167,9 @@ import { ReleasedOptionsPageComponent } from './components/released-options-page
     EnglishCourseProvider,
     GroupProvider,
     RequestProvider,
+    EnglishPeriodProvider,
     ImageToBase64Service,
+    { provide: MAT_DATE_LOCALE, useValue: 'es-MX' }
   ]
 })
 export class EnglishModule { }
