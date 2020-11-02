@@ -44,6 +44,7 @@ export class CoursesRequestTableComponent implements OnInit {
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   requestsCourses: IRequestCourse[] = [];
+  requestsPendingCourses: IRequestCourse[] = [];
 
   filters = { // management of active filters
     courses: {
@@ -62,6 +63,7 @@ export class CoursesRequestTableComponent implements OnInit {
 
   activeCourses: ICourse[] = [];
   notPaidRequests: IRequestCourse[] = [];
+  pendingRequests: IRequestCourse[] = [];
 
   constructor(
     private requestCourseProv: RequestCourseProvider,
@@ -77,6 +79,7 @@ export class CoursesRequestTableComponent implements OnInit {
   async ngOnInit() {
 
     await this.getData();
+    await this.getPendingData();
 
     this.requestProvider.getPeriods().subscribe(
       (periods) => {
@@ -101,12 +104,22 @@ export class CoursesRequestTableComponent implements OnInit {
           return req;
         });
         this.notPaidRequests = this.requestsCourses.filter(req => (req.status == 'requested'));
-
         // create table data
         this.dataSource = new MatTableDataSource(this.requestsCourses);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
+        resolve(true);
+      });
+    });
+  }
+
+  getPendingData() { // retornar pendingRequests
+    return new Promise((resolve) => {
+      this.requestCourseProv.getAllRequestCourse().subscribe((data) => {
+        // read the request
+        this.requestsPendingCourses = data.requestCourses.filter(cour => cour.status === 'pending');
+        this.pendingRequests = this.requestsPendingCourses;
         resolve(true);
       });
     });
@@ -344,24 +357,30 @@ export class CoursesRequestTableComponent implements OnInit {
     await this.getData();
     let csvData = [];// save the controlNumber
     if (event.target.files && event.target.files[0]) {
-
       Papa.parse(event.target.files[0], {
         complete: async (results) => {
           if (results.data.length > 0) {
+            console.log('result data', results.data);
             results.data.slice(1).forEach(element => {
               if (element[0].toLowerCase() == 'si') {
                 csvData.push(element[3]);
               }
             });
             this.notPaidRequests = this.notPaidRequests.filter(req => csvData.includes((req.englishStudent.studentId as IStudent).controlNumber));
-
             if (this.notPaidRequests.length > 0) {
               await this.requestCourseProv.setPaidStatus(this.notPaidRequests).toPromise().then(ok => { });
               await this.getData();
               this.notificationService.showNotification(eNotificationType.SUCCESS, 'ÍNGLES', 'Pago registrado');
-            } else {
+            }
+            this.pendingRequests = this.pendingRequests.filter(req => csvData.includes((req.englishStudent.studentId as IStudent).controlNumber));
+            console.log('pending request ', this.pendingRequests);
+            if (this.pendingRequests.length > 0) {
+              await this.requestCourseProv.setPaidStatus(this.pendingRequests).toPromise().then(ok => { });
+              await this.getPendingData();
+              this.notificationService.showNotification(eNotificationType.SUCCESS, 'ÍNGLES', 'Segundos Pagos registrado');
+            }
+            else {
               this.notificationService.showNotification(eNotificationType.INFORMATION, 'ÍNGLES', 'No hay nuevos pagos por registrar');
-
             }
             this.loadingService.setLoading(false);
           }
