@@ -36,7 +36,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('solicitude')==='approved', 'noneText':whatStatus('solicitude')==='register','rejectText':whatStatus('solicitude')==='reevaluate','processText':whatStatus('solicitude')==='send'}">
-                      Carta de solicitud
+                      1. Carta de solicitud
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -53,7 +53,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('solicitude')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -75,7 +75,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('presentation')==='approved', 'noneText':whatStatus('presentation')==='noAssigned','rejectText':whatStatus('presentation')==='reevaluate','processText':['assigned', 'sign', 'send'].includes(whatStatus('presentation'))}">
-                      Carta de presentación
+                      2. Carta de presentación
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -100,7 +100,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('presentation')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -122,7 +122,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('acceptance')==='approved', 'noneText':whatStatus('acceptance')==='register','rejectText':whatStatus('acceptance')==='reevaluate','processText':whatStatus('acceptance')==='send'}">
-                      Carta de Aceptación
+                      3. Carta de Aceptación
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -139,7 +139,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('acceptance')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -161,7 +161,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('workPlanProject')==='approved', 'noneText':whatStatus('workPlanProject')==='register','rejectText':whatStatus('workPlanProject')==='reevaluate','processText':whatStatus('workPlanProject')==='send'}">
-                      Carta de Asignación/Plan de trabajo
+                      4. Carta de Asignación/Plan de trabajo
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -178,7 +178,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('workPlanProject')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -200,7 +200,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('commitment')==='approved', 'noneText':whatStatus('commitment')==='register','rejectText':whatStatus('commitment')==='reevaluate','processText':whatStatus('commitment')==='send'}">
-                      Carta compromiso
+                      5. Carta compromiso
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -217,7 +217,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('commitment')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -239,7 +239,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('firstReport')==='approved', 'noneText':whatStatus('firstReport')==='register','rejectText':whatStatus('firstReport')==='reevaluate','processText':whatStatus('firstReport')==='send'}">
-                      Primer reporte bimestral
+                      6.1 Primer reporte bimestral
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -256,7 +256,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('firstReport')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -278,7 +278,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('secondReport')==='approved', 'noneText':whatStatus('secondReport')==='register','rejectText':whatStatus('secondReport')==='reevaluate','processText':whatStatus('secondReport')==='send'}">
-                      Segundo reporte bimestral
+                      6.2 Segundo reporte bimestral
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -295,7 +295,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('secondReport')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -317,7 +317,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('thirdReport')==='approved', 'noneText':whatStatus('thirdReport')==='register','rejectText':whatStatus('thirdReport')==='reevaluate','processText':whatStatus('thirdReport')==='send','omitText':whatStatus('thirdReport')==='Omit'}">
-                      Tercer reporte bimestral
+                       6.3 Tercer reporte bimestral
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -334,7 +334,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('thirdReport')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -360,7 +360,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('constancy')==='approved', 'noneText':whatStatus('constancy')==='register','rejectText':whatStatus('constancy')==='reevaluate','processText':whatStatus('constancy')==='send'}">
-                      Constancia de servicio social
+                      7. Constancia de servicio social
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -377,7 +377,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('constancy')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -399,7 +399,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('dependencyManagerEvaluation')==='approved', 'noneText':whatStatus('dependencyManagerEvaluation')==='register','rejectText':whatStatus('dependencyManagerEvaluation')==='reevaluate','processText':whatStatus('dependencyManagerEvaluation')==='send'}">
-                      Evaluación del responsable del programa
+                      8. Evaluación del responsable del programa
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -416,7 +416,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('dependencyManagerEvaluation')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -438,7 +438,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('lastReport')==='approved', 'noneText':whatStatus('lastReport')==='register','rejectText':whatStatus('lastReport')==='reevaluate','processText':whatStatus('lastReport')==='send'}">
-                      Reporte final
+                      9. Reporte final
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -455,7 +455,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('lastReport')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -477,7 +477,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('lastReportEvaluation')==='approved', 'noneText':whatStatus('lastReportEvaluation')==='register','rejectText':whatStatus('lastReportEvaluation')==='reevaluate','processText':whatStatus('lastReportEvaluation')==='send'}">
-                      Evaluación del Reporte final
+                      10. Evaluación del Reporte final
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -494,7 +494,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('lastReportEvaluation')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -517,7 +517,7 @@
                   <mat-card-subtitle>
                     <p
                       [ngClass]="{'acceptText':whatStatus('selfEvaluation')==='approved', 'noneText':whatStatus('selfEvaluation')==='register','rejectText':whatStatus('selfEvaluation')==='reevaluate','processText':whatStatus('selfEvaluation')==='send','omitText':whatStatus('selfEvaluation')==='Omit'}">
-                      Autoevaluación del alumno
+                      11. Autoevaluación del alumno
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
@@ -534,7 +534,7 @@
                         <mat-icon>visibility</mat-icon>
                       </button>
                       <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('selfEvaluation')">
-                        <mat-icon>save_alt</mat-icon>
+                        <mat-icon>save</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'Omit'">

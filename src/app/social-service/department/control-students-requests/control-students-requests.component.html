@@ -24,7 +24,7 @@
             </div>
           </div>
           <div class="row">
-            <table mat-table [dataSource]="dataSourceAllRequests" matSort>
+            <table mat-table [dataSource]="dataSourceAllRequests" #sortAll matSort>
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
@@ -376,6 +376,10 @@
                     <button mat-menu-item *ngIf="row['status'] === 'send'" routerLink="/social-service/validateSolicitudeDocuments" [queryParams]="{id: row['id']}">
                       <mat-icon class="material-icons text-info">check_circle</mat-icon>
                       <span>Evaluar solicitud</span>
+                    </button>
+                    <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                      <span>Expediente</span>
                     </button>
                   </mat-menu>
                 </td>

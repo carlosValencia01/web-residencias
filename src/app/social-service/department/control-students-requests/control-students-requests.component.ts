@@ -22,9 +22,8 @@ import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 export class ControlStudentsRequestsComponent implements OnInit {
   public selectedSubTab: FormControl;
   public search: string;
-  @ViewChild('MatSortSign') sortSign: MatSort;
-  // @ViewChild('MatSortApproved') sortApproved: MatSort;
-  @ViewChild('MatSortAll') sortAll: MatSort;
+  @ViewChild('sortSign') sortSign: MatSort;
+  @ViewChild('sortAll') sortAll: MatSort;
   @ViewChild(MatSort) sortNoNumber: MatSort;
   @ViewChild(MatSort) sortWithNumber: MatSort;
   @ViewChild(MatSort) sortComplete: MatSort;
@@ -32,13 +31,10 @@ export class ControlStudentsRequestsComponent implements OnInit {
   @ViewChild('matPaginatorNumber') paginatorNumber: MatPaginator;
   @ViewChild('matPaginatorNumber') paginatorComplete: MatPaginator;
   @ViewChild('matPaginatorSend') paginatorSend: MatPaginator;
-  // @ViewChild('matPaginatorApproved') paginatorApproved: MatPaginator;
   @ViewChild('matPaginatorAllRequests') paginatorAllRequests: MatPaginator;
 
   public displayedColumnsSend: string[];
   public displayedColumnsSendName: string[];
-  // public displayedColumnsApproved: string[];
-  // public displayedColumnsApprovedName: string[];
   public displayedColumnsAllRequests: string[];
   public displayedColumnsAllRequestsName: string[];
   public displayedColumnsNoNumber: string[];
@@ -49,7 +45,6 @@ export class ControlStudentsRequestsComponent implements OnInit {
   public displayedColumnsCompleteName: string[];
 
   public dataSourceSend: MatTableDataSource<any>;
-  // public dataSourceApproved: MatTableDataSource<any>;
   public dataSourceAllRequests: MatTableDataSource<any>;
   public dataSourceNoNumber: MatTableDataSource<any>;
   public dataSourceNumber: MatTableDataSource<any>;
@@ -79,8 +74,6 @@ export class ControlStudentsRequestsComponent implements OnInit {
   ngOnInit() {
     this.displayedColumnsSend = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
     this.displayedColumnsSendName = ['Nombre', 'Número de control', 'Carrera'];
-    // this.displayedColumnsApproved = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
-    // this.displayedColumnsApprovedName = ['Nombre', 'Número de control', 'Carrera'];
     this.displayedColumnsAllRequests = ['no', 'fullName', 'controlNumber', 'career', 'status', 'phase', 'actions'];
     this.displayedColumnsAllRequestsName = ['Nombre', 'Número de control', 'Carrera', 'Estatus', 'Fase'];
     this.displayedColumnsNoNumber = ['no', 'fullName', 'controlNumber', 'career', 'tradeDocumentNumber', 'actions'];
@@ -333,21 +326,6 @@ export class ControlStudentsRequestsComponent implements OnInit {
       this.loadingService.setLoading(false);
     });
   }
-
-  // _getAllApprovedRequests() {
-  //   this.loadingService.setLoading(true);
-  //   // Obtener las solicitudes aprovadas
-  //   this.controlStudentProv.getRequests('approved').subscribe(res => {
-  //     const approvedRequests = res.controlStudents.map(this._castToTableApproved);
-  //     this._refreshApproved(approvedRequests);
-  //   }, () => {
-  //     this.notificationsService.showNotification(eNotificationType.ERROR,
-  //       'Error', 'Ha sucedido un error en la descarga de la información');
-  //     this.loadingService.setLoading(false);
-  //   }, () => {
-  //     this.loadingService.setLoading(false);
-  //   });
-  // }
 
   _getAllRequests() {
     this.loadingService.setLoading(true);
