@@ -31,12 +31,14 @@ export class RecordStudentPageComponent implements OnInit {
   public firstReportDoc: Array<any>;
   public secondReportDoc: Array<any>;
   public thirdReportDoc: Array<any>;
+  public reports: Array<any>;
   public constancyDoc: Array<any>;
   public evaluationOfProgramDoc: Array<any>;
   public finalReportDoc: Array<any>;
   public evaluationOfFinalReportDoc: Array<any>;
   public selfEvaluationDoc: Array<any>;
   public verificationDocuments: object;
+  public reportDocuments: Array<any>;
   public showInformation = false;
   public showDocuments = false;
   initRequest: InitRequest;
@@ -62,12 +64,14 @@ export class RecordStudentPageComponent implements OnInit {
       .subscribe( res => {
         this.studentInformation = res.controlStudent.studentId;
         this.verificationDocuments = res.controlStudent.verification;
+        this.reportDocuments = res.controlStudent.verification.reports;
         const documents = res.controlStudent.documents;
         this.solicitudeDoc = documents.filter(d => d.filename.includes('ITT-POC-08-02'));
         this.presentationDoc = documents.filter(d => d.filename.includes('ITT-POC-08-03'));
         this.acceptanceDoc = documents.filter(d => d.filename.includes('ITT-POC-08-00'));
         this.workPlanProjectDoc = documents.filter(d => d.filename.includes('ITT-POC-08-04'));
         this.commitmentDoc = documents.filter(d => d.filename.includes('ITT-POC-08-05'));
+        this.reports = documents.filter(d => d.filename.includes('ITT-POC-08-06'));
         this.firstReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-06-01'));
         this.secondReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-06-02'));
         this.thirdReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-06-03'));
@@ -113,7 +117,7 @@ export class RecordStudentPageComponent implements OnInit {
     return this.verificationDocuments[document];
   }
 
-  onView(file): void {
+  onView(file, idx = 0): void {
     let document;
     this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Servicio social', 'Recuperando archivo');
     this.loadingService.setLoading(true);
@@ -134,14 +138,8 @@ export class RecordStudentPageComponent implements OnInit {
       case 'commitment':
         document = this.commitmentDoc;
         break;
-      case 'firstReport':
-        document = this.firstReportDoc;
-        break;
-      case 'secondReport':
-        document = this.secondReportDoc;
-        break;
-      case 'thirdReport':
-        document = this.thirdReportDoc;
+      case 'reports':
+        document = this.reports;
         break;
       case 'constancy':
         document = this.constancyDoc;
@@ -160,13 +158,13 @@ export class RecordStudentPageComponent implements OnInit {
         break;
     }
 
-    this.controlStudentProv.getResource(document[0].fileIdInDrive, document[0].filename).subscribe(data => {
+    this.controlStudentProv.getResource(document[idx].fileIdInDrive, document[idx].filename).subscribe(data => {
       this.loadingService.setLoading(false);
       this.dialog.open(ExtendViewerComponent, {
         data: {
           source: data,
           isBase64: true,
-          title: document[0].filename
+          title: document[idx].filename
         },
         disableClose: true,
         hasBackdrop: true,
@@ -179,7 +177,7 @@ export class RecordStudentPageComponent implements OnInit {
     });
   }
 
-  downloadFile(file) {
+  downloadFile(file, idx = 0) {
     let documents;
     this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Servicio social', 'Recuperando archivo');
     this.loadingService.setLoading(true);
@@ -200,14 +198,8 @@ export class RecordStudentPageComponent implements OnInit {
       case 'commitment':
         documents = this.commitmentDoc;
         break;
-      case 'firstReport':
-        documents = this.firstReportDoc;
-        break;
-      case 'secondReport':
-        documents = this.secondReportDoc;
-        break;
-      case 'thirdReport':
-        documents = this.thirdReportDoc;
+      case 'reports':
+        documents = this.reports;
         break;
       case 'constancy':
         documents = this.constancyDoc;
@@ -225,9 +217,9 @@ export class RecordStudentPageComponent implements OnInit {
         documents = this.selfEvaluationDoc;
         break;
     }
-    const fileName = documents[0].filename;
+    const fileName = documents[idx].filename;
 
-    this.controlStudentProv.getFile(documents[0].fileIdInDrive, fileName).subscribe(async (res) => {
+    this.controlStudentProv.getFile(documents[idx].fileIdInDrive, fileName).subscribe(async (res) => {
       const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
       const downloadLink = document.createElement('a');
       downloadLink.href = linkSource;

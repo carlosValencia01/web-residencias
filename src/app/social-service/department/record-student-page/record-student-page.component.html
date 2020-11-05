@@ -31,11 +31,11 @@
           <div class="row justify-content-center">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('solicitude')==='approved', 'none':whatStatus('solicitude')==='register','reject':whatStatus('solicitude')==='reevaluate','process':whatStatus('solicitude')==='send'}">
+                        [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[whatStatus('solicitude')]">
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
-                      [ngClass]="{'acceptText':whatStatus('solicitude')==='approved', 'noneText':whatStatus('solicitude')==='register','rejectText':whatStatus('solicitude')==='reevaluate','processText':whatStatus('solicitude')==='send'}">
+                      [ngClass]="{'approved': 'acceptText', 'register': 'noneText','reevaluate': 'rejectText','send': 'processText'}[whatStatus('solicitude')]">
                       1. Carta de solicitud
                     </p>
                   </mat-card-subtitle>
@@ -70,11 +70,10 @@
             </div>
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('presentation')==='approved', 'none':whatStatus('presentation')==='noAssigned','reject':whatStatus('presentation')==='reevaluate','process':['assigned', 'sign', 'send'].includes(whatStatus('presentation'))}">
+                        [ngClass]="{'approved':'accept', 'noAssigned':'none','reevaluate':'reject','assigned':'process', 'sign':'process', 'send':'process'}[whatStatus('presentation')]">
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
-                    <p
-                      [ngClass]="{'acceptText':whatStatus('presentation')==='approved', 'noneText':whatStatus('presentation')==='noAssigned','rejectText':whatStatus('presentation')==='reevaluate','processText':['assigned', 'sign', 'send'].includes(whatStatus('presentation'))}">
+                    <p [ngClass]="{'approved':'acceptText', 'noAssigned':'noneText','reevaluate':'rejectText','assigned':'processText', 'sign':'processText', 'send':'processText'}[whatStatus('presentation')]">
                       2. Carta de presentación
                     </p>
                   </mat-card-subtitle>
@@ -117,11 +116,11 @@
             </div>
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('acceptance')==='approved', 'none':whatStatus('acceptance')==='register','reject':whatStatus('acceptance')==='reevaluate','process':whatStatus('acceptance')==='send'}">
+                        [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[whatStatus('acceptance')]">
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
-                      [ngClass]="{'acceptText':whatStatus('acceptance')==='approved', 'noneText':whatStatus('acceptance')==='register','rejectText':whatStatus('acceptance')==='reevaluate','processText':whatStatus('acceptance')==='send'}">
+                      [ngClass]="{'approved': 'acceptText', 'register': 'noneText','reevaluate': 'rejectText','send': 'processText'}[whatStatus('acceptance')]">
                       3. Carta de Aceptación
                     </p>
                   </mat-card-subtitle>
@@ -156,11 +155,11 @@
             </div>
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('workPlanProject')==='approved', 'none':whatStatus('workPlanProject')==='register','reject':whatStatus('workPlanProject')==='reevaluate','process':whatStatus('workPlanProject')==='send'}">
+                        [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[whatStatus('workPlanProject')]">
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
-                      [ngClass]="{'acceptText':whatStatus('workPlanProject')==='approved', 'noneText':whatStatus('workPlanProject')==='register','rejectText':whatStatus('workPlanProject')==='reevaluate','processText':whatStatus('workPlanProject')==='send'}">
+                      [ngClass]="{'approved': 'acceptText', 'register': 'noneText','reevaluate': 'rejectText','send': 'processText'}[whatStatus('workPlanProject')]">
                       4. Carta de Asignación/Plan de trabajo
                     </p>
                   </mat-card-subtitle>
@@ -195,11 +194,11 @@
             </div>
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('commitment')==='approved', 'none':whatStatus('commitment')==='register','reject':whatStatus('commitment')==='reevaluate','process':whatStatus('commitment')==='send'}">
+                        [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[whatStatus('commitment')]">
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
-                      [ngClass]="{'acceptText':whatStatus('commitment')==='approved', 'noneText':whatStatus('commitment')==='register','rejectText':whatStatus('commitment')==='reevaluate','processText':whatStatus('commitment')==='send'}">
+                      [ngClass]="{'approved': 'acceptText', 'register': 'noneText','reevaluate': 'rejectText','send': 'processText'}[whatStatus('commitment')]">
                       5. Carta compromiso
                     </p>
                   </mat-card-subtitle>
@@ -232,19 +231,19 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0" *ngFor="let report of reportDocuments">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('firstReport')==='approved', 'none':whatStatus('firstReport')==='register','reject':whatStatus('firstReport')==='reevaluate','process':whatStatus('firstReport')==='send'}">
+                        [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[report.status]">
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
-                      [ngClass]="{'acceptText':whatStatus('firstReport')==='approved', 'noneText':whatStatus('firstReport')==='register','rejectText':whatStatus('firstReport')==='reevaluate','processText':whatStatus('firstReport')==='send'}">
-                      6.1 Primer reporte bimestral
+                      [ngClass]="{'approved': 'acceptText', 'register': 'noneText','reevaluate': 'rejectText','send': 'processText'}[report.status]">
+                      6.{{report.position}} Reporte bimestral
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                  <div [ngSwitch]="whatStatus('firstReport')" class="text-center">
+                  <div [ngSwitch]="report.status" class="text-center">
                     <div *ngSwitchCase="'send'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                       <p class="card-text">En revisión</p>
@@ -252,10 +251,10 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-primary" (click)="onView('firstReport')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('reports', (report.position - 1))">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('firstReport')">
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('reports', (report.position - 1))">
                         <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
@@ -271,88 +270,88 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
-              <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('secondReport')==='approved', 'none':whatStatus('secondReport')==='register','reject':whatStatus('secondReport')==='reevaluate','process':whatStatus('secondReport')==='send'}">
-                <mat-card-header class="justify-content-center">
-                  <mat-card-subtitle>
-                    <p
-                      [ngClass]="{'acceptText':whatStatus('secondReport')==='approved', 'noneText':whatStatus('secondReport')==='register','rejectText':whatStatus('secondReport')==='reevaluate','processText':whatStatus('secondReport')==='send'}">
-                      6.2 Segundo reporte bimestral
-                    </p>
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div [ngSwitch]="whatStatus('secondReport')" class="text-center">
-                    <div *ngSwitchCase="'send'" class="cursor-pointer">
-                      <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
-                      <p class="card-text">En revisión</p>
-                    </div>
-                    <div *ngSwitchCase="'approved'" class="cursor-pointer">
-                      <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
-                      <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-primary" (click)="onView('secondReport')">
-                        <mat-icon>visibility</mat-icon>
-                      </button>
-                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('secondReport')">
-                        <mat-icon>cloud_download</mat-icon>
-                      </button>
-                    </div>
-                    <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
-                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
-                      <p class="card-text">Rechazado</p>
-                    </div>
-                    <div *ngSwitchCase="'register'">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                      <p class="card-text">Sin enviar</p>
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
-              <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('thirdReport')==='approved', 'none':whatStatus('thirdReport')==='register','reject':whatStatus('thirdReport')==='reevaluate','process':whatStatus('thirdReport')==='send','omit':whatStatus('thirdReport')==='Omit'}">
-                <mat-card-header class="justify-content-center">
-                  <mat-card-subtitle>
-                    <p
-                      [ngClass]="{'acceptText':whatStatus('thirdReport')==='approved', 'noneText':whatStatus('thirdReport')==='register','rejectText':whatStatus('thirdReport')==='reevaluate','processText':whatStatus('thirdReport')==='send','omitText':whatStatus('thirdReport')==='Omit'}">
-                       6.3 Tercer reporte bimestral
-                    </p>
-                  </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                  <div [ngSwitch]="whatStatus('thirdReport')" class="text-center">
-                    <div *ngSwitchCase="'send'" class="cursor-pointer">
-                      <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
-                      <p class="card-text">En revisión</p>
-                    </div>
-                    <div *ngSwitchCase="'approved'" class="cursor-pointer">
-                      <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
-                      <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-primary" (click)="onView('thirdReport')">
-                        <mat-icon>visibility</mat-icon>
-                      </button>
-                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('thirdReport')">
-                        <mat-icon>cloud_download</mat-icon>
-                      </button>
-                    </div>
-                    <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
-                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
-                      <p class="card-text">Rechazado</p>
-                    </div>
-                    <div *ngSwitchCase="'Omit'">
-                      <img alt="File" src="../../assets/imgs/notfound.png" style="width: 50px; height: 50px">
-                      <p class="card-text">Omitido</p>
-                    </div>
-                    <div *ngSwitchCase="'register'">
-                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
-                      <p class="card-text">Sin enviar</p>
-                    </div>
-                  </div>
-                </mat-card-content>
-              </mat-card>
-            </div>
+<!--            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">-->
+<!--              <mat-card class="p-1"-->
+<!--                        [ngClass]="{'accept':whatStatus('secondReport')==='approved', 'none':whatStatus('secondReport')==='register','reject':whatStatus('secondReport')==='reevaluate','process':whatStatus('secondReport')==='send'}">-->
+<!--                <mat-card-header class="justify-content-center">-->
+<!--                  <mat-card-subtitle>-->
+<!--                    <p-->
+<!--                      [ngClass]="{'acceptText':whatStatus('secondReport')==='approved', 'noneText':whatStatus('secondReport')==='register','rejectText':whatStatus('secondReport')==='reevaluate','processText':whatStatus('secondReport')==='send'}">-->
+<!--                      6.2 Segundo reporte bimestral-->
+<!--                    </p>-->
+<!--                  </mat-card-subtitle>-->
+<!--                </mat-card-header>-->
+<!--                <mat-card-content>-->
+<!--                  <div [ngSwitch]="whatStatus('secondReport')" class="text-center">-->
+<!--                    <div *ngSwitchCase="'send'" class="cursor-pointer">-->
+<!--                      <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">En revisión</p>-->
+<!--                    </div>-->
+<!--                    <div *ngSwitchCase="'approved'" class="cursor-pointer">-->
+<!--                      <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">Aceptado</p>-->
+<!--                      <button mat-icon-button class="see-btn text-primary" (click)="onView('secondReport')">-->
+<!--                        <mat-icon>visibility</mat-icon>-->
+<!--                      </button>-->
+<!--                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('secondReport')">-->
+<!--                        <mat-icon>cloud_download</mat-icon>-->
+<!--                      </button>-->
+<!--                    </div>-->
+<!--                    <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">-->
+<!--                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">Rechazado</p>-->
+<!--                    </div>-->
+<!--                    <div *ngSwitchCase="'register'">-->
+<!--                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">Sin enviar</p>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </mat-card-content>-->
+<!--              </mat-card>-->
+<!--            </div>-->
+<!--            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">-->
+<!--              <mat-card class="p-1"-->
+<!--                        [ngClass]="{'accept':whatStatus('thirdReport')==='approved', 'none':whatStatus('thirdReport')==='register','reject':whatStatus('thirdReport')==='reevaluate','process':whatStatus('thirdReport')==='send','omit':whatStatus('thirdReport')==='Omit'}">-->
+<!--                <mat-card-header class="justify-content-center">-->
+<!--                  <mat-card-subtitle>-->
+<!--                    <p-->
+<!--                      [ngClass]="{'acceptText':whatStatus('thirdReport')==='approved', 'noneText':whatStatus('thirdReport')==='register','rejectText':whatStatus('thirdReport')==='reevaluate','processText':whatStatus('thirdReport')==='send','omitText':whatStatus('thirdReport')==='Omit'}">-->
+<!--                       6.3 Tercer reporte bimestral-->
+<!--                    </p>-->
+<!--                  </mat-card-subtitle>-->
+<!--                </mat-card-header>-->
+<!--                <mat-card-content>-->
+<!--                  <div [ngSwitch]="whatStatus('thirdReport')" class="text-center">-->
+<!--                    <div *ngSwitchCase="'send'" class="cursor-pointer">-->
+<!--                      <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">En revisión</p>-->
+<!--                    </div>-->
+<!--                    <div *ngSwitchCase="'approved'" class="cursor-pointer">-->
+<!--                      <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">Aceptado</p>-->
+<!--                      <button mat-icon-button class="see-btn text-primary" (click)="onView('thirdReport')">-->
+<!--                        <mat-icon>visibility</mat-icon>-->
+<!--                      </button>-->
+<!--                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('thirdReport')">-->
+<!--                        <mat-icon>cloud_download</mat-icon>-->
+<!--                      </button>-->
+<!--                    </div>-->
+<!--                    <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">-->
+<!--                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">Rechazado</p>-->
+<!--                    </div>-->
+<!--                    <div *ngSwitchCase="'Omit'">-->
+<!--                      <img alt="File" src="../../assets/imgs/notfound.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">Omitido</p>-->
+<!--                    </div>-->
+<!--                    <div *ngSwitchCase="'register'">-->
+<!--                      <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">-->
+<!--                      <p class="card-text">Sin enviar</p>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </mat-card-content>-->
+<!--              </mat-card>-->
+<!--            </div>-->
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'accept':whatStatus('constancy')==='approved', 'none':whatStatus('constancy')==='register','reject':whatStatus('constancy')==='reevaluate','process':whatStatus('constancy')==='send'}">
