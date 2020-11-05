@@ -13,11 +13,11 @@
       <div class="col-6">Teléfono: {{studentInformation.phone}}</div>
       <div class="col-6">Sexo: {{studentInformation.sex}}</div>
     </div>
-    <button mat-icon-button (click)="location.back()" matTooltip="Regresar" class="text-danger" style="position: absolute; top: 0; right: 0;">
-      <mat-icon>cancel</mat-icon>
+    <button mat-raised-button (click)="location.back()" color="warn" style="position: absolute; top: 5px; right: 5px;">
+      <mat-icon>arrow_back</mat-icon> Regresar
     </button>
-    <button mat-icon-button (click)="downloadControlCard()" matTooltip="Descargar Tarjeta de Control" class="text-success text-center" style="position: absolute; bottom: 0; right: 0;">
-      <mat-icon style="height: 36px; width: 36px; font-size: 34px;">save</mat-icon>
+    <button mat-raised-button (click)="downloadControlCard()" color="primary" matTooltip="Descargar Tarjeta de Control" style="position: absolute; bottom: 5px; right: 5px;">
+      <small>Descargar Tarjeta de Control</small>
     </button>
   </div>
 </div>
@@ -49,11 +49,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('solicitude')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('solicitude')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('solicitude')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('solicitude')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -96,11 +96,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('presentation')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('presentation')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('presentation')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('presentation')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -135,11 +135,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('acceptance')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('acceptance')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('acceptance')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('acceptance')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -174,11 +174,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('workPlanProject')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('workPlanProject')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('workPlanProject')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('workPlanProject')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -213,11 +213,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('commitment')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('commitment')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('commitment')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('commitment')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -252,11 +252,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('firstReport')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('firstReport')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('firstReport')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('firstReport')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -291,11 +291,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('secondReport')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('secondReport')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('secondReport')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('secondReport')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -330,11 +330,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('thirdReport')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('thirdReport')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('thirdReport')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('thirdReport')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -373,11 +373,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('constancy')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('constancy')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('constancy')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('constancy')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -412,11 +412,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('dependencyManagerEvaluation')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('dependencyManagerEvaluation')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('dependencyManagerEvaluation')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('dependencyManagerEvaluation')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -451,11 +451,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('lastReport')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('lastReport')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('lastReport')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('lastReport')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -490,11 +490,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('lastReportEvaluation')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('lastReportEvaluation')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('lastReportEvaluation')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('lastReportEvaluation')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
@@ -530,11 +530,11 @@
                     <div *ngSwitchCase="'approved'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/aceptado.png" style="width: 50px; height: 50px">
                       <p class="card-text">Aceptado</p>
-                      <button mat-icon-button class="see-btn text-info" (click)="onView('selfEvaluation')">
+                      <button mat-icon-button class="see-btn text-primary" (click)="onView('selfEvaluation')">
                         <mat-icon>visibility</mat-icon>
                       </button>
-                      <button mat-icon-button class="download-btn text-primary" (click)="downloadFile('selfEvaluation')">
-                        <mat-icon>save</mat-icon>
+                      <button mat-icon-button class="download-btn text-success" (click)="downloadFile('selfEvaluation')">
+                        <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
                     <div *ngSwitchCase="'Omit'">

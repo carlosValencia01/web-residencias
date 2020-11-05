@@ -30,7 +30,12 @@
       </div>
       <mat-vertical-stepper [linear]="true" #stepper>
         <mat-step [completed]="assistance">
-          <ng-template matStepLabel>Asistencia</ng-template>
+          <ng-template matStepLabel>
+            Asistencia
+            <button *ngIf="assistance" mat-fab color="primary" matTooltip="Expediente" routerLink="/social-service/recordStudent" [queryParams]="{id: controlStudentId}" style="position: absolute; top: 5px; right: 5px;">
+              <mat-icon class="material-icons">folder_shared</mat-icon>
+            </button>
+          </ng-template>
           <div *ngIf="assistance">
             <h5 class="text-center">Ya tienes tu asistencia registrada</h5>
             <div class="d-flex justify-content-center">
@@ -309,6 +314,7 @@
                           </div>
                         </div>
                       </label>
+                      <small>*Subir carta de presentación firmada por la dependencia</small>
                       <p *ngIf="['reevaluate', 'upload'].includes(presentation)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
                       <div class="text-center" *ngIf="presentation === 'reevaluate'">
                         <button mat-icon-button matSuffix
