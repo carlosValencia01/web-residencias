@@ -52,6 +52,7 @@ import { DepartmentControlStudentsPresentationComponent } from './components/dep
 import { ReviewSolicitudeDocumentsPageComponent } from './department/review-solicitude-documents-page/review-solicitude-documents-page.component';
 import { DialogDocumentViewerComponent } from './components/dialog-document-viewer/dialog-document-viewer.component';
 import { RecordStudentPageComponent } from './department/record-student-page/record-student-page.component';
+import { ControlStudentsProcessPageComponent } from './department/control-students-process-page/control-students-process-page.component';
 
 
 @NgModule({
@@ -100,7 +101,8 @@ import { RecordStudentPageComponent } from './department/record-student-page/rec
     DepartmentControlStudentsPresentationComponent,
     ReviewSolicitudeDocumentsPageComponent,
     DialogDocumentViewerComponent,
-    RecordStudentPageComponent
+    RecordStudentPageComponent,
+    ControlStudentsProcessPageComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },

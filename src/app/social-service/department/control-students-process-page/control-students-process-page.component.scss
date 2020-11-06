@@ -1,0 +1,22 @@
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-column-no, .mat-column-actions{
+  max-width: 100px;
+  min-width: 64px;
+}
+
+#narrowTd, #narrowTh {
+  width: 20%;
+  text-align: center;
+}
+
+td > mat-icon {
+  cursor: pointer;
+}

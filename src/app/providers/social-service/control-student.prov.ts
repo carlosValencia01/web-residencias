@@ -63,6 +63,16 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  addOneReportToStudent(_id) {
+    return this.api.post('controlStudent/report/' + _id, {})
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
+  removeOneReportToStudent(_id) {
+    return this.api.delete('controlStudent/report/' + _id)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   uploadFile2(data) {
     return this.api.post('controlStudent/upload/file2', data)
       .pipe(map(controlStudent => controlStudent.json()));
