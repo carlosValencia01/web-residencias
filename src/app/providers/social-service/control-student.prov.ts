@@ -32,6 +32,11 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  getFullStudentInformationByControlId(_id) {
+    return this.api.get(`controlStudent/full/student/${_id}`)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   getControlStudentByDocumentAndStatus(documentName, status) {
     return this.api.get(`controlStudent/document/status/${documentName}/${status}`)
       .pipe(map(controlStudent => controlStudent.json()));

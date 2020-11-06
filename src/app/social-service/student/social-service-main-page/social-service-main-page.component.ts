@@ -17,7 +17,6 @@ import {InitPresentationDocument} from '../../../entities/social-service/initPre
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
 
-
 moment.locale('es');
 
 @Component({
@@ -90,6 +89,11 @@ export class SocialServiceMainPageComponent implements OnInit {
   public verificationEmail: boolean; // Validacion de verificacion de email como primer paso del proceso de servicio social
   private documents: Array<any> = []; // Array para almacenar los documentos del estudiante
   public formSchedule: FormGroup;
+  public studentPhone;
+  public studentStreet;
+  public studentSuburb;
+  public studentCity;
+  public studentState;
 
   editField: string;
   scheduleList: Array<any> = [
@@ -225,12 +229,11 @@ export class SocialServiceMainPageComponent implements OnInit {
     }, () =>     this.loadingService.setLoading(false) );
   }
 
-
   downloadAsignation() {
     this.loadingService.setLoading(true);
     const asignation = this.documents.filter(f => f.filename.toString().includes('ITT-08-04'));
     let asignationId = '';
-    console.log(asignation[1].fileIdInDrive);
+    console.log(asignation[0].fileIdInDrive);
     try {
       asignationId = asignation[asignation.length - 1].fileIdInDrive;
     } catch (e) {
@@ -265,7 +268,6 @@ export class SocialServiceMainPageComponent implements OnInit {
         .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
     }, () =>     this.loadingService.setLoading(false) );
     }
-
 
   public bufferToBase64(buffer) {
     return btoa(new Uint8Array(buffer).reduce((data, byte) => {
@@ -310,7 +312,7 @@ export class SocialServiceMainPageComponent implements OnInit {
         break;
       case 'commitment':
         nameDocument = 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf';
-        if (this.acceptance === 'reevaluate') {
+        if (this.commitment === 'reevaluate') {
           newF = false;
           const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-05'));
           nameDocument = documentId[0].filename;
@@ -369,7 +371,7 @@ export class SocialServiceMainPageComponent implements OnInit {
                   await this.uploadFile(document.nameInDrive, document, 'commitment');
                   this.commitment = 'send';
                 } else {
-                  this.commitmentDoc = document;
+                  //this.commitmentDoc = document;
                   this.commitment = 'upload';
                 }
                 break;
@@ -388,6 +390,8 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   async uploadFiles() {
+    console.log(this.presentationDoc);
+    console.log(this.commitmentDoc);
     const documents = [this.presentationDoc, this.acceptanceDoc, this.workPlanProjectDoc, this.commitmentDoc];
     const details = ['presentation', 'acceptance', 'workPlanProject', 'commitment'];
     for (let n = 0; n < documents.length; n++) {
@@ -451,6 +455,12 @@ export class SocialServiceMainPageComponent implements OnInit {
         console.log(err);
         this.loadingService.setLoading(false);
       });
+      if (this.commitmentDoc) {
+        this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {['verification.' + 'commitment']: 'send'})
+                .subscribe( () => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
+                });
+      }
   }
 
   disabledUploadFile(document): boolean {
@@ -601,7 +611,21 @@ export class SocialServiceMainPageComponent implements OnInit {
     });
   }// saveWorkPlan
 
+  saveCommitment() {
+    this.controlStudentProvider.getControlStudentById(this.controlStudentId)
+    .subscribe( resp => {
+      this.formDocument = this._castToDoc(resp.controlStudent);
+      this.initRequest.setPresentationRequest(this.formDocument);
+      const binary = this.initRequest.documentSend(eSocialFiles.COMPROMISO);
+      this.saveCommitmentDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
+    }, err => {
+      console.log(err);
+    });
+  }// saveCommitment
+
+
   private _castToDoc(data) {
+    this.getMissingData();
     return {
       student: data.studentId,
       dependencyName: data.dependencyName,
@@ -622,7 +646,10 @@ export class SocialServiceMainPageComponent implements OnInit {
       dependencyProgramLocation: data.dependencyProgramLocation,
       tradeDocumentNumber: data.tradePresentationDocumentNumber,
       months: data.months,
-      schedule: data.schedule
+      schedule: data.schedule,
+      studentPhone: this.studentPhone,
+      studentStreet : this.studentStreet,
+      studentSuburb: this.studentSuburb
     };
   }
 
@@ -636,7 +663,6 @@ export class SocialServiceMainPageComponent implements OnInit {
       newF: statusDoc,
       fileId: fileId
     };
-
     this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
       async updated => {
         if (updated.action === 'create file') {
@@ -682,5 +708,99 @@ export class SocialServiceMainPageComponent implements OnInit {
     );
   }
 
+  saveCommitmentDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string) {
+    this.validateDocumentViewer('data:application/pdf;base64,' + document, 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf').then( async response => {
+      if (response) {
+        this.commitment = 'upload';
+        const documentInfo = {
+          mimeType: 'application/pdf',
+          nameInDrive: 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf',
+          bodyMedia: document,
+          folderId: student.folderIdSocService.idFolderInDrive,
+          newF: statusDoc,
+          fileId: fileId
+        };
+        this.commitmentDoc = documentInfo;
+        this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
+          async updated => {
+            if (updated.action === 'create file') {
+              const documentInfo4 = {
+                doc: {
+                  filename: updated.name,
+                  type: 'DRIVE',
+                  fileIdInDrive: updated.fileId
+                },
+                status: {
+                  name: 'ACEPTADO',
+                  active: true,
+                  message: 'Se envio por primera vez',
+                  observation: 'Firmado por: ' + this.userData.name.fullName
+                }
+              };
+              await this.controlStudentProvider.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Carta Compromiso registrada correctamente.');
+                },
+                err => {
+                  console.log(err);
+                }, () => this.loadingService.setLoading(false)
+              );
+            } else {
+              const docStatus = {
+                name: 'ACEPTADO',
+                active: true,
+                message: 'Se actualizo el documento'
+              };
+              await this.controlStudentProvider.updateDocumentLog(student._id, {filename: updated.filename, status: docStatus})
+                .subscribe( () => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Carta Compromiso actualizada correctamente.');
+                }, err => {
+                  console.log(err);
+                }, () => this.loadingService.setLoading(false));
+            }
+          },
+          err => {
+            console.log(err);
+            this.loadingService.setLoading(false);
+          }
+        );
+      }
+    }
+    );
+  }// saveCommitmentDocument
 
+  getCommitment() {
+    let commitmentFile: File = null;
+    const commitment = this.documents.filter(f => f.filename.toString().includes('ITT-POC-08-05'));
+    let commitmentId = '';
+    try {
+      commitmentId = commitment[0].fileIdInDrive;
+    } catch (e) {
+      console.log(e);
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', 'No se ha encontrado la carta compromiso, vuelva a intentarlo mas tarde.');
+      return;
+    }
+    this.controlStudentProvider.getFile(commitmentId, 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf').subscribe(async (res) => {
+      console.log('res', res);
+      commitmentFile = res.file;
+    }); {
+
+    }
+    return commitmentFile;
+  }
+
+  getMissingData() {
+    this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
+      this.studentPhone = res.student.phone;
+      this.studentStreet = res.student.street;
+      this.studentSuburb = res.student.suburb;
+      this.studentCity = res.student.city;
+      this.studentState = res.student.state;
+      console.log(res.student);
+    });
+  }
+
+    generateCommitment() {
+      this.saveCommitment();
+    }
 }

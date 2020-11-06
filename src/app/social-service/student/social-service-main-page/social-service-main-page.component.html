@@ -279,7 +279,7 @@
               </div>
             </div>
             <div *ngIf="presentationDownloaded && savedSchedule && workPlanProjectDownloaded && (validateSolicitudePhase() === 'register' || validateSolicitudePhase() === 'reevaluate')" class="text-center">
-              <div class="d-flex justify-content-around">
+              <div class="flex justify-content-around">
                 <button mat-button type="button" class="mt-2" (click)="downloadPresentation()">
                   Descargar Carta de Presentación
                   <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
@@ -419,7 +419,7 @@
                     <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
                       <h6 class="text-center">Carta <br>compromiso</h6>
                       <label for="commitment" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
-                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;" (click)="generateCommitment()">
                         <div [ngSwitch]="commitment">
                           <div *ngSwitchCase="'upload'">
                             <span mat-line class="badge badge-pill badge-success">CARGADO</span>
@@ -450,11 +450,11 @@
                           <mat-icon class="text-danger">info</mat-icon>
                         </button>
                       </div>
-                      <input type="file" id="commitment" (change)="onFileChange($event)"
+                      <input type="button" id="commitment" (change)="onFileChange($event)"
                              hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFile('commitment')">
-<!--                      <button type="button" id="commitment" (click)="createCommitmentDocument()"-->
-<!--                             hidden="hidden">-->
-<!--                      </button>-->
+                      <button type="button" id="commitment" (click)="saveCommitment()"
+                             hidden="hidden">
+                      </button>
                     </mat-card-content>
                   </mat-card>
                 </div>
@@ -490,10 +490,80 @@
               </div>
             </div>
 
+            <div class="text-center margen">
+              <div class="flex justify-content-around">
+                <button mat-button type="button" class="mt-2">
+                  <a class="noDecorado" href="http://www.tepic.tecnm.mx/sgc2/files/Procesos_Centrales/Servicio_Social/Registros%20SS/ITT-POC-08-06%20REPORTE%20BIMESTRAL%20DE%20SERVICIO%20SOCIAL.docx">
+                    Descargar Formato de Reporte Bimestral
+                  </a>
+                  <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
+                </button>
+              </div>
+            </div>
+
+
+            <div class="row margen">
+              <div class="col-4">
+                <mat-card class="my-2 solicitude-document">
+                  <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                    <h6 class="text-center">Primer Reporte Bimestral</h6>
+                    <label for="firstReport" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                      <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                      <div [ngSwitch]="firstReportStatus">
+                        <div *ngSwitchDefault>
+                          <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                        </div>
+                      </div>
+                    </label>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="col-4"> 
+                <mat-card class="my-2 solicitude-document">
+                  <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                    <h6 class="text-center">Segundo Reporte Bimestral</h6>
+                    <label for="secondReport" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                      <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                      <div [ngSwitch]="secondReportStatus">
+                        <div *ngSwitchDefault>
+                          <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                        </div>
+                      </div>
+                    </label>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="col-4"> 
+                <mat-card class="my-2 solicitude-document">
+                  <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                    <h6 class="text-center">Tercer Reporte Bimestral</h6>
+                    <label for="thirdReport" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                      <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                      <div [ngSwitch]="thirdReportStatus">
+                        <div *ngSwitchDefault>
+                          <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                        </div>
+                      </div>
+                    </label>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+            </div>
+
+            <div class="text-center">
+              <button mat-raised-button color="primary" class="w-50" (click)="uploadFiles()" [disabled]="true">Subir Reporte</button>
+            </div>
+
+
+
           </div>
         </mat-step>
       </mat-vertical-stepper>
     </div>
+
   </div>
   <div *ngIf="releaseSocialService">
     <mat-card class="w-75 m-2">
