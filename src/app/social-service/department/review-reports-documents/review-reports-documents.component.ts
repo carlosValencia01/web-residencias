@@ -1,29 +1,27 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ControlStudentProv} from '../../../providers/social-service/control-student.prov';
-import {LoadingService} from '../../../services/app/loading.service';
 import {NotificationsServices} from '../../../services/app/notifications.service';
+import {LoadingService} from '../../../services/app/loading.service';
 import {eNotificationType} from '../../../enumerators/app/notificationType.enum';
-import {IStudent} from '../../../entities/shared/student.model';
 import {MatDialog} from '@angular/material';
 import Swal from 'sweetalert2';
+import {IStudent} from '../../../entities/shared/student.model';
 import {Location} from '@angular/common';
 
 @Component({
-  selector: 'app-review-solicitude-documents-page',
-  templateUrl: './review-solicitude-documents-page.component.html',
-  styleUrls: ['./review-solicitude-documents-page.component.scss']
+  selector: 'app-review-reports-documents',
+  templateUrl: './review-reports-documents.component.html',
+  styleUrls: ['./review-reports-documents.component.scss']
 })
-export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
+export class ReviewReportsDocumentsComponent implements OnInit {
   private controlStudentId: string;
-  public acceptance: string;
-  public presentation: string;
-  public workPlan: string;
-  public commitment: string;
-  public student: IStudent;
-  public pdf: any;
-  private documents: any;
   public loaded = false;
+  public reports: any;
+  public pdf: any;
+  public student: IStudent;
+  public documents: any;
+
 
   constructor(private activatedRoute: ActivatedRoute,
               private controlStudentProv: ControlStudentProv,
@@ -38,13 +36,11 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
 
   ngOnInit() {
     this.loadingService.setLoading(true);
-    this.controlStudentProv.getControlStudentById(this.controlStudentId).subscribe(res => {
-      this.student = res.controlStudent.studentId;
-      this.documents = res.controlStudent.documents;
-      this.acceptance = res.controlStudent.verification.acceptance;
-      this.presentation = res.controlStudent.verification.presentation;
-      this.workPlan = res.controlStudent.verification.workPlanProject;
-      this.commitment = res.controlStudent.verification.commitment;
+    this.controlStudentProv.getControlStudentById(this.controlStudentId)
+      .subscribe(res => {
+        this.student = res.controlStudent.studentId;
+        this.reports = res.controlStudent.verification.reports;
+        this.documents = res.controlStudent.documents;
     }, () => {
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
         'No se pudo obtener la información del estudiante, intentelo mas tarde');
@@ -54,7 +50,7 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
 
   viewDocument(documentCode) {
     this.loadingService.setLoading(true);
-    const documentId = this.documents.filter(d => d.filename.includes(documentCode));
+    const documentId = this.reports.filter(d => d.filename.includes(documentCode));
     this.controlStudentProv.getResource(documentId[0].fileIdInDrive, documentCode).subscribe(async (data: Blob) => {
       this.pdf = data;
       // this.openDialog(this.pdf);
@@ -71,12 +67,12 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
     }, () => this.disableLoading() );
   }
 
-  messageForCompany(element, document) {
-    switch (element) {
+  messageForCompany(type, report) {
+    switch (type) {
       case 'rejectDocument':
         Swal.fire({
           title: 'Evaluación de documento',
-          text: 'Escriba un mensaje que describa el error para el documento por favor',
+          text: 'Escriba un mensaje que describa el error para el reporte por favor',
           type: 'error',
           input: 'text',
           inputValue: '',
@@ -96,15 +92,15 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
                 'escriba un mensaje para el alumno de los errores en su información');
             } else {
               // Asignar mensaje por parte de bolsa de trabajo
-              this.sendVerificationInformation( document, {validation: false, message: result.value}, 'reevaluate');
+              this.sendVerificationInformation( report, {filename: report.name, validation: false, message: result.value}, 'reevaluate');
             }
           }
         });
         break;
       case 'evaluateDocument':
         Swal.fire({
-          title: 'Evaluación de documento',
-          html: 'Se ha realizado la validación de toda la información de la solicitud del estudiante' +
+          title: 'Evaluación de reporte bimestral',
+          html: 'Se ha realizado la validación de toda la información del reporte del estudiante' +
             '<br><strong>¿Está seguro de continuar?</strong>',
           type: 'info',
           showCancelButton: true,
@@ -115,39 +111,36 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
           confirmButtonText: 'Validar documento'
         }).then((result) => {
           if (result.value) {
-              // Todos los campos del formulario son correctos
-            this.sendVerificationInformation( document, {validation: true, message: ''}, 'approved');
+            // Todos los campos del formulario son correctos
+            this.sendVerificationInformation( report, {filename: report.name, validation: true, message: ''}, 'approved');
           }
         });
         break;
     }
   }
 
-  sendVerificationInformation(document, information, status) {
+
+  sendVerificationInformation(report, information, status) {
     this.loadingService.setLoading(true);
-    this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId,
-      {['verificationDepartment.' + document]: information,
-        ['verification.' + document]: status})
-      .subscribe( () => {
+    this.controlStudentProv.updateReportFromDepartmentEvaluation(this.controlStudentId,
+      {reportId: report._id, eStatus: status})
+      .subscribe( res => {
         this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
-          'Se ha enviado su validación del documento');
-        switch (document) {
-          case 'presentation':
-            this.presentation = status;
-            break;
-          case 'acceptance':
-            this.acceptance = status;
-            break;
-          case 'workPlanProject':
-            this.workPlan = status;
-            break;
-          case 'commitment':
-            this.commitment = status;
-            break;
-        }
-      }, () => {
+          res.msg);
+        this.controlStudentProv.updateOneVerificationDepartmentReport(this.controlStudentId,
+          information).subscribe( eRes => {
+          this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
+            eRes.msg);
+          this.ngOnInit();
+        }, err => {
+            const message = JSON.parse(err._body).msg || 'Error al buscar recurso';
+            this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
+            message);
+        });
+      }, error => {
+        const message = JSON.parse(error._body).msg || 'Error al buscar recurso';
         this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
-          'Ha sucedido un error guardando la información, vuelva a intentarlo mas tarde');
+          message);
         this.loadingService.setLoading(false);
       }, () => this.loadingService.setLoading(false));
   }
@@ -156,4 +149,5 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
     this.loadingService.setLoading(false);
     this.loaded = true;
   }
+
 }

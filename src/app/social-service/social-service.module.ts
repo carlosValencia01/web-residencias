@@ -53,6 +53,7 @@ import { ReviewSolicitudeDocumentsPageComponent } from './department/review-soli
 import { DialogDocumentViewerComponent } from './components/dialog-document-viewer/dialog-document-viewer.component';
 import { RecordStudentPageComponent } from './department/record-student-page/record-student-page.component';
 import { ControlStudentsProcessPageComponent } from './department/control-students-process-page/control-students-process-page.component';
+import { ReviewReportsDocumentsComponent } from './department/review-reports-documents/review-reports-documents.component';
 
 
 @NgModule({
@@ -102,7 +103,8 @@ import { ControlStudentsProcessPageComponent } from './department/control-studen
     ReviewSolicitudeDocumentsPageComponent,
     DialogDocumentViewerComponent,
     RecordStudentPageComponent,
-    ControlStudentsProcessPageComponent
+    ControlStudentsProcessPageComponent,
+    ReviewReportsDocumentsComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },

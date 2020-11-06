@@ -49,6 +49,10 @@
                       <mat-icon class="material-icons text-info">folder_shared</mat-icon>
                       <span>Expediente</span>
                     </button>
+                    <button mat-menu-item routerLink="/social-service/validateReportsDocuments" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-primary">find_in_page</mat-icon>
+                      <span>Evaluar reportes</span>
+                    </button>
                     <button mat-menu-item (click)="addNewReport(row['id'])">
                       <mat-icon class="material-icons text-primary">add_circle</mat-icon>
                       <span>Agregar +1 Reporte Bimestral</span>

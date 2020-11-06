@@ -1,0 +1,55 @@
+<mat-card *ngIf="loaded">
+  <mat-card-header>
+    <mat-card-title>Servicio social: Revisión de reportes bimestrales</mat-card-title>
+    <mat-card-subtitle>Estudiante: {{student.fullName}}</mat-card-subtitle>
+    <button mat-icon-button (click)="location.back()" matTooltip="Regresar" class="text-danger" style="position: absolute; top: 5px; right: 5px;">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="lateral">
+      <mat-card class="document" *ngFor="let report of reports">
+        <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+          <h6 class="text-center">Reporte Bimestral No.{{report.position}}</h6>
+          <button mat-icon-button [matMenuTriggerFor]="menu1" style="position:absolute; bottom: 5px; right: 5px;">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu1="matMenu">
+            <button mat-menu-item (click)="messageForCompany('evaluateDocument', report)" *ngIf="report.status !== 'approved'">
+              <mat-icon class="text-success">thumb_up</mat-icon>
+              <span>Aceptar</span>
+            </button>
+            <button mat-menu-item (click)="messageForCompany('rejectDocument', report)">
+              <mat-icon class="text-danger">thumb_down</mat-icon>
+              <span>Rechazar</span>
+            </button>
+          </mat-menu>
+          <img src="../../../../assets/icons/pdfReport.svg" style="width: 30%; cursor: pointer;" (click)="viewDocument(report.name)">
+          <!--            <p style="font-size: 0.8em;">Documento sin atender</p>-->
+          <div [ngSwitch]="report.status">
+            <div *ngSwitchCase="'send'">
+              <span mat-line class="badge badge-pill badge-info">PENDIENTE</span>
+            </div>
+            <div *ngSwitchCase="'reevaluate'">
+              <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
+            </div>
+            <div *ngSwitchCase="'approved'">
+              <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+            </div>
+            <div *ngSwitchDefault>
+              <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="presentation">
+      <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'90vh'" [useBrowserLocale]="true"
+                               (pdfLoaded)="disableLoading()">
+      </ngx-extended-pdf-viewer>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+

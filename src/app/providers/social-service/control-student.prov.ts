@@ -100,6 +100,16 @@ export class ControlStudentProv {
     return this.api.put(`controlStudent/document/status/${id}`, data).pipe(map(res => res.json()));
   }
 
+  updateReportFromDepartmentEvaluation(_id, data) {
+    return this.api.put(`controlStudent/report/status/${_id}`, data)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
+  updateOneVerificationDepartmentReport(_id, data) {
+    return this.api.put(`controlStudent/report/department/${_id}`, data)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   saveWorkPlan(id, data) {
     return this.api.put(`controlStudent/saveWorkPlan/${id}`, data); // .pipe(map(res => res.json()));
   }
