@@ -98,7 +98,7 @@ import { DialogDocumentViewerComponent } from './components/dialog-document-view
     ControlStudentsRequestsComponent,
     DepartmentControlStudentsPresentationComponent,
     ReviewSolicitudeDocumentsPageComponent,
-    DialogDocumentViewerComponent
+    DialogDocumentViewerComponent,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
