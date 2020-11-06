@@ -1,12 +1,10 @@
 <mat-card>
-  <button mat-mini-fab matTooltip="Agregar una asistencia" class="addAssistance" type="button"><mat-icon>person_add</mat-icon></button>
   <mat-card-content>
-    <mat-tab-group>
+    <mat-tab-group [selectedIndex]="selectedTab.value" (selectedIndexChange)="selectedTab.setValue($event)">
       <mat-tab>
         <ng-template mat-tab-label>
-          <div>
-            Control de asistencia
-          </div>
+          <mat-icon color="primary">list</mat-icon>
+          Control de asistencia
         </ng-template>
         <div>
           <div class="row p-3">
@@ -36,10 +34,13 @@
                             [matColumnDef]="item">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsAttendanceName[index]}}</th>
                 <td *matCellDef="let row" mat-cell style="width:25%;">
-                  <span mat-line *ngIf="index === 3">
+                  <mat-icon mat-line *ngIf="index === 3" [ngClass]="(row[item])?'text-success':'text-danger'">
+                    {{row[item] ? 'check_circle' : 'remove_circle'}}
+                  </mat-icon>
+                  <span mat-line *ngIf="index === 4">
                       {{row[item] | date: 'mediumDate'}}
                   </span>
-                  <span mat-line *ngIf="index !== 3">
+                  <span mat-line *ngIf="![3, 4].includes(index)">
                       {{row[item]}}
                   </span>
                 </td>
@@ -51,8 +52,8 @@
                     <mat-icon>more_vert</mat-icon>
                   </button>
                   <mat-menu #actions>
-                    <button mat-menu-item>
-                      <mat-icon class="text-danger">person_add_disabled</mat-icon>
+                    <button mat-menu-item (click)="removeAssistance(row['_id'])">
+                      <mat-icon class="text-danger">remove_circle</mat-icon>
                       <span>Quitar asistencia</span>
                     </button>
                   </mat-menu>
@@ -62,6 +63,35 @@
               <tr *matRowDef="let row; columns: displayedColumnsAttendance;" mat-row></tr>
             </table>
             <mat-paginator #matPaginatorAttendance [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon color="warn">add_circle</mat-icon>
+          Agregar asistencias
+        </ng-template>
+        <div class="w-75 m-4 mx-auto">
+          <small>Ingrese los números de control correspondientes para registrar la asistencia</small>
+          <mat-form-field style="width: 100%;">
+            <mat-chip-list #chipList aria-label="Numeros de control">
+              <mat-chip *ngFor="let student of assistance" selectable="true"
+                        removable="true" (removed)="remove(student)">
+                {{student.controlNumber}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+              <input placeholder="No. de Control 1840...., 1940..., 2040..."
+                     [matChipInputFor]="chipList"
+                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                     matChipInputAddOnBlur="true"
+                     (matChipInputTokenEnd)="add($event)">
+            </mat-chip-list>
+          </mat-form-field>
+          <div class="d-flex justify-content-center">
+            <button mat-raised-button color="primary" class="w-75" (click)="addAssistance()" [disabled]="addAssistanceBtn">
+              Registrar asistencia
+            </button>
           </div>
         </div>
       </mat-tab>

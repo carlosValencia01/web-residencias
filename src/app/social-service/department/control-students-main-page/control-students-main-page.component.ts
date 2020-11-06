@@ -1,5 +1,4 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {FormControl} from '@angular/forms';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { ControlStudentProv } from 'src/app/providers/social-service/control-student.prov';
@@ -8,7 +7,13 @@ import { NotificationsServices } from 'src/app/services/app/notifications.servic
 import {ComponentType} from '@angular/cdk/overlay';
 import * as Papa from 'papaparse';
 import {LoadCsvDataComponent} from '../../../commons/load-csv-data/load-csv-data.component';
+import {MatChipInputEvent} from '@angular/material/typings/chips';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {FormControl} from '@angular/forms';
 
+interface ControlNumber {
+  controlNumber: string;
+}
 
 @Component({
   selector: 'app-control-students-main-page',
@@ -17,23 +22,61 @@ import {LoadCsvDataComponent} from '../../../commons/load-csv-data/load-csv-data
 })
 export class ControlStudentsMainPageComponent implements OnInit {
   public search: string;
+  public selectedTab: FormControl;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('matPaginatorAttendance') paginatorAttendance: MatPaginator;
   public displayedColumnsAttendance: string[];
   public displayedColumnsAttendanceName: string[];
-
   public dataSourceAttendance: MatTableDataSource<any>;
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  assistance: ControlNumber[] = [];
+  public addAssistanceBtn = true;
+
   constructor( private controlStudentProv: ControlStudentProv,
                 private loadingService: LoadingService,
                 private dialog: MatDialog,
                 private notificationsService: NotificationsServices) {
+    this.selectedTab = new FormControl(0);
   }
 
   ngOnInit() {
-    this.displayedColumnsAttendance = ['controlNumber', 'fullName', 'career', 'date', 'actions'];
-    this.displayedColumnsAttendanceName = ['Número de control', 'Nombre completo', 'Carrera', 'Fecha de asistencia'];
+    this.displayedColumnsAttendance = ['controlNumber', 'fullName', 'career', 'assistance', 'date', 'actions'];
+    this.displayedColumnsAttendanceName = ['Número de control', 'Nombre completo', 'Carrera','Asistencia', 'Fecha de asistencia'];
     this._getAllControlStudents();
+  }
+
+  add(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+
+    if (/^[A-Za-z]?[0-9]{8,9}$/.test(value)) {
+      // Add our fruit
+      if ((value || '').trim()) {
+        this.assistance.push({controlNumber: value.trim()});
+      }
+
+      // Reset the input value
+      if (input) {
+        input.value = '';
+      }
+      this.addAssistanceBtn = false;
+
+    } else if (value.length > 0) {
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', 'Ingrese un número de control valido');
+    }
+  }
+
+  remove(number: ControlNumber): void {
+    const index = this.assistance.indexOf(number);
+
+    if (index >= 0) {
+      this.assistance.splice(index, 1);
+    }
+    if (this.assistance.length === 0) {
+      this.addAssistanceBtn = true;
+    }
   }
 
   public applyFilter(filterValue: string) {
@@ -75,8 +118,38 @@ export class ControlStudentsMainPageComponent implements OnInit {
       controlNumber: data.controlNumber,
       fullName: data.studentId.fullName,
       career: data.studentId.career,
+      assistance: data.verification.assistance,
       date: data.releaseAssistanceDate
     };
+  }
+
+  // function para guardar las asistencias de forma manual
+  addAssistance() {
+    this.controlStudentProv.releaseSocialServiceCsv(this.assistance).subscribe(_ => {
+      this.loadingService.setLoading(false);
+      this.notificationsService.showNotification(eNotificationType.SUCCESS,
+        'La asistencia de los estudiantes ha sido registrada', '');
+      this.selectedTab.setValue(0);
+      this.assistance = [];
+      this.refreshAttendance();
+    }, _ => {
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Ocurrió un error al registrar la asistencia de los estudiantes', '');
+      this.loadingService.setLoading(false);
+    });
+  }
+
+  // function para quitar asistencia a alumno, a traves de cambiar el estatus a false de la propiedad assistance
+  removeAssistance(controlStudentId) {
+    this.controlStudentProv.updateGeneralControlStudent(controlStudentId, {'verification.assistance': false})
+      .subscribe( () => {
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'Se ha retirado la asistencia del estudiante', '');
+        this.refreshAttendance();
+      }, () => {
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'Ocurrió un error al remover la asistencia del estudiante', 'Intentelo más tarde');
+      });
   }
 
   // Evento para cargar asistencia de alumnos mediante csv
