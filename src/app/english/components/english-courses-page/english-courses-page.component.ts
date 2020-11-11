@@ -158,7 +158,7 @@ export class EnglishCoursesPageComponent implements OnInit {
         this.loadingService.setLoading(true);
         this.requestCourseProv.updateRequestCourseStatusToPendingByGroupId(group._id, '').subscribe(
           res => {
-            this.notificationsServices.showNotification(eNotificationType.SUCCESS, res.message, '');
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS, '+' + res.nModified + ' Estudiantes', 'Pendientes del segundo pago');
             console.log(res);
           }, () => {
             this.loadingService.setLoading(false);
