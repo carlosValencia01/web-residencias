@@ -382,12 +382,15 @@ export class CoursesRequestTableComponent implements OnInit {
             else {
               this.notificationService.showNotification(eNotificationType.INFORMATION, 'ÍNGLES', 'No hay nuevos pagos por registrar');
             }
-            this.loadingService.setLoading(false);
           }
+          this.loadingService.setLoading(false);
         },
         encoding: 'utf8',
         skipEmptyLines: true
       });
+      event.target.value = '';
+    }else{
+      this.loadingService.setLoading(false);
     }
   }
 
