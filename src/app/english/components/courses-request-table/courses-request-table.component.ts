@@ -96,7 +96,7 @@ export class CoursesRequestTableComponent implements OnInit {
     return new Promise((resolve) => {
       this.requestCourseProv.getAllRequestCourse().subscribe((data) => {
         // read the request      
-        this.requestsCourses = data.requestCourses.filter(cour => (cour.status == 'requested' || cour.status == 'paid')).map(req => {
+        this.requestsCourses = data.requestCourses.filter(cour => (cour.status == 'requested' || cour.status == 'paid' || cour.status == 'pending')).map(req => {
           let tmpDate = new Date();
           const startHour = req.group.schedule[0].startHour;
           tmpDate.setHours(startHour / 60, startHour % 60, 0, 0); // set the start hour of course for export
