@@ -144,11 +144,13 @@ export class EnglishCoursesPageComponent implements OnInit {
   pending(group: IGroup): void {
     // console.log('grupo id', group.course._id);
     Swal.fire({
-      title: 'Cambio de estatus a alumnos para segundo periodo de curso',
-      text: '¿Esta seguro de continuar?',
+      title: 'Cambio de estatus a alumnos para segundo período de curso',
+      text: '¿Está seguro de continuar?',
       type: 'warning',
       showCloseButton: true,
       showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
       confirmButtonText: 'Continuar',
       cancelButtonText: 'Cancelar'
     }).then(result => {
