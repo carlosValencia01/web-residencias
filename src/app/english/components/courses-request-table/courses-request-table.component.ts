@@ -376,7 +376,7 @@ export class CoursesRequestTableComponent implements OnInit {
             console.log('pending request ', this.pendingRequests);
             if (this.pendingRequests.length > 0) {
               await this.requestCourseProv.setPaidStatus(this.pendingRequests).toPromise().then(ok => { });
-              await this.getPendingData();
+              await this.ngOnInit();
               this.notificationService.showNotification(eNotificationType.SUCCESS, 'ÍNGLES', 'Segundos Pagos registrado');
             }
             else {
