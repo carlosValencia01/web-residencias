@@ -131,7 +131,7 @@ export class GroupStudentsComponent implements OnInit {
   declineStudentRequest(student){
     Swal.fire({
       title: 'Declinar estudiante',
-      text: `Está por rechazar la solicitud del estudiante ` + student.englishStudent.studentId.fullName + `. ¿Desea continuar?`,
+      html: `Está por rechazar la solicitud del estudiante <b>` + student.englishStudent.studentId.fullName + `</b>. ¿Desea continuar?`,
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
@@ -164,7 +164,7 @@ export class GroupStudentsComponent implements OnInit {
 
     Swal.fire({
       title: 'Declinar estudiante',
-      text: `Está por rechazar la solicitud del estudiante ` + name + `. ¿Desea continuar?`,
+      html: `Está por rechazar la solicitud del estudiante <b>` + name + `</b>. ¿Desea continuar?`,
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,

@@ -65,7 +65,7 @@ export class AddStudentsGroupModalComponent implements OnInit {
     }
     Swal.fire({
       title: 'Agregar estudiante',
-      text: `Está por agregar al curso al estudiante ` + student.englishStudent.studentId.fullName + `. ¿Desea continuar?`,
+      html: `Está por agregar al curso al estudiante <b>` + student.englishStudent.studentId.fullName + `</b>. ¿Desea continuar?`,
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,
