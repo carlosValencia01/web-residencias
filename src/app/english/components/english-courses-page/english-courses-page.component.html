@@ -566,7 +566,7 @@
       <td data-f-sz="12" data-a-h="center">{{ indice + 1 }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.controlNumber }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.fullName }}</td>
-      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.career || '---' }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.careerId ? alumno.englishStudent.studentId.careerId.shortName : '---' }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.email }}</td>
       <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.currentPhone }}</td>
     </tr>
