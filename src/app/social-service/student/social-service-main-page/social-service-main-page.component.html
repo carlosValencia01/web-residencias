@@ -489,7 +489,9 @@
                 </div>
               </div>
             </div>
-
+          </div>
+          
+          <div *ngIf="validateSolicitudePhase() === 'approved'">
             <div class="text-center margen">
               <div class="flex justify-content-around">
                 <button mat-button type="button" class="mt-2">
@@ -500,66 +502,61 @@
                 </button>
               </div>
             </div>
+              <div class="row margen">
+                <div class="col-3" *ngFor="let report of reports">
+                  <mat-card class="my-2 solicitude-document">
+                    <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                      <h6 class="text-center">Reporte Bimestral No. {{report.position}}</h6>
+                      <label for={{report.position}} style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                          <div [ngSwitch]="report.status">
+                            <div *ngSwitchCase="'upload'">
+                              <span mat-line class="badge badge-pill badge-success">CARGADO</span>
+                            </div>
+                            <div *ngSwitchCase="'send'">
+                              <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
+                            </div>
+                            <div *ngSwitchCase="'reevaluate'">
+                              <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                            </div>
+                            <div *ngSwitchCase="'approved'">
+                              <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+                            </div>
+                            <div *ngSwitchCase="'register'">
+                              <div *ngIf="!disabledUploadReport(report.position, report.status)">
+                                <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                              </div>
+                              <div *ngIf="disabledUploadReport(report.position, report.status)">
+                                <span mat-line class="badge badge-pill badge-secondary">NO DISPONIBLE</span>
+                              </div>
 
-
-            <div class="row margen">
-              <div class="col-4">
-                <mat-card class="my-2 solicitude-document">
-                  <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
-                    <h6 class="text-center">Primer Reporte Bimestral</h6>
-                    <label for="firstReport" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
-                      <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
-                      <div [ngSwitch]="firstReportStatus">
-                        <div *ngSwitchDefault>
-                          <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
-                        </div>
-                      </div>
-                    </label>
-                  </mat-card-content>
-                </mat-card>
+                            </div>
+                          </div>
+                      </label>                    
+                      <p *ngIf="['reevaluate', 'upload'].includes(report.status)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
+                        <div class="text-center"  *ngIf="report.status === 'reevaluate'">                  
+                          <button mat-icon-button matSuffix
+                                  matTooltipClass="bg-danger"
+                                  [matTooltip]="verificationDepartmentReports[report.position - 1].message"     
+                                  matTooltipPosition="above"
+                                  [attr.aria-label]="'show information'"
+                                  style="margin-left: auto;"
+                                  type="button">
+                            <mat-icon class="text-danger">info</mat-icon>
+                          </button>                      
+                        </div>                      
+                        <input type="file" id={{report.position}} (change)="uploadReport($event, report._id)"
+                              hidden="hidden" accept="application/pdf" [disabled]="disabledUploadReport(report.position, report.status)">
+                    </mat-card-content>
+                  </mat-card>
+                </div>
               </div>
-
-              <div class="col-4"> 
-                <mat-card class="my-2 solicitude-document">
-                  <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
-                    <h6 class="text-center">Segundo Reporte Bimestral</h6>
-                    <label for="secondReport" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
-                      <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
-                      <div [ngSwitch]="secondReportStatus">
-                        <div *ngSwitchDefault>
-                          <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
-                        </div>
-                      </div>
-                    </label>
-                  </mat-card-content>
-                </mat-card>
+              <div class="text-center">
+                <button mat-raised-button color="primary" class="w-50" (click)="uploadReportFile()" [disabled]="validateUploadReport()">Subir Reporte</button>
               </div>
-
-              <div class="col-4"> 
-                <mat-card class="my-2 solicitude-document">
-                  <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
-                    <h6 class="text-center">Tercer Reporte Bimestral</h6>
-                    <label for="thirdReport" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
-                      <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
-                      <div [ngSwitch]="thirdReportStatus">
-                        <div *ngSwitchDefault>
-                          <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
-                        </div>
-                      </div>
-                    </label>
-                  </mat-card-content>
-                </mat-card>
-              </div>
-
-            </div>
-
-            <div class="text-center">
-              <button mat-raised-button color="primary" class="w-50" (click)="uploadFiles()" [disabled]="true">Subir Reporte</button>
             </div>
 
 
-
-          </div>
         </mat-step>
       </mat-vertical-stepper>
     </div>
