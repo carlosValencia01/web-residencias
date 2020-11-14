@@ -1,0 +1,98 @@
+table {
+    width: 100%;
+}
+
+.mat-header-cell {
+  flex-direction: column;
+  justify-content: center;
+  background-color: rgb(21, 43, 84);
+  color: #fff;
+  font-size: 14pt;
+}
+  
+  //Centrar encabezado de la tabla
+.mat-header-cell {
+    flex-direction: column;
+    justify-content: center;
+}
+  
+  //Centrar el contenido de los renglones de la tabla
+.mat-cell {
+    text-align: center;
+    justify-content:center;
+}
+
+.mat-column-currentPhone{
+    max-width: 88px;
+    min-width: 88px;
+}
+
+.mat-column-email{
+    max-width: 250px;
+    min-width: 200px;
+}
+
+.mat-column-fullName, .mat-column-career{
+    min-width: 150px;
+}
+.mat-column-actions{
+    padding-right: 0px;
+}
+
+.table thead th {    
+    border-bottom: none;
+    background: rgb(21, 43, 84);
+    color: white;    
+    font-size: 14pt;
+}
+.table-titles{
+    margin: 0;
+    background: rgb(21, 43, 84);
+    color: white;
+    padding: 0.3em;
+    border-bottom: 0.5px solid white;
+    border-radius: 5px 5px 0 0;
+}
+
+.card-shadow{
+    box-shadow: 0px 7px 12px rgba(0,0,0,0.12);
+}
+
+.footer-actions{
+    width: 100%;
+    background: white;
+    padding-bottom: 10px;
+    margin: 0;   
+}
+.footer-actions-reports{
+    display: flex;
+    justify-content: flex-start;    
+    flex-wrap: wrap;
+}
+.div-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    flex-basis: 5%;
+    transition: all 0.5s;
+}
+.div-img:hover{
+    background-color: rgba($color: #ccc, $alpha: 0.7);
+}
+.action{
+    width: 25px; 
+    height: 25px;
+}
+#tableExcelReport, #tablePdfReportHead, #tablePdfReport, #tablePdfActHead, #tablePdfAct, #tableAvgsExcel{
+    display: none;
+}
+
+.aproved-students{
+    background-color: #00aa42;;
+    color: white;
+}
+.not-aproved-students{
+    background-color: #aa0000d6;
+    color: white;
+}

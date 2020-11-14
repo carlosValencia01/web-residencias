@@ -46,6 +46,7 @@ export class StudentEnglishPageComponent implements OnInit {
   requestStudent: IRequestCourse[];
   lastRequestStudent: IRequestCourse;
   showImg = false; //Mostrar Foto
+  showPrices = true; //Mostrar Precios de los cursos
   imageDoc; //Imagen del Drive
   photoStudent = ''; //Foto a mostrar
   activePeriod: IPeriod;
@@ -128,7 +129,10 @@ export class StudentEnglishPageComponent implements OnInit {
           if (this.englishStudent) {
             this.requestStudent = await this._getRequests(this.englishStudent._id) as IRequestCourse[];
             this.lastRequestStudent = this.requestStudent[this.requestStudent.length - 1];
-            this.showCoursePrices();
+            if (this.showPrices) {
+              this.showCoursePrices();
+              this.showPrices=false;
+            }
           }
 
           if (this.englishStudent && this.englishStudent.courseType) {
@@ -311,6 +315,10 @@ export class StudentEnglishPageComponent implements OnInit {
 
   public selectNewCourse() {
     this.tabGroup.selectedIndex = 1;
+  }
+
+  public selectProgress() {
+    this.tabGroup.selectedIndex = 2;
   }
 
   private showCoursePrices(): void {

@@ -6,3 +6,25 @@ button{
 table {
     width: 100%;
   }
+
+//Centrar encabezado de la tabla
+.mat-header-cell {
+    flex-direction: column;
+    justify-content: center;
+}
+  
+//Centrar el contenido de los renglones de la tabla
+.mat-cell {
+    text-align: center;
+    justify-content:center;
+}
+
+.mat-column-monday, .mat-column-tuesday,.mat-column-wednesday,.mat-column-thursday,.mat-column-Fryday,.mat-column-saturday{
+    max-width: 120px;
+    min-width: 120px;
+}
+
+.mat-column-select{
+    max-width: 100px;
+    min-width: 100px;
+}

@@ -1,0 +1,398 @@
+<mat-form-field *ngIf="periods" class="w-100">
+  <mat-chip-list #chipList aria-label="Period selection">
+    <mat-chip *ngFor="let p of usedPeriods" selectable="true" removable="true" (removed)="removePeriod(p)">
+      {{p.periodName}}-{{p.year}}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+    <input placeholder="Filtrar por período..." #periodInput [formControl]="periodCtrl" [matAutocomplete]="auto"
+      [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
+      (matChipInputTokenEnd)="addPeriod($event)" (ngModelChange)="filterPeriod($event)" matInput>
+  </mat-chip-list>
+  <mat-autocomplete #auto="matAutocomplete">
+    <mat-option *ngFor="let period of periods" [value]="period" (click)="slectedPeriod(period)">
+      {{period.periodName}}-{{period.year}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+
+<div class="row">
+
+  <div *ngFor="let group of showGroups" class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+    <mat-card class="mat-card-course mb-3 text-white" style="background-color:#183969;">
+      <mat-card-header>
+        <mat-card-title><strong>{{group.name}}</strong></mat-card-title>
+        <mat-card-subtitle class="text-white">{{ getStatusGroupName(group.status) }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <button mat-icon-button class="button-options-group" [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button (click)="openDilogViewScheduleGroup(group.schedule)" mat-menu-item>
+          <mat-icon>watch_later</mat-icon>
+          <span>Ver Horario</span>
+        </button>
+        <button (click)="uploadAverages(group)" mat-menu-item>
+          <mat-icon>view_list</mat-icon>
+          <span>Ver Alumnos Inscritos</span>
+        </button>
+        <button (click)="downloadPDF(group)" mat-menu-item>
+          <mat-icon>description</mat-icon>
+          <span>Descargar Lista Alumnos PDF</span>
+        </button>
+        <button (click)="downloadExcel(group)" mat-menu-item>
+          <mat-icon>view_comfy</mat-icon>
+          <span>Descargar Lista Alumnos Excel</span>
+        </button>
+        
+        <button (click)="generateAct(group)" mat-menu-item *ngIf="group.status == 'evaluated' || group.status == 'finalized'">
+          <mat-icon>class</mat-icon>
+          <span>Generar Acta Calificaciones</span>
+        </button>
+      </mat-menu>
+
+      <mat-card-content class="pl-2 pr-2 m-0">
+      </mat-card-content>
+      <mat-card-actions>
+        <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false"
+          style="background-color: #C7C7C7;">
+          <mat-expansion-panel-header>
+            <mat-panel-title></mat-panel-title>
+            <mat-panel-description>
+              Detalles del grupo
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p>Curso: <strong>{{group.course.name}}</strong></p>
+          <p>Bloque: <strong>{{group.level}}</strong></p>
+          <p>Estudiantes: <strong>{{group.numberStudents}}</strong></p>
+        </mat-expansion-panel>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+</div>
+
+<ng-template #viewScheduleGroup>
+  <h1 mat-dialog-title>Horario</h1>
+  <div mat-dialog-content>
+    <table class="table table-bordered table-hover mt-2">
+      <thead>
+        <tr>
+          <th class="text-center" *ngFor="let day of weekdays" scope="col">
+            {{dayschedule[day]}}</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td class="text-center" *ngFor="let day of weekdays; let j = index;">
+            <ng-container *ngFor="let hourForDay of scheduleGroupSelected;">
+              <ng-container *ngIf="hourForDay.day==day">
+                {{getHour(hourForDay.startHour)}} - {{getHour(hourForDay.endDate)}}
+              </ng-container>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+  </div>
+</ng-template>
+
+<!-- Tabla reporte alumnos Excel-->
+<table class="table table-striped table-bordered table-hover" id="tableExcelReport"
+  data-cols-width="9,21,35,35,17,17,17,17,17,17" *ngIf="excelData">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Bloque
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Grupo
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Curso
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Docente
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Lunes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Martes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Miércoles
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Jueves
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Viernes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Sábado
+      </th>
+    </tr>
+  </thead>
+  <thead>
+    <tr>
+      <th data-a-h="center">{{ excelData.group.level }}</th>
+      <th data-a-h="center">{{ excelData.group.name }}</th>
+      <th data-a-h="center">{{ excelData.group.course.name }}</th>
+      <th data-a-h="center">{{ excelData.teacher ? excelData.teacher.name.fullName : 'Sin Asignar'}}</th>
+      <th data-a-h="center">{{excelData.schedule.Lunes.hour}}</th>
+      <th data-a-h="center">{{excelData.schedule.Martes.hour}}</th>
+      <th data-a-h="center">{{excelData.schedule.Miercoles.hour}}</th>
+      <th data-a-h="center">{{excelData.schedule.Jueves.hour}}</th>
+      <th data-a-h="center">{{excelData.schedule.Viernes.hour}}</th>
+      <th data-a-h="center">{{excelData.schedule.Sabado.hour}}</th>
+    </tr>
+  </thead>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th data-a-h="center">{{excelData.schedule.Lunes.classroom.name ? excelData.schedule.Lunes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Martes.classroom.name ? excelData.schedule.Martes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Miercoles.classroom.name ? excelData.schedule.Miercoles.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Jueves.classroom.name ? excelData.schedule.Jueves.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Viernes.classroom.name ? excelData.schedule.Viernes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{excelData.schedule.Sabado.classroom.name ? excelData.schedule.Sabado.classroom.name : ''}}</th>
+    </tr>
+  </thead>
+  <thead>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        No
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Número de Control
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Nombre
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Carrera
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Correo
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Teléfono
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="
+        let alumno of excelData.students;
+        let indice = index;
+      ">
+      <td data-f-sz="12" data-a-h="center">{{ indice + 1 }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.controlNumber }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.fullName }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.careerId ? alumno.englishStudent.studentId.careerId.shortName : '---' }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.email }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.currentPhone }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Tabla reporte alumnos PDF-->
+<table class="table table-striped table-bordered table-hover" id="tablePdfReportHead"
+  data-cols-width="9,21,35,35,17,17,17,17,17,17" *ngIf="pdfData">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Bloque
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Grupo
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Curso
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Docente
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Lunes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Martes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Miércoles
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Jueves
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Viernes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Sábado
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th data-a-h="center">{{ pdfData.group.level }}</th>
+      <th data-a-h="center">{{ pdfData.group.name }}</th>
+      <th data-a-h="center">{{ pdfData.group.course.name }}</th>
+      <th data-a-h="center">{{ pdfData.teacher ? pdfData.teacher.name.fullName : 'Sin Asignar'}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Lunes.hour}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Martes.hour}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Miercoles.hour}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Jueves.hour}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Viernes.hour}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Sabado.hour}}</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th data-a-h="center">{{pdfData.schedule.Lunes.classroom.name ? pdfData.schedule.Lunes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Martes.classroom.name ? pdfData.schedule.Martes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Miercoles.classroom.name ? pdfData.schedule.Miercoles.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Jueves.classroom.name ? pdfData.schedule.Jueves.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Viernes.classroom.name ? pdfData.schedule.Viernes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{pdfData.schedule.Sabado.classroom.name ? pdfData.schedule.Sabado.classroom.name : ''}}</th>
+    </tr>
+  </tbody>
+</table>
+<table class="table table-striped table-bordered table-hover" id="tablePdfReport"
+  data-cols-width="9,21,35,35,17,17,17,17,17,17" *ngIf="pdfData">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        No
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Número de Control
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Nombre
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Carrera
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Correo
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Teléfono
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="
+        let alumno of pdfData.students;
+        let indice = index;
+      ">
+      <td data-f-sz="12" data-a-h="center">{{ indice + 1 }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.controlNumber }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.fullName }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.careerId ? alumno.englishStudent.studentId.careerId.shortName : '---' }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.studentId.email }}</td>
+      <td data-f-sz="12" data-a-h="center">{{ alumno.englishStudent.currentPhone }}</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<table class="table table-striped table-bordered table-hover" id="tablePdfActHead"
+  data-cols-width="9,21,35,35,17,17,17,17,17,17" *ngIf="actData">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Lunes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Martes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Miércoles
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Jueves
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Viernes
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Sábado
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th data-a-h="center">{{actData.schedule.Lunes.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Martes.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Miercoles.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Jueves.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Viernes.hour}}</th>
+      <th data-a-h="center">{{actData.schedule.Sabado.hour}}</th>
+      </tr>
+      <tr>
+      <th data-a-h="center">{{actData.schedule.Lunes.classroom.name  ? actData.schedule.Lunes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Martes.classroom.name  ? actData.schedule.Martes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Miercoles.classroom.name  ? actData.schedule.Miercoles.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Jueves.classroom.name  ? actData.schedule.Jueves.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Viernes.classroom.name  ? actData.schedule.Viernes.classroom.name : ''}}</th>
+      <th data-a-h="center">{{actData.schedule.Sabado.classroom.name  ? actData.schedule.Sabado.classroom.name : ''}}</th>
+      </tr>
+  </tbody>
+</table>
+
+<table class="table table-striped table-bordered table-hover" id="tablePdfAct"
+  data-cols-width="9,21,35,35,17,17,17,17,17,17" *ngIf="actData">
+  <thead>
+    <tr>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        No.
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        No. Contról
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Nombre del Alumno
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Carrera
+      </th>
+      <th data-f-bold="true" data-a-h="center" data-f-sz="14" data-fill-color="112043" data-f-color="FFFFFF">
+        Calificación
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let alumno of actData.students; let indice = index;">
+      <th data-a-h="center">{{ indice + 1 }}</th>
+      <th data-a-h="center">{{ alumno.englishStudent.studentId.controlNumber }}</th>
+      <th data-a-h="center">{{ alumno.englishStudent.studentId.fullName }}</th>
+      <th data-a-h="center">{{ alumno.englishStudent.studentId.careerId ? alumno.englishStudent.studentId.careerId.shortName : '---' }}</th>
+      <th data-a-h="center">{{ alumno.average ? alumno.average : 'NA' }}</th>
+    </tr>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  </tbody>
+</table>

@@ -1,0 +1,104 @@
+
+<div class="row sticky">
+  <div class="col-11">
+    <div class="row text-center">
+      <div class="col-12 p-0">
+        <h1 mat-dialog-title>
+          SUBIR CALIFICACIONES
+        </h1>
+      </div>
+    </div>
+  </div>
+  <div class="col-1">
+    <button mat-icon-button (click)="onClose()" class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div class="row text-center p-3">
+  <div class="col-xs-12 col-md-5">
+    <input #fileUpload type="file" (change)="onUpload($event)" style="display: none">
+    <p>Cargar archivo</p>
+    <button mat-mini-fab class="mr-3" color="primary" (click)="fileUpload.click()" data-toggle="tooltip"
+      title="Cargar archivo">
+      <mat-icon>attachment</mat-icon>
+    </button>
+  </div>
+  <div class="col-xs-12 col-md-5" *ngIf="dataSource.data.length > 0">        
+    <span class="p-2">Enviar datos</span>
+    <button mat-mini-fab class="mr-3" color="secondary" (click)="sendAverages()" data-toggle="tooltip"
+      title="Enviar datos" style="display: inline;">
+      <mat-icon>cloud_upload</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div style="position: relative;">
+  <div style="position: relative; overflow: auto; max-width: 100%;">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort #sortStudents="matSort"
+      matSortActive="ID" matSortDirection="asc">
+
+      <!--Columna Nombre-->
+
+      <ng-container matColumnDef="fullName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.fullName}} </mat-cell>
+      </ng-container>
+
+      <!--Columna No. Control-->
+
+      <ng-container matColumnDef="controlNumber">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>No. Control</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.controlNumber}} </mat-cell>
+      </ng-container>
+
+      <!--Columna Carrera-->
+
+      <ng-container matColumnDef="career">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
+      </ng-container>
+
+      <!--Columna Correo-->
+
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electronico</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
+      </ng-container>
+
+      <!--Columna Telefono-->
+
+      <ng-container matColumnDef="currentPhone">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Telefono Celular</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.phone}} </mat-cell>
+      </ng-container>
+
+
+      <!--Columna promedio-->
+
+      <ng-container matColumnDef="average" >
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Promedio</mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.average}} </mat-cell>
+      </ng-container>
+
+      
+      <mat-header-row 
+        *matHeaderRowDef="['fullName', 'controlNumber', 'career', 'email', 'currentPhone','average']">
+      </mat-header-row>
+      <mat-row
+        *matRowDef="let row; columns: ['fullName', 'controlNumber', 'career', 'email', 'currentPhone', 'average']">
+      </mat-row>            
+
+      <!--Tabla sin datos (Disponible a Partir de ANGULAR v10)-->
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="6">No se encontraron datos.</td>
+      </tr>
+
+    </table>
+  </div>
+  <!--Paginas-->
+
+  <mat-paginator #matPaginatorEnglishStudents [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+</div>

@@ -1,8 +1,7 @@
-<mat-card class="w-100">
-  <mat-card-content *ngIf="requestCourse">
-    <div class="row text-center">
-      <div class="col-3"></div>
-      <div class="col-2">
+<mat-card class="w-100" class="bg-light">
+  <mat-card-content *ngIf="requestCourse" >
+    <div class="row text-center" style="place-content: center">
+      <div class="col-xs-12 col-sm-5 col-md-3 col-lg-3 col-xl-4">
         <mat-card class="orange-card-info flex-align-center p-0">
           <mat-card-header>
             <mat-card-subtitle class="m-0">CURSO</mat-card-subtitle>
@@ -10,7 +9,7 @@
           </mat-card-header>
         </mat-card>
       </div>
-      <div class="col-2">
+      <div class="col-xs-12 col-sm-5 col-md-2 col-lg-2 col-xl-2">
         <mat-card class="orange-card-info flex-align-center p-0">
           <mat-card-header>
             <mat-card-subtitle class="m-0">GRUPO</mat-card-subtitle>
@@ -18,19 +17,18 @@
           </mat-card-header>
         </mat-card>
       </div>
-      <div class="col-2">
-        <mat-card class="orange-card-info flex-align-center p-0">
+      <div class="col-sm-11 col-md-6 col-lg-5">
+        <mat-card class="orange-card-info orange-card-info-teacher flex-align-center p-0">
           <mat-card-header>
             <mat-card-subtitle class="m-0">DOCENTE</mat-card-subtitle>
-            <mat-card-title *ngIf="requestCourse.group.teacher">{{requestCourse.group.teacher.name | uppercase}}</mat-card-title>
+            <mat-card-title *ngIf="requestCourse.group.teacher">{{requestCourse.group.teacher.name.fullName | uppercase}}</mat-card-title>
             <mat-card-title *ngIf="!requestCourse.group.teacher">SIN ASIGNAR</mat-card-title>
           </mat-card-header>
         </mat-card>
       </div>
-      <div class="col-3"></div>
     </div>
 
-    <table class="table table-bordered table-hover mt-2" >
+    <table class="table table-responsive-sm bg-white mt-2" >
       <thead>
         <tr>
           <th class="text-center" *ngFor="let day of weekdays" scope="col">
@@ -46,7 +44,7 @@
                 {{getHour(hourForDay.startHour)}} - {{getHour(hourForDay.endDate)}}
                 <br>
                 <div *ngIf="hourForDay.classroom">
-                  Aula: {{hourForDay.classroom}}
+                  Aula: {{hourForDay.classroom.name}}
                 </div>
                 <div *ngIf="!hourForDay.classroom">
                   Aula sin asignar

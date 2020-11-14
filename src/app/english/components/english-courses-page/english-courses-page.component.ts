@@ -1,50 +1,50 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder, Validators } from '@angular/forms';
+import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import Swal from 'sweetalert2';
 import TableToExcel from '@linways/table-to-excel';
-import { NotificationsServices } from 'src/app/services/app/notifications.service';
-
+import {MatTabGroup} from '@angular/material/tabs';
+import {MatAutocomplete, MatChipInputEvent} from '@angular/material';
 // TABLA
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
 // Importar Servicios
-import { CookiesService } from 'src/app/services/app/cookie.service';
-import { LoadingService } from 'src/app/services/app/loading.service';
-
+import {CookiesService} from 'src/app/services/app/cookie.service';
+import {LoadingService} from 'src/app/services/app/loading.service';
+import {PDFEnglish} from 'src/app/english/entities/english-pdf-generator';
+import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
+import {NotificationsServices} from 'src/app/services/app/notifications.service';
 // Importar Proveedores
-import { ClassroomProvider } from 'src/app/english/providers/classroom.prov';
-import { RequestCourseProvider } from 'src/app/english/providers/request-course.prov';
-import { EnglishCourseProvider } from 'src/app/english/providers/english-course.prov';
-import { GroupProvider } from 'src/app/english/providers/group.prov';
-
+import {ClassroomProvider} from 'src/app/english/providers/classroom.prov';
+import {RequestCourseProvider} from 'src/app/english/providers/request-course.prov';
+import {EnglishCourseProvider} from 'src/app/english/providers/english-course.prov';
+import {GroupProvider} from 'src/app/english/providers/group.prov';
+import {RequestProvider} from 'src/app/providers/reception-act/request.prov';
+import {EnglishStudentProvider} from 'src/app/english/providers/english-student.prov';
 // Importar Componentes
-import { StudentRequestsComponent } from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
-import { FormCreateCourseComponent } from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
-import { FormGroupComponent } from 'src/app/english/components/english-courses-page/form-group/form-group.component';
-import { FromGenerateGroupsComponent } from 'src/app/english/components/english-courses-page/from-generate-groups/from-generate-groups.component';
-import { GroupStudentsComponent } from 'src/app/english/components/english-courses-page/group-students/group-students.component';
-
+import {StudentRequestsComponent} from 'src/app/english/components/english-courses-page/student-requests/student-requests.component';
+import {FormCreateCourseComponent} from 'src/app/english/components/english-courses-page/form-create-course/form-create-course.component';
+import {FormGroupComponent} from 'src/app/english/components/english-courses-page/form-group/form-group.component';
+import {FromGenerateGroupsComponent} from 'src/app/english/components/english-courses-page/from-generate-groups/from-generate-groups.component';
+import {GroupStudentsComponent} from 'src/app/english/components/english-courses-page/group-students/group-students.component';
 // Importar Enumeradores
-import { EStatusGroupDB, EStatusGroup } from 'src/app/english/enumerators/status-group.enum';
-import { EDaysSchedule } from 'src/app/english/enumerators/days-schedule.enum';
-
+import {EStatusGroup, EStatusGroupDB} from 'src/app/english/enumerators/status-group.enum';
+import {EDaysSchedule} from 'src/app/english/enumerators/days-schedule.enum';
 // Importar Modales
-import { ActiveGroupModalComponent } from '../../modals/active-group-modal/active-group-modal.component';
-import { AssignEnglishTeacherComponent } from '../../modals/assign-english-teacher/assign-english-teacher.component';
-import { AddStudentsGroupModalComponent } from '../../modals/add-students-group-modal/add-students-group-modal.component';
-
+import {ActiveGroupModalComponent} from '../../modals/active-group-modal/active-group-modal.component';
+import {AssignEnglishTeacherComponent} from '../../modals/assign-english-teacher/assign-english-teacher.component';
+import {AddStudentsGroupModalComponent} from '../../modals/add-students-group-modal/add-students-group-modal.component';
+import {AssignClassroomComponent} from '../../modals/assign-classroom/assign-classroom.component';
 // Importar modelos
-import { IPeriod } from '../../../entities/shared/period.model';
-import { IClassroom } from '../../entities/classroom.model';
-import { IGroup } from '../../entities/group.model';
-import { ICourse } from '../../entities/course.model';
-import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { IEmployee } from '../../../entities/shared/employee.model';
-import { IRequestCourse } from '../../entities/request-course.model';
+import {IPeriod} from '../../../entities/shared/period.model';
+import {IClassroom} from '../../entities/classroom.model';
+import {IGroup} from '../../entities/group.model';
+import {ICourse} from '../../entities/course.model';
+import {eNotificationType} from 'src/app/enumerators/app/notificationType.enum';
+import {IEmployee} from '../../../entities/shared/employee.model';
+import {IRequestCourse} from '../../entities/request-course.model';
 
 @Component({
   selector: 'app-english-courses-page',
@@ -52,6 +52,9 @@ import { IRequestCourse } from '../../entities/request-course.model';
   styleUrls: ['./english-courses-page.component.scss']
 })
 export class EnglishCoursesPageComponent implements OnInit {
+
+  twoPaymentCourses: Array<any>;
+  period = false;
 
   activePeriod: IPeriod; //Periodo activo actualmente
 
@@ -61,17 +64,8 @@ export class EnglishCoursesPageComponent implements OnInit {
 
   // AULAS
   classrooms: IClassroom[];
-  classroomForm;
-  updateClassroomForm;
-  scheduleClassroom: Array<any>
-  weekdays = [1, 2, 3, 4, 5, 6]; //Dias de la semana
-  hourStart = "07:00"; //Tiempo de inicio
-  hourEnd = "21:00"; //Tiempo de finalización
-  segment = 60; //Cantidad en minutos de los segmentos
-  dataHours = []; //Horas que se van a mostrar
-  dataSchedule = []; //Arreglo de los dias seleccionados
-  dialogRef: any;
-  dayschedule = EDaysSchedule; //Enumerador de los dias de la semana
+  weekdays = [1, 2, 3, 4, 5, 6]; // Dias de la semana
+  dayschedule = EDaysSchedule; // Enumerador de los dias de la semana
   searchClassroom = '';
   searchGA = '';
 
@@ -79,6 +73,7 @@ export class EnglishCoursesPageComponent implements OnInit {
   @ViewChild("scheduleClassroomAux") dialogRefScheduleClassroomAux: TemplateRef<any>;
   @ViewChild("viewScheduleClassroom") dialogRefViewScheduleClassroom: TemplateRef<any>;
   @ViewChild("viewUpdateClassroom") dialogRefViewUpdateClassroom: TemplateRef<any>;
+  @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
   // GRUPOS
   groups: IGroup[];
@@ -88,9 +83,15 @@ export class EnglishCoursesPageComponent implements OnInit {
   };
   @ViewChild('matPaginatorClassrooms') paginatorClassrooms: MatPaginator;
   @ViewChild(MatSort) sortClassrooms: MatSort;
-  @ViewChild(MatSort) sortGroups: MatSort;
+  @ViewChild('sortGeneralGroups') sortGroups: MatSort;
   activeGroups: IGroup[];
   dataSourceActiveGroups: MatTableDataSource<IGroup>;
+
+  groupsEvaluated: IGroup[];
+  dataSourceGroupsEvaluated: MatTableDataSource<IGroup>;
+  @ViewChild('matPaginatorGroupsEvaluated') paginatorGroupsEvaluated: MatPaginator;
+  @ViewChild('sortGroupsEvaluated') sortGroupsEvaluated: MatSort;
+
   dataSourceClassrooms: MatTableDataSource<any>;
   @ViewChild('matPaginatorActiveGroups') set paginatorActiveGroups(paginator: MatPaginator) {
     this.dataSourceActiveGroups.paginator = paginator;
@@ -104,30 +105,87 @@ export class EnglishCoursesPageComponent implements OnInit {
   constructor(
     private _CookiesService: CookiesService,
     private _ActivatedRoute: ActivatedRoute,
+    private requestProvider: RequestProvider,
     private router: Router,
-    private formBuilder: FormBuilder,
     private loadingService: LoadingService,
+    private imageToBase64Serv: ImageToBase64Service,
     private requestCourseProv: RequestCourseProvider,
     private classroomProv: ClassroomProvider,
     private englishCourseProv: EnglishCourseProvider,
+    private englishStudentProv: EnglishStudentProvider,
     private groupProv: GroupProvider,
     public dialog: MatDialog,
     private notificationsServices: NotificationsServices,
+    private _formBuilder: FormBuilder,
   ) {
     if (!this._CookiesService.isAllowed(this._ActivatedRoute.snapshot.url[0].path)) {
       this.router.navigate(['/']);
     }
     this.dataSourceGroups = new MatTableDataSource();
     this.dataSourceActiveGroups = new MatTableDataSource();
+    this.dataSourceGroupsEvaluated = new MatTableDataSource();
   }
 
   ngOnInit() {
     this.createEnglishCourseActive();
-    this.createFormClassroom();
     this.createClassrooms();
     this.createEnglishCourses();
     this.createGroups();
     this.getActivePeriod();
+    this._getPeriods();
+
+    this.getTwoPayments();
+
+    setTimeout(() => {
+      this.emptyPDFGenerator = new PDFEnglish(this.imageToBase64Serv, this._CookiesService);
+    }, 300);
+  }
+
+  pending(group: IGroup): void {
+    // console.log('grupo id', group.course._id);
+    Swal.fire({
+      title: 'Cambio de estatus a alumnos para segundo período de curso',
+      text: '¿Está seguro de continuar?',
+      type: 'warning',
+      showCloseButton: true,
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar'
+    }).then(result => {
+      if (result.value) {
+        this.loadingService.setLoading(true);
+        this.requestCourseProv.updateRequestCourseStatusToPendingByGroupId(group._id, '').subscribe(
+          res => {
+            this.notificationsServices.showNotification(eNotificationType.SUCCESS, '+' + res.nModified + ' Estudiantes', 'Pendientes del segundo pago');
+            console.log(res);
+          }, () => {
+            this.loadingService.setLoading(false);
+            this.notificationsServices.showNotification(eNotificationType.ERROR, 'Error', 'No se han actualizado los estatus');
+          }, () => this.loadingService.setLoading(false)
+      );
+      }
+    });
+  }
+
+  getTwoPayments () {
+    this.englishCourseProv.getEnglishCourseTwoPayments().subscribe(
+      res => this.twoPaymentCourses = res.englishCourses
+    );
+  }
+
+  twoPayments (group: IGroup) {
+    let res = false;
+    for (const course in this.twoPaymentCourses) {
+      if (this.twoPaymentCourses[course]._id === group.course._id) {
+        res = true;
+      }
+    }
+    if (!this.period) {
+      res = false;
+    }
+    return res;
   }
 
   // #region Solicitudes
@@ -207,117 +265,12 @@ export class EnglishCoursesPageComponent implements OnInit {
   // #region Aulas
 
 
-
-  createFormClassroom() {
-    this.classroomForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      schedule: ['', Validators.required],
-      capacity: ['30', [Validators.required, Validators.min(1)]],
-    });
-
-    this.classroomForm.get('schedule').valueChanges.subscribe(option => {
-      switch (option) {
-        case '1':
-          this.generateAutoSchedule();
-          break;
-        case '2':
-          this.openDialogTableSchedule('1', null);
-          break;
-      }
-    });
-  }
-
-  createDataHours() { //Genera las Horas en segmentos
-
-    this.dataHours = [];
-
-    const start = this.getMinutes(this.hourStart); //Convierte la hora de inicio en minutos
-    const end = this.getMinutes(this.hourEnd); //Convierte la hora de fin en minutos
-
-    for (let hour = start; hour < end; hour = hour + this.segment) { //Recorrer de inicio a fin incrementando por segmentos
-      this.dataHours.push(this.getHour(hour)); //Guardar el segmento de hora
-    }
-
-  }
-
   getHour(minutes): String { //Convierte minutos a tiempo en formato 24-h
     let h = Math.floor(minutes / 60); //Consigue las horas
     let m = minutes % 60; //Consigue los minutos
     let hh = h < 10 ? '0' + h : h; //Asigna un 0 al inicio de la hora si es menor a 10
     let mm = m < 10 ? '0' + m : m; //Asigna un 0 al inicio de los minutos si es menor a 10
     return hh + ':' + mm; //Retorna los minutos en tiempo Ej: "24:00"
-  }
-
-  generateSchedule() { //Genera el arreglo en el que se guardaran los valores seleccionados
-    this.dataSchedule = [];
-    this.dataHours.forEach(a => { //Recorre cada una de las horas
-      let week = []; //define arreglo de dias de la semana
-      this.weekdays.forEach(b => { //Recorre cada dia de la semana
-        week.push(""); //Agrega valor al dia
-      });
-      this.dataSchedule.push(week); //Agrega los dias de la semana a la hora
-    });
-  }
-
-  selectHour(hour) { //Seleccionar hora de la Tabla
-    //Si todos los campos estan vacios
-    if (this.dataSchedule[hour][0] == "" && this.dataSchedule[hour][1] == "" && this.dataSchedule[hour][2] == "" &&
-      this.dataSchedule[hour][3] == "" && this.dataSchedule[hour][4] == "" && this.dataSchedule[hour][5] == "") {
-      for (let i = 0; i < 5; i++) {//De Lunes a Viernes
-        this.dataSchedule[hour][i] = this.dataHours[hour]; //Asignar la hora seleccionada
-      }
-    } else {//Si no
-      for (let i = 0; i < 6; i++) { //De lunes a Sabado
-        this.dataSchedule[hour][i] = ""; //Dejar de seleccionar esos dias
-      }
-    }
-  }
-
-  openDialogTableSchedule(type, schedule) {
-    let view: any;
-    switch (type) {
-      case "1":
-        this.segment = 60;
-        this.createDataHours();
-        this.generateSchedule();
-        view = this.dialogRefScheduleClassroomAux;
-        break;
-
-      case "2":
-        this.segment = 30;
-        this.createDataHours();
-        this.generateSchedule();
-        this.getSchedule(schedule, 'status');
-        view = this.dialogRefViewScheduleClassroom;
-        break;
-    }
-    this.dialogRef = this.dialog.open(view, { hasBackdrop: false, height: '90%', width: '80%' });
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (!result) {
-        this.classroomForm.get('schedule').setValue('');
-      }
-    });
-  }
-
-  getSchedule(schedule, get) {
-    schedule.forEach(element => {
-
-      const psitionHour = this.dataHours.indexOf(this.getHour(element.startHour));
-
-      if (psitionHour > -1) {
-
-        switch (get) {
-          case 'status':
-            this.dataSchedule[psitionHour][element.day - 1] = element.status;
-            break;
-
-          case 'time':
-            this.dataSchedule[psitionHour][element.day - 1] = this.dataHours[psitionHour];
-            break;
-        }
-
-      }
-    });
   }
 
   showHour(hour): boolean { //Mostrar el renglon de la hora
@@ -327,28 +280,6 @@ export class EnglishCoursesPageComponent implements OnInit {
       return false; //Ocultar
     } else {
       return true; //Mostrar
-    }
-  }
-
-  generateAutoSchedule() {
-    this.scheduleClassroom = [];
-
-    this.segment = 30;
-
-    const start = this.getMinutes(this.hourStart);
-    const end = this.getMinutes(this.hourEnd);
-
-    for (let hour = start; hour < end; hour = hour + this.segment) {
-      this.weekdays.forEach(day => {
-        this.dataHours.push(this.getHour(hour));
-        let data = {
-          day: day,
-          startHour: hour,
-          endDate: hour + this.segment,
-          status: 'available'
-        }
-        this.scheduleClassroom.push(data);
-      });
     }
   }
 
@@ -366,167 +297,6 @@ export class EnglishCoursesPageComponent implements OnInit {
     }, () => this.loadingService.setLoading(false));
   }
 
-  createScheduleClassroom() {
-
-    this.scheduleClassroom = [];
-
-    this.segment = 30;
-
-    this.dataSchedule.forEach(hourForDay => {
-
-      this.weekdays.forEach(day => {
-        if (hourForDay[day - 1]) {
-
-          let startHour = this.getMinutes(hourForDay[day - 1]);
-          let endDate = startHour + this.segment;
-
-          let startData = {
-            day: day,
-            startHour: startHour,
-            endDate: endDate,
-            status: 'available'
-          }
-
-          this.scheduleClassroom.push(startData);
-
-          //
-          let endData = {
-            day: day,
-            startHour: endDate,
-            endDate: endDate + this.segment,
-            status: 'available'
-          }
-
-          this.scheduleClassroom.push(endData);
-
-        }
-      });
-    });
-
-    if (this.scheduleClassroom.length == 0) {
-      Swal.fire({
-        title: 'ATENCIÓN!',
-        text: 'Es necesario agregar un horario.',
-        showConfirmButton: false,
-        timer: 2000,
-        type: 'warning'
-      })
-      return false;
-    };
-
-    return true;
-  }
-
-  onCreateClassroom() {
-
-    var classroom = {
-      name: this.classroomForm.get('name').value,
-      schedule: this.scheduleClassroom,
-      capacity: this.classroomForm.get('capacity').value,
-
-    };
-
-    this.classroomProv.createClassroom(classroom).subscribe(res => {
-      this.dialog.closeAll();
-      this.ngOnInit();
-      Swal.fire({
-        title: 'Aula registrada con exito!',
-        showConfirmButton: false,
-        timer: 2500,
-        type: 'success'
-      });
-    },
-      error => { });
-  }
-
-  deleteClassroom(classroomId, classroomName) {
-
-    Swal.fire({
-      title: 'Borrar Aula',
-      text: `¿Está seguro de eliminar el aula: ` + classroomName + ` ?`,
-      type: 'warning',
-      allowOutsideClick: false,
-      showCancelButton: true,
-      confirmButtonColor: 'red',
-      cancelButtonColor: 'green',
-      confirmButtonText: 'Si',
-      cancelButtonText: 'No',
-      focusCancel: true
-    }).then((result) => {
-      if (result.value) {
-
-        this.loadingService.setLoading(true);
-        this.classroomProv.deleteClassroom(classroomId).subscribe(res => {
-          this.ngOnInit();
-          Swal.fire({
-            title: 'Eliminada!',
-            text: 'El aula se ha eliminado exitosamente.',
-            showConfirmButton: false,
-            timer: 2500,
-            type: 'success'
-          })
-        }, error => {
-
-        }, () => this.loadingService.setLoading(false));
-
-      }
-    });
-
-  }
-
-  openDialogCreateClassroom() {
-    this.dialogRef = this.dialog.open(this.dialogRefViewCreateClassroom, { hasBackdrop: false, height: '70%', width: '40%' });
-  }
-
-  openDialogUpdateClassroom(classroom) {
-
-    this.segment = 60;
-    this.createDataHours();
-    this.generateSchedule();
-    this.getSchedule(classroom.schedule, 'time');
-
-    this.updateClassroomForm = this.formBuilder.group({
-      id: [classroom._id, Validators.required],
-      name: [classroom.name, Validators.required],
-      capacity: [classroom.capacity, [Validators.required, Validators.min(1)]],
-    });
-
-    this.dialogRef = this.dialog.open(this.dialogRefViewUpdateClassroom, { hasBackdrop: false, height: '90%', width: '80%' });
-
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.onUpdateClassroom();
-      }
-    });
-  }
-
-  verifySchedule() {
-    if (this.createScheduleClassroom()) {
-      this.dialogRef.close(true);
-    }
-  }
-
-  onUpdateClassroom() {
-
-    const id = this.updateClassroomForm.get('id').value;
-
-    var classroom = {
-      name: this.updateClassroomForm.get('name').value,
-      schedule: this.scheduleClassroom,
-      capacity: this.updateClassroomForm.get('capacity').value,
-
-    };
-    this.classroomProv.updateClassroom(id, classroom).subscribe(res => {
-      this.ngOnInit();
-      Swal.fire({
-        title: 'Actualización exitosa!',
-        showConfirmButton: false,
-        timer: 2500,
-        type: 'success'
-      });
-    },
-      error => { });
-  }
   // #endregion
 
   // #region Grupos
@@ -550,14 +320,15 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   createDataSourceGroups() {
-    this.groups = this.groups.filter(({ status }) => status !== EStatusGroupDB.ACTIVE);
-    this.dataSourceGroups.data = this.groups;
+    this.dataSourceGroups.data = this.groups.filter(({ status }) => status !== EStatusGroupDB.ACTIVE && !(status === EStatusGroupDB.FINALIZED || status === "evaluated"));
     this.dataSourceGroups.sort = this.sortGroups;
   }
 
   divideGroups() {
     this.activeGroups = this.groups.filter(({ status }) => status === EStatusGroupDB.ACTIVE);
+    this.groupsEvaluated = this.groups.filter(({ status }) => status === EStatusGroupDB.FINALIZED || status === "evaluated");
     this.createDataSourceActiveGroups(this.activeGroups);
+    this.createDataSourceGroupsEvaluated();
   }
 
   createDataSourceActiveGroups(groups: IGroup[]): void {
@@ -565,17 +336,14 @@ export class EnglishCoursesPageComponent implements OnInit {
     this.dataSourceActiveGroups.sort = this.sortActiveGroups;
   }
 
-  scheduleGroupSelected: Array<any>;
+  createDataSourceGroupsEvaluated() {
+    this.dataSourceGroupsEvaluated.data = this.groupsEvaluated;
+    this.dataSourceGroupsEvaluated.paginator = this.paginatorGroupsEvaluated;
+    this.dataSourceGroupsEvaluated.sort = this.sortGroupsEvaluated;
+  }
 
   openDilogViewScheduleGroup(scheduleSelected) {
-    this.scheduleGroupSelected = scheduleSelected;
-    this.dialogRef = this.dialog.open(this.dialogRefViewScheduleGroup, { hasBackdrop: false });
-
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (!result) {
-        this.scheduleGroupSelected = [];
-      }
-    });
+    this.dialog.open(this.dialogRefViewScheduleGroup, { data: scheduleSelected, hasBackdrop: true });
   }
 
   openDialogFormGenerateGroups() {
@@ -589,6 +357,11 @@ export class EnglishCoursesPageComponent implements OnInit {
         result.courseName.split(" ").forEach(word => {
           startName += word.charAt(0);
         });
+
+        var totalGroup = result.levels * result.schedules.length;
+        var createdGroupSuccess = 0;
+        var createdGroupError = 0;
+        this.loadingService.setLoading(true);
 
         for (let level = 1; level <= result.levels; level++) {
 
@@ -605,10 +378,9 @@ export class EnglishCoursesPageComponent implements OnInit {
               course: result.courseId,
             };
 
-            this.groupProv.createGroup(data).subscribe(res => {
-              this.ngOnInit()
-            },
-              error => { });
+            this.groupProv.createGroup(data).subscribe(res => { createdGroupSuccess++; },
+              error => { createdGroupError++; },
+              () => { this.groupsCreationAdministrator(createdGroupSuccess, createdGroupError, totalGroup) });
 
           });
 
@@ -616,6 +388,17 @@ export class EnglishCoursesPageComponent implements OnInit {
 
       };
     });
+  }
+
+  groupsCreationAdministrator(createdGroupSuccess, createdGroupError, totalGroup) {
+    if (createdGroupSuccess + createdGroupError == totalGroup) {
+      this.ngOnInit();
+      this.loadingService.setLoading(false);
+      this.notificationsServices.showNotification(eNotificationType.SUCCESS, createdGroupSuccess + " Grupo(s)", 'Creado(s) correctamente');
+      if (createdGroupError > 0) {
+        this.notificationsServices.showNotification(eNotificationType.ERROR, "En " + createdGroupError + " Grupo(s)", 'Ocurrió un error');
+      }
+    }
   }
 
   openDialogFormCreateGroup(): void {
@@ -669,13 +452,15 @@ export class EnglishCoursesPageComponent implements OnInit {
             break;
           default:
             return;
-            break;
         };
 
         this.groupProv.createGroup(data).subscribe(res => {
-          this.ngOnInit()
+          this.notificationsServices.showNotification(eNotificationType.SUCCESS, data.name, 'Creado correctamente');
         },
-          error => { });
+          error => {
+            this.notificationsServices.showNotification(eNotificationType.ERROR, data.name, 'Ocurrió un error');
+          },
+          () => { this.ngOnInit() });
       };
     });
   }
@@ -693,7 +478,7 @@ export class EnglishCoursesPageComponent implements OnInit {
       data: {
         group: group
       },
-      hasBackdrop: false, height: '70%', width: '90%'
+      hasBackdrop: true, height: '70%', width: '90%'
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -713,6 +498,26 @@ export class EnglishCoursesPageComponent implements OnInit {
       data: { group, teacherId: group.teacher && group.teacher._id },
       hasBackdrop: true,
       maxWidth: '85vw',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((group: IGroup) => {
+        if (group) {
+          const index = this.activeGroups.findIndex(({ _id }) => _id === group._id);
+          if (index !== -1) {
+            this.activeGroups.splice(index, 1, group);
+            this.createDataSourceActiveGroups(this.activeGroups);
+          }
+        }
+      });
+  }
+
+  public openDialogShowClassrooms(group: IGroup): void {
+    const dialogRef = this.dialog.open(AssignClassroomComponent, {
+      data: { group },
+      hasBackdrop: true,
+      maxWidth: '95vw',
       disableClose: true,
     });
 
@@ -748,43 +553,30 @@ export class EnglishCoursesPageComponent implements OnInit {
       err => { }, () => sub.unsubscribe()
     );
   }
+
   //#endregion
 
   // #region Cursos
+  coursesDataSource: MatTableDataSource<any>;
+  @ViewChild('matPaginatorCourses') paginatorCourses: MatPaginator;
+  @ViewChild('sortCourses') sortCourses: MatSort;
 
   createEnglishCourses() {
     this.loadingService.setLoading(true);
     this.englishCourseProv.getAllEnglishCourse().subscribe(res => {
 
       this.englishCourses = res.englishCourses;
-
+      this.fillTableCourses();
     }, error => {
 
     }, () => this.loadingService.setLoading(false));
   }
 
-  createCourse() {
-    var data = {
-      englishCourse: {
-        name: "",
-        dailyHours: "",
-        totalHours: "",
-        totalSemesters: "",
-        finalHours: "",
-        //status: ""
-      },
-      courseSchedule: {
-        days: [
-          {
-            desc: [false, false, false, false, false, false, false],
-            enable: false,
-            hours: []
-          }
-        ]
-      },
-      newCourse: true
-    }
-
+  fillTableCourses() {
+    this.coursesDataSource = new MatTableDataSource();
+    this.coursesDataSource.data = this.englishCourses;
+    this.coursesDataSource.sort = this.sortCourses;
+    this.coursesDataSource.paginator = this.paginatorCourses;
   }
 
   openDialogFormCreateCourse(): void {
@@ -802,13 +594,83 @@ export class EnglishCoursesPageComponent implements OnInit {
           totalHours: result.totalHoursCtrl,
           startPeriod: this.activePeriod._id,
           status: 'active',
+          payment: {
+            payments: result.paymentsCtrl,
+            pay: result.payCtrl,
+          }
         };
         this.englishCourseProv.createEnglishCourse(data).subscribe(res => {
-          this.ngOnInit()
+          if (res) {
+            Swal.fire({
+              title: 'Curso creado con éxito!',
+              showConfirmButton: false,
+              timer: 2500,
+              type: 'success'
+            });
+            this.ngOnInit();
+          }
         },
           error => { });
 
       };
+    });
+  }
+
+  courseFormGroup: FormGroup;
+  @ViewChild("viewEditCourse") dialogRefViewEditCourse: TemplateRef<any>;
+
+  openDilogEditCourse(course) {
+    this.courseFormGroup = null;
+    this.courseFormGroup = this._formBuilder.group({
+      nameCtrl: [{ value: course.name, disabled: true }, Validators.required],
+      statusCtrl: [course.status == 'active'],
+      dailyHoursCtrl: [{ value: course.dailyHours, disabled: true }, [Validators.required, Validators.min(1)]],
+      semesterHoursCtrl: [{ value: course.semesterHours, disabled: true }, [Validators.required, Validators.min(1)]],
+      totalSemestersCtrl: [{ value: course.totalSemesters, disabled: true }, [Validators.required, Validators.min(1)]],
+      totalHoursCtrl: [{ value: course.totalHours, disabled: true }, [Validators.required, Validators.min(1)]],
+      paymentsCtrl: [course.payment ? course.payment.payments : 1, [Validators.required, Validators.min(1), Validators.max(2)]],
+      payCtrl: [course.payment ? course.payment.pay : '', [Validators.required, Validators.min(0)]],
+    });
+
+    let dialogRef = this.dialog.open(this.dialogRefViewEditCourse, { hasBackdrop: true });
+    dialogRef.afterClosed().subscribe(values => {
+      console.log(values);
+      if (values) {
+
+        Swal.fire({
+          title: 'Guardar cambios',
+          html: `Está por modificar el curso <b>` + course.name + `</b>. ¿Desea continuar?`,
+          type: 'warning',
+          allowOutsideClick: false,
+          showCancelButton: true,
+          confirmButtonColor: 'green',
+          cancelButtonColor: 'red',
+          confirmButtonText: 'Continuar',
+          cancelButtonText: 'Cancelar',
+          focusCancel: true
+        }).then((result) => {
+          if (result.value) {
+            let data = {
+              status: values.statusCtrl ? 'active' : 'inactive',
+              'payment.payments': values.paymentsCtrl,
+              'payment.pay': values.payCtrl,
+            }
+            this.loadingService.setLoading(true);
+            this.englishCourseProv.updateEnglishCourse(course._id, data).subscribe(res => {
+              if (res) {
+                Swal.fire({
+                  title: 'Curso modificado con éxito!',
+                  showConfirmButton: false,
+                  timer: 2500,
+                  type: 'success'
+                });
+                this.ngOnInit();
+              }
+            });
+            this.loadingService.setLoading(false);
+          }
+        });
+      }
     });
   }
 
@@ -819,6 +681,18 @@ export class EnglishCoursesPageComponent implements OnInit {
 
       if (res.period) {
         this.activePeriod = res.period;
+      }
+      if (new Date(res.period.englishSecPerInitDate) <= new Date() && new Date(res.period.englishSecPerEndDate) >= new Date() ) {
+        this.period = true;
+        Swal.fire({
+          title: '<strong>El segundo periodo de solicitudes ha iniciado, favor de cambiar los grupos a pendiente</strong>',
+          type: 'info',
+          showCloseButton: true,
+          focusConfirm: false,
+          confirmButtonText:
+            '<i class="fa fa-thumbs-up"></i> Ok',
+          confirmButtonAriaLabel: 'Thumbs up, great!'
+        });
       }
 
     }, error => {
@@ -849,37 +723,63 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
 
   getScheduleDaysGroup(schedules) {
-    var horario = {
-      Lunes: '',
-      Martes: '',
-      Miercoles: '',
-      Jueves: '',
-      Viernes: '',
-      Sabado: ''
-    };
-    schedules.forEach((schedule, index) => {
-      switch (EDaysSchedule[schedule.day]) {
-        case 'Lunes':
-          horario.Lunes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Martes':
-          horario.Martes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Miércoles':
-          horario.Miercoles = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Jueves':
-          horario.Jueves = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Viernes':
-          horario.Viernes = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-        case 'Sábado':
-          horario.Sabado = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
-          break;
-      }
+    return new Promise((resolve) => {
+      var horario = {
+        Lunes: {
+          hour: '',
+          classroom: ''
+        },
+        Martes: {
+          hour: '',
+          classroom: ''
+        },
+        Miercoles: {
+          hour: '',
+          classroom: ''
+        },
+        Jueves: {
+          hour: '',
+          classroom: ''
+        },
+        Viernes: {
+          hour: '',
+          classroom: ''
+        },
+        Sabado: {
+          hour: '',
+          classroom: ''
+        }
+      };
+      schedules.forEach((schedule, index) => {
+        switch (EDaysSchedule[schedule.day]) {
+          case 'Lunes':
+            horario.Lunes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Lunes.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Martes':
+            horario.Martes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Martes.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Miércoles':
+            horario.Miercoles.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Miercoles.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Jueves':
+            horario.Jueves.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Jueves.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Viernes':
+            horario.Viernes.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Viernes.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+          case 'Sábado':
+            horario.Sabado.hour = this.getHour(schedule.startHour) + ' - ' + this.getHour(schedule.endDate);
+            horario.Sabado.classroom = schedule.classroom ? schedule.classroom : '';
+            break;
+        }
+      });
+      resolve(horario);
     });
-    return horario;
   }
 
   activeGroup(_groupId) {
@@ -889,6 +789,10 @@ export class EnglishCoursesPageComponent implements OnInit {
   getPaidStudentsRequest(group) {
     this.groupProv.getAllStudentsGroup(group._id).subscribe(res => {
       if (res) {
+        if (res.students.length==0) {
+          this.notificationsServices.showNotification(eNotificationType.ERROR, res.students.length+' Solicitud(es)', 'No cuentas con suficientes');
+          return;
+        }
         const students = res.students;
         const linkModal = this.dialog.open(ActiveGroupModalComponent, {
           data: {
@@ -920,12 +824,73 @@ export class EnglishCoursesPageComponent implements OnInit {
     }, error => {
     });
   }
+
+  actData;
+  teacher;
+  emptyPDFGenerator: PDFEnglish;
+
+  async generateAct(group) {
+    this.notificationsServices.showNotification(eNotificationType.INFORMATION, 'INGLÉS', 'Generando Acta Calificaciones');
+    this.actData = {
+      students: await this.getStudentsGroup(group._id),
+      group: group,
+      schedule: await this.getScheduleDaysGroup(group.schedule),
+      teacher: {
+        name: group.teacher.name,
+        email: group.teacher.email
+      }
+    };
+    console.log(this.actData);
+    setTimeout(() => {
+      this.generatePDFAct();
+    }, 2000);
+  }
+
+  getStudentsGroup(id): Promise<Array<IRequestCourse>> {
+    return new Promise((resolve) => {
+      this.requestCourseProv.getAllRequestActiveCourse(id, this._CookiesService.getClientId()).subscribe(async res => {
+        resolve(res.requestCourses);
+      });
+    });
+  }
+
+  generatePDFAct() {
+    this.loadingService.setLoading(true);
+    const doc1 = this.emptyPDFGenerator.generateActaCalificacionesStep1(this.actData);
+
+    doc1.autoTable({
+      html: '#tablePdfActHead',
+      theme: 'grid',
+      headStyles: { fillColor: [20, 43, 88], textColor: [255, 255, 255] },
+      styles: { halign: 'center', valign: 'middle', fontSize: 7, fontStyle: 'bold', cellPadding: 1 },
+      margin: { top: 120 }
+    });
+
+    doc1.autoTable({
+      html: '#tablePdfAct',
+      theme: 'grid',
+      headStyles: { fillColor: [20, 43, 88], textColor: [255, 255, 255] },
+      styles: { halign: 'center', valign: 'middle', fontSize: 7, fontStyle: 'bold', cellPadding: 1 },
+      startY: 159
+    });
+
+    const doc = this.emptyPDFGenerator.generateGroupStudentsListStep2(doc1);
+
+    window.open(doc.output('bloburl'), '_blank');
+    this.loadingService.setLoading(false);
+    this.actData = null;
+  }
+
+  async uploadAverages(group: IGroup) {
+    this.router.navigate(['/english/english-groups', group.teacher._id, group._id]);
+  }
+
   //#endregion
 
   // #region Reportes Excel
   generateExcelActiveGroup(_group) {
     this.notificationsServices.showNotification(eNotificationType.INFORMATION, '', 'Generando Reporte...');
-    this.requestCourseProv.getAllRequestActiveCourse(_group._id).subscribe(async res => {
+    this.requestCourseProv.getAllRequestActiveCourse(_group._id, this._CookiesService.getClientId()).subscribe(async res => {
       this.dataExcel = {
         group: _group,
         teacher: _group.teacher ? _group.teacher.name.fullName : '',
@@ -976,4 +941,168 @@ export class EnglishCoursesPageComponent implements OnInit {
   }
   // #endregion
 
+  // #region Filtro Periodo
+
+  // Periods
+  periods: IPeriod[] = [];
+  filteredPeriods: IPeriod[] = [];
+  // periods used to filter data
+  usedPeriods: IPeriod[] = [];
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
+  @ViewChild('periodInput') periodInput: ElementRef<HTMLInputElement>;
+  periodCtrl = new FormControl();
+
+  _getPeriods() {
+    this.requestProvider.getPeriods().subscribe(
+      (periods) => {
+        this.periods = periods.periods;
+        this.filteredPeriods = periods.periods;
+        this.usedPeriods = [];
+        this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
+      }
+    );
+  }
+
+  addPeriod(event: MatChipInputEvent): void {
+    if (!this.matAutocomplete.isOpen) {
+      const input = event.input;
+      const value = event.value;
+      if (input) {
+        input.value = '';
+      }
+      this.periodCtrl.setValue(null);
+    }
+  }
+
+  filterPeriod(value: string): void {
+    if (value) {
+      this.periods = this.periods.filter(period => (period.periodName + '-' + period.year).toLowerCase().trim().indexOf(value) !== -1);
+    }
+  }
+
+  slectedPeriod(period): void {
+    this.updatePeriods(period, 'insert');
+  }
+
+  updatePeriods(period, action: string): void {
+    if (action === 'delete') {
+      this.filteredPeriods.push(period);
+      this.usedPeriods = this.usedPeriods.filter(per => per._id !== period._id);
+    }
+    if (action === 'insert') {
+      this.usedPeriods.push(period);
+      this.filteredPeriods = this.filteredPeriods.filter(per => per._id !== period._id);
+    }
+    this.periods = this.filteredPeriods;
+    if (this.periodInput) this.periodInput.nativeElement.blur(); // set focus
+    this.applyFiltersActiveGroups();
+    this.applyFiltersGroupsEvaluated();
+  }
+
+  removePeriod(period): void {
+    this.updatePeriods(period, 'delete');
+  }
+
+  applyFiltersActiveGroups() {
+
+    this.dataSourceGroups.data = this.groups.filter(({ status }) => status !== EStatusGroupDB.ACTIVE && !(status === EStatusGroupDB.FINALIZED || status === "evaluated"));
+    if (this.usedPeriods) {
+      if (this.usedPeriods.length > 0) {
+        this.dataSourceGroups.data = this.dataSourceGroups.data.filter(
+          (req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period._id))
+        );
+      } else {
+        this.dataSourceGroups.data = this.dataSourceGroups.data;
+      }
+    } else {
+      this.dataSourceGroups.data = this.dataSourceGroups.data;
+    }
+  }
+
+  applyFiltersGroupsEvaluated() {
+
+    this.dataSourceGroupsEvaluated.data = this.groupsEvaluated;
+    if (this.usedPeriods) {
+      if (this.usedPeriods.length > 0) {
+        this.dataSourceGroupsEvaluated.data = this.dataSourceGroupsEvaluated.data.filter(
+          (req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period._id))
+        );
+      } else {
+        this.dataSourceGroupsEvaluated.data = this.dataSourceGroupsEvaluated.data;
+      }
+    } else {
+      this.dataSourceGroupsEvaluated.data = this.dataSourceGroupsEvaluated.data;
+    }
+  }
+
+  async closeGroup(group) {
+
+    var confirmdialog;
+    if (group.reqCount > 0) {
+      confirmdialog = await this.swalDialogInput('DECLINAR SOLICITUDES', 'Especifique el motivo');
+      if (!confirmdialog) {
+        return;
+      }
+    }
+    Swal.fire({
+      title: 'Cerrar grupo',
+      html: `Está por cerrar el grupo <b>` + group.name + `</b>. ¿Desea continuar?`,
+      type: 'warning',
+      allowOutsideClick: false,
+      showCancelButton: true,
+      confirmButtonColor: 'green',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Continuar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: true
+    }).then((result) => {
+      if (result.value) {
+        this.loadingService.setLoading(true);
+        this.groupProv.closeGroup(group._id, { confirmdialog: confirmdialog }).subscribe(res => {
+          if (res) {
+            console.log("Errores al modificar en la BD: " + res.err);
+            Swal.fire({
+              title: 'Grupo cerrado con éxito!',
+              showConfirmButton: false,
+              timer: 2500,
+              type: 'success'
+            });
+            this.ngOnInit();
+          }
+        });
+        this.loadingService.setLoading(false);
+      }
+    });
+  }
+
+  swalDialogInput(title: string, msg: string) {
+    return Swal.fire({
+      title: title,
+      text: msg,
+      showCancelButton: true,
+      allowOutsideClick: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Confirmar',
+      input: 'text',
+      inputValidator: (value) => {
+        if (!value) {// validate empty input
+          return '¡Ingresa el motivo!';
+        }
+      }
+    }).then((result) => {
+      return result.value ? result.value !== '' ? result.value : false : false;
+    });
+  }
+
+
+
+}
+
+interface IEnglishTeacher {
+  _id: string;
+  name: string;
+  countGroups: number;
+  groups: ICourse[];
 }
