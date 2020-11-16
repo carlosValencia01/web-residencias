@@ -1,0 +1,68 @@
+<mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;">
+
+  <!--TAB de No Liberados-->
+  <mat-tab label="No Liberados">
+
+    <mat-card>
+
+      <mat-card-content>
+
+        <!--Tabla-->
+        <div style="position: relative;">
+
+          <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
+
+            <table mat-table [dataSource]="unreleasedStudentsDataSource" matSort #sortUnreleasedStudents="matSort" matSortActive="ID"
+              matSortDirection="asc">
+
+              <ng-container matColumnDef="controlNumber">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>NC</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.controlNumber}}</mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+                <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="career">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+                </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <button mat-icon-button [matMenuTriggerFor]="actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+
+                  <mat-menu #actions="matMenu">
+                  </mat-menu>
+
+                </mat-cell>
+              </ng-container>
+              <mat-header-row
+                *matHeaderRowDef="['controlNumber', 'name', 'career', 'actions']">
+              </mat-header-row>
+              <mat-row
+                *matRowDef="let row; columns: ['controlNumber', 'name', 'career',  'actions']">
+              </mat-row>
+
+            </table>
+            <mat-paginator #matPaginatorUnreleasedStudents [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+          </div>
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  </mat-tab>
+
+  <!--TAB de Liberados-->
+  <mat-tab label="Liberados">
+  </mat-tab>
+
+</mat-tab-group>

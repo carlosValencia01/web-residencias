@@ -1,0 +1,18 @@
+<mat-tab-group mat-align-tabs="center" headerPosition="Top" dynamicHeight mat-stretch-tabs style="margin: -15px;">
+  
+  <!-- ESTUDIANTES -->
+  <mat-tab label="Estudiantes">
+    <app-student-list></app-student-list>
+  </mat-tab>
+
+  <!-- REVISION DE INFORMACIÓN -->
+  <mat-tab label="Revisión de Información" class="p-md-5">
+    <app-review-information-page></app-review-information-page>
+  </mat-tab>
+
+  <!-- IMPORTAR DATOS -->
+  <mat-tab label="Importar Datos">
+    <app-upload-external-students></app-upload-external-students>
+  </mat-tab>
+
+</mat-tab-group>

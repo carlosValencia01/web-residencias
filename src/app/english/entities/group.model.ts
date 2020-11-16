@@ -6,7 +6,7 @@ import { ICourse } from './course.model';
 export interface IGroup {
   _id?: string;
   name: string;
-  schedule: ISchedule[];
+  schedule: IGroupSchedule[];
   level: number;
   period: IPeriod;
   status: string;
@@ -16,7 +16,8 @@ export interface IGroup {
   course: ICourse;
 }
 
-interface ISchedule {
+export interface IGroupSchedule {
+  _id?: string;
   day: number; // Lunes: 1, Sábado: 6
   startHour: number; // En minutos
   endDate: number; // En minutos

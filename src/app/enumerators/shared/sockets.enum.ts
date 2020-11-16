@@ -12,3 +12,7 @@ export enum eRecActEvents {
     REQUEST_BY_ROLE= "tit:requestByRole",
     GET_DIARY= "tit:getDiary"
 };
+export enum eEnglishEvents {
+    GET_ALL_GROUP_BY_TEACHER = "eng:getAllGroupByTeacher",
+    GET_ALL_REQUEST_ACTIVE_COURSE ="eng:getAllRequestActiveCourse",
+};

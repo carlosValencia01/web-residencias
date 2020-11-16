@@ -1,0 +1,39 @@
+<section class="p-0 px-sm-1 px-md-3">
+  <div class="d-flex justify-content-between">
+    <h1 mat-dialog-title>Asignar aula al grupo {{ groupName }}</h1>
+    <button mat-icon-button [mat-dialog-close]="group" class="float-right">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-dialog-content class="p-0 px-sm-1 px-md-2">
+    <div class="row p-0 m-0 d-flex justify-content-center">
+      <div class="col-12" *ngIf="canShowScheduleTable()">
+        <table class="w-100 table table-bordered table-hover mt-2">
+          <thead>
+            <tr class="text-center" style="background: white;">
+              <th *ngFor="let day of weekdays" scope="col">
+                {{ getDaySchedule(day) }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="clickable-row">
+              <td class="text-center p-0" *ngFor="let day of weekdays" [class.assigned-day]="isAssignedDay(day)">
+                <ng-container *ngFor="let schedule of groupSchedule;">
+                  <div class="w-100 h-100 p-2" *ngIf="schedule.day === day"
+                    [class.assigned-classroom]="hasAssignedClassroom(schedule)">
+                    {{ getScheduleHour(schedule.startHour) }} - {{ getScheduleHour(schedule.endDate) }}
+                    <br /><span [ngClass]="getBadgeType(schedule)">{{ getBadgeText(schedule) }}</span>
+                    <br /><button mat-stroked-button class="my-1 small" (click)="assignClassroom(schedule)">
+                      {{ schedule.classroom ? 'Cambiar aula' : 'Asignar aula' }}
+                    </button>
+                  </div>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </mat-dialog-content>
+</section>

@@ -14,5 +14,17 @@ export enum EStatusEnglishStudent {
   not_released = "Ingles sin liberar",
   released = "Ingles liberado",
   rejected = "Solicitud rechazada",
-  requested = "Solicitud enviada"
+  requested = "Solicitud enviada",
+  pending = "Pendiente del segundo pago"
+}
+
+export enum EStatusEnglishStudentBackgroundColor {
+  no_choice = '#dadada',
+  waiting = ' #f8f5cd',
+  cancelled = "#ff2d2d",
+  studying = "#ffc49d",
+  not_released = "#76c8ff",
+  released = "#58ff8a",
+  rejected = "#ff2d2d",
+  requested = "#f8f5cd"
 }

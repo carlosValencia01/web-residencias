@@ -18,4 +18,6 @@ export enum ERequestCourseStatus {
   'finalized' = 'Finalizado',
   'approved' = 'Aprobado',
   'not_approved' = 'No aprobado',
+  'cancelled' = 'Cancelado',
+  'pending' = 'Pendiente',
 }

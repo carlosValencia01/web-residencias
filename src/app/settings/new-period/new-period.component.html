@@ -22,7 +22,7 @@
       <mat-form-field appearance="outline" >
         <mat-label>Nombre del período</mat-label>
         <select matNativeControl required formControlName="periodName"
-        
+
         >
           <option value="ENERO-JUNIO">
             ENERO-JUNIO
@@ -30,11 +30,11 @@
           <option value="AGOSTO-DICIEMBRE">
             AGOSTO-DICIEMBRE
           </option>
-        </select>     
+        </select>
         <mat-error>
             <span
             *ngIf="!formPeriod.get('periodName').valid && formPeriod.get('periodName').touched">Seleccione un período</span>
-        </mat-error>   
+        </mat-error>
       </mat-form-field>
       <mat-form-field appearance="outline">
         <mat-label>Año</mat-label>
@@ -43,15 +43,15 @@
         >
           <option [value]="yeaar" *ngFor="let yeaar of yearsInput">
             {{yeaar}}
-          </option>        
-        </select>     
+          </option>
+        </select>
         <mat-error>
             <span
             *ngIf="!formPeriod.get('year').valid && formPeriod.get('year').touched">Seleccione un año</span>
-        </mat-error>   
+        </mat-error>
       </mat-form-field>
     </div>
-    <div class="col-md-4"> 
+    <div class="col-md-4">
       <mat-form-field>
         <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker" placeholder="Fecha inicio" formControlName="initDate">
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
@@ -60,7 +60,7 @@
       <mat-error>
           <span
           *ngIf="!formPeriod.get('initDate').valid && formPeriod.get('initDate').touched">Seleccione una fecha valida</span>
-      </mat-error> 
+      </mat-error>
     </div>
     <div class="col-md-4">
       <mat-form-field>
@@ -71,7 +71,7 @@
       <mat-error>
           <span
           *ngIf="!formPeriod.get('endDate').valid && formPeriod.get('endDate').touched">Seleccione una fecha valida</span>
-      </mat-error> 
+      </mat-error>
     </div>
   </div>
   <hr/>
@@ -82,7 +82,7 @@
   </div>
   <div class="row text-center">
     <div class="col-md-2"></div>
-    <div class="col-md-3"> 
+    <div class="col-md-3">
       <mat-form-field>
         <input [min]="minDate" matInput [matDatepicker]="picker3" placeholder="Fecha inicio" formControlName="insPerInitDate">
         <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
@@ -91,8 +91,8 @@
       <mat-error>
           <span
           *ngIf="!formPeriod.get('insPerInitDate').valid && formPeriod.get('insPerInitDate').touched">Seleccione una fecha valida</span>
-      </mat-error> 
-      
+      </mat-error>
+
     </div>
     <div class="col-md-3">
       <mat-form-field>
@@ -103,7 +103,7 @@
       <mat-error>
           <span
           *ngIf="!formPeriod.get('insPerEndDate').valid && formPeriod.get('insPerEndDate').touched">Seleccione una fecha valida</span>
-      </mat-error> 
+      </mat-error>
     </div>
     <div class="col-md-3">
         <mat-form-field>
@@ -114,7 +114,7 @@
           <mat-error>
               <span
               *ngIf="!formPeriod.get('certificateDeliveryDate').valid && formPeriod.get('certificateDeliveryDate').touched">Seleccione una fecha valida</span>
-          </mat-error> 
+          </mat-error>
     </div>
     <div class="col-md-1"></div>
   </div>
@@ -127,7 +127,7 @@
   </div>
   <div class="row text-center">
       <div class="col-md-3"></div>
-    <div class="col-md-3"> 
+    <div class="col-md-3">
       <mat-form-field>
         <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="picker6" placeholder="Fecha inicio" formControlName="arecPerInitDate">
         <mat-datepicker-toggle matSuffix [for]="picker6"></mat-datepicker-toggle>
@@ -136,8 +136,8 @@
       <mat-error>
           <span
           *ngIf="!formPeriod.get('arecPerInitDate').valid && formPeriod.get('arecPerInitDate').touched">Seleccione una fecha valida</span>
-      </mat-error> 
-      
+      </mat-error>
+
     </div>
     <div class="col-md-3">
       <mat-form-field>
@@ -148,7 +148,7 @@
       <mat-error>
           <span
           *ngIf="!formPeriod.get('arecPerEndDate').valid && formPeriod.get('arecPerEndDate').touched">Seleccione una fecha valida</span>
-      </mat-error> 
+      </mat-error>
     </div>
     <div class="col-md-3"></div>
   </div>
@@ -160,24 +160,24 @@
   </div>
   <div class="row text-center">
       <div class="col-md-3"></div>
-    <div class="col-md-3"> 
+    <div class="col-md-3">
       <mat-form-field>
         <input type="number" min="0" max="24" matInput placeholder="Hora inicio" formControlName="arecInitShed">
-        
+
       </mat-form-field>
       <mat-error>
           <span
           *ngIf="!formPeriod.get('arecInitShed').valid && formPeriod.get('arecInitShed').touched">Hora en formato HH (24hrs)</span>
-      </mat-error> 
+      </mat-error>
     </div>
     <div class="col-md-3">
       <mat-form-field>
-        <input type="number" [min]="formPeriod.get('arecInitShed').valid ? formPeriod.get('arecInitShed').value : 0" max="24" matInput placeholder="Hora fin" formControlName="arecEndShed"> 
+        <input type="number" [min]="formPeriod.get('arecInitShed').valid ? formPeriod.get('arecInitShed').value : 0" max="24" matInput placeholder="Hora fin" formControlName="arecEndShed">
       </mat-form-field>
       <mat-error>
           <span
           *ngIf="!formPeriod.get('arecEndShed').valid && formPeriod.get('arecEndShed').touched">Hora en formato HH (24hrs)</span>
-      </mat-error> 
+      </mat-error>
     </div>
     <div class="col-md-3"></div>
   </div><hr/>
@@ -186,9 +186,11 @@
       <h5>Datos del período para cursos de ingles</h5>
     </div>
   </div>
-  <div class="row text-center">
-      <div class="col-md-3"></div>
-    <div class="col-md-3"> 
+  <div class="row text-center justify-content-around">
+    <div class="col-md-3 d-flex align-items-center justify-content-center">
+      <h6>Primer periodo de solicitudes</h6>
+    </div>
+    <div class="col-md-3">
       <mat-form-field>
         <input [min]="minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="englishInit" placeholder="Fecha inicio" formControlName="englishPerInitDate">
         <mat-datepicker-toggle matSuffix [for]="englishInit"></mat-datepicker-toggle>
@@ -197,8 +199,7 @@
       <mat-error>
           <span
           *ngIf="!formPeriod.get('englishPerInitDate').valid && formPeriod.get('englishPerInitDate').touched">Seleccione una fecha valida</span>
-      </mat-error> 
-      
+      </mat-error>
     </div>
     <div class="col-md-3">
       <mat-form-field>
@@ -209,14 +210,40 @@
       <mat-error>
           <span
           *ngIf="!formPeriod.get('englishPerEndDate').valid && formPeriod.get('englishPerEndDate').touched">Seleccione una fecha valida</span>
-      </mat-error> 
+      </mat-error>
     </div>
-    <div class="col-md-3"></div>
+  </div>
+  <div class="row text-center justify-content-around">
+    <div class="col-md-3 d-flex align-items-center justify-content-center">
+      <h6>Segundo periodo de solicitudes</h6>
+    </div>
+    <div class="col-md-3">
+      <mat-form-field>
+        <input [min]="formPeriod.get('englishPerEndDate').valid ? formPeriod.get('englishPerEndDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="englishSecInit" placeholder="Fecha inicio" formControlName="englishSecPerInitDate">
+        <mat-datepicker-toggle matSuffix [for]="englishSecInit"></mat-datepicker-toggle>
+        <mat-datepicker #englishSecInit></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+            *ngIf="!formPeriod.get('englishSecPerInitDate').valid && formPeriod.get('englishSecPerInitDate').touched">Seleccione una fecha valida</span>
+      </mat-error>
+    </div>
+    <div class="col-md-3">
+      <mat-form-field>
+        <input [min]="formPeriod.get('englishSecPerInitDate').valid ? formPeriod.get('englishSecPerInitDate').value : minDate" matInput [matDatepickerFilter]="myFilter" [matDatepicker]="englishSecEnd" placeholder="Fecha fin" formControlName="englishSecPerEndDate">
+        <mat-datepicker-toggle matSuffix [for]="englishSecEnd"></mat-datepicker-toggle>
+        <mat-datepicker #englishSecEnd></mat-datepicker>
+      </mat-form-field>
+      <mat-error>
+          <span
+            *ngIf="!formPeriod.get('englishPerEndDate').valid && formPeriod.get('englishSecPerEndDate').touched">Seleccione una fecha valida</span>
+      </mat-error>
+    </div>
   </div>
   <hr/>
   <div class="row text-center">
       <div class="col-md-4"></div>
-    <div class="col-2"> 
+    <div class="col-2">
       <button *ngIf="data.operation !== 'edit'" mat-flat-button color="primary"  type="submit" [disabled]="!formPeriod.valid">Crear período</button>
       <button *ngIf="data.operation === 'edit'" mat-flat-button color="primary"  type="submit" [disabled]="!formPeriod.valid">Actualizar período</button>
     </div>
@@ -225,6 +252,6 @@
     </div>
     <div class="col-md-4"></div>
   </div>
-  
+
 </form>
 

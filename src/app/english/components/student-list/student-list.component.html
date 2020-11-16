@@ -1,0 +1,209 @@
+<mat-card>
+
+  <mat-card-content>
+
+    <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+      <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+        <input matInput (keyup)="applyFilterStudents()" placeholder="Ingrese Nombre o Numero de Control..."
+          [(ngModel)]="searchStudent" (keyup)="applyFilterStudents()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!--Tabla-->
+    <div style="position: relative;">
+
+      <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
+
+        <table mat-table [dataSource]="englishStudentsDataSource" matSort #sortStudents="matSort" matSortActive="ID"
+          matSortDirection="asc">
+
+          <ng-container matColumnDef="controlNumber">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>NC</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.controlNumber}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="phone">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.phone}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="career">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Carrera</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.career}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="hours">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Horas</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.hours}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Estatus</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="badge badge-pill" [ngStyle]="{'background': this.statusEnEsBackgroundColor[row.status]}">{{statusEnglishStudent[row.status]}}</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #actions="matMenu">
+                <button (click)="openViewHistory(row)" mat-menu-item>
+                  <mat-icon>schedule</mat-icon>
+                  <span>Ver Avance</span>
+                </button>
+                <button (click)="deleteProfile(row)" mat-menu-item>
+                  <mat-icon>delete_forever</mat-icon>
+                  <span>Eliminar Perfil de Inglés</span>
+                </button>
+              </mat-menu>
+
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="['controlNumber', 'name', 'phone', 'career', 'hours', 'status', 'actions']">
+          </mat-header-row>
+          <mat-row
+            *matRowDef="let row; columns: ['controlNumber', 'name', 'phone', 'career', 'hours', 'status',  'actions']">
+          </mat-row>
+
+        </table>
+        <mat-paginator #matPaginatorStudents [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+      </div>
+    </div>
+
+  </mat-card-content>
+
+</mat-card>
+
+
+<ng-template #viewHistory>
+  <h1 mat-dialog-title>Avance</h1>
+  <div mat-dialog-content>
+    <!-- tabla -->
+    <div style="position: relative; background: white;">
+      <div class="filters" style="display:flex; align-items: baseline; justify-content: flex-end;">
+        <mat-form-field appearance="outline" class="col-md-12 col-lg-7">
+          <input matInput (keyup)="applyFilterHistory()" placeholder="Buscar..." [(ngModel)]="searchHistory"
+            (keyup)="applyFilterHistory()">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+      <div style="position: relative; overflow: auto; max-width: 100%;">
+
+        <table mat-table [dataSource]="requestsDataSource" class="mat-elevation-z8" matSort>
+
+          <ng-container matColumnDef="course">
+            <mat-header-cell *matHeaderCellDef>Curso</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.course}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="level">
+            <mat-header-cell *matHeaderCellDef>Bloque</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.level}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="group">
+            <mat-header-cell *matHeaderCellDef>Grupo</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.group}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Estatus</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span class="badge badge-pill" style="background: #dadada;">{{requestCourseStatus[row.status]}}</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="average">
+            <mat-header-cell *matHeaderCellDef>Promedio</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.average}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="teacher">
+            <mat-header-cell *matHeaderCellDef>Docente</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.teacher}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="period">
+            <mat-header-cell *matHeaderCellDef>Periodo</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.period}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #actions="matMenu">
+                <button (click)="openDilogViewScheduleGroup(row.schedule)" mat-menu-item>
+                  <mat-icon>watch_later</mat-icon>
+                  <span>Ver Horario</span>
+                </button>
+              </mat-menu>
+
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row
+            *matHeaderRowDef="['course', 'level', 'group', 'status', 'average', 'teacher', 'period', 'actions']">
+          </mat-header-row>
+          <mat-row
+            *matRowDef="let row; columns: ['course', 'level', 'group', 'status', 'average', 'teacher', 'period', 'actions']">
+          </mat-row>
+        </table>
+
+      </div>
+
+      <!--Paginas-->
+      <mat-paginator #matPaginatorHistory [pageSizeOptions]="[5, 10, 25, 50]"></mat-paginator>
+
+    </div>
+    <!-- tabla -->
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+  </div>
+</ng-template>
+
+<ng-template #viewScheduleGroup>
+  <h1 mat-dialog-title>Horario</h1>
+  <div mat-dialog-content>
+    <table class="table table-bordered table-hover mt-2">
+      <thead>
+        <tr>
+          <th class="text-center" *ngFor="let day of weekdays" scope="col">
+            {{dayschedule[day]}}</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td class="text-center" *ngFor="let day of weekdays; let j = index;">
+            <ng-container *ngFor="let hourForDay of scheduleGroupSelected;">
+              <ng-container *ngIf="hourForDay.day==day">
+                {{getHour(hourForDay.startHour)}} - {{getHour(hourForDay.endDate)}}
+              </ng-container>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button cdkFocusInitial matDialogClose class="button-blue">Salir</button>
+  </div>
+</ng-template>

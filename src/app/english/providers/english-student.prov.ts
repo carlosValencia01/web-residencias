@@ -9,6 +9,11 @@ export class EnglishStudentProvider {
 
   constructor(private api: Api) { }
 
+  getAllEnglishStudent() {
+    return this.api.get('sg-cle/englishstudent/all')
+    .pipe(map(students => students.json()));
+}
+
   getEnglishStudentByStudentId(studentId: string) {
     return this.api.get(`sg-cle/englishstudent/search/student/` + studentId)
       .pipe(map(student => student.json()));
@@ -34,5 +39,9 @@ export class EnglishStudentProvider {
 
   getEnglishStudentNoVerified() {
     return this.api.get('sg-cle/englishstudent/students/noverified').pipe(map(student => student.json()));
+  }
+
+  deleteEnglishProfile(id){
+    return this.api.delete('sg-cle/englishstudent/delete/profile/' + id).pipe(map(res => res.json()));
   }
 }

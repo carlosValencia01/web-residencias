@@ -112,13 +112,13 @@
                     style="color: blue; cursor: pointer;" (click)="selectNewCourse()">Selecciona un nuevo curso y
                     horario</a></label>
               </div>
-              <div *ngIf="lastRequestStudent && lastRequestStudent.paidNumber && lastRequestStudent.paidNumber > 0"
+              <div *ngIf="lastRequestStudent && lastRequestStudent.paidNumber && lastRequestStudent.paidNumber > 0 && englishStudent.status != 'not_released' && englishStudent.status != 'released' "
                 class="paid-label">
                 <label *ngIf="lastRequestStudent.paidNumber == 1"><a>Primer pago registrado</a></label>
                 <label *ngIf="lastRequestStudent.paidNumber == 2"><a>Segundo pago registrado</a></label>
               </div>
               <mat-divider></mat-divider>
-              <div class="container-progress-spinners mt-3 mb-2">
+              <div class="container-progress-spinners mt-3 mb-2" (click)="selectProgress()">
                 <div class="mat-progress-spinner-empty">
                   <mat-progress-spinner style="margin:0 auto;" mode="determinate" value="100" strokeWidth="25"
                     diameter="150">
@@ -131,7 +131,10 @@
                 </div>
                 <div class="center-description-progress-spinner">{{englishStudent.totalHoursCoursed}} hrs</div>
               </div>
-              <div>Aún no cumple con las horas necesarias para liberar el Inglés</div>
+              <ng-container [ngSwitch]="englishStudent.status == 'not_released' || englishStudent.totalHoursCoursed >= 450">
+                <div *ngSwitchCase="true">Ya cumple con las horas necesarias y se encuentra pendiente su liberación de Inglés</div>
+                <div *ngSwitchCase="false">Aún no cumple con las horas necesarias para liberar el Inglés</div>
+              </ng-container>
               <div *ngIf="lastRequestStudent">
                 <button *ngIf="lastRequestStudent.status=='requested'" class="mt-4" mat-raised-button color="warn"
                   (click)="openDialogRejectRequest(englishStudent._id)">Cancelar solicitud</button>
@@ -142,7 +145,7 @@
       </mat-tab>
 
       <!--TAB de Seleccion de Curso-->
-      <mat-tab label="Selección de curso" *ngIf="(englishStudent.verified && englishStudent.status == 'no_choice') ">
+      <mat-tab label="Selección de Curso" *ngIf="(englishStudent.verified && englishStudent.status == 'no_choice') ">
         <!--Cursos -->
         <div class="row justify-content-center p-3" *ngIf="inPeriod">
 
@@ -207,8 +210,8 @@
       </mat-tab>
 
       <!--TAB del Avance del Estudiante-->
-      <mat-tab label="Avance" *ngIf="englishStudent.status == 'studying'">
-        Aquí se mostrará el avance
+      <mat-tab label="Avance" *ngIf="englishStudent.verified">
+        <app-student-progress-page [englishStudent]="englishStudent"></app-student-progress-page>
       </mat-tab>
 
     </mat-tab-group>

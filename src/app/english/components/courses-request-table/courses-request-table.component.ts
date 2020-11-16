@@ -6,18 +6,21 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import TableToExcel from '@linways/table-to-excel';
 import * as Papa from 'papaparse';
+import Swal from 'sweetalert2';
+// services
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
-import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
 import { LoadingService } from 'src/app/services/app/loading.service';
 import { NotificationsServices } from 'src/app/services/app/notifications.service';
-import Swal from 'sweetalert2';
+// providers
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { EnglishCourseProvider } from '../../providers/english-course.prov';
+import { RequestCourseProvider } from '../../providers/request-course.prov';
+import { EnglishStudentProvider } from 'src/app/english/providers/english-student.prov';
+// models
 import { IPeriod } from '../../../entities/shared/period.model';
 import { IStudent } from '../../../entities/shared/student.model';
 import { ICourse } from '../../entities/course.model';
 import { IRequestCourse } from '../../entities/request-course.model';
-import { EnglishCourseProvider } from '../../providers/english-course.prov';
-import { EnglishStudentProvider } from '../../providers/english-student.prov';
-import { RequestCourseProvider } from '../../providers/request-course.prov';
 
 @Component({
   selector: 'app-courses-request-table',
@@ -41,6 +44,7 @@ export class CoursesRequestTableComponent implements OnInit {
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   requestsCourses: IRequestCourse[] = [];
+  requestsPendingCourses: IRequestCourse[] = [];
 
   filters = { // management of active filters
     courses: {
@@ -59,14 +63,15 @@ export class CoursesRequestTableComponent implements OnInit {
 
   activeCourses: ICourse[] = [];
   notPaidRequests: IRequestCourse[] = [];
+  pendingRequests: IRequestCourse[] = [];
 
   constructor(
     private requestCourseProv: RequestCourseProvider,
     private requestProvider: RequestProvider,
     private englishCourseProv: EnglishCourseProvider,
+    private englishStudentProv: EnglishStudentProvider,
     private notificationService: NotificationsServices,
     private loadingService: LoadingService,
-    private englishStudentProv: EnglishStudentProvider,
   ) {
     this.dataSource = new MatTableDataSource();
   }
@@ -74,6 +79,7 @@ export class CoursesRequestTableComponent implements OnInit {
   async ngOnInit() {
 
     await this.getData();
+    await this.getPendingData();
 
     this.requestProvider.getPeriods().subscribe(
       (periods) => {
@@ -90,7 +96,7 @@ export class CoursesRequestTableComponent implements OnInit {
     return new Promise((resolve) => {
       this.requestCourseProv.getAllRequestCourse().subscribe((data) => {
         // read the request      
-        this.requestsCourses = data.requestCourses.filter(cour => (cour.status == 'requested' || cour.status == 'paid')).map(req => {
+        this.requestsCourses = data.requestCourses.filter(cour => (cour.status == 'requested' || cour.status == 'paid' || cour.status == 'pending')).map(req => {
           let tmpDate = new Date();
           const startHour = req.group.schedule[0].startHour;
           tmpDate.setHours(startHour / 60, startHour % 60, 0, 0); // set the start hour of course for export
@@ -98,12 +104,22 @@ export class CoursesRequestTableComponent implements OnInit {
           return req;
         });
         this.notPaidRequests = this.requestsCourses.filter(req => (req.status == 'requested'));
-
         // create table data
         this.dataSource = new MatTableDataSource(this.requestsCourses);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
+        resolve(true);
+      });
+    });
+  }
+
+  getPendingData() { // retornar pendingRequests
+    return new Promise((resolve) => {
+      this.requestCourseProv.getAllRequestCourse().subscribe((data) => {
+        // read the request
+        this.requestsPendingCourses = data.requestCourses.filter(cour => cour.status === 'pending');
+        this.pendingRequests = this.requestsPendingCourses;
         resolve(true);
       });
     });
@@ -117,8 +133,22 @@ export class CoursesRequestTableComponent implements OnInit {
   async declineRequest(request) {
     const confirmdialog = await this.swalDialogInput('DECLINAR SOLICITUD', 'Especifique el motivo');
     if (confirmdialog) {
-      const data = { status: 'rejected', rejectMessage: confirmdialog };
-      this.requestCourseProv.updateRequestById(request._id, data).subscribe(updated => { });
+      const data = { status: 'rejected', rejectMessage: confirmdialog, active: false };
+      this.requestCourseProv.updateRequestById(request._id, data).subscribe(updated => {
+        if(updated){
+          this.englishStudentProv.updateEnglishStudent({status:'no_choice'},request.englishStudent._id).subscribe(res => {
+            if(res){
+              Swal.fire({
+                title: 'Éxito!',
+                text: 'Solicitud declinada',
+                showConfirmButton: false,
+                timer: 2500,
+                type: 'success'
+              });
+            }
+          });
+        }
+       });
       await this.getData();
       this.applyFilters();
     }
@@ -327,31 +357,40 @@ export class CoursesRequestTableComponent implements OnInit {
     await this.getData();
     let csvData = [];// save the controlNumber
     if (event.target.files && event.target.files[0]) {
-
       Papa.parse(event.target.files[0], {
         complete: async (results) => {
           if (results.data.length > 0) {
+            console.log('result data', results.data);
             results.data.slice(1).forEach(element => {
               if (element[0].toLowerCase() == 'si') {
                 csvData.push(element[3]);
               }
             });
             this.notPaidRequests = this.notPaidRequests.filter(req => csvData.includes((req.englishStudent.studentId as IStudent).controlNumber));
-
             if (this.notPaidRequests.length > 0) {
               await this.requestCourseProv.setPaidStatus(this.notPaidRequests).toPromise().then(ok => { });
               await this.getData();
               this.notificationService.showNotification(eNotificationType.SUCCESS, 'ÍNGLES', 'Pago registrado');
-            } else {
-              this.notificationService.showNotification(eNotificationType.INFORMATION, 'ÍNGLES', 'No hay nuevos pagos por registrar');
-
             }
-            this.loadingService.setLoading(false);
+            this.pendingRequests = this.pendingRequests.filter(req => csvData.includes((req.englishStudent.studentId as IStudent).controlNumber));
+            console.log('pending request ', this.pendingRequests);
+            if (this.pendingRequests.length > 0) {
+              await this.requestCourseProv.setPaidStatus(this.pendingRequests).toPromise().then(ok => { });
+              await this.ngOnInit();
+              this.notificationService.showNotification(eNotificationType.SUCCESS, 'ÍNGLES', 'Segundos Pagos registrado');
+            }
+            else {
+              this.notificationService.showNotification(eNotificationType.INFORMATION, 'ÍNGLES', 'No hay nuevos pagos por registrar');
+            }
           }
+          this.loadingService.setLoading(false);
         },
         encoding: 'utf8',
         skipEmptyLines: true
       });
+      event.target.value = '';
+    }else{
+      this.loadingService.setLoading(false);
     }
   }
 

@@ -47,13 +47,13 @@ export class BossMessageComponent implements OnInit {
   saveMessage(message){
     if(this.edit){
       // editar el mensaje
-      this.englishCourseProv.updateEnBossMessage(this.bossMessage._id,message).subscribe(updated=>{this.notificationServ.showNotification(eNotificationType.SUCCESS,'CLE','Mensaje actualizado con exito.')});
+      this.englishCourseProv.updateEnBossMessage(this.bossMessage._id,message).subscribe(updated=>{this.notificationServ.showNotification(eNotificationType.SUCCESS,'CLE','Mensaje actualizado con éxito.')});
     }else{
       // crear el mensaje
       this.englishCourseProv.createEnBossMessage(message).subscribe(data=>{
         this.bossMessage = data.message;      
         this.edit = true;
-        this.notificationServ.showNotification(eNotificationType.SUCCESS,'CLE','Mensaje guardado con exito.')
+        this.notificationServ.showNotification(eNotificationType.SUCCESS,'CLE','Mensaje guardado con éxito.')
       })
     }
     
