@@ -92,7 +92,7 @@ export class ReviewReportsDocumentsComponent implements OnInit {
                 'escriba un mensaje para el alumno de los errores en su información');
             } else {
               // Asignar mensaje por parte de bolsa de trabajo
-              this.sendVerificationInformation( report, {filename: report.name, validation: false, message: result.value}, 'reevaluate');
+              this.sendVerificationInformation( report, {filename: report.name, validation: false, message: result.value}, 'reevaluate', 'reports');
             }
           }
         });
@@ -112,7 +112,7 @@ export class ReviewReportsDocumentsComponent implements OnInit {
         }).then((result) => {
           if (result.value) {
             // Todos los campos del formulario son correctos
-            this.sendVerificationInformation( report, {filename: report.name, validation: true, message: ''}, 'approved');
+            this.sendVerificationInformation( report, {filename: report.name, validation: true, message: ''}, 'approved', 'reports');
           }
         });
         break;
@@ -120,23 +120,23 @@ export class ReviewReportsDocumentsComponent implements OnInit {
   }
 
 
-  sendVerificationInformation(report, information, status) {
+  sendVerificationInformation(report, information, status, nameDocument) {
     this.loadingService.setLoading(true);
     this.controlStudentProv.updateReportFromDepartmentEvaluation(this.controlStudentId,
-      {reportId: report._id, eStatus: status})
+      {documentId: report._id, eStatus: status, documentDepartment: information, nameDocument: nameDocument})
       .subscribe( res => {
         this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
           res.msg);
-        this.controlStudentProv.updateOneVerificationDepartmentReport(this.controlStudentId,
-          information).subscribe( eRes => {
-          this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
-            eRes.msg);
-          this.ngOnInit();
-        }, err => {
-            const message = JSON.parse(err._body).msg || 'Error al buscar recurso';
-            this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
-            message);
-        });
+        // this.controlStudentProv.updateOneVerificationDepartmentReport(this.controlStudentId,
+        //   {document: information, nameDocument: nameDocument}).subscribe( eRes => {
+        //   this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
+        //     eRes.msg);
+        //   this.ngOnInit();
+        // }, err => {
+        //     const message = JSON.parse(err._body).msg || 'Error al buscar recurso';
+        //     this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
+        //     message);
+        // });
       }, error => {
         const message = JSON.parse(error._body).msg || 'Error al buscar recurso';
         this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
