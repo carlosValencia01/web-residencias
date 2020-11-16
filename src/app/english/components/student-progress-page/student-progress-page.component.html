@@ -1,0 +1,90 @@
+<div class="row justify-content-center">
+<p  class="col-12 mt-3 text-center">
+  <b> Total de horas cursadas:</b>
+</p>
+<mat-card class="col-8 col-lg-7 p-3 mb-3">
+
+  <mat-card-content>
+
+    <div>
+      <h2 class="text-center">{{totalHoursCoursed}}/{{totalHours}}</h2>
+    </div>
+    
+    <div class="p-1">
+      <mat-progress-bar mode="determinate" [value]="percentHours"></mat-progress-bar>
+    </div>
+    
+  </mat-card-content>
+
+</mat-card>
+
+</div>
+<div class="row justify-content-center">
+<div class="col-11 col-lg-10 p-3">
+
+    <!--Tabla-->
+    <div style="position: relative;">
+
+      <div style="position: relative; overflow: auto; max-width: 100%;" class="mat-elevation-z8">
+
+        <table mat-table [dataSource]="requestsDataSource" matSort #sortRequests="matSort" matSortActive="ID"
+          matSortDirection="asc">
+
+          <ng-container matColumnDef="period">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Periodo</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.period}}</mat-cell>
+          </ng-container>
+          
+          <ng-container matColumnDef="course">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Curso</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.course}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="level">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Bloque</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.level}}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="average">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Promedio</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.average}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="hoursCoursed">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Horas</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.hoursCoursed}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center; width: 5%;">Acciones
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-icon-button [matMenuTriggerFor]="actions">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+
+              <mat-menu #actions="matMenu">
+                <button (click)="openViewInfo(row)" mat-menu-item>
+                  <mat-icon>error_outline</mat-icon>
+                  <span>Ver mas Información</span>
+                </button>
+              </mat-menu>
+
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="['period', 'course', 'level', 'average', 'hoursCoursed', 'actions']">
+          </mat-header-row>
+          <mat-row
+            *matRowDef="let row; columns: ['period', 'course', 'level', 'average', 'hoursCoursed', 'actions']">
+          </mat-row>
+
+        </table>
+        <mat-paginator #matPaginatorRequests [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #viewScheduleGroup>
+  hola
+</ng-template>

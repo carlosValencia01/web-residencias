@@ -69,7 +69,7 @@ export class AssignEnglishTeacherComponent implements OnInit {
 
     Swal.fire({
       title: 'Asignación de docente',
-      text: `¿Está seguro de asignar el docente ${teacher.name.fullName} al grupo ${this.data.group.name}?`,
+      html: `¿Está seguro de asignar el docente <b>${teacher.name.fullName}</b> al grupo <b>${this.data.group.name}</b>?`,
       type: 'warning',
       allowOutsideClick: false,
       showCancelButton: true,

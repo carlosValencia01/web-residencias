@@ -1,9 +1,16 @@
 .orange-card-info{
-    background: #ff760c;
+    background: #fd8c35;
     color: white;
     height: 104px;
     margin-bottom: 5%;
     margin-top: 15px;
+    border: 2px solid #fd6b00;
+    box-shadow: 0px 0px 12px rgba(0,0,0,0.3);
+}
+@media (max-width: 360px){
+    .orange-card-info-teacher{
+        height: 150px;
+    }
 }
 .orange-card-info .mat-card-header .mat-card-title{
     font-weight: 800 !important;
