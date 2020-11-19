@@ -55,7 +55,6 @@ export class LoginPageComponent implements OnInit {
     })
       .subscribe((res) => {
         this.userProv.sendTokenFromAPI(res.token);
-
         if (res.user.rol && res.user.rol.name && res.user.rol.name.toUpperCase().indexOf('ESTUDIANTE') > -1) {
           this._studentLogin(res);
           return;
