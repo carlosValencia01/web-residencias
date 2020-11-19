@@ -28,17 +28,16 @@ export class RecordStudentPageComponent implements OnInit {
   public acceptanceDoc: Array<any>;
   public commitmentDoc: Array<any>;
   public workPlanProjectDoc: Array<any>;
-  public firstReportDoc: Array<any>;
-  public secondReportDoc: Array<any>;
-  public thirdReportDoc: Array<any>;
   public reports: Array<any>;
   public constancyDoc: Array<any>;
-  public evaluationOfProgramDoc: Array<any>;
+  public evaluationOfProgramDocs: Array<any>;
   public finalReportDoc: Array<any>;
   public evaluationOfFinalReportDoc: Array<any>;
-  public selfEvaluationDoc: Array<any>;
+  public selfEvaluationDocs: Array<any>;
   public verificationDocuments: object;
   public reportDocuments: Array<any>;
+  public managerEvaluationDocuments: Array<any>;
+  public selfEvaluationDocuments: Array<any>;
   public showInformation = false;
   public showDocuments = false;
   initRequest: InitRequest;
@@ -65,6 +64,8 @@ export class RecordStudentPageComponent implements OnInit {
         this.studentInformation = res.controlStudent.studentId;
         this.verificationDocuments = res.controlStudent.verification;
         this.reportDocuments = res.controlStudent.verification.reports;
+        this.managerEvaluationDocuments = res.controlStudent.verification.managerEvaluations;
+        this.selfEvaluationDocuments = res.controlStudent.verification.selfEvaluations;
         const documents = res.controlStudent.documents;
         this.solicitudeDoc = documents.filter(d => d.filename.includes('ITT-POC-08-02'));
         this.presentationDoc = documents.filter(d => d.filename.includes('ITT-POC-08-03'));
@@ -72,14 +73,11 @@ export class RecordStudentPageComponent implements OnInit {
         this.workPlanProjectDoc = documents.filter(d => d.filename.includes('ITT-POC-08-04'));
         this.commitmentDoc = documents.filter(d => d.filename.includes('ITT-POC-08-05'));
         this.reports = documents.filter(d => d.filename.includes('ITT-POC-08-06'));
-        this.firstReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-06-01'));
-        this.secondReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-06-02'));
-        this.thirdReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-06-03'));
         this.constancyDoc = documents.filter(d => d.filename.includes('ITT-POC-08-08'));
-        this.evaluationOfProgramDoc = documents.filter(d => d.filename.includes('ITT-POC-08-09'));
-        this.finalReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-00-10'));
+        this.evaluationOfProgramDocs = documents.filter(d => d.filename.includes('ITT-POC-08-09'));
+        this.finalReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-00-12'));
         this.evaluationOfFinalReportDoc = documents.filter(d => d.filename.includes('ITT-POC-08-10'));
-        this.selfEvaluationDoc = documents.filter(d => d.filename.includes('ITT-POC-08-11'));
+        this.selfEvaluationDocs = documents.filter(d => d.filename.includes('ITT-POC-08-11'));
         this.formDocument = this._castToDoc(res.controlStudent);
         this._initializeDocument(res.controlStudent.studentId);
       }, error => {
@@ -145,7 +143,7 @@ export class RecordStudentPageComponent implements OnInit {
         document = this.constancyDoc;
         break;
       case 'dependencyManagerEvaluation':
-        document = this.evaluationOfProgramDoc;
+        document = this.evaluationOfProgramDocs;
         break;
       case 'lastReportEvaluation':
         document = this.evaluationOfFinalReportDoc;
@@ -154,7 +152,7 @@ export class RecordStudentPageComponent implements OnInit {
         document = this.finalReportDoc;
         break;
       case 'selfEvaluation':
-        document = this.selfEvaluationDoc;
+        document = this.selfEvaluationDocs;
         break;
     }
 
@@ -205,7 +203,7 @@ export class RecordStudentPageComponent implements OnInit {
         documents = this.constancyDoc;
         break;
       case 'dependencyManagerEvaluation':
-        documents = this.evaluationOfProgramDoc;
+        documents = this.evaluationOfProgramDocs;
         break;
       case 'lastReportEvaluation':
         documents = this.evaluationOfFinalReportDoc;
@@ -214,7 +212,7 @@ export class RecordStudentPageComponent implements OnInit {
         documents = this.finalReportDoc;
         break;
       case 'selfEvaluation':
-        documents = this.selfEvaluationDoc;
+        documents = this.selfEvaluationDocs;
         break;
     }
     const fileName = documents[idx].filename;

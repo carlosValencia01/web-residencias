@@ -27,6 +27,11 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  getControlStudentByGeneralStatus(eStatus) {
+    return this.api.get(`controlStudent/student/status/${eStatus}`)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   getStudentInformationByControlId(_id) {
     return this.api.get(`controlStudent/student/${_id}`)
       .pipe(map(controlStudent => controlStudent.json()));
@@ -107,6 +112,11 @@ export class ControlStudentProv {
 
   updateReportFromDepartmentEvaluation(_id, data) {
     return this.api.put(`controlStudent/report/status/${_id}`, data)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
+  updateDocumentEvaluationFromDepartmentEvaluation(_id, data) {
+    return this.api.put(`controlStudent/report/multiple/status/${_id}`, data)
       .pipe(map(controlStudent => controlStudent.json()));
   }
 

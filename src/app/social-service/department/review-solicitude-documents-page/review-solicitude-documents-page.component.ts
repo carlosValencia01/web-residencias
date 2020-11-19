@@ -145,6 +145,19 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
             this.commitment = status;
             break;
         }
+        if (this.presentation === 'approved' &&
+            this.acceptance === 'approved' &&
+            this.workPlan === 'approved' &&
+            this.commitment === 'approved') {
+          this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, {'status': 'process'})
+            .subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
+                'Se ha iniciado el proceso de servicio social del estudiante');
+            }, () => {
+              this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
+                'No se ha cambiado el estatus general del estudiante');
+            });
+        }
       }, () => {
         this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
           'Ha sucedido un error guardando la información, vuelva a intentarlo mas tarde');

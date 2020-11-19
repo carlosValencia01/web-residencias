@@ -18,6 +18,8 @@ export class ReviewReportsDocumentsComponent implements OnInit {
   private controlStudentId: string;
   public loaded = false;
   public reports: any;
+  public selfEvaluations: any;
+  public managerEvaluations: any;
   public pdf: any;
   public student: IStudent;
   public documents: any;
@@ -40,6 +42,8 @@ export class ReviewReportsDocumentsComponent implements OnInit {
       .subscribe(res => {
         this.student = res.controlStudent.studentId;
         this.reports = res.controlStudent.verification.reports;
+        this.selfEvaluations = res.controlStudent.verification.selfEvaluations;
+        this.managerEvaluations = res.controlStudent.verification.managerEvaluations;
         this.documents = res.controlStudent.documents;
     }, () => {
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
@@ -50,24 +54,30 @@ export class ReviewReportsDocumentsComponent implements OnInit {
 
   viewDocument(documentCode) {
     this.loadingService.setLoading(true);
-    const documentId = this.reports.filter(d => d.filename.includes(documentCode));
-    this.controlStudentProv.getResource(documentId[0].fileIdInDrive, documentCode).subscribe(async (data: Blob) => {
-      this.pdf = data;
-      // this.openDialog(this.pdf);
-    }, error => {
-      let message = '';
-      try {
-        message = JSON.parse(error._body).message || 'Error al buscar recurso';
-      } catch {
-        message = 'Error al buscar el recurso';
-      }
-      this.disableLoading();
+    const documentId = this.documents.find(d => d.filename.includes(documentCode));
+    if (documentId) {
+      this.controlStudentProv.getResource(documentId.fileIdInDrive, documentCode).subscribe(async (data: Blob) => {
+        this.pdf = data;
+        // this.openDialog(this.pdf);
+      }, error => {
+        let message = '';
+        try {
+          message = JSON.parse(error._body).message || 'Error al buscar recurso';
+        } catch {
+          message = 'Error al buscar el recurso';
+        }
+        this.loadingService.setLoading(false);
+        this.notificationsService
+          .showNotification(eNotificationType.ERROR, 'Servicio social', message);
+      }, () => this.loadingService.setLoading(false) );
+    } else {
+      this.loadingService.setLoading(false);
       this.notificationsService
-        .showNotification(eNotificationType.ERROR, 'Servicio social', message);
-    }, () => this.disableLoading() );
+        .showNotification(eNotificationType.ERROR, 'Servicio social', 'El documento no se encuentra disponible todavía');
+    }
   }
 
-  messageForCompany(type, report) {
+  messageForCompany(type, report, nameDocument) {
     switch (type) {
       case 'rejectDocument':
         Swal.fire({
@@ -92,7 +102,7 @@ export class ReviewReportsDocumentsComponent implements OnInit {
                 'escriba un mensaje para el alumno de los errores en su información');
             } else {
               // Asignar mensaje por parte de bolsa de trabajo
-              this.sendVerificationInformation( report, {filename: report.name, validation: false, message: result.value}, 'reevaluate', 'reports');
+              this.sendVerificationInformation( report, {filename: report.name, validation: false, message: result.value}, 'reevaluate', nameDocument);
             }
           }
         });
@@ -112,7 +122,7 @@ export class ReviewReportsDocumentsComponent implements OnInit {
         }).then((result) => {
           if (result.value) {
             // Todos los campos del formulario son correctos
-            this.sendVerificationInformation( report, {filename: report.name, validation: true, message: ''}, 'approved', 'reports');
+            this.sendVerificationInformation( report, {filename: report.name, validation: true, message: ''}, 'approved', nameDocument);
           }
         });
         break;
@@ -122,11 +132,12 @@ export class ReviewReportsDocumentsComponent implements OnInit {
 
   sendVerificationInformation(report, information, status, nameDocument) {
     this.loadingService.setLoading(true);
-    this.controlStudentProv.updateReportFromDepartmentEvaluation(this.controlStudentId,
+    this.controlStudentProv.updateDocumentEvaluationFromDepartmentEvaluation(this.controlStudentId,
       {documentId: report._id, eStatus: status, documentDepartment: information, nameDocument: nameDocument})
       .subscribe( res => {
         this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
           res.msg);
+        this.ngOnInit();
         // this.controlStudentProv.updateOneVerificationDepartmentReport(this.controlStudentId,
         //   {document: information, nameDocument: nameDocument}).subscribe( eRes => {
         //   this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',

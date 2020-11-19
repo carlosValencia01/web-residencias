@@ -112,7 +112,7 @@ export class ControlStudentsProcessPageComponent implements OnInit {
   _getReport() {
     this.loadingService.setLoading(true);
     // Obtener las solicitudes aprovadas
-    this.controlStudentProv.getRequests('all').subscribe(res => {
+    this.controlStudentProv.getControlStudentByGeneralStatus('process').subscribe(res => {
         const reportRequest = res.controlStudents.map(this._castToTable);
         this._refreshReport(reportRequest);
       }, () => {
@@ -141,7 +141,7 @@ export class ControlStudentsProcessPageComponent implements OnInit {
       fullName: data.studentId.fullName,
       controlNumber: data.controlNumber,
       career: data.studentId.career,
-      status: '0/' + data.verification.reports.length
+      status: data.verification.reports.filter(r => r.status === 'approved').length + '/' + data.verification.reports.length
     };
   }
 

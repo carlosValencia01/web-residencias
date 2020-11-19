@@ -2,45 +2,122 @@
   <mat-card-header>
     <mat-card-title>Servicio social: Revisión de reportes bimestrales</mat-card-title>
     <mat-card-subtitle>Estudiante: {{student.fullName}}</mat-card-subtitle>
-    <button mat-icon-button (click)="location.back()" matTooltip="Regresar" class="text-danger" style="position: absolute; top: 5px; right: 5px;">
+    <button mat-raised-button (click)="location.back()" color="warn" style="position: absolute; top: 5px; right: 5px;">
       <mat-icon>arrow_back</mat-icon>
+      Regresar
     </button>
   </mat-card-header>
   <mat-card-content>
     <div class="lateral">
-      <mat-card class="document" *ngFor="let report of reports">
-        <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
-          <h6 class="text-center">Reporte Bimestral No.{{report.position}}</h6>
-          <button mat-icon-button [matMenuTriggerFor]="menu1" style="position:absolute; bottom: 5px; right: 5px;">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #menu1="matMenu">
-            <button mat-menu-item (click)="messageForCompany('evaluateDocument', report)" *ngIf="report.status !== 'approved'">
-              <mat-icon class="text-success">thumb_up</mat-icon>
-              <span>Aceptar</span>
+      <mat-card class="mb-4" *ngFor="let report of reports; let i = index;">
+        <mat-card class="document">
+          <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+            <button mat-icon-button [matMenuTriggerFor]="menu1" style="position:absolute; bottom: 5px; right: 5px;">
+              <mat-icon>more_vert</mat-icon>
             </button>
-            <button mat-menu-item (click)="messageForCompany('rejectDocument', report)">
-              <mat-icon class="text-danger">thumb_down</mat-icon>
-              <span>Rechazar</span>
+            <h6 class="text-center">Reporte Bimestral No.{{report.position}}</h6>
+            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(report.name)">
+            <mat-menu #menu1="matMenu">
+              <button mat-menu-item (click)="messageForCompany('evaluateDocument', report, 'reports')" *ngIf="!['approved', 'register'].includes(report.status)">
+                <mat-icon class="text-success">thumb_up</mat-icon>
+                <span>Aceptar</span>
+              </button>
+              <button mat-menu-item (click)="messageForCompany('rejectDocument', report, 'reports')" *ngIf="report.status !== 'register'">
+                <mat-icon class="text-danger">thumb_down</mat-icon>
+                <span>Rechazar</span>
+              </button>
+            </mat-menu>
+            <div [ngSwitch]="report.status">
+              <div *ngSwitchCase="'send'">
+                <span mat-line class="badge badge-pill badge-info">PENDIENTE</span>
+              </div>
+              <div *ngSwitchCase="'reevaluate'">
+                <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
+              </div>
+              <div *ngSwitchCase="'approved'">
+                <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+              </div>
+              <div *ngSwitchDefault>
+                <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+              </div>
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="document">
+          <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+
+            <button mat-icon-button [matMenuTriggerFor]="menu2" style="position:absolute; bottom: 5px; right: 5px;">
+              <mat-icon>more_vert</mat-icon>
             </button>
-          </mat-menu>
-          <img src="../../../../assets/icons/pdfReport.svg" style="width: 30%; cursor: pointer;" (click)="viewDocument(report.name)">
-          <!--            <p style="font-size: 0.8em;">Documento sin atender</p>-->
-          <div [ngSwitch]="report.status">
-            <div *ngSwitchCase="'send'">
-              <span mat-line class="badge badge-pill badge-info">PENDIENTE</span>
+            <h6 class="text-center">Evaluación del Representante No.{{managerEvaluations[i].position}}</h6>
+            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(managerEvaluations[i].name)">
+            <mat-menu #menu2="matMenu">
+              <button mat-menu-item (click)="messageForCompany('evaluateDocument', managerEvaluations[i], 'managerEvaluations')" *ngIf="!['approved', 'register'].includes(managerEvaluations[i].status)">
+                <mat-icon class="text-success">thumb_up</mat-icon>
+                <span>Aceptar</span>
+              </button>
+              <button mat-menu-item (click)="messageForCompany('rejectDocument', managerEvaluations[i], 'managerEvaluations')" *ngIf="managerEvaluations[i].status !== 'register'">
+                <mat-icon class="text-danger">thumb_down</mat-icon>
+                <span>Rechazar</span>
+              </button>
+            </mat-menu>
+            <!--            <p style="font-size: 0.8em;">Documento sin atender</p>-->
+            <div [ngSwitch]="managerEvaluations[i].status">
+              <div *ngSwitchCase="'send'">
+                <span mat-line class="badge badge-pill badge-info">PENDIENTE</span>
+              </div>
+              <div *ngSwitchCase="'reevaluate'">
+                <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
+              </div>
+              <div *ngSwitchCase="'approved'">
+                <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+              </div>
+              <div *ngSwitchDefault>
+                <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+              </div>
             </div>
-            <div *ngSwitchCase="'reevaluate'">
-              <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
+
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="document">
+          <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+
+            <button mat-icon-button [matMenuTriggerFor]="menu3" style="position:absolute; bottom: 5px; right: 5px;">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <h6 class="text-center">Evaluación del Estudiante No.{{selfEvaluations[i].position}}</h6>
+            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(selfEvaluations[i].name)">
+            <mat-menu #menu3="matMenu">
+              <button mat-menu-item (click)="messageForCompany('evaluateDocument', selfEvaluations[i], 'selfEvaluations')" *ngIf="!['approved', 'register'].includes(selfEvaluations[i].status)">
+                <mat-icon class="text-success">thumb_up</mat-icon>
+                <span>Aceptar</span>
+              </button>
+              <button mat-menu-item (click)="messageForCompany('rejectDocument', selfEvaluations[i], 'selfEvaluations')" *ngIf="selfEvaluations[i].status !== 'register'">
+                <mat-icon class="text-danger">thumb_down</mat-icon>
+                <span>Rechazar</span>
+              </button>
+            </mat-menu>
+            <!--            <p style="font-size: 0.8em;">Documento sin atender</p>-->
+            <div [ngSwitch]="selfEvaluations[i].status">
+              <div *ngSwitchCase="'send'">
+                <span mat-line class="badge badge-pill badge-info">PENDIENTE</span>
+              </div>
+              <div *ngSwitchCase="'reevaluate'">
+                <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
+              </div>
+              <div *ngSwitchCase="'approved'">
+                <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+              </div>
+              <div *ngSwitchDefault>
+                <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+              </div>
             </div>
-            <div *ngSwitchCase="'approved'">
-              <span mat-line class="badge badge-pill badge-success">APROBADO</span>
-            </div>
-            <div *ngSwitchDefault>
-              <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
-            </div>
-          </div>
-        </mat-card-content>
+
+          </mat-card-content>
+        </mat-card>
       </mat-card>
     </div>
 
