@@ -72,6 +72,253 @@
         </div>
       </mat-tab>
 
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div>
+            Reporte Final
+          </div>
+        </ng-template>
+        <br>
+        <div>
+          <div class="row p-3">
+            <div class="col-11">
+              <mat-form-field class="w-100">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                       oninput="this.value=this.value.toUpperCase()">
+              </mat-form-field>
+            </div>
+            <div class="col-1 justify-content-end text-center">
+              <button mat-mini-fab class="m-1" color="primary" (click)="refreshLastReport()" data-toggle="tooltip"
+                      title="Recargar">
+                <mat-icon>update</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="row text-center">
+            <table mat-table [dataSource]="dataSourceLastReport" matSort>
+              <ng-container matColumnDef="no">
+                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+                <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+                  {{i+1}}
+                </td>
+              </ng-container>
+              <ng-container *ngFor="let item of displayedColumnsLastReport.slice(1, -1);let index=index"
+                            [matColumnDef]="item">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsLastReportName[index]}}</th>
+                <td *matCellDef="let row; let i = index" mat-cell style="width:25%;">
+                  <span mat-line *ngIf="item !== 'status'">{{row[item]}}</span>
+                  <span mat-line *ngIf="item === 'status'" class="badge badge-pill" [ngClass]="{'send':'badge-danger', 'reevaluate':'badge-warning'}[row[item]]">
+                    {{row[item] === 'send' ? 'Sin atender' : 'Revaluación'}}
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th *matHeaderCellDef mat-header-cell>Acciones</th>
+                <td *matCellDef="let row" mat-cell style="width:20%">
+                  <button [matMenuTriggerFor]="actions" mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions>
+                    <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                      <span>Expediente</span>
+                    </button>
+                    <button mat-menu-item routerLink="/social-service/validateLastReportDocument" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-primary">find_in_page</mat-icon>
+                      <span>Evaluar reporte final</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <tr *matHeaderRowDef="displayedColumnsLastReport" mat-header-row></tr>
+              <tr *matRowDef="let row; columns: displayedColumnsLastReport;" mat-row></tr>
+            </table>
+            <mat-paginator #matPaginatorLastReport [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div>
+            Constancia sin oficio
+          </div>
+        </ng-template>
+        <br>
+        <div>
+          <div class="row p-3">
+            <div class="col-11">
+              <mat-form-field class="w-100">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                       oninput="this.value=this.value.toUpperCase()">
+              </mat-form-field>
+            </div>
+            <div class="col-1 justify-content-end text-center">
+              <button mat-mini-fab class="m-1" color="primary" (click)="refreshPreAssigned()" data-toggle="tooltip"
+                      title="Recargar">
+                <mat-icon>update</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="row text-center">
+            <table mat-table [dataSource]="dataSourcePreAssigned" matSort>
+              <ng-container matColumnDef="no">
+                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+                <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+                  {{i+1}}
+                </td>
+              </ng-container>
+              <ng-container *ngFor="let item of displayedColumnsPreAssigned.slice(1, -1);let index=index"
+                            [matColumnDef]="item">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsPreAssignedName[index]}}</th>
+                <td *matCellDef="let row;" mat-cell style="width:25%;">
+                  {{row[item]}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th *matHeaderCellDef mat-header-cell>Acciones</th>
+                <td *matCellDef="let row" mat-cell style="width:20%">
+                  <button [matMenuTriggerFor]="actions" mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions>
+                    <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                      <span>Expediente</span>
+                    </button>
+                    <button mat-menu-item (click)="assignTradeDocumentNumber(row['id'])">
+                      <mat-icon class="material-icons">assignment</mat-icon>
+                      <span>Asignar No.Oficio</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <tr *matHeaderRowDef="displayedColumnsPreAssigned" mat-header-row></tr>
+              <tr *matRowDef="let row; columns: displayedColumnsPreAssigned;" mat-row></tr>
+            </table>
+            <mat-paginator #matPaginatorPreAssigned [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div>
+            Constancia por firmar
+          </div>
+        </ng-template>
+        <br>
+        <div>
+          <div class="row p-3">
+            <div class="col-11">
+              <mat-form-field class="w-100">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                       oninput="this.value=this.value.toUpperCase()">
+              </mat-form-field>
+            </div>
+            <div class="col-1 justify-content-end text-center">
+              <button mat-mini-fab class="m-1" color="primary" (click)="refreshPreSign()" data-toggle="tooltip"
+                      title="Recargar">
+                <mat-icon>update</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="row text-center">
+            <table mat-table [dataSource]="dataSourcePreSign" matSort>
+              <ng-container matColumnDef="no">
+                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+                <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+                  {{i+1}}
+                </td>
+              </ng-container>
+              <ng-container *ngFor="let item of displayedColumnsPreSign.slice(1, -1);let index=index"
+                            [matColumnDef]="item">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsPreSignName[index]}}</th>
+                <td *matCellDef="let row;" mat-cell style="width:25%;">
+                  {{row[item]}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th *matHeaderCellDef mat-header-cell>Acciones</th>
+                <td *matCellDef="let row" mat-cell style="width:20%">
+                  <button [matMenuTriggerFor]="actions" mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions>
+                    <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                      <span>Expediente</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <tr *matHeaderRowDef="displayedColumnsPreSign" mat-header-row></tr>
+              <tr *matRowDef="let row; columns: displayedColumnsPreSign;" mat-row></tr>
+            </table>
+            <mat-paginator #matPaginatorPreSign [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div>
+            Liberación
+          </div>
+        </ng-template>
+        <br>
+        <div>
+          <div class="row p-3">
+            <div class="col-11">
+              <mat-form-field class="w-100">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                       oninput="this.value=this.value.toUpperCase()">
+              </mat-form-field>
+            </div>
+            <div class="col-1 justify-content-end text-center">
+              <button mat-mini-fab class="m-1" color="primary" (click)="refreshApproved()" data-toggle="tooltip"
+                      title="Recargar">
+                <mat-icon>update</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="row text-center">
+            <table mat-table [dataSource]="dataSourceApproved" matSort>
+              <ng-container matColumnDef="no">
+                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+                <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+                  {{i+1}}
+                </td>
+              </ng-container>
+              <ng-container *ngFor="let item of displayedColumnsApproved.slice(1, -1);let index=index"
+                            [matColumnDef]="item">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsApprovedName[index]}}</th>
+                <td *matCellDef="let row;" mat-cell style="width:25%;">
+                  {{row[item]}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th *matHeaderCellDef mat-header-cell>Acciones</th>
+                <td *matCellDef="let row" mat-cell style="width:20%">
+                  <button [matMenuTriggerFor]="actions" mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions>
+                    <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                      <span>Expediente</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <tr *matHeaderRowDef="displayedColumnsApproved" mat-header-row></tr>
+              <tr *matRowDef="let row; columns: displayedColumnsApproved;" mat-row></tr>
+            </table>
+            <mat-paginator #matPaginatorApproved [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </mat-tab>
+
     </mat-tab-group>
   </mat-card-content>
 </mat-card>
