@@ -104,6 +104,12 @@ export class SocialServiceInitFormComponent implements OnInit {
             Object.assign(this.formRequest.value, {'verification.solicitude': 'send', 'verification.signs.solicitude.signStudentDate': new Date()}))
             .subscribe( res => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+              this._createHistoryDocumentStatus(
+                'ITT-POC-08-02 Solicitud de Servicio Social.pdf',
+                'SE ENVIO',
+                'REGISTRO DE INFORMACIÓN DEL ESTUDIANTE',
+                this.cookiesService.getData().user.fullName
+              );
               this.sendInformation.emit();
             }, () => {
               this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
@@ -115,6 +121,22 @@ export class SocialServiceInitFormComponent implements OnInit {
       );
     }
   }// registerRequest
+
+  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible) {
+    this.controlStudentProv.createHistoryDocumentStatus(this.controlStudentId,
+      {name: nameDocument,
+        status: [{  name: nameStatus,
+          message: messageStatus,
+          responsible: responsible }]
+      }).subscribe( created => {
+      this.notificationsService.showNotification(eNotificationType.SUCCESS,
+        'Exito', created.msg);
+    }, error => {
+      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', message);
+    });
+  }
 
   _initialize() {
     this.formRequest = this.formBuilder.group({

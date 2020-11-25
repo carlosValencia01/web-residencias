@@ -166,6 +166,22 @@ export class SocialServiceMainPageComponent implements OnInit {
     this.ngOnInit();
   }
 
+  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible) {
+    this.controlStudentProvider.createHistoryDocumentStatus(this.controlStudentId,
+      {name: nameDocument,
+        status: [{  name: nameStatus,
+          message: messageStatus,
+          responsible: responsible }]
+      }).subscribe( created => {
+      this.notificationsService.showNotification(eNotificationType.SUCCESS,
+        'Exito', created.msg);
+    }, error => {
+      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', message);
+    });
+  }
+
   getFolderId() {
     this.inscriptionsProv.getActivePeriod().toPromise().then(
       period => {
@@ -433,7 +449,7 @@ export class SocialServiceMainPageComponent implements OnInit {
             },
             status: {
               name: 'EN PROCESO',
-              message: `Se subio el ${nameDocument} por primera vez`
+              message: `El estudiante subio el ${nameDocument} por primera vez`
             }
           };
           // Actualizar información del documento subido a
@@ -454,7 +470,7 @@ export class SocialServiceMainPageComponent implements OnInit {
             filename: updated.filename,
             status: {
               name: 'EN PROCESO',
-              message: `Se actualizo el ${nameDocument}`
+              message: `El estudiante actualizo el ${nameDocument}`
             }
           };
           // Actualizar la información del documento
@@ -981,7 +997,7 @@ export class SocialServiceMainPageComponent implements OnInit {
             },
             status: {
               name: 'EN PROCESO',
-              message: `Se subio el ${nameDocument} por primera vez`
+              message: `El estudiante subio el ${nameDocument} por primera vez`
             }
           };
           // Actualizar información del documento subido a drive
@@ -1004,7 +1020,7 @@ export class SocialServiceMainPageComponent implements OnInit {
             filename: updated.filename,
             status: {
               name: 'EN PROCESO',
-              message: `Se actualizo el ${nameDocument}`
+              message: `El estudiante actualizo el ${nameDocument}`
             }
           };
           // Actualizar la información del documento

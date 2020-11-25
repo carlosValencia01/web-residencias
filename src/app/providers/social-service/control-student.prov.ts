@@ -93,6 +93,16 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  createHistoryDocumentStatus(controlStudentId, data) {
+    return this.api.post('controlStudent/history/' + controlStudentId, data)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
+  pushHistoryDocumentStatus(controlStudentId, documentId, data) {
+    return this.api.put(`controlStudent/history/${controlStudentId}/${documentId}`, data)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   releaseSocialServiceCsv(data: any) {
     return this.api.put(`controlStudent/release/csv`, data).pipe(map(res => res.json()));
   }

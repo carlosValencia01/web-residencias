@@ -44,6 +44,7 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
   public errorFieldsMessage: Array<any> = [];
   public errorFieldsValidate: Array<any> = [];
   public fileId = '';
+  private historyDocumentStatus: Array<any>;
 
   constructor(private formBuilder: FormBuilder,
               private controlStudentProv: ControlStudentProv,
@@ -62,7 +63,8 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
       .subscribe(res => {
         const data = this._castToForm(res.controlStudent);
         this.formRequest.setValue(data);
-        res.controlStudent.verificationDepartment.information.forEach( dep => {
+        this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
+        res.controlStudent.verificationDepartment.solicitude.forEach( dep => {
           dep.validation ? this.formRequest.get(dep.fieldName).disable() : this.formRequest.get(dep.fieldName).enable();
           this.errorFieldsValidate[dep.fieldName] = dep.validation;
           if (!dep.validation) {
@@ -100,6 +102,10 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
               Object.assign(this.formRequest.value, {'verification.solicitude': 'send', 'verification.signs.solicitude.signStudentDate': new Date()}))
               .subscribe( res => {
                 this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+                this._pushHistoryDocumentStatus('SE ACTUALIZO',
+                                              'ACTUALIZACIÓN DE INFORMACIÓN DE SOLICITUD',
+                                              this.cookiesService.getData().user.name.fullName,
+                                              'ITT-POC-08-02');
                 this.sendInformation.emit();
               }, () => {
                 this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
@@ -111,6 +117,20 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
       );
     }
   }// registerRequest
+
+  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
+    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
+    this.controlStudentProv.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
+      {name: nameStatus, message: messageStatus, responsible: responsible})
+      .subscribe(inserted => {
+        this.notificationsService.showNotification(eNotificationType.SUCCESS,
+          'Exito', inserted.msg);
+      }, error => {
+        const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'Error', message);
+      });
+  }
 
   community(event) {
     if (event.value === 'd') {
