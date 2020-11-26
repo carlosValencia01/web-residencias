@@ -8,14 +8,15 @@ import * as moment from 'moment';
 import {eFOLDER} from '../../../enumerators/shared/folder.enum';
 import {StudentProvider} from '../../../providers/shared/student.prov';
 import {InscriptionsProvider} from '../../../providers/inscriptions/inscriptions.prov';
-import { FormBuilder, FormControl, FormGroup, PatternValidator, Validators } from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatDialog} from '@angular/material';
 import {DialogVerificationComponent} from '../../components/dialog-verification/dialog-verification.component';
 import {DialogDocumentViewerComponent} from '../../components/dialog-document-viewer/dialog-document-viewer.component';
 import {InitRequestModel} from '../../../entities/social-service/initRequest.model';
 import {InitPresentationDocument} from '../../../entities/social-service/initPresentationDocument';
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
-import { ImageToBase64Service } from 'src/app/services/app/img.to.base63.service';
+import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
+import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
 
 moment.locale('es');
 
@@ -111,6 +112,8 @@ export class SocialServiceMainPageComponent implements OnInit {
   public now = moment.utc();
   public dateArray: Array<any>;
 
+  private historyDocumentStatus: Array<any>;
+
   editField: string;
   scheduleList: Array<any> = [
     { hour: 'Hora', monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '', total: '' }
@@ -148,6 +151,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.addDates(new Date(res.controlStudent.initialDate).valueOf());
       this.lastReport = res.controlStudent.verification.lastReport;
       this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
+      this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
@@ -178,8 +182,22 @@ export class SocialServiceMainPageComponent implements OnInit {
     }, error => {
       const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
       this.notificationsService.showNotification(eNotificationType.ERROR,
-        'Error', message);
+        'Atención', message);
     });
+  }
+
+  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
+    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
+    this.controlStudentProvider.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
+      {name: nameStatus, message: messageStatus, responsible: responsible})
+      .subscribe(inserted => {
+        this.notificationsService.showNotification(eNotificationType.SUCCESS,
+          'Exito', inserted.msg);
+      }, error => {
+        const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'Error', message);
+      });
   }
 
   getFolderId() {
@@ -241,10 +259,10 @@ export class SocialServiceMainPageComponent implements OnInit {
         'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
       return;
     }
-    this.controlStudentProvider.getFile(presentationId, 'ITT-POC-08-03 Carta de Presentación de Servicio Social.pdf').subscribe(async (res) => {
+    this.controlStudentProvider.getFile(presentationId, eSocialNameDocuments.PRESENTACION).subscribe(async (res) => {
       const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
       const downloadLink = document.createElement('a');
-      const fileName = 'ITT-POC-08-03 Carta de Presentación de Servicio Social.pdf';
+      const fileName = eSocialNameDocuments.PRESENTACION;
       downloadLink.href = linkSource;
       downloadLink.download = fileName;
       downloadLink.click();
@@ -254,6 +272,8 @@ export class SocialServiceMainPageComponent implements OnInit {
         this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
           {'verification.presentationDownloaded': true, 'verification.presentationDateDownload' : new Date()})
           .subscribe(() => {
+            this._pushHistoryDocumentStatus('DESCARGA',
+              'SE HA DESCARGADO EL DOCUMENTO POR PRIMERA VEZ', this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
             this.ngOnInit();
           }, () => {
             this.notificationsService.showNotification(eNotificationType.ERROR,
@@ -270,7 +290,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   downloadAsignation() {
     this.loadingService.setLoading(true);
-    const asignation = this.documents.filter(f => f.filename.toString().includes('ITT-POC-08-04'));
+    const asignation = this.documents.filter(f => f.filename.toString().includes(eSocialNameDocuments.ASIGNACION_CODE));
     let asignationId = '';
     try {
       asignationId = asignation[0].fileIdInDrive;
@@ -280,10 +300,10 @@ export class SocialServiceMainPageComponent implements OnInit {
         'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
       return;
     }
-    this.controlStudentProvider.getFile(asignationId, 'ITT-POC-08-04 Carta de Asignación-Plan de Trabajo.pdf').subscribe(async (res) => {
+    this.controlStudentProvider.getFile(asignationId, eSocialNameDocuments.ASIGNACION).subscribe(async (res) => {
       const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
       const downloadLink = document.createElement('a');
-      const fileName = 'ITT-POC-08-04 Carta de Asignación-Plan de Trabajo.pdf';
+      const fileName = eSocialNameDocuments.ASIGNACION;
       downloadLink.href = linkSource;
       downloadLink.download = fileName;
       downloadLink.click();
@@ -293,6 +313,8 @@ export class SocialServiceMainPageComponent implements OnInit {
         this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
           {'verification.workPlanProjectDownloaded': true, 'verification.workPlanProjectDateDownload' : new Date()})
           .subscribe(() => {
+            this._pushHistoryDocumentStatus('DESCARGA',
+              'SE HA DESCARGADO EL DOCUMENTO POR PRIMERA VEZ', this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
             this.ngOnInit();
           }, () => {
             this.notificationsService.showNotification(eNotificationType.ERROR,
@@ -322,37 +344,37 @@ export class SocialServiceMainPageComponent implements OnInit {
     let nameDocument = '';
     switch (docType) {
       case 'presentation':
-        nameDocument = 'ITT-POC-08-03 Carta de Presentación de Servicio Social.pdf';
-        if (this.presentation === 'reevaluate' || this.presentation === 'sign') {
+        nameDocument = eSocialNameDocuments.PRESENTACION;
+        if (['reevaluate', 'sign', 'upload'].includes(this.presentation)) {
           newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-03'));
+          const documentId = this.documents.filter(d => d.filename.includes(eSocialNameDocuments.PRESENTACION_CODE));
           nameDocument = documentId[0].filename;
           fileId = documentId[0].fileIdInDrive;
         }
         break;
       case 'acceptance':
-        nameDocument = 'ITT-POC-08-00 Carta de aceptación de Servicio Social.pdf';
+        nameDocument = eSocialNameDocuments.ACEPTACION;
         if (this.acceptance === 'reevaluate') {
           newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-00'));
+          const documentId = this.documents.filter(d => d.filename.includes(eSocialNameDocuments.ACEPTACION_CODE));
           nameDocument = documentId[0].filename;
           fileId = documentId[0].fileIdInDrive;
         }
         break;
       case 'workProject':
-        nameDocument = 'ITT-POC-08-04 Carta de Asignación-Plan de Trabajo.pdf';
-        if (this.workPlanProject === 'reevaluate') {
+        nameDocument = eSocialNameDocuments.ASIGNACION;
+        if (['reevaluate', 'register', 'upload'].includes(this.workPlanProject)) {
           newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-04'));
+          const documentId = this.documents.filter(d => d.filename.includes(eSocialNameDocuments.ASIGNACION_CODE));
           nameDocument = documentId[0].filename;
           fileId = documentId[0].fileIdInDrive;
         }
         break;
       case 'commitment':
-        nameDocument = 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf';
+        nameDocument = eSocialNameDocuments.COMPROMISO;
         if (this.commitment === 'reevaluate') {
           newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-05'));
+          const documentId = this.documents.filter(d => d.filename.includes(eSocialNameDocuments.COMPROMISO_CODE));
           nameDocument = documentId[0].filename;
           fileId = documentId[0].fileIdInDrive;
         }
@@ -373,6 +395,7 @@ export class SocialServiceMainPageComponent implements OnInit {
           newF: newF,
           fileId: fileId
         };
+        console.log(document);
 
         this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then( async response => {
           if (response) {
@@ -409,7 +432,7 @@ export class SocialServiceMainPageComponent implements OnInit {
                   await this.uploadFile(document.nameInDrive, document, 'commitment');
                   this.commitment = 'send';
                 } else {
-                  //this.commitmentDoc = document;
+                  // this.commitmentDoc = document;
                   this.commitment = 'upload';
                 }
                 break;
@@ -438,6 +461,19 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   uploadFile(nameDocument, document, detailDocument) {
     this.loadingService.setLoading(true);
+    const nameDocuments = {
+      'presentation': eSocialNameDocuments.PRESENTACION,
+      'acceptance': eSocialNameDocuments.ACEPTACION,
+      'workPlanProject': eSocialNameDocuments.ASIGNACION,
+      'commitment': eSocialNameDocuments.COMPROMISO
+    };
+    const codeDocuments = {
+      'presentation': eSocialNameDocuments.PRESENTACION_CODE,
+      'acceptance': eSocialNameDocuments.ACEPTACION_CODE,
+      'workPlanProject': eSocialNameDocuments.ASIGNACION_CODE,
+      'commitment': eSocialNameDocuments.COMPROMISO_CODE
+    };
+
     // Cargar el documento a Drive, ya debe de existir su registro y base de datos
     this.controlStudentProvider.uploadFile2(document).subscribe( async updated => {
         if (updated.action === 'create file') {
@@ -452,6 +488,7 @@ export class SocialServiceMainPageComponent implements OnInit {
               message: `El estudiante subio el ${nameDocument} por primera vez`
             }
           };
+          this._createHistoryDocumentStatus(nameDocuments[detailDocument], 'SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName);
           // Actualizar información del documento subido a
           await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo).subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
@@ -473,6 +510,8 @@ export class SocialServiceMainPageComponent implements OnInit {
               message: `El estudiante actualizo el ${nameDocument}`
             }
           };
+          this._pushHistoryDocumentStatus('SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName, codeDocuments[detailDocument]);
+
           // Actualizar la información del documento
           await this.controlStudentProvider.updateDocumentLog(this.controlStudentId, documentInfo)
             .subscribe( () => {
@@ -612,7 +651,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     const scheduleMonths = monthList.slice(i, i + 6 ); // Arreglo de meses que se enviara a la bd
     // scheduleMonths es el arreglo con el horario por dias
     // aqui pedirle al alumno que se identifique
-    console.log(this.controlNumber);
+    // console.log(this.controlNumber);
     const dialogRef = this.dialog.open(DialogVerificationComponent, { data: { email: this.controlNumber }, });
       dialogRef.afterClosed().subscribe(result => {
           if (result) {
@@ -630,12 +669,12 @@ export class SocialServiceMainPageComponent implements OnInit {
   }// registerSchedule
 
   saveWorkPlan() {
-    this.controlStudentProvider.getStudentInformationByControlId(this.controlStudentId)
-    .subscribe(resp => {
-      this.studentData = resp;
-    }, err => {
-      console.log(err);
-    });
+    // this.controlStudentProvider.getStudentInformationByControlId(this.controlStudentId)
+    // .subscribe(resp => {
+    //   this.studentData = resp;
+    // }, err => {
+    //   console.log(err);
+    // });
     this.controlStudentProvider.getControlStudentById(this.controlStudentId)
     .subscribe( resp => {
       this.formDocument = this._castToDoc(resp.controlStudent);
@@ -646,19 +685,6 @@ export class SocialServiceMainPageComponent implements OnInit {
       console.log(err);
     });
   }// saveWorkPlan
-
-  saveCommitment() {
-    this.controlStudentProvider.getControlStudentById(this.controlStudentId)
-    .subscribe( resp => {
-      this.formDocument = this._castToDoc(resp.controlStudent);
-      this.initRequest.setPresentationRequest(this.formDocument);
-      const binary = this.initRequest.documentSend(eSocialFiles.COMPROMISO);
-      this.saveCommitmentDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
-    }, err => {
-      console.log(err);
-    });
-  }// saveCommitment
-
 
   private _castToDoc(data) {
     this.getMissingData();
@@ -693,7 +719,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     this.loadingService.setLoading(true);
     const documentInfo = {
       mimeType: 'application/pdf',
-      nameInDrive: 'ITT-POC-08-04 Carta de Asignación / Plan de Trabajo del Prestador de Servicio Social.pdf',
+      nameInDrive: eSocialNameDocuments.ASIGNACION,
       bodyMedia: document,
       folderId: student.folderIdSocService.idFolderInDrive,
       newF: statusDoc,
@@ -715,9 +741,13 @@ export class SocialServiceMainPageComponent implements OnInit {
               observation: 'Firmado por: ' + this.userData.name.fullName
             }
           };
+          this._createHistoryDocumentStatus(eSocialNameDocuments.ASIGNACION,
+            'SE REGISTRO', 'SE HA REGISTRADO LA INFORMACIÓN PARA EL PLAN DE TRABAJO',
+            this.userData.name.fullName);
 
           await this.controlStudentProvider.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Asignación registrada correctamente.');
+              this.ngOnInit();
             },
             err => {
               console.log(err);
@@ -745,12 +775,13 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   saveCommitmentDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string) {
-    this.validateDocumentViewer('data:application/pdf;base64,' + document, 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf').then( async response => {
+    this.validateDocumentViewer('data:application/pdf;base64,' + document,
+      eSocialNameDocuments.COMPROMISO).then( async response => {
       if (response) {
         this.commitment = 'upload';
         const documentInfo = {
           mimeType: 'application/pdf',
-          nameInDrive: 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf',
+          nameInDrive: eSocialNameDocuments.COMPROMISO,
           bodyMedia: document,
           folderId: student.folderIdSocService.idFolderInDrive,
           newF: statusDoc,
@@ -774,7 +805,8 @@ export class SocialServiceMainPageComponent implements OnInit {
                 }
               };
               await this.controlStudentProvider.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Carta Compromiso registrada correctamente.');
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS,
+                    'Exito', 'Carta Compromiso registrada correctamente.');
                 },
                 err => {
                   console.log(err);
@@ -788,7 +820,8 @@ export class SocialServiceMainPageComponent implements OnInit {
               };
               await this.controlStudentProvider.updateDocumentLog(student._id, {filename: updated.filename, status: docStatus})
                 .subscribe( () => {
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Carta Compromiso actualizada correctamente.');
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS,
+                    'Exito', 'Carta Compromiso actualizada correctamente.');
                 }, err => {
                   console.log(err);
                 }, () => this.loadingService.setLoading(false));
@@ -804,26 +837,26 @@ export class SocialServiceMainPageComponent implements OnInit {
     );
   }// saveCommitmentDocument
 
-  getCommitment() {
-    let commitmentFile: File = null;
-    const commitment = this.documents.filter(f => f.filename.toString().includes('ITT-POC-08-05'));
-    let commitmentId = '';
-    try {
-      commitmentId = commitment[0].fileIdInDrive;
-    } catch (e) {
-      console.log(e);
-      this.notificationsService.showNotification(eNotificationType.ERROR,
-        'Error', 'No se ha encontrado la carta compromiso, vuelva a intentarlo mas tarde.');
-      return;
-    }
-    this.controlStudentProvider.getFile(commitmentId, 'ITT-POC-08-05 Carta Compromiso de Servicio Social.pdf').subscribe(async (res) => {
-      console.log('res', res);
-      commitmentFile = res.file;
-    }); {
-
-    }
-    return commitmentFile;
-  }
+  // getCommitment() {
+  //   let commitmentFile: File = null;
+  //   const commitment = this.documents.filter(f => f.filename.toString().includes(eSocialNameDocuments.COMPROMISO_CODE));
+  //   let commitmentId = '';
+  //   try {
+  //     commitmentId = commitment[0].fileIdInDrive;
+  //   } catch (e) {
+  //     console.log(e);
+  //     this.notificationsService.showNotification(eNotificationType.ERROR,
+  //       'Error', 'No se ha encontrado la carta compromiso, vuelva a intentarlo mas tarde.');
+  //     return;
+  //   }
+  //   this.controlStudentProvider.getFile(commitmentId, eSocialNameDocuments.COMPROMISO).subscribe(async (res) => {
+  //     console.log('res', res);
+  //     commitmentFile = res.file;
+  //   }); {
+  //
+  //   }
+  //   return commitmentFile;
+  // }
 
   getMissingData() {
     this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
@@ -832,12 +865,34 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.studentSuburb = res.student.suburb;
       this.studentCity = res.student.city;
       this.studentState = res.student.state;
-      console.log(res.student);
+      // console.log(res.student);
     });
   }
 
   generateCommitment() {
-    this.saveCommitment();
+    this.controlStudentProvider.getControlStudentById(this.controlStudentId)
+      .subscribe( resp => {
+        this.formDocument = this._castToDoc(resp.controlStudent);
+        this.initRequest.setPresentationRequest(this.formDocument);
+        const binary = this.initRequest.documentSend(eSocialFiles.COMPROMISO);
+        this.validateDocumentViewer('data:application/pdf;base64,' + binary,
+          eSocialNameDocuments.COMPROMISO).then( async response => {
+          if (response) {
+            this.commitmentDoc = {
+              mimeType: 'application/pdf',
+              nameInDrive: eSocialNameDocuments.COMPROMISO,
+              bodyMedia: binary,
+              folderId: this.folderId,
+              newF: true,
+              fileId: ''
+            };
+            this.commitment = 'upload';
+          }
+        });
+        // this.saveCommitmentDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
+      }, err => {
+        console.log(err);
+      });
   }
 
   uploadReport(event) {

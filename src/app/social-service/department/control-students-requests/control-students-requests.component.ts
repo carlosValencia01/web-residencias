@@ -13,6 +13,7 @@ import {ImageToBase64Service} from '../../../services/app/img.to.base63.service'
 import {DatePipe} from '@angular/common';
 import {InscriptionsProvider} from '../../../providers/inscriptions/inscriptions.prov';
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
+import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
 
 @Component({
   selector: 'app-control-students-requests',
@@ -137,7 +138,12 @@ export class ControlStudentsRequestsComponent implements OnInit {
         this.controlStudentProv.getControlStudentById(controlStudentId)
           .subscribe( resp => {
             this.formDocument = this._castToDoc(resp.controlStudent);
-            console.log(this.formDocument);
+            this._pushHistoryDocumentStatus('SE FIRMO',
+              'SE HA FIRMADO LA CARTA DE PRESENTACIÓN',
+              this.userData.name.fullName,
+              eSocialNameDocuments.PRESENTACION_CODE,
+              controlStudentId, resp.controlStudent.historyDocumentStatus);
+            // console.log(this.formDocument);
             this.initRequest.setPresentationRequest(this.formDocument);
             // this.pdf = this.initRequest.socialServicePresentation().output('bloburl');
             const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
@@ -172,7 +178,7 @@ export class ControlStudentsRequestsComponent implements OnInit {
     this.loadingService.setLoading(true);
     const documentInfo = {
       mimeType: 'application/pdf',
-      nameInDrive: 'ITT-POC-08-03 Carta de Presentación de Servicio Social.pdf',
+      nameInDrive: eSocialNameDocuments.PRESENTACION,
       bodyMedia: document,
       folderId: student.folderIdSocService.idFolderInDrive,
       newF: statusDoc,
@@ -195,6 +201,8 @@ export class ControlStudentsRequestsComponent implements OnInit {
               observation: 'Firmado por: ' + this.userData.name.fullName
             }
           };
+
+
 
           await this.controlStudentProv.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud registrada correctamente.');
@@ -302,6 +310,8 @@ export class ControlStudentsRequestsComponent implements OnInit {
                 this.notificationsService.showNotification(eNotificationType.SUCCESS,
                   'Se ha asignado correctamente el número de oficio al estudiante', '');
                 this.changeSubTab(0);
+                this._createHistoryDocumentStatus(eSocialNameDocuments.PRESENTACION, 'SE REGISTRO',
+                  'SE HA ASIGNADO NO. DE OFICIO ' + result.value + ' A CARTA DE PRESENTACIÓN', this.userData.name.fullName, controlStudentId);
             }, () => {
                 this.notificationsService.showNotification(eNotificationType.ERROR,
                   'Ha sucedido un error, no se ha asignado el número de oficio al estudiante', 'Vuelva a intentarlo mas tarde');
@@ -310,6 +320,37 @@ export class ControlStudentsRequestsComponent implements OnInit {
         });
       }
     });
+  }
+
+  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible, controlStudentId) {
+    console.log(nameDocument, nameStatus, messageStatus, responsible, controlStudentId);
+    this.controlStudentProv.createHistoryDocumentStatus(controlStudentId,
+      {name: nameDocument,
+        status: [{  name: nameStatus,
+          message: messageStatus,
+          responsible: responsible }]
+      }).subscribe( created => {
+      this.notificationsService.showNotification(eNotificationType.SUCCESS,
+        'Exito', created.msg);
+    }, error => {
+      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', message);
+    });
+  }
+
+  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string, controlStudentId, historyStatus) {
+    const doc = historyStatus.find(h => h.name.includes(documentCode));
+    this.controlStudentProv.pushHistoryDocumentStatus(controlStudentId, doc._id,
+      {name: nameStatus, message: messageStatus, responsible: responsible})
+      .subscribe(inserted => {
+        this.notificationsService.showNotification(eNotificationType.SUCCESS,
+          'Exito', inserted.msg);
+      }, error => {
+        const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'Error', message);
+      });
   }
 
   _getAllSendRequests() {
@@ -413,7 +454,7 @@ export class ControlStudentsRequestsComponent implements OnInit {
 
   private _refreshAllRequests(data: Array<any>): void {
     this.dataSourceAllRequests = new MatTableDataSource(data);
-    this.dataSourceAllRequests.paginator = this.paginatorSend;
+    this.dataSourceAllRequests.paginator = this.paginatorAllRequests;
     this.dataSourceAllRequests.sort = this.sortAll;
   }
 
@@ -427,14 +468,14 @@ export class ControlStudentsRequestsComponent implements OnInit {
     };
   }
 
-  _castToTableApproved(data) {
-    return {
-      id: data._id,
-      fullName: data.studentId.fullName,
-      controlNumber: data.controlNumber,
-      career: data.studentId.career
-    };
-  }
+  // _castToTableApproved(data) {
+  //   return {
+  //     id: data._id,
+  //     fullName: data.studentId.fullName,
+  //     controlNumber: data.controlNumber,
+  //     career: data.studentId.career
+  //   };
+  // }
 
   _castToTableAllRequests(data) {
     return {

@@ -8,6 +8,8 @@ import {IStudent} from '../../../entities/shared/student.model';
 import {MatDialog} from '@angular/material';
 import Swal from 'sweetalert2';
 import {Location} from '@angular/common';
+import {CookiesService} from '../../../services/app/cookie.service';
+import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
 
 @Component({
   selector: 'app-review-solicitude-documents-page',
@@ -24,16 +26,20 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
   public pdf: any;
   private documents: any;
   public loaded = false;
+  private historyDocumentStatus: Array<any>;
+  private userData;
 
   constructor(private activatedRoute: ActivatedRoute,
               private controlStudentProv: ControlStudentProv,
               private notificationsService: NotificationsServices,
               private loadingService: LoadingService,
+              private cookiesService: CookiesService,
               public location: Location,
               public dialog: MatDialog) {
     activatedRoute.queryParams.subscribe( param => {
       this.controlStudentId = param.id;
     });
+    this.userData = this.cookiesService.getData().user;
   }
 
   ngOnInit() {
@@ -45,6 +51,7 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
       this.presentation = res.controlStudent.verification.presentation;
       this.workPlan = res.controlStudent.verification.workPlanProject;
       this.commitment = res.controlStudent.verification.commitment;
+      this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
     }, () => {
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
         'No se pudo obtener la información del estudiante, intentelo mas tarde');
@@ -123,6 +130,20 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
     }
   }
 
+  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
+    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
+    this.controlStudentProv.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
+      {name: nameStatus, message: messageStatus, responsible: responsible})
+      .subscribe(inserted => {
+        this.notificationsService.showNotification(eNotificationType.SUCCESS,
+          'Exito', inserted.msg);
+      }, error => {
+        const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'Error', message);
+      });
+  }
+
   sendVerificationInformation(document, information, status) {
     this.loadingService.setLoading(true);
     this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId,
@@ -134,15 +155,43 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
         switch (document) {
           case 'presentation':
             this.presentation = status;
+            if (status === 'reevaluate') {
+              this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+                this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
+            } else {
+              this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+                this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
+            }
             break;
           case 'acceptance':
             this.acceptance = status;
+            if (status === 'reevaluate') {
+              this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+                this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
+            } else {
+              this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+                this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
+            }
             break;
           case 'workPlanProject':
             this.workPlan = status;
+            if (status === 'reevaluate') {
+              this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+                this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
+            } else {
+              this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+                this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
+            }
             break;
           case 'commitment':
             this.commitment = status;
+            if (status === 'reevaluate') {
+              this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+                this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
+            } else {
+              this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+                this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
+            }
             break;
         }
         if (this.presentation === 'approved' &&

@@ -308,7 +308,7 @@
                             <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                           </div>
                           <div *ngSwitchCase="'reevaluate'">
-                            <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                            <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                           </div>
                           <div *ngSwitchCase="'approved'">
                             <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -350,7 +350,7 @@
                             <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                           </div>
                           <div *ngSwitchCase="'reevaluate'">
-                            <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                            <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                           </div>
                           <div *ngSwitchCase="'approved'">
                             <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -391,7 +391,7 @@
                             <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                           </div>
                           <div *ngSwitchCase="'reevaluate'">
-                            <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                            <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                           </div>
                           <div *ngSwitchCase="'approved'">
                             <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -423,7 +423,7 @@
                     <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
                       <h6 class="text-center">Carta <br>compromiso</h6>
                       <label for="commitment" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
-                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;" (click)="generateCommitment()">
+                        <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
                         <div [ngSwitch]="commitment">
                           <div *ngSwitchCase="'upload'">
                             <span mat-line class="badge badge-pill badge-success">CARGADO</span>
@@ -432,7 +432,7 @@
                             <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                           </div>
                           <div *ngSwitchCase="'reevaluate'">
-                            <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                            <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                           </div>
                           <div *ngSwitchCase="'approved'">
                             <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -454,11 +454,11 @@
                           <mat-icon class="text-danger">info</mat-icon>
                         </button>
                       </div>
-                      <input type="button" id="commitment" (change)="onFileChange($event)"
+                      <input type="button" id="commitment" (click)="generateCommitment()"
                              hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFile('commitment')">
-                      <button type="button" id="commitment" (click)="saveCommitment()"
-                             hidden="hidden">
-                      </button>
+<!--                      <button type="button" id="commitment" (click)="saveCommitment()"-->
+<!--                             hidden="hidden">-->
+<!--                      </button>-->
                     </mat-card-content>
                   </mat-card>
                 </div>
@@ -494,7 +494,7 @@
               </div>
             </div>
           </div>
-          
+
             <div *ngIf="validateSolicitudePhase() === 'approved' ">
               <div class="text-center margen">
                 <div class="flex justify-content-around">
@@ -543,7 +543,7 @@
                                 <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'reevaluate'">
-                                <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                                <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'approved'">
                                 <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -557,19 +557,19 @@
                                 </div>
                               </div>
                             </div>
-                        </label>                    
+                        </label>
                         <p *ngIf="['reevaluate', 'upload'].includes(reports[report.position -1].status)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
-                          <div class="text-center"  *ngIf="reports[report.position -1].status === 'reevaluate'">                  
+                          <div class="text-center"  *ngIf="reports[report.position -1].status === 'reevaluate'">
                             <button mat-icon-button matSuffix
                                     matTooltipClass="bg-danger"
-                                    [matTooltip]="filesStatus.reports[report.position - 1].message"     
+                                    [matTooltip]="filesStatus.reports[report.position - 1].message"
                                     matTooltipPosition="above"
                                     [attr.aria-label]="'show information'"
                                     style="margin-left: auto;"
                                     type="button">
                               <mat-icon class="text-danger">info</mat-icon>
-                            </button>                      
-                          </div>                      
+                            </button>
+                          </div>
                           <input type="file" id=report{{report.position}} (change)="uploadReport($event)"
                                 hidden="hidden" accept="application/pdf" [disabled]="disabledUploadReport(report.position, report.status)">
                       </mat-card-content>
@@ -592,7 +592,7 @@
                                 <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'reevaluate'">
-                                <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                                <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'approved'">
                                 <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -606,19 +606,19 @@
                                 </div>
                               </div>
                             </div>
-                        </label>                    
+                        </label>
                         <p *ngIf="['reevaluate', 'upload'].includes(managerEvaluations[report.position -1].status)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
-                          <div class="text-center"  *ngIf="managerEvaluations[report.position -1].status === 'reevaluate'">                  
+                          <div class="text-center"  *ngIf="managerEvaluations[report.position -1].status === 'reevaluate'">
                             <button mat-icon-button matSuffix
                                     matTooltipClass="bg-danger"
-                                    [matTooltip]="filesStatus.managerEvaluations[report.position - 1].message"     
+                                    [matTooltip]="filesStatus.managerEvaluations[report.position - 1].message"
                                     matTooltipPosition="above"
                                     [attr.aria-label]="'show information'"
                                     style="margin-left: auto;"
                                     type="button">
                               <mat-icon class="text-danger">info</mat-icon>
-                            </button>                      
-                          </div>                      
+                            </button>
+                          </div>
                           <input type="file" id=managerEvaluations{{report.position}} (change)="uploadReport($event)"
                                 hidden="hidden" accept="application/pdf" [disabled]="disabledUploadReport(report.position, report.status)">
                       </mat-card-content>
@@ -641,7 +641,7 @@
                                 <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'reevaluate'">
-                                <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                                <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'approved'">
                                 <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -655,19 +655,19 @@
                                 </div>
                               </div>
                             </div>
-                        </label>                    
+                        </label>
                         <p *ngIf="['reevaluate', 'upload'].includes(selfEvaluations[report.position -1].status)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
-                          <div class="text-center"  *ngIf="selfEvaluations[report.position -1].status === 'reevaluate'">                  
+                          <div class="text-center"  *ngIf="selfEvaluations[report.position -1].status === 'reevaluate'">
                             <button mat-icon-button matSuffix
                                     matTooltipClass="bg-danger"
-                                    [matTooltip]="filesStatus.selfEvaluations[report.position - 1].message"     
+                                    [matTooltip]="filesStatus.selfEvaluations[report.position - 1].message"
                                     matTooltipPosition="above"
                                     [attr.aria-label]="'show information'"
                                     style="margin-left: auto;"
                                     type="button">
                               <mat-icon class="text-danger">info</mat-icon>
-                            </button>                      
-                          </div>                      
+                            </button>
+                          </div>
                           <input type="file" id=selfEvaluations{{report.position}} (change)="uploadReport($event)"
                                 hidden="hidden" accept="application/pdf" [disabled]="disabledUploadReport(report.position, report.status)">
                       </mat-card-content>
@@ -717,7 +717,7 @@
                                 <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'reevaluate'">
-                                <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                                <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'approved'">
                                 <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -744,10 +744,10 @@
                         </mat-card-content>
                       </mat-card>
                     </div>
-                  
+
                     <div class="col-3">
                       <mat-card class="my-2 solicitude-document">
-                        <mat-card-content class="d-flex flex-column justify-content-center align-items-center">              
+                        <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
                           <h6 class="text-center">Carta de Evaluación del Reporte Final</h6>
                           <label for="lastReportEvaluation" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
                             <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
@@ -759,7 +759,7 @@
                                 <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'reevaluate'">
-                                <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                                <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
                               </div>
                               <div *ngSwitchCase="'approved'">
                                 <span mat-line class="badge badge-pill badge-success">APROBADO</span>
