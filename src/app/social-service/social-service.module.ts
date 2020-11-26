@@ -55,6 +55,7 @@ import { RecordStudentPageComponent } from './department/record-student-page/rec
 import { ControlStudentsProcessPageComponent } from './department/control-students-process-page/control-students-process-page.component';
 import { ReviewReportsDocumentsComponent } from './department/review-reports-documents/review-reports-documents.component';
 import { ReviewLastReportPageComponent } from './department/review-last-report-page/review-last-report-page.component';
+import { DialogHistoryViewerComponent } from './components/dialog-history-viewer/dialog-history-viewer.component';
 
 
 @NgModule({
@@ -106,7 +107,8 @@ import { ReviewLastReportPageComponent } from './department/review-last-report-p
     RecordStudentPageComponent,
     ControlStudentsProcessPageComponent,
     ReviewReportsDocumentsComponent,
-    ReviewLastReportPageComponent
+    ReviewLastReportPageComponent,
+    DialogHistoryViewerComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -117,6 +119,6 @@ import { ReviewLastReportPageComponent } from './department/review-last-report-p
     ImageToBase64Service,
     DatePipe
   ],
-  entryComponents: [DialogVerificationComponent, DialogDocumentViewerComponent]
+  entryComponents: [DialogVerificationComponent, DialogDocumentViewerComponent, DialogHistoryViewerComponent]
 })
 export class SocialServiceModule { }

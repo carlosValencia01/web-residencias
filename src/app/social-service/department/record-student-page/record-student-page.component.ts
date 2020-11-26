@@ -14,6 +14,8 @@ import {InitRequest} from '../../../entities/social-service/initRequest';
 import {SolicitudeModel} from '../../../entities/social-service/solicitude.model';
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 import {Binary} from '@angular/compiler';
+import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
+import {DialogHistoryViewerComponent} from '../../components/dialog-history-viewer/dialog-history-viewer.component';
 
 @Component({
   selector: 'app-record-student-page',
@@ -42,6 +44,7 @@ export class RecordStudentPageComponent implements OnInit {
   public showDocuments = false;
   initRequest: InitRequest;
   formDocument: SolicitudeModel;
+  private historyDocumentStatus: Array<any>;
 
   constructor(private activatedRoute: ActivatedRoute,
               private loadingService: LoadingService,
@@ -80,8 +83,9 @@ export class RecordStudentPageComponent implements OnInit {
         this.selfEvaluationDocs = documents.filter(d => d.filename.includes('ITT-POC-08-11'));
         this.formDocument = this._castToDoc(res.controlStudent);
         this._initializeDocument(res.controlStudent.studentId);
+        this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
       }, error => {
-        console.log(error);
+        // console.log(error);
         this.loadingService.setLoading(false);
       }, () => {
         this.showInformation = true;
@@ -106,13 +110,67 @@ export class RecordStudentPageComponent implements OnInit {
     const linkSource = 'data:pdf/application;base64,' + binary;
     const downloadLink = document.createElement('a');
     downloadLink.href = linkSource;
-    downloadLink.download = 'ITT-POC-08-07_TARJETA_DE_CONTROL_DE_SERVICIO_SOCIAL.pdf';
+    downloadLink.download = eSocialNameDocuments.TARJETACONTROL;
     downloadLink.click();
     this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
   }
 
   whatStatus(document: string): string {
     return this.verificationDocuments[document];
+  }
+
+  viewHistory(file: string, idx = 0) {
+    let history;
+
+    switch (file) {
+      case 'solicitude':
+        history = this.historyDocumentStatus.find(f => f.name.includes('ITT-POC-08-02'));
+        break;
+      case 'presentation':
+        history = this.historyDocumentStatus.find(f => f.name.includes('ITT-POC-08-03'));
+        break;
+      case 'acceptance':
+        history = this.historyDocumentStatus.find(f => f.name.includes('ITT-POC-08-00'));
+        break;
+      case 'workPlanProject':
+        history = this.historyDocumentStatus.find(f => f.name.includes('ITT-POC-08-04'));
+        break;
+      case 'commitment':
+        history = this.historyDocumentStatus.find(f => f.name.includes('ITT-POC-08-05'));
+        break;
+      case 'reports':
+        const rep = this.historyDocumentStatus.filter(f => f.name.includes('ITT-POC-08-06'));
+        history = rep[idx];
+        break;
+      case 'constancy':
+        history = this.historyDocumentStatus.find(f => f.name.includes('ITT-POC-08-08'));
+        break;
+      case 'dependencyManagerEvaluation':
+        const rep2 = this.historyDocumentStatus.filter(f => f.name.includes('ITT-POC-08-09'));
+        history = rep2[idx];
+        break;
+      case 'lastReportEvaluation':
+        history = this.historyDocumentStatus.find(f => f.name.includes('ITT-POC-08-10'));
+        break;
+      case 'lastReport':
+        history = this.historyDocumentStatus.find(f => f.name.includes('ITT-POC-08-12'));
+        break;
+      case 'selfEvaluation':
+        const rep3 = this.historyDocumentStatus.filter(f => f.name.includes('ITT-POC-08-11'));
+        history = rep3[idx];
+        break;
+    }
+
+    if (history) {
+      this.dialog.open(DialogHistoryViewerComponent, {
+        data: history,
+        disableClose: true,
+        hasBackdrop: true
+      });
+    } else {
+      this.notificationsService
+        .showNotification(eNotificationType.ERROR, 'Servicio Social', 'Sin historial');
+    }
   }
 
   onView(file, idx = 0): void {
@@ -171,7 +229,7 @@ export class RecordStudentPageComponent implements OnInit {
     }, _ => {
       this.loadingService.setLoading(false);
       this.notificationsService
-        .showNotification(eNotificationType.ERROR, 'Acto recepcional', 'Documento no encontrado');
+        .showNotification(eNotificationType.ERROR, 'Servicio Social', 'Documento no encontrado');
     });
   }
 

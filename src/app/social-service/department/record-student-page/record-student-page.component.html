@@ -32,6 +32,9 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[whatStatus('solicitude')]">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('solicitude')">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -71,6 +74,9 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'approved':'accept', 'noAssigned':'none','reevaluate':'reject','assigned':'process', 'sign':'process', 'send':'process'}[whatStatus('presentation')]">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('presentation')">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p [ngClass]="{'approved':'acceptText', 'noAssigned':'noneText','reevaluate':'rejectText','assigned':'processText', 'sign':'processText', 'send':'processText'}[whatStatus('presentation')]">
@@ -117,6 +123,9 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[whatStatus('acceptance')]">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('acceptance')">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -156,6 +165,9 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[whatStatus('workPlanProject')]">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('workPlanProject')">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -195,6 +207,9 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[whatStatus('commitment')]">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('commitment')">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -231,9 +246,12 @@
                 </mat-card-content>
               </mat-card>
             </div>
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0" *ngFor="let report of reportDocuments">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0" *ngFor="let report of reportDocuments; let i = index">
               <mat-card class="p-1"
                         [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[report.status]">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('reports', i)">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -271,9 +289,12 @@
               </mat-card>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0" *ngFor="let manager of managerEvaluationDocuments">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0" *ngFor="let manager of managerEvaluationDocuments; let i = index">
               <mat-card class="p-1"
                         [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[manager.status]">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('dependencyManagerEvaluation', i)">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -311,9 +332,12 @@
               </mat-card>
             </div>
 
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0" *ngFor="let self of selfEvaluationDocuments">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0" *ngFor="let self of selfEvaluationDocuments; let i = index">
               <mat-card class="p-1"
                         [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send': 'process'}[self.status]">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('selfEvaluation', i)">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -354,6 +378,9 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'accept':whatStatus('constancy')==='approved', 'none':whatStatus('constancy')==='register','reject':whatStatus('constancy')==='reevaluate','process':whatStatus('constancy')==='send'}">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('constancy')">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -394,6 +421,9 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'accept':whatStatus('lastReport')==='approved', 'none':whatStatus('lastReport')==='register','reject':whatStatus('lastReport')==='reevaluate','process':whatStatus('lastReport')==='send'}">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('lastReport')">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
@@ -434,6 +464,9 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
                         [ngClass]="{'accept':whatStatus('lastReportEvaluation')==='approved', 'none':whatStatus('lastReportEvaluation')==='register','reject':whatStatus('lastReportEvaluation')==='reevaluate','process':whatStatus('lastReportEvaluation')==='send'}">
+                <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('lastReportEvaluation')">
+                  <mat-icon>history</mat-icon>
+                </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p

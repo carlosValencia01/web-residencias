@@ -395,7 +395,6 @@ export class SocialServiceMainPageComponent implements OnInit {
           newF: newF,
           fileId: fileId
         };
-        console.log(document);
 
         this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then( async response => {
           if (response) {

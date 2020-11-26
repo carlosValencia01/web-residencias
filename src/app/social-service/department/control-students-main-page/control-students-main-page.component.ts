@@ -42,7 +42,7 @@ export class ControlStudentsMainPageComponent implements OnInit {
 
   ngOnInit() {
     this.displayedColumnsAttendance = ['controlNumber', 'fullName', 'career', 'assistance', 'date', 'actions'];
-    this.displayedColumnsAttendanceName = ['Número de control', 'Nombre completo', 'Carrera','Asistencia', 'Fecha de asistencia'];
+    this.displayedColumnsAttendanceName = ['Número de control', 'Nombre completo', 'Carrera', 'Asistencia', 'Fecha de asistencia'];
     this._getAllControlStudents();
   }
 

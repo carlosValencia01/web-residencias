@@ -1,0 +1,30 @@
+
+<div mat-dialog-title>
+  <div class="d-flex justify-content-around">
+    <button mat-flat-button color="warn" style="width: 25%;" type="button" (click)="dialogResult()">Cerrar</button>
+  </div>
+</div>
+<div mat-dialog-content>
+  <table mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="no">
+        <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+        <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+          {{i+1}}
+        </td>
+      </ng-container>
+      <ng-container *ngFor="let item of displayedColumns.slice(1);let index=index"
+                    [matColumnDef]="item">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsName[index]}}</th>
+        <td *matCellDef="let row;" mat-cell style="width:25%;">
+          <span *ngIf="index !== 3">{{row[item]}}</span>
+          <span *ngIf="index === 3">{{row[item] | date :'medium'}}</span>
+        </td>
+      </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+</div>
