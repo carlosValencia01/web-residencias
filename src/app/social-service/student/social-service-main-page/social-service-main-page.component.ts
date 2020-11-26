@@ -54,6 +54,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public assistanceSecondStep = false; // Condicion para el subStepper en caso de no tener asistencia y revisar el formulario a evaluar
   public solicitudeDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
+  public reportsDocument: boolean; // Condicion para saber si continuar con los reportes
   public statusFirstDocuments: string; // Condicion para saber si el estudiante ya envio toda la información o esta en revisión
   // documents status
   public presentation: string; // Variable para guardar el estatus de la carta de presentacion.
@@ -132,6 +133,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.acceptance = res.controlStudent.verification.acceptance;
       this.commitment = res.controlStudent.verification.commitment;
       this.presentationDocument = false;
+      this.reportsDocument = true;
       this.permission = false;
       this.releaseSocialService = false;
       this.assistance = false;
@@ -841,6 +843,118 @@ export class SocialServiceMainPageComponent implements OnInit {
             fileId = documentId[0].fileIdInDrive;
           }
         break;
+        case 'report2':
+          this.reportId = this.reports[1]._id;
+          nameDocument = 'ITT-POC-08-06-02 Reporte bimestral de reporte social.pdf';
+          if (this.reports[1].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-02'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report3':
+          this.reportId = this.reports[2]._id;
+          nameDocument = 'ITT-POC-08-06-03 Reporte bimestral de reporte social.pdf';
+          if (this.reports[2].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-03'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report4':
+          this.reportId = this.reports[3]._id;
+          nameDocument = 'ITT-POC-08-06-04 Reporte bimestral de reporte social.pdf';
+          if (this.reports[3].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-04'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report5':
+          this.reportId = this.reports[4]._id;
+          nameDocument = 'ITT-POC-08-06-05 Reporte bimestral de reporte social.pdf';
+          if (this.reports[4].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-05'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report6':
+          this.reportId = this.reports[5]._id;
+          nameDocument = 'ITT-POC-08-06-06 Reporte bimestral de reporte social.pdf';
+          if (this.reports[5].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-06'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report7':
+          this.reportId = this.reports[6]._id;
+          nameDocument = 'ITT-POC-08-06-07 Reporte bimestral de reporte social.pdf';
+          if (this.reports[6].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-07'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report8':
+          this.reportId = this.reports[7]._id;
+          nameDocument = 'ITT-POC-08-06-08 Reporte bimestral de reporte social.pdf';
+          if (this.reports[7].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-08'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report9':
+          this.reportId = this.reports[8]._id;
+          nameDocument = 'ITT-POC-08-06-09 Reporte bimestral de reporte social.pdf';
+          if (this.reports[8].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-09'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report10':
+          this.reportId = this.reports[9]._id;
+          nameDocument = 'ITT-POC-08-06-10 Reporte bimestral de reporte social.pdf';
+          if (this.reports[9].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-10'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report11':
+          this.reportId = this.reports[10]._id;
+          nameDocument = 'ITT-POC-08-06-11 Reporte bimestral de reporte social.pdf';
+          if (this.reports[10].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-11'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report12':
+          this.reportId = this.reports[11]._id;
+          nameDocument = 'ITT-POC-08-06-12 Reporte bimestral de reporte social.pdf';
+          if (this.reports[11].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-12'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+
+
         case 'managerEvaluations1':
           this.managerEvaluationId = this.managerEvaluations[0]._id;
           nameDocument = 'ITT-POC-08-09-01 Evaluacion responsable del programa.pdf';
@@ -851,12 +965,233 @@ export class SocialServiceMainPageComponent implements OnInit {
             fileId = documentId[0].fileIdInDrive;
           }
         break;
+        case 'managerEvaluations2':
+          this.managerEvaluationId = this.managerEvaluations[1]._id;
+          nameDocument = 'ITT-POC-08-09-02 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[1].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-02'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations3':
+          this.managerEvaluationId = this.managerEvaluations[2]._id;
+          nameDocument = 'ITT-POC-08-09-03 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[2].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-03'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations4':
+          this.managerEvaluationId = this.managerEvaluations[3]._id;
+          nameDocument = 'ITT-POC-08-09-04 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[3].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-04'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations5':
+          this.managerEvaluationId = this.managerEvaluations[4]._id;
+          nameDocument = 'ITT-POC-08-09-05 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[4].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-05'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations6':
+          this.managerEvaluationId = this.managerEvaluations[5]._id;
+          nameDocument = 'ITT-POC-08-09-06 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[5].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-06'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations7':
+          this.managerEvaluationId = this.managerEvaluations[6]._id;
+          nameDocument = 'ITT-POC-08-09-07 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[6].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-07'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations8':
+          this.managerEvaluationId = this.managerEvaluations[7]._id;
+          nameDocument = 'ITT-POC-08-09-08 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[7].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-08'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations9':
+          this.managerEvaluationId = this.managerEvaluations[8]._id;
+          nameDocument = 'ITT-POC-08-09-09 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[8].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-09'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations10':
+          this.managerEvaluationId = this.managerEvaluations[9]._id;
+          nameDocument = 'ITT-POC-08-09-10 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[9].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-10'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations11':
+          this.managerEvaluationId = this.managerEvaluations[10]._id;
+          nameDocument = 'ITT-POC-08-09-11 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[10].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-11'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'managerEvaluations12':
+          this.managerEvaluationId = this.managerEvaluations[11]._id;
+          nameDocument = 'ITT-POC-08-09-12 Evaluacion responsable del programa.pdf';
+          if (this.managerEvaluations[11].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-09-12'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+
         case 'selfEvaluations1':
           this.selfEvaluationId = this.selfEvaluations[0]._id;
           nameDocument = 'ITT-POC-08-11-01 Autoevaluación del alumno.pdf';
           if (this.selfEvaluations[0].status === 'reevaluate') {
             newF = false;
             const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-01'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations2':
+          this.selfEvaluationId = this.selfEvaluations[1]._id;
+          nameDocument = 'ITT-POC-08-11-02 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[1].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-02'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations3':
+          this.selfEvaluationId = this.selfEvaluations[2]._id;
+          nameDocument = 'ITT-POC-08-11-03 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[2].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-03'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations4':
+          this.selfEvaluationId = this.selfEvaluations[3]._id;
+          nameDocument = 'ITT-POC-08-11-04 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[3].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-04'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations5':
+          this.selfEvaluationId = this.selfEvaluations[4]._id;
+          nameDocument = 'ITT-POC-08-11-05 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[4].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-05'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations6':
+          this.selfEvaluationId = this.selfEvaluations[5]._id;
+          nameDocument = 'ITT-POC-08-11-06 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[5].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-06'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations7':
+          this.selfEvaluationId = this.selfEvaluations[6]._id;
+          nameDocument = 'ITT-POC-08-11-07 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[6].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-07'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations8':
+          this.selfEvaluationId = this.selfEvaluations[7]._id;
+          nameDocument = 'ITT-POC-08-11-08 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[7].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-08'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations9':
+          this.selfEvaluationId = this.selfEvaluations[8]._id;
+          nameDocument = 'ITT-POC-08-11-09 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[8].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-09'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations10':
+          this.selfEvaluationId = this.selfEvaluations[9]._id;
+          nameDocument = 'ITT-POC-08-11-10 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[9].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-10'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations11':
+          this.selfEvaluationId = this.selfEvaluations[10]._id;
+          nameDocument = 'ITT-POC-08-11-11 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[10].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-11'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'selfEvaluations12':
+          this.selfEvaluationId = this.selfEvaluations[11]._id;
+          nameDocument = 'ITT-POC-08-11-12 Autoevaluación del alumno.pdf';
+          if (this.selfEvaluations[11].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-11-12'));
             nameDocument = documentId[0].filename;
             fileId = documentId[0].fileIdInDrive;
           }
@@ -883,33 +1218,331 @@ export class SocialServiceMainPageComponent implements OnInit {
           switch (docType) {
             case 'report1':
               if (this.reports[0].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId);
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
                 this.reports[0].status = 'send';
               } else {
                 this.reportDoc = document;
                 this.reports[0].status = 'upload';
               }
             break;
+            case 'report2':
+              if (this.reports[1].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[1].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[1].status = 'upload';
+              }
+            break;
+            case 'report3':
+              if (this.reports[2].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[2].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[2].status = 'upload';
+              }
+            break;
+            case 'report4':
+              if (this.reports[3].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[3].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[3].status = 'upload';
+              }
+            break;
+            case 'report5':
+              if (this.reports[4].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[4].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[4].status = 'upload';
+              }
+            break;
+            case 'report6':
+              if (this.reports[5].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[5].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[5].status = 'upload';
+              }
+            break;
+            case 'report7':
+              if (this.reports[6].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[6].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[6].status = 'upload';
+              }
+            break;
+            case 'report8':
+              if (this.reports[7].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[7].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[7].status = 'upload';
+              }
+            break;
+            case 'report9':
+              if (this.reports[8].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[8].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[8].status = 'upload';
+              }
+            break;
+            case 'report10':
+              if (this.reports[9].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[9].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[9].status = 'upload';
+              }
+            break;
+            case 'report11':
+              if (this.reports[10].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[10].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[10].status = 'upload';
+              }
+            break;
+            case 'report12':
+              if (this.reports[11].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[11].status = 'send';
+              } else {
+                this.reportDoc = document;
+                this.reports[11].status = 'upload';
+              }
+            break;
+
             case 'managerEvaluations1':
               if (this.managerEvaluations[0].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId);
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
                 this.managerEvaluations[0].status = 'send';
               } else {
                 this.managerEvaluationDoc = document;
                 this.managerEvaluations[0].status = 'upload';
               }
             break;
+            case 'managerEvaluations2':
+              if (this.managerEvaluations[1].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[1].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[1].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations3':
+              if (this.managerEvaluations[2].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[2].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[2].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations4':
+              if (this.managerEvaluations[3].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[3].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[3].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations5':
+              if (this.managerEvaluations[4].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[4].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[4].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations6':
+              if (this.managerEvaluations[5].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[5].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[5].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations7':
+              if (this.managerEvaluations[6].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[6].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[6].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations8':
+              if (this.managerEvaluations[7].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[7].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[7].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations9':
+              if (this.managerEvaluations[8].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[8].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[8].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations10':
+              if (this.managerEvaluations[9].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[9].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[9].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations11':
+              if (this.managerEvaluations[10].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[10].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[10].status = 'upload';
+              }
+            break;
+            case 'managerEvaluations12':
+              if (this.managerEvaluations[11].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.managerEvaluationId, '2');
+                this.managerEvaluations[11].status = 'send';
+              } else {
+                this.managerEvaluationDoc = document;
+                this.managerEvaluations[11].status = 'upload';
+              }
+            break;
+
             case 'selfEvaluations1':
               if (this.selfEvaluations[0].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId);
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
                 this.selfEvaluations[0].status = 'send';
               } else {
                 this.selfEvaluationDoc = document;
                 this.selfEvaluations[0].status = 'upload';
               }
             break;
+            case 'selfEvaluations2':
+              if (this.selfEvaluations[1].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[1].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[1].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations3':
+              if (this.selfEvaluations[2].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[2].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[2].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations4':
+              if (this.selfEvaluations[3].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[3].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[3].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations5':
+              if (this.selfEvaluations[4].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[4].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[4].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations6':
+              if (this.selfEvaluations[5].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[5].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[5].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations7':
+              if (this.selfEvaluations[6].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[6].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[6].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations8':
+              if (this.selfEvaluations[7].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[7].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[7].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations9':
+              if (this.selfEvaluations[8].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[8].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[8].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations10':
+              if (this.selfEvaluations[9].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[9].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[9].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations11':
+              if (this.selfEvaluations[10].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[10].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[10].status = 'upload';
+              }
+            break;
+            case 'selfEvaluations12':
+              if (this.selfEvaluations[11].status === 'reevaluate') {
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
+                this.selfEvaluations[11].status = 'send';
+              } else {
+                this.selfEvaluationDoc = document;
+                this.selfEvaluations[11].status = 'upload';
+              }
+            break;
           }
-
         }
       });
       };
@@ -917,14 +1550,18 @@ export class SocialServiceMainPageComponent implements OnInit {
   }// uploadReport
 
   validateUploadReport() { // metodo para activar el boton para enviar reportes
-    return false;
+    if ( this.reportDoc && this.managerEvaluationDoc && this.selfEvaluationDoc)
+    {
+      return false;
+    }
+    return true;
   }
 
   /*retornar true para deshabilitar el boton
   posibles statues del reporte = 'register', 'send', 'reevaluate', 'approved'
    el boton se activa cuando:
     -el status es diferente de approved
-    -el anterior esta en status approved excepto en el primer reporte
+    -el anterior (report, managerEvaluation y selfEvaluation) esta en status approved excepto en el primer reporte
     -la fecha ya permite enviar el reporte.
   */
   disabledUploadReport(reportPosition, reportStatus) {
@@ -932,7 +1569,8 @@ export class SocialServiceMainPageComponent implements OnInit {
     if ( reportStatus !== 'approved') {
       // el reporte anterior esta aprobado
       if (reportPosition > 1) {
-        if (this.reports[reportPosition - 2].status === 'approved') {
+        // tslint:disable-next-line: max-line-length
+        if (this.reports[reportPosition - 2].status === 'approved' && this.managerEvaluations[reportPosition - 2].status === 'approved' && this.selfEvaluations[reportPosition - 2].status === 'approved') {
           // validar que dependiendo del numero de reporte la fecha sea adecuada
           if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
             button = false;
@@ -957,18 +1595,30 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   async uploadReportFile() {
     if ( this.reportDoc ) {
-      await this.uploadFileReportToDrive(this.reportDoc.nameInDrive, this.reportDoc, this.reportId);
+      await this.uploadFileReportToDrive(this.reportDoc.nameInDrive, this.reportDoc, this.reportId, '1');
     }
     if ( this.managerEvaluationDoc ) {
-      await this.uploadFileReportToDrive(this.managerEvaluationDoc.nameInDrive, this.managerEvaluationDoc, this.managerEvaluationId);
+      await this.uploadFileReportToDrive(this.managerEvaluationDoc.nameInDrive, this.managerEvaluationDoc, this.managerEvaluationId, '2');
     }
     if ( this.selfEvaluationDoc ) {
-      await this.uploadFileReportToDrive(this.selfEvaluationDoc.nameInDrive, this.selfEvaluationDoc, this.selfEvaluationId);
+      await this.uploadFileReportToDrive(this.selfEvaluationDoc.nameInDrive, this.selfEvaluationDoc, this.selfEvaluationId, '3');
     }
   }
 
 
-  uploadFileReportToDrive(nameDocument, document, reportId) {
+  uploadFileReportToDrive(nameDocument, document, documentId, type) {
+    let typeDoc = '';
+    switch (type) {
+      case '1':
+        typeDoc = 'reports';
+      break;
+      case '2':
+        typeDoc = 'managerEvaluations';
+      break;
+      case '3':
+        typeDoc = 'selfEvaluations';
+      break;
+    }
     this.loadingService.setLoading(true);
     // Cargar el documento a Drive, ya debe de existir su registro y base de datos
     this.controlStudentProvider.uploadFile2(document).subscribe( async updated => {
@@ -989,7 +1639,7 @@ export class SocialServiceMainPageComponent implements OnInit {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
               // Actualizar en la bd el status del reporte
               this.controlStudentProvider.updateReportFromDepartmentEvaluation(this.controlStudentId,
-                {reportId: reportId, eStatus: 'send'})
+                {nameDocument: typeDoc, documentId: documentId, eStatus: 'send'})
                 .subscribe( res => {
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se guardo el registro del reporte');
                   this.ngOnInit();
@@ -1013,7 +1663,7 @@ export class SocialServiceMainPageComponent implements OnInit {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
                 nameDocument + ' actualizado.');
                 this.controlStudentProvider.updateReportFromDepartmentEvaluation(this.controlStudentId,
-                  {reportId: reportId, eStatus: 'send'})
+                  {nameDocument: typeDoc, documentId: documentId, eStatus: 'send'})
                   .subscribe( res => {
                     this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se guardo el registro del reporte');
                     this.ngOnInit();
@@ -1041,7 +1691,6 @@ export class SocialServiceMainPageComponent implements OnInit {
   validateUploadFinalFiles() {
     return this.lastReport !== 'upload' ||
             this.lastReportEvaluation !== 'upload';
-
   }
 
   disabledUploadFinalFile(document) {
