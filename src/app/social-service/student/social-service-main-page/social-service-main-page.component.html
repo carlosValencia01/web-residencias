@@ -801,6 +801,48 @@
                     </mat-card>
                   </div>
 
+                  <div class="col-3">
+                    <mat-card class="my-2 solicitude-document">
+                      <mat-card-content class="d-flex flex-column justify-content-center align-items-center">              
+                        <h6 class="text-center">Carta de Liberación de la dependencia</h6>
+                        <label for="dependencyRelease" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
+                          <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                          <div [ngSwitch]="dependencyRelease">
+                            <div *ngSwitchCase="'upload'">
+                              <span mat-line class="badge badge-pill badge-success">CARGADO</span>
+                            </div>
+                            <div *ngSwitchCase="'send'">
+                              <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
+                            </div>
+                            <div *ngSwitchCase="'reevaluate'">
+                              <span mat-line class="badge badge-pill badge-warn">REEVALUACIÓN</span>
+                            </div>
+                            <div *ngSwitchCase="'approved'">
+                              <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+                            </div>
+                            <div *ngSwitchDefault>
+                              <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                            </div>
+                          </div>
+                        </label>
+                        <p *ngIf="['reevaluate', 'upload'].includes(dependencyRelease)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
+                        <div class="text-center"  *ngIf="dependencyRelease === 'reevaluate'">
+                          <button mat-icon-button matSuffix
+                                  matTooltipClass="bg-danger"
+                                  [matTooltip]="filesStatus['dependencyRelease'].message"
+                                  matTooltipPosition="above"
+                                  [attr.aria-label]="'show information'"
+                                  style="margin-left: auto;"
+                                  type="button">
+                            <mat-icon class="text-danger">info</mat-icon>
+                          </button>
+                        </div>
+                        <input type="file" id="dependencyRelease" (change)="onFinalFileChange($event)"
+                               hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFinalFile('dependencyRelease')">
+                      </mat-card-content>
+                    </mat-card>
+                  </div>
+
                 </div>
 
 
@@ -811,6 +853,7 @@
               </div>
             </div>
           </div><!--reporte final y carta de evaluacion del reporte final-->
+
         </mat-step>
         <mat-step [completed]="true">
           <ng-template matStepLabel>Proceso de Validación</ng-template>

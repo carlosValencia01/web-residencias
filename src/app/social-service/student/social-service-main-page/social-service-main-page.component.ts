@@ -68,6 +68,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   // Last report  documents status
   public lastReport: string;
   public lastReportEvaluation: string;
+  public dependencyRelease: string;
   // Object Documents
   public presentationDoc: any; // Variable para guardar el estatus de la carta de presentacion.
   public workPlanProjectDoc: any; // Variable para guardar el estatus del plan de trabajo.
@@ -78,6 +79,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public selfEvaluationDoc: any; // Variable para guardar la autoevaluacion que se va a subir
   public lastReportEvaluationDoc: any; // Variable para guardar la carta de evaluacion del reporte final que se va a subir
   public lastReportDoc: any; // Variable para guardar el reporte final que se va a subir
+  public dependencyReleaseDoc: any; // Variable para guardar la carta de liberacion por parte de la dependencia que se va a subir
   public reportId: any; // Variable para guardar el id del reporte
   public managerEvaluationId: any; // Variable para guardar el id del reporte
   public selfEvaluationId: any; // Variable para guardar el id del reporte
@@ -150,6 +152,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.addDates(new Date(res.controlStudent.initialDate).valueOf());
       this.lastReport = res.controlStudent.verification.lastReport;
       this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
+      this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
@@ -1680,17 +1683,21 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   async uploadFinalDocumentation() {
-    if(this.lastReportDoc) {
+    if (this.lastReportDoc) {
       await this.uploadFile(this.lastReportDoc.nameInDrive, this.lastReportDoc, 'lastReport');
     }
-    if(this.lastReportEvaluationDoc){
+    if (this.lastReportEvaluationDoc) {
       await this.uploadFile(this.lastReportEvaluationDoc.nameInDrive, this.lastReportEvaluationDoc, 'lastReportEvaluation');
+    }
+    if (this.dependencyReleaseDoc) {
+      await this.uploadFile(this.dependencyReleaseDoc.nameInDrive, this.dependencyReleaseDoc, 'dependencyRelease');
     }
   }
 
   validateUploadFinalFiles() {
     return this.lastReport !== 'upload' ||
-            this.lastReportEvaluation !== 'upload';
+            this.lastReportEvaluation !== 'upload' ||
+            this.dependencyRelease !== 'upload';
   }
 
   disabledUploadFinalFile(document) {
@@ -1701,6 +1708,9 @@ export class SocialServiceMainPageComponent implements OnInit {
       break;
       case 'lastReportEvaluation':
         res = ['approved', 'send'].includes(this.lastReportEvaluation);
+      break;
+      case 'dependencyRelease':
+        res = ['approved', 'send'].includes(this.dependencyRelease);
       break;
     }
     return res;
@@ -1731,12 +1741,20 @@ export class SocialServiceMainPageComponent implements OnInit {
           fileId = documentId[0].fileIdInDrive;
         }
       break;
+      case 'dependencyRelease':
+        nameDocument = 'ITT-POC-08-13 Carta de liberacion de la dependencia.pdf';
+        if ( this.dependencyRelease === 'reevaluate' ) {
+          newF = false;
+          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-13'));
+          nameDocument = documentId[0].filename;
+          fileId = documentId[0].fileIdInDrive;
+        }
+      break;
     }
     this.selectedFile = <File>event.target.files[0];
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       reader.readAsDataURL(file);
-
       reader.onload = () => {
         const document = {
           mimeType: this.selectedFile.type,
@@ -1765,6 +1783,15 @@ export class SocialServiceMainPageComponent implements OnInit {
                 } else {
                   this.lastReportEvaluationDoc = document;
                   this.lastReportEvaluation = 'upload';
+                }
+              break;
+              case 'dependencyRelease':
+                if (this.dependencyRelease === 'reevaluate') {
+                  await this.uploadFile(document.nameInDrive, document, 'dependencyRelease');
+                  this.dependencyRelease = 'send';
+                } else {
+                  this.dependencyReleaseDoc = document;
+                  this.dependencyRelease = 'upload';
                 }
               break;
             }
