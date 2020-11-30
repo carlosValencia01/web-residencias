@@ -15,8 +15,14 @@ import Swal from 'sweetalert2';
 })
 export class ControlStudentsProcessPageComponent implements OnInit {
   public selectedTab: FormControl;
-
   public search: string;
+
+  @ViewChild('sortProcess') sortProcess: MatSort;
+  @ViewChild('matPaginatorProcess') paginatorProcess: MatPaginator;
+  public displayedColumnsProcess: string[];
+  public displayedColumnsProcessName: string[];
+  public dataSourceProcess: MatTableDataSource<any>;
+
   @ViewChild('sortReport') sortReport: MatSort;
   @ViewChild('matPaginatorReport') paginatorReport: MatPaginator;
   public displayedColumnsReport: string[];
@@ -48,6 +54,7 @@ export class ControlStudentsProcessPageComponent implements OnInit {
   public dataSourceApproved: MatTableDataSource<any>;
 
   private userData;
+  private readonly positionName: String;
 
 
   constructor( private controlStudentProv: ControlStudentProv,
@@ -55,19 +62,22 @@ export class ControlStudentsProcessPageComponent implements OnInit {
                private cookiesService: CookiesService,
                private notificationsService: NotificationsServices ) {
     this.userData = this.cookiesService.getData().user;
+    this.positionName = this.cookiesService.getPosition().name;
     this.selectedTab = new FormControl(0);
-    this._getReport();
+    this._getByNotEqualGeneralStatus('solicitude');
   }
 
   ngOnInit() {
+    this.displayedColumnsProcess = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
+    this.displayedColumnsProcessName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
     this.displayedColumnsReport = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
     this.displayedColumnsReportName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
     this.displayedColumnsLastReport = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
     this.displayedColumnsLastReportName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
     this.displayedColumnsPreAssigned = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
     this.displayedColumnsPreAssignedName = ['Nombre', 'Número de control', 'Carrera'];
-    this.displayedColumnsPreSign = ['no', 'fullName', 'controlNumber', 'career', 'tradeNumber', 'performance', 'actions'];
-    this.displayedColumnsPreSignName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio', 'Desempeño'];
+    this.displayedColumnsPreSign = ['no', 'fullName', 'controlNumber', 'career', 'tradeNumber', 'performance', 'status', 'actions'];
+    this.displayedColumnsPreSignName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio', 'Desempeño', 'Estatus'];
     this.displayedColumnsApproved = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
     this.displayedColumnsApprovedName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
   }
@@ -75,41 +85,49 @@ export class ControlStudentsProcessPageComponent implements OnInit {
   public changeTab(event) {
     this.selectedTab.setValue(event);
     switch (event) {
-      case 0: return this._getReport();
-      case 1: return this._getLastReport();
-      case 2: return this._getByGeneralStatus('preAssigned');
-      case 3: return this._getByGeneralStatus('preSign');
-      case 4: return this._getByGeneralStatus('approved');
+      case 0: return this._getByNotEqualGeneralStatus('solicitude');
+      case 1: return this._getReport();
+      case 2: return this._getLastReport();
+      case 3: return this._getByGeneralStatus('preAssigned');
+      case 4: return this._getByGeneralStatus('preSign');
+      case 5: return this._getByGeneralStatus('approved');
     }
   }
+
 
   public applyFilter(filterValue: string) {
     switch (this.selectedTab.value) {
       case 0:
+        this.dataSourceProcess.filter = filterValue.trim().toLowerCase();
+        if (this.dataSourceProcess.paginator) {
+          this.dataSourceProcess.paginator.firstPage();
+        }
+        break;
+      case 1:
         this.dataSourceReport.filter = filterValue.trim().toLowerCase();
         if (this.dataSourceReport.paginator) {
           this.dataSourceReport.paginator.firstPage();
         }
         break;
-      case 1:
+      case 2:
         this.dataSourceLastReport.filter = filterValue.trim().toLowerCase();
         if (this.dataSourceLastReport.paginator) {
           this.dataSourceLastReport.paginator.firstPage();
         }
         break;
-      case 2:
+      case 3:
         this.dataSourcePreAssigned.filter = filterValue.trim().toLowerCase();
         if (this.dataSourcePreAssigned.paginator) {
           this.dataSourcePreAssigned.paginator.firstPage();
         }
         break;
-      case 3:
+      case 4:
         this.dataSourcePreSign.filter = filterValue.trim().toLowerCase();
         if (this.dataSourcePreSign.paginator) {
           this.dataSourcePreSign.paginator.firstPage();
         }
         break;
-      case 4:
+      case 5:
         this.dataSourceApproved.filter = filterValue.trim().toLowerCase();
         if (this.dataSourceApproved.paginator) {
           this.dataSourceApproved.paginator.firstPage();
@@ -167,6 +185,22 @@ export class ControlStudentsProcessPageComponent implements OnInit {
           });
       }
     });
+  }
+
+  _getByNotEqualGeneralStatus(status: string) {
+    this.loadingService.setLoading(true);
+    // Obtener las solicitudes aprovadas
+    this.controlStudentProv.getControlStudentByNotEqualGeneralStatus(status).subscribe(res => {
+        const request = res.controlStudents.map(this._castToTableProcess);
+        this._refreshProcess(request);
+      }, () => {
+        this.notificationsService.showNotification(eNotificationType.ERROR,
+          'Error', 'Ha sucedido un error en la descarga de la información');
+        this.loadingService.setLoading(false);
+      }, () => {
+        this.loadingService.setLoading(false);
+      }
+    );
   }
 
   _getReport() {
@@ -233,6 +267,10 @@ export class ControlStudentsProcessPageComponent implements OnInit {
     );
   }
 
+  public refreshProcess() {
+    this._getByNotEqualGeneralStatus('solicitude');
+  }
+
   public refreshReport() {
     this._getReport();
   }
@@ -251,6 +289,12 @@ export class ControlStudentsProcessPageComponent implements OnInit {
 
   public refreshApproved() {
     this._getByGeneralStatus('approved');
+  }
+
+  private _refreshProcess(data: Array<any>): void {
+    this.dataSourceProcess = new MatTableDataSource(data);
+    this.dataSourceProcess.paginator = this.paginatorProcess;
+    this.dataSourceProcess.sort = this.sortProcess;
   }
 
   private _refreshReport(data: Array<any>): void {
@@ -283,6 +327,22 @@ export class ControlStudentsProcessPageComponent implements OnInit {
     this.dataSourceApproved.sort = this.sortApproved;
   }
 
+  _castToTableProcess(data) {
+    return {
+      id: data._id,
+      fullName: data.studentId.fullName,
+      controlNumber: data.controlNumber,
+      career: data.studentId.career,
+      status:
+        data.status === 'preAssigned' ? 'Constancia sin oficio' :
+        data.status === 'preSign' ? 'Constancia por firmar' :
+        data.status === 'approved' ? 'Liberado' :
+          data.status === 'process' && data.verification.reports.every(r => r.status === 'approved') ||
+          data.verification.managerEvaluations.every(m => m.status === 'approved') ||
+          data.verification.selfEvaluations.every(e => e.status === 'approved') ? 'Reporte Final' : 'Reportes Bimestrales'
+    };
+  }
+
   _castToTable(data) {
     return {
       id: data._id,
@@ -299,7 +359,8 @@ export class ControlStudentsProcessPageComponent implements OnInit {
       controlNumber: data.controlNumber,
       career: data.studentId.career,
       tradeNumber: data.tradeConstancyDocumentNumber,
-      performance: data.performanceLevelConstancyDocument
+      performance: data.performanceLevelConstancyDocument,
+      status: data.verification.constancy
     };
   }
 
@@ -322,6 +383,37 @@ export class ControlStudentsProcessPageComponent implements OnInit {
       status: data.verification.lastReport === 'reevaluate' ||
               data.verification.lastReportEvaluation === 'reevaluate' ? 'reevaluate' : 'send'
     };
+  }
+
+  public verifyPositionBoss(): boolean {
+    return this.positionName === 'JEFE DE DEPARTAMENTO';
+  }
+
+  signConstancyDocument(controlStudentId) {
+    Swal.fire({
+      title: '¿Esta seguro/a de continuar?',
+      type: 'warning',
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#3085d6',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Si'
+    }).then((res) => {
+      if (res.value) {
+        this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
+          {'verification.signs.constancy.signDepartmentName': this.userData.name.fullName,
+                  'verification.signs.constancy.signDepartmentDate': new Date(),
+                  'verification.constancy': 'firstSign'})
+          .subscribe(() => {
+            this.notificationsService.showNotification(eNotificationType.SUCCESS,
+              'Se ha registrado su firma al documento', '');
+            this.refreshPreAssigned();
+          }, () => {
+            this.notificationsService.showNotification(eNotificationType.ERROR,
+              'Ha sucedido un error, no se ha registrado su firma al documento', 'Vuelva a intentarlo mas tarde');
+          });
+      }
+    });
   }
 
   assignTradeDocumentNumber(controlStudentId) {

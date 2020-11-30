@@ -4,6 +4,65 @@
       <mat-tab>
         <ng-template mat-tab-label>
           <div>
+            Todos los procesos
+          </div>
+        </ng-template>
+        <br>
+        <div>
+          <div class="row p-3">
+            <div class="col-11">
+              <mat-form-field class="w-100">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."
+                       oninput="this.value=this.value.toUpperCase()">
+              </mat-form-field>
+            </div>
+            <div class="col-1 justify-content-end text-center">
+              <button mat-mini-fab class="m-1" color="primary" (click)="refreshProcess()" data-toggle="tooltip"
+                      title="Recargar">
+                <mat-icon>update</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="row text-center">
+            <table mat-table [dataSource]="dataSourceProcess" matSort>
+              <ng-container matColumnDef="no">
+                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+                <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+                  {{i+1}}
+                </td>
+              </ng-container>
+              <ng-container *ngFor="let item of displayedColumnsProcess.slice(1, -1);let index=index"
+                            [matColumnDef]="item">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsProcessName[index]}}</th>
+                <td *matCellDef="let row;" mat-cell style="width:25%;">
+                  {{row[item]}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="actions">
+                <th *matHeaderCellDef mat-header-cell>Acciones</th>
+                <td *matCellDef="let row" mat-cell style="width:20%">
+                  <button [matMenuTriggerFor]="actions" mat-icon-button>
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actions>
+                    <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                      <span>Expediente</span>
+                    </button>
+                  </mat-menu>
+                </td>
+              </ng-container>
+              <tr *matHeaderRowDef="displayedColumnsProcess" mat-header-row></tr>
+              <tr *matRowDef="let row; columns: displayedColumnsProcess;" mat-row></tr>
+            </table>
+            <mat-paginator #matPaginatorProcess [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div>
             Reportes Bimestrales
           </div>
         </ng-template>
@@ -235,7 +294,10 @@
                             [matColumnDef]="item">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsPreSignName[index]}}</th>
                 <td *matCellDef="let row;" mat-cell style="width:25%;">
-                  {{row[item]}}
+                  <span mat-line *ngIf="item !== 'status'">{{row[item]}}</span>
+                  <span mat-line *ngIf="item === 'status'" class="badge badge-pill" [ngClass]="{'register':'badge-danger', 'firstSign':'badge-info'}[row[item]]">
+                    {{row[item] === 'register' ? 'Pendiente' : 'Sub-Dirección'}}
+                  </span>
                 </td>
               </ng-container>
               <ng-container matColumnDef="actions">
@@ -248,6 +310,10 @@
                     <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
                       <mat-icon class="material-icons text-info">folder_shared</mat-icon>
                       <span>Expediente</span>
+                    </button>
+                    <button mat-menu-item *ngIf="verifyPositionBoss() && row['status'] === 'register'" (click)="signConstancyDocument(row['id'])">
+                      <mat-icon class="material-icons text-info">assignment_turned_in</mat-icon>
+                      <span>Firmar</span>
                     </button>
                   </mat-menu>
                 </td>

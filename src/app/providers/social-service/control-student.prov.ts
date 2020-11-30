@@ -32,6 +32,11 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  getControlStudentByNotEqualGeneralStatus(eStatus) {
+    return this.api.get(`controlStudent/student/status/not/${eStatus}`)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   getStudentInformationByControlId(_id) {
     return this.api.get(`controlStudent/student/${_id}`)
       .pipe(map(controlStudent => controlStudent.json()));
