@@ -66,8 +66,8 @@ export class ControlStudentsProcessPageComponent implements OnInit {
     this.displayedColumnsLastReportName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
     this.displayedColumnsPreAssigned = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
     this.displayedColumnsPreAssignedName = ['Nombre', 'Número de control', 'Carrera'];
-    this.displayedColumnsPreSign = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
-    this.displayedColumnsPreSignName = ['Nombre', 'Número de control', 'Carrera'];
+    this.displayedColumnsPreSign = ['no', 'fullName', 'controlNumber', 'career', 'tradeNumber', 'performance', 'actions'];
+    this.displayedColumnsPreSignName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio', 'Desempeño'];
     this.displayedColumnsApproved = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
     this.displayedColumnsApprovedName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
   }
@@ -217,7 +217,7 @@ export class ControlStudentsProcessPageComponent implements OnInit {
             this._refreshPreAssigned(request);
             break;
           case 'preSign':
-            this._refreshPreSign(request);
+            this._refreshPreSign(res.controlStudents.map(this._castToTablePreSign));
             break;
           case 'approved':
             this._refreshApproved(request);
@@ -292,6 +292,17 @@ export class ControlStudentsProcessPageComponent implements OnInit {
     };
   }
 
+  _castToTablePreSign(data) {
+    return {
+      id: data._id,
+      fullName: data.studentId.fullName,
+      controlNumber: data.controlNumber,
+      career: data.studentId.career,
+      tradeNumber: data.tradeConstancyDocumentNumber,
+      performance: data.performanceLevelConstancyDocument
+    };
+  }
+
   _castReportToTable(data) {
     return {
       id: data._id,
@@ -326,28 +337,52 @@ export class ControlStudentsProcessPageComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Asignar'
-    }).then((result) => {
-      if (result.value) {
+    }).then((resultA) => {
+      if (resultA.value) {
         Swal.fire({
-          title: '¿Esta seguro de continuar?',
-          type: 'warning',
+          title: 'Asignación de Nivel de Desempeño del Estudiante',
+          type: 'question',
+          input: 'select',
+          inputOptions: {
+            'Excelente': 'Excelente',
+            'Notable': 'Notable',
+            'Bueno': 'Bueno',
+            'Suficiente': 'Suficiente',
+            'Insuficiente': 'Insuficiente'
+          },
+          inputAttributes: {
+            autocapitalize: 'off'
+          },
           showCancelButton: true,
           cancelButtonColor: '#d33',
           confirmButtonColor: '#3085d6',
           cancelButtonText: 'Cancelar',
-          confirmButtonText: 'Si'
-        }).then((res) => {
-          if (res.value) {
-            this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
-              {'status': 'preSign', 'tradeConstancyDocumentNumber': result.value})
-              .subscribe(() => {
-                this.notificationsService.showNotification(eNotificationType.SUCCESS,
-                  'Se ha asignado correctamente el número de oficio al estudiante', '');
-                this.refreshPreAssigned();
-              }, () => {
-                this.notificationsService.showNotification(eNotificationType.ERROR,
-                  'Ha sucedido un error, no se ha asignado el número de oficio al estudiante', 'Vuelva a intentarlo mas tarde');
-              });
+          confirmButtonText: 'Asignar'
+        }).then((resultB) => {
+          if (resultB.value) {
+            console.log(resultB.value);
+            Swal.fire({
+              title: '¿Esta seguro de continuar?',
+              type: 'warning',
+              showCancelButton: true,
+              cancelButtonColor: '#d33',
+              confirmButtonColor: '#3085d6',
+              cancelButtonText: 'Cancelar',
+              confirmButtonText: 'Si'
+            }).then((res) => {
+              if (res.value) {
+                this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
+                  {'status': 'preSign', 'tradeConstancyDocumentNumber': resultA.value, 'performanceLevelConstancyDocument': resultB.value})
+                  .subscribe(() => {
+                    this.notificationsService.showNotification(eNotificationType.SUCCESS,
+                      'Se ha asignado correctamente el número de oficio y nivel de desempeño al estudiante', '');
+                    this.refreshPreAssigned();
+                  }, () => {
+                    this.notificationsService.showNotification(eNotificationType.ERROR,
+                      'Ha sucedido un error, no se ha asignado el número de oficio al estudiante', 'Vuelva a intentarlo mas tarde');
+                  });
+              }
+            });
           }
         });
       }
