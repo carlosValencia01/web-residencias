@@ -1,0 +1,27 @@
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-column-select, .mat-column-no, .mat-column-actions{
+  max-width: 100px;
+  width: 64px;
+  min-width: 40px;
+}
+
+#narrowTd, #narrowTh {
+  width: 20%;
+  text-align: center;
+}
+
+td > mat-icon {
+  cursor: pointer;
+}
+
+.ng-star-inserted {
+  font-size: 12px !important;
+}

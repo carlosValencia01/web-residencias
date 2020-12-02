@@ -9,6 +9,7 @@ import {RecordStudentPageComponent} from './department/record-student-page/recor
 import {ControlStudentsProcessPageComponent} from './department/control-students-process-page/control-students-process-page.component';
 import {ReviewReportsDocumentsComponent} from './department/review-reports-documents/review-reports-documents.component';
 import {ReviewLastReportPageComponent} from './department/review-last-report-page/review-last-report-page.component';
+import {ControlSubprincipalPageComponent} from './department/control-subprincipal-page/control-subprincipal-page.component';
 
 // Rutas de alummno o Departamento de Servicio social
 const routes: Routes = [
@@ -44,6 +45,10 @@ const routes: Routes = [
   {
     path: 'recordStudent',
     component: RecordStudentPageComponent
+  },
+  {
+    path: 'subprincipal',
+    component: ControlSubprincipalPageComponent
   },
   // Rutas de estudiante
   {

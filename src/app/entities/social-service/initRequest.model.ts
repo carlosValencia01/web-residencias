@@ -20,6 +20,8 @@ export interface InitRequestModel {
   dependencyProgramLocationInside?: string;
   dependencyProgramLocation?: string;
   tradeDocumentNumber?: string;
+  tradeConstancyDocumentNumber?: string;
+  performanceLevelConstancyDocument?: string;
   periodId?: IPeriod;
   months?: Array<any>;
   schedule?: Array<any>;

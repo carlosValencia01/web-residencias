@@ -56,6 +56,7 @@ import { ControlStudentsProcessPageComponent } from './department/control-studen
 import { ReviewReportsDocumentsComponent } from './department/review-reports-documents/review-reports-documents.component';
 import { ReviewLastReportPageComponent } from './department/review-last-report-page/review-last-report-page.component';
 import { DialogHistoryViewerComponent } from './components/dialog-history-viewer/dialog-history-viewer.component';
+import { ControlSubprincipalPageComponent } from './department/control-subprincipal-page/control-subprincipal-page.component';
 
 
 @NgModule({
@@ -108,7 +109,8 @@ import { DialogHistoryViewerComponent } from './components/dialog-history-viewer
     ControlStudentsProcessPageComponent,
     ReviewReportsDocumentsComponent,
     ReviewLastReportPageComponent,
-    DialogHistoryViewerComponent
+    DialogHistoryViewerComponent,
+    ControlSubprincipalPageComponent
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },

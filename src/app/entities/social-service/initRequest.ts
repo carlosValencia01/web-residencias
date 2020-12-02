@@ -215,7 +215,7 @@ export class InitRequest {
     return doc;
   }
 
-  // ************** CARTA DE SOLICITUD PARA LA REALIZACION DEL SERVICIO SOCIAL
+  // ************** TARJETA DE CONTROL PARA LA REALIZACION DEL SERVICIO SOCIAL
   public socialServiceControlCard(): jsPDF {
     const doc = this.newDocumentTec(true, false);
 
