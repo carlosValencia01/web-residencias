@@ -377,21 +377,21 @@
 
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('constancy')==='approved', 'none':whatStatus('constancy')==='register','reject':whatStatus('constancy')==='reevaluate','process':whatStatus('constancy')==='send'}">
+                        [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject', 'firstSign': 'process'}[whatStatus('constancy')]">
                 <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('constancy')">
                   <mat-icon>history</mat-icon>
                 </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
-                      [ngClass]="{'acceptText':whatStatus('constancy')==='approved', 'noneText':whatStatus('constancy')==='register','rejectText':whatStatus('constancy')==='reevaluate','processText':whatStatus('constancy')==='send'}">
+                      [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject', 'firstSign': 'process'}[whatStatus('constancy')]">
                       9. Constancia de servicio social
                     </p>
                   </mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
                   <div [ngSwitch]="whatStatus('constancy')" class="text-center">
-                    <div *ngSwitchCase="'send'" class="cursor-pointer">
+                    <div *ngSwitchCase="'firstSign'" class="cursor-pointer">
                       <img alt="File" src="../../assets/imgs/revision.png" style="width: 50px; height: 50px">
                       <p class="card-text">En revisión</p>
                     </div>
@@ -405,10 +405,6 @@
                         <mat-icon>cloud_download</mat-icon>
                       </button>
                     </div>
-                    <div *ngSwitchCase="'reevaluate'" class="cursor-pointer">
-                      <img alt="File" src="../../assets/imgs/rechazado.png" style="width: 50px; height: 50px">
-                      <p class="card-text">Rechazado</p>
-                    </div>
                     <div *ngSwitchCase="'register'">
                       <img alt="File" src="../../assets/imgs/fileView.png" style="width: 50px; height: 50px">
                       <p class="card-text">Sin enviar</p>
@@ -420,14 +416,14 @@
 
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('lastReport')==='approved', 'none':whatStatus('lastReport')==='register','reject':whatStatus('lastReport')==='reevaluate','process':whatStatus('lastReport')==='send'}">
+                        [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send':'process'}[whatStatus('lastReport')]">
                 <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('lastReport')">
                   <mat-icon>history</mat-icon>
                 </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
-                      [ngClass]="{'acceptText':whatStatus('lastReport')==='approved', 'noneText':whatStatus('lastReport')==='register','rejectText':whatStatus('lastReport')==='reevaluate','processText':whatStatus('lastReport')==='send'}">
+                      [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send':'process'}[whatStatus('lastReport')]">
                       10. Reporte final
                     </p>
                   </mat-card-subtitle>
@@ -463,14 +459,14 @@
 
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 m-1 p-0">
               <mat-card class="p-1"
-                        [ngClass]="{'accept':whatStatus('lastReportEvaluation')==='approved', 'none':whatStatus('lastReportEvaluation')==='register','reject':whatStatus('lastReportEvaluation')==='reevaluate','process':whatStatus('lastReportEvaluation')==='send'}">
+                        [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send':'process'}[whatStatus('lastReportEvaluation')]">
                 <button mat-icon-button class="history-btn text-danger" (click)="viewHistory('lastReportEvaluation')">
                   <mat-icon>history</mat-icon>
                 </button>
                 <mat-card-header class="justify-content-center">
                   <mat-card-subtitle>
                     <p
-                      [ngClass]="{'acceptText':whatStatus('lastReportEvaluation')==='approved', 'noneText':whatStatus('lastReportEvaluation')==='register','rejectText':whatStatus('lastReportEvaluation')==='reevaluate','processText':whatStatus('lastReportEvaluation')==='send'}">
+                      [ngClass]="{'approved': 'accept', 'register': 'none','reevaluate': 'reject','send':'process'}[whatStatus('lastReportEvaluation')]">
                       11. Evaluación del Reporte final
                     </p>
                   </mat-card-subtitle>

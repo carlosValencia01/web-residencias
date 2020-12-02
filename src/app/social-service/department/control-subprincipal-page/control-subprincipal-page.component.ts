@@ -134,6 +134,7 @@ export class ControlSubprincipalPageComponent implements OnInit {
               this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
                 {'verification.signs.constancy.signSubPrincipalDate': new Date(),
                   'verification.signs.constancy.signSubPrincipalName': this.userData.name.fullName,
+                  'verification.constancy': 'approved',
                   'status': 'approved'} )
                 .subscribe( res => {
                   // this._pushHistoryDocumentStatus('SE CREO', 'CREACIÓN DE DOCUMENTO DE SOLICITUD', this.userData.name.fullName);
