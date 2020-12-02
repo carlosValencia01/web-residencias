@@ -24,11 +24,11 @@
             </div>
           </div>
           <div class="row text-center">
-            <table mat-table [dataSource]="dataSourceAll" #sortAll matSort>
+            <table mat-table [dataSource]="dataSourceAll" matSort>
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
-                  {{i+1}}
+                  {{matPaginatorAll.pageIndex*matPaginatorAll.pageSize + i+1}}
                 </td>
               </ng-container>
               <ng-container *ngFor="let item of displayedColumnsAll.slice(1, -1);let index=index"
@@ -91,7 +91,7 @@
             </div>
           </div>
           <div class="row text-center">
-            <table mat-table [dataSource]="dataSourceForSign" #sortForSign matSort>
+            <table mat-table [dataSource]="dataSourceForSign" matSort>
               <ng-container matColumnDef="select">
                 <th *matHeaderCellDef mat-header-cell class="text-center"></th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
@@ -101,7 +101,7 @@
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
-                  {{i+1}}
+                  {{matPaginatorForSign.pageIndex*matPaginatorForSign.pageSize + i+1}}
                 </td>
               </ng-container>
               <ng-container *ngFor="let item of displayedColumnsForSign.slice(2, -1);let index=index"

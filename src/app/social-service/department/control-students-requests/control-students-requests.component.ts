@@ -23,8 +23,8 @@ import {eSocialNameDocuments} from '../../../enumerators/social-service/socialSe
 export class ControlStudentsRequestsComponent implements OnInit {
   public selectedSubTab: FormControl;
   public search: string;
-  @ViewChild('sortSign') sortSign: MatSort;
-  @ViewChild('sortAll') sortAll: MatSort;
+  @ViewChild(MatSort) sortSign: MatSort;
+  @ViewChild(MatSort) sortAll: MatSort;
   @ViewChild(MatSort) sortNoNumber: MatSort;
   @ViewChild(MatSort) sortWithNumber: MatSort;
   @ViewChild(MatSort) sortComplete: MatSort;

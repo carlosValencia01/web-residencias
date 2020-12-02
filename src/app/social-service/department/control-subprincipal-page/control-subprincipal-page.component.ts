@@ -20,13 +20,13 @@ export class ControlSubprincipalPageComponent implements OnInit {
   public selectedTab: FormControl;
   public search: string;
 
-  @ViewChild('sortAll') sortAll: MatSort;
+  @ViewChild(MatSort) sortAll: MatSort;
   @ViewChild('matPaginatorAll') paginatorAll: MatPaginator;
   public displayedColumnsAll: string[];
   public displayedColumnsAllName: string[];
   public dataSourceAll: MatTableDataSource<any>;
 
-  @ViewChild('sortForSign') sortForSign: MatSort;
+  @ViewChild(MatSort) sortForSign: MatSort;
   @ViewChild('matPaginatorForSign') paginatorForSign: MatPaginator;
   public displayedColumnsForSign: string[];
   public displayedColumnsForSignName: string[];

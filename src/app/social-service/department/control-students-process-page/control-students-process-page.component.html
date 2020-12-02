@@ -360,7 +360,12 @@
                             [matColumnDef]="item">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsApprovedName[index]}}</th>
                 <td *matCellDef="let row;" mat-cell style="width:25%;">
-                  {{row[item]}}
+                  <span mat-line *ngIf="[0,1,2].includes(index)">
+                        {{row[item]}}
+                      </span>
+                  <span mat-line *ngIf="index === 3" class="badge badge-pill badge-success">
+                      Liberado
+                  </span>
                 </td>
               </ng-container>
               <ng-container matColumnDef="actions">

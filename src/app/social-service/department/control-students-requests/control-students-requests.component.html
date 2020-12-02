@@ -24,11 +24,11 @@
             </div>
           </div>
           <div class="row">
-            <table mat-table [dataSource]="dataSourceAllRequests" #sortAll matSort>
+            <table mat-table [dataSource]="dataSourceAllRequests" matSort>
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
-                  {{i+1}}
+                  {{matPaginatorAllRequests.pageIndex*matPaginatorAllRequests.pageSize + i+1}}
                 </td>
               </ng-container>
               <ng-container *ngFor="let item of displayedColumnsAllRequests.slice(1,-1);let index=index"
@@ -127,7 +127,7 @@
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
-                  {{i+1}}
+                  {{matPaginatorSend.pageIndex*matPaginatorSend.pageSize + i+1}}
                 </td>
               </ng-container>
               <ng-container *ngFor="let item of displayedColumnsSend.slice(1, -1);let index=index"
@@ -162,64 +162,6 @@
           </div>
         </div>
       </mat-tab>
-<!--      <mat-tab>-->
-<!--        <ng-template mat-tab-label>-->
-<!--          <div>-->
-<!--            Solicitudes Aceptadas-->
-<!--          </div>-->
-<!--        </ng-template>-->
-<!--        <br>-->
-<!--        <div>-->
-<!--          <div class="row p-3">-->
-<!--            <div class="col-11">-->
-<!--              <mat-form-field class="w-100">-->
-<!--                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda..."-->
-<!--                       oninput="this.value=this.value.toUpperCase()">-->
-<!--              </mat-form-field>-->
-<!--            </div>-->
-<!--              <div class="col-1 justify-content-end text-center">-->
-<!--                <button mat-mini-fab class="m-1" color="primary" (click)="refreshApproved()" data-toggle="tooltip"-->
-<!--                        title="Recargar">-->
-<!--                  <mat-icon>update</mat-icon>-->
-<!--                </button>-->
-<!--              </div>-->
-<!--          </div>-->
-<!--          <div class="row text-center">-->
-<!--            <table mat-table [dataSource]="dataSourceApproved" matSort>-->
-<!--              <ng-container matColumnDef="no">-->
-<!--                <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>-->
-<!--                <td *matCellDef="let row; let i = index" mat-cell style="width:10%">-->
-<!--                  {{i+1}}-->
-<!--                </td>-->
-<!--              </ng-container>-->
-<!--              <ng-container *ngFor="let item of displayedColumnsApproved.slice(1,-1);let index=index"-->
-<!--                                    [matColumnDef]="item">-->
-<!--                              <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsApprovedName[index]}}</th>-->
-<!--                              <td *matCellDef="let row;" mat-cell style="width:25%;">-->
-<!--                                  {{row[item]}}-->
-<!--                              </td>-->
-<!--              </ng-container>-->
-<!--              <ng-container matColumnDef="actions">-->
-<!--                <th *matHeaderCellDef mat-header-cell>Acciones</th>-->
-<!--                <td *matCellDef="let row" mat-cell style="width:20%">-->
-<!--                  <button [matMenuTriggerFor]="actions" mat-icon-button>-->
-<!--                    <mat-icon>more_vert</mat-icon>-->
-<!--                  </button>-->
-<!--                  <mat-menu #actions>-->
-<!--                    <button mat-menu-item>-->
-<!--                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>-->
-<!--                      <span>Expediente</span>-->
-<!--                    </button>-->
-<!--                  </mat-menu>-->
-<!--                </td>-->
-<!--              </ng-container>-->
-<!--              <tr *matHeaderRowDef="displayedColumnsApproved" mat-header-row></tr>-->
-<!--              <tr *matRowDef="let row; columns: displayedColumnsApproved;" mat-row></tr>-->
-<!--            </table>-->
-<!--          <mat-paginator #matPaginatorApproved [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </mat-tab>-->
       <mat-tab>
         <ng-template mat-tab-label>
           <div>
@@ -246,7 +188,7 @@
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:5%">
-                  {{i+1}}
+                  {{matPaginatorNoNumber.pageIndex*matPaginatorNoNumber.pageSize + i+1}}
                 </td>
               </ng-container>
               <ng-container *ngFor="let item of displayedColumnsNoNumber.slice(1, -1);let index=index"
@@ -301,7 +243,7 @@
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:5%">
-                  {{i+1}}
+                  {{matPaginatorNumber.pageIndex*matPaginatorNumber.pageSize + i+1}}
                 </td>
               </ng-container>
               <ng-container *ngFor="let item of displayedColumnsNumber.slice(1, -1);let index=index"
@@ -363,7 +305,7 @@
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
                 <td *matCellDef="let row; let i = index" mat-cell style="width:5%">
-                  {{i+1}}
+                  {{matPaginatorComplete.pageIndex*matPaginatorComplete.pageSize + i+1}}
                 </td>
               </ng-container>
               <ng-container *ngFor="let item of displayedColumnsComplete.slice(1, -1);let index=index"

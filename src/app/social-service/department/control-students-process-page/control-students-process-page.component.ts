@@ -17,37 +17,37 @@ export class ControlStudentsProcessPageComponent implements OnInit {
   public selectedTab: FormControl;
   public search: string;
 
-  @ViewChild('sortProcess') sortProcess: MatSort;
+  @ViewChild(MatSort) sortProcess: MatSort;
   @ViewChild('matPaginatorProcess') paginatorProcess: MatPaginator;
   public displayedColumnsProcess: string[];
   public displayedColumnsProcessName: string[];
   public dataSourceProcess: MatTableDataSource<any>;
 
-  @ViewChild('sortReport') sortReport: MatSort;
+  @ViewChild(MatSort) sortReport: MatSort;
   @ViewChild('matPaginatorReport') paginatorReport: MatPaginator;
   public displayedColumnsReport: string[];
   public displayedColumnsReportName: string[];
   public dataSourceReport: MatTableDataSource<any>;
 
-  @ViewChild('sortLastReport') sortLastReport: MatSort;
+  @ViewChild(MatSort) sortLastReport: MatSort;
   @ViewChild('matPaginatorLastReport') paginatorLastReport: MatPaginator;
   public displayedColumnsLastReport: string[];
   public displayedColumnsLastReportName: string[];
   public dataSourceLastReport: MatTableDataSource<any>;
 
-  @ViewChild('sortPreAssigned') sortPreAssigned: MatSort;
+  @ViewChild(MatSort) sortPreAssigned: MatSort;
   @ViewChild('matPaginatorPreAssigned') paginatorPreAssigned: MatPaginator;
   public displayedColumnsPreAssigned: string[];
   public displayedColumnsPreAssignedName: string[];
   public dataSourcePreAssigned: MatTableDataSource<any>;
 
-  @ViewChild('sortPreSign') sortPreSign: MatSort;
+  @ViewChild(MatSort) sortPreSign: MatSort;
   @ViewChild('matPaginatorPreSign') paginatorPreSign: MatPaginator;
   public displayedColumnsPreSign: string[];
   public displayedColumnsPreSignName: string[];
   public dataSourcePreSign: MatTableDataSource<any>;
 
-  @ViewChild('sortApproved') sortApproved: MatSort;
+  @ViewChild(MatSort) sortApproved: MatSort;
   @ViewChild('matPaginatorApproved') paginatorApproved: MatPaginator;
   public displayedColumnsApproved: string[];
   public displayedColumnsApprovedName: string[];
@@ -348,7 +348,8 @@ export class ControlStudentsProcessPageComponent implements OnInit {
       id: data._id,
       fullName: data.studentId.fullName,
       controlNumber: data.controlNumber,
-      career: data.studentId.career
+      career: data.studentId.career,
+      status: data.status
     };
   }
 
