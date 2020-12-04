@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import { eNotificationType } from 'src/app/enumerators/app/notificationType.enum';
 import { ControlStudentProv } from 'src/app/providers/social-service/control-student.prov';
@@ -7,9 +7,11 @@ import { NotificationsServices } from 'src/app/services/app/notifications.servic
 import {ComponentType} from '@angular/cdk/overlay';
 import * as Papa from 'papaparse';
 import {LoadCsvDataComponent} from '../../../commons/load-csv-data/load-csv-data.component';
-import {MatChipInputEvent} from '@angular/material/typings/chips';
+import { MatAutocomplete, MatChipInputEvent } from '@angular/material';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {FormControl} from '@angular/forms';
+import { RequestProvider } from 'src/app/providers/reception-act/request.prov';
+import { IPeriod } from '../../../entities/shared/period.model';
 
 interface ControlNumber {
   controlNumber: string;
@@ -23,12 +25,19 @@ interface ControlNumber {
 export class ControlStudentsMainPageComponent implements OnInit {
   public search: string;
   public selectedTab: FormControl;
+  periodCtrl = new FormControl();
+  periods: IPeriod[] = [];
+  usedPeriods: IPeriod[] = [];
+  filteredPeriods: IPeriod[] = [];
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
+  @ViewChild('periodInput') periodInput: ElementRef<HTMLInputElement>;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('matPaginatorAttendance') paginatorAttendance: MatPaginator;
   public displayedColumnsAttendance: string[];
   public displayedColumnsAttendanceName: string[];
   public dataSourceAttendance: MatTableDataSource<any>;
+  public dataSourceAttendance2: MatTableDataSource<any>;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   assistance: ControlNumber[] = [];
   public addAssistanceBtn = true;
@@ -36,15 +45,134 @@ export class ControlStudentsMainPageComponent implements OnInit {
   constructor( private controlStudentProv: ControlStudentProv,
                 private loadingService: LoadingService,
                 private dialog: MatDialog,
-                private notificationsService: NotificationsServices) {
+                private notificationsService: NotificationsServices,
+                private requestProvider: RequestProvider) {
     this.selectedTab = new FormControl(0);
   }
 
   ngOnInit() {
     this.displayedColumnsAttendance = ['controlNumber', 'fullName', 'career', 'assistance', 'date', 'actions'];
-    this.displayedColumnsAttendanceName = ['Número de control', 'Nombre completo', 'Carrera','Asistencia', 'Fecha de asistencia'];
+    this.displayedColumnsAttendanceName = ['Número de control', 'Nombre completo', 'Carrera', 'Asistencia', 'Fecha de asistencia'];
     this._getAllControlStudents();
+    this._getPeriodData();
+  }// ngOnInit
+
+  async _getPeriodData () {
+    this.requestProvider.getPeriods().subscribe(
+      (periods) => {
+        this.periods = periods.periods;
+        this.filteredPeriods = periods.periods;
+        this.updatePeriods(this.filteredPeriods.filter(per => per.active === true)[0], 'insert');
+      }
+    );
   }
+
+  filterPeriod(value: string): void {
+    if (value) {
+      this.periods = this.periods.filter(period => (period.periodName + '-' + period.year).toLowerCase().trim().indexOf(value) !== -1);
+    }
+  }
+
+  /**
+   * Keep the period filter synchronized
+   * @param period the period to be uptated (add to filter or remove)
+   * @param action the action to do with the period filter
+   *
+   */
+  updatePeriods(period, action: string): void {
+    if (action === 'delete') {
+      this.filteredPeriods.push(period);
+      this.usedPeriods = this.usedPeriods.filter(per => per._id !== period._id);
+    }
+    if (action === 'insert') {
+      this.usedPeriods.push(period);
+      this.filteredPeriods = this.filteredPeriods.filter(per => per._id !== period._id);
+    }
+    this.periods = this.filteredPeriods;
+    if (this.periodInput) {
+      this.periodInput.nativeElement.blur(); // set focus
+    }
+    this.applyFilters();
+  }
+
+
+
+  /**
+   * Filter data in table
+   */
+  applyFilters() {
+
+    this.controlStudentProv.getAllControlStudents().subscribe( res => {
+      const controlStudents = res.controlStudents.map(this._castToTableAttendance);
+      this._refreshAttendance(controlStudents.filter((req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period))));
+    }, () => {
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', 'Ha sucedido un error en la descarga de la información');
+    }, () => {});
+
+    if (this.usedPeriods) {
+      if (this.usedPeriods.length > 0) {
+        /*
+        this.dataSourceAttendance.data = this.dataSourceAttendance.data.filter(
+          (req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period))
+        );
+        */
+        this._refreshAttendance(this.dataSourceAttendance.data
+          .filter((req: any) => this.usedPeriods.map(per => (per._id)).includes((req.period)))
+          );
+      } else {
+        this.controlStudentProv.getAllControlStudents().subscribe( res => {
+          const controlStudents = res.controlStudents.map(this._castToTableAttendance);
+          this._refreshAttendance(controlStudents);
+        }, () => {
+          this.notificationsService.showNotification(eNotificationType.ERROR,
+            'Error', 'Ha sucedido un error en la descarga de la información');
+        }, () => {});
+        // this.dataSourceAttendance.data = this.dataSourceAttendance.data;
+      }
+    } else {
+      this.dataSourceAttendance.data = this.dataSourceAttendance.data;
+    }
+  }
+
+
+
+
+
+  /**
+   * Quit a period from the filter
+   * @param period the period to be deleted
+   */
+  removePeriod(period): void {
+    this.updatePeriods(period, 'delete');
+  }
+
+  /**
+   *
+   * @param event chip input event
+   * keep the autocomplete working well
+   */
+  addPeriod(event: MatChipInputEvent): void {
+    if (!this.matAutocomplete.isOpen) {
+      const input = event.input;
+      const value = event.value;
+      if (input) {
+        input.value = '';
+      }
+      this.periodCtrl.setValue(null);
+    }
+  }
+
+    /**
+   *
+   * @param period the period to filter
+   * new period was selected in filters
+   */
+  selectedPeriod(period): void {
+    this.updatePeriods(period, 'insert');
+  }
+
+
 
   add(event: MatChipInputEvent): void {
     const input = event.input;
@@ -119,7 +247,8 @@ export class ControlStudentsMainPageComponent implements OnInit {
       fullName: data.studentId.fullName,
       career: data.studentId.career,
       assistance: data.verification.assistance,
-      date: data.releaseAssistanceDate
+      date: data.releaseAssistanceDate,
+      period: data.periodId
     };
   }
 

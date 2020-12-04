@@ -56,6 +56,8 @@ export class SocialServiceMainPageComponent implements OnInit {
   public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public reportsDocument: boolean; // Condicion para saber si continuar con los reportes
   public statusFirstDocuments: string; // Condicion para saber si el estudiante ya envio toda la información o esta en revisión
+  public bimestralReport = false; // variable para saber si se deben mostrar los reportes bimestrales
+  public finalReport = false; // Variable para saber si se mustra el reporte final.
   // documents status
   public presentation: string; // Variable para guardar el estatus de la carta de presentacion.
   public workPlanProject: string; // Variable para guardar el estatus del plan de trabajo.
@@ -153,6 +155,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.lastReport = res.controlStudent.verification.lastReport;
       this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
       this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
+      this.showReports();
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
         'Atención',
@@ -160,6 +163,11 @@ export class SocialServiceMainPageComponent implements OnInit {
       this._loadPage();
     }, () => this._loadPage());
       this._initializeTableForm();
+  }
+
+  showReports() {
+    this.bimestralReport = this.reports[this.reports.length - 1].status === 'approved' && this.managerEvaluations[this.managerEvaluations.length - 1].status === 'approved' && this.selfEvaluations[this.selfEvaluations.length - 1].status === 'approved';
+    this.finalReport = this.lastReport !== 'approved' || this.lastReportEvaluation !== 'approved' || this.dependencyRelease !== 'approved';
   }
 
   _loadPage() {
