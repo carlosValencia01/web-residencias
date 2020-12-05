@@ -49,6 +49,7 @@ import { ESignatureProvider } from './providers/electronic-signature/eSignature.
 registerLocaleData(localeEs);
 import { getSpanishPaginatorIntl } from 'src/app/services/shared/mat-paginator-labels';
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import { RequestProvider } from './providers/reception-act/request.prov';
 @NgModule({
   declarations: [
     AppComponent,
@@ -109,7 +110,8 @@ import { MatPaginatorIntl } from '@angular/material/paginator';
     NotificationsServices,
     RoleService,
     Storage,
-    WebSocketService
+    WebSocketService,
+    RequestProvider
   ],
   entryComponents: [SelectPositionComponent],
   bootstrap: [AppComponent]

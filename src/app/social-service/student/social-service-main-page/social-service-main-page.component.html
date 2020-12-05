@@ -498,13 +498,13 @@
 
         <mat-step [completed]="true">
           <ng-template matStepLabel>Reportes</ng-template>
-          <div class="row">
+
+          <div class="row" *ngIf="!bimestralReport || bimestralReport && finalReport">
             <mat-icon class="text-info">info</mat-icon>
             <h6>Revisa tus documentos hasta que sean validados</h6>
           </div>
 
-
-          <div *ngIf="validateSolicitudePhase() === 'approved' "><!--reportes bimestrales-->
+          <div *ngIf="!bimestralReport"><!--reportes bimestrales-->
             <div class="text-center margen">
               <div class="flex justify-content-around">
 
@@ -693,9 +693,7 @@
             </div>
           </div><!--reportes bimestrales-->
 
-
-
-          <div *ngIf="true"><!--reporte final y carta de evaluacion del reporte final-->
+          <div *ngIf="bimestralReport && finalReport"><!--reporte final, carta de evaluacion del reporte final y carta de liberacion-->
             <div class="text-center margen">
               <div class="flex justify-content-around">
 
@@ -850,6 +848,22 @@
               </div>
             </div>
           </div><!--reporte final y carta de evaluacion del reporte final-->
+
+          <div *ngIf="bimestralReport && !finalReport">
+              <div class="row justify-content-center"> 
+                <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+                  <mat-card style="height: 225px; width: 300px;">
+                    <mat-card-header class="flex-column align-items-center">
+                      <img alt="File" src="../../../../assets/imgs/approved.png" style="width: 80px; height: 80px;">
+                      <h5 class="text-center mt-3">Sus reportes han sido <span class="text-success">aceptados</span></h5>
+                    </mat-card-header>
+                  </mat-card>
+                </div>
+              </div>
+              <div class="col-12 mt-4" style="text-align: center;">
+                <button mat-raised-button matStepperNext color="primary" style="width: 15%;">Continuar</button>
+              </div>
+          </div>
 
         </mat-step>
         <mat-step [completed]="true">

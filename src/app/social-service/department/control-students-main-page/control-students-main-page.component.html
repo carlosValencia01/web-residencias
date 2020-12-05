@@ -7,6 +7,34 @@
           Control de asistencia
         </ng-template>
         <div>
+
+          <div class="row text-center p-4 m-0 mt-2" style="align-items: center;">
+            <div class="col-xs-12 col-md-4">
+              <mat-form-field *ngIf="periods" class="w-100">
+                <mat-chip-list #chipList aria-label="Period selection">
+                    <mat-chip *ngFor="let p of usedPeriods" selectable="true" removable="true"
+                        (removed)="removePeriod(p)">
+                        {{p.periodName}}-{{p.year}}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="Filtrar por período..." #periodInput [formControl]="periodCtrl"
+                        [matAutocomplete]="auto" [matChipInputFor]="chipList"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes" matChipInputAddOnBlur="true"
+                        (matChipInputTokenEnd)="addPeriod($event)" (ngModelChange)="filterPeriod($event)"
+                        matInput>
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let period of periods" [value]="period" (click)="selectedPeriod(period)">
+                        {{period.periodName}}-{{period.year}}
+                    </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+          </div>
+
+
+        </div>
+        <div>
           <div class="row p-3">
             <div class="col-10">
               <mat-form-field class="w-100">
