@@ -56,6 +56,9 @@ export class ControlStudentsProcessPageComponent implements OnInit {
   private userData;
   private readonly positionName: String;
 
+  public studentToSign: Array<any> = new Array<any>();
+  public flagStudentToSign = true;
+
 
   constructor( private controlStudentProv: ControlStudentProv,
                private loadingService: LoadingService,
@@ -76,7 +79,9 @@ export class ControlStudentsProcessPageComponent implements OnInit {
     this.displayedColumnsLastReportName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
     this.displayedColumnsPreAssigned = ['no', 'fullName', 'controlNumber', 'career', 'actions'];
     this.displayedColumnsPreAssignedName = ['Nombre', 'Número de control', 'Carrera'];
-    this.displayedColumnsPreSign = ['no', 'fullName', 'controlNumber', 'career', 'tradeNumber', 'performance', 'status', 'actions'];
+    this.displayedColumnsPreSign = this.verifyPositionBoss() ?
+      ['select', 'no', 'fullName', 'controlNumber', 'career', 'tradeNumber', 'performance', 'status', 'actions'] :
+      ['no', 'fullName', 'controlNumber', 'career', 'tradeNumber', 'performance', 'status', 'actions'];
     this.displayedColumnsPreSignName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio', 'Desempeño', 'Estatus'];
     this.displayedColumnsApproved = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
     this.displayedColumnsApprovedName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
@@ -91,6 +96,37 @@ export class ControlStudentsProcessPageComponent implements OnInit {
       case 3: return this._getByGeneralStatus('preAssigned');
       case 4: return this._getByGeneralStatus('preSign');
       case 5: return this._getByGeneralStatus('approved');
+    }
+  }
+
+  selectDocument(event, student) {
+    student.check = event.checked;
+    if (event.checked) {
+      this.studentToSign.push(student);
+      this.flagStudentToSign = false;
+    } else {
+      const index = this.studentToSign.findIndex(st => st.controlNumber === student.controlNumber);
+      this.studentToSign.splice(index, 1);
+      if (this.studentToSign.length === 0) {
+        this.flagStudentToSign = true;
+      }
+    }
+  }
+
+  selectAll(event) {
+    this.dataSourcePreSign.data.forEach(fs => {
+      if (event.checked) {
+        if (!fs.check && fs.status !== 'firstSign') {
+          fs.check = true;
+          this.studentToSign.push(fs);
+        }
+      } else {
+        fs.check = false;
+        this.studentToSign.pop();
+      }
+    });
+    if (!event.checked) {
+      this.flagStudentToSign = true;
     }
   }
 
@@ -408,6 +444,30 @@ export class ControlStudentsProcessPageComponent implements OnInit {
           .subscribe(() => {
             this.notificationsService.showNotification(eNotificationType.SUCCESS,
               'Se ha registrado su firma al documento', '');
+            this.refreshPreAssigned();
+          }, () => {
+            this.notificationsService.showNotification(eNotificationType.ERROR,
+              'Ha sucedido un error, no se ha registrado su firma al documento', 'Vuelva a intentarlo mas tarde');
+          });
+      }
+    });
+  }
+
+  signAllConstancyDocument() {
+    Swal.fire({
+      title: '¿Esta seguro/a de continuar?',
+      type: 'warning',
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#3085d6',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Si'
+    }).then((res) => {
+      if (res.value) {
+        this.controlStudentProv.signAllConstancyDocumentsForDepartment({students: this.studentToSign, responsible: this.userData.name.fullName})
+          .subscribe(() => {
+            this.notificationsService.showNotification(eNotificationType.SUCCESS,
+              'Se han registrado las firmas a los documentos de los estudiantes', '');
             this.refreshPreAssigned();
           }, () => {
             this.notificationsService.showNotification(eNotificationType.ERROR,

@@ -282,7 +282,65 @@
               </button>
             </div>
           </div>
-          <div class="row text-center">
+          <div  *ngIf="verifyPositionBoss()">
+            <div class="row p-2">
+              <div class="col-6 text-center">
+                <mat-checkbox #all (change)="selectAll($event)">Seleccionar a todos los alumnos</mat-checkbox>
+              </div>
+              <div class="col-6 text-center">
+                <button mat-raised-button color="primary" class="w-75" type="button" [disabled]="(!all.checked || studentToSign.length === 0) && flagStudentToSign" (click)="signAllConstancyDocument()">Firmar a todos</button>
+              </div>
+            </div>
+            <div class="row text-center">
+              <table mat-table [dataSource]="dataSourcePreSign" matSort>
+                <ng-container matColumnDef="select">
+                  <th *matHeaderCellDef mat-header-cell class="text-center"></th>
+                  <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+                    <mat-checkbox [checked]="row['check']" [disabled]="row['status'] === 'firstSign'" (change)="selectDocument($event, row)"></mat-checkbox>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="no">
+                  <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+                  <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+                    {{i+1}}
+                  </td>
+                </ng-container>
+                <ng-container *ngFor="let item of displayedColumnsPreSign.slice(2, -1);let index=index"
+                              [matColumnDef]="item">
+                  <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsPreSignName[index]}}</th>
+                  <td *matCellDef="let row;" mat-cell style="width:25%;">
+                    <span mat-line *ngIf="item !== 'status'">{{row[item]}}</span>
+                    <span mat-line *ngIf="item === 'status'" class="badge badge-pill" [ngClass]="{'register':'badge-danger', 'firstSign':'badge-info'}[row[item]]">
+                    {{row[item] === 'register' ? 'Pendiente' : 'Sub-Dirección'}}
+                  </span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                  <th *matHeaderCellDef mat-header-cell>Acciones</th>
+                  <td *matCellDef="let row" mat-cell style="width:20%">
+                    <button [matMenuTriggerFor]="actions" mat-icon-button>
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #actions>
+                      <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                        <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                        <span>Expediente</span>
+                      </button>
+                      <button mat-menu-item *ngIf="verifyPositionBoss() && row['status'] === 'register'" (click)="signConstancyDocument(row['id'])">
+                        <mat-icon class="material-icons text-info">assignment_turned_in</mat-icon>
+                        <span>Firmar</span>
+                      </button>
+                    </mat-menu>
+                  </td>
+                </ng-container>
+                <tr *matHeaderRowDef="displayedColumnsPreSign" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumnsPreSign;" mat-row></tr>
+              </table>
+              <mat-paginator #matPaginatorPreSign [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+            </div>
+          </div>
+
+          <div class="row text-center" *ngIf="!verifyPositionBoss()">
             <table mat-table [dataSource]="dataSourcePreSign" matSort>
               <ng-container matColumnDef="no">
                 <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>

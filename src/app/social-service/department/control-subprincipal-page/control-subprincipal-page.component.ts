@@ -276,7 +276,7 @@ export class ControlSubprincipalPageComponent implements OnInit {
       status: data.status === 'solicitude' ? 'Solicitud' :
         data.status === 'process' ? 'Proceso' :
         data.status === 'preAssigned' ? 'Registro de constancia' :
-        data.status === 'preSign' ? 'Constancia en firma' : 'Liberado'
+        data.status === 'preSign' ? 'Constancia firmada por Vinculación' : 'Liberado'
     };
   }
 
