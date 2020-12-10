@@ -18,6 +18,7 @@ export class ReviewLastReportPageComponent implements OnInit {
   private controlStudentId: string;
   public lastReport: string;
   public lastReportEvaluation: string;
+  public dependencyRelease: string;
   public student: IStudent;
   public pdf: any;
   private documents: any;
@@ -39,8 +40,9 @@ export class ReviewLastReportPageComponent implements OnInit {
     this.controlStudentProv.getControlStudentById(this.controlStudentId).subscribe(res => {
       this.student = res.controlStudent.studentId;
       this.documents = res.controlStudent.documents;
-      this.lastReport = res.controlStudent.verification.lastRreport;
+      this.lastReport = res.controlStudent.verification.lastReport;
       this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
+      this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
     }, () => {
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
         'No se pudo obtener la información del estudiante, intentelo mas tarde');

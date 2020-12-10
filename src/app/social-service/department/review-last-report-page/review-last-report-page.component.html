@@ -31,7 +31,7 @@
               <span mat-line class="badge badge-pill badge-info">PENDIENTE</span>
             </div>
             <div *ngSwitchCase="'reevaluate'">
-              <span mat-line class="badge badge-pill badge-danger">REEVALUACIÓN</span>
+              <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
             </div>
             <div *ngSwitchCase="'approved'">
               <span mat-line class="badge badge-pill badge-success">APROBADO</span>
@@ -66,7 +66,42 @@
               <span mat-line class="badge badge-pill badge-info">PENDIENTE</span>
             </div>
             <div *ngSwitchCase="'reevaluate'">
-              <span mat-line class="badge badge-pill badge-danger">REEVALUACIÓN</span>
+              <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
+            </div>
+            <div *ngSwitchCase="'approved'">
+              <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+            </div>
+            <div *ngSwitchDefault>
+              <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="document">
+        <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+          <h6 class="text-center">Carta de liberación de la dependencia</h6>
+          <button mat-icon-button [matMenuTriggerFor]="menu3" style="position:absolute; bottom: 5px; right: 5px;">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu3="matMenu">
+            <button mat-menu-item (click)="messageForCompany('evaluateDocument', 'dependencyRelease')" *ngIf="dependencyRelease !== 'approved'">
+              <mat-icon class="text-success">thumb_up</mat-icon>
+              <span>Aceptar</span>
+            </button>
+            <button mat-menu-item (click)="messageForCompany('rejectDocument', 'dependencyRelease')">
+              <mat-icon class="text-danger">thumb_down</mat-icon>
+              <span>Rechazar</span>
+            </button>
+          </mat-menu>
+          <img src="../../../../assets/icons/pdfReport.svg" style="width: 30%; cursor: pointer;" (click)="viewDocument('ITT-POC-08-13')">
+          <!--            <p style="font-size: 0.8em;">Documento sin atender</p>-->
+          <div [ngSwitch]="dependencyRelease">
+            <div *ngSwitchCase="'send'">
+              <span mat-line class="badge badge-pill badge-info">PENDIENTE</span>
+            </div>
+            <div *ngSwitchCase="'reevaluate'">
+              <span mat-line class="badge badge-pill badge-danger">REVALUACIÓN</span>
             </div>
             <div *ngSwitchCase="'approved'">
               <span mat-line class="badge badge-pill badge-success">APROBADO</span>

@@ -142,7 +142,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.presentationDocument = false;
       this.reportsDocument = true;
       this.permission = false;
-      this.releaseSocialService = false;
+      this.releaseSocialService = res.controlStudent.status === 'approved';
       this.assistance = false;
       this.reports = res.controlStudent.verification.reports;
       this.managerEvaluations = res.controlStudent.verification.managerEvaluations;
@@ -477,13 +477,19 @@ export class SocialServiceMainPageComponent implements OnInit {
       'presentation': eSocialNameDocuments.PRESENTACION,
       'acceptance': eSocialNameDocuments.ACEPTACION,
       'workPlanProject': eSocialNameDocuments.ASIGNACION,
-      'commitment': eSocialNameDocuments.COMPROMISO
+      'commitment': eSocialNameDocuments.COMPROMISO,
+      'lastReportEvaluation': eSocialNameDocuments.EVALUACIONREPORTEFINAL_CODE,
+      'lastReport': eSocialNameDocuments.REPORTEFINAL_CODE,
+      'dependencyRelease': eSocialNameDocuments.CARTALIBERACION_CODE
     };
     const codeDocuments = {
       'presentation': eSocialNameDocuments.PRESENTACION_CODE,
       'acceptance': eSocialNameDocuments.ACEPTACION_CODE,
       'workPlanProject': eSocialNameDocuments.ASIGNACION_CODE,
-      'commitment': eSocialNameDocuments.COMPROMISO_CODE
+      'commitment': eSocialNameDocuments.COMPROMISO_CODE,
+      'lastReportEvaluation': eSocialNameDocuments.EVALUACIONREPORTEFINAL_CODE,
+      'lastReport': eSocialNameDocuments.REPORTEFINAL_CODE,
+      'dependencyRelease': eSocialNameDocuments.CARTALIBERACION_CODE
     };
 
     // Cargar el documento a Drive, ya debe de existir su registro y base de datos
@@ -500,7 +506,7 @@ export class SocialServiceMainPageComponent implements OnInit {
               message: `El estudiante subio el ${nameDocument} por primera vez`
             }
           };
-          this._createHistoryDocumentStatus(nameDocuments[detailDocument], 'SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName);
+          // this._createHistoryDocumentStatus(nameDocuments[detailDocument], 'SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName);
           // Actualizar información del documento subido a
           await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo).subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
@@ -522,7 +528,7 @@ export class SocialServiceMainPageComponent implements OnInit {
               message: `El estudiante actualizo el ${nameDocument}`
             }
           };
-          this._pushHistoryDocumentStatus('SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName, codeDocuments[detailDocument]);
+          // this._pushHistoryDocumentStatus('SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName, codeDocuments[detailDocument]);
 
           // Actualizar la información del documento
           await this.controlStudentProvider.updateDocumentLog(this.controlStudentId, documentInfo)
