@@ -30,6 +30,8 @@ export class InitConstancy {
   private tecLogo: any;
   private serviceFirm: any;
   private directorFirm: any;
+  private departmentSignature: any;
+  private subPlanDirectorSignature: any;
   private montserratNormal: any;
   private montserratBold: any;
   public _request: InitConstancyModel;
@@ -72,6 +74,14 @@ export class InitConstancy {
 
     this._getImage.getBase64('assets/imgs/firms/servicios.png').then(firm => {
       this.serviceFirm = firm;
+    });
+
+    this._getImage.getBase64('assets/imgs/firms/departamentoVinculacion.png').then(firm => {
+      this.departmentSignature = firm;
+    });
+
+    this._getImage.getBase64('assets/imgs/firms/subplaneacion.png').then(firm => {
+      this.subPlanDirectorSignature = firm;
     });
   }
 
@@ -142,6 +152,9 @@ export class InitConstancy {
 
     const firstSign = this.addArroba(`${this._request.departmentSignName} JEFE(A) DEL DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN`);
     const secondSign = this.addArroba(`${this._CookiesService.getData().user.name.fullName} SUBDIRECTOR(A) DE PLANEACIÓN Y VINCULACIÓN`);
+
+    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 30, 180, 35, 35);
+    doc.addImage(this.subPlanDirectorSignature, 'PNG', this.MARGIN.LEFT + 110, 180, 35, 30);
 
     this.justifyText(doc, firstSign, {x: this.MARGIN.LEFT + 20, y: 210}, 60, 4, 9);
     this.justifyText(doc, secondSign, {x: this.MARGIN.LEFT + 100, y: 210}, 60, 4, 9);

@@ -28,6 +28,7 @@ export class InitPresentationDocument {
   private sepLogo: any;
   private tecNacLogoTitle: any;
   private tecLogo: any;
+  private departmentSignature: any;
   private serviceFirm: any;
   private directorFirm: any;
   private montserratNormal: any;
@@ -72,6 +73,10 @@ export class InitPresentationDocument {
 
     this._getImage.getBase64('assets/imgs/firms/servicios.png').then(firm => {
       this.serviceFirm = firm;
+    });
+
+    this._getImage.getBase64('assets/imgs/firms/departamentoVinculacion.png').then(firm => {
+      this.departmentSignature = firm;
     });
   }
 
@@ -135,8 +140,8 @@ export class InitPresentationDocument {
 
     // Firma de la Jefa del Departamento de Gestion y Vinculacion
     doc.setFontSize(9);
-    doc.text('ATENTAMENTE', (this.WIDTH / 2), 205, { align: 'center' });
-    doc.text('Firma', (this.WIDTH / 2), 217, { align: 'center' });
+    doc.text('ATENTAMENTE', (this.WIDTH / 2), 185, { align: 'center' });
+    doc.addImage(this.departmentSignature, 'PNG', (this.WIDTH / 2) - 15, 220 - 30, 35, 35);
     doc.text('_______________________________________________', (this.WIDTH / 2), 220, { align: 'center' });
     doc.text('Jefe(a) de Departamento de Gestión Tecnológica y Vinculación', (this.WIDTH / 2), 225, { align: 'center' });
 
@@ -205,7 +210,7 @@ export class InitPresentationDocument {
         actDesc,
         {x: this.MARGIN.LEFT + 2, y: 147}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
     doc.text(this._request.dependencyActivities, this.MARGIN.LEFT + 2, 157, { align: 'left' });
-      
+
     doc.rect(this.MARGIN.LEFT + 2, 192, this.WIDTH - (this.MARGIN.RIGHT * 2) - 4, 33); // HORARIO  225
 
     doc.line(this.MARGIN.LEFT + 2, 201, this.WIDTH - (this.MARGIN.RIGHT) - 25 , 201); // 1 horizontal
@@ -307,13 +312,13 @@ export class InitPresentationDocument {
       doc.text(`Domicilio de la dependencia: ${this._request.dependencyAddress}`, this.MARGIN.LEFT, 130, { align: 'left' });
       doc.text(`Responsable del programa: ${this._request.dependencyDepartmentManager}`, this.MARGIN.LEFT, 140, { align: 'left' });
       doc.text(`Fecha de inicio: *fecha de inicio* Fecha de terminación: *fecha final*`, this.MARGIN.LEFT, 150, { align: 'left' });
-      
+
       // Segundo parrafo
       this.justifyText(doc,
-        'Me comprometo a realizar el Servicio Social acatando el reglamento emitido por el Tecnológico Nacional de México y llevarlo a cabo en el lugar y periodos manifestados, así como, a participar con mis conocimientos e iniciativas en las actividades que desempeñe, ' + 
+        'Me comprometo a realizar el Servicio Social acatando el reglamento emitido por el Tecnológico Nacional de México y llevarlo a cabo en el lugar y periodos manifestados, así como, a participar con mis conocimientos e iniciativas en las actividades que desempeñe, ' +
         'procurando dar una imagen positiva del instituto en el Organizmo o Dependencia oficial, de no hacerlo así, quedo enterado(a) de la cancelación respectiva a la cual procedera automáticamente.',
         {x: this.MARGIN.LEFT, y: 160}, this.WIDTH - (this.MARGIN.RIGHT * 2), 5, 12);
-      
+
       doc.text('En la ciudad de: Tepic el día *dia* del mes *mes* de *año*', (this.WIDTH / 2), 200, { align: 'center' });
       doc.setFont(this.FONT, 'Bold');
       doc.text('CONFORMIDAD', (this.WIDTH / 2), 210, { align: 'center' });
