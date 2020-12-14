@@ -49,6 +49,7 @@ export class InitRequest {
     public _CookiesService: CookiesService
   ) {
     this._getImageToPdf();
+    console.log(this._request.periodId);
   }
 
   public setSolicitudeRequest(request: SolicitudeModel) {
@@ -236,20 +237,21 @@ export class InitRequest {
     // Cuadro de Datos personales
     doc.rect(this.MARGIN.LEFT, 60, this.WIDTH - (this.MARGIN.RIGHT * 2), 22);
     doc.text(`NOMBRE: ${this._request.student.fullName}`, this.MARGIN.LEFT + 4, 68, { align: 'left' });
-    doc.text(`EDAD: ${this._request.student.sex}`, this.MARGIN.LEFT + 130, 68, { align: 'left' });
-    doc.text(`SEXO: ${this._request.student.sex}`, this.MARGIN.LEFT + 150, 68, { align: 'left' });
-    doc.text(`DOMICLIO: ${this._request.student.street} ${this._request.student.suburb}`, this.MARGIN.LEFT + 4, 73, { align: 'left' });
-    doc.text(`TEL: ${this._request.student.phone}`, this.MARGIN.LEFT + 130, 73, { align: 'left' });
+    doc.text(`EDAD: ${this._request.student.sex || ''}`, this.MARGIN.LEFT + 130, 68, { align: 'left' });
+    doc.text(`SEXO: ${this._request.student.sex || ''}`, this.MARGIN.LEFT + 150, 68, { align: 'left' });
+    doc.text(`DOMICLIO: ${this._request.student.street || ''} ${this._request.student.suburb}`, this.MARGIN.LEFT + 4, 73, { align: 'left' });
+    doc.text(`TEL: ${this._request.student.phone || ''}`, this.MARGIN.LEFT + 130, 73, { align: 'left' });
     doc.text(`NO. DE CONTROL: ${this._request.student.controlNumber}`, this.MARGIN.LEFT + 4, 78, { align: 'left' });
     doc.text(`CREDITOS APROBADOS: 70%`, this.MARGIN.LEFT + 120, 78, { align: 'left' });
 
     // Cuadro de Datos del programa
+    const periodMark = this._request.periodId.periodName === 'AGOSTO-DICIEMBRE' ? 144 : 86;
     doc.text('PERIODO', this.MARGIN.LEFT, 90, { align: 'left' });
     doc.text('ENERO-JUNIO', this.MARGIN.LEFT + 50, 90, { align: 'left' });
     doc.text('JULIO-DICIEMBRE', this.MARGIN.LEFT + 100, 90, { align: 'left' });
     doc.rect(this.MARGIN.LEFT + 80, 86, 10, 5); // ENERO-JUNIO
     doc.rect(this.MARGIN.LEFT + 140, 86, 10, 5); // JULIO-DICIEMBRE
-    doc.text('X', this.MARGIN.LEFT + 144, 90, { align: 'left' }); // 86 -> ENERO, 144 -> JULIO
+    doc.text('X', this.MARGIN.LEFT + periodMark, 90, { align: 'left' }); // 86 -> ENERO, 144 -> JULIO
 
 
     doc.rect(this.MARGIN.LEFT, 95, this.WIDTH - (this.MARGIN.RIGHT * 2), 45); // tabla general
@@ -294,19 +296,17 @@ export class InitRequest {
     doc.rect(this.MARGIN.LEFT + 130, 166, 5, 5);
     doc.rect(this.MARGIN.LEFT + 140, 166, 5, 5);
     doc.rect(this.MARGIN.LEFT + 150, 166, 5, 5);
-    if (this.documentStatus.firstReport === 'approved' &&
-      this.documentStatus.secondReport === 'approved' &&
-      this.documentStatus.thirdReport === 'approved') {
+    if (this.documentStatus.reports.every(r => r.status === 'approved')) {
       doc.text('X', this.MARGIN.LEFT + 119, 170, { align: 'left' });
     }
-    if (this.documentStatus.firstReport === 'approved') {
-      doc.text('X', this.MARGIN.LEFT + 134, 170, { align: 'left' });
+    if (this.documentStatus.reports[0].status === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 131, 170, { align: 'left' });
     }
-    if (this.documentStatus.secondReport === 'approved') {
-      doc.text('X', this.MARGIN.LEFT + 144, 170, { align: 'left' });
+    if (this.documentStatus.reports[1].status === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 141, 170, { align: 'left' });
     }
-    if (this.documentStatus.thirdReport === 'approved') {
-      doc.text('X', this.MARGIN.LEFT + 154, 170, { align: 'left' });
+    if (this.documentStatus.reports[2].status === 'approved') {
+      doc.text('X', this.MARGIN.LEFT + 151, 170, { align: 'left' });
     }
 
     doc.text('CURSO DE', this.MARGIN.LEFT + 4, 180, { align: 'left' });
@@ -328,13 +328,16 @@ export class InitRequest {
       doc.text('X', this.MARGIN.LEFT + 49, 194, { align: 'left' });
     }
 
+    let dateRelease = '';
     doc.text('CARTA DE TERMINACIÓN', this.MARGIN.LEFT + 65, 193, { align: 'left' });
     doc.rect(this.MARGIN.LEFT + 115, 190, 10, 5);
-    if (this.documentStatus.selfEvaluation === 'approved') {
+    if (this.documentStatus.dependencyRelease === 'approved') {
       doc.text('X', this.MARGIN.LEFT + 119, 194, { align: 'left' });
+      dateRelease = moment(new Date()).format('L');
     }
 
-    doc.text('FECHA', this.MARGIN.LEFT + 135, 193, { align: 'left' });
+    doc.text('FECHA', this.MARGIN.LEFT + 135, 194, { align: 'left' });
+    doc.text(dateRelease, this.MARGIN.LEFT + 150, 194, { align: 'left' });
     doc.rect(this.MARGIN.LEFT + 150, 190, 20, 5);
 
     doc.text('PLAN DE TRABAJO', this.MARGIN.LEFT + 4, 206, { align: 'left' });
@@ -343,12 +346,15 @@ export class InitRequest {
       doc.text('X', this.MARGIN.LEFT + 49, 206, { align: 'left' });
     }
 
+    let dateConstancy = '';
     doc.text('CONSTANCIA OFICIAL', this.MARGIN.LEFT + 65, 206, { align: 'left' });
     doc.rect(this.MARGIN.LEFT + 115, 202, 10, 5);
     if (this.documentStatus.lastReport === 'approved') {
       doc.text('X', this.MARGIN.LEFT + 119, 206, { align: 'left' });
+      dateConstancy = moment(this.documentStatus.signs.constancy.signSubPrincipalDate).format('L');
     }
     doc.text('FECHA', this.MARGIN.LEFT + 135, 206, { align: 'left' });
+    doc.text(dateConstancy, this.MARGIN.LEFT + 151, 206, { align: 'left' });
     doc.rect(this.MARGIN.LEFT + 150, 202, 20, 5);
 
 

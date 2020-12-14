@@ -158,7 +158,7 @@ export class InitConstancy {
     const firstSign = this.addArroba(`${this._request.departmentSignName} JEFE(A) DEL DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN`);
     const secondSign = this.addArroba(`${this._CookiesService.getData().user.name.fullName} SUBDIRECTOR(A) DE PLANEACIÓN Y VINCULACIÓN`);
 
-    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 30, 160, 35, 35);
+    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 25, 160, 30, 30);
     doc.addImage(this.subPlanDirectorSignature, 'PNG', this.MARGIN.LEFT + 110, 165, 40, 20);
 
     this.justifyText(doc, firstSign, {x: this.MARGIN.LEFT + 20, y: 200}, 60, 4, 9);

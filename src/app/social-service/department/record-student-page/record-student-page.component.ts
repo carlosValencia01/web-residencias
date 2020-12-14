@@ -13,7 +13,6 @@ import {CookiesService} from '../../../services/app/cookie.service';
 import {InitRequest} from '../../../entities/social-service/initRequest';
 import {SolicitudeModel} from '../../../entities/social-service/solicitude.model';
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
-import {Binary} from '@angular/compiler';
 import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
 import {DialogHistoryViewerComponent} from '../../components/dialog-history-viewer/dialog-history-viewer.component';
 
