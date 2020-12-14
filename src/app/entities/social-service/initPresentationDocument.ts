@@ -31,6 +31,7 @@ export class InitPresentationDocument {
   private departmentSignature: any;
   private serviceFirm: any;
   private directorFirm: any;
+  private stampTec: any;
   private montserratNormal: any;
   private montserratBold: any;
   public _request: InitRequestModel;
@@ -78,6 +79,10 @@ export class InitPresentationDocument {
     this._getImage.getBase64('assets/imgs/firms/departamentoVinculacion.png').then(firm => {
       this.departmentSignature = firm;
     });
+
+    this._getImage.getBase64('assets/imgs/firms/sello25.png').then(firm => {
+      this.stampTec = firm;
+    });
   }
 
   public documentSend(file: eSocialFiles) {
@@ -115,44 +120,51 @@ export class InitPresentationDocument {
 
     doc.setTextColor(0, 0, 0);
     // Title
-    doc.setFont(this.FONT, 'Bold');
-    doc.setFontSize(8);
-    doc.text('CARTA DE PRESENTACIÓN PARA LA REALIZACIÓN DEL SERVICIO SOCIAL', (this.WIDTH / 2), 35, { align: 'center' });
-    doc.text('ITT-POC-08-03', (this.WIDTH / 2), 40, { align: 'center' });
+    // doc.setFont(this.FONT, 'Bold');
+    // doc.setFontSize(8);
+    // doc.text('CARTA DE PRESENTACIÓN PARA LA REALIZACIÓN DEL SERVICIO SOCIAL', (this.WIDTH / 2), 35, { align: 'center' });
+    // doc.text('ITT-POC-08-03', (this.WIDTH / 2), 40, { align: 'center' });
 
     // Cuadro de Datos personales
-    doc.setFont(this.FONT, 'Normal');
+    doc.setFont(this.FONT, 'Bold');
     doc.setFontSize(10);
-    this.addTextRight(doc, 'Departamento Académico: Departamento de Gestión Tecnológica y Vinculación', 55);
-    this.addTextRight(doc, `No. de Oficio: ${this._request.tradeDocumentNumber}`, 60);
-    this.addTextRight(doc, 'Asunto: Carta de Presentación', 65);
+    this.addTextRight(doc, this.addArroba('DEPARTAMENTO: GESTIÓN TECNOLÓGICA Y VINCULACIÓN'), 50);
+    this.addTextRight(doc, this.addArroba(`No. DE OFICIO: ${this._request.tradeDocumentNumber}`), 55);
+    this.addTextRight(doc, this.addArroba('ASUNTO: Carta de Presentación'), 60);
 
-    doc.text('C. ' + this._request.dependencyDepartmentManager, this.MARGIN.LEFT, 75, { align: 'left' });
-    doc.text(this._request.dependencyName, this.MARGIN.LEFT, 80, { align: 'left' });
+    doc.text('Tepic, Nayarit.' + moment().format('D [DE] MMMM [DE] YYYY').toUpperCase(), this.MARGIN.LEFT, 70, { align: 'left' });
 
-    doc.text('PRESENTE', this.MARGIN.LEFT, 105, { align: 'left' });
-    const body = `Por este conducto, presentamos a sus finas atenciones al C. ${this._request.student.fullName}, con número de control escolar:  ${this._request.student.controlNumber}, estudiante de la carrera de: ${this._request.student.career}, quien desea realizar su Servicio Social en esa Dependencia, cubriendo un total de mínimo 480 horas y máximo 500 horas en el programa ${this._request.dependencyProgramName} en un período mínimo de seis meses y no mayor de dos años.`;
+    doc.text('LIC. MANUEL ÁNGEL URIBE VÁZQUEZ' + this._request.dependencyDepartmentManager, this.MARGIN.LEFT, 75, { align: 'left' });
+    doc.text('DIRECTOR', this.MARGIN.LEFT, 80, { align: 'left' });
+    doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', this.MARGIN.LEFT, 85, { align: 'left' });
+
+    doc.text('PRESENTE', this.MARGIN.LEFT, 95, { align: 'left' });
+    this.addTextRight(doc, this._request.dependencyDepartmentManager, 100);
+    this.addTextRight(doc, this._request.dependencyName, 105);
+
+    doc.setFont(this.FONT, 'Normal');
+    const body = `Por este conducto, presentamos a sus finas atenciones al C. ${this.addArroba(this._request.student.fullName)}, con número de control ${this.addArroba(this._request.student.controlNumber)}, alumno de la carrera de ${this.addArroba(this._request.student.career)}, quien desea realizar su Servicio Social en esa dependencia, cubriendo un total de 500 horas en el programa ${this.addArroba(this._request.dependencyProgramName)} en un período mínimo de seis meses y no mayor de dos años. Así mismo solicito de la manera más atenta nos haga llegar la carta de aceptación, donde mencione el día de inicio de su servicio social.`;
     this.justifyText(doc,
       body,
-      {x: this.MARGIN.LEFT, y: 110}, this.WIDTH - (this.MARGIN.LEFT * 2), 7, 10);
+      {x: this.MARGIN.LEFT, y: 115}, this.WIDTH - (this.MARGIN.LEFT * 2), 7, 10);
 
     doc.text('Agradezco las atenciones que se sirva brindar al portador de la presente.', this.MARGIN.LEFT, 160, { align: 'left' });
 
     // Firma de la Jefa del Departamento de Gestion y Vinculacion
-    doc.setFontSize(9);
-    doc.text('ATENTAMENTE', (this.WIDTH / 2), 185, { align: 'center' });
-    doc.addImage(this.departmentSignature, 'PNG', (this.WIDTH / 2) - 15, 220 - 30, 35, 35);
-    doc.text('_______________________________________________', (this.WIDTH / 2), 220, { align: 'center' });
-    doc.text('Jefe(a) de Departamento de Gestión Tecnológica y Vinculación', (this.WIDTH / 2), 225, { align: 'center' });
+    doc.setFont(this.FONT, 'Bold');
+    doc.setFontSize(10);
+    doc.text('ATENTAMENTE', this.MARGIN.LEFT, 170, { align: 'left' });
+    doc.text('Excelencia en Educación Tecnológica', this.MARGIN.LEFT, 175, { align: 'left' });
+    doc.text('\"SABIDURIA TECNOLÓGICA, PASIÓN DE NUESTRO ESPÍRITU\"', this.MARGIN.LEFT, 180, { align: 'left' });
+    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 20, 190, 25, 25);
+    doc.text('M.C ZOILA RAQUEL AGUIRRE GONZÁLES', this.MARGIN.LEFT, 225, { align: 'left' });
+    doc.text('JEFA DEL DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN', this.MARGIN.LEFT, 230, { align: 'left' });
+    doc.text('ZRGA/ahn', this.MARGIN.LEFT, 245, { align: 'left' });
+
+    doc.addImage(this.stampTec, 'PNG', this.WIDTH - (this.WIDTH / 3), 175, 50, 50);
 
     // Footer
-    doc.setFont(this.FONT, 'Bold');
-    doc.setTextColor(189, 189, 189);
-    doc.setFontSize(8);
-    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
-    doc.text('Código ITT-POC-08-03', (this.WIDTH / 2), 262, { align: 'center' });
-    doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
-    doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
+    this.addFooterTec(doc);
     return doc;
   }
 

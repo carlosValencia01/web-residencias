@@ -32,6 +32,7 @@ export class InitConstancy {
   private directorFirm: any;
   private departmentSignature: any;
   private subPlanDirectorSignature: any;
+  private stampTec: any;
   private montserratNormal: any;
   private montserratBold: any;
   public _request: InitConstancyModel;
@@ -83,6 +84,10 @@ export class InitConstancy {
     this._getImage.getBase64('assets/imgs/firms/subplaneacion.png').then(firm => {
       this.subPlanDirectorSignature = firm;
     });
+
+    this._getImage.getBase64('assets/imgs/firms/sello25.png').then(firm => {
+      this.stampTec = firm;
+    });
   }
 
   public documentSend() {
@@ -104,12 +109,12 @@ export class InitConstancy {
     // Title
     doc.setFont(this.FONT, 'Bold');
     doc.setFontSize(10);
-    doc.text('CONSTANCIA DE SERVICIO SOCIAL ITT-POC-08-08', (this.WIDTH / 2), 35, { align: 'center' });
+    // doc.text('CONSTANCIA DE SERVICIO SOCIAL ITT-POC-08-08', (this.WIDTH / 2), 35, { align: 'center' });
 
     // doc.setFontSize(10);
-    const header1 = 'Departamento: GESTIÓN TECNOLÓGICA Y VINCULACIÓN';
-    const header2 = `No. de Oficio: ${this._request.tradeConstancyDocumentNumber}`;
-    const header3 = 'Asunto: Constancia de liberación de Servicio Social';
+    const header1 = 'DEPARTAMENTO: GESTIÓN TECNOLÓGICA Y VINCULACIÓN';
+    const header2 = `No. DE OFICIO: ${this._request.tradeConstancyDocumentNumber}`;
+    const header3 = 'ASUNTO: Constancia de liberación de Servicio Social';
     doc.text(header1, this.WIDTH - (this.MARGIN.RIGHT + doc.getTextWidth(header1)),  45, { align: 'left' });
     doc.text(header2, this.WIDTH - (this.MARGIN.RIGHT + doc.getTextWidth(header2)),  50, { align: 'left' });
     doc.text(header3, this.WIDTH - (this.MARGIN.RIGHT + doc.getTextWidth(header3)),  55, { align: 'left' });
@@ -117,8 +122,8 @@ export class InitConstancy {
 
     doc.text('A QUIEN CORRESPONDA:', this.MARGIN.LEFT, 65, { align: 'left' });
     doc.setFont(this.FONT, 'Normal');
-    doc.text('Por medio de la presente se hace constar que:', this.MARGIN.LEFT, 70, { align: 'left' });
     let grade;
+    doc.text('Por medio de la presente se hace constar que:', this.MARGIN.LEFT, 70, { align: 'left' });
     switch (this._request.performanceLevelConstancyDocument) {
       case 'Excelente':
         grade = '100';
@@ -136,9 +141,9 @@ export class InitConstancy {
         grade = '60';
         break;
     }
-    const ph1 = `Según documentos que obran en los archivos de esta Institución, al C.${this._request.student.fullName}, con número de control ${this._request.student.controlNumber} de la carrera de ${this._request.student.career} realizó su Servicio Social en la Dependencia ${this._request.dependencyName}, en el programa: ${this._request.dependencyProgramName}, cubriendo un mínimo total de 480 horas, durante el período comprendido del ${moment(this._request.initialDate).format('LL')} al ${moment(this._request.initialDate).format('LL')} obteniendo una calificación de ${grade}.`;
-    const ph2 = 'Este Servicio Social fue realizado de acuerdo con lo establecido en la Ley Reglamentaria del Artículo 5o. Constitucional relativo al ejercicio de las Profesiones y los Reglamentos que rigen la normativa emitida por el Tecnológico Nacional de México.';
-    const ph3 = `Se extiende la presente para los fines legales que al interesado convengan, en la Ciudad de Tepic, Nayarit a los ${moment(today).format('D [días del mes de] MMMM [del] YYYY')}`;
+    const ph1 = `Según documentos en los archivos de esta Institución, al C. ${this.addArroba(this._request.student.fullName)}, con número de control ${this.addArroba(this._request.student.controlNumber)} de la carrera de ${this.addArroba(this._request.student.career)} realizó su Servicio Social en la Dependencia ${this.addArroba(this._request.dependencyName)}, en el programa: ${this.addArroba(this._request.dependencyProgramName)}, cubriendo un total de 500 horas, durante el período comprendido del ${this.addArroba(moment(this._request.initialDate).format('LL').toUpperCase())} al ${this.addArroba(moment(this._request.initialDate).format('LL').toUpperCase())} obteniendo un nivel de desempeño de ${this.addArroba(grade)}.`;
+    const ph2 = 'Este Servicio Social fue realizado de acuerdo con lo establecido en la Ley Reglamentaria del Artículo 5o. Constitucional relativo al ejercicio de las Profesiones y los Reglamentos que rigen la Sistema Nacional de Educación Superior Tecnológica.';
+    const ph3 = `Se extiende la presente para los fines legales que al interesado convengan, en la Ciudad de Tepic, Nayarit a los ${moment(today).format('D [días del mes de] MMMM [del] YYYY').toUpperCase()}`;
 
     this.justifyText(doc, ph1, {x: this.MARGIN.LEFT, y: 75}, this.WIDTH - (this.MARGIN.LEFT * 2 + 10), 4, 10);
     this.justifyText(doc, ph2, {x: this.MARGIN.LEFT, y: 100}, this.WIDTH - (this.MARGIN.LEFT * 2 + 10), 4, 10);
@@ -153,23 +158,18 @@ export class InitConstancy {
     const firstSign = this.addArroba(`${this._request.departmentSignName} JEFE(A) DEL DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN`);
     const secondSign = this.addArroba(`${this._CookiesService.getData().user.name.fullName} SUBDIRECTOR(A) DE PLANEACIÓN Y VINCULACIÓN`);
 
-    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 30, 180, 35, 35);
-    doc.addImage(this.subPlanDirectorSignature, 'PNG', this.MARGIN.LEFT + 110, 180, 35, 30);
+    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 30, 160, 35, 35);
+    doc.addImage(this.subPlanDirectorSignature, 'PNG', this.MARGIN.LEFT + 110, 165, 40, 20);
 
-    this.justifyText(doc, firstSign, {x: this.MARGIN.LEFT + 20, y: 210}, 60, 4, 9);
-    this.justifyText(doc, secondSign, {x: this.MARGIN.LEFT + 100, y: 210}, 60, 4, 9);
+    this.justifyText(doc, firstSign, {x: this.MARGIN.LEFT + 20, y: 200}, 60, 4, 9);
+    this.justifyText(doc, secondSign, {x: this.MARGIN.LEFT + 100, y: 200}, 60, 4, 9);
+    doc.addImage(this.stampTec, 'PNG', this.WIDTH - (this.WIDTH / 4), 210, 40, 40);
 
-    doc.text('C.c.p. Departamento de Servicios Escolares', this.MARGIN.LEFT, 240, {align: 'left'});
+    doc.text('EMM/ZRAG/ahn', this.MARGIN.LEFT, 240, {align: 'left'});
     doc.text('C.c.p. Expediente del estudiante.', this.MARGIN.LEFT, 245, {align: 'left'});
-    doc.text('C.c.p. Expediente', this.MARGIN.LEFT, 250, {align: 'left'});
 
     // Footer
-    doc.setFont(this.FONT, 'Bold');
-    doc.setTextColor(189, 189, 189);
-    doc.setFontSize(8);
-    doc.text('Referencia a la Norma ISO 9001:2015  8.2.3', this.MARGIN.LEFT, 267, { align: 'left' });
-    doc.text('Código ITT-POC-08-08', this.MARGIN.LEFT + 100, 267, { align: 'left' });
-    doc.text('Rev. 0', this.WIDTH - 30, 267, { align: 'left' });
+    this.addFooterTec(doc);
     return doc;
   }
 
