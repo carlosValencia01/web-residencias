@@ -58,7 +58,6 @@ import { ReviewLastReportPageComponent } from './department/review-last-report-p
 import { DialogHistoryViewerComponent } from './components/dialog-history-viewer/dialog-history-viewer.component';
 import { ControlSubprincipalPageComponent } from './department/control-subprincipal-page/control-subprincipal-page.component';
 
-
 @NgModule({
   imports: [
     CommonModule,

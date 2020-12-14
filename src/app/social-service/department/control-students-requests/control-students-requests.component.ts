@@ -57,6 +57,8 @@ export class ControlStudentsRequestsComponent implements OnInit {
   public pdf;
   private userData;
 
+  public studentToSign: Array<any> = new Array<any>();
+  public flagStudentToSign = true;
 
   constructor( private controlStudentProv: ControlStudentProv,
               private loadingService: LoadingService,
@@ -79,7 +81,9 @@ export class ControlStudentsRequestsComponent implements OnInit {
     this.displayedColumnsAllRequestsName = ['Nombre', 'Número de control', 'Carrera', 'Estatus', 'Fase'];
     this.displayedColumnsNoNumber = ['no', 'fullName', 'controlNumber', 'career', 'tradeDocumentNumber', 'actions'];
     this.displayedColumnsNoNumberName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio'];
-    this.displayedColumnsNumber = ['no', 'fullName', 'controlNumber', 'career', 'tradeDocumentNumber', 'status', 'actions'];
+    this.displayedColumnsNumber = this.verifyPositionBoss() ?
+      ['select', 'no', 'fullName', 'controlNumber', 'career', 'tradeDocumentNumber', 'status', 'actions'] :
+      ['no', 'fullName', 'controlNumber', 'career', 'tradeDocumentNumber', 'status', 'actions'];
     this.displayedColumnsNumberName = ['Nombre', 'Número de control', 'Carrera', 'No. Oficio', 'Estatus'];
     this.displayedColumnsComplete = ['no', 'fullName', 'controlNumber', 'career', 'status', 'actions'];
     this.displayedColumnsCompleteName = ['Nombre', 'Número de control', 'Carrera', 'Estatus'];
@@ -132,26 +136,67 @@ export class ControlStudentsRequestsComponent implements OnInit {
     }
   }
 
-  signPresentationDocument(controlStudentId) {
+  selectDocument(event, student) {
+    student.check = event.checked;
+    if (event.checked) {
+      this.studentToSign.push(student);
+      this.flagStudentToSign = false;
+    } else {
+      const index = this.studentToSign.findIndex(st => st.controlNumber === student.controlNumber);
+      this.studentToSign.splice(index, 1);
+      if (this.studentToSign.length === 0) {
+        this.flagStudentToSign = true;
+      }
+    }
+  }
+
+  selectAll(event) {
+    this.dataSourceNumber.data.forEach(fs => {
+      if (event.checked) {
+        if (!fs.check && fs.status !== 'firstSign') {
+          fs.check = true;
+          this.studentToSign.push(fs);
+        }
+      } else {
+        fs.check = false;
+        this.studentToSign.pop();
+      }
+    });
+    if (!event.checked) {
+      this.flagStudentToSign = true;
+    }
+  }
+
+  async signAllPresentationDocument() {
     this.signPresentationConfirmation().then( conf => {
       if (conf) {
-        this.controlStudentProv.getControlStudentById(controlStudentId)
-          .subscribe( resp => {
-            this.formDocument = this._castToDoc(resp.controlStudent);
-            this._pushHistoryDocumentStatus('SE FIRMO',
-              'SE HA FIRMADO LA CARTA DE PRESENTACIÓN',
-              this.userData.name.fullName,
-              eSocialNameDocuments.PRESENTACION_CODE,
-              controlStudentId, resp.controlStudent.historyDocumentStatus);
-            // console.log(this.formDocument);
-            this.initRequest.setPresentationRequest(this.formDocument);
-            // this.pdf = this.initRequest.socialServicePresentation().output('bloburl');
-            const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
-            this.saveDocument(binary, this.formDocument.student, controlStudentId, true, '');
-          }, err => {
-            console.log(err);
-          });
-      }
+        for (const student of this.studentToSign) {
+          this.loadingService.setLoading(true);
+          const controlStudentId = student.id;
+          this.controlStudentProv.getControlStudentById(controlStudentId)
+            .subscribe( async resp => {
+              this.formDocument = this._castToDoc(resp.controlStudent);
+              this.initRequest.setPresentationRequest(this.formDocument);
+              const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
+              this.saveDocument(binary, this.formDocument.student, controlStudentId, true, '')
+                .then(() => {
+                  this.refreshNumber();
+                  this.loadingService.setLoading(false);
+                  this._pushHistoryDocumentStatus('SE FIRMO',
+                    'SE HA FIRMADO LA CARTA DE PRESENTACIÓN',
+                    this.userData.name.fullName,
+                    eSocialNameDocuments.PRESENTACION_CODE,
+                    controlStudentId, resp.controlStudent.historyDocumentStatus);
+                }).catch(errMsg => {
+                this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Error',
+                  errMsg);
+                this.loadingService.setLoading(false);
+              });
+            }, err => {
+              console.log(err);
+            });
+        }
+        }
     });
   }
 
@@ -175,80 +220,56 @@ export class ControlStudentsRequestsComponent implements OnInit {
   }
 
   saveDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string) {
-    this.loadingService.setLoading(true);
-    const documentInfo = {
-      mimeType: 'application/pdf',
-      nameInDrive: eSocialNameDocuments.PRESENTACION,
-      bodyMedia: document,
-      folderId: student.folderIdSocService.idFolderInDrive,
-      newF: statusDoc,
-      fileId: fileId
-    };
+    return new Promise( (resolve, reject) => {
+      const documentInfo = {
+        mimeType: 'application/pdf',
+        nameInDrive: eSocialNameDocuments.PRESENTACION,
+        bodyMedia: document,
+        folderId: student.folderIdSocService.idFolderInDrive,
+        newF: statusDoc,
+        fileId: fileId
+      };
 
-    this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-      async updated => {
-        if (updated.action === 'create file') {
-          const documentInfo4 = {
-            doc: {
-              filename: updated.name,
-              type: 'DRIVE',
-              fileIdInDrive: updated.fileId
-            },
-            status: {
-              name: 'ACEPTADO',
-              active: true,
-              message: 'Se envio por primera vez',
-              observation: 'Firmado por: ' + this.userData.name.fullName
-            }
-          };
+      this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
+        async updated => {
+          if (updated.action === 'create file') {
+            const documentInfo4 = {
+              doc: {
+                filename: updated.name,
+                type: 'DRIVE',
+                fileIdInDrive: updated.fileId
+              },
+              status: {
+                name: 'ACEPTADO',
+                active: true,
+                message: 'Se envio por primera vez',
+                observation: 'Firmado por: ' + this.userData.name.fullName
+              }
+            };
 
-
-
-          await this.controlStudentProv.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
-              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud registrada correctamente.');
-              this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
-                {'verification.presentation': 'sign', 'verification.signs.presentation.signDepartmentDate': new Date(),
-                  'verification.signs.presentation.signDepartmentName': this.userData.name.fullName} )
-                .subscribe( res => {
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
-                  this.changeSubTab(0);
-                }, () => {
-                  this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
-                    'No se ha podido guardar la información de firma del responsable');
-                });
-            },
-            err => {
-              console.log(err);
-            }, () => this.loadingService.setLoading(false)
-          );
-        } else {
-          const docStatus = {
-            name: 'ACEPTADO',
-            active: true,
-            message: 'Se actualizo el documento'
-          };
-          await this.controlStudentProv.updateDocumentLog(student._id, {filename: updated.filename, status: docStatus})
-            .subscribe( () => {
-              this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
-                {'verification.presentation': 'sign', 'verification.signs.presentation.signDepartmentDate': new Date(),
-                  'verification.signs.presentation.signDepartmentName': this.userData.name.fullName} )
-                .subscribe( res => {
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
-                }, () => {
-                  this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
-                    'No se ha podido guardar la información de firma del responsable');
-                });
-              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud actualizada correctamente.');
-            }, err => {
-              console.log(err);
-            }, () => this.loadingService.setLoading(false));
-        }
-      },
-      err => {
-        console.log(err);
-        this.loadingService.setLoading(false);
-      }
-    );
+            await this.controlStudentProv.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
+                this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Solicitud registrada correctamente.');
+                this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
+                  {'verification.presentation': 'sign', 'verification.signs.presentation.signDepartmentDate': new Date(),
+                    'verification.signs.presentation.signDepartmentName': this.userData.name.fullName} )
+                  .subscribe( res => {
+                    this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+                    resolve();
+                  }, () => {
+                    reject('No se ha podido guardar la información de firma del responsable');
+                  });
+              },
+              err => {
+                console.log(err);
+                reject('Vuelva a intentarlo mas tarde.');
+              });
+          }
+        },
+        err => {
+          console.log(err);
+          reject('Vuelva a intentarlo mas tarde.');
+        });
+    });
   }
 
   public refreshSend() {

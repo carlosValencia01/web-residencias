@@ -369,10 +369,6 @@
                       <mat-icon class="material-icons text-info">folder_shared</mat-icon>
                       <span>Expediente</span>
                     </button>
-                    <button mat-menu-item *ngIf="verifyPositionBoss() && row['status'] === 'register'" (click)="signConstancyDocument(row['id'])">
-                      <mat-icon class="material-icons text-info">assignment_turned_in</mat-icon>
-                      <span>Firmar</span>
-                    </button>
                   </mat-menu>
                 </td>
               </ng-container>

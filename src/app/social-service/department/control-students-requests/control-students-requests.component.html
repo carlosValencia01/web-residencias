@@ -237,7 +237,65 @@
             </button>
           </div>
         </div>
-        <div class="row">
+        <div *ngIf="verifyPositionBoss()">
+          <div class="row p-2">
+            <div class="col-6 text-center">
+              <mat-checkbox #all (change)="selectAll($event)">Seleccionar a todos los alumnos</mat-checkbox>
+            </div>
+            <div class="col-6 text-center">
+              <button mat-raised-button color="primary" class="w-75" type="button" [disabled]="(!all.checked || studentToSign.length === 0) && flagStudentToSign" (click)="signAllPresentationDocument()">Firmar a todos</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mat-elevation-z8">
+              <table mat-table [dataSource]="dataSourceNumber" matSort>
+                <ng-container matColumnDef="select">
+                  <th *matHeaderCellDef mat-header-cell class="text-center"></th>
+                  <td *matCellDef="let row; let i = index" mat-cell style="width:10%">
+                    <mat-checkbox [checked]="row['check']" [disabled]="row['status'] === 'firstSign'" (change)="selectDocument($event, row)"></mat-checkbox>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="no">
+                  <th *matHeaderCellDef mat-header-cell class="text-center">No.</th>
+                  <td *matCellDef="let row; let i = index" mat-cell style="width:5%">
+                    {{matPaginatorNumber.pageIndex*matPaginatorNumber.pageSize + i+1}}
+                  </td>
+                </ng-container>
+                <ng-container *ngFor="let item of displayedColumnsNumber.slice(2, -1);let index=index"
+                              [matColumnDef]="item">
+                  <th *matHeaderCellDef mat-header-cell mat-sort-header>{{displayedColumnsNumberName[index]}}</th>
+                  <td *matCellDef="let row" mat-cell style="width:25%;">
+                        <span mat-line *ngIf="[0,1,2,3].includes(index)">
+                          {{row[item]}}
+                        </span>
+                    <span mat-line *ngIf="index === 4" class="badge badge-pill" [ngClass]="(row['status'] === 'Firmada')?'badge-primary':'badge-warning'">
+                          {{row[item]}}
+                        </span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                  <th *matHeaderCellDef mat-header-cell>Acciones</th>
+                  <td *matCellDef="let row" mat-cell>
+                    <button [matMenuTriggerFor]="actions" mat-icon-button>
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #actions>
+                      <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                        <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                        <span>Expediente</span>
+                      </button>
+                    </mat-menu>
+                  </td>
+                </ng-container>
+                <tr *matHeaderRowDef="displayedColumnsNumber" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumnsNumber;" mat-row></tr>
+              </table>
+              <mat-paginator #matPaginatorNumber [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="!verifyPositionBoss()">
           <div class="col-12 mat-elevation-z8">
             <table mat-table [dataSource]="dataSourceNumber" matSort>
               <ng-container matColumnDef="no">
@@ -265,9 +323,9 @@
                     <mat-icon>more_vert</mat-icon>
                   </button>
                   <mat-menu #actions>
-                    <button mat-menu-item *ngIf="verifyPositionBoss()" (click)="signPresentationDocument(row['id'])">
-                      <mat-icon class="material-icons text-info">assignment_turned_in</mat-icon>
-                      <span>Firmar</span>
+                    <button mat-menu-item routerLink="/social-service/recordStudent" [queryParams]="{id: row['id']}">
+                      <mat-icon class="material-icons text-info">folder_shared</mat-icon>
+                      <span>Expediente</span>
                     </button>
                   </mat-menu>
                 </td>
