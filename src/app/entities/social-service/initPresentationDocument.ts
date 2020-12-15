@@ -232,7 +232,10 @@ export class InitPresentationDocument {
       this.justifyText(doc,
         actDesc,
         {x: this.MARGIN.LEFT + 2, y: 147}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
-    doc.text(this._request.dependencyActivities, this.MARGIN.LEFT + 2, 157, { align: 'left' });
+      this.justifyText(doc,
+        this._request.dependencyActivities,
+        {x: this.MARGIN.LEFT + 2, y: 155}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
+    //doc.text(this._request.dependencyActivities, this.MARGIN.LEFT + 2, 157, { align: 'left' });
 
     doc.rect(this.MARGIN.LEFT + 2, 192, this.WIDTH - (this.MARGIN.RIGHT * 2) - 4, 33); // HORARIO  225
 
@@ -296,8 +299,7 @@ export class InitPresentationDocument {
         //225
     let inside = 'no';
     if (this._request.dependencyProgramLocationInside) {inside = 'si'; }
-    doc.text(`EL SERVICIO SOCIAL LO REALIZARA DENTRO DE LAS INSTALACIONES DE LA DEPENDENCIA:` , this.MARGIN.LEFT + 2, 228, { align: 'left' });
-    doc.text(`              ${inside}` , this.MARGIN.LEFT + 2, 233, { align: 'left' });
+    doc.text(`EL SERVICIO SOCIAL LO REALIZARA DENTRO DE LAS INSTALACIONES DE LA DEPENDENCIA: ${inside}` , this.MARGIN.LEFT + 2, 228, { align: 'left' });
     doc.text(`DONDE:  ${this._request.dependencyProgramLocation}` , this.MARGIN.LEFT + 2, 238, { align: 'left' });
     // 240
     // Footer
