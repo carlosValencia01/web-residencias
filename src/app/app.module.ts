@@ -50,7 +50,9 @@ registerLocaleData(localeEs);
 import { getSpanishPaginatorIntl } from 'src/app/services/shared/mat-paginator-labels';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { RequestProvider } from './providers/reception-act/request.prov';
+
 @NgModule({
+  
   declarations: [
     AppComponent,
     HomeHeaderComponent,

@@ -110,7 +110,7 @@ import { ControlSubprincipalPageComponent } from './department/control-subprinci
     ReviewReportsDocumentsComponent,
     ReviewLastReportPageComponent,
     DialogHistoryViewerComponent,
-    ControlSubprincipalPageComponent
+    ControlSubprincipalPageComponent,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
