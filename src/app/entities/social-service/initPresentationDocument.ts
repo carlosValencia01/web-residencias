@@ -342,11 +342,12 @@ export class InitPresentationDocument {
         'procurando dar una imagen positiva del instituto en el Organizmo o Dependencia oficial, de no hacerlo así, quedo enterado(a) de la cancelación respectiva a la cual procedera automáticamente.',
         {x: this.MARGIN.LEFT, y: 160}, this.WIDTH - (this.MARGIN.RIGHT * 2), 5, 12);
 
-      doc.text('En la ciudad de: Tepic el día *dia* del mes *mes* de *año*', (this.WIDTH / 2), 200, { align: 'center' });
+      doc.text(`En la ciudad de: Tepic el día ${moment(new Date()).format('D [del mes] MMMM [de] YYYY').toUpperCase()}`, (this.WIDTH / 2), 200, { align: 'center' });
       doc.setFont(this.FONT, 'Bold');
       doc.text('CONFORMIDAD', (this.WIDTH / 2), 210, { align: 'center' });
-      doc.text(`Firmado digitalmente por ${this._request.student.fullName}`, (this.WIDTH / 2), 225, { align: 'center' });
-      doc.text('Firma del prestante del Servicio Social', (this.WIDTH / 2), 233, { align: 'center' });
+      doc.setFontSize(9);
+      doc.text(`Esta solicitud fue firmada electrónicamente por ${this._request.student.fullName} el ${moment(new Date()).format('D [de] MMMM [de] YYYY [a las] h:mm a')}`, (this.WIDTH / 2), 225, { align: 'center' });
+      doc.text('Firma del prestante del Servicio Social', (this.WIDTH / 2), 230, { align: 'center' });
 
       // Footer
       doc.setFont(this.FONT, 'Bold');
@@ -374,7 +375,7 @@ export class InitPresentationDocument {
     doc.setFontSize(8);
     doc.text('Código: ITT-POC-08-11                     Revisión: 1', (this.WIDTH / 2), 47, { align: 'center' });
     doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 52, { align: 'center' });
-    // Preguntas  
+    // Preguntas
     doc.setFontSize(11);
     doc.text('Nivel de desempeño del criterio', ((this.WIDTH / 4)*3) - 15, 62, { align: 'center' });
     doc.text('No.', this.MARGIN.LEFT +3 , 69, { align: 'center' });
@@ -431,7 +432,7 @@ export class InitPresentationDocument {
       {x: this.MARGIN.LEFT + 3, y: 187}, 162, 4, 10);
       // Nombre, No. de control y firma del prestador de Servicio Social
     doc.text(`${this.selfEvaluation.studentName}, ${this.selfEvaluation.control}`, this.WIDTH/2 , 210, { align: 'center' });
-    doc.setFontSize(8);                                                    
+    doc.setFontSize(8);
     doc.text(`Documento firmado electrónicamente por ${this.selfEvaluation.studentName}, el ${moment().format('D [de] MMMM [de] YYYY [a las] h:mm a')}`, this.WIDTH/2 , 215, { align: 'center' });
     doc.setFontSize(10);
     doc.line(this.MARGIN.LEFT +12, 217, this.MARGIN.LEFT + 170 , 217);
@@ -453,7 +454,7 @@ export class InitPresentationDocument {
 
     //lineas y rectangulos
     doc.rect(this.MARGIN.LEFT -2, 64, this.WIDTH - (2 * this.MARGIN.RIGHT) + 4, 164); // rectangulo completo
-    doc.rect(this.MARGIN.LEFT +65, 57, (this.WIDTH - (2 * this.MARGIN.RIGHT) + 4)-(67), 7); // primer rectangulo 
+    doc.rect(this.MARGIN.LEFT +65, 57, (this.WIDTH - (2 * this.MARGIN.RIGHT) + 4)-(67), 7); // primer rectangulo
 
     //Lineas horizontales
     doc.line(this.MARGIN.LEFT -2, 72, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 72);
