@@ -6,6 +6,7 @@ import {ImageToBase64Service} from '../../services/app/img.to.base63.service';
 import {CookiesService} from '../../services/app/cookie.service';
 import {eSocialFiles} from '../../enumerators/social-service/document.enum';
 import {InitRequestModel} from './initRequest.model';
+import { InitSelfEvaluationModel } from './initSelfEvaluation.model';
 
 moment.locale('es');
 
@@ -35,6 +36,7 @@ export class InitPresentationDocument {
   private montserratNormal: any;
   private montserratBold: any;
   public _request: InitRequestModel;
+  public selfEvaluation: InitSelfEvaluationModel;
 
   constructor(
     public _getImage: ImageToBase64Service,
@@ -45,6 +47,10 @@ export class InitPresentationDocument {
 
   public setPresentationRequest(request: InitRequestModel) {
     this._request = request;
+  }
+
+  public setSelfEvaluationRequest(request: InitSelfEvaluationModel) {
+    this.selfEvaluation = request;
   }
 
   private _getImageToPdf() {
@@ -101,6 +107,11 @@ export class InitPresentationDocument {
       }
       case eSocialFiles.COMPROMISO: {
         document = this.socialServiceCommitment().output('arraybuffer');
+        binary = this.bufferToBase64(document);
+        break;
+      }
+      case eSocialFiles.AUTOEVALUACION: {
+        document = this.socialServiceSelfEvaluation().output('arraybuffer');
         binary = this.bufferToBase64(document);
         break;
       }
@@ -347,6 +358,133 @@ export class InitPresentationDocument {
       doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
       return doc;
     }
+
+
+
+  // ************** Carta de autoevaluacion de servicio social
+  public socialServiceSelfEvaluation(): jsPDF {
+    const coordenadas = [this.MARGIN.LEFT + 78, this.MARGIN.LEFT + 105, this.MARGIN.LEFT + 128, this.MARGIN.LEFT + 145, this.MARGIN.LEFT + 167];
+    const doc = this.newDocumentTec(true, false);
+    doc.setTextColor(0, 0, 0);
+    // Title
+    doc.setFont(this.FONT, 'Bold');
+    doc.setFontSize(11);
+    doc.text('FORMATO DE AUTOEVALUACIÓN CUALITATIVA DEL PRESTADOR DE SERVICIO SOCIAL', (this.WIDTH / 2), 35, { align: 'center' });
+    doc.text('DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN', (this.WIDTH / 2), 42, { align: 'center' });
+    doc.setFontSize(8);
+    doc.text('Código: ITT-POC-08-11                     Revisión: 1', (this.WIDTH / 2), 47, { align: 'center' });
+    doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 52, { align: 'center' });
+    // Preguntas  
+    doc.setFontSize(11);
+    doc.text('Nivel de desempeño del criterio', ((this.WIDTH / 4)*3) - 15, 62, { align: 'center' });
+    doc.text('No.', this.MARGIN.LEFT +3 , 69, { align: 'center' });
+    doc.text('Criterios a evaluar', this.MARGIN.LEFT + 35 , 69, { align: 'center' });
+    doc.text('Insuficiente', this.MARGIN.LEFT + 78 , 69, { align: 'center' });
+    doc.text('Suficiente', this.MARGIN.LEFT + 105 , 69, { align: 'center' });
+    doc.text('Bueno', this.MARGIN.LEFT + 128 , 69, { align: 'center' });
+    doc.text('Notable', this.MARGIN.LEFT + 145 , 69, { align: 'center' });
+    doc.text('Excelente', this.MARGIN.LEFT + 167 , 69, { align: 'center' });
+
+    doc.text('*', coordenadas[this.selfEvaluation.qs1] , 81, { align: 'center' }); //1
+    doc.text('*', coordenadas[this.selfEvaluation.qs2] , 96, { align: 'center' }); //2
+    doc.text('*', coordenadas[this.selfEvaluation.qs3] , 106, { align: 'center' }); //3
+    doc.text('*', coordenadas[this.selfEvaluation.qs4] , 116, { align: 'center' }); //4
+    doc.text('*', coordenadas[this.selfEvaluation.qs5] , 134, { align: 'center' }); //5
+    doc.text('*', coordenadas[this.selfEvaluation.qs6] , 152, { align: 'center' }); //6
+    doc.text('*', coordenadas[this.selfEvaluation.qs7] , 170, { align: 'center' }); //7
+
+    doc.setFontSize(10);
+
+    this.justifyText(doc,
+      'Cumplí en tiempo y forma con las actividades encomendadas alcanzando los objetivos.',
+      {x: this.MARGIN.LEFT + 10, y: 77}, this.MARGIN.LEFT + 32, 4, 10);
+    doc.text('1', this.MARGIN.LEFT + 4 , 81, { align: 'center' });
+    this.justifyText(doc,
+      'Trabajé en equipo y me adapté a nuevas situaciones.',
+      {x: this.MARGIN.LEFT + 10, y: 95}, this.MARGIN.LEFT + 32, 4, 10);
+    doc.text('2', this.MARGIN.LEFT + 4 , 96, { align: 'center' });
+    this.justifyText(doc,
+      'Mostré liderazgo en las actividades encomendadas.',
+      {x: this.MARGIN.LEFT + 10, y: 105}, this.MARGIN.LEFT + 32, 4, 10);
+    doc.text('3', this.MARGIN.LEFT + 4 , 106, { align: 'center' });
+    this.justifyText(doc,
+      'Organicé mi tiempo y trabajé de manera proactiva.',
+      {x: this.MARGIN.LEFT + 10, y: 115}, this.MARGIN.LEFT + 32, 4, 10);
+    doc.text('4', this.MARGIN.LEFT + 4 , 116, { align: 'center' });
+    this.justifyText(doc,
+      'Interpreté la realidad y me sensibilicé aportando soluciones a la problemática con la actividad complementaria.',
+      {x: this.MARGIN.LEFT + 10, y: 125}, this.MARGIN.LEFT + 32, 4, 10);
+    doc.text('5', this.MARGIN.LEFT + 4 , 134, { align: 'center' });
+    this.justifyText(doc,
+      'Realicé sugerencias innovadoras para beneficio o mejora del programa en el que participa.',
+      {x: this.MARGIN.LEFT + 10, y: 147}, this.MARGIN.LEFT + 32, 4, 10);
+    doc.text('6', this.MARGIN.LEFT + 4 , 152, { align: 'center' });
+    this.justifyText(doc,
+      'Tuve iniciativa para ayudar en las actividades encomendadas y mostré espíritu de servicio. ',
+      {x: this.MARGIN.LEFT + 10, y: 165}, this.MARGIN.LEFT + 32, 4, 10);
+    doc.text('7', this.MARGIN.LEFT + 4 , 170, { align: 'center' });
+
+    // doc.text('Observaciones: ', this.MARGIN.LEFT + 3 , 190, { align: 'left' });
+    doc.setFontSize(10);
+    this.justifyText(doc,
+      `Observaciones: ${this.selfEvaluation.observations}` ,
+      {x: this.MARGIN.LEFT + 3, y: 187}, 162, 4, 10);
+      // Nombre, No. de control y firma del prestador de Servicio Social
+    doc.text(`${this.selfEvaluation.studentName}, ${this.selfEvaluation.control}`, this.WIDTH/2 , 210, { align: 'center' });
+    doc.setFontSize(8);                                                    
+    doc.text(`Documento firmado electrónicamente por ${this.selfEvaluation.studentName}, el ${moment().format('D [de] MMMM [de] YYYY [a las] h:mm a')}`, this.WIDTH/2 , 215, { align: 'center' });
+    doc.setFontSize(10);
+    doc.line(this.MARGIN.LEFT +12, 217, this.MARGIN.LEFT + 170 , 217);
+    doc.text('Nombre, No. de control y firma del prestador de Servicio Social', this.WIDTH/2, 221, { align: 'center' });
+    doc.text('c.c.p. Oficina de Servicio Social ', this.MARGIN.LEFT + 3, 226, { align: 'left' });
+
+    doc.setFont(this.FONT, 'Bold');
+    doc.text(`Nombre del prestador de Servicio Social: ${this.selfEvaluation.studentName}`, this.MARGIN.LEFT + 10, 232, { align: 'left' });
+    doc.text(`Programa: ${this.selfEvaluation.programName}`, this.MARGIN.LEFT + 10, 238, { align: 'left' });
+    doc.text(`Periodo de realización: ${this.selfEvaluation.period}`, this.MARGIN.LEFT + 10, 245, { align: 'left' });
+    doc.text('Indique a que bimestre corresponde:', this.MARGIN.LEFT + 10, 252, { align: 'left' });
+    doc.text(`Bimestre: ${this.selfEvaluation.position}`, this.MARGIN.LEFT + 150, 252, { align: 'center' });
+    // Footer
+    doc.setFont(this.FONT, 'Bold');
+    doc.setFontSize(8);
+    doc.text('Código ITT-POC-08-05', this.MARGIN.LEFT + 10, 262, { align: 'left' });
+    doc.text('Revisión: 1', (this.WIDTH / 2 ) + 50, 262, { align: 'left' });
+    doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', this.MARGIN.LEFT + 10, 267, { align: 'left' });
+
+    //lineas y rectangulos
+    doc.rect(this.MARGIN.LEFT -2, 64, this.WIDTH - (2 * this.MARGIN.RIGHT) + 4, 164); // rectangulo completo
+    doc.rect(this.MARGIN.LEFT +65, 57, (this.WIDTH - (2 * this.MARGIN.RIGHT) + 4)-(67), 7); // primer rectangulo 
+
+    //Lineas horizontales
+    doc.line(this.MARGIN.LEFT -2, 72, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 72);
+    doc.line(this.MARGIN.LEFT -2, 91, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 91);
+    doc.line(this.MARGIN.LEFT -2, 101, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 101);
+    doc.line(this.MARGIN.LEFT -2, 111, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 111);
+    doc.line(this.MARGIN.LEFT -2, 121, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 121);
+    doc.line(this.MARGIN.LEFT -2, 143, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 143);
+    doc.line(this.MARGIN.LEFT -2, 161, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 161);
+    doc.line(this.MARGIN.LEFT -2, 181, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 181);
+      //Lineas verticales
+    doc.line(this.MARGIN.LEFT + 8, 64, this.MARGIN.LEFT + 8, 181);
+    doc.line(this.MARGIN.LEFT + 65, 64, this.MARGIN.LEFT + 65, 181);
+    doc.line(this.MARGIN.LEFT + 92, 64, this.MARGIN.LEFT + 92, 181);
+
+    doc.line(this.MARGIN.LEFT + 118, 64, this.MARGIN.LEFT + 118, 181);
+    doc.line(this.MARGIN.LEFT + 136, 64, this.MARGIN.LEFT + 136, 181);
+    doc.line(this.MARGIN.LEFT + 155, 64, this.MARGIN.LEFT + 155, 181);
+
+
+    /*
+    doc.setFont(this.FONT, 'Bold');
+    doc.setTextColor(189, 189, 189);
+    doc.setFontSize(8);
+    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    doc.text('Código ITT-POC-08-05', (this.WIDTH / 2), 262, { align: 'center' });
+    doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
+    doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
+    */
+    return doc;
+  }
 
   // A una cadena de texto, le añade @ a cada palabra tanto al inicio y al final
   // Esto es para indicar que se le agregará texto en negritas

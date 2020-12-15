@@ -27,6 +27,17 @@ export interface InitRequestModel {
   schedule?: Array<any>;
 }
 
+export interface selfEvaluationModel {
+  qs1?: string;
+  qs2?: string;
+  qs3?: string;
+  qs4?: string;
+  qs5?: string;
+  qs6?: string;
+  qs7?: string;
+  observations?: string;
+}
+
 interface Category {
   option: string;
   value: string;
