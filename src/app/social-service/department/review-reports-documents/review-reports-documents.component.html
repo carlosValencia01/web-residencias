@@ -16,7 +16,7 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <h6 class="text-center">Reporte Bimestral No.{{report.position}}</h6>
-            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(report.name)">
+            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(report.name, false)">
             <mat-menu #menu1="matMenu">
               <button mat-menu-item (click)="messageForCompany('evaluateDocument', report, 'reports')" *ngIf="!['approved', 'register'].includes(report.status)">
                 <mat-icon class="text-success">thumb_up</mat-icon>
@@ -52,7 +52,7 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <h6 class="text-center">Evaluación del Representante No.{{managerEvaluations[i].position}}</h6>
-            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(managerEvaluations[i].name)">
+            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(managerEvaluations[i].name, true)">
             <mat-menu #menu2="matMenu">
               <button mat-menu-item (click)="messageForCompany('evaluateDocument', managerEvaluations[i], 'managerEvaluations')" *ngIf="!['approved', 'register'].includes(managerEvaluations[i].status)">
                 <mat-icon class="text-success">thumb_up</mat-icon>
@@ -89,7 +89,7 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <h6 class="text-center">Evaluación del Estudiante No.{{selfEvaluations[i].position}}</h6>
-            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(selfEvaluations[i].name)">
+            <img src="../../../../assets/icons/pdfReport.svg" style="width: 20%; cursor: pointer;" (click)="viewDocument(selfEvaluations[i].name, false)">
             <mat-menu #menu3="matMenu">
               <button mat-menu-item (click)="messageForCompany('evaluateDocument', selfEvaluations[i], 'selfEvaluations')" *ngIf="!['approved', 'register'].includes(selfEvaluations[i].status)">
                 <mat-icon class="text-success">thumb_up</mat-icon>
@@ -121,10 +121,43 @@
       </mat-card>
     </div>
 
-    <div class="presentation">
+    <div class="presentation" *ngIf="!evaluation">
       <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'90vh'" [useBrowserLocale]="true"
                                (pdfLoaded)="disableLoading()">
       </ngx-extended-pdf-viewer>
+    </div>
+    <div class="presentation" *ngIf="evaluation">
+        <div>
+          <h4>Evaluación del Responsable del Programa</h4>
+        </div>
+        <div class="row"><!--evaluacion responsable del programa-->
+          <div class="col-7" style="position: -webkit-sticky; position: sticky; top: 0;">
+            <ngx-extended-pdf-viewer [src]="pdf" backgroundColor="#ffffff" [height]="'90vh'" [useBrowserLocale]="true"
+                                     (pdfLoaded)="disableLoading()">
+            </ngx-extended-pdf-viewer>`
+          </div>
+          <!--cuestionario-->
+          <div class="col-4" style="max-height: 60%;">
+            <form [formGroup]="formManagerEvaluation" (ngSubmit)="updateManagerScores()">
+              <div [formArrayName]="'questions'">
+                <div class="row" *ngFor="let question of questionsGroups.controls; let i = index;">
+                  <div [formGroupName]="i">
+                    <label>{{questions[i].text}}</label>
+                    <mat-form-field appearance="outline" style="width: 100%;">
+                      <mat-label>Seleccione una opcion</mat-label>
+                      <mat-select formControlName="q{{i+1}}">
+                        <mat-option *ngFor="let score of scores" [value]="score.option">
+                          {{score.value}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <button mat-raised-button type="submit" class="mt-2 w-100" color="primary">Actualizar información</button>
+            </form>
+          </div>
+        </div>
     </div>
   </mat-card-content>
 </mat-card>

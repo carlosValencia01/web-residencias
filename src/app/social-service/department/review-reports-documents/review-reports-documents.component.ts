@@ -8,6 +8,12 @@ import {MatDialog} from '@angular/material';
 import Swal from 'sweetalert2';
 import {IStudent} from '../../../entities/shared/student.model';
 import {Location} from '@angular/common';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+
+interface Score {
+  option: string;
+  value: string;
+}
 
 @Component({
   selector: 'app-review-reports-documents',
@@ -23,6 +29,25 @@ export class ReviewReportsDocumentsComponent implements OnInit {
   public pdf: any;
   public student: IStudent;
   public documents: any;
+  public formManagerEvaluation: FormGroup;
+  public questionsGroups: FormArray;
+  public scores: Score[] = [
+    {option: '0', value: 'Insuficiente'},
+    {option: '1', value: 'Suficiente'},
+    {option: '2', value: 'Bueno'},
+    {option: '3', value: 'Notable'},
+    {option: '4', value: 'Excelente'},
+  ];
+  public questions: any[] = [
+    { position: 'q1', text: '1-Cumple en tiempo y forma con las actividades encomendadas alcanzando los objetivos.' },
+    { position: 'q2', text: '2-Trabaja en equipo y se adapta a nuevas situaciones.' },
+    { position: 'q3', text: '3-Muestra liderazgo en las actividades encomendadas.' },
+    { position: 'q4', text: '4-Organiza su tiempo y trabaja de manera proactiva.' },
+    { position: 'q5', text: '5-Interpreta la realidad y se sensibiliza aportando soluciones a la problemática con la actividad complementaria.' },
+    { position: 'q6', text: '6-Realiza sugerencias innovadoras para beneficio o mejora del programa en el que participa.' },
+    { position: 'q7', text: '7-Tiene iniciativa para ayudar en las actividades encomendadas y muestra espíritu de servicio.' }
+  ];
+  public evaluation = false;
 
 
   constructor(private activatedRoute: ActivatedRoute,
@@ -30,6 +55,7 @@ export class ReviewReportsDocumentsComponent implements OnInit {
               private notificationsService: NotificationsServices,
               private loadingService: LoadingService,
               public location: Location,
+              private formBuilder: FormBuilder,
               public dialog: MatDialog) {
     activatedRoute.queryParams.subscribe( param => {
       this.controlStudentId = param.id;
@@ -49,11 +75,41 @@ export class ReviewReportsDocumentsComponent implements OnInit {
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
         'No se pudo obtener la información del estudiante, intentelo mas tarde');
       this.disableLoading();
-    }, () => this.disableLoading());
+    }, () => {
+        this.disableLoading();
+        this._initManagerEvaluationRequest();
+      });
   }
 
-  viewDocument(documentCode) {
+  _initManagerEvaluationRequest() {
+    this.questionsGroups = this.formBuilder.array(this.questions.map(quest => this.formBuilder.group({
+      [quest.position]: ['', Validators.required]
+    })));
+
+    this.formManagerEvaluation = this.formBuilder.group({
+      questions: this.questionsGroups
+    });
+  }
+
+  _setManagerEvaluationRequestValues(documentCode) {
+    const evaluation = this.managerEvaluations.find(d => d.name === documentCode);
+    const data = {q1: '2',  q2: '2', q3: '3', q4: '1', q5: '4', q6: '4', q7: '3'};
+    const scores = [];
+    // Cambiar data por evaluation.scores
+    Object.keys(data).forEach((key) => {
+      scores.push({[key]: data[key]});
+    });
+    this.getQuestions.setValue(scores);
+  }
+
+  get getQuestions(): FormArray {
+    return this.formManagerEvaluation.get('questions') as FormArray;
+  }
+
+  viewDocument(documentCode, _eval: boolean) {
     this.loadingService.setLoading(true);
+    this.evaluation = _eval;
+    this._setManagerEvaluationRequestValues(documentCode);
     const documentId = this.documents.find(d => d.filename.includes(documentCode));
     if (documentId) {
       this.controlStudentProv.getResource(documentId.fileIdInDrive, documentCode).subscribe(async (data: Blob) => {
@@ -127,6 +183,14 @@ export class ReviewReportsDocumentsComponent implements OnInit {
         });
         break;
     }
+  }
+
+  updateManagerScores() {
+    let form = {};
+    this.formManagerEvaluation.value.questions.forEach(quest => {
+      form = Object.assign(form, quest);
+    });
+    // form  =>  {q1: '1', q2: '2', ....}
   }
 
 
