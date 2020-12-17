@@ -14,6 +14,7 @@ import {DialogVerificationComponent} from '../../components/dialog-verification/
 import {DialogDocumentViewerComponent} from '../../components/dialog-document-viewer/dialog-document-viewer.component';
 import {InitRequestModel} from '../../../entities/social-service/initRequest.model';
 import { InitSelfEvaluationModel } from '../../../entities/social-service/initSelfEvaluation.model';
+import { InitAsignationModel } from '../../../entities/social-service/initAsignation.model';
 import {InitPresentationDocument} from '../../../entities/social-service/initPresentationDocument';
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
@@ -37,6 +38,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   formDocument: InitRequestModel;
   formSelfEvaluationDocument: InitSelfEvaluationModel;
+  formAsignationDocument: InitAsignationModel;
   initRequest: InitPresentationDocument;
   public formManagerEvaluation: FormGroup;
   public formSelfEvaluation: FormGroup;
@@ -70,6 +72,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public assistance: boolean; // Condicion para saber si ya tiene la asistencia registrada (si existe su registro en BD)
   public assistanceFirstStep = false; // Condicion para el stepper de ASISTENCIA, controlamos que hasta que no sea verdadero no se continua
   public assistanceSecondStep = false; // Condicion para el subStepper en caso de no tener asistencia y revisar el formulario a evaluar
+  public reportsStep = false; // Condicion para permitir pasar al step de reportes.
   public solicitudeDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public reportsDocument: boolean; // Condicion para saber si continuar con los reportes
@@ -131,11 +134,19 @@ export class SocialServiceMainPageComponent implements OnInit {
   public verificationEmail: boolean; // Validacion de verificacion de email como primer paso del proceso de servicio social
   private documents: Array<any> = []; // Array para almacenar los documentos del estudiante
   public formSchedule: FormGroup;
-  public studentPhone;
-  public studentStreet;
-  public studentSuburb;
-  public studentCity;
-  public studentState;
+  public studentPhone = "";
+  public studentStreet = "";
+  public studentSuburb = "";
+  public studentCity = "";
+  public studentState = "";
+  public studentFullName = "";
+  public studentgender = "";
+  public studentCarrer = "";
+  public studentSemester = "";
+  public studentControl = "";
+  public studentProgress = "";
+  public studentBirth = "";
+  public studentAge: number;
   public initialDate: moment.Moment = moment.utc();
   public now = moment.utc();
   public dateArray: Array<any>;
@@ -196,6 +207,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
       this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
       this.periodId = res.controlStudent.periodId;
+      this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);
       this.showReports();
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
@@ -204,6 +216,14 @@ export class SocialServiceMainPageComponent implements OnInit {
       this._loadPage();
     }, () => this._loadPage());
       this._initializeTableForm();
+  }
+
+  enableReportStep(presentation : string, acceptance : string, workPlanProject : string, commitment : string){
+    if ( presentation === 'approved' && acceptance === 'approved' && workPlanProject === 'approved' && commitment === 'approved') {
+      return true;
+    }
+    // permitir pasar a reportes cuando carta de presentacion, aceptacion, asignacion y compomiso esten aceptadas
+    return false;
   }
 
   showReports() {
@@ -730,10 +750,12 @@ export class SocialServiceMainPageComponent implements OnInit {
     // }, err => {
     //   console.log(err);
     // });
+    this.getMissingData();
     this.controlStudentProvider.getControlStudentById(this.controlStudentId)
     .subscribe( resp => {
       this.formDocument = this._castToDoc(resp.controlStudent);
-      this.initRequest.setPresentationRequest(this.formDocument);
+      this.formAsignationDocument = this._castToAsignationDoc(resp.controlStudent);
+      this.initRequest.setAsignationRequest(this.formAsignationDocument);
       const binary = this.initRequest.documentSend(eSocialFiles.ASIGNACION);
       this.saveDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
     }, err => {
@@ -741,8 +763,59 @@ export class SocialServiceMainPageComponent implements OnInit {
     });
   }// saveWorkPlan
 
+  private _castToAsignationDoc(data) {
+    return {
+        studentName: this.studentFullName,
+        studentAge: this.studentAge,
+        studentGender: this.studentgender,
+        studentStreet : this.studentStreet,
+        studentSuburb: this.studentSuburb,
+        studentCity: this.studentCity,
+        studentPhone: this.studentPhone,
+        studentCarrer: this.studentCarrer,
+        semester: this.studentSemester,
+        studentControl: this.controlNumber,
+        studentProgress: "por definir",
+
+        dependencyProgramName: data.dependencyProgramName,
+        dependencyProgramObjective: data.dependencyProgramObjective,
+        dependencyActivities: data.dependencyActivities,
+        schedule: data.schedule,
+        months: data.months,
+        dependencyProgramLocationInside: data.dependencyProgramLocationInside,
+        dependencyProgramLocation: data.dependencyProgramLocation
+    };
+  }
+  /* 
+  Metodo para obtener los datos del estudiante que hacen falta para la carta de asignacion
+  */
+  getMissingData() {
+    this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {      
+        this.studentFullName = this.isUndefined(res.student.fullName),
+        this.studentgender = this.isUndefined(res.student.sex),
+        this.studentStreet = this.isUndefined(res.student.street);
+        this.studentSuburb = this.isUndefined(res.student.suburb);        
+        this.studentCity = this.isUndefined(res.student.city);
+        this.studentPhone = this.isUndefined(res.student.phone);
+        this.studentCarrer = this.isUndefined(res.student.career);
+        this.studentSemester = this.isUndefined(res.student.semester),
+        this.studentControl = this.isUndefined(res.student.controlNumber);
+        this.studentProgress = "por definir";
+        this.studentState = res.student.state;
+        this.studentBirth = res.student.dateBirth;
+        this.studentAge = moment().diff(this.studentBirth,'years');
+    });
+  }
+
+  isUndefined(dato){
+    if(!dato){
+      return "";
+    }
+    return dato;
+  }
+
   private _castToDoc(data) {
-    this.getMissingData();
+    
     return {
       student: data.studentId,
       dependencyName: data.dependencyName,
@@ -913,16 +986,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   //   return commitmentFile;
   // }
 
-  getMissingData() {
-    this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
-      this.studentPhone = res.student.phone;
-      this.studentStreet = res.student.street;
-      this.studentSuburb = res.student.suburb;
-      this.studentCity = res.student.city;
-      this.studentState = res.student.state;
-      // console.log(res.student);
-    });
-  }
+
 
   generateCommitment() {
     this.controlStudentProvider.getControlStudentById(this.controlStudentId)
@@ -950,6 +1014,189 @@ export class SocialServiceMainPageComponent implements OnInit {
       });
   }
 
+ 
+
+  validateUploadReport() { // metodo para activar el boton para enviar reportes
+    if ( this.reportDoc && this.managerEvaluationDoc && this.selfEvaluationDoc)
+    {
+      return false;
+    }
+    return true;
+  }
+
+  
+
+  addDates(initDate) {
+      this.dateArray =
+        [moment.utc(initDate).add(50, 'days'), moment.utc(initDate).add(110, 'days'), moment.utc(initDate).add(170, 'days'), moment.utc(initDate).add(230, 'days'),
+        moment.utc(initDate).add(290, 'days'), moment.utc(initDate).add(350, 'days'), moment.utc(initDate).add(410, 'days'), moment.utc(initDate).add(470, 'days'),
+        moment.utc(initDate).add(530, 'days'), moment.utc(initDate).add(590, 'days'), moment.utc(initDate).add(650, 'days'), moment.utc(initDate).add(710, 'days')];
+  }
+
+  async uploadReportFile() {
+    if ( this.reportDoc ) {
+      await this.uploadFileReportToDrive(this.reportDoc.nameInDrive, this.reportDoc, this.reportId, '1');
+    }
+    if ( this.managerEvaluationDoc ) {
+      await this.uploadFileReportToDrive(this.managerEvaluationDoc.nameInDrive, this.managerEvaluationDoc, this.managerEvaluationId, '2');
+    }
+    if ( this.selfEvaluationDoc ) {
+      await this.uploadFileReportToDrive(this.selfEvaluationDoc.nameInDrive, this.selfEvaluationDoc, this.selfEvaluationId, '3');
+    }
+  }
+
+
+
+  async uploadFinalDocumentation() {
+    if (this.lastReportDoc) {
+      await this.uploadFile(this.lastReportDoc.nameInDrive, this.lastReportDoc, 'lastReport');
+    }
+    if (this.lastReportEvaluationDoc) {
+      await this.uploadFile(this.lastReportEvaluationDoc.nameInDrive, this.lastReportEvaluationDoc, 'lastReportEvaluation');
+    }
+    if (this.dependencyReleaseDoc) {
+      await this.uploadFile(this.dependencyReleaseDoc.nameInDrive, this.dependencyReleaseDoc, 'dependencyRelease');
+    }
+  }
+
+  validateUploadFinalFiles() {
+    return this.lastReport !== 'upload' ||
+            this.lastReportEvaluation !== 'upload' ||
+            this.dependencyRelease !== 'upload';
+  }
+
+  disabledUploadFinalFile(document) {
+    let res = false;
+    switch (document) {
+      case 'lastReport':
+        res = ['approved', 'send'].includes(this.lastReport);
+      break;
+      case 'lastReportEvaluation':
+        res = ['approved', 'send'].includes(this.lastReportEvaluation);
+      break;
+      case 'dependencyRelease':
+        res = ['approved', 'send'].includes(this.dependencyRelease);
+      break;
+    }
+    return res;
+  }
+
+  async onFinalFileChange(event) {
+    const reader = new FileReader();
+    const docType = event.target.attributes.id.value;
+    let newF = true;
+    let fileId = '';
+    let nameDocument = '';
+    switch (docType) {
+      case 'lastReport':
+        nameDocument = 'ITT-POC-08-12 Reporte final.pdf';
+        if ( this.lastReport === 'reevaluate' ) {
+          newF = false;
+          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-12'));
+          nameDocument = documentId[0].filename;
+          fileId = documentId[0].fileIdInDrive;
+        }
+      break;
+      case 'lastReportEvaluation':
+        nameDocument = 'ITT-POC-08-10 Evaluación del reporte final.pdf';
+        if ( this.lastReportEvaluation === 'reevaluate' ) {
+          newF = false;
+          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-10'));
+          nameDocument = documentId[0].filename;
+          fileId = documentId[0].fileIdInDrive;
+        }
+      break;
+      case 'dependencyRelease':
+        nameDocument = 'ITT-POC-08-13 Carta de liberacion de la dependencia.pdf';
+        if ( this.dependencyRelease === 'reevaluate' ) {
+          newF = false;
+          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-13'));
+          nameDocument = documentId[0].filename;
+          fileId = documentId[0].fileIdInDrive;
+        }
+      break;
+    }
+    this.selectedFile = <File>event.target.files[0];
+    if (event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const document = {
+          mimeType: this.selectedFile.type,
+          nameInDrive: nameDocument,
+          bodyMedia: reader.result.toString().split(',')[1],
+          folderId: this.folderId,
+          newF: newF,
+          fileId: fileId
+        };
+        this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then( async response => {
+          if (response) {
+            switch (docType) {
+              case 'lastReport':
+                if (this.lastReport === 'reevaluate') {
+                  await this.uploadFile(document.nameInDrive, document, 'lastReport');
+                  this.lastReport = 'send';
+                } else {
+                  this.lastReportDoc = document;
+                  this.lastReport = 'upload';
+                }
+              break;
+              case 'lastReportEvaluation':
+                if (this.lastReportEvaluation === 'reevaluate') {
+                  await this.uploadFile(document.nameInDrive, document, 'lastReportEvaluation');
+                  this.lastReportEvaluation = 'send';
+                } else {
+                  this.lastReportEvaluationDoc = document;
+                  this.lastReportEvaluation = 'upload';
+                }
+              break;
+              case 'dependencyRelease':
+                if (this.dependencyRelease === 'reevaluate') {
+                  await this.uploadFile(document.nameInDrive, document, 'dependencyRelease');
+                  this.dependencyRelease = 'send';
+                } else {
+                  this.dependencyReleaseDoc = document;
+                  this.dependencyRelease = 'upload';
+                }
+              break;
+            }
+          }
+        });
+      };
+    }
+  }
+/* Bimestral Reports section*/
+  
+  /*retornar true para deshabilitar el boton
+  posibles statues del reporte = 'register', 'send', 'reevaluate', 'approved'
+   el boton se activa cuando:
+    -el status es diferente de approved o send
+    -el anterior (report, managerEvaluation y selfEvaluation) esta en status approved excepto en el primer reporte
+    -la fecha ya permite enviar el reporte.
+  */
+  disabledUploadReport(reportPosition, reportStatus) {
+    let button = true;
+    if ( reportStatus !== 'approved' && reportStatus !== 'send') {
+      // el reporte anterior esta aprobado
+      if (reportPosition > 1) {
+        // tslint:disable-next-line: max-line-length
+        if (this.reports[reportPosition - 2].status === 'approved' && this.managerEvaluations[reportPosition - 2].status === 'approved' && this.selfEvaluations[reportPosition - 2].status === 'approved') {
+          // validar que dependiendo del numero de reporte la fecha sea adecuada
+          if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
+            button = false;
+          }
+        }
+      } else { // Si es el primero solo validar la fecha
+      // aqui validar solo la fecha
+        if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
+          button = false;
+        }
+      }
+    }
+    return button;
+  }
+
+  // BimestralReport
   uploadReport(event) {
     const reader = new FileReader();
     const docType = event.target.attributes.id.value;
@@ -1076,16 +1323,12 @@ export class SocialServiceMainPageComponent implements OnInit {
             nameDocument = documentId[0].filename;
             fileId = documentId[0].fileIdInDrive;
           }
-        break;
-   
-        
+        break;     
     }
-
     this.selectedFile = <File>event.target.files[0];
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       reader.readAsDataURL(file);
-
       reader.onload = () => {
         const document = {
           mimeType: this.selectedFile.type,
@@ -1095,10 +1338,8 @@ export class SocialServiceMainPageComponent implements OnInit {
           newF: newF,
           fileId: fileId
         };
-
       this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then(async response => {
         if (response) {
-
           switch (docType) {
             case 'report1':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
@@ -1155,62 +1396,6 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
   }// uploadReport
 
-  validateUploadReport() { // metodo para activar el boton para enviar reportes
-    if ( this.reportDoc && this.managerEvaluationDoc && this.selfEvaluationDoc)
-    {
-      return false;
-    }
-    return true;
-  }
-
-  /*retornar true para deshabilitar el boton
-  posibles statues del reporte = 'register', 'send', 'reevaluate', 'approved'
-   el boton se activa cuando:
-    -el status es diferente de approved
-    -el anterior (report, managerEvaluation y selfEvaluation) esta en status approved excepto en el primer reporte
-    -la fecha ya permite enviar el reporte.
-  */
-  disabledUploadReport(reportPosition, reportStatus) {
-    let button = true;
-    if ( reportStatus !== 'approved') {
-      // el reporte anterior esta aprobado
-      if (reportPosition > 1) {
-        // tslint:disable-next-line: max-line-length
-        if (this.reports[reportPosition - 2].status === 'approved' && this.managerEvaluations[reportPosition - 2].status === 'approved' && this.selfEvaluations[reportPosition - 2].status === 'approved') {
-          // validar que dependiendo del numero de reporte la fecha sea adecuada
-          if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
-            button = false;
-          }
-        }
-      } else { // Si es el primero solo validar la fecha
-      // aqui validar solo la fecha
-        if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
-          button = false;
-        }
-      }
-    }
-    return button;
-  }
-
-  addDates(initDate) {
-      this.dateArray =
-        [moment.utc(initDate).add(50, 'days'), moment.utc(initDate).add(110, 'days'), moment.utc(initDate).add(170, 'days'), moment.utc(initDate).add(230, 'days'),
-        moment.utc(initDate).add(290, 'days'), moment.utc(initDate).add(350, 'days'), moment.utc(initDate).add(410, 'days'), moment.utc(initDate).add(470, 'days'),
-        moment.utc(initDate).add(530, 'days'), moment.utc(initDate).add(590, 'days'), moment.utc(initDate).add(650, 'days'), moment.utc(initDate).add(710, 'days')];
-  }
-
-  async uploadReportFile() {
-    if ( this.reportDoc ) {
-      await this.uploadFileReportToDrive(this.reportDoc.nameInDrive, this.reportDoc, this.reportId, '1');
-    }
-    if ( this.managerEvaluationDoc ) {
-      await this.uploadFileReportToDrive(this.managerEvaluationDoc.nameInDrive, this.managerEvaluationDoc, this.managerEvaluationId, '2');
-    }
-    if ( this.selfEvaluationDoc ) {
-      await this.uploadFileReportToDrive(this.selfEvaluationDoc.nameInDrive, this.selfEvaluationDoc, this.selfEvaluationId, '3');
-    }
-  }
-
   uploadFileReportToDrive(nameDocument, document, documentId, type) {
     let typeDoc = '';
     switch (type) {
@@ -1219,9 +1404,6 @@ export class SocialServiceMainPageComponent implements OnInit {
       break;
       case '2':
         typeDoc = 'managerEvaluations';
-      break;
-      case '3':
-        typeDoc = 'selfEvaluations';
       break;
     }
     this.loadingService.setLoading(true);
@@ -1284,125 +1466,6 @@ export class SocialServiceMainPageComponent implements OnInit {
       });
   }
 
-  async uploadFinalDocumentation() {
-    if (this.lastReportDoc) {
-      await this.uploadFile(this.lastReportDoc.nameInDrive, this.lastReportDoc, 'lastReport');
-    }
-    if (this.lastReportEvaluationDoc) {
-      await this.uploadFile(this.lastReportEvaluationDoc.nameInDrive, this.lastReportEvaluationDoc, 'lastReportEvaluation');
-    }
-    if (this.dependencyReleaseDoc) {
-      await this.uploadFile(this.dependencyReleaseDoc.nameInDrive, this.dependencyReleaseDoc, 'dependencyRelease');
-    }
-  }
-
-  validateUploadFinalFiles() {
-    return this.lastReport !== 'upload' ||
-            this.lastReportEvaluation !== 'upload' ||
-            this.dependencyRelease !== 'upload';
-  }
-
-  disabledUploadFinalFile(document) {
-    let res = false;
-    switch (document) {
-      case 'lastReport':
-        res = ['approved', 'send'].includes(this.lastReport);
-      break;
-      case 'lastReportEvaluation':
-        res = ['approved', 'send'].includes(this.lastReportEvaluation);
-      break;
-      case 'dependencyRelease':
-        res = ['approved', 'send'].includes(this.dependencyRelease);
-      break;
-    }
-    return res;
-  }
-
-  async onFinalFileChange(event) {
-    const reader = new FileReader();
-    const docType = event.target.attributes.id.value;
-    let newF = true;
-    let fileId = '';
-    let nameDocument = '';
-    switch (docType) {
-      case 'lastReport':
-        nameDocument = 'ITT-POC-08-12 Reporte final.pdf';
-        if ( this.lastReport === 'reevaluate' ) {
-          newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-12'));
-          nameDocument = documentId[0].filename;
-          fileId = documentId[0].fileIdInDrive;
-        }
-      break;
-      case 'lastReportEvaluation':
-        nameDocument = 'ITT-POC-08-10 Evaluación del reporte final.pdf';
-        if ( this.lastReportEvaluation === 'reevaluate' ) {
-          newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-10'));
-          nameDocument = documentId[0].filename;
-          fileId = documentId[0].fileIdInDrive;
-        }
-      break;
-      case 'dependencyRelease':
-        nameDocument = 'ITT-POC-08-13 Carta de liberacion de la dependencia.pdf';
-        if ( this.dependencyRelease === 'reevaluate' ) {
-          newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-13'));
-          nameDocument = documentId[0].filename;
-          fileId = documentId[0].fileIdInDrive;
-        }
-      break;
-    }
-    this.selectedFile = <File>event.target.files[0];
-    if (event.target.files && event.target.files.length) {
-      const [file] = event.target.files;
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const document = {
-          mimeType: this.selectedFile.type,
-          nameInDrive: nameDocument,
-          bodyMedia: reader.result.toString().split(',')[1],
-          folderId: this.folderId,
-          newF: newF,
-          fileId: fileId
-        };
-        this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then( async response => {
-          if (response) {
-            switch (docType) {
-              case 'lastReport':
-                if (this.lastReport === 'reevaluate') {
-                  await this.uploadFile(document.nameInDrive, document, 'lastReport');
-                  this.lastReport = 'send';
-                } else {
-                  this.lastReportDoc = document;
-                  this.lastReport = 'upload';
-                }
-              break;
-              case 'lastReportEvaluation':
-                if (this.lastReportEvaluation === 'reevaluate') {
-                  await this.uploadFile(document.nameInDrive, document, 'lastReportEvaluation');
-                  this.lastReportEvaluation = 'send';
-                } else {
-                  this.lastReportEvaluationDoc = document;
-                  this.lastReportEvaluation = 'upload';
-                }
-              break;
-              case 'dependencyRelease':
-                if (this.dependencyRelease === 'reevaluate') {
-                  await this.uploadFile(document.nameInDrive, document, 'dependencyRelease');
-                  this.dependencyRelease = 'send';
-                } else {
-                  this.dependencyReleaseDoc = document;
-                  this.dependencyRelease = 'upload';
-                }
-              break;
-            }
-          }
-        });
-      };
-    }
-  }
-
   // ManagerEvaluation
   cancelManagerEvaluation(position){
     this.managerEv = false;
@@ -1440,7 +1503,8 @@ export class SocialServiceMainPageComponent implements OnInit {
         //Subir el documento
         this.uploadFileReportToDrive(this.documentManagerEvaluation.nameInDrive, this.documentManagerEvaluation, this.managerEvaluationId, '2');
         this.managerEv = false;
-        this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Sus datos se estan procesando', '');
+        this.managerEvaluations[this.managerEvPosition-1].status = "send";
+        
       }, () => {
                 this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
                 'No se ha podido guardar la información, favor de intentarlo mas tarde');
@@ -1605,7 +1669,6 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
     }
   }
-
 
   // SelfEvaluation
   selfEvaluationQuest(position){
@@ -1805,7 +1868,6 @@ export class SocialServiceMainPageComponent implements OnInit {
     });    
   
   }
-
 
   saveSelfEvaluationDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string, name: string) {
     this.loadingService.setLoading(true);

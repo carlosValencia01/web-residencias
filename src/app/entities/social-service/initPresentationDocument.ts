@@ -7,6 +7,7 @@ import {CookiesService} from '../../services/app/cookie.service';
 import {eSocialFiles} from '../../enumerators/social-service/document.enum';
 import {InitRequestModel} from './initRequest.model';
 import { InitSelfEvaluationModel } from './initSelfEvaluation.model';
+import { InitAsignationModel } from './initAsignation.model';
 
 moment.locale('es');
 
@@ -37,6 +38,7 @@ export class InitPresentationDocument {
   private montserratBold: any;
   public _request: InitRequestModel;
   public selfEvaluation: InitSelfEvaluationModel;
+  public asignation: InitAsignationModel;
 
   constructor(
     public _getImage: ImageToBase64Service,
@@ -47,6 +49,10 @@ export class InitPresentationDocument {
 
   public setPresentationRequest(request: InitRequestModel) {
     this._request = request;
+  }
+
+  public setAsignationRequest(request: InitAsignationModel) {
+    this.asignation = request;
   }
 
   public setSelfEvaluationRequest(request: InitSelfEvaluationModel) {
@@ -196,16 +202,16 @@ export class InitPresentationDocument {
     doc.text('DATOS DEL PRESTADOR DE SERVICIO SOCIAL', this.MARGIN.LEFT, 55, { align: 'left' });
     doc.rect(this.MARGIN.LEFT, 58, this.WIDTH - (this.MARGIN.RIGHT * 2), 35);
     doc.setFont(this.FONT, 'Normal');
-    const nombre = `NOMBRE COMPLETO: ${this._request.student.fullName}    EDAD: XX    SEXO:X`;
+    const nombre = `NOMBRE COMPLETO: ${this.asignation.studentName}    EDAD: ${this.asignation.studentAge}    SEXO:${this.asignation.studentGender}`;
     doc.text(nombre, this.MARGIN.LEFT + 2, 62, { align: 'left' });
-    const direccion = `DIRECCION: Calle siempreviva #123 colonia abcdefg Tepic, Nayarit   TEL: 1234567890`
+    const direccion = `DIRECCION: ${this.asignation.studentStreet} colonia ${this.asignation.studentSuburb} ${this.asignation.studentCity}, Nayarit   TEL: ${this.asignation.studentPhone}`
     doc.text(direccion, this.MARGIN.LEFT + 2, 69, { align: 'left' });
     doc.text(`                    CALLE Y NUMERO     COLONIA       CIUDAD Y ESTADO`, this.MARGIN.LEFT + 2, 76, { align: 'left' });
-    const carrera = `CARRERA: ${this._request.student.career}     SEMESTRE: ${this._request.student.semester}`;
+    const carrera = `CARRERA: ${this.asignation.studentCarrer}     SEMESTRE: ${this.asignation.semester}`;
     doc.text(carrera, this.MARGIN.LEFT + 2, 83, { align: 'left' });
-    const noCtrol = `No. DE CONTROL:   ${this._request.student.controlNumber}     No. DE CREDITOS CUBIERTOS:  XX.X%`;
+    const noCtrol = `No. DE CONTROL:   ${this.asignation.studentControl}     No. DE CREDITOS CUBIERTOS:  ${this.asignation.studentProgress}`;
     doc.text(noCtrol, this.MARGIN.LEFT + 2, 90, { align: 'left' });
-
+    //_request
     // Cuadro de Datos del programa
 
 
@@ -219,12 +225,12 @@ export class InitPresentationDocument {
     doc.text('NOMBRE', this.MARGIN.LEFT + 2, 107, { align: 'left' });
     doc.text('OBJETIVO', ((this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2) + 22, 107, { align: 'left' });
 
-    const programName = this._request.dependencyProgramName;
+    const programName = this.asignation.dependencyProgramName;
     this.justifyText(doc,
       programName,
       {x: this.MARGIN.LEFT + 2, y: 112}, ((this.WIDTH - (this.MARGIN.LEFT * 2)) / 2) - 5, 5, 10);
 
-    const programObjective = this._request.dependencyProgramObjective;
+    const programObjective = this.asignation.dependencyProgramObjective;
     this.justifyText(doc,
       programObjective,
       {x: ((this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2) + 22, y: 112}, ((this.WIDTH - (this.MARGIN.LEFT * 2)) / 2) - 5 , 5, 10);
@@ -233,7 +239,7 @@ export class InitPresentationDocument {
         actDesc,
         {x: this.MARGIN.LEFT + 2, y: 147}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
       this.justifyText(doc,
-        this._request.dependencyActivities,
+        this.asignation.dependencyActivities,
         {x: this.MARGIN.LEFT + 2, y: 155}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
     //doc.text(this._request.dependencyActivities, this.MARGIN.LEFT + 2, 157, { align: 'left' });
 
@@ -279,28 +285,28 @@ export class InitPresentationDocument {
 
     doc.setFontSize(9);
     doc.text(`Hora`, this.MARGIN.LEFT + 4, 210, { align: 'left' });
-    doc.text(this._request.schedule[0], this.MARGIN.LEFT + 14, 210, { align: 'left' });
-    doc.text(this._request.schedule[1], this.MARGIN.LEFT + 34, 210, { align: 'left' });
-    doc.text(this._request.schedule[2], this.MARGIN.LEFT + 54, 210, { align: 'left' });
-    doc.text(this._request.schedule[3], this.MARGIN.LEFT + 74, 210, { align: 'left' });
-    doc.text(this._request.schedule[4], this.MARGIN.LEFT + 94, 210, { align: 'left' });
-    doc.text(this._request.schedule[5], this.MARGIN.LEFT + 114, 210, { align: 'left' });
-    doc.text(this._request.schedule[6], this.MARGIN.LEFT + 133, 210, { align: 'left' });
+    doc.text(this.asignation.schedule[0], this.MARGIN.LEFT + 14, 210, { align: 'left' });
+    doc.text(this.asignation.schedule[1], this.MARGIN.LEFT + 34, 210, { align: 'left' });
+    doc.text(this.asignation.schedule[2], this.MARGIN.LEFT + 54, 210, { align: 'left' });
+    doc.text(this.asignation.schedule[3], this.MARGIN.LEFT + 74, 210, { align: 'left' });
+    doc.text(this.asignation.schedule[4], this.MARGIN.LEFT + 94, 210, { align: 'left' });
+    doc.text(this.asignation.schedule[5], this.MARGIN.LEFT + 114, 210, { align: 'left' });
+    doc.text(this.asignation.schedule[6], this.MARGIN.LEFT + 133, 210, { align: 'left' });
     doc.text(`21 horas`, this.MARGIN.LEFT + 154, 210, { align: 'left' });
 
     doc.text(`PERIODO DE REALIZACIÓN (MESES)`, ((this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2) - 10 , 216, { align: 'left' });
-    doc.text(this._request.months[0], this.MARGIN.LEFT + 4, 223, { align: 'left' });
-    doc.text(this._request.months[1], this.MARGIN.LEFT + 24, 223, { align: 'left' });
-    doc.text(this._request.months[2], this.MARGIN.LEFT + 44, 223, { align: 'left' });
-    doc.text(this._request.months[3], this.MARGIN.LEFT + 64, 223, { align: 'left' });
-    doc.text(this._request.months[4], this.MARGIN.LEFT + 84, 223, { align: 'left' });
-    doc.text(this._request.months[5], this.MARGIN.LEFT + 104, 223, { align: 'left' });
+    doc.text(this.asignation.months[0], this.MARGIN.LEFT + 4, 223, { align: 'left' });
+    doc.text(this.asignation.months[1], this.MARGIN.LEFT + 24, 223, { align: 'left' });
+    doc.text(this.asignation.months[2], this.MARGIN.LEFT + 44, 223, { align: 'left' });
+    doc.text(this.asignation.months[3], this.MARGIN.LEFT + 64, 223, { align: 'left' });
+    doc.text(this.asignation.months[4], this.MARGIN.LEFT + 84, 223, { align: 'left' });
+    doc.text(this.asignation.months[5], this.MARGIN.LEFT + 104, 223, { align: 'left' });
     doc.text(`24 semanas`, this.MARGIN.LEFT + 153, 223, { align: 'left' });
         //225
     let inside = 'no';
-    if (this._request.dependencyProgramLocationInside) {inside = 'si'; }
+    if (this.asignation.dependencyProgramLocationInside) {inside = 'si'; }
     doc.text(`EL SERVICIO SOCIAL LO REALIZARA DENTRO DE LAS INSTALACIONES DE LA DEPENDENCIA: ${inside}` , this.MARGIN.LEFT + 2, 228, { align: 'left' });
-    doc.text(`DONDE:  ${this._request.dependencyProgramLocation}` , this.MARGIN.LEFT + 2, 238, { align: 'left' });
+    doc.text(`DONDE:  ${this.asignation.dependencyProgramLocation}` , this.MARGIN.LEFT + 2, 238, { align: 'left' });
     // 240
     // Footer
     doc.setFont(this.FONT, 'Bold');

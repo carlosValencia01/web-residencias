@@ -133,7 +133,7 @@
           </div>
         </mat-step>
 
-        <mat-step [completed]="true"><!--presentationDocument-->
+        <mat-step [completed]="reportsStep"><!--presentationDocument-->
           <ng-template matStepLabel>Documentos de presentación</ng-template>
           <div *ngIf="statusFirstDocuments === 'approved'">
             <div *ngIf="['noAssigned','assigned'].includes(presentation)">
@@ -493,10 +493,8 @@
             </div>
           </div>
         </mat-step>
-
-
-
-        <mat-step [completed]="true">
+        <!--permitir pasar a reportes cuando carta de presentacion, aceptacion, asignacion y compomiso esten aceptadas-->
+        <mat-step [completed]="true"><!--Reportes-->
           <ng-template matStepLabel>Reportes</ng-template>
 
           <div class="row" *ngIf="!bimestralReport || bimestralReport && finalReport">
@@ -598,10 +596,10 @@
                                 <span mat-line class="badge badge-pill badge-success">APROBADO</span>
                               </div>
                               <div *ngSwitchCase="'register'">
-                                <div *ngIf="!disabledUploadReport(report.position, report.status)">
+                                <div *ngIf="!disabledUploadReport(report.position, managerEvaluations[report.position -1].status)">
                                   <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
                                 </div>
-                                <div *ngIf="disabledUploadReport(report.position, report.status)">
+                                <div *ngIf="disabledUploadReport(report.position, managerEvaluations[report.position -1].status)">
                                   <span mat-line class="badge badge-pill badge-secondary">NO DISPONIBLE</span>
                                 </div>
                               </div>
@@ -650,16 +648,15 @@
                                         <span mat-line class="badge badge-pill badge-success">APROBADO</span>
                                       </div>
                                       <div *ngSwitchCase="'register'">
-                                        <div *ngIf="!disabledUploadReport(report.position, report.status)">
+                                        <div *ngIf="!disabledUploadReport(report.position, selfEvaluations[report.position -1].status)">
                                           <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
                                         </div>
-                                        <div *ngIf="disabledUploadReport(report.position, report.status)">
+                                        <div *ngIf="disabledUploadReport(report.position, selfEvaluations[report.position -1].status)">
                                           <span mat-line class="badge badge-pill badge-secondary">NO DISPONIBLE</span>
                                         </div>
                                       </div>
                                     </div>
                                 </div>
-
                         </label>
                         <p *ngIf="['reevaluate', 'upload'].includes(selfEvaluations[report.position -1].status)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
                           <div class="text-center"  *ngIf="selfEvaluations[report.position -1].status === 'reevaluate'">
@@ -897,7 +894,7 @@
                   <div class="text-center mt-2">
                     <div class="flex justify-content-around">
                       <button mat-raised-button type="button" class="mt-2 buttonMargin" color="warn" (click)="cancelSelfEvaluation()">Cancelar</button>
-                      <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Aceptar</button>
+                      <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Firmar</button>
                     </div>
                   </div>
                 </form>
@@ -920,7 +917,7 @@
               <div class="flex justify-content-around">
 
                 <button mat-raised-button type="button" class="mt-2 buttonMargin">
-                  <a class="noDecorado" download="SERVICIO_SOCIAL_GUIA_REPORTE_FINAL.doc" target="_blank" href="src/assets/docs/SERVICIO_SOCIAL_GUIA_REPORTE_FINAL.doc">
+                  <a class="noDecorado" download="SERVICIO_SOCIAL_GUIA_REPORTE_FINAL.doc" target="_blank" href="src/assets/docs/SERVICIO_SOCIAL_GUIA_REPORTE_FINAL.docx">
                     Guía para Reporte Final                  
                   </a>      
                   <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
@@ -1088,7 +1085,8 @@
           </div>
 
         </mat-step>
-        <mat-step [completed]="true">
+
+        <mat-step [completed]="true"><!--Validacion-->
           <ng-template matStepLabel>Proceso de Validación</ng-template>
           <div *ngIf="true">
             <div class="row justify-content-center margen">
@@ -1104,6 +1102,7 @@
           </div>
 
         </mat-step>
+
       </mat-vertical-stepper>
     </div>
   </div>
