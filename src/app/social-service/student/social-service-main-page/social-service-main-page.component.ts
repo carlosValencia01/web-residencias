@@ -14,6 +14,7 @@ import {DialogVerificationComponent} from '../../components/dialog-verification/
 import {DialogDocumentViewerComponent} from '../../components/dialog-document-viewer/dialog-document-viewer.component';
 import {InitRequestModel} from '../../../entities/social-service/initRequest.model';
 import { InitSelfEvaluationModel } from '../../../entities/social-service/initSelfEvaluation.model';
+import { InitAsignationModel } from '../../../entities/social-service/initAsignation.model';
 import {InitPresentationDocument} from '../../../entities/social-service/initPresentationDocument';
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
@@ -37,6 +38,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   formDocument: InitRequestModel;
   formSelfEvaluationDocument: InitSelfEvaluationModel;
+  formAsignationDocument: InitAsignationModel;
   initRequest: InitPresentationDocument;
   public formManagerEvaluation: FormGroup;
   public formSelfEvaluation: FormGroup;
@@ -70,6 +72,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public assistance: boolean; // Condicion para saber si ya tiene la asistencia registrada (si existe su registro en BD)
   public assistanceFirstStep = false; // Condicion para el stepper de ASISTENCIA, controlamos que hasta que no sea verdadero no se continua
   public assistanceSecondStep = false; // Condicion para el subStepper en caso de no tener asistencia y revisar el formulario a evaluar
+  public reportsStep = false; // Condicion para permitir pasar al step de reportes.
   public solicitudeDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public reportsDocument: boolean; // Condicion para saber si continuar con los reportes
@@ -131,15 +134,25 @@ export class SocialServiceMainPageComponent implements OnInit {
   public verificationEmail: boolean; // Validacion de verificacion de email como primer paso del proceso de servicio social
   private documents: Array<any> = []; // Array para almacenar los documentos del estudiante
   public formSchedule: FormGroup;
-  public studentPhone;
-  public studentStreet;
-  public studentSuburb;
-  public studentCity;
-  public studentState;
+  public studentPhone = "";
+  public studentStreet = "";
+  public studentSuburb = "";
+  public studentCity = "";
+  public studentState = "";
+  public studentFullName = "";
+  public studentgender = "";
+  public studentCarrer = "";
+  public studentSemester = "";
+  public studentControl = "";
+  public studentProgress = "";
+  public studentBirth = "";
+  public studentAge: number;
   public initialDate: moment.Moment = moment.utc();
   public now = moment.utc();
   public dateArray: Array<any>;
-
+  private periodId;
+  private periods;
+  private periodName;
   public prueba = "asdfasdf";
 
   private historyDocumentStatus: Array<any>;
@@ -193,6 +206,8 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
       this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
       this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
+      this.periodId = res.controlStudent.periodId;
+      this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);
       this.showReports();
     }, error => {
       this.notificationsService.showNotification(eNotificationType.INFORMATION,
@@ -201,6 +216,14 @@ export class SocialServiceMainPageComponent implements OnInit {
       this._loadPage();
     }, () => this._loadPage());
       this._initializeTableForm();
+  }
+
+  enableReportStep(presentation : string, acceptance : string, workPlanProject : string, commitment : string){
+    if ( presentation === 'approved' && acceptance === 'approved' && workPlanProject === 'approved' && commitment === 'approved') {
+      return true;
+    }
+    // permitir pasar a reportes cuando carta de presentacion, aceptacion, asignacion y compomiso esten aceptadas
+    return false;
   }
 
   showReports() {
@@ -727,10 +750,12 @@ export class SocialServiceMainPageComponent implements OnInit {
     // }, err => {
     //   console.log(err);
     // });
+    this.getMissingData();
     this.controlStudentProvider.getControlStudentById(this.controlStudentId)
     .subscribe( resp => {
       this.formDocument = this._castToDoc(resp.controlStudent);
-      this.initRequest.setPresentationRequest(this.formDocument);
+      this.formAsignationDocument = this._castToAsignationDoc(resp.controlStudent);
+      this.initRequest.setAsignationRequest(this.formAsignationDocument);
       const binary = this.initRequest.documentSend(eSocialFiles.ASIGNACION);
       this.saveDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
     }, err => {
@@ -738,8 +763,59 @@ export class SocialServiceMainPageComponent implements OnInit {
     });
   }// saveWorkPlan
 
+  private _castToAsignationDoc(data) {
+    return {
+        studentName: this.studentFullName,
+        studentAge: this.studentAge,
+        studentGender: this.studentgender,
+        studentStreet : this.studentStreet,
+        studentSuburb: this.studentSuburb,
+        studentCity: this.studentCity,
+        studentPhone: this.studentPhone,
+        studentCarrer: this.studentCarrer,
+        semester: this.studentSemester,
+        studentControl: this.controlNumber,
+        studentProgress: "por definir",
+
+        dependencyProgramName: data.dependencyProgramName,
+        dependencyProgramObjective: data.dependencyProgramObjective,
+        dependencyActivities: data.dependencyActivities,
+        schedule: data.schedule,
+        months: data.months,
+        dependencyProgramLocationInside: data.dependencyProgramLocationInside,
+        dependencyProgramLocation: data.dependencyProgramLocation
+    };
+  }
+  /* 
+  Metodo para obtener los datos del estudiante que hacen falta para la carta de asignacion
+  */
+  getMissingData() {
+    this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {      
+        this.studentFullName = this.isUndefined(res.student.fullName),
+        this.studentgender = this.isUndefined(res.student.sex),
+        this.studentStreet = this.isUndefined(res.student.street);
+        this.studentSuburb = this.isUndefined(res.student.suburb);        
+        this.studentCity = this.isUndefined(res.student.city);
+        this.studentPhone = this.isUndefined(res.student.phone);
+        this.studentCarrer = this.isUndefined(res.student.career);
+        this.studentSemester = this.isUndefined(res.student.semester),
+        this.studentControl = this.isUndefined(res.student.controlNumber);
+        this.studentProgress = "por definir";
+        this.studentState = res.student.state;
+        this.studentBirth = res.student.dateBirth;
+        this.studentAge = moment().diff(this.studentBirth,'years');
+    });
+  }
+
+  isUndefined(dato){
+    if(!dato){
+      return "";
+    }
+    return dato;
+  }
+
   private _castToDoc(data) {
-    this.getMissingData();
+    
     return {
       student: data.studentId,
       dependencyName: data.dependencyName,
@@ -910,16 +986,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   //   return commitmentFile;
   // }
 
-  getMissingData() {
-    this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
-      this.studentPhone = res.student.phone;
-      this.studentStreet = res.student.street;
-      this.studentSuburb = res.student.suburb;
-      this.studentCity = res.student.city;
-      this.studentState = res.student.state;
-      // console.log(res.student);
-    });
-  }
+
 
   generateCommitment() {
     this.controlStudentProvider.getControlStudentById(this.controlStudentId)
@@ -947,380 +1014,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       });
   }
 
-  uploadReport(event) {
-    const reader = new FileReader();
-    const docType = event.target.attributes.id.value;
-    let newF = true;
-    let fileId = '';
-    let nameDocument = '';
-    switch (docType) {
-        case 'report1':
-          this.reportId = this.reports[0]._id;
-          nameDocument = 'ITT-POC-08-06-01 Reporte bimestral de reporte social.pdf';
-          if (this.reports[0].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-01'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report2':
-          this.reportId = this.reports[1]._id;
-          nameDocument = 'ITT-POC-08-06-02 Reporte bimestral de reporte social.pdf';
-          if (this.reports[1].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-02'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report3':
-          this.reportId = this.reports[2]._id;
-          nameDocument = 'ITT-POC-08-06-03 Reporte bimestral de reporte social.pdf';
-          if (this.reports[2].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-03'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report4':
-          this.reportId = this.reports[3]._id;
-          nameDocument = 'ITT-POC-08-06-04 Reporte bimestral de reporte social.pdf';
-          if (this.reports[3].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-04'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report5':
-          this.reportId = this.reports[4]._id;
-          nameDocument = 'ITT-POC-08-06-05 Reporte bimestral de reporte social.pdf';
-          if (this.reports[4].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-05'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report6':
-          this.reportId = this.reports[5]._id;
-          nameDocument = 'ITT-POC-08-06-06 Reporte bimestral de reporte social.pdf';
-          if (this.reports[5].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-06'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report7':
-          this.reportId = this.reports[6]._id;
-          nameDocument = 'ITT-POC-08-06-07 Reporte bimestral de reporte social.pdf';
-          if (this.reports[6].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-07'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report8':
-          this.reportId = this.reports[7]._id;
-          nameDocument = 'ITT-POC-08-06-08 Reporte bimestral de reporte social.pdf';
-          if (this.reports[7].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-08'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report9':
-          this.reportId = this.reports[8]._id;
-          nameDocument = 'ITT-POC-08-06-09 Reporte bimestral de reporte social.pdf';
-          if (this.reports[8].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-09'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report10':
-          this.reportId = this.reports[9]._id;
-          nameDocument = 'ITT-POC-08-06-10 Reporte bimestral de reporte social.pdf';
-          if (this.reports[9].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-10'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report11':
-          this.reportId = this.reports[10]._id;
-          nameDocument = 'ITT-POC-08-06-11 Reporte bimestral de reporte social.pdf';
-          if (this.reports[10].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-11'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-        case 'report12':
-          this.reportId = this.reports[11]._id;
-          nameDocument = 'ITT-POC-08-06-12 Reporte bimestral de reporte social.pdf';
-          if (this.reports[11].status === 'reevaluate') {
-            newF = false;
-            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-12'));
-            nameDocument = documentId[0].filename;
-            fileId = documentId[0].fileIdInDrive;
-          }
-        break;
-   
-        
-    }
-
-    this.selectedFile = <File>event.target.files[0];
-    if (event.target.files && event.target.files.length) {
-      const [file] = event.target.files;
-      reader.readAsDataURL(file);
-
-      reader.onload = () => {
-        const document = {
-          mimeType: this.selectedFile.type,
-          nameInDrive: nameDocument,
-          bodyMedia: reader.result.toString().split(',')[1],
-          folderId: this.folderId,
-          newF: newF,
-          fileId: fileId
-        };
-
-      this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then(async response => {
-        if (response) {
-
-          switch (docType) {
-            case 'report1':
-              if (this.reports[0].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[0].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[0].status = 'upload';
-              }
-            break;
-            case 'report2':
-              if (this.reports[1].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[1].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[1].status = 'upload';
-              }
-            break;
-            case 'report3':
-              if (this.reports[2].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[2].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[2].status = 'upload';
-              }
-            break;
-            case 'report4':
-              if (this.reports[3].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[3].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[3].status = 'upload';
-              }
-            break;
-            case 'report5':
-              if (this.reports[4].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[4].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[4].status = 'upload';
-              }
-            break;
-            case 'report6':
-              if (this.reports[5].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[5].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[5].status = 'upload';
-              }
-            break;
-            case 'report7':
-              if (this.reports[6].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[6].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[6].status = 'upload';
-              }
-            break;
-            case 'report8':
-              if (this.reports[7].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[7].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[7].status = 'upload';
-              }
-            break;
-            case 'report9':
-              if (this.reports[8].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[8].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[8].status = 'upload';
-              }
-            break;
-            case 'report10':
-              if (this.reports[9].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[9].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[9].status = 'upload';
-              }
-            break;
-            case 'report11':
-              if (this.reports[10].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[10].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[10].status = 'upload';
-              }
-            break;
-            case 'report12':
-              if (this.reports[11].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[11].status = 'send';
-              } else {
-                this.reportDoc = document;
-                this.reports[11].status = 'upload';
-              }
-            break;
-
-           
-            case 'selfEvaluations1':
-              if (this.selfEvaluations[0].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[0].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[0].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations2':
-              if (this.selfEvaluations[1].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[1].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[1].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations3':
-              if (this.selfEvaluations[2].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[2].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[2].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations4':
-              if (this.selfEvaluations[3].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[3].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[3].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations5':
-              if (this.selfEvaluations[4].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[4].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[4].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations6':
-              if (this.selfEvaluations[5].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[5].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[5].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations7':
-              if (this.selfEvaluations[6].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[6].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[6].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations8':
-              if (this.selfEvaluations[7].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[7].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[7].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations9':
-              if (this.selfEvaluations[8].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[8].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[8].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations10':
-              if (this.selfEvaluations[9].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[9].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[9].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations11':
-              if (this.selfEvaluations[10].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[10].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[10].status = 'upload';
-              }
-            break;
-            case 'selfEvaluations12':
-              if (this.selfEvaluations[11].status === 'reevaluate') {
-                await this.uploadFileReportToDrive(document.nameInDrive, document, this.selfEvaluationId, '3');
-                this.selfEvaluations[11].status = 'send';
-              } else {
-                this.selfEvaluationDoc = document;
-                this.selfEvaluations[11].status = 'upload';
-              }
-            break;
-          }
-        }
-      });
-      };
-    }
-  }// uploadReport
+ 
 
   validateUploadReport() { // metodo para activar el boton para enviar reportes
     if ( this.reportDoc && this.managerEvaluationDoc && this.selfEvaluationDoc)
@@ -1330,34 +1024,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     return true;
   }
 
-  /*retornar true para deshabilitar el boton
-  posibles statues del reporte = 'register', 'send', 'reevaluate', 'approved'
-   el boton se activa cuando:
-    -el status es diferente de approved
-    -el anterior (report, managerEvaluation y selfEvaluation) esta en status approved excepto en el primer reporte
-    -la fecha ya permite enviar el reporte.
-  */
-  disabledUploadReport(reportPosition, reportStatus) {
-    let button = true;
-    if ( reportStatus !== 'approved') {
-      // el reporte anterior esta aprobado
-      if (reportPosition > 1) {
-        // tslint:disable-next-line: max-line-length
-        if (this.reports[reportPosition - 2].status === 'approved' && this.managerEvaluations[reportPosition - 2].status === 'approved' && this.selfEvaluations[reportPosition - 2].status === 'approved') {
-          // validar que dependiendo del numero de reporte la fecha sea adecuada
-          if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
-            button = false;
-          }
-        }
-      } else { // Si es el primero solo validar la fecha
-      // aqui validar solo la fecha
-        if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
-          button = false;
-        }
-      }
-    }
-    return button;
-  }
+  
 
   addDates(initDate) {
       this.dateArray =
@@ -1378,78 +1045,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
   }
 
-  uploadFileReportToDrive(nameDocument, document, documentId, type) {
-    let typeDoc = '';
-    switch (type) {
-      case '1':
-        typeDoc = 'reports';
-      break;
-      case '2':
-        typeDoc = 'managerEvaluations';
-      break;
-      case '3':
-        typeDoc = 'selfEvaluations';
-      break;
-    }
-    this.loadingService.setLoading(true);
-    // Cargar el documento a Drive, ya debe de existir su registro y base de datos
-    this.controlStudentProvider.uploadFile2(document).subscribe( async updated => {
-        if (updated.action === 'create file') {
-          const documentInfo = {
-            doc: {
-              filename: updated.name,
-              type: 'DRIVE',
-              fileIdInDrive: updated.fileId,
-            },
-            status: {
-              name: 'EN PROCESO',
-              message: `El estudiante subio el ${nameDocument} por primera vez`
-            }
-          };
-          // Actualizar información del documento subido a drive
-          await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo).subscribe( () => {
-              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
-              // Actualizar en la bd el status del reporte
-              this.controlStudentProvider.updateReportFromDepartmentEvaluation(this.controlStudentId,
-                {nameDocument: typeDoc, documentId: documentId, eStatus: 'send'})
-                .subscribe( res => {
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se guardo el registro del reporte');
-                  this.ngOnInit();
-                } );
-            },
-            err => {
-              console.log(err);
-            }, () => this.loadingService.setLoading(false)
-          );
-        } else {
-          const documentInfo = {
-            filename: updated.filename,
-            status: {
-              name: 'EN PROCESO',
-              message: `El estudiante actualizo el ${nameDocument}`
-            }
-          };
-          // Actualizar la información del documento
-          await this.controlStudentProvider.updateDocumentLog(this.controlStudentId, documentInfo)
-            .subscribe( () => {
-              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
-                nameDocument + ' actualizado.');
-                this.controlStudentProvider.updateReportFromDepartmentEvaluation(this.controlStudentId,
-                  {nameDocument: typeDoc, documentId: documentId, eStatus: 'send'})
-                  .subscribe( res => {
-                    this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se guardo el registro del reporte');
-                    this.ngOnInit();
-                  } );
-            }, err => {
-              console.log(err);
-            }, () => this.loadingService.setLoading(false));
-        }
-      },
-      err => {
-        console.log(err);
-        this.loadingService.setLoading(false);
-      });
-  }
+
 
   async uploadFinalDocumentation() {
     if (this.lastReportDoc) {
@@ -1569,6 +1165,306 @@ export class SocialServiceMainPageComponent implements OnInit {
       };
     }
   }
+/* Bimestral Reports section*/
+  
+  /*retornar true para deshabilitar el boton
+  posibles statues del reporte = 'register', 'send', 'reevaluate', 'approved'
+   el boton se activa cuando:
+    -el status es diferente de approved o send
+    -el anterior (report, managerEvaluation y selfEvaluation) esta en status approved excepto en el primer reporte
+    -la fecha ya permite enviar el reporte.
+  */
+  disabledUploadReport(reportPosition, reportStatus) {
+    let button = true;
+    if ( reportStatus !== 'approved' && reportStatus !== 'send') {
+      // el reporte anterior esta aprobado
+      if (reportPosition > 1) {
+        // tslint:disable-next-line: max-line-length
+        if (this.reports[reportPosition - 2].status === 'approved' && this.managerEvaluations[reportPosition - 2].status === 'approved' && this.selfEvaluations[reportPosition - 2].status === 'approved') {
+          // validar que dependiendo del numero de reporte la fecha sea adecuada
+          if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
+            button = false;
+          }
+        }
+      } else { // Si es el primero solo validar la fecha
+      // aqui validar solo la fecha
+        if (this.now.isAfter(this.dateArray[reportPosition - 1])) {
+          button = false;
+        }
+      }
+    }
+    return button;
+  }
+
+  // BimestralReport
+  uploadReport(event) {
+    const reader = new FileReader();
+    const docType = event.target.attributes.id.value;
+    let newF = true;
+    let fileId = '';
+    let nameDocument = '';
+    switch (docType) {
+        case 'report1':
+          this.reportId = this.reports[0]._id;
+          nameDocument = 'ITT-POC-08-06-01 Reporte bimestral de servicio social.pdf';
+          if (this.reports[0].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-01'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report2':
+          this.reportId = this.reports[1]._id;
+          nameDocument = 'ITT-POC-08-06-02 Reporte bimestral de servicio social.pdf';
+          if (this.reports[1].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-02'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report3':
+          this.reportId = this.reports[2]._id;
+          nameDocument = 'ITT-POC-08-06-03 Reporte bimestral de servicio social.pdf';
+          if (this.reports[2].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-03'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report4':
+          this.reportId = this.reports[3]._id;
+          nameDocument = 'ITT-POC-08-06-04 Reporte bimestral de servicio social.pdf';
+          if (this.reports[3].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-04'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report5':
+          this.reportId = this.reports[4]._id;
+          nameDocument = 'ITT-POC-08-06-05 Reporte bimestral de servicio social.pdf';
+          if (this.reports[4].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-05'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report6':
+          this.reportId = this.reports[5]._id;
+          nameDocument = 'ITT-POC-08-06-06 Reporte bimestral de servicio social.pdf';
+          if (this.reports[5].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-06'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report7':
+          this.reportId = this.reports[6]._id;
+          nameDocument = 'ITT-POC-08-06-07 Reporte bimestral de servicio social.pdf';
+          if (this.reports[6].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-07'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report8':
+          this.reportId = this.reports[7]._id;
+          nameDocument = 'ITT-POC-08-06-08 Reporte bimestral de servicio social.pdf';
+          if (this.reports[7].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-08'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report9':
+          this.reportId = this.reports[8]._id;
+          nameDocument = 'ITT-POC-08-06-09 Reporte bimestral de servicio social.pdf';
+          if (this.reports[8].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-09'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report10':
+          this.reportId = this.reports[9]._id;
+          nameDocument = 'ITT-POC-08-06-10 Reporte bimestral de servicio social.pdf';
+          if (this.reports[9].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-10'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report11':
+          this.reportId = this.reports[10]._id;
+          nameDocument = 'ITT-POC-08-06-11 Reporte bimestral de servicio social.pdf';
+          if (this.reports[10].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-11'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'report12':
+          this.reportId = this.reports[11]._id;
+          nameDocument = 'ITT-POC-08-06-12 Reporte bimestral de servicio social.pdf';
+          if (this.reports[11].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-06-12'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;     
+    }
+    this.selectedFile = <File>event.target.files[0];
+    if (event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const document = {
+          mimeType: this.selectedFile.type,
+          nameInDrive: nameDocument,
+          bodyMedia: reader.result.toString().split(',')[1],
+          folderId: this.folderId,
+          newF: newF,
+          fileId: fileId
+        };
+      this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then(async response => {
+        if (response) {
+          switch (docType) {
+            case 'report1':
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[0].status = 'send';
+            break;
+            case 'report2':
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[1].status = 'send';
+            break;
+            case 'report3':
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[2].status = 'send';
+            break;
+            case 'report4':
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[3].status = 'send';
+            break;
+            case 'report5':              
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[4].status = 'send';              
+            break;
+            case 'report6':              
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[5].status = 'send';
+            break;
+            case 'report7':              
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[6].status = 'send';              
+            break;
+            case 'report8':              
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[7].status = 'send';              
+            break;
+            case 'report9':              
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[8].status = 'send';              
+            break;
+            case 'report10':              
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[9].status = 'send';              
+            break;
+            case 'report11':            
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[10].status = 'send';            
+            break;
+            case 'report12':              
+                await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
+                this.reports[11].status = 'send';              
+            break;
+          }
+        }
+      });
+      };
+    }
+  }// uploadReport
+
+  uploadFileReportToDrive(nameDocument, document, documentId, type) {
+    let typeDoc = '';
+    switch (type) {
+      case '1':
+        typeDoc = 'reports';
+      break;
+      case '2':
+        typeDoc = 'managerEvaluations';
+      break;
+    }
+    this.loadingService.setLoading(true);
+    // Cargar el documento a Drive, ya debe de existir su registro y base de datos
+    this.controlStudentProvider.uploadFile2(document).subscribe( async updated => {
+        if (updated.action === 'create file') {
+          const documentInfo = {
+            doc: {
+              filename: updated.name,
+              type: 'DRIVE',
+              fileIdInDrive: updated.fileId,
+            },
+            status: {
+              name: 'EN PROCESO',
+              message: `El estudiante subio el ${nameDocument} por primera vez`
+            }
+          };
+          // Actualizar información del documento subido a drive
+          await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo).subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
+              // Actualizar en la bd el status del reporte
+              this.controlStudentProvider.updateReportFromDepartmentEvaluation(this.controlStudentId,
+                {nameDocument: typeDoc, documentId: documentId, eStatus: 'send'})
+                .subscribe( res => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se guardo el registro del reporte');
+                  // this.ngOnInit();
+                } );
+            },
+            err => {
+              console.log(err);
+            }, () => this.loadingService.setLoading(false)
+          );
+        } else {
+          const documentInfo = {
+            filename: updated.filename,
+            status: {
+              name: 'EN PROCESO',
+              message: `El estudiante actualizo el ${nameDocument}`
+            }
+          };
+          // Actualizar la información del documento
+          await this.controlStudentProvider.updateDocumentLog(this.controlStudentId, documentInfo)
+            .subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
+                nameDocument + ' actualizado.');
+                this.controlStudentProvider.updateReportFromDepartmentEvaluation(this.controlStudentId,
+                  {nameDocument: typeDoc, documentId: documentId, eStatus: 'send'})
+                  .subscribe( res => {
+                    this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se guardo el registro del reporte');
+                    // this.ngOnInit();
+                  } );
+            }, err => {
+              console.log(err);
+            }, () => this.loadingService.setLoading(false));
+        }
+      },
+      err => {
+        console.log(err);
+        this.loadingService.setLoading(false);
+      });
+  }
 
   // ManagerEvaluation
   cancelManagerEvaluation(position){
@@ -1607,7 +1503,8 @@ export class SocialServiceMainPageComponent implements OnInit {
         //Subir el documento
         this.uploadFileReportToDrive(this.documentManagerEvaluation.nameInDrive, this.documentManagerEvaluation, this.managerEvaluationId, '2');
         this.managerEv = false;
-        this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Sus datos se estan procesando', '');
+        this.managerEvaluations[this.managerEvPosition-1].status = "send";
+        
       }, () => {
                 this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
                 'No se ha podido guardar la información, favor de intentarlo mas tarde');
@@ -1773,7 +1670,6 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
   }
 
-
   // SelfEvaluation
   selfEvaluationQuest(position){
     // primero evaluar si esta disponible la captura
@@ -1798,7 +1694,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       QS5: ['', Validators.required],
       QS6: ['', Validators.required],
       QS7: ['', Validators.required],
-      selfObservations: ['', Validators.required],
+      selfObservations: ['', ],
     });
   }
 
@@ -1953,6 +1849,13 @@ export class SocialServiceMainPageComponent implements OnInit {
         break;
     }
 
+    this.inscriptionsProv.getAllPeriods().subscribe(resp => {
+      this.periods = resp.periods;
+      let period = this.periods.filter(period => period._id === this.periodId);
+      this.periodName = period[0].periodName;      
+    });
+
+
     this.controlStudentProvider.getControlStudentById(this.controlStudentId)
     .subscribe( resp => {
       this.formDocument = this._castToDoc(resp.controlStudent);
@@ -1965,7 +1868,6 @@ export class SocialServiceMainPageComponent implements OnInit {
     });    
   
   }
-
 
   saveSelfEvaluationDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string, name: string) {
     this.loadingService.setLoading(true);
@@ -2045,9 +1947,9 @@ export class SocialServiceMainPageComponent implements OnInit {
       position: this.selfEvPosition,
       studentName: this.formDocument.student.fullName,
       programName: this.formDocument.dependencyProgramName,
-      period: "Periodo",
+      period: this.periodName,
       control: this.controlNumber,
-    };
+    };    
   }
 
 }
