@@ -151,7 +151,7 @@ export class InitPresentationDocument {
 
     doc.text('Tepic, Nayarit.' + moment().format('D [DE] MMMM [DE] YYYY').toUpperCase(), this.MARGIN.LEFT, 70, { align: 'left' });
 
-    doc.text('LIC. MANUEL ÁNGEL URIBE VÁZQUEZ', this.MARGIN.LEFT, 75, { align: 'left' });
+    doc.text('M.A. MANUEL ÁNGEL URIBE VÁZQUEZ', this.MARGIN.LEFT, 75, { align: 'left' });
     doc.text('DIRECTOR', this.MARGIN.LEFT, 80, { align: 'left' });
     doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', this.MARGIN.LEFT, 85, { align: 'left' });
 
@@ -174,7 +174,7 @@ export class InitPresentationDocument {
     doc.text('Excelencia en Educación Tecnológica', this.MARGIN.LEFT, 175, { align: 'left' });
     doc.text('\"SABIDURIA TECNOLÓGICA, PASIÓN DE NUESTRO ESPÍRITU\"', this.MARGIN.LEFT, 180, { align: 'left' });
     doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 20, 200, 25, 25);
-    doc.text('M.C ZOILA RAQUEL AGUIRRE GONZÁLEZ', this.MARGIN.LEFT, 225, { align: 'left' });
+    doc.text('M.C. ZOILA RAQUEL AGUIRRE GONZÁLEZ', this.MARGIN.LEFT, 225, { align: 'left' });
     doc.text('JEFA DEL DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN', this.MARGIN.LEFT, 230, { align: 'left' });
     doc.text('ZRGA/ahn', this.MARGIN.LEFT, 245, { align: 'left' });
 

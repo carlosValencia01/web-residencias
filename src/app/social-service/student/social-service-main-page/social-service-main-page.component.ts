@@ -83,7 +83,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public managerEvPosition = 0; // Variable para saber donde mostrar el formulario.
   private documentManagerEvaluation : any; // Variable para guardar los datos del documento de evaluacion.
   public selfEv = false; // Variable para mostrar el formulario de autoevaluacion.
-  public selfEvPosition = 0; // Variable para saber donde mostrar el formulario de autoevaluacion 
+  public selfEvPosition = 0; // Variable para saber donde mostrar el formulario de autoevaluacion
   public pdf: any; // Variable para guardar el contenido del pdf que se mostrara en el formulario.
   // documents status
   public presentation: string; // Variable para guardar el estatus de la carta de presentacion.
@@ -786,15 +786,15 @@ export class SocialServiceMainPageComponent implements OnInit {
         dependencyProgramLocation: data.dependencyProgramLocation
     };
   }
-  /* 
+  /*
   Metodo para obtener los datos del estudiante que hacen falta para la carta de asignacion
   */
   getMissingData() {
-    this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {      
+    this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
         this.studentFullName = this.isUndefined(res.student.fullName),
         this.studentgender = this.isUndefined(res.student.sex),
         this.studentStreet = this.isUndefined(res.student.street);
-        this.studentSuburb = this.isUndefined(res.student.suburb);        
+        this.studentSuburb = this.isUndefined(res.student.suburb);
         this.studentCity = this.isUndefined(res.student.city);
         this.studentPhone = this.isUndefined(res.student.phone);
         this.studentCarrer = this.isUndefined(res.student.career);
@@ -815,7 +815,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   private _castToDoc(data) {
-    
+
     return {
       student: data.studentId,
       dependencyName: data.dependencyName,
@@ -1014,7 +1014,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       });
   }
 
- 
+
 
   validateUploadReport() { // metodo para activar el boton para enviar reportes
     if ( this.reportDoc && this.managerEvaluationDoc && this.selfEvaluationDoc)
@@ -1024,7 +1024,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     return true;
   }
 
-  
+
 
   addDates(initDate) {
       this.dateArray =
@@ -1166,7 +1166,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
   }
 /* Bimestral Reports section*/
-  
+
   /*retornar true para deshabilitar el boton
   posibles statues del reporte = 'register', 'send', 'reevaluate', 'approved'
    el boton se activa cuando:
@@ -1323,7 +1323,7 @@ export class SocialServiceMainPageComponent implements OnInit {
             nameDocument = documentId[0].filename;
             fileId = documentId[0].fileIdInDrive;
           }
-        break;     
+        break;
     }
     this.selectedFile = <File>event.target.files[0];
     if (event.target.files && event.target.files.length) {
@@ -1357,37 +1357,37 @@ export class SocialServiceMainPageComponent implements OnInit {
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
                 this.reports[3].status = 'send';
             break;
-            case 'report5':              
+            case 'report5':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[4].status = 'send';              
+                this.reports[4].status = 'send';
             break;
-            case 'report6':              
+            case 'report6':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
                 this.reports[5].status = 'send';
             break;
-            case 'report7':              
+            case 'report7':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[6].status = 'send';              
+                this.reports[6].status = 'send';
             break;
-            case 'report8':              
+            case 'report8':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[7].status = 'send';              
+                this.reports[7].status = 'send';
             break;
-            case 'report9':              
+            case 'report9':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[8].status = 'send';              
+                this.reports[8].status = 'send';
             break;
-            case 'report10':              
+            case 'report10':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[9].status = 'send';              
+                this.reports[9].status = 'send';
             break;
-            case 'report11':            
+            case 'report11':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[10].status = 'send';            
+                this.reports[10].status = 'send';
             break;
-            case 'report12':              
+            case 'report12':
                 await this.uploadFileReportToDrive(document.nameInDrive, document, this.reportId, '1');
-                this.reports[11].status = 'send';              
+                this.reports[11].status = 'send';
             break;
           }
         }
@@ -1472,16 +1472,16 @@ export class SocialServiceMainPageComponent implements OnInit {
     this.managerEvaluations[position-1].status = 'register';
   }
 
-  _initManagerEvaluationRequest(){
+  _initManagerEvaluationRequest() {
     this.formManagerEvaluation = this.formBuilder.group({
-      Q1: ['', Validators.required],
-      Q2: ['', Validators.required],
-      Q3: ['', Validators.required],
-      Q4: ['', Validators.required],
-      Q5: ['', Validators.required],
-      Q6: ['', Validators.required],
-      Q7: ['', Validators.required],
-    })
+      q1: ['', Validators.required],
+      q2: ['', Validators.required],
+      q3: ['', Validators.required],
+      q4: ['', Validators.required],
+      q5: ['', Validators.required],
+      q6: ['', Validators.required],
+      q7: ['', Validators.required],
+    });
   }
 
   registerManagerEvaluation(){
@@ -1490,21 +1490,15 @@ export class SocialServiceMainPageComponent implements OnInit {
     if (this.formManagerEvaluation.invalid) {
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor de llenar todos los campos', '');
     } else {
-      let q1 = this.formManagerEvaluation.value.Q1;
-      let q2 = this.formManagerEvaluation.value.Q2;
-      let q3 = this.formManagerEvaluation.value.Q3;
-      let q4 = this.formManagerEvaluation.value.Q4;
-      let q5 = this.formManagerEvaluation.value.Q5;
-      let q6 = this.formManagerEvaluation.value.Q6;
-      let q7 = this.formManagerEvaluation.value.Q7;
+      const responses = this.formManagerEvaluation.value;
       this.controlStudentProvider.updateManagerEvaluationScore(this.controlStudentId,
-          {Q1:q1,Q2:q2,Q3:q3,Q4:q4,Q5:q5,Q6:q6,Q7:q7,position:this.managerEvPosition})
-        .subscribe(res => {
-        //Subir el documento
+          Object.assign(responses, {position: this.managerEvPosition}))
+        .subscribe(() => {
+        // Subir el documento
         this.uploadFileReportToDrive(this.documentManagerEvaluation.nameInDrive, this.documentManagerEvaluation, this.managerEvaluationId, '2');
         this.managerEv = false;
         this.managerEvaluations[this.managerEvPosition-1].status = "send";
-        
+
       }, () => {
                 this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
                 'No se ha podido guardar la información, favor de intentarlo mas tarde');
@@ -1716,7 +1710,7 @@ export class SocialServiceMainPageComponent implements OnInit {
           this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Sus datos se estan procesando', '');
           // generar el documento
           this.generateSelfEvaluation();
-          
+
       }
       )
     }
@@ -1852,7 +1846,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     this.inscriptionsProv.getAllPeriods().subscribe(resp => {
       this.periods = resp.periods;
       let period = this.periods.filter(period => period._id === this.periodId);
-      this.periodName = period[0].periodName;      
+      this.periodName = period[0].periodName;
     });
 
 
@@ -1865,8 +1859,8 @@ export class SocialServiceMainPageComponent implements OnInit {
       this.saveSelfEvaluationDocument(binary, this.formDocument.student, this.controlStudentId, true, '', nameDocument);
     }, err => {
       console.log(err);
-    });    
-  
+    });
+
   }
 
   saveSelfEvaluationDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string, name: string) {
@@ -1949,7 +1943,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       programName: this.formDocument.dependencyProgramName,
       period: this.periodName,
       control: this.controlNumber,
-    };    
+    };
   }
 
 }

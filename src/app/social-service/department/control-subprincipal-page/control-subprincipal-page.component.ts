@@ -252,6 +252,7 @@ export class ControlSubprincipalPageComponent implements OnInit {
 
   public refreshForSign() {
     this._getForSign();
+    this.selectAll({checked: false});
   }
 
   private _refreshAll(data: Array<any>): void {

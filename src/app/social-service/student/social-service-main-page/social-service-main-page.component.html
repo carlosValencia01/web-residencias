@@ -627,10 +627,10 @@
                   <mat-card class="my-2 solicitude-document">
                       <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
                         <h6 class="text-center">Carta de Autoevaluación No. {{report.position}}</h6>
-                        <label 
-                                for=selfEvaluations{{report.position}} 
-                                style="cursor: pointer; flex: 1 2;" 
-                                class="d-flex flex-column align-items-center justify-content-center"                                
+                        <label
+                                for=selfEvaluations{{report.position}}
+                                style="cursor: pointer; flex: 1 2;"
+                                class="d-flex flex-column align-items-center justify-content-center"
                                 >
                                 <div class="d-flex flex-column justify-content-center align-items-center" (click)="selfEvaluationQuest(report.position)">
                                   <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
@@ -673,7 +673,7 @@
                       </mat-card-content>
                   </mat-card>
                 </div>
-                
+
               </div>
               <!--Cuestionario managerEvaluation-->
               <div *ngIf="managerEv && report.position === managerEvPosition">
@@ -698,93 +698,93 @@
                         <label>1-Cumple en tiempo y forma con las actividades encomendadas alcanzando los objetivos.</label>
                           <mat-form-field appearance="outline" style="width: 100%;">
                             <mat-label> Seleccione una opcion</mat-label>
-                            <mat-select formControlName="Q1">
+                            <mat-select formControlName="q1">
                               <mat-option *ngFor="let score of scores" [value]="score.option">
                                 {{score.value}}
                               </mat-option>
                             </mat-select>
                           </mat-form-field>
                       </div>
-                  
+
                       <div class="row">
                         <label>2-Trabaja en equipo y se adapta a nuevas situaciones.</label>
                           <mat-form-field appearance="outline" style="width: 100%;">
                             <mat-label> Seleccione una opcion</mat-label>
-                            <mat-select formControlName="Q2">
+                            <mat-select formControlName="q2">
                               <mat-option *ngFor="let score of scores" [value]="score.option">
                                 {{score.value}}
                               </mat-option>
                             </mat-select>
                           </mat-form-field>
                       </div>
-                  
+
                       <div class="row">
                         <label>3-Muestra liderazgo en las actividades encomendadas.</label>
                           <mat-form-field appearance="outline" style="width: 100%;">
                             <mat-label> Seleccione una opcion</mat-label>
-                            <mat-select formControlName="Q3">
+                            <mat-select formControlName="q3">
                               <mat-option *ngFor="let score of scores" [value]="score.option">
                                 {{score.value}}
                               </mat-option>
                             </mat-select>
                           </mat-form-field>
                       </div>
-                  
+
                       <div class="row">
                         <label>4-Organiza su tiempo y trabaja de manera proactiva.</label>
                           <mat-form-field appearance="outline" style="width: 100%;">
                             <mat-label> Seleccione una opcion</mat-label>
-                            <mat-select formControlName="Q4">
+                            <mat-select formControlName="q4">
                               <mat-option *ngFor="let score of scores" [value]="score.option">
                                 {{score.value}}
                               </mat-option>
                             </mat-select>
                           </mat-form-field>
                       </div>
-                  
+
                       <div class="row">
                         <label>5-Interpreta la realidad y se sensibiliza aportando soluciones a la problemática con la actividad complementaria.</label>
                           <mat-form-field appearance="outline" style="width: 100%;">
                             <mat-label> Seleccione una opcion</mat-label>
-                            <mat-select formControlName="Q5">
+                            <mat-select formControlName="q5">
                               <mat-option *ngFor="let score of scores" [value]="score.option">
                                 {{score.value}}
                               </mat-option>
                             </mat-select>
                           </mat-form-field>
                       </div>
-                  
+
                       <div class="row">
                         <label>6-Realiza sugerencias innovadoras para beneficio o mejora del programa en el que participa.</label>
                           <mat-form-field appearance="outline" style="width: 100%;">
                             <mat-label> Seleccione una opcion</mat-label>
-                            <mat-select formControlName="Q6">
+                            <mat-select formControlName="q6">
                               <mat-option *ngFor="let score of scores" [value]="score.option">
                                 {{score.value}}
                               </mat-option>
                             </mat-select>
                           </mat-form-field>
                       </div>
-                  
+
                       <div class="row">
                         <label>7-Tiene iniciativa para ayudar en las actividades encomendadas y muestra espíritu de servicio.</label>
                           <mat-form-field appearance="outline" style="width: 100%;">
                             <mat-label> Seleccione una opcion</mat-label>
-                            <mat-select formControlName="Q7">
+                            <mat-select formControlName="q7">
                               <mat-option *ngFor="let score of scores" [value]="score.option">
                                 {{score.value}}
                               </mat-option>
                             </mat-select>
                           </mat-form-field>
                       </div>
-                  
+
                     </div>
                   </div>
 
                   <div class="text-center mt-2">
                     <div class="flex justify-content-around">
                       <button mat-raised-button type="button" class="mt-2 buttonMargin" color="warn" (click)="cancelManagerEvaluation(report.position)">Cancelar</button>
-                      <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Aceptar</button>                      
+                      <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Aceptar</button>
                     </div>
                   </div>
                 </form>
@@ -810,7 +810,7 @@
                         </mat-select>
                       </mat-form-field>
                   </div>
-  
+
                   <div class="row">
                     <label>2-Trabajé en equipo y me adapté a nuevas situaciones.</label>
                       <mat-form-field appearance="outline" style="width: 100%;">
@@ -822,7 +822,7 @@
                         </mat-select>
                       </mat-form-field>
                   </div>
-  
+
                   <div class="row">
                     <label>3-Mostré liderazgo en las actividades encomendadas.</label>
                       <mat-form-field appearance="outline" style="width: 100%;">
@@ -834,7 +834,7 @@
                         </mat-select>
                       </mat-form-field>
                   </div>
-  
+
                   <div class="row">
                     <label>4-Organicé mi tiempo y trabajé de manera proactiva.</label>
                       <mat-form-field appearance="outline" style="width: 100%;">
@@ -846,7 +846,7 @@
                         </mat-select>
                       </mat-form-field>
                   </div>
-  
+
                   <div class="row">
                     <label>5-Interpreté la realidad y me sensibilicé aportando soluciones a la problemática con la actividad complementaria.</label>
                       <mat-form-field appearance="outline" style="width: 100%;">
@@ -858,7 +858,7 @@
                         </mat-select>
                       </mat-form-field>
                   </div>
-  
+
                   <div class="row">
                     <label>6-Realicé sugerencias innovadoras para beneficio o mejora del programa en el que participa.</label>
                       <mat-form-field appearance="outline" style="width: 100%;">
@@ -870,7 +870,7 @@
                         </mat-select>
                       </mat-form-field>
                   </div>
-  
+
                   <div class="row">
                     <label>7-Tuve iniciativa para ayudar en las actividades encomendadas y mostré espíritu de servicio.</label>
                       <mat-form-field appearance="outline" style="width: 100%;">
@@ -890,7 +890,7 @@
                         <textarea matInput formControlName="selfObservations" type="text" rows="8"></textarea>
                       </mat-form-field>
                   </div>
-  
+
                   <div class="text-center mt-2">
                     <div class="flex justify-content-around">
                       <button mat-raised-button type="button" class="mt-2 buttonMargin" color="warn" (click)="cancelSelfEvaluation()">Cancelar</button>
@@ -918,8 +918,8 @@
 
                 <button mat-raised-button type="button" class="mt-2 buttonMargin">
                   <a class="noDecorado" download="SERVICIO_SOCIAL_GUIA_REPORTE_FINAL.doc" target="_blank" href="src/assets/docs/SERVICIO_SOCIAL_GUIA_REPORTE_FINAL.docx">
-                    Guía para Reporte Final                  
-                  </a>      
+                    Guía para Reporte Final
+                  </a>
                   <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
                 </button>
 
@@ -1017,7 +1017,7 @@
 
                   <div class="col-3">
                     <mat-card class="my-2 solicitude-document">
-                      <mat-card-content class="d-flex flex-column justify-content-center align-items-center">              
+                      <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
                         <h6 class="text-center">Carta de Liberación de la dependencia</h6>
                         <label for="dependencyRelease" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
                           <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
@@ -1069,7 +1069,7 @@
           </div><!--reporte final y carta de evaluacion del reporte final-->
 
           <div *ngIf="bimestralReport && !finalReport">
-              <div class="row justify-content-center"> 
+              <div class="row justify-content-center">
                 <div class="col-10 col-sm-8 col-md-6 col-lg-4">
                   <mat-card style="height: 225px; width: 300px;">
                     <mat-card-header class="flex-column align-items-center">

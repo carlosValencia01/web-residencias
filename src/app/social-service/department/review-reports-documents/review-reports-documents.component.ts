@@ -11,7 +11,7 @@ import {Location} from '@angular/common';
 import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 interface Score {
-  option: string;
+  option: number;
   value: string;
 }
 
@@ -31,12 +31,13 @@ export class ReviewReportsDocumentsComponent implements OnInit {
   public documents: any;
   public formManagerEvaluation: FormGroup;
   public questionsGroups: FormArray;
+  private managerEvaluationPosition: number;
   public scores: Score[] = [
-    {option: '0', value: 'Insuficiente'},
-    {option: '1', value: 'Suficiente'},
-    {option: '2', value: 'Bueno'},
-    {option: '3', value: 'Notable'},
-    {option: '4', value: 'Excelente'},
+    {option: 0, value: 'Insuficiente'},
+    {option: 1, value: 'Suficiente'},
+    {option: 2, value: 'Bueno'},
+    {option: 3, value: 'Notable'},
+    {option: 4, value: 'Excelente'},
   ];
   public questions: any[] = [
     { position: 'q1', text: '1-Cumple en tiempo y forma con las actividades encomendadas alcanzando los objetivos.' },
@@ -93,13 +94,9 @@ export class ReviewReportsDocumentsComponent implements OnInit {
 
   _setManagerEvaluationRequestValues(documentCode) {
     const evaluation = this.managerEvaluations.find(d => d.name === documentCode);
-    const data = {q1: '2',  q2: '2', q3: '3', q4: '1', q5: '4', q6: '4', q7: '3'};
-    const scores = [];
-    // Cambiar data por evaluation.scores
-    Object.keys(data).forEach((key) => {
-      scores.push({[key]: data[key]});
-    });
-    this.getQuestions.setValue(scores);
+    this.managerEvaluationPosition = evaluation.position;
+    const score = Object.keys(evaluation.scores).map((key) => ({[key]: evaluation.scores[key]}));
+    this.getQuestions.setValue(score);
   }
 
   get getQuestions(): FormArray {
@@ -109,7 +106,9 @@ export class ReviewReportsDocumentsComponent implements OnInit {
   viewDocument(documentCode, _eval: boolean) {
     this.loadingService.setLoading(true);
     this.evaluation = _eval;
-    this._setManagerEvaluationRequestValues(documentCode);
+    if (_eval) {
+      this._setManagerEvaluationRequestValues(documentCode);
+    }
     const documentId = this.documents.find(d => d.filename.includes(documentCode));
     if (documentId) {
       this.controlStudentProv.getResource(documentId.fileIdInDrive, documentCode).subscribe(async (data: Blob) => {
@@ -186,11 +185,35 @@ export class ReviewReportsDocumentsComponent implements OnInit {
   }
 
   updateManagerScores() {
-    let form = {};
-    this.formManagerEvaluation.value.questions.forEach(quest => {
-      form = Object.assign(form, quest);
+    Swal.fire({
+      title: '¿Esta seguro(a) de actualizar la evaluación del responsable del programa del estudiante?',
+      type: 'warning',
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      confirmButtonColor: '#3085d6',
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Aceptar'
+    }).then((res) => {
+      if (res.value) {
+        this.loadingService.setLoading(true);
+        let form = {};
+        this.formManagerEvaluation.value.questions.forEach(quest => {
+          form = Object.assign(form, quest);
+        });
+        // form  =>  {q1: '1', q2: '2', ....}
+        const result = Object.assign(form, {position: this.managerEvaluationPosition});
+        this.controlStudentProv.updateManagerEvaluationScore(this.controlStudentId,
+          result )
+          .subscribe(() => {
+            this.notificationsService.showNotification(eNotificationType.SUCCESS,
+              'Se ha actualizado la evaluación del documento', '');
+          }, () => {
+            this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
+              'No se ha podido guardar la información, favor de intentarlo mas tarde');
+            this.loadingService.setLoading(false);
+          }, () => this.loadingService.setLoading(false));
+      }
     });
-    // form  =>  {q1: '1', q2: '2', ....}
   }
 
 
@@ -201,6 +224,8 @@ export class ReviewReportsDocumentsComponent implements OnInit {
       .subscribe( res => {
         this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
           res.msg);
+        this.pdf = '';
+        this.evaluation = false;
         this.ngOnInit();
       }, error => {
         const message = JSON.parse(error._body).msg || 'Error al buscar recurso';

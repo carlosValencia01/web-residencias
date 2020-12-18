@@ -155,14 +155,14 @@ export class InitConstancy {
     doc.text('EXCELENCIA EN EDUCACIÓN TECNOLÓGICA', this.MARGIN.LEFT, 145, { align: 'left' });
     doc.text('\"SABIDURÍA TECNOLÓGICA, PASIÓN DE NUESTRO ESPÍRITU\"', this.MARGIN.LEFT, 150, { align: 'left' });
 
-    const firstSign = this.addArroba(`${this._request.departmentSignName} JEFE(A) DEL DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN`);
-    const secondSign = this.addArroba(`${this._CookiesService.getData().user.name.fullName} SUBDIRECTOR(A) DE PLANEACIÓN Y VINCULACIÓN`);
+    const firstSign = this.addArroba(`M.C. ${this._request.departmentSignName} JEFA DEL DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN`);
+    const secondSign = this.addArroba(`ING. ${this._CookiesService.getData().user.name.fullName} SUBDIRECTORA DE PLANEACIÓN Y VINCULACIÓN`);
 
-    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 25, 160, 30, 30);
-    doc.addImage(this.subPlanDirectorSignature, 'PNG', this.MARGIN.LEFT + 110, 165, 40, 20);
+    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 30, 165, 30, 30);
+    doc.addImage(this.subPlanDirectorSignature, 'PNG', this.MARGIN.LEFT + 115, 175, 40, 20);
 
-    this.justifyText(doc, firstSign, {x: this.MARGIN.LEFT + 20, y: 200}, 60, 4, 9);
-    this.justifyText(doc, secondSign, {x: this.MARGIN.LEFT + 100, y: 200}, 60, 4, 9);
+    this.justifyText(doc, firstSign, {x: this.MARGIN.LEFT + 15, y: 200}, 70, 5, 9);
+    this.justifyText(doc, secondSign, {x: this.MARGIN.LEFT + 100, y: 200}, 65, 5, 9);
     doc.addImage(this.stampTec, 'PNG', this.WIDTH - (this.WIDTH / 4), 210, 40, 40);
 
     doc.text('EMM/ZRAG/ahn', this.MARGIN.LEFT, 240, {align: 'left'});
