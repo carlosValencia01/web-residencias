@@ -1,0 +1,30 @@
+<form [formGroup]="form">
+  <p>
+    Captura la fecha de inicio que se indica en tu carta de aceptación por parte de la dependencia
+  </p>
+
+  <div class="justify-content-center">
+    <div>
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Fecha de inicio</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dependencyInitialDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </div>  
+  <div *ngIf="showAlertDiv" style="margin-top: 8px;" class="alert alert-danger" role="alert">
+    {{messageAlertDiv}}
+  </div>
+  
+</form>
+
+<mat-dialog-actions class="justify-content-center">
+  <button mat-button mat-dialog-close color="warn">Cancelar</button>
+  <button mat-button type="submit" color="primary" (click)="saveDate()" >Aceptar</button>
+</mat-dialog-actions>
+
+<!-- 
+
+
+-->
