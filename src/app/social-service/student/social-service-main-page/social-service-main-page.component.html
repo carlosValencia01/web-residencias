@@ -458,8 +458,9 @@
                   </mat-card>
                 </div>
               </div>
+
               <div class="text-center">
-                <button mat-raised-button color="primary" class="w-50" (click)="uploadFiles()" [disabled]="validateUploadFiles()">Subir documentos</button>
+                <button mat-raised-button color="primary" class="w-50" (click)="uploadFiles()" [disabled]="validateUploadFiles()">Enviar información</button>
               </div>
             </div>
 
@@ -529,6 +530,7 @@
             <!--Cards de reportes-->
             <div *ngFor="let report of reports">
               <div class="row margen d-flex justify-content-center">
+                <!--Reporte bimestral-->
                 <div class="col-3" >
                   <mat-card class="my-2 solicitude-document">
                       <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
@@ -575,11 +577,11 @@
                       </mat-card-content>
                   </mat-card>
                 </div>
-
+                <!--Formato de evaluacion-->
                 <div class="col-3" >
                   <mat-card class="my-2 solicitude-document">
                       <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
-                        <h6 class="text-center">Carta de Evaluación No. {{report.position}}</h6>
+                        <h6 class="text-center">Formato de evaluación por la dependencia No. {{report.position}}</h6>
                         <label for=managerEvaluations{{report.position}} style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
                           <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
                             <div [ngSwitch]="managerEvaluations[report.position -1].status">
@@ -622,11 +624,11 @@
                       </mat-card-content>
                   </mat-card>
                 </div>
-
+                <!--Formato de autoevaluacion-->
                 <div class="col-3" >
                   <mat-card class="my-2 solicitude-document">
                       <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
-                        <h6 class="text-center">Carta de Autoevaluación No. {{report.position}}</h6>
+                        <h6 class="text-center">Formato de autoevaluación No. {{report.position}}</h6>
                         <label
                                 for=selfEvaluations{{report.position}}
                                 style="cursor: pointer; flex: 1 2;"
@@ -885,16 +887,20 @@
 
                   <div class="row">
                     <label>Observaciones.</label>
-                    <mat-form-field appearance="outline" style="width: 100%;">
-                      <mat-label> Seleccione una opcion</mat-label>
+                    <mat-form-field appearance="outline" style="width: 100%;">                    
                         <textarea matInput formControlName="selfObservations" type="text" rows="8"></textarea>
                       </mat-form-field>
                   </div>
 
-                  <div class="text-center mt-2">
-                    <div class="flex justify-content-around">
+                  <div>
+                    <div class="row text-center flex justify-content-center">
                       <button mat-raised-button type="button" class="mt-2 buttonMargin" color="warn" (click)="cancelSelfEvaluation()">Cancelar</button>
-                      <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Firmar</button>
+                      <div *ngIf="saveSelfEvaluationButton">
+                        <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Guardar</button>
+                      </div>
+                      <div *ngIf="signSelfEvaluationButton">
+                          <button mat-raised-button type="button" class="mt-2 buttonMargin" color="primary" (click)="signSelfEvaluation()">Firmar</button>                      
+                      </div>
                     </div>
                   </div>
                 </form>
@@ -922,15 +928,16 @@
                   </a>
                   <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
                 </button>
-
-                <button mat-raised-button type="button" class="mt-2 buttonMargin">
-                  <a class="noDecorado" href="http://www.tepic.tecnm.mx/sgc2/files/Procesos_Centrales/Servicio_Social/Registros%20SS/ITT-POC-08-10%20EVALUACI%C3%93N%20DEL%20REPORTE%20FINAL.docx">
-                    Formato de Carta de Evaluación de Reporte Final
-                  </a>
-                  <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
-                </button>
-
+                <!--
+                  <button mat-raised-button type="button" class="mt-2 buttonMargin">
+                    <a class="noDecorado" href="http://www.tepic.tecnm.mx/sgc2/files/Procesos_Centrales/Servicio_Social/Registros%20SS/ITT-POC-08-10%20EVALUACI%C3%93N%20DEL%20REPORTE%20FINAL.docx">
+                      Formato de Carta de Evaluación de Reporte Final
+                    </a>
+                    <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
+                  </button>
+                -->
                 <div class="row margen d-flex justify-content-center">
+                  <!--Reporte final-->
                   <div class="col-3">
                     <mat-card class="my-2 solicitude-document">
                       <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
@@ -967,54 +974,13 @@
                             <mat-icon class="text-danger">info</mat-icon>
                           </button>
                         </div>
-                        <input type="file" id="lastReport" (change)="onFinalFileChange($event)"
+                        <input type="file" id="lastReport" (change)="uploadFinalReportDocumentation($event)"
                                hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFinalFile('lastReport')">
                       </mat-card-content>
                     </mat-card>
                   </div>
 
-                  <div class="col-3">
-                    <mat-card class="my-2 solicitude-document">
-                      <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
-                        <h6 class="text-center">Carta de Evaluación del Reporte Final</h6>
-                        <label for="lastReportEvaluation" style="cursor: pointer; flex: 1 2;" class="d-flex flex-column align-items-center justify-content-center">
-                          <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
-                          <div [ngSwitch]="lastReportEvaluation">
-                            <div *ngSwitchCase="'upload'">
-                              <span mat-line class="badge badge-pill badge-success">CARGADO</span>
-                            </div>
-                            <div *ngSwitchCase="'send'">
-                              <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
-                            </div>
-                            <div *ngSwitchCase="'reevaluate'">
-                              <span mat-line class="badge badge-pill badge-warn">REVALUACIÓN</span>
-                            </div>
-                            <div *ngSwitchCase="'approved'">
-                              <span mat-line class="badge badge-pill badge-success">APROBADO</span>
-                            </div>
-                            <div *ngSwitchDefault>
-                              <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
-                            </div>
-                          </div>
-                        </label>
-                        <p *ngIf="['reevaluate', 'upload'].includes(lastReportEvaluation)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
-                        <div class="text-center"  *ngIf="lastReportEvaluation === 'reevaluate'">
-                          <button mat-icon-button matSuffix
-                                  matTooltipClass="bg-danger"
-                                  [matTooltip]="filesStatus['lastReportEvaluation'].message"
-                                  matTooltipPosition="above"
-                                  [attr.aria-label]="'show information'"
-                                  style="margin-left: auto;"
-                                  type="button">
-                            <mat-icon class="text-danger">info</mat-icon>
-                          </button>
-                        </div>
-                        <input type="file" id="lastReportEvaluation" (change)="onFinalFileChange($event)"
-                               hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFinalFile('lastReportEvaluation')">
-                      </mat-card-content>
-                    </mat-card>
-                  </div>
-
+                  <!--Carta de liberacion-->
                   <div class="col-3">
                     <mat-card class="my-2 solicitude-document">
                       <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
@@ -1051,18 +1017,186 @@
                             <mat-icon class="text-danger">info</mat-icon>
                           </button>
                         </div>
-                        <input type="file" id="dependencyRelease" (change)="onFinalFileChange($event)"
+                        <input type="file" id="dependencyRelease" (change)="uploadFinalReportDocumentation($event)"
                                hidden="hidden" accept="application/pdf" [disabled]="disabledUploadFinalFile('dependencyRelease')">
                       </mat-card-content>
                     </mat-card>
                   </div>
 
+                  <!--Formato de evaluacion de Reporte final-->
+                  <div class="col-3" >
+                    <mat-card class="my-2 solicitude-document">
+                        <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
+                          <h6 class="text-center">Formato de Evaluación de las actividades</h6>
+                          <label
+                                  for="lastReportEvaluation"
+                                  style="cursor: pointer; flex: 1 2;"
+                                  class="d-flex flex-column align-items-center justify-content-center"
+                                  >
+                                  <div class="d-flex flex-column justify-content-center align-items-center" (click)="lastReportEvaluationQuest()">
+                                    <img src="../../../../assets/icons/pdfReport.svg" style="width: 40%; cursor: pointer;">
+                                    <div [ngSwitch]="lastReportEvaluation">
+                                      <div *ngSwitchCase="'upload'">
+                                        <span mat-line class="badge badge-pill badge-success">CARGADO</span>
+                                      </div>
+                                      <div *ngSwitchCase="'send'">
+                                        <span mat-line class="badge badge-pill badge-info">EVALUACIÓN</span>
+                                      </div>
+                                      <div *ngSwitchCase="'reevaluate'">
+                                        <span mat-line class="badge badge-pill badge-warn">REVALUACIÓN</span>
+                                      </div>
+                                      <div *ngSwitchCase="'approved'">
+                                        <span mat-line class="badge badge-pill badge-success">APROBADO</span>
+                                      </div>
+                                      <div *ngSwitchDefault>
+                                        <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                          </label>
+                          <p *ngIf="['reevaluate', 'upload'].includes(lastReportEvaluation)" style="font-size: 0.6em;">Para editar el documento, vuelva a hacer click</p>
+                            <div class="text-center"  *ngIf="lastReportEvaluation === 'reevaluate'">
+                              <button mat-icon-button matSuffix
+                                      matTooltipClass="bg-danger"
+                                      [matTooltip]="filesStatus['lastReportEvaluation'].message"
+                                      matTooltipPosition="above"
+                                      [attr.aria-label]="'show information'"
+                                      style="margin-left: auto;"
+                                      type="button">
+                                <mat-icon class="text-danger">info</mat-icon>
+                              </button>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                  </div>    
                 </div>
 
+                <!--Cuestionario Formato de evaluacion de reporte final-->
+                <div *ngIf="lastReportEvaluationForm">
+                  <hr>
+                  <div>
+                    <h2>FORMATO DE EVALUACIÓN DE LAS ACTIVIDADES POR EL PRESTADOR DE SERVICIO SOCIAL</h2>
+                  </div>
+                  <form [formGroup]="formlastReportEvaluation" class="card-body" (ngSubmit)="registerlastReportEvaluation()">
+                    <div class="row">
+                      <label>1-¿Consideras importante la realización del Servicio Social?.</label>
+                        <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label> Seleccione una opcion</mat-label>
+                          <mat-select formControlName="QL1">
+                            <mat-option *ngFor="let score of scores" [value]="score.option">
+                              {{score.value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                    </div>
 
-                <div class="text-center margen">
-                  <button mat-raised-button color="primary" class="w-50" (click)="uploadFinalDocumentation()" [disabled]="validateUploadFinalFiles()">Subir Reporte</button>
+                    <div class="row">
+                      <label>2-¿Consideras que las actividades que realizaste son pertinentes a los fines del Servicio Social?.</label>
+                        <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label> Seleccione una opcion</mat-label>
+                          <mat-select formControlName="QL2">
+                            <mat-option *ngFor="let score of scores" [value]="score.option">
+                              {{score.value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="row">
+                      <label>3-¿Consideras que las actividades que realizaste contribuyen a tu formación integral?.</label>
+                        <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label> Seleccione una opcion</mat-label>
+                          <mat-select formControlName="QL3">
+                            <mat-option *ngFor="let score of scores" [value]="score.option">
+                              {{score.value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="row">
+                      <label>4-¿Contribuiste en actividades de beneficio social comunitario?.</label>
+                        <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label> Seleccione una opcion</mat-label>
+                          <mat-select formControlName="QL4">
+                            <mat-option *ngFor="let score of scores" [value]="score.option">
+                              {{score.value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="row">
+                      <label>5-¿Contribuiste en actividades de protección al medio ambiente?.</label>
+                        <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label> Seleccione una opcion</mat-label>
+                          <mat-select formControlName="QL5">
+                            <mat-option *ngFor="let score of scores" [value]="score.option">
+                              {{score.value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="row">
+                      <label>6-¿Cómo consideras que las competencias que adquiriste en la escuela contribuyeron a atender asertivamente las actividades de servicio social?.</label>
+                        <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label> Seleccione una opcion</mat-label>
+                          <mat-select formControlName="QL6">
+                            <mat-option *ngFor="let score of scores" [value]="score.option">
+                              {{score.value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="row">
+                      <label>7-¿Consideras que sería factible continuar con este proyecto de Servicio Social a un proyecto de Residencias Profesionales, proyecto integrador, proyecto de investigación o desarrollo tecnológico?.</label>
+                        <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label> Seleccione una opcion</mat-label>
+                          <mat-select formControlName="QL7">
+                            <mat-option *ngFor="let score of scores" [value]="score.option">
+                              {{score.value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="row">
+                      <label>8-¿Recomendarías a otro estudiante realizar su Servicio Social en la dependencia donde lo realizaste?.</label>
+                        <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label> Seleccione una opcion</mat-label>
+                          <mat-select formControlName="QL8">
+                            <mat-option *ngFor="let score of scores" [value]="score.option">
+                              {{score.value}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="row">
+                      <label>Observaciones.</label>
+                      <mat-form-field appearance="outline" style="width: 100%;">                    
+                          <textarea matInput formControlName="lastselfObservations" type="text" rows="8"></textarea>
+                        </mat-form-field>
+                    </div>
+
+                    <div>
+                      <div class="row text-center flex justify-content-center">
+                        <button mat-raised-button type="button" class="mt-2 buttonMargin" color="warn" (click)="cancelLastReportEvaluationForm()">Cancelar</button>
+                        <div *ngIf="saveLastSelfEvaluationButton">
+                          <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Guardar</button>
+                        </div>
+                        <div *ngIf="signLastSelfEvaluationButton">
+                            <button mat-raised-button type="button" class="mt-2 buttonMargin" color="primary" (click)="signLastSelfEvaluation()">Firmar</button>                      
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+
+                  <hr>
                 </div>
+                <!--Cuestionario Formato de evaluacion de reporte final-->
 
               </div>
             </div>
@@ -1117,7 +1251,7 @@
         <div class="w-100 mx-auto">
           <div class="row">
             <div class="flex justify-content-around">
-              <button mat-raised-button type="button" class="mt-2 buttonMargin">
+              <button mat-raised-button type="button" (click)="downloadRelease()" class="mt-2 buttonMargin">
                   Carta de liberación
                 <mat-icon matPrefix class="text-info">cloud_download</mat-icon>
               </button>

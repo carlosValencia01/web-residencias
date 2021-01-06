@@ -14,11 +14,13 @@ import {DialogVerificationComponent} from '../../components/dialog-verification/
 import {DialogDocumentViewerComponent} from '../../components/dialog-document-viewer/dialog-document-viewer.component';
 import {InitRequestModel} from '../../../entities/social-service/initRequest.model';
 import { InitSelfEvaluationModel } from '../../../entities/social-service/initSelfEvaluation.model';
+import { InitLastSelfEvaluationModel } from '../../../entities/social-service/initLastSelfEvaluation.model';
 import { InitAsignationModel } from '../../../entities/social-service/initAsignation.model';
 import {InitPresentationDocument} from '../../../entities/social-service/initPresentationDocument';
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
 import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
+import { DialogStudentInitDateComponent } from '../../components/dialog-student-init-date/dialog-student-init-date.component';
 
 moment.locale('es');
 
@@ -38,10 +40,12 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   formDocument: InitRequestModel;
   formSelfEvaluationDocument: InitSelfEvaluationModel;
+  formLastSelfEvaluationDocument: InitLastSelfEvaluationModel;
   formAsignationDocument: InitAsignationModel;
   initRequest: InitPresentationDocument;
   public formManagerEvaluation: FormGroup;
   public formSelfEvaluation: FormGroup;
+  public formlastReportEvaluation: FormGroup;
 
   public scores: Score[] = [
     {option: '0', value: 'Insuficiente'},
@@ -85,6 +89,11 @@ export class SocialServiceMainPageComponent implements OnInit {
   public selfEv = false; // Variable para mostrar el formulario de autoevaluacion.
   public selfEvPosition = 0; // Variable para saber donde mostrar el formulario de autoevaluacion
   public pdf: any; // Variable para guardar el contenido del pdf que se mostrara en el formulario.
+  public signSelfEvaluationButton = false; // Variable para mostrar u ocultar el boton de firmar autoevaluacion bimestral.
+  public saveSelfEvaluationButton = true; // Variable para mostrar u ocultar el boton de guardar autoevaluacion bimestral.
+  public signLastSelfEvaluationButton = false; // Variable para mostrar u ocultar el boton de firmar autoevaluacion Final.
+  public saveLastSelfEvaluationButton = true; // Variable para mostrar u ocultar el boton de guardar autoevaluacion Final.
+  public lastReportEvaluationForm = false; // Variable para mostrar u oculatar el formulario de evaluacion de reporte final.
   // documents status
   public presentation: string; // Variable para guardar el estatus de la carta de presentacion.
   public workPlanProject: string; // Variable para guardar el estatus del plan de trabajo.
@@ -153,7 +162,6 @@ export class SocialServiceMainPageComponent implements OnInit {
   private periodId;
   private periods;
   private periodName;
-  public prueba = "asdfasdf";
 
   private historyDocumentStatus: Array<any>;
 
@@ -169,8 +177,8 @@ export class SocialServiceMainPageComponent implements OnInit {
   public qs5: number;
   public qs6: number;
   public qs7: number;
+  public qs8: number;
   public selfObservation: string;
-
 
   ngOnInit() {
     this.loadingService.setLoading(true);
@@ -216,6 +224,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       this._loadPage();
     }, () => this._loadPage());
       this._initializeTableForm();
+      
   }
 
   enableReportStep(presentation : string, acceptance : string, workPlanProject : string, commitment : string){
@@ -480,11 +489,13 @@ export class SocialServiceMainPageComponent implements OnInit {
                 break;
               case 'acceptance':
                 if (this.acceptance === 'reevaluate') {
-                  await this.uploadFile(document.nameInDrive, document, 'acceptance');
-                  this.acceptance = 'send';
+                  this.requestDate(document.nameInDrive, document, 'acceptance',true);
+                    // await this.uploadFile(document.nameInDrive, document, 'acceptance');                  
+                    this.acceptance = 'send';                                     
                 } else {
                   this.acceptanceDoc = document;
                   this.acceptance = 'upload';
+                  this.requestDate();
                 }
                 break;
               case 'workProject':
@@ -511,6 +522,38 @@ export class SocialServiceMainPageComponent implements OnInit {
       };
     }
   }
+
+
+  /* 
+    Metodo para abrir dialog para pedir la fecha de inicio de la carta de aceptacion
+  */
+  requestDate(nameDocument?, document?, detailDocument?,revaluate = false){
+        const dialogRef = this.dialog.open(DialogStudentInitDateComponent, {    
+          width: '400px',
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          if(result){
+            if (revaluate){
+              this.uploadFile(document.nameInDrive, document, 'acceptance');
+            }
+            this.saveDependencyInitDate(result);
+          }else{
+            this.acceptance = 'register'
+          }
+        });
+ }
+
+ saveDependencyInitDate(date){
+          this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
+            Object.assign({'dependencyInitialDate': date}))
+            .subscribe( res => {
+              }, () => {
+              this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
+                'No se ha podido guardar la información, favor de intentarlo mas tarde');
+                this.acceptance = 'register'
+              this.loadingService.setLoading(false);
+            }, () => this.loadingService.setLoading(false));
+ }
 
   validateUploadFiles() {
     return this.presentation !== 'upload' ||
@@ -1065,106 +1108,9 @@ export class SocialServiceMainPageComponent implements OnInit {
             this.dependencyRelease !== 'upload';
   }
 
-  disabledUploadFinalFile(document) {
-    let res = false;
-    switch (document) {
-      case 'lastReport':
-        res = ['approved', 'send'].includes(this.lastReport);
-      break;
-      case 'lastReportEvaluation':
-        res = ['approved', 'send'].includes(this.lastReportEvaluation);
-      break;
-      case 'dependencyRelease':
-        res = ['approved', 'send'].includes(this.dependencyRelease);
-      break;
-    }
-    return res;
-  }
 
-  async onFinalFileChange(event) {
-    const reader = new FileReader();
-    const docType = event.target.attributes.id.value;
-    let newF = true;
-    let fileId = '';
-    let nameDocument = '';
-    switch (docType) {
-      case 'lastReport':
-        nameDocument = 'ITT-POC-08-12 Reporte final.pdf';
-        if ( this.lastReport === 'reevaluate' ) {
-          newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-12'));
-          nameDocument = documentId[0].filename;
-          fileId = documentId[0].fileIdInDrive;
-        }
-      break;
-      case 'lastReportEvaluation':
-        nameDocument = 'ITT-POC-08-10 Evaluación del reporte final.pdf';
-        if ( this.lastReportEvaluation === 'reevaluate' ) {
-          newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-10'));
-          nameDocument = documentId[0].filename;
-          fileId = documentId[0].fileIdInDrive;
-        }
-      break;
-      case 'dependencyRelease':
-        nameDocument = 'ITT-POC-08-13 Carta de liberacion de la dependencia.pdf';
-        if ( this.dependencyRelease === 'reevaluate' ) {
-          newF = false;
-          const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-13'));
-          nameDocument = documentId[0].filename;
-          fileId = documentId[0].fileIdInDrive;
-        }
-      break;
-    }
-    this.selectedFile = <File>event.target.files[0];
-    if (event.target.files && event.target.files.length) {
-      const [file] = event.target.files;
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const document = {
-          mimeType: this.selectedFile.type,
-          nameInDrive: nameDocument,
-          bodyMedia: reader.result.toString().split(',')[1],
-          folderId: this.folderId,
-          newF: newF,
-          fileId: fileId
-        };
-        this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then( async response => {
-          if (response) {
-            switch (docType) {
-              case 'lastReport':
-                if (this.lastReport === 'reevaluate') {
-                  await this.uploadFile(document.nameInDrive, document, 'lastReport');
-                  this.lastReport = 'send';
-                } else {
-                  this.lastReportDoc = document;
-                  this.lastReport = 'upload';
-                }
-              break;
-              case 'lastReportEvaluation':
-                if (this.lastReportEvaluation === 'reevaluate') {
-                  await this.uploadFile(document.nameInDrive, document, 'lastReportEvaluation');
-                  this.lastReportEvaluation = 'send';
-                } else {
-                  this.lastReportEvaluationDoc = document;
-                  this.lastReportEvaluation = 'upload';
-                }
-              break;
-              case 'dependencyRelease':
-                if (this.dependencyRelease === 'reevaluate') {
-                  await this.uploadFile(document.nameInDrive, document, 'dependencyRelease');
-                  this.dependencyRelease = 'send';
-                } else {
-                  this.dependencyReleaseDoc = document;
-                  this.dependencyRelease = 'upload';
-                }
-              break;
-            }
-          }
-        });
-      };
-    }
-  }
+
+
 /* Bimestral Reports section*/
 
   /*retornar true para deshabilitar el boton
@@ -1677,6 +1623,8 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   cancelSelfEvaluation(){
     this.selfEv = false;
+    this.saveSelfEvaluationButton = true;
+    this.signSelfEvaluationButton = false;
   }
 
   _initSelfEvaluation(){
@@ -1690,12 +1638,24 @@ export class SocialServiceMainPageComponent implements OnInit {
       QS7: ['', Validators.required],
       selfObservations: ['', ],
     });
+    this.formSelfEvaluation.valueChanges.subscribe(res=>{
+      this.saveSelfEvaluationButton=true;
+      this.signSelfEvaluationButton=false;
+    }
+    );
   }
 
   registerSelfEvaluation(){
     if(this.formSelfEvaluation.invalid){
       this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor de llenar todos los campos', '');
     } else {
+      this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Revise si sus respuestas son correctas.', '');
+      this.signSelfEvaluationButton = true;
+      this.saveSelfEvaluationButton = false;
+    }
+  }
+
+  signSelfEvaluation(){
       this.qs1 = this.formSelfEvaluation.value.QS1;
       this.qs2 = this.formSelfEvaluation.value.QS2;
       this.qs3 = this.formSelfEvaluation.value.QS3;
@@ -1710,10 +1670,8 @@ export class SocialServiceMainPageComponent implements OnInit {
           this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Sus datos se estan procesando', '');
           // generar el documento
           this.generateSelfEvaluation();
-
       }
-      )
-    }
+      );
   }
 
   generateSelfEvaluation() {
@@ -1899,9 +1857,10 @@ export class SocialServiceMainPageComponent implements OnInit {
                 {nameDocument: 'selfEvaluations', documentId: this.selfEvaluationId, eStatus: 'send'})
                 .subscribe( res => {
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se guardo el registro de autoevaluacion');
-                  this.ngOnInit();
+                  // this.ngOnInit();
+                  this.selfEv = false;
+                  this.selfEvaluations[this.selfEvPosition - 1].status = "send";
                 } );
-                this.selfEv = false;
             },
             err => {
               console.log(err);
@@ -1946,4 +1905,287 @@ export class SocialServiceMainPageComponent implements OnInit {
     };
   }
 
+  /*Seccion Reporte final*/
+  disabledUploadFinalFile(document) {
+    let res = false;
+    switch (document) {
+      case 'lastReport':
+        res = ['approved', 'send'].includes(this.lastReport);
+      break;
+      case 'lastReportEvaluation':
+        res = ['approved', 'send'].includes(this.lastReportEvaluation);
+      break;
+      case 'dependencyRelease':
+        res = ['approved', 'send'].includes(this.dependencyRelease);
+      break;
+    }
+    return res;
+  }
+  
+  uploadFinalReportDocumentation(event) {
+    const reader = new FileReader();
+    const docType = event.target.attributes.id.value;
+    let newF = true;
+    let fileId = '';
+    let nameDocument = '';
+    switch (docType) {
+        case 'lastReport':
+          this.reportId = this.reports[0]._id;
+          nameDocument = 'ITT-POC-08-12 Reporte final.pdf';
+          if (this.reports[0].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-12'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+        case 'dependencyRelease':
+          this.reportId = this.reports[0]._id;
+          nameDocument = 'ITT-POC-08-13 Carta de liberacion de la dependencia.pdf';
+          if (this.reports[0].status === 'reevaluate') {
+            newF = false;
+            const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-13'));
+            nameDocument = documentId[0].filename;
+            fileId = documentId[0].fileIdInDrive;
+          }
+        break;
+    }
+    this.selectedFile = <File>event.target.files[0];
+    if (event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const document = {
+          mimeType: this.selectedFile.type,
+          nameInDrive: nameDocument,
+          bodyMedia: reader.result.toString().split(',')[1],
+          folderId: this.folderId,
+          newF: newF,
+          fileId: fileId
+        };
+      this.validateDocumentViewer(reader.result.toString(), document.nameInDrive).then(async response => {
+        if (response) {
+          switch (docType) {
+            case 'lastReport':
+                await this.uploadFile(document.nameInDrive, document, 'lastReport');
+                this.lastReport = 'send';
+            break;
+            case 'dependencyRelease':
+                await this.uploadFile(document.nameInDrive, document, 'dependencyRelease');
+                this.dependencyRelease = 'send';
+            break;
+          }
+        }
+      });
+      };
+    }
+  }// uploadFinalReportDocumentation
+
+  //Reporte final
+
+  
+  //Carta de liberacion de la dependencia
+  
+  //carta de evaluacion del reporte final
+  cancelLastReportEvaluationForm(){
+    this.lastReportEvaluationForm = false;
+    this.saveLastSelfEvaluationButton = true;
+    this.signLastSelfEvaluationButton = false;
+  }
+
+  lastReportEvaluationQuest(){
+    if(!this.disabledUploadFinalFile('lastReportEvaluation')){
+      this.lastReportEvaluationForm = true;
+      this._initLastReportEvaluation();
+    }
+  }
+
+  _initLastReportEvaluation(){
+    this.formlastReportEvaluation = this.formBuilder.group({
+      QL1: ['', Validators.required],
+      QL2: ['', Validators.required],
+      QL3: ['', Validators.required],
+      QL4: ['', Validators.required],
+      QL5: ['', Validators.required],
+      QL6: ['', Validators.required],
+      QL7: ['', Validators.required],
+      QL8: ['', Validators.required],
+      lastselfObservations: ['', ],
+    });
+    this.formlastReportEvaluation.valueChanges.subscribe(res=>{
+      this.saveLastSelfEvaluationButton=true;
+      this.signLastSelfEvaluationButton=false;
+    }
+    );
+  }
+
+  registerlastReportEvaluation(){
+    if(this.formlastReportEvaluation.invalid){
+      this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor de llenar todos los campos', '');
+    } else {
+      this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Revise si sus respuestas son correctas.', '');
+      this.signLastSelfEvaluationButton = true;
+      this.saveLastSelfEvaluationButton = false;
+    }
+  }
+
+  signLastSelfEvaluation(){
+    this.qs1 = this.formlastReportEvaluation.value.QL1;
+    this.qs2 = this.formlastReportEvaluation.value.QL2;
+    this.qs3 = this.formlastReportEvaluation.value.QL3;
+    this.qs4 = this.formlastReportEvaluation.value.QL4;
+    this.qs5 = this.formlastReportEvaluation.value.QL5;
+    this.qs6 = this.formlastReportEvaluation.value.QL6;
+    this.qs7 = this.formlastReportEvaluation.value.QL7;
+    this.qs8 = this.formlastReportEvaluation.value.QL8;
+    this.selfObservation = this.formlastReportEvaluation.value.lastselfObservations;
+    this.controlStudentProvider.updateLastSelfEvaluationScore(this.controlStudentId,
+        {QL1:this.qs1,QL2:this.qs2,QL3:this.qs3,QL4:this.qs4,QL5:this.qs5,QL6:this.qs6,QL7:this.qs7,QL8:this.qs8})
+      .subscribe(res => {
+        this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Sus datos se estan procesando', '');
+        // generar el documento
+        this.generateLastSelfEvaluation();
+    }
+    );
+  }
+
+  generateLastSelfEvaluation(){
+    let newF = true;
+    let fileId = '';
+    let nameDocument = '';
+    nameDocument = 'ITT-POC-08-10 Evaluación del reporte final.pdf';
+      if (this.lastReportEvaluation === 'reevaluate') {
+        newF = false;
+        const documentId = this.documents.filter(d => d.filename.includes('ITT-POC-08-10'));
+        nameDocument = documentId[0].filename;
+        fileId = documentId[0].fileIdInDrive;
+      }
+    this.inscriptionsProv.getAllPeriods().subscribe(resp => {
+      this.periods = resp.periods;
+      let period = this.periods.filter(period => period._id === this.periodId);
+      this.periodName = period[0].periodName;
+    });
+
+    this.controlStudentProvider.getControlStudentById(this.controlStudentId)
+    .subscribe( resp => {
+      this.formDocument = this._castToDoc(resp.controlStudent);
+      this.formLastSelfEvaluationDocument = this._castToDocLastSelfEvaluation();
+      this.initRequest.setLastSelfEvaluationRequest(this.formLastSelfEvaluationDocument);
+      const binary = this.initRequest.documentSend(eSocialFiles.EVALUACIONACTIVIDADES);
+      this.saveLastSelfEvaluationDocument(binary, this.formDocument.student, this.controlStudentId, true, '', nameDocument);
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  _castToDocLastSelfEvaluation(){
+    return {
+      ql1: this.qs1,
+      ql2: this.qs2,
+      ql3: this.qs3,
+      ql4: this.qs4,
+      ql5: this.qs5,
+      ql6: this.qs6,
+      ql7: this.qs7,
+      ql8: this.qs8,
+      observations: this.selfObservation,  
+      studentName: this.formDocument.student.fullName,
+      programName: this.formDocument.dependencyProgramName,
+      period: this.periodName,
+      control: this.controlNumber,
+    };
+  }
+
+  saveLastSelfEvaluationDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string, name: string) {
+    this.loadingService.setLoading(true);
+    const documentInfo = {
+      mimeType: 'application/pdf',
+      nameInDrive: name,
+      bodyMedia: document,
+      folderId: student.folderIdSocService.idFolderInDrive,
+      newF: statusDoc,
+      fileId: fileId
+    };
+    this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
+      async updated => {
+        if (updated.action === 'create file') {
+          const documentInfo4 = {
+            doc: {
+              filename: updated.name,
+              type: 'DRIVE',
+              fileIdInDrive: updated.fileId
+            },
+            status: {
+              name: 'ACEPTADO',
+              active: true,
+              message: 'Se envio por primera vez',
+              observation: 'Firmado por: ' + this.userData.name.fullName
+            }
+          };
+          this._createHistoryDocumentStatus(name,
+            'SE REGISTRO', 'SE HA REGISTRADO EL DOCUMENTO '+name,
+            this.userData.name.fullName);
+
+          await this.controlStudentProvider.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', name + ' registrada correctamente.');
+              
+              this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {['verification.lastReportEvaluation' ]: 'send'})
+                .subscribe( () => {
+                  this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
+                  this.lastReportEvaluation = 'send';
+                  this.lastReportEvaluationForm = false;
+                });
+            },
+            err => {
+              console.log(err);
+            }, () => this.loadingService.setLoading(false)
+          );
+        } else {
+          const docStatus = {
+            name: 'ACEPTADO',
+            active: true,
+            message: 'Se actualizo el documento'
+          };
+          await this.controlStudentProvider.updateDocumentLog(student._id, {filename: updated.filename, status: docStatus})
+            .subscribe( () => {
+              this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', name + ' registrada correctamente.');
+            }, err => {
+              console.log(err);
+            }, () => this.loadingService.setLoading(false));
+        }
+      },
+      err => {
+        console.log(err);
+        this.loadingService.setLoading(false);
+      }
+    );
+  }
+
+// Descarga de carta de liberacion de servicio social
+downloadRelease() {
+  this.loadingService.setLoading(true);
+  const release = this.documents.filter(f => f.filename.toString().includes('ITT-POC-08-08')); // cambiar por codigo de carta de liberacion
+  let releaseId = '';
+  try {
+    releaseId = release[0].fileIdInDrive;
+  } catch (e) {
+    this.notificationsService.showNotification(eNotificationType.ERROR,
+      'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
+    return;
+  }
+  this.controlStudentProvider.getFile(releaseId, 'ITT-POC-08-08 Constancia de Servicio Social.pdf').subscribe(async (res) => { // cambiar por liberacion
+    const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
+    const downloadLink = document.createElement('a');
+    const fileName = 'Carta de liberacion de Servicio Social.pdf';
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    downloadLink.click();
+    this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
+  }, error => {
+    this.loadingService.setLoading(false);
+    const message = JSON.parse(error._body).message || 'Error al descargar el documento, intentelo mas tarde';
+    this.notificationsService
+      .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
+  }, () =>     this.loadingService.setLoading(false) );
+}
 }

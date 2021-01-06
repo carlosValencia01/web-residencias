@@ -50,6 +50,7 @@ registerLocaleData(localeEs);
 import { getSpanishPaginatorIntl } from 'src/app/services/shared/mat-paginator-labels';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { RequestProvider } from './providers/reception-act/request.prov';
+import { DialogStudentInitDateComponent } from './social-service/components/dialog-student-init-date/dialog-student-init-date.component';
 
 @NgModule({
   
@@ -115,7 +116,9 @@ import { RequestProvider } from './providers/reception-act/request.prov';
     WebSocketService,
     RequestProvider
   ],
-  entryComponents: [SelectPositionComponent],
+  entryComponents: [
+    SelectPositionComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

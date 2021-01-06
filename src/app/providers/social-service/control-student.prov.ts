@@ -155,6 +155,11 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  updateLastSelfEvaluationScore(_id, data) {
+    return this.api.put(`controlStudent/lastSelfEvaluation/score/${_id}`, data)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   saveWorkPlan(id, data) {
     return this.api.put(`controlStudent/saveWorkPlan/${id}`, data); // .pipe(map(res => res.json()));
   }
