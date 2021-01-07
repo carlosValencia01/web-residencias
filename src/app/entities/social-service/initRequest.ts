@@ -294,8 +294,28 @@ export class InitRequest {
     doc.text('REPORTES BIMESTRALES', this.MARGIN.LEFT + 65, 170, { align: 'left' });
     doc.rect(this.MARGIN.LEFT + 115, 166, 10, 5);
     doc.rect(this.MARGIN.LEFT + 130, 166, 5, 5);
-    doc.rect(this.MARGIN.LEFT + 140, 166, 5, 5);
-    doc.rect(this.MARGIN.LEFT + 150, 166, 5, 5);
+    doc.rect(this.MARGIN.LEFT + 138, 166, 5, 5);
+    doc.rect(this.MARGIN.LEFT + 146, 166, 5, 5);
+    if (this.documentStatus.reports.length > 3) {
+      if (this.documentStatus.reports.length >= 4) {
+        doc.rect(this.MARGIN.LEFT + 154, 166, 5, 5);
+        if (this.documentStatus.reports[3].status === 'approved') {
+          doc.text('X', this.MARGIN.LEFT + 155, 170, { align: 'left' });
+        }
+      }
+      if (this.documentStatus.reports.length >= 5) {
+        doc.rect(this.MARGIN.LEFT + 162, 166, 5, 5);
+        if (this.documentStatus.reports[4].status === 'approved') {
+          doc.text('X', this.MARGIN.LEFT + 163, 170, { align: 'left' });
+        }
+      }
+      if (this.documentStatus.reports.length >= 6) {
+        doc.rect(this.MARGIN.LEFT + 170, 166, 5, 5);
+        if (this.documentStatus.reports[5].status === 'approved') {
+          doc.text('X', this.MARGIN.LEFT + 171, 170, { align: 'left' });
+        }
+      }
+    }
     if (this.documentStatus.reports.every(r => r.status === 'approved')) {
       doc.text('X', this.MARGIN.LEFT + 119, 170, { align: 'left' });
     }
@@ -303,10 +323,10 @@ export class InitRequest {
       doc.text('X', this.MARGIN.LEFT + 131, 170, { align: 'left' });
     }
     if (this.documentStatus.reports[1].status === 'approved') {
-      doc.text('X', this.MARGIN.LEFT + 141, 170, { align: 'left' });
+      doc.text('X', this.MARGIN.LEFT + 139, 170, { align: 'left' });
     }
     if (this.documentStatus.reports[2].status === 'approved') {
-      doc.text('X', this.MARGIN.LEFT + 151, 170, { align: 'left' });
+      doc.text('X', this.MARGIN.LEFT + 147, 170, { align: 'left' });
     }
 
     doc.text('CURSO DE', this.MARGIN.LEFT + 4, 180, { align: 'left' });
