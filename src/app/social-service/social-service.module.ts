@@ -58,6 +58,7 @@ import { ReviewLastReportPageComponent } from './department/review-last-report-p
 import { DialogHistoryViewerComponent } from './components/dialog-history-viewer/dialog-history-viewer.component';
 import { ControlSubprincipalPageComponent } from './department/control-subprincipal-page/control-subprincipal-page.component';
 import { DialogStudentInitDateComponent } from './components/dialog-student-init-date/dialog-student-init-date.component';
+import { DialogAcceptCommitmentComponent } from './components/dialog-accept-commitment/dialog-accept-commitment.component';
 
 @NgModule({
   imports: [
@@ -112,6 +113,7 @@ import { DialogStudentInitDateComponent } from './components/dialog-student-init
     DialogHistoryViewerComponent,
     ControlSubprincipalPageComponent,
     DialogStudentInitDateComponent,
+    DialogAcceptCommitmentComponent,
   ],
   providers: [
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
@@ -122,6 +124,6 @@ import { DialogStudentInitDateComponent } from './components/dialog-student-init
     ImageToBase64Service,
     DatePipe
   ],
-  entryComponents: [DialogVerificationComponent, DialogDocumentViewerComponent, DialogHistoryViewerComponent,DialogStudentInitDateComponent]
+  entryComponents: [DialogVerificationComponent, DialogDocumentViewerComponent, DialogHistoryViewerComponent,DialogStudentInitDateComponent,DialogAcceptCommitmentComponent]
 })
 export class SocialServiceModule { }

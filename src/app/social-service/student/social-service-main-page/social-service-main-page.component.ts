@@ -21,6 +21,7 @@ import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
 import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
 import { DialogStudentInitDateComponent } from '../../components/dialog-student-init-date/dialog-student-init-date.component';
+import { DialogAcceptCommitmentComponent } from '../../components/dialog-accept-commitment/dialog-accept-commitment.component';
 
 moment.locale('es');
 
@@ -512,8 +513,8 @@ export class SocialServiceMainPageComponent implements OnInit {
                   await this.uploadFile(document.nameInDrive, document, 'commitment');
                   this.commitment = 'send';
                 } else {
-                  // this.commitmentDoc = document;
-                  this.commitment = 'upload';
+                  //abrir accepcomitment
+                  this.requestCommitment();                    
                 }
                 break;
             }
@@ -522,6 +523,22 @@ export class SocialServiceMainPageComponent implements OnInit {
       };
     }
   }
+
+  /* 
+    Metodo para abrir dialog para confirmar carta compromiso
+  */
+ requestCommitment(){
+  const dialogRef = this.dialog.open(DialogAcceptCommitmentComponent, {    
+    width: '400px',
+  });
+  dialogRef.afterClosed().subscribe(result => {
+    if(result){
+      this.commitment = 'upload';
+    }else{
+      
+    }
+  });
+ }
 
 
   /* 
@@ -1048,7 +1065,8 @@ export class SocialServiceMainPageComponent implements OnInit {
               newF: true,
               fileId: ''
             };
-            this.commitment = 'upload';
+            this.requestCommitment();
+            //this.commitment = 'upload';
           }
         });
         // this.saveCommitmentDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
