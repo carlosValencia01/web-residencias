@@ -7,27 +7,30 @@
     <div *ngIf="!permission" class="d-flex justify-content-center">
       <mat-card class="w-75 m-2">
         <mat-card-content class="d-flex flex-column align-items-center justify-content-center">
-          <img alt="File" src="../../../../assets/imgs/sweetInfoIcon.png" style="width: 100px; height: 100px;">
-          <h4 class="text-center mt-3 text-primary noAccepted">Lo sentimos</h4>
-          <h5 class="text-center mt-3 noAccepted">Todavía no cumples con los requisitos para realizar tu servicio social</h5>
+        <img alt="File" src="../../../../assets/imgs/sweetInfoIcon.png" style="width: 100px; height: 100px;">
+        <h5 class="text-center mt-3 noAccepted">Requisitos para realizar tu servicio social</h5>
           <div class="w-50 mt-3">
             <h5 class="messageVerify font-weight-bold">Requisitos:</h5>
             <div class="w-100 mx-auto">
               <ol class="listVerify">
-                <li>Cumplir con el 70% de tu avance reticular <mat-icon class="text-danger" matTooltip="Todavía no cumples con el avance reticular">clear</mat-icon></li>
-                <li>Ser un estudiante con estatus Activo <mat-icon class="text-success">check</mat-icon></li>
-                <li>Asistir a la junta de servicio social <mat-icon class="text-danger">clear</mat-icon></li>
+                <li>Cumplir con el 65% de tu avance reticular <mat-icon class="text-success">check</mat-icon></li>
+                <li>Ser un estudiante con estatus Activo <mat-icon class="text-success">check</mat-icon></li>                
               </ol>
             </div>
+
+            <div class="w-100 d-flex justify-content-around">
+              <button mat-flat-button color="primary" (click)="permission = true">Continuar</button>
+            </div>
+
           </div>
         </mat-card-content>
       </mat-card>
     </div>
     <div *ngIf="permission">
-      <div class="w-100 my-1 d-flex justify-content-around">
-        <button mat-flat-button color="accent" (click)="assistance = false">Sin asistencia</button>
-        <button mat-flat-button color="primary" (click)="assistance = true">Con asistencia</button>
-      </div>
+        <div class="w-100 my-1 d-flex justify-content-around">
+          <button mat-flat-button color="accent" (click)="assistance = false">Sin asistencia</button>
+          <button mat-flat-button color="primary" (click)="assistance = true">Con asistencia</button>
+        </div>
       <mat-vertical-stepper [linear]="true" #stepper>
         <mat-step [completed]="assistance">
           <ng-template matStepLabel>
@@ -61,7 +64,7 @@
                 <ng-template matStepLabel>Formulario de Servicio Social</ng-template>
                 <div class="row justify-content-center">
                   <div class="col-12 my-2">
-                    <h4>Formulario: <a href="#" target="_blank" (click)="assistanceSecondStep = true">Asistencia para el servicio social</a></h4>
+                    <h4>Formulario: <a href="https://docs.google.com/forms/d/e/1FAIpQLScFY8DJg2F0IpGy5UXt0cLprqy5BDkqsEqRTzluiHHHkAxvow/viewform" target="_blank" (click)="assistanceSecondStep = true">Asistencia para el servicio social</a></h4>
                   </div>
                   <div class="col-6">
                     <button mat-raised-button matStepperNext [disabled]="!assistanceSecondStep" color="primary" style="width: 100%;">Continuar</button>
@@ -71,7 +74,10 @@
               <mat-step>
 
                 <ng-template matStepLabel>Resultado</ng-template>
-                <h5 class="text-center">Tu asistencia para servicio social se ha registrado con éxito</h5>
+                <h6 class="text-center">Has finalizado el proceso para contar con tu asistencia de Servicio Social, <strong>espera un máximo de tres días</strong> para obtener tu asistencia, de no ser así , 
+                  vuelve a mirar el video, contesta correctamente todo el formulario y 
+                  <strong>espera de nuevo los resultados para contar con tu asistencia </strong> 
+                  y puedas iniciar con tu tramite para tu Servicio Social.</h6>
                 <div class="d-flex justify-content-center" *ngIf="assistanceFirstStep && assistanceSecondStep">
                   <button mat-raised-button matStepperNext (click)="assistance = true" color="primary" style="width: 25%;">Continuar</button>
                 </div>
@@ -470,7 +476,7 @@
                   <mat-card style="height: 225px; width: 300px;">
                     <mat-card-header class="flex-column align-items-center">
                       <img alt="File" src="../../../../assets/imgs/reloj.png" style="width: 80px; height: 80px;">
-                      <h5 class="text-center mt-3">Sus documentos de solicitud de servicio social estan en <strong>revisión</strong></h5>
+                      <h5 class="text-center mt-3">Sus documentos de presentacion estan en <strong>revisión</strong></h5>
                     </mat-card-header>
                   </mat-card>
                 </div>
@@ -483,7 +489,7 @@
                   <mat-card style="height: 225px; width: 300px;">
                     <mat-card-header class="flex-column align-items-center">
                       <img alt="File" src="../../../../assets/imgs/approved.png" style="width: 80px; height: 80px;">
-                      <h5 class="text-center mt-3">Sus documentos de solicitud de servicio social han sido <span class="text-success">aceptados</span></h5>
+                      <h5 class="text-center mt-3">Sus documentos de presentacion han sido <span class="text-success">aceptados</span></h5>
                     </mat-card-header>
                   </mat-card>
                 </div>

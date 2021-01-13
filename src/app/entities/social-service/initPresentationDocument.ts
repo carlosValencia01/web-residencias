@@ -348,12 +348,13 @@ export class InitPresentationDocument {
         {x: this.MARGIN.LEFT, y: 70}, this.WIDTH - (this.MARGIN.RIGHT * 2), 6, 11);
       // Datos del prestador de servicio
       doc.text(`Nombre del prestante del Servicio Social: ${this._request.student.fullName}`, this.MARGIN.LEFT, 90, { align: 'left' });
-      doc.text(`Número de control: ${this._request.student.controlNumber}  Domicilio: `, this.MARGIN.LEFT, 100, { align: 'left' });
-      doc.text(`Teléfono: ${this._request.student.phone} Carrera: ${this._request.student.career} Semestre: ${this._request.student.semester}`, this.MARGIN.LEFT, 110, { align: 'left' });
-      doc.text(`Dependencia u organismo: ${this._request.dependencyName}`, this.MARGIN.LEFT, 120, { align: 'left' });
-      doc.text(`Domicilio de la dependencia: ${this._request.dependencyAddress}`, this.MARGIN.LEFT, 130, { align: 'left' });
-      doc.text(`Responsable del programa: ${this._request.dependencyDepartmentManager}`, this.MARGIN.LEFT, 140, { align: 'left' });
-      doc.text(`Fecha de inicio: *fecha de inicio* Fecha de terminación: *fecha final*`, this.MARGIN.LEFT, 150, { align: 'left' });
+      doc.text(`Número de control: ${this._request.student.controlNumber} `, this.MARGIN.LEFT, 100, { align: 'left' });  
+      doc.text(`Domicilio: ${this._request.student.street} colonia ${this._request.student.suburb} ${this._request.student.city}, Nayarit`, this.MARGIN.LEFT, 110, { align: 'left' });  
+      doc.text(`Teléfono: ${this._request.student.phone} Carrera: ${this._request.student.career} Semestre: ${this._request.student.semester}`, this.MARGIN.LEFT, 120, { align: 'left' });
+      doc.text(`Dependencia u organismo: ${this._request.dependencyName}`, this.MARGIN.LEFT, 130, { align: 'left' });
+      doc.text(`Domicilio de la dependencia: ${this._request.dependencyAddress}`, this.MARGIN.LEFT, 140, { align: 'left' });
+      doc.text(`Responsable del programa: ${this._request.dependencyDepartmentManager}`, this.MARGIN.LEFT, 150, { align: 'left' });
+      // doc.text(`Fecha de inicio: *fecha de inicio* Fecha de terminación: *fecha final*`, this.MARGIN.LEFT, 150, { align: 'left' });
 
       // Segundo parrafo
       this.justifyText(doc,
