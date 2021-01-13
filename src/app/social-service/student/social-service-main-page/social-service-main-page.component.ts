@@ -36,7 +36,7 @@ interface Score {
 })
 export class SocialServiceMainPageComponent implements OnInit {
   selectedFile: File = null;
-  @ViewChild('dialogverification') dialogVerification: DialogVerificationComponent;
+  @ViewChild(DialogVerificationComponent) dialogVerification: DialogVerificationComponent;
 
   formDocument: InitRequestModel;
   formSelfEvaluationDocument: InitSelfEvaluationModel;
@@ -85,7 +85,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public finalReport = false; // Variable para saber si se mustra el reporte final.
   public managerEv = false; // Variable para mostrar el formulario de la evalacion del responsable.
   public managerEvPosition = 0; // Variable para saber donde mostrar el formulario.
-  private documentManagerEvaluation : any; // Variable para guardar los datos del documento de evaluacion.
+  private documentManagerEvaluation: any; // Variable para guardar los datos del documento de evaluacion.
   public selfEv = false; // Variable para mostrar el formulario de autoevaluacion.
   public selfEvPosition = 0; // Variable para saber donde mostrar el formulario de autoevaluacion
   public pdf: any; // Variable para guardar el contenido del pdf que se mostrara en el formulario.
@@ -143,18 +143,18 @@ export class SocialServiceMainPageComponent implements OnInit {
   public verificationEmail: boolean; // Validacion de verificacion de email como primer paso del proceso de servicio social
   private documents: Array<any> = []; // Array para almacenar los documentos del estudiante
   public formSchedule: FormGroup;
-  public studentPhone = "";
-  public studentStreet = "";
-  public studentSuburb = "";
-  public studentCity = "";
-  public studentState = "";
-  public studentFullName = "";
-  public studentgender = "";
-  public studentCarrer = "";
-  public studentSemester = "";
-  public studentControl = "";
-  public studentProgress = "";
-  public studentBirth = "";
+  public studentPhone = '';
+  public studentStreet = '';
+  public studentSuburb = '';
+  public studentCity = '';
+  public studentState = '';
+  public studentFullName = '';
+  public studentgender = '';
+  public studentCarrer = '';
+  public studentSemester = '';
+  public studentControl = '';
+  public studentProgress = '';
+  public studentBirth = '';
   public studentAge: number;
   public initialDate: moment.Moment = moment.utc();
   public now = moment.utc();
@@ -224,10 +224,9 @@ export class SocialServiceMainPageComponent implements OnInit {
       this._loadPage();
     }, () => this._loadPage());
       this._initializeTableForm();
-      
   }
 
-  enableReportStep(presentation : string, acceptance : string, workPlanProject : string, commitment : string){
+  enableReportStep(presentation: string, acceptance: string, workPlanProject: string, commitment: string) {
     if ( presentation === 'approved' && acceptance === 'approved' && workPlanProject === 'approved' && commitment === 'approved') {
       return true;
     }
@@ -489,9 +488,9 @@ export class SocialServiceMainPageComponent implements OnInit {
                 break;
               case 'acceptance':
                 if (this.acceptance === 'reevaluate') {
-                  this.requestDate(document.nameInDrive, document, 'acceptance',true);
-                    // await this.uploadFile(document.nameInDrive, document, 'acceptance');                  
-                    this.acceptance = 'send';                                     
+                  this.requestDate(document.nameInDrive, document, 'acceptance', true);
+                    // await this.uploadFile(document.nameInDrive, document, 'acceptance');
+                    this.acceptance = 'send';
                 } else {
                   this.acceptanceDoc = document;
                   this.acceptance = 'upload';
@@ -524,26 +523,26 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
 
-  /* 
+  /*
     Metodo para abrir dialog para pedir la fecha de inicio de la carta de aceptacion
   */
-  requestDate(nameDocument?, document?, detailDocument?,revaluate = false){
-        const dialogRef = this.dialog.open(DialogStudentInitDateComponent, {    
+  requestDate(nameDocument?, document?, detailDocument?, revaluate = false) {
+        const dialogRef = this.dialog.open(DialogStudentInitDateComponent, {
           width: '400px',
         });
         dialogRef.afterClosed().subscribe(result => {
-          if(result){
-            if (revaluate){
+          if (result) {
+            if (revaluate) {
               this.uploadFile(document.nameInDrive, document, 'acceptance');
             }
             this.saveDependencyInitDate(result);
-          }else{
-            this.acceptance = 'register'
+          } else {
+            this.acceptance = 'register';
           }
         });
  }
 
- saveDependencyInitDate(date){
+ saveDependencyInitDate(date) {
           this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId,
             Object.assign({'dependencyInitialDate': date}))
             .subscribe( res => {
@@ -1921,7 +1920,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
     return res;
   }
-  
+
   uploadFinalReportDocumentation(event) {
     const reader = new FileReader();
     const docType = event.target.attributes.id.value;
@@ -1983,9 +1982,9 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   //Reporte final
 
-  
+
   //Carta de liberacion de la dependencia
-  
+
   //carta de evaluacion del reporte final
   cancelLastReportEvaluationForm(){
     this.lastReportEvaluationForm = false;
@@ -2088,7 +2087,7 @@ export class SocialServiceMainPageComponent implements OnInit {
       ql6: this.qs6,
       ql7: this.qs7,
       ql8: this.qs8,
-      observations: this.selfObservation,  
+      observations: this.selfObservation,
       studentName: this.formDocument.student.fullName,
       programName: this.formDocument.dependencyProgramName,
       period: this.periodName,
@@ -2128,7 +2127,7 @@ export class SocialServiceMainPageComponent implements OnInit {
 
           await this.controlStudentProvider.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', name + ' registrada correctamente.');
-              
+
               this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {['verification.lastReportEvaluation' ]: 'send'})
                 .subscribe( () => {
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
