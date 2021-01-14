@@ -1,8 +1,4 @@
 <div *ngIf="loaded">
-  <div class="w-100 d-flex justify-content-around">
-    <button mat-flat-button color="accent" (click)="permission = false">Sin permiso</button>
-    <button mat-flat-button color="primary" (click)="permission = true">Con permiso</button>
-  </div>
   <div *ngIf="!releaseSocialService">
     <div *ngIf="!permission" class="d-flex justify-content-center">
       <mat-card class="w-75 m-2">
@@ -14,7 +10,7 @@
             <div class="w-100 mx-auto">
               <ol class="listVerify">
                 <li>Cumplir con el 65% de tu avance reticular <mat-icon class="text-success">check</mat-icon></li>
-                <li>Ser un estudiante con estatus Activo <mat-icon class="text-success">check</mat-icon></li>                
+                <li>Ser un estudiante con estatus Activo <mat-icon class="text-success">check</mat-icon></li>
               </ol>
             </div>
 
@@ -27,10 +23,6 @@
       </mat-card>
     </div>
     <div *ngIf="permission">
-        <div class="w-100 my-1 d-flex justify-content-around">
-          <button mat-flat-button color="accent" (click)="assistance = false">Sin asistencia</button>
-          <button mat-flat-button color="primary" (click)="assistance = true">Con asistencia</button>
-        </div>
       <mat-vertical-stepper [linear]="true" #stepper>
         <mat-step [completed]="assistance">
           <ng-template matStepLabel>
@@ -53,7 +45,7 @@
                 <ng-template matStepLabel>Video de Servicio Social</ng-template>
                 <div class="row justify-content-center">
                   <div class="col-12 my-2">
-                    <h4>Video: <a href="#" target="_blank" (click)="assistanceFirstStep = true">¿Qué significa hacer mi servicio social?</a></h4>
+                    <h4>Video: <a href="https://youtu.be/E_aJXKDLsW8" target="_blank" (click)="assistanceFirstStep = true">¿Qué significa hacer mi servicio social?</a></h4>
                   </div>
                   <div class="col-6">
                     <button mat-raised-button matStepperNext color="primary" [disabled]="!assistanceFirstStep" style="width: 100%;">Continuar</button>
@@ -74,12 +66,11 @@
               <mat-step>
 
                 <ng-template matStepLabel>Resultado</ng-template>
-                <h6 class="text-center">Has finalizado el proceso para contar con tu asistencia de Servicio Social, <strong>espera un máximo de tres días</strong> para obtener tu asistencia, de no ser así , 
-                  vuelve a mirar el video, contesta correctamente todo el formulario y 
-                  <strong>espera de nuevo los resultados para contar con tu asistencia </strong> 
+                <h6 class="text-center">Has finalizado el proceso para contar con tu asistencia de Servicio Social, <strong>espera un máximo de tres días</strong> para obtener tu asistencia, de no ser así ,
+                  vuelve a mirar el video, contesta correctamente todo el formulario y
+                  <strong>espera de nuevo los resultados para contar con tu asistencia </strong>
                   y puedas iniciar con tu tramite para tu Servicio Social.</h6>
                 <div class="d-flex justify-content-center" *ngIf="assistanceFirstStep && assistanceSecondStep">
-                  <button mat-raised-button matStepperNext (click)="assistance = true" color="primary" style="width: 25%;">Continuar</button>
                 </div>
               </mat-step>
             </mat-horizontal-stepper>
@@ -893,7 +884,7 @@
 
                   <div class="row">
                     <label>Observaciones.</label>
-                    <mat-form-field appearance="outline" style="width: 100%;">                    
+                    <mat-form-field appearance="outline" style="width: 100%;">
                         <textarea matInput formControlName="selfObservations" type="text" rows="8"></textarea>
                       </mat-form-field>
                   </div>
@@ -905,7 +896,7 @@
                         <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Guardar</button>
                       </div>
                       <div *ngIf="signSelfEvaluationButton">
-                          <button mat-raised-button type="button" class="mt-2 buttonMargin" color="primary" (click)="signSelfEvaluation()">Firmar</button>                      
+                          <button mat-raised-button type="button" class="mt-2 buttonMargin" color="primary" (click)="signSelfEvaluation()">Firmar</button>
                       </div>
                     </div>
                   </div>
@@ -1074,7 +1065,7 @@
                             </div>
                         </mat-card-content>
                     </mat-card>
-                  </div>    
+                  </div>
                 </div>
 
                 <!--Cuestionario Formato de evaluacion de reporte final-->
@@ -1182,7 +1173,7 @@
 
                     <div class="row">
                       <label>Observaciones.</label>
-                      <mat-form-field appearance="outline" style="width: 100%;">                    
+                      <mat-form-field appearance="outline" style="width: 100%;">
                           <textarea matInput formControlName="lastselfObservations" type="text" rows="8"></textarea>
                         </mat-form-field>
                     </div>
@@ -1194,7 +1185,7 @@
                           <button mat-raised-button type="submit" class="mt-2 buttonMargin" color="primary">Guardar</button>
                         </div>
                         <div *ngIf="signLastSelfEvaluationButton">
-                            <button mat-raised-button type="button" class="mt-2 buttonMargin" color="primary" (click)="signLastSelfEvaluation()">Firmar</button>                      
+                            <button mat-raised-button type="button" class="mt-2 buttonMargin" color="primary" (click)="signLastSelfEvaluation()">Firmar</button>
                         </div>
                       </div>
                     </div>

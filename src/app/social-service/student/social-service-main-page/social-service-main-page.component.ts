@@ -56,21 +56,6 @@ export class SocialServiceMainPageComponent implements OnInit {
     {option: '4', value: 'Excelente'},
   ];
 
-  constructor(private loadingService: LoadingService,
-              private cookiesService: CookiesService,
-              private studentProvider: StudentProvider,
-              private inscriptionsProv: InscriptionsProvider,
-              private notificationsService: NotificationsServices,
-              private controlStudentProvider: ControlStudentProv,
-              private formBuilder: FormBuilder,
-              public dialog: MatDialog,
-              public imgSrv: ImageToBase64Service) {
-    // Obtencion de la informacion del alumno, id, nombre, carrera, revisar en localStorage
-    this.userData = this.cookiesService.getData().user;
-    this._idStudent = this.userData._id;
-    this.initRequest = new InitPresentationDocument(this.imgSrv, this.cookiesService);
-  }
-
   public loaded = false; // Carga de la pagina
   public permission: boolean; // Permiso para acceder a servicio social
   public releaseSocialService: boolean; // Condicion para saber si ha liberado el servicio social
@@ -181,50 +166,84 @@ export class SocialServiceMainPageComponent implements OnInit {
   public qs8: number;
   public selfObservation: string;
 
+  constructor(private loadingService: LoadingService,
+              private cookiesService: CookiesService,
+              private studentProvider: StudentProvider,
+              private inscriptionsProv: InscriptionsProvider,
+              private notificationsService: NotificationsServices,
+              private controlStudentProvider: ControlStudentProv,
+              private formBuilder: FormBuilder,
+              public dialog: MatDialog,
+              public imgSrv: ImageToBase64Service) {
+    // Obtencion de la informacion del alumno, id, nombre, carrera, revisar en localStorage
+    this.userData = this.cookiesService.getData().user;
+    this._idStudent = this.userData._id;
+    this.initRequest = new InitPresentationDocument(this.imgSrv, this.cookiesService);
+  }
+
   ngOnInit() {
     this.loadingService.setLoading(true);
-    this.controlStudentProvider.getControlStudentByStudentId(this.userData._id).subscribe( async res => {
-      this.controlStudentId = res.controlStudent._id;
-      this.emailStudent = res.controlStudent.emailStudent || '';
-      this.sendEmailCode = res.controlStudent.verification.sendEmailCode;
-      this.verificationEmail = res.controlStudent.verification.verificationEmail;
-      this.statusFirstDocuments = res.controlStudent.verification['solicitude'];
-      this.solicitudeDocument = this.statusFirstDocuments === 'approved';
-      this.documents = res.controlStudent.documents;
-      this.presentation = res.controlStudent.verification.presentation;
-      this.workPlanProject = res.controlStudent.verification.workPlanProject;
-      this.acceptance = res.controlStudent.verification.acceptance;
-      this.commitment = res.controlStudent.verification.commitment;
-      this.presentationDocument = false;
-      this.reportsDocument = true;
-      this.permission = false;
-      this.releaseSocialService = res.controlStudent.status === 'approved';
-      this.assistance = false;
-      this.reports = res.controlStudent.verification.reports;
-      this.managerEvaluations = res.controlStudent.verification.managerEvaluations;
-      this.selfEvaluations = res.controlStudent.verification.selfEvaluations;
-      await this.getFolderId();
-      this.controlNumber = res.controlStudent.controlNumber;
-      if ( res.controlStudent.months.length !== 0  ) { this.savedSchedule = true; }
-      this.presentationDownloaded = res.controlStudent.verification.presentationDownloaded;
-      this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
-      this.filesStatus = res.controlStudent.verificationDepartment;
-      this.initialDate = moment.utc(new Date(res.controlStudent.initialDate).valueOf());
-      this.addDates(new Date(res.controlStudent.initialDate).valueOf());
-      this.lastReport = res.controlStudent.verification.lastReport;
-      this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
-      this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
-      this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
-      this.periodId = res.controlStudent.periodId;
-      this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);
-      this.showReports();
-    }, error => {
-      this.notificationsService.showNotification(eNotificationType.INFORMATION,
-        'Atención',
-        'No se ha encontrado su información por favor de recargar la página o volver a intentarlo mas tarde');
-      this._loadPage();
-    }, () => this._loadPage());
+    // Validar si el estudiante cuenta con el porcentaje aprobatorio
+    if (parseFloat(this.userData.percentCareer) >= 65 && this.userData.status === 'ACT') {
+      this.controlStudentProvider.getControlStudentByStudentId(this.userData._id).subscribe( async (res: any) => {
+        this.controlStudentId = res.controlStudent._id;
+        this.emailStudent = res.controlStudent.emailStudent || '';
+        this.controlNumber = res.controlStudent.controlNumber;
+        this.periodId = res.controlStudent.periodId;
+
+        this.sendEmailCode = res.controlStudent.verification.sendEmailCode;
+        this.verificationEmail = res.controlStudent.verification.verificationEmail;
+        this.statusFirstDocuments = res.controlStudent.verification['solicitude'];
+
+        this.solicitudeDocument = this.statusFirstDocuments === 'approved';
+        this.documents = res.controlStudent.documents;
+        this.presentation = res.controlStudent.verification.presentation;
+        this.workPlanProject = res.controlStudent.verification.workPlanProject;
+        this.acceptance = res.controlStudent.verification.acceptance;
+        this.commitment = res.controlStudent.verification.commitment;
+        this.presentationDocument = false;
+        this.reportsDocument = true;
+        this.releaseSocialService = res.controlStudent.status === 'approved';
+        this.reports = res.controlStudent.verification.reports;
+        this.managerEvaluations = res.controlStudent.verification.managerEvaluations;
+        this.selfEvaluations = res.controlStudent.verification.selfEvaluations;
+        if ( res.controlStudent.months.length !== 0  ) { this.savedSchedule = true; }
+        this.presentationDownloaded = res.controlStudent.verification.presentationDownloaded;
+        this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
+        this.filesStatus = res.controlStudent.verificationDepartment;
+        this.initialDate = moment.utc(new Date(res.controlStudent.initialDate).valueOf());
+        this.addDates(new Date(res.controlStudent.initialDate).valueOf());
+        this.lastReport = res.controlStudent.verification.lastReport;
+        this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
+        this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
+        this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
+        this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);
+
+        this.assistance = res.controlStudent.verification.assistance;
+        this.permission = true;
+        await this.getFolderId();
+        this.showReports();
+      }, () => {
+        this.notificationsService.showNotification(eNotificationType.INFORMATION,
+          'Atención',
+          'Por favor espere un momento en lo que se registra su información');
+        this.controlStudentProvider.createRegisterByControlNumber(this.userData.email).subscribe(response => {
+          this.notificationsService.showNotification(eNotificationType.SUCCESS,
+            'Exito',
+            response.msg);
+          setTimeout( () => {
+            window.location.reload();
+          }, 2000);
+        }, err => {
+          const message = JSON.parse(err._body).msg || 'Error al registrar, intentelo más tarde';
+          this.notificationsService.showNotification(eNotificationType.ERROR,
+            'Error', message);
+        });
+        this._loadPage();
+      }, () => this._loadPage());
       this._initializeTableForm();
+    }
+
   }
 
   enableReportStep(presentation: string, acceptance: string, workPlanProject: string, commitment: string) {
@@ -236,8 +255,12 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   showReports() {
-    this.bimestralReport = this.reports[this.reports.length - 1].status === 'approved' && this.managerEvaluations[this.managerEvaluations.length - 1].status === 'approved' && this.selfEvaluations[this.selfEvaluations.length - 1].status === 'approved';
-    this.finalReport = this.lastReport !== 'approved' || this.lastReportEvaluation !== 'approved' || this.dependencyRelease !== 'approved';
+    this.bimestralReport = this.reports[this.reports.length - 1].status === 'approved' &&
+                          this.managerEvaluations[this.managerEvaluations.length - 1].status === 'approved' &&
+                          this.selfEvaluations[this.selfEvaluations.length - 1].status === 'approved';
+    this.finalReport = this.lastReport !== 'approved' ||
+                      this.lastReportEvaluation !== 'approved' ||
+                      this.dependencyRelease !== 'approved';
   }
 
   _loadPage() {
@@ -513,7 +536,7 @@ export class SocialServiceMainPageComponent implements OnInit {
                   this.commitment = 'send';
                 } else {
                   //abrir accepcomitment
-                  this.requestCommitment();                    
+                  this.requestCommitment();
                 }
                 break;
             }
@@ -523,18 +546,18 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
   }
 
-  /* 
+  /*
     Metodo para abrir dialog para confirmar carta compromiso
   */
  requestCommitment(){
-  const dialogRef = this.dialog.open(DialogAcceptCommitmentComponent, {    
+  const dialogRef = this.dialog.open(DialogAcceptCommitmentComponent, {
     width: '400px',
   });
   dialogRef.afterClosed().subscribe(result => {
     if(result){
       this.commitment = 'upload';
     }else{
-      
+
     }
   });
  }

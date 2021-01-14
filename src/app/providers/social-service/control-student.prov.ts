@@ -78,8 +78,8 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
-  createAssistanceByControlNumber(controlNumber) {
-    return this.api.post('controlStudent/register/assistance', {controlNumber: controlNumber})
+  createRegisterByControlNumber(controlNumber) {
+    return this.api.post('controlStudent/create/register', {controlNumber: controlNumber})
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
