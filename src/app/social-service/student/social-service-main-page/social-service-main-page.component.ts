@@ -22,6 +22,7 @@ import {ImageToBase64Service} from 'src/app/services/app/img.to.base63.service';
 import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
 import { DialogStudentInitDateComponent } from '../../components/dialog-student-init-date/dialog-student-init-date.component';
 import { DialogAcceptCommitmentComponent } from '../../components/dialog-accept-commitment/dialog-accept-commitment.component';
+import Swal from 'sweetalert2';
 
 moment.locale('es');
 
@@ -272,6 +273,27 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   async changeStatusSendInformation() {
     this.ngOnInit();
+  }
+
+  showHelpInformation() {
+    Swal.fire({
+      title: '<strong>Información de contacto</strong>',
+      html:
+        '<h3><strong>Instituto Tecnológico de Tepic</strong></h3>' +
+        '<hr>' +
+        '<p>Para dudas o mayor información comunicarse con:</p>' +
+        '<p><i class="fa fa-building"></i> <span><strong>Areá de Servicio Social</strong></span></p>' +
+        '<p><i class="fa fa-phone"></i> <strong>Teléfono</strong>: <u>311 211 9400</u>, <strong>Ext.</strong><u>325</u> <strong>o</strong> <u>318</u></p>' +
+        '<hr>' +
+        '<p>Tienes dudas acerca de como utilizar la plataforma, mira el siguiente video:</p>' +
+        '<a href="#" target="_blank">Plataforma para el Servicio Social del TecNM Campus Tepic</a>',
+      showCloseButton: true,
+      showCancelButton: false,
+      focusConfirm: false,
+      confirmButtonText:
+        '<i class="fa fa-thumbs-up"></i> Gracias',
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+    });
   }
 
   _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible) {

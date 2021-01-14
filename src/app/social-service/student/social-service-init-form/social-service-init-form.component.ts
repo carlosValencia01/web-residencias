@@ -46,7 +46,9 @@ export class SocialServiceInitFormComponent implements OnInit {
     '1': 'Nombre  y teléfono de la dependencia en la que se pretende realizar el Servicio Social.'
   };
   // initRequest: InitRequest;
-  @ViewChild('dialogverification') dialogVerification: DialogVerificationComponent;
+  @ViewChild(DialogVerificationComponent) dialogVerification: DialogVerificationComponent;
+  private patterPhone = /[(]?[0-9]{3}[)]?[-\s\\.]?[0-9]{3}[-\s\\.]?[0-9]{4}$/;
+  private patterName = /^(([ñÑA-Za-z\u00E0-\u00FC]+[\-\']?)*([ñÑA-Za-z\u00E0-\u00FC]+)?\s)+([ñÑA-Za-z\u00E0-\u00FC]+[\-\']?)+([ñÑA-Za-z\u00E0-\u00FC]+)?$/;
 
   constructor(private formBuilder: FormBuilder,
               private controlStudentProv: ControlStudentProv,
@@ -62,7 +64,7 @@ export class SocialServiceInitFormComponent implements OnInit {
     this._initialize();
 
     this.communityName = new FormControl('');
-    this.emailStudent = new FormControl({value: this.email, disabled: this.sendEmailCode}, Validators.required);
+    this.emailStudent = new FormControl({value: this.email, disabled: this.sendEmailCode}, Validators.compose([Validators.required, Validators.email]));
     this.code = new FormControl({value: '', disabled: (!this.sendEmailCode || this.verificationEmail)}, Validators.required);
   }
 
@@ -77,7 +79,7 @@ export class SocialServiceInitFormComponent implements OnInit {
 
   async registerRequest() {
     if (this.formRequest.invalid) {
-      this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor de llenar todos los campos', '');
+      this.notificationsService.showNotification(eNotificationType.ERROR, 'Por favor de llenar todos los campos e indicaciones', '');
     } else {
       const dialogRef = this.dialog.open(DialogVerificationComponent, { data: { email: this.controlNumber }, });
       dialogRef.afterClosed().subscribe(result => {
@@ -141,13 +143,13 @@ export class SocialServiceInitFormComponent implements OnInit {
   _initialize() {
     this.formRequest = this.formBuilder.group({
       dependencyName: [{value: '', disabled: !this.verificationEmail}, Validators.required],
-      dependencyPhone: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      dependencyPhone: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.pattern(this.patterPhone)])],
       dependencyAddress: [{value: '', disabled: !this.verificationEmail}, Validators.required],
-      dependencyHeadline: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      dependencyHeadline: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.pattern(this.patterName)])],
       dependencyHeadlinePosition: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       dependencyDepartment: [{value: '', disabled: !this.verificationEmail}, Validators.required],
-      dependencyDepartmentManager: [{value: '', disabled: !this.verificationEmail}, Validators.required],
-      dependencyDepartmentManagerEmail: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      dependencyDepartmentManager: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.pattern(this.patterName)])],
+      dependencyDepartmentManagerEmail: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.email])],
       dependencyProgramName: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       dependencyProgramModality: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       initialDate: [{value: this.today, disabled: !this.verificationEmail}, Validators.required],
@@ -202,6 +204,14 @@ export class SocialServiceInitFormComponent implements OnInit {
 
   getErrorMessages(field) {
     return this.formRequest.get(field).hasError('required') ? 'Campo obligatorio' : '';
+  }
+
+  getFieldRequiredMessage(field: string) {
+    return this.formRequest.get(field).hasError('required') ? 'Campo obligatorio' :
+        this.formRequest.get(field).hasError('pattern') && field === 'dependencyPhone' ? 'Escriba su teléfono de 10 dígitos' :
+          this.formRequest.get(field).hasError('pattern') && field === 'dependencyHeadline' || field === 'dependencyDepartmentManager'  ? 'Escriba el nombre completo' :
+            this.formRequest.get(field).hasError('email') ? 'Correo electrónico invalido' :
+              '';
   }
 
 }

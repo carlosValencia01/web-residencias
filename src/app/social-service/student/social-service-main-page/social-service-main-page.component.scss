@@ -45,3 +45,30 @@ table td, .field-day{
   margin-left: 20px;
   margin-right: 20px;
 }
+
+.record {
+  width: 56px;
+  height: 56px;
+  font-size: 2em;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999 !important;
+}
+
+.askInformation {
+  width: 56px;
+  height: 56px;
+  font-size: 2em;
+  background-color: #03b1f6;
+  position: absolute;
+  top: 5px;
+  right: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999 !important;
+}

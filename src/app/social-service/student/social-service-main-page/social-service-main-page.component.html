@@ -27,8 +27,11 @@
         <mat-step [completed]="assistance">
           <ng-template matStepLabel>
             Asistencia
-            <button *ngIf="assistance" mat-fab color="primary" matTooltip="Expediente" routerLink="/social-service/recordStudent" [queryParams]="{id: controlStudentId}" style="position: absolute; top: 5px; right: 5px;">
+            <button *ngIf="assistance" mat-fab class="record" color="primary" matTooltip="Expediente" routerLink="/social-service/recordStudent" [queryParams]="{id: controlStudentId}">
               <mat-icon class="material-icons">folder_shared</mat-icon>
+            </button>
+            <button mat-fab matTooltip="Información de contacto con la institución" class="askInformation" type="button" (click)="showHelpInformation()">
+              <i class="fa fa-question" aria-hidden="true"></i>
             </button>
           </ng-template>
           <div *ngIf="assistance">
@@ -433,7 +436,7 @@
                             <span mat-line class="badge badge-pill badge-success">APROBADO</span>
                           </div>
                           <div *ngSwitchDefault>
-                            <span mat-line class="badge badge-pill badge-warning">POR ENVIAR</span>
+                            <span mat-line class="badge badge-pill badge-warning">GENERAR CARTA</span>
                           </div>
                         </div>
                       </label>
