@@ -4,7 +4,7 @@
       <mat-card class="w-75 m-2">
         <mat-card-content class="d-flex flex-column align-items-center justify-content-center">
         <img alt="File" src="../../../../assets/imgs/sweetInfoIcon.png" style="width: 100px; height: 100px;">
-        <h5 class="text-center mt-3 noAccepted">Requisitos para realizar tu servicio social</h5>
+        <h5 class="text-center mt-3 noAccepted">Lo sentimos, todavía no cumples con los requisitos para realizar tu servicio social</h5>
           <div class="w-50 mt-3">
             <h5 class="messageVerify font-weight-bold">Requisitos:</h5>
             <div class="w-100 mx-auto">
@@ -13,11 +13,6 @@
                 <li>Ser un estudiante con estatus Activo <mat-icon class="text-success">check</mat-icon></li>
               </ol>
             </div>
-
-            <div class="w-100 d-flex justify-content-around">
-              <button mat-flat-button color="primary" (click)="permission = true">Continuar</button>
-            </div>
-
           </div>
         </mat-card-content>
       </mat-card>
@@ -67,7 +62,6 @@
                 </div>
               </mat-step>
               <mat-step>
-
                 <ng-template matStepLabel>Resultado</ng-template>
                 <h6 class="text-center">Has finalizado el proceso para contar con tu asistencia de Servicio Social, <strong>espera un máximo de tres días</strong> para obtener tu asistencia, de no ser así ,
                   vuelve a mirar el video, contesta correctamente todo el formulario y
@@ -99,9 +93,6 @@
                     <h5 class="text-center mt-3">Su <strong>información</strong> está siendo <strong class="text-info">validada </strong></h5>
                   </mat-card-header>
                 </mat-card>
-              </div>
-              <div class="col-12 mt-4" style=" text-align: center;">
-                <button mat-raised-button matStepperNext color="primary" style="width: 15%;">Continuar</button>
               </div>
             </div>
           </div>
@@ -399,6 +390,7 @@
                           </div>
                         </div>
                       </label>
+                      <small>*Subir carta de asignación firmada por el/la encargado/encargada del programa de la dependencia</small>
                       <p *ngIf="['reevaluate', 'upload'].includes(workPlanProject)" style="font-size: 0.6em;">Para editar el documento, vuelva a seleccionar otro documento</p>
                       <div class="text-center"  *ngIf="workPlanProject === 'reevaluate'">
                         <button mat-icon-button matSuffix
@@ -495,7 +487,7 @@
           </div>
         </mat-step>
         <!--permitir pasar a reportes cuando carta de presentacion, aceptacion, asignacion y compomiso esten aceptadas-->
-        <mat-step [completed]="true"><!--Reportes-->
+        <mat-step [completed]="controlStudentStatus === 'process'"><!--Reportes-->
           <ng-template matStepLabel>Reportes</ng-template>
 
           <div class="row" *ngIf="!bimestralReport || bimestralReport && finalReport">
@@ -1220,18 +1212,16 @@
 
         </mat-step>
 
-        <mat-step [completed]="true"><!--Validacion-->
+        <mat-step [completed]="['preAssigned', 'preSign'].includes(this.controlStudentStatus)"><!--Validacion-->
           <ng-template matStepLabel>Proceso de Validación</ng-template>
-          <div *ngIf="true">
-            <div class="row justify-content-center margen">
-              <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-                <mat-card style="height: 200px; width: 300px;">
-                  <mat-card-header class="flex-column align-items-center">
-                    <img alt="File" src="../../../../assets/imgs/reloj.png" style="width: 80px; height: 80px;">
-                    <h5 class="text-center mt-3">Su <strong>carta de liberación</strong> está en proceso</h5>
-                  </mat-card-header>
-                </mat-card>
-              </div>
+          <div class="row justify-content-center margen">
+            <div class="col-10 col-sm-8 col-md-6 col-lg-4">
+              <mat-card style="height: 200px; width: 300px;">
+                <mat-card-header class="flex-column align-items-center">
+                  <img alt="File" src="../../../../assets/imgs/reloj.png" style="width: 80px; height: 80px;">
+                  <h5 class="text-center mt-3">Su <strong>carta de liberación</strong> está en proceso</h5>
+                </mat-card-header>
+              </mat-card>
             </div>
           </div>
 

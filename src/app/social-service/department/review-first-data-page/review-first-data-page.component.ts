@@ -422,7 +422,7 @@ export class ReviewFirstDataPageComponent implements OnInit {
   }
 
   cancelInformationReview() {
-    this.router.navigate(['/social-service/controlStudents']);
+    this.router.navigate(['/social-service/solicitudeStudents']);
   }
 
   sendVerificationInformation(information, status) {
@@ -432,7 +432,7 @@ export class ReviewFirstDataPageComponent implements OnInit {
       .subscribe( () => {
         this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
           'Se ha enviado su validación de información');
-        this.router.navigate(['/social-service/controlStudents']);
+        this.router.navigate(['/social-service/solicitudeStudents']);
       }, () => {
         this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
           'Ha sucedido un error guardando la información, vuelva a intentarlo mas tarde');

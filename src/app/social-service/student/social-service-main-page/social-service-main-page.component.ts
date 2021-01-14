@@ -58,6 +58,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   ];
 
   public loaded = false; // Carga de la pagina
+  public controlStudentStatus: string;
   public permission: boolean; // Permiso para acceder a servicio social
   public releaseSocialService: boolean; // Condicion para saber si ha liberado el servicio social
   public assistance: boolean; // Condicion para saber si ya tiene la asistencia registrada (si existe su registro en BD)
@@ -109,7 +110,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public managerEvaluationId: any; // Variable para guardar el id del reporte
   public selfEvaluationId: any; // Variable para guardar el id del reporte
   // document status for department
-  public filesStatus = [];
+  public filesStatus: any;
 
   public workPlanProjectDownloaded = false; // Variable para saber cuando la carta de asignación ha sido descargada
   public presentationDownloaded = false; // Variable para saber cuando la carta de presentacion ha sido descargada
@@ -191,6 +192,7 @@ export class SocialServiceMainPageComponent implements OnInit {
         this.emailStudent = res.controlStudent.emailStudent || '';
         this.controlNumber = res.controlStudent.controlNumber;
         this.periodId = res.controlStudent.periodId;
+        this.controlStudentStatus = res.controlStudent.status;
 
         this.sendEmailCode = res.controlStudent.verification.sendEmailCode;
         this.verificationEmail = res.controlStudent.verification.verificationEmail;
@@ -1111,11 +1113,9 @@ export class SocialServiceMainPageComponent implements OnInit {
               newF: true,
               fileId: ''
             };
-            this.requestCommitment();
-            //this.commitment = 'upload';
+            this.commitment = 'upload';
           }
         });
-        // this.saveCommitmentDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
       }, err => {
         console.log(err);
       });
