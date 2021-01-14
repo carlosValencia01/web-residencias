@@ -49,7 +49,7 @@ export class InitRequest {
     public _CookiesService: CookiesService
   ) {
     this._getImageToPdf();
-    console.log(this._request.periodId);
+    // console.log(this._request.periodId);
   }
 
   public setSolicitudeRequest(request: SolicitudeModel) {

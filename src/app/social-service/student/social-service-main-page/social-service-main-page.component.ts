@@ -242,6 +242,8 @@ export class SocialServiceMainPageComponent implements OnInit {
         this._loadPage();
       }, () => this._loadPage());
       this._initializeTableForm();
+    } else {
+      this._loadPage();
     }
 
   }

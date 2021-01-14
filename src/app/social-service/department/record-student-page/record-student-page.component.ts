@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {LoadingService} from '../../../services/app/loading.service';
 import {ControlStudentProv} from '../../../providers/social-service/control-student.prov';
@@ -44,6 +44,8 @@ export class RecordStudentPageComponent implements OnInit {
   initRequest: InitRequest;
   formDocument: SolicitudeModel;
   private historyDocumentStatus: Array<any>;
+  private userData: any;
+  private controlStudentStatus: string;
 
   constructor(private activatedRoute: ActivatedRoute,
               private loadingService: LoadingService,
@@ -57,6 +59,7 @@ export class RecordStudentPageComponent implements OnInit {
     activatedRoute.queryParams.subscribe( param => {
       this.controlStudentId = param.id;
     });
+    this.userData = this.cookiesService.getData().user;
   }
 
   ngOnInit() {
@@ -68,6 +71,7 @@ export class RecordStudentPageComponent implements OnInit {
         this.reportDocuments = res.controlStudent.verification.reports;
         this.managerEvaluationDocuments = res.controlStudent.verification.managerEvaluations;
         this.selfEvaluationDocuments = res.controlStudent.verification.selfEvaluations;
+        this.controlStudentStatus = res.controlStudent.status;
         const documents = res.controlStudent.documents;
         this.solicitudeDoc = documents.filter(d => d.filename.includes('ITT-POC-08-02'));
         this.presentationDoc = documents.filter(d => d.filename.includes('ITT-POC-08-03'));
@@ -103,6 +107,11 @@ export class RecordStudentPageComponent implements OnInit {
   }
 
   downloadControlCard() {
+    if (this.userData.rol.name === 'Estudiante' && this.controlStudentStatus === 'solicitude') {
+      this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
+        'Tu Tarjeta de Control estará disponible una vez todos tus documentos de solicitud esten aprobados');
+      return;
+    }
     this.initRequest.setSolicitudeRequest(this.formDocument);
     this.initRequest.setDocumentStatus(this.verificationDocuments);
     const binary = this.initRequest.documentSend(eSocialFiles.TARJETACONTROL);
