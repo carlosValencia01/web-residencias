@@ -8,6 +8,7 @@ export interface InitAsignationModel {
     studentStreet?: string | "";
     studentSuburb?: string | "";
     studentCity?: string | "";
+    studentState?: string | "";
     studentPhone?: string | "";
     studentCarrer?: string | "";
     semester?: string | "";

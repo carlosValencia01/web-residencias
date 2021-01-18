@@ -135,9 +135,10 @@ export class SocialServiceMainPageComponent implements OnInit {
   public studentStreet = '';
   public studentSuburb = '';
   public studentCity = '';
+  public studentZip = '';
   public studentState = '';
   public studentFullName = '';
-  public studentgender = '';
+  public studentGender = '';
   public studentCarrer = '';
   public studentSemester = '';
   public studentControl = '';
@@ -220,10 +221,17 @@ export class SocialServiceMainPageComponent implements OnInit {
         this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
         this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
         this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
-        this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);
-
+        this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);        
         this.assistance = res.controlStudent.verification.assistance;
         this.permission = true;
+        // Student personal information
+        this.studentCity = res.controlStudent.studentCity;
+        this.studentGender = res.controlStudent.studentGender;
+        this.studentPhone = res.controlStudent.studentPhone;
+        this.studentState = res.controlStudent.studentState;
+        this.studentStreet = res.controlStudent.studentStreet;
+        this.studentSuburb = res.controlStudent.studentSuburb;
+        this.studentZip = res.controlStudent.studentZip;
         await this.getFolderId();
         this.showReports();
       }, () => {
@@ -899,15 +907,16 @@ export class SocialServiceMainPageComponent implements OnInit {
     return {
         studentName: this.studentFullName,
         studentAge: this.studentAge,
-        studentGender: this.studentgender,
+        studentGender: this.studentGender,
         studentStreet : this.studentStreet,
         studentSuburb: this.studentSuburb,
         studentCity: this.studentCity,
         studentPhone: this.studentPhone,
+        studentState: this.studentState,
         studentCarrer: this.studentCarrer,
         semester: this.studentSemester,
         studentControl: this.controlNumber,
-        studentProgress: "por definir",
+        studentProgress: this.cookiesService.getData().user.percentCareer,
 
         dependencyProgramName: data.dependencyProgramName,
         dependencyProgramObjective: data.dependencyProgramObjective,
@@ -923,17 +932,11 @@ export class SocialServiceMainPageComponent implements OnInit {
   */
   getMissingData() {
     this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
-        this.studentFullName = this.isUndefined(res.student.fullName),
-        this.studentgender = this.isUndefined(res.student.sex),
-        this.studentStreet = this.isUndefined(res.student.street);
-        this.studentSuburb = this.isUndefined(res.student.suburb);
-        this.studentCity = this.isUndefined(res.student.city);
-        this.studentPhone = this.isUndefined(res.student.phone);
+        this.studentFullName = this.isUndefined(res.student.fullName),    
         this.studentCarrer = this.isUndefined(res.student.career);
         this.studentSemester = this.isUndefined(res.student.semester),
         this.studentControl = this.isUndefined(res.student.controlNumber);
-        this.studentProgress = "por definir";
-        this.studentState = res.student.state;
+        this.studentProgress = this.cookiesService.getData().user.percentCareer;
         this.studentBirth = res.student.dateBirth;
         this.studentAge = moment().diff(this.studentBirth,'years');
     });
@@ -947,7 +950,6 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   private _castToDoc(data) {
-
     return {
       student: data.studentId,
       dependencyName: data.dependencyName,

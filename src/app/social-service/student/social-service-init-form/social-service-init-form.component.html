@@ -26,6 +26,71 @@
         </div>
       </div>
       <hr>
+      <p style="font-size: 0.8rem;"><strong>Datos personales</strong></p>
+      <hr>
+
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Teléfono celular</mat-label>
+            <input matInput formControlName="studentPhone" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['1']">info</mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6">
+          <mat-label>Sexo</mat-label>
+          <mat-radio-group class="row justify-content-center my-3" formControlName="studentGender">
+            <mat-radio-button class="col-12 col-md-5" value="H">Hombre</mat-radio-button>
+            <mat-radio-button class="col-12 col-md-5" value="M">Mujer</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Calle y numero</mat-label>
+            <input matInput formControlName="studentStreet" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['2']">info</mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Colonia</mat-label>
+            <input matInput formControlName="studentSuburb" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['3']">info</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Código postal</mat-label>
+            <input matInput formControlName="studentZip" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['4']">info</mat-icon>
+          </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Municipio</mat-label>
+            <input matInput formControlName="studentCity" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['5']">info</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="studentState">
+              <mat-option *ngFor="let state of states" [value]="state.option">
+                {{state.value}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <hr>
       <p style="font-size: 0.8rem;"><strong>Datos del programa</strong></p>
       <hr>
       <div class="row">
@@ -33,9 +98,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Dependencia oficial</mat-label>
             <input matInput formControlName="dependencyName" type="text" required>
-            <mat-icon matSuffix [matTooltip]="fieldMessages['1']">
-              info
-            </mat-icon>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['6']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyName').invalid">
               {{getFieldRequiredMessage('dependencyName')}}</mat-error>
           </mat-form-field>
@@ -44,6 +107,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Teléfono</mat-label>
             <input matInput formControlName="dependencyPhone" type="tel" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['7']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyPhone').invalid">
               {{getFieldRequiredMessage('dependencyPhone')}}</mat-error>
           </mat-form-field>
@@ -54,6 +118,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Domicilio de la depencia</mat-label>
             <input matInput formControlName="dependencyAddress" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['8']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyAddress').invalid">
               {{getFieldRequiredMessage('dependencyAddress')}}</mat-error>
           </mat-form-field>
@@ -64,6 +129,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Titular de la dependencia</mat-label>
             <input matInput formControlName="dependencyHeadline" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['9']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyHeadline').invalid">
               {{getFieldRequiredMessage('dependencyHeadline')}}</mat-error>
           </mat-form-field>
@@ -72,6 +138,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Puesto ó cargo del titular</mat-label>
             <input matInput formControlName="dependencyHeadlinePosition" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['10']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyHeadlinePosition').invalid">
               {{getFieldRequiredMessage('dependencyHeadlinePosition')}}</mat-error>
           </mat-form-field>
@@ -82,6 +149,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Unidad orgánica ó departamento</mat-label>
             <input matInput formControlName="dependencyDepartment" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['11']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyDepartment').invalid">
               {{getFieldRequiredMessage('dependencyDepartment')}}</mat-error>
           </mat-form-field>
@@ -90,6 +158,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Nombre del encargado</mat-label>
             <input matInput formControlName="dependencyDepartmentManager" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['12']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyDepartmentManager').invalid">
               {{getFieldRequiredMessage('dependencyDepartmentManager')}}</mat-error>
           </mat-form-field>
@@ -100,6 +169,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Correo electrónico</mat-label>
             <input matInput formControlName="dependencyDepartmentManagerEmail" type="email" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['13']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyDepartmentManagerEmail').invalid">
               {{getFieldRequiredMessage('dependencyDepartmentManagerEmail')}}</mat-error>
           </mat-form-field>
@@ -110,6 +180,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Nombre del programa</mat-label>
             <input matInput formControlName="dependencyProgramName" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['14']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyProgramName').invalid">
               {{getFieldRequiredMessage('dependencyProgramName')}}</mat-error>
           </mat-form-field>
@@ -129,6 +200,7 @@
           <mat-form-field appearance="fill" style="width: 100%;">
             <mat-label>Fecha de inicio</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="initialDate" disabled readonly>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['15']">info</mat-icon>
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
@@ -139,6 +211,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Actividades del programa</mat-label>
             <textarea matInput formControlName="dependencyActivities" type="text" rows="8" required></textarea>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['16']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyActivities').invalid">
               {{getFieldRequiredMessage('dependencyActivities')}}</mat-error>
           </mat-form-field>
@@ -171,6 +244,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Objetivo del programa</mat-label>
             <textarea matInput formControlName="dependencyProgramObjective" type="text" rows="8" required></textarea>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['17']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyProgramObjective').invalid">
               {{getFieldRequiredMessage('dependencyProgramObjective')}}</mat-error>
           </mat-form-field>
@@ -193,6 +267,7 @@
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Donde</mat-label>
             <input matInput formControlName="dependencyProgramLocation" type="text" required>
+            <mat-icon matSuffix [matTooltip]="fieldMessages['18']">info</mat-icon>
             <mat-error *ngIf="this.formRequest.get('dependencyProgramLocation').invalid">
               {{getFieldRequiredMessage('dependencyProgramLocation')}}</mat-error>
           </mat-form-field>

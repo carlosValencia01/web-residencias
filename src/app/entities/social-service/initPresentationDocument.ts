@@ -215,12 +215,12 @@ export class InitPresentationDocument {
     doc.setFont(this.FONT, 'Normal');
     const nombre = `NOMBRE COMPLETO: ${this.asignation.studentName}    EDAD: ${this.asignation.studentAge}    SEXO:${this.asignation.studentGender}`;
     doc.text(nombre, this.MARGIN.LEFT + 2, 62, { align: 'left' });
-    const direccion = `DIRECCION: ${this.asignation.studentStreet} colonia ${this.asignation.studentSuburb} ${this.asignation.studentCity}, Nayarit   TEL: ${this.asignation.studentPhone}`
+    const direccion = `DIRECCION: ${this.asignation.studentStreet} Col. ${this.asignation.studentSuburb}, ${this.asignation.studentCity}. ${this.asignation.studentState}  TEL: ${this.asignation.studentPhone}`
     doc.text(direccion, this.MARGIN.LEFT + 2, 69, { align: 'left' });
     doc.text(`                    CALLE Y NUMERO     COLONIA       CIUDAD Y ESTADO`, this.MARGIN.LEFT + 2, 76, { align: 'left' });
     const carrera = `CARRERA: ${this.asignation.studentCarrer}     SEMESTRE: ${this.asignation.semester}`;
     doc.text(carrera, this.MARGIN.LEFT + 2, 83, { align: 'left' });
-    const noCtrol = `No. DE CONTROL:   ${this.asignation.studentControl}     No. DE CREDITOS CUBIERTOS:  ${this.asignation.studentProgress}`;
+    const noCtrol = `No. DE CONTROL:   ${this.asignation.studentControl}     No. DE CREDITOS CUBIERTOS:  ${this.asignation.studentProgress}%`;
     doc.text(noCtrol, this.MARGIN.LEFT + 2, 90, { align: 'left' });
     //_request
     // Cuadro de Datos del programa

@@ -16,6 +16,14 @@ export interface SolicitudeModel {
   dependencyProgramObjective?: string;
   dependencyProgramLocationInside?: string;
   dependencyProgramLocation?: string;
+  
+  studentCity?: string;
+  studentGender?: string;
+  studentPhone?: string;
+  studentState?: string;
+  studentStreet?: string;
+  studentSuburb?: string;
+  
 }
 
 interface Category {
