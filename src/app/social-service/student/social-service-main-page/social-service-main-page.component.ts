@@ -187,76 +187,91 @@ export class SocialServiceMainPageComponent implements OnInit {
   ngOnInit() {
     this.loadingService.setLoading(true);
     // Validar si el estudiante cuenta con el porcentaje aprobatorio
-    if (parseFloat(this.userData.percentCareer) >= 65 && this.userData.status === 'ACT') {
-      this.controlStudentProvider.getControlStudentByStudentId(this.userData._id).subscribe( async (res: any) => {
-        this.controlStudentId = res.controlStudent._id;
-        this.emailStudent = res.controlStudent.emailStudent || '';
-        this.controlNumber = res.controlStudent.controlNumber;
-        this.periodId = res.controlStudent.periodId;
-        this.controlStudentStatus = res.controlStudent.status;
+    this.validatePercentCareerToSocialService(this.userData._id).then(res => {
+      if (res) {
+        this.controlStudentProvider.getControlStudentByStudentId(this.userData._id).subscribe( async (res: any) => {
+          this.controlStudentId = res.controlStudent._id;
+          this.emailStudent = res.controlStudent.emailStudent || '';
+          this.controlNumber = res.controlStudent.controlNumber;
+          this.periodId = res.controlStudent.periodId;
+          this.controlStudentStatus = res.controlStudent.status;
 
-        this.sendEmailCode = res.controlStudent.verification.sendEmailCode;
-        this.verificationEmail = res.controlStudent.verification.verificationEmail;
-        this.statusFirstDocuments = res.controlStudent.verification['solicitude'];
+          this.sendEmailCode = res.controlStudent.verification.sendEmailCode;
+          this.verificationEmail = res.controlStudent.verification.verificationEmail;
+          this.statusFirstDocuments = res.controlStudent.verification['solicitude'];
 
-        this.solicitudeDocument = this.statusFirstDocuments === 'approved';
-        this.documents = res.controlStudent.documents;
-        this.presentation = res.controlStudent.verification.presentation;
-        this.workPlanProject = res.controlStudent.verification.workPlanProject;
-        this.acceptance = res.controlStudent.verification.acceptance;
-        this.commitment = res.controlStudent.verification.commitment;
-        this.presentationDocument = false;
-        this.reportsDocument = true;
-        this.releaseSocialService = res.controlStudent.status === 'approved';
-        this.reports = res.controlStudent.verification.reports;
-        this.managerEvaluations = res.controlStudent.verification.managerEvaluations;
-        this.selfEvaluations = res.controlStudent.verification.selfEvaluations;
-        if ( res.controlStudent.months.length !== 0  ) { this.savedSchedule = true; }
-        this.presentationDownloaded = res.controlStudent.verification.presentationDownloaded;
-        this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
-        this.filesStatus = res.controlStudent.verificationDepartment;
-        this.initialDate = moment.utc(new Date(res.controlStudent.initialDate).valueOf());
-        this.addDates(new Date(res.controlStudent.initialDate).valueOf());
-        this.lastReport = res.controlStudent.verification.lastReport;
-        this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
-        this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
-        this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
-        this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);        
-        this.assistance = res.controlStudent.verification.assistance;
-        this.permission = true;
-        // Student personal information
-        this.studentCity = res.controlStudent.studentCity;
-        this.studentGender = res.controlStudent.studentGender;
-        this.studentPhone = res.controlStudent.studentPhone;
-        this.studentState = res.controlStudent.studentState;
-        this.studentStreet = res.controlStudent.studentStreet;
-        this.studentSuburb = res.controlStudent.studentSuburb;
-        this.studentZip = res.controlStudent.studentZip;
-        await this.getFolderId();
-        this.showReports();
-      }, () => {
-        this.notificationsService.showNotification(eNotificationType.INFORMATION,
-          'Atención',
-          'Por favor espere un momento en lo que se registra su información');
-        this.controlStudentProvider.createRegisterByControlNumber(this.userData.email).subscribe(response => {
-          this.notificationsService.showNotification(eNotificationType.SUCCESS,
-            'Exito',
-            response.msg);
-          setTimeout( () => {
-            window.location.reload();
-          }, 2000);
-        }, err => {
-          const message = JSON.parse(err._body).msg || 'Error al registrar, intentelo más tarde';
+          this.solicitudeDocument = this.statusFirstDocuments === 'approved';
+          this.documents = res.controlStudent.documents;
+          this.presentation = res.controlStudent.verification.presentation;
+          this.workPlanProject = res.controlStudent.verification.workPlanProject;
+          this.acceptance = res.controlStudent.verification.acceptance;
+          this.commitment = res.controlStudent.verification.commitment;
+          this.presentationDocument = false;
+          this.reportsDocument = true;
+          this.releaseSocialService = res.controlStudent.status === 'approved';
+          this.reports = res.controlStudent.verification.reports;
+          this.managerEvaluations = res.controlStudent.verification.managerEvaluations;
+          this.selfEvaluations = res.controlStudent.verification.selfEvaluations;
+          if ( res.controlStudent.months.length !== 0  ) { this.savedSchedule = true; }
+          this.presentationDownloaded = res.controlStudent.verification.presentationDownloaded;
+          this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
+          this.filesStatus = res.controlStudent.verificationDepartment;
+          this.initialDate = moment.utc(new Date(res.controlStudent.initialDate).valueOf());
+          this.addDates(new Date(res.controlStudent.initialDate).valueOf());
+          this.lastReport = res.controlStudent.verification.lastReport;
+          this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
+          this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
+          this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
+          this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);
+          this.assistance = res.controlStudent.verification.assistance;
+          this.permission = true;
+          // Student personal information
+          this.studentCity = res.controlStudent.studentCity;
+          this.studentGender = res.controlStudent.studentGender;
+          this.studentPhone = res.controlStudent.studentPhone;
+          this.studentState = res.controlStudent.studentState;
+          this.studentStreet = res.controlStudent.studentStreet;
+          this.studentSuburb = res.controlStudent.studentSuburb;
+          this.studentZip = res.controlStudent.studentZip;
+          await this.getFolderId();
+          this.showReports();
+        }, () => {
+          this.notificationsService.showNotification(eNotificationType.INFORMATION,
+            'Atención',
+            'Por favor espere un momento en lo que se registra su información');
+          this.controlStudentProvider.createRegisterByControlNumber(this.userData.email).subscribe(response => {
+            this.notificationsService.showNotification(eNotificationType.SUCCESS,
+              'Exito',
+              response.msg);
+            setTimeout( () => {
+              window.location.reload();
+            }, 2000);
+          }, err => {
+            const message = JSON.parse(err._body).msg || 'Error al registrar, intentelo más tarde';
+            this.notificationsService.showNotification(eNotificationType.ERROR,
+              'Error', message);
+          });
+          this._loadPage();
+        }, () => this._loadPage());
+        this._initializeTableForm();
+      } else {
+        this._loadPage();
+      }
+    });
+  }
+
+  validatePercentCareerToSocialService(studentId) {
+    return new Promise( (resolve) => {
+      this.controlStudentProvider.getControlStudentAccessToSocialService(studentId)
+        .subscribe(res => {
+          resolve(res.access);
+        }, error => {
+          const message = JSON.parse(error._body).msg || 'Error, no se cuenta con el acceso, intentelo mas tarde';
           this.notificationsService.showNotification(eNotificationType.ERROR,
             'Error', message);
+          resolve(false);
         });
-        this._loadPage();
-      }, () => this._loadPage());
-      this._initializeTableForm();
-    } else {
-      this._loadPage();
-    }
-
+    });
   }
 
   enableReportStep(presentation: string, acceptance: string, workPlanProject: string, commitment: string) {
@@ -294,6 +309,7 @@ export class SocialServiceMainPageComponent implements OnInit {
         '<p>Para dudas o mayor información comunicarse con:</p>' +
         '<p><i class="fa fa-building"></i> <span><strong>Areá de Servicio Social</strong></span></p>' +
         '<p><i class="fa fa-phone"></i> <strong>Teléfono</strong>: <u>311 211 9400</u>, <strong>Ext.</strong><u>325</u> <strong>o</strong> <u>318</u></p>' +
+        '<p><i class="fa fa-email"></i> <strong>Correo Electrónico</strong>: <a href="mailto:serviciosocial@ittepic.edu.mx">serviciosocial@ittepic.edu.mx</a></p>' +
         '<hr>' +
         '<p>Tienes dudas acerca de como utilizar la plataforma, mira el siguiente video:</p>' +
         '<a href="#" target="_blank">Plataforma para el Servicio Social del TecNM Campus Tepic</a>',
@@ -932,7 +948,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   */
   getMissingData() {
     this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
-        this.studentFullName = this.isUndefined(res.student.fullName),    
+        this.studentFullName = this.isUndefined(res.student.fullName),
         this.studentCarrer = this.isUndefined(res.student.career);
         this.studentSemester = this.isUndefined(res.student.semester),
         this.studentControl = this.isUndefined(res.student.controlNumber);

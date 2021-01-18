@@ -52,6 +52,12 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  getControlStudentAccessToSocialService(_id) {
+    return this.api.get(`controlStudent/student/access/${_id}`)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
+
   getRequests(status) {
     return this.api.get(`controlStudent/request/${status}`)
       .pipe(map(controlStudent => controlStudent.json()));

@@ -33,8 +33,10 @@
         <div class="col-12 col-md-6">
           <mat-form-field appearance="outline" style="width: 100%;">
             <mat-label>Teléfono celular</mat-label>
-            <input matInput formControlName="studentPhone" type="text" required>
+            <input matInput formControlName="studentPhone" type="tel" required>
             <mat-icon matSuffix [matTooltip]="fieldMessages['1']">info</mat-icon>
+            <mat-error *ngIf="this.formRequest.get('studentPhone').invalid">
+              {{getFieldRequiredMessage('studentPhone')}}</mat-error>
           </mat-form-field>
         </div>
         <div class="col-12 col-md-6">
@@ -43,6 +45,8 @@
             <mat-radio-button class="col-12 col-md-5" value="H">Hombre</mat-radio-button>
             <mat-radio-button class="col-12 col-md-5" value="M">Mujer</mat-radio-button>
           </mat-radio-group>
+          <mat-error *ngIf="this.formRequest.get('studentGender').invalid">
+            {{getFieldRequiredMessage('studentGender')}}</mat-error>
         </div>
       </div>
       <div class="row">
@@ -51,6 +55,8 @@
             <mat-label>Calle y numero</mat-label>
             <input matInput formControlName="studentStreet" type="text" required>
             <mat-icon matSuffix [matTooltip]="fieldMessages['2']">info</mat-icon>
+            <mat-error *ngIf="this.formRequest.get('studentStreet').invalid">
+              {{getFieldRequiredMessage('studentStreet')}}</mat-error>
           </mat-form-field>
         </div>
         <div class="col-12 col-md-6">
@@ -58,6 +64,8 @@
             <mat-label>Colonia</mat-label>
             <input matInput formControlName="studentSuburb" type="text" required>
             <mat-icon matSuffix [matTooltip]="fieldMessages['3']">info</mat-icon>
+            <mat-error *ngIf="this.formRequest.get('studentSuburb').invalid">
+              {{getFieldRequiredMessage('studentSuburb')}}</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -67,6 +75,8 @@
             <mat-label>Código postal</mat-label>
             <input matInput formControlName="studentZip" type="text" required>
             <mat-icon matSuffix [matTooltip]="fieldMessages['4']">info</mat-icon>
+            <mat-error *ngIf="this.formRequest.get('studentZip').invalid">
+              {{getFieldRequiredMessage('studentZip')}}</mat-error>
           </mat-form-field>
         </div>
         <div class="col-12 col-md-6">
@@ -74,6 +84,8 @@
             <mat-label>Municipio</mat-label>
             <input matInput formControlName="studentCity" type="text" required>
             <mat-icon matSuffix [matTooltip]="fieldMessages['5']">info</mat-icon>
+            <mat-error *ngIf="this.formRequest.get('studentCity').invalid">
+              {{getFieldRequiredMessage('studentCity')}}</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -86,6 +98,8 @@
                 {{state.value}}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="this.formRequest.get('studentState').invalid">
+              {{getFieldRequiredMessage('studentState')}}</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -201,7 +215,7 @@
             <mat-label>Fecha de inicio</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="initialDate" disabled readonly>
             <mat-icon matSuffix [matTooltip]="fieldMessages['15']">info</mat-icon>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+<!--            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>

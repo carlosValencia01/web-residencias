@@ -198,8 +198,8 @@ export class SocialServiceInitFormComponent implements OnInit {
 
   _initialize() {
     this.formRequest = this.formBuilder.group({
-      studentPhone: [{value: '', disabled: !this.verificationEmail}, Validators.required],
-      studentGender: [{value: 'H', disabled: !this.verificationEmail}, Validators.required],
+      studentPhone: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.pattern(this.patterPhone)])],
+      studentGender: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       studentStreet: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       studentSuburb: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       studentZip: [{value: '', disabled: !this.verificationEmail}, Validators.required],
@@ -216,7 +216,7 @@ export class SocialServiceInitFormComponent implements OnInit {
       dependencyDepartmentManagerEmail: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.email])],
       dependencyProgramName: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       dependencyProgramModality: [{value: 'Interno', disabled: !this.verificationEmail}, Validators.required],
-      initialDate: [{value: this.today, disabled: !this.verificationEmail}, Validators.required],
+      initialDate: [{value: this.today, disabled: !this.verificationEmail}],
       dependencyActivities: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       dependencyProgramType: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       dependencyProgramObjective: [{value: '', disabled: !this.verificationEmail}, Validators.required],
@@ -272,7 +272,7 @@ export class SocialServiceInitFormComponent implements OnInit {
 
   getFieldRequiredMessage(field: string) {
     return this.formRequest.get(field).hasError('required') ? 'Campo obligatorio' :
-        this.formRequest.get(field).hasError('pattern') && field === 'dependencyPhone' ? 'Escriba su teléfono de 10 dígitos' :
+        this.formRequest.get(field).hasError('pattern') && (field === 'dependencyPhone' || field === 'studentPhone') ? 'Escriba su teléfono de 10 dígitos' :
           this.formRequest.get(field).hasError('pattern') && field === 'dependencyHeadline' || field === 'dependencyDepartmentManager'  ? 'Escriba el nombre completo' :
             this.formRequest.get(field).hasError('email') ? 'Correo electrónico invalido' :
               '';

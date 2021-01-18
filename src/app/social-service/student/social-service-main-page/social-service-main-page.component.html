@@ -37,7 +37,7 @@
           </div>
           <div *ngIf="!assistance">
             <h5>Todavía no tienes tu asistencia registrada</h5>
-            <p>Si quieres iniciar con tu proceso de servicio social necesitaras mirar el siguiente video y responder al formulario a continuación</p>
+            <p>Si quieres iniciar con tu proceso de servicio social necesitaras observar el siguiente video y responder al formulario a continuación</p>
             <mat-horizontal-stepper [linear]="true">
               <mat-step [completed]="assistanceFirstStep">
                 <ng-template matStepLabel>Video de Servicio Social</ng-template>
@@ -64,7 +64,7 @@
               <mat-step>
                 <ng-template matStepLabel>Resultado</ng-template>
                 <h6 class="text-center">Has finalizado el proceso para contar con tu asistencia de Servicio Social, <strong>espera un máximo de tres días</strong> para obtener tu asistencia, de no ser así ,
-                  vuelve a mirar el video, contesta correctamente todo el formulario y
+                  vuelve a observar el video, contesta correctamente todo el formulario y
                   <strong>espera de nuevo los resultados para contar con tu asistencia </strong>
                   y puedas iniciar con tu tramite para tu Servicio Social.</h6>
                 <div class="d-flex justify-content-center" *ngIf="assistanceFirstStep && assistanceSecondStep">
@@ -87,10 +87,11 @@
           <div *ngIf="statusFirstDocuments === 'send'">
             <div class="row justify-content-center">
               <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-                <mat-card style="height: 200px; width: 300px;">
+                <mat-card style="height: 240px; width: 300px;">
                   <mat-card-header class="flex-column align-items-center">
                     <img alt="File" src="../../../../assets/imgs/reloj.png" style="width: 80px; height: 80px;">
                     <h5 class="text-center mt-3">Su <strong>información</strong> está siendo <strong class="text-info">validada </strong></h5>
+                    <small class="text-center mt-3">Su respuesta de Solicitud de Servicio Social estará en un máximo de <strong class="text-info">tres días</strong></small>
                   </mat-card-header>
                 </mat-card>
               </div>
@@ -130,10 +131,11 @@
             <div *ngIf="['noAssigned','assigned'].includes(presentation)">
               <div class="row justify-content-center">
                 <div class="col-10 col-sm-8 col-md-6 col-lg-4">
-                  <mat-card style="height: 225px; width: 300px;">
+                  <mat-card style="height: 250px; width: 300px;">
                     <mat-card-header class="flex-column align-items-center">
                       <img alt="File" src="../../../../assets/imgs/reloj.png" style="width: 80px; height: 80px;">
-                      <h5 class="text-center mt-3">Su Carta de presentación está en trámite</h5>
+                      <h5 class="text-center mt-3">Su <strong>Carta de presentación</strong> está en <strong class="text-info">trámite</strong></h5>
+                      <small class="text-center mt-3">Su respuesta de Carta de presentación estará en un máximo de <strong class="text-info">tres días</strong></small>
                     </mat-card-header>
                   </mat-card>
                 </div>
