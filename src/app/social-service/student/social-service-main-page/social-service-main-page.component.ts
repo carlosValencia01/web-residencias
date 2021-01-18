@@ -595,6 +595,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   requestDate(nameDocument?, document?, detailDocument?, revaluate = false) {
         const dialogRef = this.dialog.open(DialogStudentInitDateComponent, {
           width: '400px',
+          hasBackdrop: true
         });
         dialogRef.afterClosed().subscribe(result => {
           if (result) {
@@ -628,12 +629,15 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   async uploadFiles() {
-    const documents = [this.presentationDoc, this.acceptanceDoc, this.workPlanProjectDoc, this.commitmentDoc];
+    // const documents = [this.presentationDoc, this.acceptanceDoc, this.workPlanProjectDoc, this.commitmentDoc];
     const details = ['presentation', 'acceptance', 'workPlanProject', 'commitment'];
-    for (let n = 0; n < documents.length; n++) {
-      await this.uploadFile(documents[n].nameInDrive, documents[n], details[n]);
-    }
-    this.ngOnInit();
+    // for (let n = 0; n < documents.length; n++) {
+    //   await this.uploadFile(documents[n].nameInDrive, documents[n], details[n]);
+    // }
+    await this.uploadFile(this.presentationDoc.nameInDrive, this.presentationDoc, details[0]);
+    await this.uploadFile(this.acceptanceDoc.nameInDrive, this.acceptanceDoc, details[1]);
+    await this.uploadFile(this.workPlanProjectDoc.nameInDrive, this.workPlanProjectDoc, details[2]);
+    await this.uploadFile(this.commitmentDoc.nameInDrive, this.commitmentDoc, details[3]);
   }
 
   uploadFile(nameDocument, document, detailDocument) {
@@ -677,6 +681,7 @@ export class SocialServiceMainPageComponent implements OnInit {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
               this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {['verification.' + detailDocument]: 'send'})
                 .subscribe( () => {
+                  this.changeStatusDocumentsToClient(detailDocument, 'send');
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
                 });
             },
@@ -702,6 +707,7 @@ export class SocialServiceMainPageComponent implements OnInit {
                 nameDocument + ' actualizado.');
               this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {['verification.' + detailDocument]: 'send'})
                 .subscribe( () => {
+                  this.changeStatusDocumentsToClient(detailDocument, 'send');
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
                 });
             }, err => {
@@ -720,6 +726,24 @@ export class SocialServiceMainPageComponent implements OnInit {
                 });
       }
   }
+
+  changeStatusDocumentsToClient(document, status) {
+    switch (document) {
+      case 'presentation':
+        this.presentation = status;
+        break;
+      case 'acceptance':
+        this.acceptance = status;
+        break;
+      case 'workPlanProject':
+        this.workPlanProject = status;
+        break;
+      case 'commitment':
+        this.commitment = status;
+        break;
+    }
+  }
+
 
   disabledUploadFile(document): boolean {
     let dis = false;
