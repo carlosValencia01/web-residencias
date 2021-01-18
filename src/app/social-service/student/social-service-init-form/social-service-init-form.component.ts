@@ -14,6 +14,11 @@ interface Category {
   value: string;
 }
 
+interface State {
+  option: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-social-service-init-form',
   templateUrl: './social-service-init-form.component.html',
@@ -41,9 +46,60 @@ export class SocialServiceInitFormComponent implements OnInit {
     {option: 'f', value: 'I.T de Tepic'},
     {option: 'g', value: 'Instituciones educativas privadas'}
   ];
+  public states: State[] = [
+    {option: 'Aguascalientes', value: 'Aguascalientes'},
+    {option: 'Baja California', value: 'Baja California'},
+    {option: 'Baja California Sur', value: 'Baja California Sur'},
+    {option: 'Campeche', value: 'Campeche'},
+    {option: 'Chiapas', value: 'Chiapas'},
+    {option: 'Chihuahua', value: 'Chihuahua'},
+    {option: 'Ciudad de México', value: 'Ciudad de México'},
+    {option: 'Coahuila de Zaragoza', value: 'Coahuila de Zaragoza'},
+    {option: 'Colima', value: 'Colima'},
+    {option: 'Durango', value: 'Durango'},
+    {option: 'Estado de México', value: 'Estado de México'},
+    {option: 'Guanajuato', value: 'Guanajuato'},
+    {option: 'Guerrero', value: 'Guerrero'},
+    {option: 'Hidalgo', value: 'Hidalgo'},
+    {option: 'Jalisco', value: 'Jalisco'},
+    {option: 'Michoacán de Ocampo', value: 'Michoacán de Ocampo'},
+    {option: 'Morelos', value: 'Morelos'},
+    {option: 'Nayarit', value: 'Nayarit'},
+    {option: 'Nuevo León', value: 'Nuevo León'},
+    {option: 'Oaxaca', value: 'Oaxaca'},
+    {option: 'Puebla', value: 'Puebla'},
+    {option: 'Querétaro', value: 'Querétaro'},
+    {option: 'Quintana Roo', value: 'Quintana Roo'},
+    {option: 'San Luis Potosí', value: 'San Luis Potosí'},
+    {option: 'Sinaloa', value: 'Sinaloa'},
+    {option: 'Sonora', value: 'Sonora'},
+    {option: 'Tabasco', value: 'Tabasco'},
+    {option: 'Tamaulipas', value: 'Tamaulipas'},
+    {option: 'Tlaxcala', value: 'Tlaxcala'},
+    {option: 'Veracruz', value: 'Veracruz'},
+    {option: 'Yucatán', value: 'Yucatán'},
+    {option: 'Zacatecas', value: 'Zacatecas'},
+  ];
   public communityFlag = false;
   public fieldMessages = {
-    '1': 'Nombre  y teléfono de la dependencia en la que se pretende realizar el Servicio Social.'
+    '1': 'Número de teléfono particular.',
+    '2': 'Calle y número de domicilio particular.',
+    '3': 'Colonia de domicilio particular.',
+    '4': 'Código postal de domicilio particular.',
+    '5': 'Municipio donde vive.',
+    '6': 'Nombre de la dependencia en la que se pretende realizar el servicio social.',
+    '7': 'Número de teléfono de la dependencia en la que se pretende realizar el servicio social.',
+    '8': 'Domicilio de la dependencia en la que se pretende realizar el servicio social.',
+    '9': 'Nombre completo del titular de la dependencia.',
+    '10': 'Nombre del puesto.',
+    '11': 'Unidad orgánica o departamento de adscripción.',
+    '12': 'Nombre completo del encargado de la unidad orgánica o departamento.',
+    '13': 'Correo electrónico del encargado.',
+    '14': 'Nombre del programa.',
+    '15': 'Fecha de inicio del servicio social.',
+    '16': 'Actividades que se realizarán.',
+    '17': 'Indicar el objetivo del programa de servicio social a desarrollar en la dependencia u organismo.',
+    '18': 'Anote el lugar en donde realizará sus actividades.',
   };
   // initRequest: InitRequest;
   @ViewChild(DialogVerificationComponent) dialogVerification: DialogVerificationComponent;
@@ -142,6 +198,14 @@ export class SocialServiceInitFormComponent implements OnInit {
 
   _initialize() {
     this.formRequest = this.formBuilder.group({
+      studentPhone: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      studentGender: [{value: 'H', disabled: !this.verificationEmail}, Validators.required],
+      studentStreet: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      studentSuburb: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      studentZip: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      studentCity: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      studentState: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+
       dependencyName: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       dependencyPhone: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.pattern(this.patterPhone)])],
       dependencyAddress: [{value: '', disabled: !this.verificationEmail}, Validators.required],
@@ -151,7 +215,7 @@ export class SocialServiceInitFormComponent implements OnInit {
       dependencyDepartmentManager: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.pattern(this.patterName)])],
       dependencyDepartmentManagerEmail: [{value: '', disabled: !this.verificationEmail}, Validators.compose([Validators.required, Validators.email])],
       dependencyProgramName: [{value: '', disabled: !this.verificationEmail}, Validators.required],
-      dependencyProgramModality: [{value: '', disabled: !this.verificationEmail}, Validators.required],
+      dependencyProgramModality: [{value: 'Interno', disabled: !this.verificationEmail}, Validators.required],
       initialDate: [{value: this.today, disabled: !this.verificationEmail}, Validators.required],
       dependencyActivities: [{value: '', disabled: !this.verificationEmail}, Validators.required],
       dependencyProgramType: [{value: '', disabled: !this.verificationEmail}, Validators.required],

@@ -25,6 +25,13 @@ export interface InitRequestModel {
   periodId?: IPeriod;
   months?: Array<any>;
   schedule?: Array<any>;
+
+  studentCity?: string;
+  studentGender?: string;
+  studentPhone?: string;
+  studentState?: string;
+  studentStreet?: string;
+  studentSuburb?: string;
 }
 
 export interface selfEvaluationModel {

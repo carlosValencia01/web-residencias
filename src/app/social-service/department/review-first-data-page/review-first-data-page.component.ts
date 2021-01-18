@@ -100,6 +100,7 @@ export class ReviewFirstDataPageComponent implements OnInit {
       .subscribe( res => {
         const data = this._castToForm(res.controlStudent);
         this.formRequest.setValue(data);
+
         this.formDocument = this._castToDoc(res.controlStudent);
         this._initializeDocument(res.controlStudent.studentId);
         this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
@@ -224,6 +225,12 @@ export class ReviewFirstDataPageComponent implements OnInit {
       dependencyProgramObjective: data.dependencyProgramObjective,
       dependencyProgramLocationInside: data.dependencyProgramLocationInside,
       dependencyProgramLocation: data.dependencyProgramLocation,
+      studentCity:data.studentCity,
+      studentGender:data.studentGender,
+      studentPhone:data.studentPhone,
+      studentState:data.studentState,
+      studentStreet:data.studentStreet,
+      studentSuburb:data.studentSuburb,
     };
   }
   createFormInformationReview() {
@@ -324,7 +331,6 @@ export class ReviewFirstDataPageComponent implements OnInit {
               this._pushHistoryDocumentStatus('SE EVALUO', 'SE HA ACEPTADO LA INFORMACIÓN DE SOLICITUD', this.userData.name.fullName);
               // Se asigna el valor del formulario del alumno a la clase de initRequest para el documento de solicitud
               this.initRequest.setSolicitudeRequest(this.formDocument);
-
               this.initRequest.setSignResponsibles(this.userData, this.signStudentDate);
               // Se obtiene el documento pdf de Servicio Social
               const binary = this.initRequest.documentSend(eSocialFiles.SOLICITUD);

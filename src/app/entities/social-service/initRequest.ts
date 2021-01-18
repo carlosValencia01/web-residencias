@@ -139,9 +139,10 @@ export class InitRequest {
     doc.rect(this.MARGIN.LEFT, 58, this.WIDTH - (this.MARGIN.RIGHT * 2), 32);
     doc.setFont(this.FONT, 'Normal');
     doc.text(`Nombre completo: ${this._request.student.fullName}`, this.MARGIN.LEFT + 2, 62, { align: 'left' });
-    doc.text(`Sexo: ${this._request.student.sex}`, this.MARGIN.LEFT + 2, 69, { align: 'left' });
-    doc.text(`Teléfono: ${this._request.student.phone}`, this.MARGIN.LEFT + 18, 69, { align: 'left' });
-    doc.text(`Domicilio: ${this._request.student.street} ${this._request.student.suburb}`, this.MARGIN.LEFT + 58, 69, { align: 'left' });
+    doc.text(`Sexo: ${this._request.studentGender} Teléfono: ${this._request.studentPhone}`, this.MARGIN.LEFT + 2, 67, { align: 'left' });
+    
+    doc.text(`Domicilio: ${this._request.studentStreet} Col. ${this._request.studentSuburb}, ${this._request.studentCity}. ${this._request.studentState}`, this.MARGIN.LEFT + 2, 72, { align: 'left' });
+    
     doc.setFont(this.FONT, 'Bold');
     doc.text('ESCOLARIDAD', this.MARGIN.LEFT + 2, 77, { align: 'left' });
     doc.setFont(this.FONT, 'Normal');
