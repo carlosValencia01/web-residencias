@@ -216,7 +216,7 @@ export class SocialServiceMainPageComponent implements OnInit {
         this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
         this.filesStatus = res.controlStudent.verificationDepartment;
         this.initialDate = moment.utc(new Date(res.controlStudent.initialDate).valueOf());
-        this.addDates(new Date(res.controlStudent.initialDate).valueOf());
+        this.addDates(new Date(res.controlStudent.dependencyInitialDate).valueOf());
         this.lastReport = res.controlStudent.verification.lastReport;
         this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
         this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
@@ -949,7 +949,10 @@ export class SocialServiceMainPageComponent implements OnInit {
       schedule: data.schedule,
       studentPhone: this.studentPhone,
       studentStreet : this.studentStreet,
-      studentSuburb: this.studentSuburb
+      studentSuburb: this.studentSuburb,
+      studentCity: this.studentCity,
+      studentState: this.studentState,
+
     };
   }
 
@@ -1115,6 +1118,9 @@ export class SocialServiceMainPageComponent implements OnInit {
               newF: true,
               fileId: ''
             };
+            if(this.commitment === 'reevaluate'){
+              await this.uploadFile(this.commitmentDoc.nameInDrive, this.commitmentDoc, 'commitment');
+            }
             this.commitment = 'upload';
           }
         });
@@ -2106,7 +2112,7 @@ export class SocialServiceMainPageComponent implements OnInit {
     this.qs8 = this.formlastReportEvaluation.value.QL8;
     this.selfObservation = this.formlastReportEvaluation.value.lastselfObservations;
     this.controlStudentProvider.updateLastSelfEvaluationScore(this.controlStudentId,
-        {QL1:this.qs1,QL2:this.qs2,QL3:this.qs3,QL4:this.qs4,QL5:this.qs5,QL6:this.qs6,QL7:this.qs7,QL8:this.qs8})
+        {qL1:this.qs1,qL2:this.qs2,qL3:this.qs3,qL4:this.qs4,qL5:this.qs5,qL6:this.qs6,qL7:this.qs7,qL8:this.qs8})
       .subscribe(res => {
         this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Sus datos se estan procesando', '');
         // generar el documento
