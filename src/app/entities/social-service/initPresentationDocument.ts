@@ -31,6 +31,8 @@ export class InitPresentationDocument {
   private sepLogo: any;
   private tecNacLogoTitle: any;
   private tecLogo: any;
+  private footerGreen: any;
+  private footerMexico2021: any;
   private departmentSignature: any;
   private serviceFirm: any;
   private directorFirm: any;
@@ -66,16 +68,24 @@ export class InitPresentationDocument {
   }
 
   private _getImageToPdf() {
-    this._getImage.getBase64('assets/imgs/sep.png').then(logo => {
+    this._getImage.getBase64('assets/imgs/sep-2.png').then(logo => {
       this.sepLogo = logo;
     });
 
-    this._getImage.getBase64('assets/imgs/ittepic-sm.png').then(logo => {
+    this._getImage.getBase64('assets/imgs/ittepic-sm2.png').then(logo => {
       this.tecLogo = logo;
     });
 
     this._getImage.getBase64('assets/imgs/tecnm.png').then(logo => {
       this.tecNacLogoTitle = logo;
+    });
+
+    this._getImage.getBase64('assets/imgs/footer-1.png').then(logo => {
+      this.footerGreen = logo;
+    });
+
+    this._getImage.getBase64('assets/imgs/footer-2.png').then(logo => {
+      this.footerMexico2021 = logo;
     });
 
     this._getImage.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
@@ -323,7 +333,9 @@ export class InitPresentationDocument {
     doc.setFont(this.FONT, 'Bold');
     doc.setTextColor(189, 189, 189);
     doc.setFontSize(8);
-    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
+    doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM, 32, 17);
+    doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
     doc.text('Código ITT-POC-08-04', (this.WIDTH / 2), 262, { align: 'center' });
     doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
     doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
@@ -348,8 +360,8 @@ export class InitPresentationDocument {
         {x: this.MARGIN.LEFT, y: 70}, this.WIDTH - (this.MARGIN.RIGHT * 2), 6, 11);
       // Datos del prestador de servicio
       doc.text(`Nombre del prestante del Servicio Social: ${this._request.student.fullName}`, this.MARGIN.LEFT, 90, { align: 'left' });
-      doc.text(`Número de control: ${this._request.student.controlNumber} `, this.MARGIN.LEFT, 100, { align: 'left' });  
-      doc.text(`Domicilio: ${this._request.student.street} colonia ${this._request.student.suburb} ${this._request.student.city}, Nayarit`, this.MARGIN.LEFT, 110, { align: 'left' });  
+      doc.text(`Número de control: ${this._request.student.controlNumber} `, this.MARGIN.LEFT, 100, { align: 'left' });
+      doc.text(`Domicilio: ${this._request.student.street} colonia ${this._request.student.suburb} ${this._request.student.city}, Nayarit`, this.MARGIN.LEFT, 110, { align: 'left' });
       doc.text(`Teléfono: ${this._request.student.phone} Carrera: ${this._request.student.career} Semestre: ${this._request.student.semester}`, this.MARGIN.LEFT, 120, { align: 'left' });
       doc.text(`Dependencia u organismo: ${this._request.dependencyName}`, this.MARGIN.LEFT, 130, { align: 'left' });
       doc.text(`Domicilio de la dependencia: ${this._request.dependencyAddress}`, this.MARGIN.LEFT, 140, { align: 'left' });
@@ -373,7 +385,9 @@ export class InitPresentationDocument {
       doc.setFont(this.FONT, 'Bold');
       doc.setTextColor(189, 189, 189);
       doc.setFontSize(8);
-      doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+      doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
+      doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM, 32, 17);
+      doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
       doc.text('Código ITT-POC-08-05', (this.WIDTH / 2), 262, { align: 'center' });
       doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
       doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
@@ -465,18 +479,13 @@ export class InitPresentationDocument {
     doc.text(`Periodo de realización: ${this.selfEvaluation.period}`, this.MARGIN.LEFT + 10, 245, { align: 'left' });
     doc.text('Indique a que bimestre corresponde:', this.MARGIN.LEFT + 10, 252, { align: 'left' });
     doc.text(`Bimestre: ${this.selfEvaluation.position}`, this.MARGIN.LEFT + 150, 252, { align: 'center' });
-    // Footer
-    doc.setFont(this.FONT, 'Bold');
-    doc.setFontSize(8);
-    doc.text('Código ITT-POC-08-05', this.MARGIN.LEFT + 10, 262, { align: 'left' });
-    doc.text('Revisión: 1', (this.WIDTH / 2 ) + 50, 262, { align: 'left' });
-    doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', this.MARGIN.LEFT + 10, 267, { align: 'left' });
 
-    //lineas y rectangulos
+
+    // lineas y rectangulos
     doc.rect(this.MARGIN.LEFT -2, 64, this.WIDTH - (2 * this.MARGIN.RIGHT) + 4, 164); // rectangulo completo
     doc.rect(this.MARGIN.LEFT +65, 57, (this.WIDTH - (2 * this.MARGIN.RIGHT) + 4)-(67), 7); // primer rectangulo
 
-    //Lineas horizontales
+    // Lineas horizontales
     doc.line(this.MARGIN.LEFT -2, 72, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 72);
     doc.line(this.MARGIN.LEFT -2, 91, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 91);
     doc.line(this.MARGIN.LEFT -2, 101, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 101);
@@ -485,7 +494,7 @@ export class InitPresentationDocument {
     doc.line(this.MARGIN.LEFT -2, 143, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 143);
     doc.line(this.MARGIN.LEFT -2, 161, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 161);
     doc.line(this.MARGIN.LEFT -2, 181, this.WIDTH - (this.MARGIN.RIGHT) + 2 , 181);
-      //Lineas verticales
+    // Lineas verticales
     doc.line(this.MARGIN.LEFT + 8, 64, this.MARGIN.LEFT + 8, 181);
     doc.line(this.MARGIN.LEFT + 65, 64, this.MARGIN.LEFT + 65, 181);
     doc.line(this.MARGIN.LEFT + 92, 64, this.MARGIN.LEFT + 92, 181);
@@ -495,15 +504,15 @@ export class InitPresentationDocument {
     doc.line(this.MARGIN.LEFT + 155, 64, this.MARGIN.LEFT + 155, 181);
 
 
-    /*
+    // Footer
     doc.setFont(this.FONT, 'Bold');
     doc.setTextColor(189, 189, 189);
     doc.setFontSize(8);
-    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
-    doc.text('Código ITT-POC-08-05', (this.WIDTH / 2), 262, { align: 'center' });
-    doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
-    doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
-    */
+    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
+    doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM, 32, 17);
+    doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    doc.text('Código ITT-POC-08-11', (this.WIDTH / 2), 262, { align: 'center' });
+    doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 267, { align: 'center' });
     return doc;
   }
 
@@ -538,7 +547,7 @@ export class InitPresentationDocument {
       doc.text('Notable', this.MARGIN.LEFT + 145 , 83, { align: 'center' });
       doc.text('Excelente', this.MARGIN.LEFT + 167 , 83, { align: 'center' });
 
-       
+
       doc.text('*', coordenadas[this.lastSelfEvaluation.ql1] , 90, { align: 'center' }); //1
       doc.text('*', coordenadas[this.lastSelfEvaluation.ql2] , 101, { align: 'center' }); //2
       doc.text('*', coordenadas[this.lastSelfEvaluation.ql3] , 115, { align: 'center' }); //3
@@ -547,7 +556,7 @@ export class InitPresentationDocument {
       doc.text('*', coordenadas[this.lastSelfEvaluation.ql6] , 153, { align: 'center' }); //6
       doc.text('*', coordenadas[this.lastSelfEvaluation.ql7] , 177, { align: 'center' }); //7
       doc.text('*', coordenadas[this.lastSelfEvaluation.ql8] , 197, { align: 'center' }); //8
-      
+
      doc.setFontSize(10);
      doc.setFont(this.FONT, 'arial');
      this.justifyText(doc,
@@ -567,7 +576,7 @@ export class InitPresentationDocument {
        {x: this.MARGIN.LEFT + 10, y: 125}, this.MARGIN.LEFT + 44, 4, 9.5);
      doc.text('4', this.MARGIN.LEFT + 4 , 127, { align: 'center' });
      this.justifyText(doc,
-       '¿Contribuiste en actividades de protección al medio ambiente?', 
+       '¿Contribuiste en actividades de protección al medio ambiente?',
        {x: this.MARGIN.LEFT + 10, y: 135}, this.MARGIN.LEFT + 44, 4, 9.5);
      doc.text('5', this.MARGIN.LEFT + 4 , 137, { align: 'center' });
      this.justifyText(doc,
@@ -582,7 +591,7 @@ export class InitPresentationDocument {
       '¿Recomendarías a otro estudiante realizar su Servicio Social en la dependencia donde lo realizaste? ',
       {x: this.MARGIN.LEFT + 10, y: 193}, this.MARGIN.LEFT + 44, 4, 9);
     doc.text('8', this.MARGIN.LEFT + 4 , 197, { align: 'center' });
-    
+
     // doc.setFontSize(9.5);
     this.justifyText(doc,
         `Observaciones: ${this.lastSelfEvaluation.observations}` ,
@@ -595,15 +604,17 @@ export class InitPresentationDocument {
       doc.line(this.MARGIN.LEFT +12, 240, this.MARGIN.LEFT + 170 , 240);
       doc.text('Nombre, No. de control y firma del prestador de Servicio Social', this.WIDTH/2, 245, { align: 'center' });
       doc.text('c.c.p. Oficina de Servicio Social ', this.MARGIN.LEFT + 3, 250, { align: 'left' });
-      
-      
+
+
       // Footer
       doc.setFont(this.FONT, 'Bold');
       doc.setFontSize(8);
-      doc.text('Código ITT-POC-08-10', this.MARGIN.LEFT + 10, 262, { align: 'left' });
-      doc.text('Revisión: 1', (this.WIDTH / 2 ) + 50, 262, { align: 'left' });
-      doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', this.MARGIN.LEFT + 10, 267, { align: 'left' });
-  
+      doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
+      doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM, 32, 17);
+      doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+      doc.text('Código ITT-POC-08-10',  (this.WIDTH / 2), 262, { align: 'center' });
+      doc.text('Referencia a la Norma ISO 9001:2015   8.2.3',  (this.WIDTH / 2), 267, { align: 'center' });
+
       //lineas y rectangulos
       doc.rect(this.MARGIN.LEFT -2, 77, this.WIDTH - (2 * this.MARGIN.RIGHT) + 4, 177); // rectangulo completo
       doc.rect(this.MARGIN.LEFT +76, 72, (this.WIDTH - (2 * this.MARGIN.RIGHT) + 4)-(78), 5); // primer rectangulo
@@ -620,22 +631,12 @@ export class InitPresentationDocument {
       //Lineas verticales
       doc.line(this.MARGIN.LEFT + 8, 77, this.MARGIN.LEFT + 8, 203);
       doc.line(this.MARGIN.LEFT + 76, 77, this.MARGIN.LEFT + 76, 203);
-      
+
       doc.line(this.MARGIN.LEFT + 98, 77, this.MARGIN.LEFT + 98, 203);
       doc.line(this.MARGIN.LEFT + 120, 77, this.MARGIN.LEFT + 120, 203);
       doc.line(this.MARGIN.LEFT + 136, 77, this.MARGIN.LEFT + 136, 203);
       doc.line(this.MARGIN.LEFT + 155, 77, this.MARGIN.LEFT + 155, 203);
-      
-  
-      /*
-      doc.setFont(this.FONT, 'Bold');
-      doc.setTextColor(189, 189, 189);
-      doc.setFontSize(8);
-      doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
-      doc.text('Código ITT-POC-08-05', (this.WIDTH / 2), 262, { align: 'center' });
-      doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
-      doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
-      */
+
       return doc;
     }
 
@@ -805,27 +806,31 @@ export class InitPresentationDocument {
 
   private addHeaderTec(document: jsPDF) {
     const tecnmHeight = 15;
-    const sepHeight = tecnmHeight * 100 / 53;
+    const sepHeight = tecnmHeight * 100 / 60;
     document.setFont(this.FONT, 'Bold');
     document.setFontSize(8);
     document.setTextColor(189, 189, 189);
     // Logo Izquierdo
-    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 35 * 3, sepHeight);
+    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 30 * 3, sepHeight);
+    // Logo Centro
+    document.addImage(this.tecNacLogoTitle, 'PNG', 115, 8, 40, tecnmHeight);
     // Logo Derecho
-    document.addImage(this.tecNacLogoTitle, 'PNG', 155, 5, 40, tecnmHeight);
-    document.text('Instituto Tecnólogico de Tepic', 160, 23, { align: 'left' });
+    document.addImage(this.tecLogo, 'PNG', 180, 5, 15, tecnmHeight);
+    document.text('Instituto Tecnólogico de Tepic', 150, 25, { align: 'left' });
   }
 
   private addFooterTec(document: jsPDF) {
     document.setFont(this.FONT, 'Bold');
     document.setFontSize(8);
     document.setTextColor(189, 189, 189);
-    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
+    document.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 17, this.HEIGHT - this.MARGIN.BOTTOM, 31, 15);
     // document.setTextColor(183, 178, 178);
-    document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2), 260, { align: 'center' });
-    document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01. email: info@ittepic.edu.mx',
-      (this.WIDTH / 2), 265, { align: 'center' });
-    document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
+    document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2) + 5, 260, { align: 'center' });
+    document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01.',
+      (this.WIDTH / 2) + 5, 265, { align: 'center' });
+    document.text('email: info@ittepic.edu.mx, www.ittepic.edu.mx', (this.WIDTH / 2) + 5, 270, { align: 'center' });
+    document.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 145, this.HEIGHT - this.MARGIN.BOTTOM, 20, 20);
   }
 
   // @ts-ignore

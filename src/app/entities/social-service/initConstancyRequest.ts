@@ -28,6 +28,8 @@ export class InitConstancy {
   private sepLogo: any;
   private tecNacLogoTitle: any;
   private tecLogo: any;
+  private footerGreen: any;
+  private footerMexico2021: any;
   private serviceFirm: any;
   private directorFirm: any;
   private departmentSignature: any;
@@ -49,16 +51,24 @@ export class InitConstancy {
   }
 
   private _getImageToPdf() {
-    this._getImage.getBase64('assets/imgs/sep.png').then(logo => {
+    this._getImage.getBase64('assets/imgs/sep-2.png').then(logo => {
       this.sepLogo = logo;
     });
 
-    this._getImage.getBase64('assets/imgs/ittepic-sm.png').then(logo => {
+    this._getImage.getBase64('assets/imgs/ittepic-sm2.png').then(logo => {
       this.tecLogo = logo;
     });
 
     this._getImage.getBase64('assets/imgs/tecnm.png').then(logo => {
       this.tecNacLogoTitle = logo;
+    });
+
+    this._getImage.getBase64('assets/imgs/footer-1.png').then(logo => {
+      this.footerGreen = logo;
+    });
+
+    this._getImage.getBase64('assets/imgs/footer-2.png').then(logo => {
+      this.footerMexico2021 = logo;
     });
 
     this._getImage.getBase64('assets/fonts/Montserrat-Regular.ttf').then(base64 => {
@@ -339,29 +349,32 @@ export class InitConstancy {
 
   private addHeaderTec(document: jsPDF) {
     const tecnmHeight = 15;
-    const sepHeight = tecnmHeight * 100 / 53;
+    const sepHeight = tecnmHeight * 100 / 60;
     document.setFont(this.FONT, 'Bold');
     document.setFontSize(8);
     document.setTextColor(189, 189, 189);
     // Logo Izquierdo
-    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 35 * 3, sepHeight);
+    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 30 * 3, sepHeight);
+    // Logo Centro
+    document.addImage(this.tecNacLogoTitle, 'PNG', 115, 8, 40, tecnmHeight);
     // Logo Derecho
-    document.addImage(this.tecNacLogoTitle, 'PNG', 155, 5, 40, tecnmHeight);
-    document.text('Instituto Tecnólogico de Tepic', 160, 23, { align: 'left' });
+    document.addImage(this.tecLogo, 'PNG', 180, 5, 15, tecnmHeight);
+    document.text('Instituto Tecnólogico de Tepic', 150, 25, { align: 'left' });
   }
 
   private addFooterTec(document: jsPDF) {
     document.setFont(this.FONT, 'Bold');
     document.setFontSize(8);
     document.setTextColor(189, 189, 189);
-    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
+    document.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 17, this.HEIGHT - this.MARGIN.BOTTOM, 31, 15);
     // document.setTextColor(183, 178, 178);
-    document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2), 260, { align: 'center' });
-    document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01. email: info@ittepic.edu.mx',
-      (this.WIDTH / 2), 265, { align: 'center' });
-    document.text('www.ittepic.edu.mx', (this.WIDTH / 2), 270, { align: 'center' });
+    document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2) + 5, 260, { align: 'center' });
+    document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01.',
+      (this.WIDTH / 2) + 5, 265, { align: 'center' });
+    document.text('email: info@ittepic.edu.mx, www.ittepic.edu.mx', (this.WIDTH / 2) + 5, 270, { align: 'center' });
+    document.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 145, this.HEIGHT - this.MARGIN.BOTTOM, 20, 20);
   }
-
   // @ts-ignore
   private addTable(document: jsPDF,
                    data: Array<Object>,

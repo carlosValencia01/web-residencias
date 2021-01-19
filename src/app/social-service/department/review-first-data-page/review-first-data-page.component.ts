@@ -225,12 +225,12 @@ export class ReviewFirstDataPageComponent implements OnInit {
       dependencyProgramObjective: data.dependencyProgramObjective,
       dependencyProgramLocationInside: data.dependencyProgramLocationInside,
       dependencyProgramLocation: data.dependencyProgramLocation,
-      studentCity:data.studentCity,
-      studentGender:data.studentGender,
-      studentPhone:data.studentPhone,
-      studentState:data.studentState,
-      studentStreet:data.studentStreet,
-      studentSuburb:data.studentSuburb,
+      studentCity: data.studentCity,
+      studentGender: data.studentGender,
+      studentPhone: data.studentPhone,
+      studentState: data.studentState,
+      studentStreet: data.studentStreet,
+      studentSuburb: data.studentSuburb,
     };
   }
   createFormInformationReview() {
@@ -324,11 +324,11 @@ export class ReviewFirstDataPageComponent implements OnInit {
             if (this.wrongFields.length > 0) {
               // Se ha encontrado al menos un campo rechazado
               this.sendVerificationInformation(this.formInformationReview, 'reevaluate');
-              this._pushHistoryDocumentStatus('SE EVALUO', 'SE RECHAZO INFORMACION DE SOLICITUD', this.userData.name.fullName);
+              // this._pushHistoryDocumentStatus('SE EVALUO', 'SE RECHAZO INFORMACION DE SOLICITUD', this.userData.name.fullName);
             } else {
               // Todos los campos del formulario son correctos
               this.sendVerificationInformation( [], 'approved');
-              this._pushHistoryDocumentStatus('SE EVALUO', 'SE HA ACEPTADO LA INFORMACIÓN DE SOLICITUD', this.userData.name.fullName);
+              // this._pushHistoryDocumentStatus('SE EVALUO', 'SE HA ACEPTADO LA INFORMACIÓN DE SOLICITUD', this.userData.name.fullName);
               // Se asigna el valor del formulario del alumno a la clase de initRequest para el documento de solicitud
               this.initRequest.setSolicitudeRequest(this.formDocument);
               this.initRequest.setSignResponsibles(this.userData, this.signStudentDate);
@@ -375,7 +375,7 @@ export class ReviewFirstDataPageComponent implements OnInit {
                 {'verification.signs.solicitude.signDepartmentDate': new Date(),
                   'verification.signs.solicitude.signDepartmentName': this.userData.name.fullName} )
                 .subscribe( res => {
-                  this._pushHistoryDocumentStatus('SE CREO', 'CREACIÓN DE DOCUMENTO DE SOLICITUD', this.userData.name.fullName);
+                  // this._pushHistoryDocumentStatus('SE CREO', 'CREACIÓN DE DOCUMENTO DE SOLICITUD', this.userData.name.fullName);
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
                 }, () => {
                   this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
@@ -399,7 +399,7 @@ export class ReviewFirstDataPageComponent implements OnInit {
                 {'verification.signs.solicitude.signDepartmentDate': new Date(),
                   'verification.signs.solicitude.signDepartmentName': this.userData.name.fullName} )
                 .subscribe( res => {
-                  this._pushHistoryDocumentStatus('SE ACTUALIZO', 'ACTUALIZACIÓN DE DOCUMENTO DE SOLICITUD', this.userData.name.fullName);
+                  // this._pushHistoryDocumentStatus('SE ACTUALIZO', 'ACTUALIZACIÓN DE DOCUMENTO DE SOLICITUD', this.userData.name.fullName);
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
                 }, () => {
                   this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
