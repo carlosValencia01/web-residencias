@@ -152,48 +152,48 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
       .subscribe( () => {
         this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
           'Se ha enviado su validación del documento');
-        // switch (document) {
-        //   case 'presentation':
-        //     this.presentation = status;
-        //     if (status === 'reevaluate') {
-        //       this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
-        //         this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
-        //     } else {
-        //       this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
-        //         this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
-        //     }
-        //     break;
-        //   case 'acceptance':
-        //     this.acceptance = status;
-        //     if (status === 'reevaluate') {
-        //       this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
-        //         this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
-        //     } else {
-        //       this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
-        //         this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
-        //     }
-        //     break;
-        //   case 'workPlanProject':
-        //     this.workPlan = status;
-        //     if (status === 'reevaluate') {
-        //       this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
-        //         this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
-        //     } else {
-        //       this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
-        //         this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
-        //     }
-        //     break;
-        //   case 'commitment':
-        //     this.commitment = status;
-        //     if (status === 'reevaluate') {
-        //       this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
-        //         this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
-        //     } else {
-        //       this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
-        //         this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
-        //     }
-        //     break;
-        // }
+        switch (document) {
+          case 'presentation':
+            this.presentation = status;
+            // if (status === 'reevaluate') {
+            //   this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+            //     this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
+            // } else {
+            //   this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+            //     this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
+            // }
+            break;
+          case 'acceptance':
+            this.acceptance = status;
+            // if (status === 'reevaluate') {
+            //   this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+            //     this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
+            // } else {
+            //   this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+            //     this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
+            // }
+            break;
+          case 'workPlanProject':
+            this.workPlan = status;
+            // if (status === 'reevaluate') {
+            //   this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+            //     this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
+            // } else {
+            //   this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+            //     this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
+            // }
+            break;
+          case 'commitment':
+            this.commitment = status;
+            // if (status === 'reevaluate') {
+            //   this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+            //     this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
+            // } else {
+            //   this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+            //     this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
+            // }
+            break;
+        }
         if (this.presentation === 'approved' &&
             this.acceptance === 'approved' &&
             this.workPlan === 'approved' &&
