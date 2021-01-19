@@ -125,7 +125,7 @@
           </div>
         </mat-step>
 
-        <mat-step [completed]="reportsStep"><!--presentationDocument-->
+        <mat-step [completed]="solicitudeStep"><!--presentationDocument-->
           <ng-template matStepLabel>Documentos de presentación</ng-template>
           <div *ngIf="statusFirstDocuments === 'approved'">
             <div *ngIf="['noAssigned','assigned'].includes(presentation)">
@@ -489,7 +489,7 @@
           </div>
         </mat-step>
         <!--permitir pasar a reportes cuando carta de presentacion, aceptacion, asignacion y compomiso esten aceptadas-->
-        <mat-step [completed]="controlStudentStatus === 'process'"><!--Reportes-->
+        <mat-step [completed]="reportsStep"><!--Reportes-->
           <ng-template matStepLabel>Reportes</ng-template>
 
           <div class="row" *ngIf="!bimestralReport || bimestralReport && finalReport">
@@ -624,7 +624,6 @@
                       <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
                         <h6 class="text-center">Formato de autoevaluación No. {{report.position}}</h6>
                         <label
-                                for=selfEvaluations{{report.position}}
                                 style="cursor: pointer; flex: 1 2;"
                                 class="d-flex flex-column align-items-center justify-content-center"
                                 >
@@ -1023,7 +1022,6 @@
                         <mat-card-content class="d-flex flex-column justify-content-center align-items-center">
                           <h6 class="text-center">Formato de Evaluación de las actividades</h6>
                           <label
-                                  for="lastReportEvaluation"
                                   style="cursor: pointer; flex: 1 2;"
                                   class="d-flex flex-column align-items-center justify-content-center"
                                   >
@@ -1214,7 +1212,7 @@
 
         </mat-step>
 
-        <mat-step [completed]="['preAssigned', 'preSign'].includes(this.controlStudentStatus)"><!--Validacion-->
+        <mat-step [completed]="lastStep"><!--Validacion-->
           <ng-template matStepLabel>Proceso de Validación</ng-template>
           <div class="row justify-content-center margen">
             <div class="col-10 col-sm-8 col-md-6 col-lg-4">

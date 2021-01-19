@@ -40,7 +40,7 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
   public fieldMessages = {
     '1': 'Nombre  y teléfono de la dependencia en la que se pretende realizar el Servicio Social.'
   };
-  @ViewChild('dialogverification') dialogVerification: DialogVerificationComponent;
+  @ViewChild(DialogVerificationComponent) dialogVerification: DialogVerificationComponent;
   public errorFieldsMessage: Array<any> = [];
   public errorFieldsValidate: Array<any> = [];
   public fileId = '';

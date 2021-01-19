@@ -64,7 +64,9 @@ export class SocialServiceMainPageComponent implements OnInit {
   public assistance: boolean; // Condicion para saber si ya tiene la asistencia registrada (si existe su registro en BD)
   public assistanceFirstStep = false; // Condicion para el stepper de ASISTENCIA, controlamos que hasta que no sea verdadero no se continua
   public assistanceSecondStep = false; // Condicion para el subStepper en caso de no tener asistencia y revisar el formulario a evaluar
-  public reportsStep = false; // Condicion para permitir pasar al step de reportes.
+  public solicitudeStep = false; // Condicion para permitir pasar al step de reportes.
+  public reportsStep = false;
+  public lastStep = false;
   public solicitudeDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public presentationDocument: boolean; // Condicion para saber si tiene el registro de información para los primeros documentos
   public reportsDocument: boolean; // Condicion para saber si continuar con los reportes
@@ -222,7 +224,9 @@ export class SocialServiceMainPageComponent implements OnInit {
           this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
           this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
           this.dependencyRelease = res.controlStudent.verification.dependencyRelease;
-          this.reportsStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);
+          this.solicitudeStep = this.enableReportStep(this.presentation, this.acceptance, this.workPlanProject, this.commitment);
+          this.reportsStep = ['process', 'preAssigned', 'preSign'].includes(this.controlStudentStatus);
+          this.lastStep = ['preAssigned', 'preSign'].includes(this.controlStudentStatus);
           this.assistance = res.controlStudent.verification.assistance;
           this.permission = true;
           // Student personal information
@@ -2267,31 +2271,36 @@ export class SocialServiceMainPageComponent implements OnInit {
     );
   }
 
-// Descarga de carta de liberacion de servicio social
-downloadRelease() {
-  this.loadingService.setLoading(true);
-  const release = this.documents.filter(f => f.filename.toString().includes('ITT-POC-08-08')); // cambiar por codigo de carta de liberacion
-  let releaseId = '';
-  try {
-    releaseId = release[0].fileIdInDrive;
-  } catch (e) {
-    this.notificationsService.showNotification(eNotificationType.ERROR,
-      'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
-    return;
+  // Descarga de carta de liberacion de servicio social
+  downloadRelease() {
+    this.loadingService.setLoading(true);
+    const release = this.documents.filter(f => f.filename.toString().includes('ITT-POC-08-08')); // cambiar por codigo de carta de liberacion
+    let releaseId = '';
+    try {
+      releaseId = release[0].fileIdInDrive;
+    } catch (e) {
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', 'No se ha encontrado el documento, vuelva a intentarlo mas tarde.');
+      return;
+    }
+    this.controlStudentProvider.getFile(releaseId, 'ITT-POC-08-08 Constancia de Servicio Social.pdf').subscribe(async (res) => { // cambiar por liberacion
+      const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
+      const downloadLink = document.createElement('a');
+      const fileName = 'Carta de liberacion de Servicio Social.pdf';
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+      this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
+    }, error => {
+      this.loadingService.setLoading(false);
+      const message = JSON.parse(error._body).message || 'Error al descargar el documento, intentelo mas tarde';
+      this.notificationsService
+        .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
+    }, () =>     this.loadingService.setLoading(false) );
   }
-  this.controlStudentProvider.getFile(releaseId, 'ITT-POC-08-08 Constancia de Servicio Social.pdf').subscribe(async (res) => { // cambiar por liberacion
-    const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
-    const downloadLink = document.createElement('a');
-    const fileName = 'Carta de liberacion de Servicio Social.pdf';
-    downloadLink.href = linkSource;
-    downloadLink.download = fileName;
-    downloadLink.click();
-    this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
-  }, error => {
+
+  disableLoading() {
     this.loadingService.setLoading(false);
-    const message = JSON.parse(error._body).message || 'Error al descargar el documento, intentelo mas tarde';
-    this.notificationsService
-      .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
-  }, () =>     this.loadingService.setLoading(false) );
-}
+    this.loaded = true;
+  }
 }

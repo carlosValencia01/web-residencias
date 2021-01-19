@@ -234,7 +234,8 @@ export class ControlSubprincipalPageComponent implements OnInit {
     this.loadingService.setLoading(true);
     // Obtener las solicitudes aprovadas
     this.controlStudentProv.getControlStudentByGeneralStatus('preSign').subscribe(res => {
-        const request = res.controlStudents.map(this._castToTable);
+        const readyToSign = res.controlStudents.filter(c => c.verification.constancy === 'firstSign');
+        const request = readyToSign.map(this._castToTable);
         this._refreshForSign(request);
       }, () => {
         this.notificationsService.showNotification(eNotificationType.ERROR,
