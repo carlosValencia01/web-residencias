@@ -97,7 +97,7 @@ export class ReviewFirstDataPageComponent implements OnInit {
     this.loadingService.setLoading(true);
     this._initialize();
     this.controlStudentProvider.getControlStudentById(this.controlStudentId)
-      .subscribe( res => {
+      .subscribe( async res => {
         const data = this._castToForm(res.controlStudent);
         this.formRequest.setValue(data);
 
@@ -105,7 +105,8 @@ export class ReviewFirstDataPageComponent implements OnInit {
         this._initializeDocument(res.controlStudent.studentId);
         this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
         this.signStudentDate = res.controlStudent.verification.signs.solicitude.signStudentDate;
-        this.studentFolderId = res.controlStudent.studentId.folderIdSocService.idFolderInDrive;
+        const folder = await this.controlStudentProvider.getControlStudentFolderById(this.controlStudentId).toPromise();
+        this.studentFolderId = folder.folderId;
         this.studentDocumentSolicitude = res.controlStudent.documents.filter(f => f.filename.includes('SOLICITUD'));
         const informationSolicitude = res.controlStudent.verificationDepartment.solicitude;
         if (informationSolicitude.length > 0) {

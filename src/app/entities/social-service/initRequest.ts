@@ -180,7 +180,7 @@ export class InitRequest {
     doc.setFontSize(9);
     // doc.text('Descripcion de las actividades', this.MARGIN.LEFT + 2, 169, { align: 'left' });
     this.justifyText(doc,
-      this._request.dependencyActivities,
+      this._request.dependencyActivities.trim(),
       {x: this.MARGIN.LEFT + 4, y: 165}, this.WIDTH - (this.MARGIN.LEFT * 2 + 10), 4, 8);
     const categoryDe = this._request.dependencyProgramType.option;
     this.category[categoryDe] = 'X';
@@ -393,7 +393,7 @@ export class InitRequest {
 
 
     // Cuadro de Uso exclusivo de la oficina del servicio social
-    doc.rect(this.MARGIN.LEFT, 230, this.WIDTH - (this.MARGIN.RIGHT * 2), 30);
+    doc.rect(this.MARGIN.LEFT, 230, this.WIDTH - (this.MARGIN.RIGHT * 2), 25);
     doc.setFont(this.FONT, 'Normal');
     doc.text('OBSERVACIONES: ', this.MARGIN.LEFT + 2, 233, { align: 'left' });
 
@@ -404,9 +404,9 @@ export class InitRequest {
     doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM + 5, 15, 15);
     doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM + 5, 32, 17);
     doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM + 5, 17, 17);
-    doc.text('Referencia a la Norma ISO 9001:2015  8.2.3', this.MARGIN.LEFT, 267, { align: 'left' });
-    doc.text('Código ITT-POC-08-07', this.MARGIN.LEFT + 100, 267, { align: 'left' });
-    doc.text('Rev. 1', this.WIDTH - 30, 267, { align: 'left' });
+    doc.text('Referencia a la Norma ISO 9001:2015  8.2.3', (this.WIDTH / 2), 262, { align: 'left' });
+    doc.text('Código ITT-POC-08-07', (this.WIDTH / 2), 267, { align: 'left' });
+    doc.text('Rev. 1', (this.WIDTH / 2), 272, { align: 'left' });
     return doc;
   }
 

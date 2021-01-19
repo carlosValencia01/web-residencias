@@ -22,6 +22,11 @@ export class ControlStudentProv {
       .pipe(map(controlStudent => controlStudent.json()));
   }
 
+  getControlStudentFolderById(_id) {
+    return this.api.get(`controlStudent/control/student/folder/${_id}`)
+      .pipe(map(controlStudent => controlStudent.json()));
+  }
+
   getControlStudentByStudentId(studentId) {
     return this.api.get(`controlStudent/${studentId}`)
       .pipe(map(controlStudent => controlStudent.json()));
