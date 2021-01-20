@@ -329,7 +329,7 @@ export class InitPresentationDocument {
     doc.text(`EL SERVICIO SOCIAL LO REALIZARA DENTRO DE LAS INSTALACIONES DE LA DEPENDENCIA: ${inside}` , this.MARGIN.LEFT + 2, 228, { align: 'left' });
     doc.text(`DONDE:  ${this.asignation.dependencyProgramLocation}` , this.MARGIN.LEFT + 2, 233, { align: 'left' });
     doc.text(`Nombre del Responsable del programa: ${this.asignation.dependencyDepartmentManager}.   Firma: ____________________` , this.MARGIN.LEFT + 2, 240, { align: 'left' });
-    doc.text(`Jefe de la Oficina Serv. Social del I.T.T: .   Firma: ` , this.MARGIN.LEFT + 2, 245, { align: 'left' });
+    doc.text(`Jefe de la Oficina Serv. Social del I.T.T: _____________________________ .   Firma: ____________________` , this.MARGIN.LEFT + 2, 245, { align: 'left' });
     doc.text(`FECHA ${moment(new Date()).format('D / MMMM / YYYY')}` , this.MARGIN.LEFT + 2, 250, { align: 'left' });
     // 240
     // Footer
