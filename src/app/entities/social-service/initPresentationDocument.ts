@@ -230,7 +230,7 @@ export class InitPresentationDocument {
     doc.text(`                    CALLE Y NUMERO     COLONIA       CIUDAD Y ESTADO`, this.MARGIN.LEFT + 2, 76, { align: 'left' });
     const carrera = `CARRERA: ${this.asignation.studentCarrer}     SEMESTRE: ${this.asignation.semester}`;
     doc.text(carrera, this.MARGIN.LEFT + 2, 83, { align: 'left' });
-    const noCtrol = `No. DE CONTROL:   ${this.asignation.studentControl}     No. DE CREDITOS CUBIERTOS:  ${this.asignation.studentProgress}%`;
+    const noCtrol = `No. DE CONTROL:   ${this.asignation.studentControl}     No. DE CREDITOS CUBIERTOS:  ${this.asignation.studentProgress}`;
     doc.text(noCtrol, this.MARGIN.LEFT + 2, 90, { align: 'left' });
     //_request
     // Cuadro de Datos del programa
@@ -255,14 +255,14 @@ export class InitPresentationDocument {
     this.justifyText(doc,
       programObjective,
       {x: ((this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2) + 22, y: 112}, ((this.WIDTH - (this.MARGIN.LEFT * 2)) / 2) - 5 , 5, 10);
-      const actDesc = 'ACTIVIDADES A DESARROLLAR (Preguntar al responsable del programa acerca de las actividades que realizará y use el espacio necesario para describir adecuadamente, no se limite):';
+      const actDesc = 'ACTIVIDADES A DESARROLLAR:';
+      doc.text(actDesc, this.MARGIN.LEFT + 2, 147, { align: 'left' });
+      // this.justifyText(doc,
+      //   actDesc,
+      //   {x: this.MARGIN.LEFT + 2, y: 147}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
       this.justifyText(doc,
-        actDesc,
-        {x: this.MARGIN.LEFT + 2, y: 147}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
-      this.justifyText(doc,
-        this.asignation.dependencyActivities,
-        {x: this.MARGIN.LEFT + 2, y: 155}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
-    //doc.text(this._request.dependencyActivities, this.MARGIN.LEFT + 2, 157, { align: 'left' });
+        this.asignation.dependencyActivities.replace(/\n/g, ', '),
+        {x: this.MARGIN.LEFT + 2, y: 153}, this.WIDTH - (this.MARGIN.LEFT * 2) - 5 , 4, 9);
 
     doc.rect(this.MARGIN.LEFT + 2, 192, this.WIDTH - (this.MARGIN.RIGHT * 2) - 4, 33); // HORARIO  225
 
@@ -328,8 +328,8 @@ export class InitPresentationDocument {
     if (this.asignation.dependencyProgramLocationInside) {inside = 'si'; }
     doc.text(`EL SERVICIO SOCIAL LO REALIZARA DENTRO DE LAS INSTALACIONES DE LA DEPENDENCIA: ${inside}` , this.MARGIN.LEFT + 2, 228, { align: 'left' });
     doc.text(`DONDE:  ${this.asignation.dependencyProgramLocation}` , this.MARGIN.LEFT + 2, 233, { align: 'left' });
-    doc.text(`Nombre del Responsable del programa: ${this.asignation.dependencyDepartmentManager}.   Firma` , this.MARGIN.LEFT + 2, 240, { align: 'left' });
-    doc.text(`Jefe de la Oficina Serv. Social del I.T.T: Alfredo Hernandez Nolasco.   Firma` , this.MARGIN.LEFT + 2, 245, { align: 'left' });
+    doc.text(`Nombre del Responsable del programa: ${this.asignation.dependencyDepartmentManager}.   Firma: ____________________` , this.MARGIN.LEFT + 2, 240, { align: 'left' });
+    doc.text(`Jefe de la Oficina Serv. Social del I.T.T: .   Firma: ` , this.MARGIN.LEFT + 2, 245, { align: 'left' });
     doc.text(`FECHA ${moment(new Date()).format('D / MMMM / YYYY')}` , this.MARGIN.LEFT + 2, 250, { align: 'left' });
     // 240
     // Footer

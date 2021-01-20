@@ -153,7 +153,6 @@ export class SocialServiceMainPageComponent implements OnInit {
   private periodId;
   private periods;
   private periodName;
-  public dependencyDepartmentManager;
 
   private historyDocumentStatus: Array<any>;
 
@@ -238,7 +237,6 @@ export class SocialServiceMainPageComponent implements OnInit {
           this.studentStreet = res.controlStudent.studentStreet;
           this.studentSuburb = res.controlStudent.studentSuburb;
           this.studentZip = res.controlStudent.studentZip;
-          this.dependencyDepartmentManager = res.controlStudent.dependencyDepartmentManager;
           await this.getFolderId();
           this.showReports();
         }, () => {
@@ -948,7 +946,7 @@ export class SocialServiceMainPageComponent implements OnInit {
         months: data.months,
         dependencyProgramLocationInside: data.dependencyProgramLocationInside,
         dependencyProgramLocation: data.dependencyProgramLocation,
-        dependencyDepartmentManager: this.dependencyDepartmentManager;
+        dependencyDepartmentManager: data.dependencyDepartmentManager
     };
   }
   /*

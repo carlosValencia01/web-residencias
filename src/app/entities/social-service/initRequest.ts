@@ -149,7 +149,7 @@ export class InitRequest {
     doc.rect(this.MARGIN.LEFT, 58, this.WIDTH - (this.MARGIN.RIGHT * 2), 32);
     doc.setFont(this.FONT, 'Normal');
     doc.text(`Nombre completo: ${this._request.student.fullName}`, this.MARGIN.LEFT + 2, 62, { align: 'left' });
-    doc.text(`Sexo: ${this._request.studentGender} Teléfono: ${this._request.studentPhone}`, this.MARGIN.LEFT + 2, 67, { align: 'left' });
+    doc.text(`Sexo: ${this._request.studentGender}         Teléfono: ${this._request.studentPhone}`, this.MARGIN.LEFT + 2, 67, { align: 'left' });
 
     doc.text(`Domicilio: ${this._request.studentStreet} Col. ${this._request.studentSuburb}, ${this._request.studentCity}. ${this._request.studentState}`, this.MARGIN.LEFT + 2, 72, { align: 'left' });
 
@@ -167,7 +167,7 @@ export class InitRequest {
     doc.rect(this.MARGIN.LEFT, 100, this.WIDTH - (this.MARGIN.RIGHT * 2), 108);
     doc.setFont(this.FONT, 'Normal');
     doc.text(`Dependencia Oficial: ${this._request.dependencyName}`, this.MARGIN.LEFT + 2, 105, { align: 'left' });
-    doc.text(`Tel: ${this._request.dependencyPhone}`, this.MARGIN.LEFT + 125, 105, { align: 'left' });
+    doc.text(`Tel: ${this._request.dependencyPhone}`, this.MARGIN.LEFT + 135, 105, { align: 'left' });
     doc.text(`Titular de la dependencia: ${this._request.dependencyHeadline}`, this.MARGIN.LEFT + 2, 112, { align: 'left' });
     doc.text(`Puesto o cargo: ${this._request.dependencyHeadlinePosition}`, this.MARGIN.LEFT + 2, 119, { align: 'left' });
     doc.text(`Unidad órganica o Departamento: ${this._request.dependencyDepartment}`, this.MARGIN.LEFT + 2, 126, { align: 'left' });
@@ -180,7 +180,7 @@ export class InitRequest {
     doc.setFontSize(9);
     // doc.text('Descripcion de las actividades', this.MARGIN.LEFT + 2, 169, { align: 'left' });
     this.justifyText(doc,
-      this._request.dependencyActivities.replace('\n', ','),
+      this._request.dependencyActivities.replace(/\n/g, ', '),
       {x: this.MARGIN.LEFT + 4, y: 165}, this.WIDTH - (this.MARGIN.LEFT * 2 + 10), 4, 8);
     const categoryDe = this._request.dependencyProgramType.option;
     this.category[categoryDe] = 'X';
