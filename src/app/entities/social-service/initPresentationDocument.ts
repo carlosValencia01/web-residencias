@@ -239,7 +239,7 @@ export class InitPresentationDocument {
     doc.setFontSize(10);
     doc.setFont(this.FONT, 'Bold');
     doc.text('DATOS DEL PROGRAMA', this.MARGIN.LEFT, 99, { align: 'left' });
-    doc.rect(this.MARGIN.LEFT, 102, this.WIDTH - (this.MARGIN.RIGHT * 2), 138); // rectangulo completo
+    doc.rect(this.MARGIN.LEFT, 102, this.WIDTH - (this.MARGIN.RIGHT * 2), 133); // rectangulo completo
     doc.rect(this.MARGIN.LEFT, 102, (this.WIDTH - (this.MARGIN.RIGHT * 2)) / 2, 40); // ya esta bien
     doc.rect(this.MARGIN.LEFT, 102, (this.WIDTH - (this.MARGIN.RIGHT * 2)), 40); // ya esta bien
     doc.setFont(this.FONT, 'Normal');
@@ -327,7 +327,10 @@ export class InitPresentationDocument {
     let inside = 'no';
     if (this.asignation.dependencyProgramLocationInside) {inside = 'si'; }
     doc.text(`EL SERVICIO SOCIAL LO REALIZARA DENTRO DE LAS INSTALACIONES DE LA DEPENDENCIA: ${inside}` , this.MARGIN.LEFT + 2, 228, { align: 'left' });
-    doc.text(`DONDE:  ${this.asignation.dependencyProgramLocation}` , this.MARGIN.LEFT + 2, 238, { align: 'left' });
+    doc.text(`DONDE:  ${this.asignation.dependencyProgramLocation}` , this.MARGIN.LEFT + 2, 233, { align: 'left' });
+    doc.text(`Nombre del Responsable del programa: ${this.asignation.dependencyDepartmentManager}.   Firma` , this.MARGIN.LEFT + 2, 240, { align: 'left' });
+    doc.text(`Jefe de la Oficina Serv. Social del I.T.T: Alfredo Hernandez Nolasco.   Firma` , this.MARGIN.LEFT + 2, 245, { align: 'left' });
+    doc.text(`FECHA ${moment(new Date()).format('D / MMMM / YYYY')}` , this.MARGIN.LEFT + 2, 250, { align: 'left' });
     // 240
     // Footer
     doc.setFont(this.FONT, 'Bold');
