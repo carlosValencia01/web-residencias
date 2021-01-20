@@ -21,4 +21,5 @@ export interface InitAsignationModel {
     months?: Array<any>;
     dependencyProgramLocationInside?: string;
     dependencyProgramLocation?: string;
+    dependencyDepartmentManager?: string;
 }
