@@ -910,14 +910,15 @@ export class SocialServiceMainPageComponent implements OnInit {
     // }, err => {
     //   console.log(err);
     // });
-    this.getMissingData();
+    // this.getMissingData();
     this.controlStudentProvider.getControlStudentById(this.controlStudentId)
-    .subscribe( resp => {
+    .subscribe( async resp => {
       this.formDocument = this._castToDoc(resp.controlStudent);
       this.formAsignationDocument = this._castToAsignationDoc(resp.controlStudent);
+      const folder = await this.controlStudentProvider.getControlStudentFolderById(this.controlStudentId).toPromise();
       this.initRequest.setAsignationRequest(this.formAsignationDocument);
       const binary = this.initRequest.documentSend(eSocialFiles.ASIGNACION);
-      this.saveDocument(binary, this.formDocument.student, this.controlStudentId, true, '');
+      this.saveDocument(binary, folder.folderId, this.controlStudentId, true, '');
     }, err => {
       console.log(err);
     });
@@ -925,18 +926,18 @@ export class SocialServiceMainPageComponent implements OnInit {
 
   private _castToAsignationDoc(data) {
     return {
-        studentName: this.studentFullName,
-        studentAge: this.studentAge,
-        studentGender: this.studentGender,
-        studentStreet : this.studentStreet,
-        studentSuburb: this.studentSuburb,
-        studentCity: this.studentCity,
-        studentPhone: this.studentPhone,
-        studentState: this.studentState,
-        studentCarrer: this.studentCarrer,
-        semester: this.studentSemester,
-        studentControl: this.controlNumber,
-        studentProgress: this.cookiesService.getData().user.percentCareer,
+        studentName: data.studentId.fullName || '',
+        studentAge: moment().diff(data.studentId.dateBirth, 'years'),
+        studentGender: this.studentGender || '',
+        studentStreet : this.studentStreet || '',
+        studentSuburb: this.studentSuburb || '',
+        studentCity: this.studentCity || '',
+        studentPhone: this.studentPhone || '',
+        studentState: this.studentState || '',
+        studentCarrer: data.studentId.career || '',
+        semester: data.studentId.semester || '',
+        studentControl: data.controlNumber || '',
+        studentProgress: data.studentId.creditsCareer || '',
 
         dependencyProgramName: data.dependencyProgramName,
         dependencyProgramObjective: data.dependencyProgramObjective,
@@ -950,24 +951,24 @@ export class SocialServiceMainPageComponent implements OnInit {
   /*
   Metodo para obtener los datos del estudiante que hacen falta para la carta de asignacion
   */
-  getMissingData() {
-    this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
-        this.studentFullName = this.isUndefined(res.student.fullName),
-        this.studentCarrer = this.isUndefined(res.student.career);
-        this.studentSemester = this.isUndefined(res.student.semester),
-        this.studentControl = this.isUndefined(res.student.controlNumber);
-        this.studentProgress = this.cookiesService.getData().user.percentCareer;
-        this.studentBirth = res.student.dateBirth;
-        this.studentAge = moment().diff(this.studentBirth,'years');
-    });
-  }
-
-  isUndefined(dato){
-    if(!dato){
-      return "";
-    }
-    return dato;
-  }
+  // getMissingData() {
+  //   this.controlStudentProvider.getFullStudentInformationByControlId(this.controlStudentId).subscribe( async res => {
+  //       this.studentFullName = this.isUndefined(res.student.fullName),
+  //       this.studentCarrer = this.isUndefined(res.student.career);
+  //       this.studentSemester = this.isUndefined(res.student.semester),
+  //       this.studentControl = this.isUndefined(res.student.controlNumber);
+  //       this.studentProgress = '';
+  //       this.studentBirth = res.student.dateBirth;
+  //       this.studentAge = moment().diff(this.studentBirth,'years');
+  //   });
+  // }
+  //
+  // isUndefined(dato){
+  //   if(!dato){
+  //     return "";
+  //   }
+  //   return dato;
+  // }
 
   private _castToDoc(data) {
     return {
@@ -1000,13 +1001,13 @@ export class SocialServiceMainPageComponent implements OnInit {
     };
   }
 
-  saveDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string) {
+  saveDocument(document, folderIdSocService, controlStudentId, statusDoc: boolean, fileId: string) {
     this.loadingService.setLoading(true);
     const documentInfo = {
       mimeType: 'application/pdf',
       nameInDrive: eSocialNameDocuments.ASIGNACION,
       bodyMedia: document,
-      folderId: student.folderIdSocService.idFolderInDrive,
+      folderId: folderIdSocService,
       newF: statusDoc,
       fileId: fileId
     };
@@ -1044,7 +1045,7 @@ export class SocialServiceMainPageComponent implements OnInit {
             active: true,
             message: 'Se actualizo el documento'
           };
-          await this.controlStudentProvider.updateDocumentLog(student._id, {filename: updated.filename, status: docStatus})
+          await this.controlStudentProvider.updateDocumentLog(controlStudentId, {filename: updated.filename, status: docStatus})
             .subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Asignación actualizada correctamente.');
             }, err => {
@@ -1058,91 +1059,6 @@ export class SocialServiceMainPageComponent implements OnInit {
       }
     );
   }
-
-  saveCommitmentDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string) {
-    this.validateDocumentViewer('data:application/pdf;base64,' + document,
-      eSocialNameDocuments.COMPROMISO).then( async response => {
-      if (response) {
-        this.commitment = 'upload';
-        const documentInfo = {
-          mimeType: 'application/pdf',
-          nameInDrive: eSocialNameDocuments.COMPROMISO,
-          bodyMedia: document,
-          folderId: student.folderIdSocService.idFolderInDrive,
-          newF: statusDoc,
-          fileId: fileId
-        };
-        this.commitmentDoc = documentInfo;
-        this.inscriptionsProv.uploadFile2(documentInfo).subscribe(
-          async updated => {
-            if (updated.action === 'create file') {
-              const documentInfo4 = {
-                doc: {
-                  filename: updated.name,
-                  type: 'DRIVE',
-                  fileIdInDrive: updated.fileId
-                },
-                status: {
-                  name: 'ACEPTADO',
-                  active: true,
-                  message: 'Se envio por primera vez',
-                  observation: 'Firmado por: ' + this.userData.name.fullName
-                }
-              };
-              await this.controlStudentProvider.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS,
-                    'Exito', 'Carta Compromiso registrada correctamente.');
-                },
-                err => {
-                  console.log(err);
-                }, () => this.loadingService.setLoading(false)
-              );
-            } else {
-              const docStatus = {
-                name: 'ACEPTADO',
-                active: true,
-                message: 'Se actualizo el documento'
-              };
-              await this.controlStudentProvider.updateDocumentLog(student._id, {filename: updated.filename, status: docStatus})
-                .subscribe( () => {
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS,
-                    'Exito', 'Carta Compromiso actualizada correctamente.');
-                }, err => {
-                  console.log(err);
-                }, () => this.loadingService.setLoading(false));
-            }
-          },
-          err => {
-            console.log(err);
-            this.loadingService.setLoading(false);
-          }
-        );
-      }
-    }
-    );
-  }// saveCommitmentDocument
-
-  // getCommitment() {
-  //   let commitmentFile: File = null;
-  //   const commitment = this.documents.filter(f => f.filename.toString().includes(eSocialNameDocuments.COMPROMISO_CODE));
-  //   let commitmentId = '';
-  //   try {
-  //     commitmentId = commitment[0].fileIdInDrive;
-  //   } catch (e) {
-  //     console.log(e);
-  //     this.notificationsService.showNotification(eNotificationType.ERROR,
-  //       'Error', 'No se ha encontrado la carta compromiso, vuelva a intentarlo mas tarde.');
-  //     return;
-  //   }
-  //   this.controlStudentProvider.getFile(commitmentId, eSocialNameDocuments.COMPROMISO).subscribe(async (res) => {
-  //     console.log('res', res);
-  //     commitmentFile = res.file;
-  //   }); {
-  //
-  //   }
-  //   return commitmentFile;
-  // }
-
 
 
   generateCommitment() {

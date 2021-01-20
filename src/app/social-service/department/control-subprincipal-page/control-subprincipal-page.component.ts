@@ -125,11 +125,12 @@ export class ControlSubprincipalPageComponent implements OnInit {
       this.loadingService.setLoading(true);
       const controlStudentId = student.id;
       this.controlStudentProv.getControlStudentById(controlStudentId)
-        .subscribe(response => {
+        .subscribe(async response => {
           const formDoc = this._castToDoc(response.controlStudent);
+          const folder = await this.controlStudentProv.getControlStudentFolderById(controlStudentId).toPromise();
           this.initConstancy.setConstancyRequest(formDoc);
           this.saveDocument(this.initConstancy.documentSend(),
-            true, '', response.controlStudent.studentId.folderIdSocService.idFolderInDrive, controlStudentId)
+            true, '', folder.folderId, controlStudentId)
             .then(() => {
               this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
                 {'verification.signs.constancy.signSubPrincipalDate': new Date(),

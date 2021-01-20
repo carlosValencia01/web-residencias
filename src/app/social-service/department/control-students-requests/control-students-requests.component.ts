@@ -176,9 +176,10 @@ export class ControlStudentsRequestsComponent implements OnInit {
           this.controlStudentProv.getControlStudentById(controlStudentId)
             .subscribe( async resp => {
               this.formDocument = this._castToDoc(resp.controlStudent);
+              const folder = await this.controlStudentProv.getControlStudentFolderById(controlStudentId).toPromise();
               this.initRequest.setPresentationRequest(this.formDocument);
               const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
-              this.saveDocument(binary, this.formDocument.student, controlStudentId, true, '')
+              this.saveDocument(binary, folder.folderId, controlStudentId, true, '')
                 .then(() => {
                   this.refreshNumber();
                   this.loadingService.setLoading(false);
@@ -219,13 +220,13 @@ export class ControlStudentsRequestsComponent implements OnInit {
     });
   }
 
-  saveDocument(document, student, controlStudentId, statusDoc: boolean, fileId: string) {
+  saveDocument(document, folderIdSocService, controlStudentId, statusDoc: boolean, fileId: string) {
     return new Promise( (resolve, reject) => {
       const documentInfo = {
         mimeType: 'application/pdf',
         nameInDrive: eSocialNameDocuments.PRESENTACION,
         bodyMedia: document,
-        folderId: student.folderIdSocService.idFolderInDrive,
+        folderId: folderIdSocService,
         newF: statusDoc,
         fileId: fileId
       };

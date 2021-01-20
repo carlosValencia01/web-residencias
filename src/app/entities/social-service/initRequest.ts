@@ -180,7 +180,7 @@ export class InitRequest {
     doc.setFontSize(9);
     // doc.text('Descripcion de las actividades', this.MARGIN.LEFT + 2, 169, { align: 'left' });
     this.justifyText(doc,
-      this._request.dependencyActivities.trim(),
+      this._request.dependencyActivities.replace('\n', ','),
       {x: this.MARGIN.LEFT + 4, y: 165}, this.WIDTH - (this.MARGIN.LEFT * 2 + 10), 4, 8);
     const categoryDe = this._request.dependencyProgramType.option;
     this.category[categoryDe] = 'X';
@@ -204,17 +204,17 @@ export class InitRequest {
     doc.text('MOTIVO: ', this.MARGIN.LEFT + 50, 222, { align: 'left' });
     doc.text('OBSERVACIONES: ', this.MARGIN.LEFT + 2, 230, { align: 'left' });
 
-    doc.setFontSize(9);
-    doc.text('FIRMA DEL DEPARTAMENTO', (this.WIDTH / 2), 238, { align: 'center' });
-    doc.text(`Esta solicitud fue firmada electrónicamente por ${this.responsibleSign.name.fullName} el ${moment().format('D [de] MMMM [de] YYYY [a las] h:mm a')}`,
-      (this.WIDTH / 2), 242, { align: 'center' });
+    // doc.setFontSize(9);
+    // doc.text('FIRMA DEL DEPARTAMENTO', (this.WIDTH / 2), 238, { align: 'center' });
+    // doc.text(`Esta solicitud fue firmada electrónicamente por ${this.responsibleSign.name.fullName} el ${moment().format('D [de] MMMM [de] YYYY [a las] h:mm a')}`,
+    //   (this.WIDTH / 2), 242, { align: 'center' });
 
     // Firma del solicitante
     doc.setFontSize(9);
-    doc.text('FIRMA DEL SOLICITANTE', (this.WIDTH / 2), 247, { align: 'center' });
+    doc.text('FIRMA DEL SOLICITANTE', (this.WIDTH / 2), 238, { align: 'center' });
     doc.text(`Esta solicitud fue firmada electrónicamente por ${this._request.student.fullName} el ${moment(this.signStudentDate).format('D [de] MMMM [de] YYYY [a las] h:mm a')}`,
-      (this.WIDTH / 2), 252, { align: 'center' });
-    doc.text('_______________________________________________________', (this.WIDTH / 2), 254, { align: 'center' });
+      (this.WIDTH / 2), 244, { align: 'center' });
+    doc.text('_______________________________________________________', (this.WIDTH / 2), 246, { align: 'center' });
 
     // Footer
     doc.setFont(this.FONT, 'Bold');
