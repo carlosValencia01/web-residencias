@@ -326,36 +326,6 @@ export class SocialServiceMainPageComponent implements OnInit {
     });
   }
 
-  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible) {
-    this.controlStudentProvider.createHistoryDocumentStatus(this.controlStudentId,
-      {name: nameDocument,
-        status: [{  name: nameStatus,
-          message: messageStatus,
-          responsible: responsible }]
-      }).subscribe( created => {
-      this.notificationsService.showNotification(eNotificationType.SUCCESS,
-        'Exito', created.msg);
-    }, error => {
-      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
-      this.notificationsService.showNotification(eNotificationType.ERROR,
-        'Atención', message);
-    });
-  }
-
-  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
-    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
-    this.controlStudentProvider.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
-      {name: nameStatus, message: messageStatus, responsible: responsible})
-      .subscribe(inserted => {
-        this.notificationsService.showNotification(eNotificationType.SUCCESS,
-          'Exito', inserted.msg);
-      }, error => {
-        const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
-        this.notificationsService.showNotification(eNotificationType.ERROR,
-          'Error', message);
-      });
-  }
-
   getFolderId() {
     this.inscriptionsProv.getActivePeriod().toPromise().then(
       period => {
@@ -703,7 +673,6 @@ export class SocialServiceMainPageComponent implements OnInit {
               message: `El estudiante subio el ${nameDocument} por primera vez`
             }
           };
-          // this._createHistoryDocumentStatus(nameDocuments[detailDocument], 'SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName);
           // Actualizar información del documento subido a
           await this.controlStudentProvider.uploadDocumentDrive(this.controlStudentId, documentInfo).subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',  nameDocument + ' cargado');
@@ -711,12 +680,13 @@ export class SocialServiceMainPageComponent implements OnInit {
                 .subscribe( () => {
                   this.changeStatusDocumentsToClient(detailDocument, 'send');
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
+                  this._createHistoryDocumentStatus(nameDocuments[detailDocument], 'SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName);
                 });
             },
             err => {
               console.log(err);
-            }, () => this.loadingService.setLoading(false)
-          );
+              this.loadingService.setLoading(false);
+            }, () => this.loadingService.setLoading(false));
         } else {
 
           const documentInfo = {
@@ -726,7 +696,6 @@ export class SocialServiceMainPageComponent implements OnInit {
               message: `El estudiante actualizo el ${nameDocument}`
             }
           };
-          // this._pushHistoryDocumentStatus('SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName, codeDocuments[detailDocument]);
 
           // Actualizar la información del documento
           await this.controlStudentProvider.updateDocumentLog(this.controlStudentId, documentInfo)
@@ -737,9 +706,11 @@ export class SocialServiceMainPageComponent implements OnInit {
                 .subscribe( () => {
                   this.changeStatusDocumentsToClient(detailDocument, 'send');
                   this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
+                  this._pushHistoryDocumentStatus('SE ENVIO', 'EL DOCUMENTO FUE ENVIADO', this.userData.name.fullName, codeDocuments[detailDocument]);
                 });
             }, err => {
               console.log(err);
+              this.loadingService.setLoading(false);
             }, () => this.loadingService.setLoading(false));
         }
       },
@@ -747,12 +718,6 @@ export class SocialServiceMainPageComponent implements OnInit {
         console.log(err);
         this.loadingService.setLoading(false);
       });
-      if (this.commitmentDoc) {
-        this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {['verification.' + 'commitment']: 'send'})
-                .subscribe( () => {
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS, '', 'Se ha guardado el registro del documento');
-                });
-      }
   }
 
   changeStatusDocumentsToClient(document, status) {
@@ -1028,12 +993,12 @@ export class SocialServiceMainPageComponent implements OnInit {
               observation: 'Firmado por: ' + this.userData.name.fullName
             }
           };
-          this._createHistoryDocumentStatus(eSocialNameDocuments.ASIGNACION,
-            'SE REGISTRO', 'SE HA REGISTRADO LA INFORMACIÓN PARA EL PLAN DE TRABAJO',
-            this.userData.name.fullName);
 
           await this.controlStudentProvider.uploadDocumentDrive(controlStudentId, documentInfo4).subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito', 'Asignación registrada correctamente.');
+              this._createHistoryDocumentStatus(eSocialNameDocuments.ASIGNACION,
+                'SE REGISTRO', 'SE HA REGISTRADO LA INFORMACIÓN PARA EL PLAN DE TRABAJO',
+                this.userData.name.fullName);
               this.ngOnInit();
             },
             err => {
@@ -2225,5 +2190,37 @@ export class SocialServiceMainPageComponent implements OnInit {
   disableLoading() {
     this.loadingService.setLoading(false);
     this.loaded = true;
+  }
+
+  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible) {
+    this.controlStudentProvider.createHistoryDocumentStatus(this.controlStudentId,
+      {name: nameDocument,
+        status: [{  name: nameStatus,
+          message: messageStatus,
+          responsible: responsible }]
+      }).subscribe( created => {
+      this.notificationsService.showNotification(eNotificationType.SUCCESS,
+        'Exito', created.msg);
+    }, error => {
+      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Atención', message);
+    });
+  }
+
+  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
+    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
+    if (doc) {
+      this.controlStudentProvider.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
+        {name: nameStatus, message: messageStatus, responsible: responsible})
+        .subscribe(inserted => {
+          this.notificationsService.showNotification(eNotificationType.SUCCESS,
+            'Exito', inserted.msg);
+        }, error => {
+          const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+          this.notificationsService.showNotification(eNotificationType.ERROR,
+            'Error', message);
+        });
+    }
   }
 }

@@ -45,6 +45,7 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
   public errorFieldsValidate: Array<any> = [];
   public fileId = '';
   private historyDocumentStatus: Array<any>;
+  private userData: any;
 
   constructor(private formBuilder: FormBuilder,
               private controlStudentProv: ControlStudentProv,
@@ -54,6 +55,7 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
               private notificationsService: NotificationsServices,
               public dialog: MatDialog) {
     this.today = new Date();
+    this.userData = this.cookiesService.getData().user;
   }
 
   ngOnInit() {
@@ -104,7 +106,7 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
                 this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
                 this._pushHistoryDocumentStatus('SE ACTUALIZO',
                                               'ACTUALIZACIÓN DE INFORMACIÓN DE SOLICITUD',
-                                              this.cookiesService.getData().user.name.fullName,
+                                               this.userData.name.fullName,
                                               'ITT-POC-08-02');
                 this.sendInformation.emit();
               }, () => {
@@ -117,20 +119,6 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
       );
     }
   }// registerRequest
-
-  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
-    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
-    this.controlStudentProv.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
-      {name: nameStatus, message: messageStatus, responsible: responsible})
-      .subscribe(inserted => {
-        this.notificationsService.showNotification(eNotificationType.SUCCESS,
-          'Exito', inserted.msg);
-      }, error => {
-        const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
-        this.notificationsService.showNotification(eNotificationType.ERROR,
-          'Error', message);
-      });
-  }
 
   community(event) {
     if (event.value === 'd') {
@@ -181,5 +169,22 @@ export class SocialServiceReviewInitFormComponent implements OnInit {
       dependencyProgramLocationInside: data.dependencyProgramLocationInside,
       dependencyProgramLocation: data.dependencyProgramLocation,
     };
+  }
+
+
+  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
+    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
+    if (doc) {
+      this.controlStudentProv.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
+        {name: nameStatus, message: messageStatus, responsible: responsible})
+        .subscribe(inserted => {
+          this.notificationsService.showNotification(eNotificationType.SUCCESS,
+            'Exito', inserted.msg);
+        }, error => {
+          const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+          this.notificationsService.showNotification(eNotificationType.ERROR,
+            'Error', message);
+        });
+    }
   }
 }

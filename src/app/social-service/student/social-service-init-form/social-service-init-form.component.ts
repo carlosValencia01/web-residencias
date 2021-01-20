@@ -105,6 +105,7 @@ export class SocialServiceInitFormComponent implements OnInit {
   @ViewChild(DialogVerificationComponent) dialogVerification: DialogVerificationComponent;
   private patterPhone = /[(]?[0-9]{3}[)]?[-\s\\.]?[0-9]{3}[-\s\\.]?[0-9]{4}$/;
   private patterName = /^(([ñÑA-Za-z\u00E0-\u00FC]+[\-\']?)*([ñÑA-Za-z\u00E0-\u00FC]+)?\s)+([ñÑA-Za-z\u00E0-\u00FC]+[\-\']?)+([ñÑA-Za-z\u00E0-\u00FC]+)?$/;
+  private userData: any;
 
   constructor(private formBuilder: FormBuilder,
               private controlStudentProv: ControlStudentProv,
@@ -114,6 +115,7 @@ export class SocialServiceInitFormComponent implements OnInit {
               private notificationsService: NotificationsServices,
               public dialog: MatDialog) {
     this.today = new Date();
+    this.userData = this.cookiesService.getData().user;
   }
 
   ngOnInit() {
@@ -166,7 +168,7 @@ export class SocialServiceInitFormComponent implements OnInit {
                 'ITT-POC-08-02 Solicitud de Servicio Social.pdf',
                 'SE ENVIO',
                 'REGISTRO DE INFORMACIÓN DEL ESTUDIANTE',
-                this.cookiesService.getData().user.fullName
+                this.userData.name.fullName
               );
               this.sendInformation.emit();
             }, () => {
@@ -179,22 +181,6 @@ export class SocialServiceInitFormComponent implements OnInit {
       );
     }
   }// registerRequest
-
-  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible) {
-    this.controlStudentProv.createHistoryDocumentStatus(this.controlStudentId,
-      {name: nameDocument,
-        status: [{  name: nameStatus,
-          message: messageStatus,
-          responsible: responsible }]
-      }).subscribe( created => {
-      this.notificationsService.showNotification(eNotificationType.SUCCESS,
-        'Exito', created.msg);
-    }, error => {
-      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
-      this.notificationsService.showNotification(eNotificationType.ERROR,
-        'Error', message);
-    });
-  }
 
   _initialize() {
     this.formRequest = this.formBuilder.group({
@@ -276,6 +262,22 @@ export class SocialServiceInitFormComponent implements OnInit {
           this.formRequest.get(field).hasError('pattern') && field === 'dependencyHeadline' || field === 'dependencyDepartmentManager'  ? 'Escriba el nombre completo' :
             this.formRequest.get(field).hasError('email') ? 'Correo electrónico invalido' :
               '';
+  }
+
+  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible) {
+    this.controlStudentProv.createHistoryDocumentStatus(this.controlStudentId,
+      {name: nameDocument,
+        status: [{  name: nameStatus,
+          message: messageStatus,
+          responsible: responsible }]
+      }).subscribe( created => {
+      this.notificationsService.showNotification(eNotificationType.SUCCESS,
+        'Exito', created.msg);
+    }, error => {
+      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', message);
+    });
   }
 
 }

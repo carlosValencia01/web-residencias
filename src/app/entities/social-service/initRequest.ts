@@ -41,7 +41,6 @@ export class InitRequest {
     'e': '', 'f': '',
     'g': '',
   };
-  private responsibleSign: any;
   private signStudentDate: Date;
   private documentStatus: any;
 
@@ -58,8 +57,7 @@ export class InitRequest {
     this._request = Object.assign(this._request, request);
   }
 
-  public setSignResponsibles(userData, signStudent) {
-    this.responsibleSign = userData;
+  public setSignResponsibles(signStudent) {
     this.signStudentDate = signStudent;
   }
 

@@ -344,37 +344,6 @@ export class ControlStudentsRequestsComponent implements OnInit {
     });
   }
 
-  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible, controlStudentId) {
-    console.log(nameDocument, nameStatus, messageStatus, responsible, controlStudentId);
-    this.controlStudentProv.createHistoryDocumentStatus(controlStudentId,
-      {name: nameDocument,
-        status: [{  name: nameStatus,
-          message: messageStatus,
-          responsible: responsible }]
-      }).subscribe( created => {
-      this.notificationsService.showNotification(eNotificationType.SUCCESS,
-        'Exito', created.msg);
-    }, error => {
-      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
-      this.notificationsService.showNotification(eNotificationType.ERROR,
-        'Error', message);
-    });
-  }
-
-  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string, controlStudentId, historyStatus) {
-    const doc = historyStatus.find(h => h.name.includes(documentCode));
-    this.controlStudentProv.pushHistoryDocumentStatus(controlStudentId, doc._id,
-      {name: nameStatus, message: messageStatus, responsible: responsible})
-      .subscribe(inserted => {
-        this.notificationsService.showNotification(eNotificationType.SUCCESS,
-          'Exito', inserted.msg);
-      }, error => {
-        const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
-        this.notificationsService.showNotification(eNotificationType.ERROR,
-          'Error', message);
-      });
-  }
-
   _getAllSendRequests() {
     this.loadingService.setLoading(true);
     // Obtención de todas las solicitudes
@@ -621,5 +590,39 @@ export class ControlStudentsRequestsComponent implements OnInit {
       tradeDocumentNumber: data.tradePresentationDocumentNumber
     };
   }
+
+  _createHistoryDocumentStatus(nameDocument, nameStatus, messageStatus, responsible, controlStudentId) {
+    // console.log(nameDocument, nameStatus, messageStatus, responsible, controlStudentId);
+    this.controlStudentProv.createHistoryDocumentStatus(controlStudentId,
+      {name: nameDocument,
+        status: [{  name: nameStatus,
+          message: messageStatus,
+          responsible: responsible }]
+      }).subscribe( created => {
+      this.notificationsService.showNotification(eNotificationType.SUCCESS,
+        'Exito', created.msg);
+    }, error => {
+      const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Error', message);
+    });
+  }
+
+  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string, controlStudentId, historyStatus) {
+    const doc = historyStatus.find(h => h.name.includes(documentCode));
+    if (doc) {
+      this.controlStudentProv.pushHistoryDocumentStatus(controlStudentId, doc._id,
+        {name: nameStatus, message: messageStatus, responsible: responsible})
+        .subscribe(inserted => {
+          this.notificationsService.showNotification(eNotificationType.SUCCESS,
+            'Exito', inserted.msg);
+        }, error => {
+          const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+          this.notificationsService.showNotification(eNotificationType.ERROR,
+            'Error', message);
+        });
+    }
+  }
+
 
 }

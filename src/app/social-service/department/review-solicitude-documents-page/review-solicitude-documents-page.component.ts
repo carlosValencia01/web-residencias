@@ -130,20 +130,6 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
     }
   }
 
-  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
-    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
-    this.controlStudentProv.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
-      {name: nameStatus, message: messageStatus, responsible: responsible})
-      .subscribe(inserted => {
-        this.notificationsService.showNotification(eNotificationType.SUCCESS,
-          'Exito', inserted.msg);
-      }, error => {
-        const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
-        this.notificationsService.showNotification(eNotificationType.ERROR,
-          'Error', message);
-      });
-  }
-
   sendVerificationInformation(document, information, status) {
     this.loadingService.setLoading(true);
     this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId,
@@ -155,49 +141,49 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
         switch (document) {
           case 'presentation':
             this.presentation = status;
-            // if (status === 'reevaluate') {
-            //   this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
-            //     this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
-            // } else {
-            //   this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
-            //     this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
-            // }
+            if (status === 'reevaluate') {
+              this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+                this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
+            } else {
+              this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+                this.userData.name.fullName, eSocialNameDocuments.PRESENTACION_CODE);
+            }
             break;
           case 'acceptance':
             this.acceptance = status;
-            // if (status === 'reevaluate') {
-            //   this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
-            //     this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
-            // } else {
-            //   this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
-            //     this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
-            // }
+            if (status === 'reevaluate') {
+              this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+                this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
+            } else {
+              this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+                this.userData.name.fullName, eSocialNameDocuments.ACEPTACION_CODE);
+            }
             break;
           case 'workPlanProject':
             this.workPlan = status;
-            // if (status === 'reevaluate') {
-            //   this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
-            //     this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
-            // } else {
-            //   this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
-            //     this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
-            // }
+            if (status === 'reevaluate') {
+              this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+                this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
+            } else {
+              this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+                this.userData.name.fullName, eSocialNameDocuments.ASIGNACION_CODE);
+            }
             break;
           case 'commitment':
             this.commitment = status;
-            // if (status === 'reevaluate') {
-            //   this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
-            //     this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
-            // } else {
-            //   this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
-            //     this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
-            // }
+            if (status === 'reevaluate') {
+              this._pushHistoryDocumentStatus('SE RECHAZO', information.message,
+                this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
+            } else {
+              this._pushHistoryDocumentStatus('SE ACEPTO', 'SE HA ACEPTADO EL DOCUMENTO',
+                this.userData.name.fullName, eSocialNameDocuments.COMPROMISO_CODE);
+            }
             break;
         }
         if (this.presentation === 'approved' &&
-            this.acceptance === 'approved' &&
-            this.workPlan === 'approved' &&
-            this.commitment === 'approved') {
+          this.acceptance === 'approved' &&
+          this.workPlan === 'approved' &&
+          this.commitment === 'approved') {
           this.controlStudentProv.updateGeneralControlStudent(this.controlStudentId, {'status': 'process'})
             .subscribe( () => {
               this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Exito',
@@ -218,5 +204,21 @@ export class ReviewSolicitudeDocumentsPageComponent implements OnInit {
   disableLoading() {
     this.loadingService.setLoading(false);
     this.loaded = true;
+  }
+
+  _pushHistoryDocumentStatus(nameStatus: string, messageStatus: string, responsible: string, documentCode: string) {
+    const doc = this.historyDocumentStatus.find(h => h.name.includes(documentCode));
+    if (doc) {
+      this.controlStudentProv.pushHistoryDocumentStatus(this.controlStudentId, doc._id,
+        {name: nameStatus, message: messageStatus, responsible: responsible})
+        .subscribe(inserted => {
+          this.notificationsService.showNotification(eNotificationType.SUCCESS,
+            'Exito', inserted.msg);
+        }, error => {
+          const message = JSON.parse(error._body).msg || 'Error al guardar el registro';
+          this.notificationsService.showNotification(eNotificationType.ERROR,
+            'Error', message);
+        });
+    }
   }
 }
