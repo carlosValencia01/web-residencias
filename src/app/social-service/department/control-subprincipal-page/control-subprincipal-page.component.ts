@@ -127,30 +127,35 @@ export class ControlSubprincipalPageComponent implements OnInit {
       this.controlStudentProv.getControlStudentById(controlStudentId)
         .subscribe(async response => {
           const formDoc = this._castToDoc(response.controlStudent);
-          const folder = await this.controlStudentProv.getControlStudentFolderById(controlStudentId).toPromise();
-          this.initConstancy.setConstancyRequest(formDoc);
-          this.saveDocument(this.initConstancy.documentSend(),
-            true, '', folder.folderId, controlStudentId)
-            .then(() => {
-              this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
-                {'verification.signs.constancy.signSubPrincipalDate': new Date(),
-                  'verification.signs.constancy.signSubPrincipalName': this.userData.name.fullName,
-                  'verification.constancy': 'approved',
-                  'status': 'approved'} )
-                .subscribe( res => {
-                  // this._pushHistoryDocumentStatus('SE CREO', 'CREACIÓN DE DOCUMENTO DE SOLICITUD', this.userData.name.fullName);
-                  this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
-                  this.refreshForSign();
-                  this.loadingService.setLoading(false);
-                }, () => {
-                  this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
-                    'No se ha podido guardar la información de firma del responsable');
-                  this.loadingService.setLoading(false);
-                });
-            }).catch(() => {
+          this.controlStudentProv.getControlStudentFolderById(controlStudentId).toPromise()
+            .then( folder => {
+              this.initConstancy.setConstancyRequest(formDoc);
+              this.saveDocument(this.initConstancy.documentSend(),
+                true, '', folder.folderId, controlStudentId)
+                .then(() => {
+                  this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
+                    {'verification.signs.constancy.signSubPrincipalDate': new Date(),
+                      'verification.signs.constancy.signSubPrincipalName': this.userData.name.fullName,
+                      'verification.constancy': 'approved',
+                      'status': 'approved'} )
+                    .subscribe( res => {
+                      // this._pushHistoryDocumentStatus('SE CREO', 'CREACIÓN DE DOCUMENTO DE SOLICITUD', this.userData.name.fullName);
+                      this.notificationsService.showNotification(eNotificationType.SUCCESS, res.msg, '');
+                      this.refreshForSign();
+                      this.loadingService.setLoading(false);
+                    }, () => {
+                      this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Atención',
+                        'No se ha podido guardar la información de firma del responsable');
+                      this.loadingService.setLoading(false);
+                    });
+                }).catch(() => {
+                this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
+                  'Error al encontrar la carpeta del estudiante');
+                this.loadingService.setLoading(false);
+              });
+            }).catch( err => {
             this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Error',
               'Vuelva a intentarlo mas tarde.');
-            this.loadingService.setLoading(false);
           });
         });
     }
