@@ -176,23 +176,28 @@ export class ControlStudentsRequestsComponent implements OnInit {
           this.controlStudentProv.getControlStudentById(controlStudentId)
             .subscribe( async resp => {
               this.formDocument = this._castToDoc(resp.controlStudent);
-              const folder = await this.controlStudentProv.getControlStudentFolderById(controlStudentId).toPromise();
-              this.initRequest.setPresentationRequest(this.formDocument);
-              const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
-              this.saveDocument(binary, folder.folderId, controlStudentId, true, '')
-                .then(() => {
-                  this.refreshNumber();
-                  this.loadingService.setLoading(false);
-                  this._pushHistoryDocumentStatus('SE FIRMO',
-                    'SE HA FIRMADO LA CARTA DE PRESENTACIÓN',
-                    this.userData.name.fullName,
-                    eSocialNameDocuments.PRESENTACION_CODE,
-                    controlStudentId, resp.controlStudent.historyDocumentStatus);
-                }).catch(errMsg => {
-                this.notificationsService.showNotification(eNotificationType.INFORMATION, 'Error',
-                  errMsg);
-                this.loadingService.setLoading(false);
-              });
+              this.controlStudentProv.getControlStudentFolderById(controlStudentId).toPromise()
+                .then( folder => {
+                  this.initRequest.setPresentationRequest(this.formDocument);
+                  const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
+                  this.saveDocument(binary, folder.folderId, controlStudentId, true, '')
+                    .then(() => {
+                      this.refreshNumber();
+                      this.loadingService.setLoading(false);
+                      this._pushHistoryDocumentStatus('SE FIRMO',
+                        'SE HA FIRMADO LA CARTA DE PRESENTACIÓN',
+                        this.userData.name.fullName,
+                        eSocialNameDocuments.PRESENTACION_CODE,
+                        controlStudentId, resp.controlStudent.historyDocumentStatus);
+                    }).catch(errMsg => {
+                    this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
+                      errMsg);
+                    this.loadingService.setLoading(false);
+                  }).catch( () => {
+                    this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
+                      'No se ha encontrado la carpeta del estudiante');
+                  });
+                });
             }, err => {
               console.log(err);
             });
@@ -268,7 +273,7 @@ export class ControlStudentsRequestsComponent implements OnInit {
         },
         err => {
           console.log(err);
-          reject('Vuelva a intentarlo mas tarde.');
+          reject('Favor de revisar que toda la información este completa.');
         });
     });
   }
