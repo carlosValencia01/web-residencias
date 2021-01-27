@@ -790,8 +790,7 @@ export class InitPresentationDocument {
   private newDocumentTec(header = true, footer = true): jsPDF {
     const doc = new jsPDF({
       unit: 'mm',
-      format: 'letter',
-      compress: true
+      format: 'letter'
     });
     // @ts-ignore
     doc.addFileToVFS('Montserrat-Regular.ttf', this.montserratNormal);
