@@ -168,12 +168,12 @@ export class InitConstancy {
     const firstSign = this.addArroba(`M.C. ${this._request.departmentSignName} JEFA DEL DEPARTAMENTO DE GESTIÓN TECNOLÓGICA Y VINCULACIÓN`);
     const secondSign = this.addArroba(`ING. ${this._CookiesService.getData().user.name.fullName} SUBDIRECTORA DE PLANEACIÓN Y VINCULACIÓN`);
 
-    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 30, 165, 30, 30);
-    doc.addImage(this.subPlanDirectorSignature, 'PNG', this.MARGIN.LEFT + 115, 175, 40, 20);
+    doc.addImage(this.departmentSignature, 'PNG', this.MARGIN.LEFT + 30, 165, 30, 30, undefined, 'FAST');
+    doc.addImage(this.subPlanDirectorSignature, 'PNG', this.MARGIN.LEFT + 115, 175, 40, 20, undefined, 'FAST');
 
     this.justifyText(doc, firstSign, {x: this.MARGIN.LEFT + 15, y: 200}, 70, 5, 9);
     this.justifyText(doc, secondSign, {x: this.MARGIN.LEFT + 100, y: 200}, 65, 5, 9);
-    doc.addImage(this.stampTec, 'PNG', this.WIDTH - (this.WIDTH / 4), 210, 40, 40);
+    doc.addImage(this.stampTec, 'PNG', this.WIDTH - (this.WIDTH / 4), 210, 40, 40, undefined, 'FAST');
 
     doc.text('EMM/ZRAG/ahn', this.MARGIN.LEFT, 240, {align: 'left'});
     doc.text('C.c.p. Expediente del estudiante.', this.MARGIN.LEFT, 245, {align: 'left'});
@@ -354,11 +354,11 @@ export class InitConstancy {
     document.setFontSize(8);
     document.setTextColor(189, 189, 189);
     // Logo Izquierdo
-    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 30 * 3, sepHeight);
+    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 30 * 3, sepHeight, undefined, 'FAST');
     // Logo Centro
-    document.addImage(this.tecNacLogoTitle, 'PNG', 115, 8, 40, tecnmHeight);
+    document.addImage(this.tecNacLogoTitle, 'PNG', 115, 8, 40, tecnmHeight, undefined, 'FAST');
     // Logo Derecho
-    document.addImage(this.tecLogo, 'PNG', 180, 5, 15, tecnmHeight);
+    document.addImage(this.tecLogo, 'PNG', 180, 5, 15, tecnmHeight, undefined, 'FAST');
     document.text('Instituto Tecnólogico de Tepic', 150, 25, { align: 'left' });
   }
 
@@ -366,14 +366,14 @@ export class InitConstancy {
     document.setFont(this.FONT, 'Bold');
     document.setFontSize(8);
     document.setTextColor(189, 189, 189);
-    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
-    document.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 17, this.HEIGHT - this.MARGIN.BOTTOM, 31, 15);
+    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15, undefined, 'FAST');
+    document.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 17, this.HEIGHT - this.MARGIN.BOTTOM, 31, 15, undefined, 'FAST');
     // document.setTextColor(183, 178, 178);
     document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2) + 5, 260, { align: 'center' });
     document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01.',
       (this.WIDTH / 2) + 5, 265, { align: 'center' });
     document.text('email: info@ittepic.edu.mx, www.ittepic.edu.mx', (this.WIDTH / 2) + 5, 270, { align: 'center' });
-    document.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 145, this.HEIGHT - this.MARGIN.BOTTOM, 20, 20);
+    document.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 145, this.HEIGHT - this.MARGIN.BOTTOM, 20, 20, undefined, 'FAST');
   }
   // @ts-ignore
   private addTable(document: jsPDF,

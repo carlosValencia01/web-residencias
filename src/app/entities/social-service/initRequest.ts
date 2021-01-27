@@ -218,9 +218,9 @@ export class InitRequest {
     doc.setFont(this.FONT, 'Bold');
     doc.setTextColor(189, 189, 189);
     doc.setFontSize(8);
-    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
-    doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM, 32, 17);
-    doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17);
+    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15, undefined, 'FAST');
+    doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM, 32, 17, undefined, 'FAST');
+    doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM, 17, 17, undefined, 'FAST');
     doc.text('Código ITT-POC-08-02', (this.WIDTH / 2), 262, { align: 'center' });
     doc.text('Rev. 0', (this.WIDTH / 2), 267, { align: 'center' });
     doc.text('Referencia a la Norma ISO 9001:2015   8.2.3', (this.WIDTH / 2), 272, { align: 'center' });
@@ -399,9 +399,9 @@ export class InitRequest {
     doc.setFont(this.FONT, 'Bold');
     doc.setTextColor(189, 189, 189);
     doc.setFontSize(8);
-    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM + 5, 15, 15);
-    doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM + 5, 32, 17);
-    doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM + 5, 17, 17);
+    doc.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM + 5, 15, 15, undefined, 'FAST');
+    doc.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 25, this.HEIGHT - this.MARGIN.BOTTOM + 5, 32, 17, undefined, 'FAST');
+    doc.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 140, this.HEIGHT - this.MARGIN.BOTTOM + 5, 17, 17, undefined, 'FAST');
     doc.text('Referencia a la Norma ISO 9001:2015  8.2.3', (this.WIDTH / 2), 262, { align: 'left' });
     doc.text('Código ITT-POC-08-07', (this.WIDTH / 2), 267, { align: 'left' });
     doc.text('Rev. 1', (this.WIDTH / 2), 272, { align: 'left' });
@@ -579,11 +579,11 @@ export class InitRequest {
     document.setFontSize(8);
     document.setTextColor(189, 189, 189);
     // Logo Izquierdo
-    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 30 * 3, sepHeight);
+    document.addImage(this.sepLogo, 'PNG', this.MARGIN.LEFT - 5, 1, 30 * 3, sepHeight, undefined, 'FAST');
     // Logo Centro
-    document.addImage(this.tecNacLogoTitle, 'PNG', 115, 8, 40, tecnmHeight);
+    document.addImage(this.tecNacLogoTitle, 'PNG', 115, 8, 40, tecnmHeight, undefined, 'FAST');
     // Logo Derecho
-    document.addImage(this.tecLogo, 'PNG', 180, 5, 15, tecnmHeight);
+    document.addImage(this.tecLogo, 'PNG', 180, 5, 15, tecnmHeight, undefined, 'FAST');
     document.text('Instituto Tecnólogico de Tepic', 150, 25, { align: 'left' });
   }
 
@@ -591,14 +591,14 @@ export class InitRequest {
     document.setFont(this.FONT, 'Bold');
     document.setFontSize(8);
     document.setTextColor(189, 189, 189);
-    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15);
-    document.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 17, this.HEIGHT - this.MARGIN.BOTTOM, 31, 15);
+    document.addImage(this.tecLogo, 'PNG', this.MARGIN.LEFT, this.HEIGHT - this.MARGIN.BOTTOM, 15, 15, undefined, 'FAST');
+    document.addImage(this.footerGreen, 'PNG', this.MARGIN.LEFT + 17, this.HEIGHT - this.MARGIN.BOTTOM, 31, 15, undefined, 'FAST');
     // document.setTextColor(183, 178, 178);
     document.text('Av. Tecnológico #2595 Fracc. Lagos del Country C.P. 63175', (this.WIDTH / 2) + 5, 260, { align: 'center' });
     document.text('Tepic, Nayarit Tel. 01 (311) 211 94 00 y 211 94 01.',
       (this.WIDTH / 2) + 5, 265, { align: 'center' });
     document.text('email: info@ittepic.edu.mx, www.ittepic.edu.mx', (this.WIDTH / 2) + 5, 270, { align: 'center' });
-    document.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 145, this.HEIGHT - this.MARGIN.BOTTOM, 20, 20);
+    document.addImage(this.footerMexico2021, 'PNG', this.MARGIN.LEFT + 145, this.HEIGHT - this.MARGIN.BOTTOM, 20, 20, undefined, 'FAST');
   }
 
   // @ts-ignore

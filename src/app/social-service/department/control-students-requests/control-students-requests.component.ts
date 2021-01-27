@@ -179,8 +179,7 @@ export class ControlStudentsRequestsComponent implements OnInit {
               this.controlStudentProv.getControlStudentFolderById(controlStudentId).toPromise()
                 .then( folder => {
                   this.initRequest.setPresentationRequest(this.formDocument);
-                  const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
-                  console.log('binary', binary);
+                  const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);                  
                   this.saveDocument(binary, folder.folderId, controlStudentId, true, '')
                     .then(() => {       
                                  
