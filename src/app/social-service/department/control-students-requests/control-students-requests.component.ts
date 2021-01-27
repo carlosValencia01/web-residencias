@@ -180,15 +180,17 @@ export class ControlStudentsRequestsComponent implements OnInit {
                 .then( folder => {
                   this.initRequest.setPresentationRequest(this.formDocument);
                   const binary = this.initRequest.documentSend(eSocialFiles.PRESENTACION);
+                  console.log('binary', binary);
                   this.saveDocument(binary, folder.folderId, controlStudentId, true, '')
-                    .then(() => {
+                    .then(() => {       
+                                 
                       this.refreshNumber();
                       this.loadingService.setLoading(false);
                       this._pushHistoryDocumentStatus('SE FIRMO',
                         'SE HA FIRMADO LA CARTA DE PRESENTACIÓN',
                         this.userData.name.fullName,
                         eSocialNameDocuments.PRESENTACION_CODE,
-                        controlStudentId, resp.controlStudent.historyDocumentStatus);
+                        controlStudentId, resp.controlStudent.historyDocumentStatus);                      
                     }).catch(errMsg => {
                     this.notificationsService.showNotification(eNotificationType.ERROR, 'Error',
                       errMsg);
