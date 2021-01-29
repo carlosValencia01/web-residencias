@@ -219,7 +219,7 @@ export class SocialServiceMainPageComponent implements OnInit {
           this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
           this.filesStatus = res.controlStudent.verificationDepartment;
           this.initialDate = moment.utc(new Date(res.controlStudent.initialDate).valueOf());
-          this.addDates(new Date(res.controlStudent.initialDate).valueOf());
+          this.addDates(new Date(res.controlStudent.dependencyInitialDate).valueOf());
           this.lastReport = res.controlStudent.verification.lastReport;
           this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
           this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
@@ -237,6 +237,7 @@ export class SocialServiceMainPageComponent implements OnInit {
           this.studentStreet = res.controlStudent.studentStreet;
           this.studentSuburb = res.controlStudent.studentSuburb;
           this.studentZip = res.controlStudent.studentZip;
+          this.showReevaluateAlert();
           await this.getFolderId();
           this.showReports();
         }, () => {
@@ -262,6 +263,13 @@ export class SocialServiceMainPageComponent implements OnInit {
         this._loadPage();
       }
     });
+  }
+
+  showReevaluateAlert(){
+    if( ['reevaluate'].includes(this.presentation || this.acceptance || this.workPlanProject || this.commitment ) ){
+      this.notificationsService.showNotification(eNotificationType.ERROR,
+        'Correcciones necesarias', 'Revise sus documentos');
+    }
   }
 
   validatePercentCareerToSocialService(studentId) {

@@ -14,7 +14,8 @@ import {DatePipe} from '@angular/common';
 import {InscriptionsProvider} from '../../../providers/inscriptions/inscriptions.prov';
 import {eSocialFiles} from '../../../enumerators/social-service/document.enum';
 import {eSocialNameDocuments} from '../../../enumerators/social-service/socialServiceNameDocuments.enum';
-
+import * as moment from 'moment';
+moment.locale('es');
 @Component({
   selector: 'app-control-students-requests',
   templateUrl: './control-students-requests.component.html',
@@ -320,34 +321,59 @@ export class ControlStudentsRequestsComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       cancelButtonText: 'Cancelar',
       confirmButtonText: 'Asignar'
-    }).then((result) => {
-      if (result.value) {
-        Swal.fire({
-          title: '¿Esta seguro de continuar?',
-          type: 'warning',
-          showCancelButton: true,
-          cancelButtonColor: '#d33',
-          confirmButtonColor: '#3085d6',
-          cancelButtonText: 'Cancelar',
-          confirmButtonText: 'Si'
-        }).then((res) => {
-          if (res.value) {
-            this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
-              {'verification.presentation': 'assigned', 'tradePresentationDocumentNumber': result.value})
-              .subscribe(() => {
-                this.notificationsService.showNotification(eNotificationType.SUCCESS,
-                  'Se ha asignado correctamente el número de oficio al estudiante', '');
-                this.changeSubTab(0);
-                this._createHistoryDocumentStatus(eSocialNameDocuments.PRESENTACION, 'SE REGISTRO',
-                  'SE HA ASIGNADO NO. DE OFICIO ' + result.value + ' A CARTA DE PRESENTACIÓN', this.userData.name.fullName, controlStudentId);
-            }, () => {
-                this.notificationsService.showNotification(eNotificationType.ERROR,
-                  'Ha sucedido un error, no se ha asignado el número de oficio al estudiante', 'Vuelva a intentarlo mas tarde');
-              });
-          }
-        });
-      }
-    });
+    })
+      .then((result) => {
+        if (result.value) {        
+          Swal.fire({
+            title: 'Asignación de año de Oficio',
+            type: 'question',
+            input: 'text',
+            inputAttributes: {
+              autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            cancelButtonColor: '#d33',
+            confirmButtonColor: '#3085d6',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Asignar'
+          })
+          .then((res) => {
+            if (res.value) {
+
+              Swal.fire({
+                title: '¿Esta seguro de continuar?',
+                type: 'warning',
+                showCancelButton: true,
+                cancelButtonColor: '#d33',
+                confirmButtonColor: '#3085d6',
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'Si'
+              })
+                .then((confirm)=>{
+                  if (confirm.value){
+                    var docNumber = '06-'+result.value+'-SS/'+res.value;
+
+                    this.controlStudentProv.updateGeneralControlStudent(controlStudentId,
+                      {'verification.presentation': 'assigned', 'tradePresentationDocumentNumber': docNumber})
+                      .subscribe(() => {
+                        this.notificationsService.showNotification(eNotificationType.SUCCESS,
+                          'Se ha asignado correctamente el número de oficio al estudiante', '');
+                        this.changeSubTab(0);
+                        this._createHistoryDocumentStatus(eSocialNameDocuments.PRESENTACION, 'SE REGISTRO',
+                          'SE HA ASIGNADO NO. DE OFICIO ' + docNumber + ' A CARTA DE PRESENTACIÓN', this.userData.name.fullName, controlStudentId);
+                    }, () => {
+                        this.notificationsService.showNotification(eNotificationType.ERROR,
+                          'Ha sucedido un error, no se ha asignado el número de oficio al estudiante', 'Vuelva a intentarlo mas tarde');
+                      });
+
+                  }
+                })
+
+
+            }
+          });
+        }
+      });  
   }
 
   _getAllSendRequests() {
@@ -593,7 +619,8 @@ export class ControlStudentsRequestsComponent implements OnInit {
       dependencyProgramObjective: data.dependencyProgramObjective,
       dependencyProgramLocationInside: data.dependencyProgramLocationInside,
       dependencyProgramLocation: data.dependencyProgramLocation,
-      tradeDocumentNumber: data.tradePresentationDocumentNumber
+      tradeDocumentNumber: data.tradePresentationDocumentNumber,
+      studentGender: data.studentGender
     };
   }
 

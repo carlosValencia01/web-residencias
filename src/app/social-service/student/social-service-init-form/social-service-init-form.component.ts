@@ -96,7 +96,7 @@ export class SocialServiceInitFormComponent implements OnInit {
     '12': 'Nombre completo del encargado de la unidad orgánica o departamento.',
     '13': 'Correo electrónico del encargado.',
     '14': 'Nombre del programa.',
-    '15': 'Fecha de inicio del servicio social.',
+    '15': 'Fecha de inicio de trámite de servicio social.',
     '16': 'Actividades que se realizarán.',
     '17': 'Indicar el objetivo del programa de servicio social a desarrollar en la dependencia u organismo.',
     '18': 'Anote el lugar en donde realizará sus actividades.',
@@ -104,7 +104,8 @@ export class SocialServiceInitFormComponent implements OnInit {
   // initRequest: InitRequest;
   @ViewChild(DialogVerificationComponent) dialogVerification: DialogVerificationComponent;
   private patterPhone = /[(]?[0-9]{3}[)]?[-\s\\.]?[0-9]{3}[-\s\\.]?[0-9]{4}$/;
-  private patterName = /^(([ñÑA-Za-z\u00E0-\u00FC]+[\-\']?)*([ñÑA-Za-z\u00E0-\u00FC]+)?\s)+([ñÑA-Za-z\u00E0-\u00FC]+[\-\']?)+([ñÑA-Za-z\u00E0-\u00FC]+)?$/;
+  // private patterName = /^(([ñÑA-Za-z\u00E0-\u00FC]+[\-\'\.]?)*([ñÑA-Za-z\u00E0-\u00FC]+)?\s)+([ñÑA-Za-z\u00E0-\u00FC]+[\-\'\.]?)+([ñÑA-Za-z\u00E0-\u00FC]+)?$/;
+  private patterName = /^(([ñÑA-Za-zäÄëËïÏöÖüÜáéíóúáéíóúÁÉÍÓÚÂÊÎÔÛâêîôûàèìòùÀÈÌÒÙ\u00E0-\u00FC]+[\-\'\.]?)*([ñÑA-Za-zäÄëËïÏöÖüÜáéíóúáéíóúÁÉÍÓÚÂÊÎÔÛâêîôûàèìòùÀÈÌÒÙ\u00E0-\u00FC]+)?\s)+([ñÑA-Za-zäÄëËïÏöÖüÜáéíóúáéíóúÁÉÍÓÚÂÊÎÔÛâêîôûàèìòùÀÈÌÒÙ\u00E0-\u00FC]+[\-\'\.]?)+([ñÑA-Za-zäÄëËïÏöÖüÜáéíóúáéíóúÁÉÍÓÚÂÊÎÔÛâêîôûàèìòùÀÈÌÒÙ\u00E0-\u00FC]+)?$/;
   private userData: any;
 
   constructor(private formBuilder: FormBuilder,
