@@ -18,7 +18,7 @@
       </mat-card>
     </div>
     <div *ngIf="permission">
-      <mat-vertical-stepper [linear]="true" #stepper>
+      <mat-vertical-stepper [linear]="true" #stepper [selectedIndex]="stepWizard">
         <mat-step [completed]="assistance">
           <ng-template matStepLabel>
             Asistencia
@@ -32,7 +32,7 @@
           <div *ngIf="assistance">
             <h5 class="text-center">Ya tienes tu asistencia registrada</h5>
             <div class="d-flex justify-content-center">
-              <button mat-raised-button matStepperNext color="primary" style="width: 25%;">Continuar</button>
+              <button mat-raised-button matStepperNext color="primary" style="width: 25%;" (click)="updateStepWizard(1)">Continuar</button>
             </div>
           </div>
           <div *ngIf="!assistance">
@@ -119,7 +119,7 @@
                 </mat-card>
               </div>
               <div class="col-12 mt-4 text-center">
-                <button mat-raised-button matStepperNext color="primary" style="width: 20%;">Continuar</button>
+                <button mat-raised-button matStepperNext color="primary" style="width: 20%;" (click)="updateStepWizard(2)">Continuar</button>
               </div>
             </div>
           </div>
@@ -483,7 +483,7 @@
                 </div>
               </div>
               <div class="col-12 mt-4" style="text-align: center;">
-                <button mat-raised-button matStepperNext color="primary" style="width: 15%;">Continuar</button>
+                <button mat-raised-button matStepperNext color="primary" style="width: 15%;" (click)="updateStepWizard(3)">Continuar</button>
               </div>
             </div>
           </div>
@@ -1206,7 +1206,7 @@
                 </div>
               </div>
               <div class="col-12 mt-4" style="text-align: center;">
-                <button mat-raised-button matStepperNext color="primary" style="width: 15%;">Continuar</button>
+                <button mat-raised-button matStepperNext color="primary" style="width: 15%;" (click)="updateStepWizard(4)">Continuar</button>
               </div>
           </div>
 

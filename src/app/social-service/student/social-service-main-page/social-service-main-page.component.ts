@@ -9,7 +9,7 @@ import {eFOLDER} from '../../../enumerators/shared/folder.enum';
 import {StudentProvider} from '../../../providers/shared/student.prov';
 import {InscriptionsProvider} from '../../../providers/inscriptions/inscriptions.prov';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatStepper} from '@angular/material';
 import {DialogVerificationComponent} from '../../components/dialog-verification/dialog-verification.component';
 import {DialogDocumentViewerComponent} from '../../components/dialog-document-viewer/dialog-document-viewer.component';
 import {InitRequestModel} from '../../../entities/social-service/initRequest.model';
@@ -39,6 +39,7 @@ interface Score {
 export class SocialServiceMainPageComponent implements OnInit {
   selectedFile: File = null;
   @ViewChild(DialogVerificationComponent) dialogVerification: DialogVerificationComponent;
+  @ViewChild('stepper') private stepper: MatStepper;
 
   formDocument: InitRequestModel;
   formSelfEvaluationDocument: InitSelfEvaluationModel;
@@ -170,6 +171,7 @@ export class SocialServiceMainPageComponent implements OnInit {
   public qs7: number;
   public qs8: number;
   public selfObservation: string;
+  public stepWizard: number;
 
   constructor(private loadingService: LoadingService,
               private cookiesService: CookiesService,
@@ -229,6 +231,10 @@ export class SocialServiceMainPageComponent implements OnInit {
           this.lastStep = ['preAssigned', 'preSign'].includes(this.controlStudentStatus);
           this.assistance = res.controlStudent.verification.assistance;
           this.permission = true;
+          this.stepWizard = res.controlStudent.stepWizard;
+          
+          // set wizardstep to stepper
+          this.setStepperStepWizard(this.stepWizard);
           // Student personal information
           this.studentCity = res.controlStudent.studentCity;
           this.studentGender = res.controlStudent.studentGender;
@@ -262,6 +268,27 @@ export class SocialServiceMainPageComponent implements OnInit {
         this._loadPage();
       }
     });
+  }
+
+  setStepperStepWizard(step) {
+    this.stepper.selectedIndex = step;
+    this.stepWizard = step;
+  }
+
+  updateStepWizard(step) {
+    if (step > this.stepWizard) {
+      this.controlStudentProvider.updateGeneralControlStudent(this.controlStudentId, {stepWizard: step})
+        .subscribe(res => {
+          this.notificationsService.showNotification(eNotificationType.SUCCESS,
+            'Se ha guardado tu registro', 'Continua con el proceso de Servicio Social');
+            this.setStepperStepWizard(step);
+        }, error => {
+          console.log(error);
+          const message = JSON.parse(error._body).msg || 'Error, no se pudo actualizar el paso general';
+          this.notificationsService.showNotification(eNotificationType.ERROR,
+            'Error', message);
+        });
+    }
   }
 
   validatePercentCareerToSocialService(studentId) {
