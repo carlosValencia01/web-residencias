@@ -154,6 +154,21 @@ export class InitPresentationDocument {
 
   // ************** CARTA DE PRESENTACION PARA LA REALIZACION DEL SERVICIO SOCIAL
   public socialServicePresentation(): jsPDF {
+    var sameManager = false;
+    var mainTextY = 115;
+    var al = 'alumno';
+    var el = 'el';
+     if(this._request.dependencyHeadline === this._request.dependencyDepartmentManager){
+      sameManager = true;
+      mainTextY = 108;
+     }
+
+     if(this._request.studentGender === 'M'){
+      al = 'alumna';
+      el = 'la';
+     }
+
+
     const doc = this.newDocumentTec(true, false);
 
     doc.setTextColor(0, 0, 0);
@@ -169,22 +184,25 @@ export class InitPresentationDocument {
     this.addTextRight(doc, this.addArroba('DEPARTAMENTO: GESTIÓN TECNOLÓGICA Y VINCULACIÓN'), 50);
     this.addTextRight(doc, this.addArroba(`No. DE OFICIO: ${this._request.tradeDocumentNumber}`), 55);
     this.addTextRight(doc, this.addArroba('ASUNTO: Carta de Presentación'), 60);
+    this.addTextRight(doc, this.addArroba( 'Tepic, Nayarit.' + moment().format('D [DE] MMMM [DE] YYYY').toUpperCase() ), 65);
 
-    doc.text('Tepic, Nayarit.' + moment().format('D [DE] MMMM [DE] YYYY').toUpperCase(), this.MARGIN.LEFT, 70, { align: 'left' });
+    //doc.text('Tepic, Nayarit.' + moment().format('D [DE] MMMM [DE] YYYY').toUpperCase(), this.MARGIN.LEFT, 65, { align: 'left' });
 
-    doc.text('M.A. MANUEL ÁNGEL URIBE VÁZQUEZ', this.MARGIN.LEFT, 75, { align: 'left' });
-    doc.text('DIRECTOR', this.MARGIN.LEFT, 80, { align: 'left' });
-    doc.text('INSTITUTO TECNOLÓGICO DE TEPIC', this.MARGIN.LEFT, 85, { align: 'left' });
-
-    doc.text('PRESENTE', this.MARGIN.LEFT, 95, { align: 'left' });
-    this.addTextRight(doc, this._request.dependencyDepartmentManager, 100);
-    this.addTextRight(doc, this._request.dependencyName, 105);
+    doc.text(this._request.dependencyHeadline.toUpperCase(), this.MARGIN.LEFT, 75, { align: 'left' });
+    doc.text(this._request.dependencyHeadlinePosition, this.MARGIN.LEFT, 80, { align: 'left' });
+    doc.text(this._request.dependencyName, this.MARGIN.LEFT, 85, { align: 'left' });
+    doc.text('PRESENTE', this.MARGIN.LEFT, 90, { align: 'left' });
+    if(!sameManager){
+      this.addTextRight(doc, `At'n `+this._request.dependencyDepartmentManager.toUpperCase(), 95);
+      this.addTextRight(doc, this._request.dependencyDepartment, 100);
+      this.addTextRight(doc, this._request.dependencyName, 105);
+    }
 
     doc.setFont(this.FONT, 'Normal');
-    const body = `Por este conducto, presentamos a sus finas atenciones al C. ${this.addArroba(this._request.student.fullName)}, con número de control ${this.addArroba(this._request.student.controlNumber)}, alumno de la carrera de ${this.addArroba(this._request.student.career)}, quien desea realizar su Servicio Social en esa dependencia, cubriendo un total de 500 horas en el programa ${this.addArroba(this._request.dependencyProgramName)} en un período mínimo de seis meses y no mayor de dos años. Así mismo solicito de la manera más atenta nos haga llegar la carta de aceptación, donde mencione el día de inicio de su servicio social.`;
+    const body = `Por este conducto, presentamos a sus finas atenciones a ${el} C. ${this.addArroba(this._request.student.fullName)}, con número de control ${this.addArroba(this._request.student.controlNumber)}, ${al} de la carrera de ${this.addArroba(this._request.student.career)}, quien desea realizar su Servicio Social en esa dependencia, cubriendo un total de 500 horas en el programa ${this.addArroba(this._request.dependencyProgramName)} en un período mínimo de seis meses y no mayor de dos años. Así mismo solicito de la manera más atenta nos haga llegar la carta de aceptación, donde mencione el día de inicio de su servicio social.`;
     this.justifyText(doc,
       body,
-      {x: this.MARGIN.LEFT, y: 115}, this.WIDTH - (this.MARGIN.LEFT * 2), 7, 10);
+      {x: this.MARGIN.LEFT, y: mainTextY}, this.WIDTH - (this.MARGIN.LEFT * 2), 7, 10);
 
     doc.text('Agradezco las atenciones que se sirva brindar al portador de la presente.', this.MARGIN.LEFT, 160, { align: 'left' });
 

@@ -46,6 +46,8 @@ export class RecordStudentPageComponent implements OnInit {
   private historyDocumentStatus: Array<any>;
   private userData: any;
   private controlStudentStatus: string;
+  public studentPhone;
+  public studentGender;
 
   constructor(private activatedRoute: ActivatedRoute,
               private loadingService: LoadingService,
@@ -66,6 +68,8 @@ export class RecordStudentPageComponent implements OnInit {
     this.loadingService.setLoading(true);
     this.controlStudentProv.getControlStudentById(this.controlStudentId)
       .subscribe( res => {
+        this.studentGender = res.controlStudent.studentGender;
+        this.studentPhone = res.controlStudent.studentPhone;
         this.studentInformation = res.controlStudent.studentId;
         this.verificationDocuments = res.controlStudent.verification;
         this.reportDocuments = res.controlStudent.verification.reports;

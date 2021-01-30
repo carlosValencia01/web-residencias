@@ -221,7 +221,7 @@ export class SocialServiceMainPageComponent implements OnInit {
           this.workPlanProjectDownloaded = res.controlStudent.verification.workPlanProjectDownloaded;
           this.filesStatus = res.controlStudent.verificationDepartment;
           this.initialDate = moment.utc(new Date(res.controlStudent.initialDate).valueOf());
-          this.addDates(new Date(res.controlStudent.initialDate).valueOf());
+          this.addDates(new Date(res.controlStudent.dependencyInitialDate).valueOf());
           this.lastReport = res.controlStudent.verification.lastReport;
           this.lastReportEvaluation = res.controlStudent.verification.lastReportEvaluation;
           this.historyDocumentStatus = res.controlStudent.historyDocumentStatus;
