@@ -341,9 +341,7 @@ export class SocialServiceMainPageComponent implements OnInit {
         '<p><i class="fa fa-building"></i> <span><strong>Areá de Servicio Social</strong></span></p>' +
         '<p><i class="fa fa-phone"></i> <strong>Teléfono</strong>: <u>311 211 9400</u>, <strong>Ext.</strong><u>325</u> <strong>o</strong> <u>318</u></p>' +
         '<p><i class="fa fa-email"></i> <strong>Correo Electrónico</strong>: <a href="mailto:serviciosocial@ittepic.edu.mx">serviciosocial@ittepic.edu.mx</a></p>' +
-        '<hr>' +
-        '<p>Tienes dudas acerca de como utilizar la plataforma, mira el siguiente video:</p>' +
-        '<a href="#" target="_blank">Plataforma para el Servicio Social del TecNM Campus Tepic</a>',
+        '<hr>',
       showCloseButton: true,
       showCancelButton: false,
       focusConfirm: false,
