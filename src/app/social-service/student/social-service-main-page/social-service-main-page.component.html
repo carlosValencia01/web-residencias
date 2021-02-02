@@ -40,10 +40,10 @@
             <p>Si quieres iniciar con tu proceso de servicio social necesitaras observar el siguiente video y responder al formulario a continuación</p>
             <mat-horizontal-stepper [linear]="true">
               <mat-step [completed]="assistanceFirstStep">
-                <ng-template matStepLabel>Video de Servicio Social</ng-template>
+                <ng-template matStepLabel>Guía de Servicio Social</ng-template>
                 <div class="row justify-content-center">
                   <div class="col-12 my-2">
-                    <h4>Video: <a href="https://youtu.be/E_aJXKDLsW8" target="_blank" (click)="assistanceFirstStep = true">¿Qué significa hacer mi servicio social?</a></h4>
+                    <h4>Descargar: <a download="Guia de servicio social.pdf" target="_blank" href="src/assets/docs/Guía Servicio Social .pdf"(click)="assistanceFirstStep = true">Guía de servicio social</a></h4>                   
                   </div>
                   <div class="col-6">
                     <button mat-raised-button matStepperNext color="primary" [disabled]="!assistanceFirstStep" style="width: 100%;">Continuar</button>
