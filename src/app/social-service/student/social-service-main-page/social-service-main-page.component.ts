@@ -39,7 +39,6 @@ interface Score {
 export class SocialServiceMainPageComponent implements OnInit {
   selectedFile: File = null;
   @ViewChild(DialogVerificationComponent) dialogVerification: DialogVerificationComponent;
-  @ViewChild('stepper') private stepper: MatStepper;
 
   formDocument: InitRequestModel;
   formSelfEvaluationDocument: InitSelfEvaluationModel;
@@ -271,7 +270,6 @@ export class SocialServiceMainPageComponent implements OnInit {
   }
 
   setStepperStepWizard(step) {
-    this.stepper.selectedIndex = step;
     this.stepWizard = step;
   }
 
