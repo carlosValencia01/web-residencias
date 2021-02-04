@@ -37,13 +37,13 @@
           </div>
           <div *ngIf="!assistance">
             <h5>Todavía no tienes tu asistencia registrada</h5>
-            <p>Si quieres iniciar con tu proceso de servicio social necesitaras observar el siguiente video y responder al formulario a continuación</p>
+            <p>Si quieres iniciar con tu proceso de servicio social necesitaras descargar y leer la guía, finalmente responder al formulario a continuación y esperar tu asistencia</p>
             <mat-horizontal-stepper [linear]="true">
               <mat-step [completed]="assistanceFirstStep">
                 <ng-template matStepLabel>Guía de Servicio Social</ng-template>
                 <div class="row justify-content-center">
                   <div class="col-12 my-2">
-                    <h4>Descargar: <a download="Guia de servicio social.pdf" target="_blank" href="src/assets/docs/GUIA_SERVICIO_SOCIAL.pdf"(click)="assistanceFirstStep = true">Guía de servicio social</a></h4>                   
+                    <h4>Descargar: <button mat-button color="primary" style="font-size: 24px;" (click)="downloadSocialServiceGuide()">Guía de servicio social</button></h4>                   
                   </div>
                   <div class="col-6">
                     <button mat-raised-button matStepperNext color="primary" [disabled]="!assistanceFirstStep" style="width: 100%;">Continuar</button>
@@ -63,10 +63,10 @@
               </mat-step>
               <mat-step>
                 <ng-template matStepLabel>Resultado</ng-template>
-                <h6 class="text-center">Has finalizado el proceso para contar con tu asistencia de Servicio Social, <strong>espera un máximo de tres días</strong> para obtener tu asistencia, de no ser así ,
-                  vuelve a observar el video, contesta correctamente todo el formulario y
+                <h6 class="text-center">Has finalizado el proceso para contar con tu asistencia de Servicio Social, <strong>espera un máximo de tres días</strong> para obtener tu asistencia, de no ser así,
+                  vuelve a estudiar la guía, contesta correctamente todo el formulario y
                   <strong>espera de nuevo los resultados para contar con tu asistencia </strong>
-                  y puedas iniciar con tu tramite para tu Servicio Social.</h6>
+                  y puedas iniciar con tu trámite para tu Servicio Social.</h6>
                 <div class="d-flex justify-content-center" *ngIf="assistanceFirstStep && assistanceSecondStep">
                 </div>
               </mat-step>

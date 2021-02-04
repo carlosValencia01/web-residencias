@@ -289,6 +289,26 @@ export class SocialServiceMainPageComponent implements OnInit {
     }
   }
 
+  downloadSocialServiceGuide() {
+    const docDriveFileId = '1cqT3yD7xhhtf_CCf0BHq4tLuxrKm1qIh';
+    this.loadingService.setLoading(true);
+    this.controlStudentProvider.getFile(docDriveFileId, 'Guia_Servicio_Social.pdf').subscribe(async (res) => {
+      const linkSource = 'data:' + res.contentType + ';base64,' + this.bufferToBase64(res.file.data);
+      const downloadLink = document.createElement('a');
+      const fileName = 'Guia Servicio Social.pdf';
+      downloadLink.href = linkSource;
+      downloadLink.download = fileName;
+      downloadLink.click();
+      this.notificationsService.showNotification(eNotificationType.SUCCESS, 'Se ha descargado el documento correctamente', '');
+    }, error => {
+      this.loadingService.setLoading(false);
+      const message = JSON.parse(error._body).message || 'Error al descargar el documento, intentelo mas tarde';
+      this.notificationsService
+        .showNotification(eNotificationType.ERROR, 'Departamento de Servicio Social', message);
+    }, () =>     this.loadingService.setLoading(false) );
+    this.assistanceFirstStep = true;
+  }
+
   validatePercentCareerToSocialService(studentId) {
     return new Promise( (resolve) => {
       this.controlStudentProvider.getControlStudentAccessToSocialService(studentId)
